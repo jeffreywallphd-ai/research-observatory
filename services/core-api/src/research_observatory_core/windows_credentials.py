@@ -25,6 +25,7 @@ from nacl.exceptions import CryptoError
 from .logging import emit_log_record
 from .ports.credential_store import (
     CredentialStore,
+    CredentialStoreProblem,
     SecretAccessContext,
     SecretAccessDenied,
     SecretAuditEvent,
@@ -38,6 +39,13 @@ from .ports.credential_store import (
     SecretRecord,
     SecretReference,
     SecretUnavailable,
+)
+from .ports.database_keys import (
+    DatabaseKeyConflict,
+    DatabaseKeyLease,
+    DatabaseKeyProvider,
+    DatabaseKeyUnavailable,
+    validate_database_key_identity,
 )
 from .ports.object_store_keys import ObjectMasterKey, ObjectMasterKeyProvider
 
@@ -601,7 +609,11 @@ class WindowsCredentialStore(CredentialStore):
                 finally:
                     _zero(root_key)
 
-    def lease(self, reference: SecretReference, context: SecretAccessContext) -> SecretLease:
+    def lease_record(
+        self,
+        reference: SecretReference,
+        context: SecretAccessContext,
+    ) -> tuple[SecretRecord, SecretLease]:
         reference_bytes = _canonical_reference(reference)
         with self._lock:
             self._ensure_root()
@@ -612,10 +624,98 @@ class WindowsCredentialStore(CredentialStore):
                     _root_file, records = self._ensure_root()
                     path = records / _record_name(root_key, reference_bytes)
                     payload = self._read_private(path, maximum=_MAX_RECORD_BYTES, missing=SecretNotFound)
-                    _record, material = self._decode_record(payload, reference, reference_bytes, root_key)
-                    return SecretLease(material)
+                    record, material = self._decode_record(payload, reference, reference_bytes, root_key)
+                    return record, SecretLease(material)
                 finally:
                     _zero(root_key)
+
+    def lease(self, reference: SecretReference, context: SecretAccessContext) -> SecretLease:
+        _record, lease = self.lease_record(reference, context)
+        return lease
+
+
+class WindowsDatabaseKeyProvider(DatabaseKeyProvider):
+    """Store active and staged per-project SQLCipher keys below the DPAPI vault root."""
+
+    _ACTIVE_NAME = "database-active-v1"
+
+    def __init__(self, store: CredentialStore, *, profile_id: str) -> None:
+        if not isinstance(store, CredentialStore):
+            raise ValueError("credential store is invalid")
+        self._store = store
+        self._profile_id = profile_id
+
+    @staticmethod
+    def _context() -> SecretAccessContext:
+        return SecretAccessContext(
+            calling_capability="CAP-02.S04",
+            purpose=SecretPurpose.DATABASE_ENCRYPTION,
+            audit_context=secrets.token_hex(16),
+        )
+
+    def _reference(self, project_id: str, name: str) -> SecretReference:
+        return SecretReference(
+            profile_id=self._profile_id,
+            kind=SecretKind.ENCRYPTION_KEY_MATERIAL,
+            subject_id=project_id,
+            name=name,
+        )
+
+    def _lease(self, reference: SecretReference, *, create: bool) -> DatabaseKeyLease:
+        try:
+            record, secret = self._store.lease_record(reference, self._context())
+        except SecretNotFound:
+            if not create:
+                raise DatabaseKeyUnavailable("project database key is unavailable") from None
+            material = bytearray(secrets.token_bytes(_ROOT_KEY_BYTES))
+            try:
+                with suppress(SecretConflict):
+                    self._store.put(reference, material, self._context())
+            finally:
+                _zero(material)
+            try:
+                record, secret = self._store.lease_record(reference, self._context())
+            except SecretNotFound:
+                raise DatabaseKeyUnavailable("project database key is unavailable") from None
+        except CredentialStoreProblem:
+            raise DatabaseKeyUnavailable("project database key is unavailable") from None
+        return DatabaseKeyLease(record.version, secret)
+
+    def active_key(self, project_id: str, *, create: bool) -> DatabaseKeyLease:
+        validate_database_key_identity(project_id)
+        return self._lease(self._reference(project_id, self._ACTIVE_NAME), create=create)
+
+    def staged_rekey(self, project_id: str, operation_id: str, *, create: bool) -> DatabaseKeyLease:
+        validate_database_key_identity(project_id, operation_id)
+        return self._lease(self._reference(project_id, f"database-rekey-{operation_id}"), create=create)
+
+    def activate_rekey(
+        self,
+        project_id: str,
+        operation_id: str,
+        *,
+        expected_active_version: str,
+    ) -> str:
+        validate_database_key_identity(project_id, operation_id)
+        pending = self._reference(project_id, f"database-rekey-{operation_id}")
+        active = self._reference(project_id, self._ACTIVE_NAME)
+        try:
+            with self._store.lease(pending, self._context()) as lease:
+                material = lease.use(bytearray)
+            try:
+                record = self._store.put(
+                    active,
+                    material,
+                    self._context(),
+                    expected_version=expected_active_version,
+                )
+            finally:
+                _zero(material)
+        except SecretConflict:
+            raise DatabaseKeyConflict("database key activation conflicted") from None
+        except CredentialStoreProblem:
+            raise DatabaseKeyUnavailable("staged database key is unavailable") from None
+        return record.version
 
 
 class WindowsObjectMasterKeyProvider(ObjectMasterKeyProvider):
@@ -673,10 +773,20 @@ def create_windows_object_key_provider(root: Path | None = None) -> ObjectMaster
     )
 
 
+def create_windows_database_key_provider(root: Path | None = None) -> DatabaseKeyProvider:
+    vault_root = default_windows_profile_vault_path() if root is None else Path(root)
+    return WindowsDatabaseKeyProvider(
+        WindowsCredentialStore(vault_root),
+        profile_id="local-default",
+    )
+
+
 __all__ = [
     "WindowsCredentialStore",
     "WindowsCurrentUserDataProtector",
+    "WindowsDatabaseKeyProvider",
     "WindowsObjectMasterKeyProvider",
+    "create_windows_database_key_provider",
     "create_windows_object_key_provider",
     "default_windows_profile_vault_path",
 ]

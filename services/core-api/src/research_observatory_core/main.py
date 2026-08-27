@@ -22,16 +22,23 @@ from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
 from .config import CoreSettings
 from .migrations.runner import migration_framework_projection
 from .object_store import upgrade_local_object_envelopes
+from .ports.database_keys import DatabaseKeyProvider
 from .ports.object_store_keys import ObjectMasterKeyProvider
 from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleService
 from .repositories import sqlite_privacy_policy_repository
-from .windows_credentials import create_windows_object_key_provider
+from .storage import (
+    DEVELOPMENT_PLAINTEXT_PROFILE,
+    configure_protected_database_provider,
+    database_protection_profile,
+)
+from .windows_credentials import create_windows_database_key_provider, create_windows_object_key_provider
 
 EXIT_CONFIGURATION_ERROR = 2
 SUPERVISION_PROTOCOL_VERSION = "1.0"
 STARTING_DIAGNOSTIC_CODE = "RO-CORE-STARTING"
 _DEFAULT_OBJECT_KEY_PROVIDER = object()
+_DEFAULT_DATABASE_KEY_PROVIDER = object()
 
 
 def create_runtime_app(
@@ -40,6 +47,7 @@ def create_runtime_app(
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
     object_key_provider: ObjectMasterKeyProvider | None | object = _DEFAULT_OBJECT_KEY_PROVIDER,
+    database_key_provider: DatabaseKeyProvider | None | object = _DEFAULT_DATABASE_KEY_PROVIDER,
     profile_vault_root: Path | None = None,
 ) -> FastAPI:
     """Compose Core with the Windows profile vault and mandatory pre-open upgrades."""
@@ -52,6 +60,22 @@ def create_runtime_app(
         if object_key_provider is not None and not isinstance(object_key_provider, ObjectMasterKeyProvider):
             raise ValueError("object-key provider is invalid")
         resolved_provider = object_key_provider
+
+    if database_key_provider is _DEFAULT_DATABASE_KEY_PROVIDER:
+        if os.name != "nt":
+            if database_protection_profile() != DEVELOPMENT_PLAINTEXT_PROFILE:
+                raise RuntimeError("the W1 protected database profile requires Windows")
+        else:
+            configure_protected_database_provider(create_windows_database_key_provider(profile_vault_root))
+    elif database_key_provider is None:
+        if database_protection_profile() != DEVELOPMENT_PLAINTEXT_PROFILE:
+            raise ValueError("plaintext database operation is allowed only in the explicit development fixture profile")
+    else:
+        if profile_vault_root is not None:
+            raise ValueError("an injected database-key provider cannot also select a profile vault root")
+        if not isinstance(database_key_provider, DatabaseKeyProvider):
+            raise ValueError("database-key provider is invalid")
+        configure_protected_database_provider(database_key_provider)
 
     projects = ProjectLifecycleService(
         object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)

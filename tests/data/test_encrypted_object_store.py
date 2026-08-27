@@ -24,7 +24,7 @@ from research_observatory_core.ports.object_store import (  # noqa: E402
 from research_observatory_core.ports.object_store_keys import (  # noqa: E402
     ObjectMasterKey,
 )
-from research_observatory_core.storage import initialize_database  # noqa: E402
+from research_observatory_core.storage import development_plaintext_database_fixture, initialize_database  # noqa: E402
 
 PROJECT_ID = "01890f6e-6a40-4cc5-98b7-7f3f36b60210"
 CREATED_AT = "2026-08-18T12:00:00.000Z"
@@ -67,6 +67,8 @@ def command(*, profile: str = "project-encrypted-v1") -> ObjectPutCommand:
 
 class EncryptedObjectStoreTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-encrypted-object-store-")
         self.project = Path(self.temporary.name).resolve() / "project"
         for relative in ("state", "objects", ".tmp"):
@@ -80,7 +82,10 @@ class EncryptedObjectStoreTests(unittest.TestCase):
         self.v2 = bytes.fromhex("22" * 32)
 
     def tearDown(self) -> None:
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def object_file(self) -> Path:
         files = tuple(path for path in (self.project / "objects").rglob("*") if path.is_file())

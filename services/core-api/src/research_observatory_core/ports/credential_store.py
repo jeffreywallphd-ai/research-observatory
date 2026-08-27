@@ -54,6 +54,7 @@ class SecretPurpose(StrEnum):
     CONNECTOR_AUTHENTICATION = "connector-authentication"
     SIGNING_VERIFICATION = "signing-verification"
     OBJECT_ENCRYPTION = "object-encryption"
+    DATABASE_ENCRYPTION = "database-encryption"
 
 
 def _require_identifier(value: object, field: str) -> str:
@@ -177,6 +178,12 @@ class CredentialStore(Protocol):
     ) -> SecretRecord: ...
 
     def lease(self, reference: SecretReference, context: SecretAccessContext) -> SecretLease: ...
+
+    def lease_record(
+        self,
+        reference: SecretReference,
+        context: SecretAccessContext,
+    ) -> tuple[SecretRecord, SecretLease]: ...
 
 
 SecretAuditSink = Callable[[SecretAuditEvent], None]

@@ -30,9 +30,10 @@ from research_observatory_core.ports.credential_store import (  # noqa: E402
     SecretUnavailable,
 )
 from research_observatory_core.ports.object_store import ObjectPutCommand  # noqa: E402
-from research_observatory_core.storage import initialize_database  # noqa: E402
+from research_observatory_core.storage import development_plaintext_database_fixture, initialize_database  # noqa: E402
 from research_observatory_core.windows_credentials import (  # noqa: E402
     WindowsCredentialStore,
+    WindowsDatabaseKeyProvider,
     WindowsObjectMasterKeyProvider,
 )
 
@@ -60,13 +61,18 @@ def context() -> SecretAccessContext:
 @unittest.skipUnless(os.name == "nt", "Windows DPAPI credential-store boundary")
 class WindowsCredentialStoreTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-windows-credentials-")
         self.root = Path(self.temporary.name).resolve()
         self.vault = self.root / "profile-vault"
         self.events: list[object] = []
 
     def tearDown(self) -> None:
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def test_user_scoped_round_trip_is_opaque_redacted_and_zeroes_the_lease(self) -> None:
         secret = b"provider-secret-that-must-not-leak"
@@ -357,6 +363,35 @@ class WindowsCredentialStoreTests(unittest.TestCase):
         with self.assertRaises(SecretAccessDenied):
             store.put(reference(), b"must-not-cross-the-redirect", context())
         self.assertEqual((), tuple(outside.iterdir()))
+
+    def test_database_keys_are_distinct_restart_stable_and_cas_activated(self) -> None:
+        provider = WindowsDatabaseKeyProvider(
+            WindowsCredentialStore(self.vault, audit_sink=self.events.append),
+            profile_id="local-default",
+        )
+        with provider.active_key(PROJECT_ID, create=True) as active:
+            original_version = active.version
+            original_material = active.use(bytes)
+        with provider.staged_rekey(PROJECT_ID, "1" * 32, create=True) as staged:
+            staged_material = staged.use(bytes)
+        self.assertNotEqual(original_material, staged_material)
+        activated_version = provider.activate_rekey(
+            PROJECT_ID,
+            "1" * 32,
+            expected_active_version=original_version,
+        )
+        self.assertNotEqual(activated_version, original_version)
+
+        restarted = WindowsDatabaseKeyProvider(
+            WindowsCredentialStore(self.vault, audit_sink=self.events.append),
+            profile_id="local-default",
+        )
+        with restarted.active_key(PROJECT_ID, create=False) as active:
+            self.assertEqual(active.version, activated_version)
+            self.assertEqual(active.use(bytes), staged_material)
+        vault_bytes = b"".join(path.read_bytes() for path in self.vault.rglob("*") if path.is_file())
+        for forbidden in (original_material, staged_material, PROJECT_ID.encode("ascii")):
+            self.assertNotIn(forbidden, vault_bytes)
 
 
 class ApplicationLockSourceBoundaryTests(unittest.TestCase):

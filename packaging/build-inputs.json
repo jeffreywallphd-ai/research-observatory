@@ -30,6 +30,7 @@
     "packages/contracts/security/application-lock-profile.schema.json",
     "packages/contracts/security/credential-store-profile.schema.json",
     "packages/contracts/storage/object-store-profile.schema.json",
+    "packages/contracts/storage/protected-database-profile.schema.json",
     "packages/contracts/storage/sqlite-migration-recovery.schema.json",
     "packages/contracts/storage/sqlite-profile.schema.json",
     "packages/contracts/support-bundle/support-bundle.schema.json",

@@ -139,6 +139,8 @@ def create_v2_project(
 
 class ObjectEnvelopeUpgradeTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = storage.development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-object-upgrade-")
         self.root = Path(self.temporary.name).resolve(strict=True) / "project"
         self.provider = MemoryKeyProvider({"object-key-v1": MASTER_KEY}, "object-key-v1")
@@ -158,7 +160,10 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
                 check=False,
                 timeout=30,
             )
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def test_v2_plaintext_is_upgraded_before_store_returns_and_restart_opens_it(self) -> None:
         plaintext = b"supported prior plaintext object"
@@ -256,7 +261,11 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             plaintext,
             project_id=encrypted_id,
         )
-        application = create_runtime_app(settings=CoreSettings(), profile_vault_root=profile_vault)
+        application = create_runtime_app(
+            settings=CoreSettings(),
+            database_key_provider=None,
+            profile_vault_root=profile_vault,
+        )
         with TestClient(application):
             opened = application.state.runtime.projects.open(root=str(encrypted_root), trace_id="d" * 32)
             self.assertEqual("read-write", opened.access_mode.value)
@@ -286,7 +295,11 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             unavailable_plaintext,
             project_id=unavailable_id,
         )
-        application = create_runtime_app(settings=CoreSettings(), object_key_provider=None)
+        application = create_runtime_app(
+            settings=CoreSettings(),
+            object_key_provider=None,
+            database_key_provider=None,
+        )
         with TestClient(application), self.assertRaises(ProjectLifecycleProblem) as raised:
             application.state.runtime.projects.open(root=str(unavailable_root), trace_id="f" * 32)
         self.assertEqual("RO-CORE-PROJECT-UPGRADE-KEY-UNAVAILABLE", raised.exception.code)

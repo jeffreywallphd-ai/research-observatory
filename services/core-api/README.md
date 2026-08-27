@@ -123,4 +123,6 @@ The frozen sidecar explicitly includes the governed Alembic migration runner and
 its pinned SQLAlchemy runtime, immutable v2 through v5 revisions, the object-
 upgrade journal, and the credential-store port and Windows adapter so backup-
 first schema recovery, pre-open envelope recovery, and production key retrieval
-remain available without a system Python installation.
+remain available without a system Python installation. It also freezes the
+SQLCipher 4.12 community runtime and `sqlcipher3` binding; the user-accessible
+`THIRD_PARTY_NOTICES.txt` at the artifact root carries their required notices.

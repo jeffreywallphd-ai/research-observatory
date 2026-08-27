@@ -29,7 +29,11 @@ from research_observatory_core.ports.repositories import (  # noqa: E402
 )
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
 from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
-from research_observatory_core.storage import initialize_database, open_canonical_database  # noqa: E402
+from research_observatory_core.storage import (  # noqa: E402
+    development_plaintext_database_fixture,
+    initialize_database,
+    open_canonical_database,
+)
 
 PROJECT_ID = "01890f6e-6a40-4cc5-98b7-123456789abc"
 CREATED_AT = "2026-08-18T01:00:00.000Z"
@@ -65,6 +69,8 @@ def event(index: int, *, key: str | None = None) -> AtomicRepositoryEvent:
 
 class SqliteRepositoryTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary.name).resolve()
         self.state = self.root / "state"
@@ -74,7 +80,10 @@ class SqliteRepositoryTests(unittest.TestCase):
         self.factory = create_sqlite_unit_of_work_factory(self.database, PROJECT_ID)
 
     def tearDown(self) -> None:
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def test_revision_provenance_and_outbox_commit_atomically_and_survive_reopen(self) -> None:
         with self.factory() as unit:

@@ -7,15 +7,19 @@ import json
 import os
 import re
 import secrets
+import shutil
 import sqlite3
 import stat
 import threading
-from contextlib import suppress
+from collections.abc import Callable
+from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 from uuid import UUID
+
+import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
 
 from research_observatory_core.migrations.versions.v0002_schema_history import (
     SCHEMA_MIGRATIONS_DDL,
@@ -32,6 +36,13 @@ from research_observatory_core.migrations.versions.v0005_object_creation_source 
     OBJECT_CREATION_SOURCE_COLUMN,
     SCHEMA_METADATA_V5_DDL,
 )
+from research_observatory_core.ports.database_keys import (
+    DatabaseKeyConflict,
+    DatabaseKeyLease,
+    DatabaseKeyProblem,
+    DatabaseKeyProvider,
+    validate_database_key_identity,
+)
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
@@ -44,6 +55,10 @@ BUSY_TIMEOUT_MILLISECONDS = 5_000
 WAL_AUTOCHECKPOINT_PAGES = 1_000
 MAX_SAFE_INTEGER = 9_007_199_254_740_991
 MINIMUM_SQLITE_VERSION = (3, 37, 0)
+SQLCIPHER_PROFILE = "sqlcipher-4.12-community-wal-v1"
+DEVELOPMENT_PLAINTEXT_PROFILE = "development-plaintext-fixture"
+_SQLCIPHER_HEADER = b"SQLite format 3\x00"
+_DATABASE_ERRORS = (sqlite3.Error, sqlcipher.Error)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -182,10 +197,78 @@ class _GuardedConnection(sqlite3.Connection):
             _close_windows_handles(handles)
 
 
+class _GuardedSqlCipherConnection(sqlcipher.Connection):
+    """Internal SQLCipher handle retaining file and directory identity guards."""
+
+    _guard_handles: list[int]
+    _guard_descriptor: int | None
+
+    def close(self) -> None:
+        try:
+            super().close()
+        finally:
+            descriptor = getattr(self, "_guard_descriptor", None)
+            if descriptor is not None:
+                self._guard_descriptor = None
+                os.close(descriptor)
+            handles = getattr(self, "_guard_handles", [])
+            self._guard_handles = []
+            _close_windows_handles(handles)
+
+
+@dataclass(frozen=True, slots=True)
+class _DatabaseProtectionConfiguration:
+    profile: str
+    provider: DatabaseKeyProvider | None
+
+
+_DATABASE_PROTECTION_LOCK = threading.RLock()
+_DATABASE_PROTECTION = _DatabaseProtectionConfiguration(profile="unconfigured", provider=None)
+
+
+def configure_protected_database_provider(provider: DatabaseKeyProvider) -> None:
+    """Install the process composition's mandatory protected-database key authority."""
+
+    if not isinstance(provider, DatabaseKeyProvider):
+        raise ValueError("database key provider is invalid")
+    global _DATABASE_PROTECTION
+    with _DATABASE_PROTECTION_LOCK:
+        if _CAPABILITY_REGISTRY.has_open_connections():
+            raise StorageProblem("database protection cannot change while a database is open")
+        _DATABASE_PROTECTION = _DatabaseProtectionConfiguration(profile=SQLCIPHER_PROFILE, provider=provider)
+
+
+@contextmanager
+def development_plaintext_database_fixture() -> Any:
+    """Explicitly scope legacy schema tests to the sole allowed plaintext profile."""
+
+    global _DATABASE_PROTECTION
+    with _DATABASE_PROTECTION_LOCK:
+        if _CAPABILITY_REGISTRY.has_open_connections():
+            raise StorageProblem("database protection cannot change while a database is open")
+        previous = _DATABASE_PROTECTION
+        _DATABASE_PROTECTION = _DatabaseProtectionConfiguration(
+            profile=DEVELOPMENT_PLAINTEXT_PROFILE,
+            provider=None,
+        )
+    try:
+        yield
+    finally:
+        with _DATABASE_PROTECTION_LOCK:
+            if _CAPABILITY_REGISTRY.has_open_connections():
+                raise StorageProblem("development plaintext fixture leaked an open database")
+            _DATABASE_PROTECTION = previous
+
+
+def database_protection_profile() -> str:
+    with _DATABASE_PROTECTION_LOCK:
+        return _DATABASE_PROTECTION.profile
+
+
 @dataclass(frozen=True, slots=True)
 class _CursorEntry:
     connection_token: str
-    cursor: sqlite3.Cursor
+    cursor: Any
 
 
 class _CapabilityRegistry:
@@ -193,7 +276,7 @@ class _CapabilityRegistry:
 
     def __init__(self) -> None:
         self._lock = threading.RLock()
-        self._connections: dict[str, _GuardedConnection] = {}
+        self._connections: dict[str, Any] = {}
         self._cursors: dict[str, _CursorEntry] = {}
 
     def _token(self) -> str:
@@ -202,13 +285,13 @@ class _CapabilityRegistry:
             if token not in self._connections and token not in self._cursors:
                 return token
 
-    def register_connection(self, connection: _GuardedConnection) -> str:
+    def register_connection(self, connection: Any) -> str:
         with self._lock:
             token = self._token()
             self._connections[token] = connection
             return token
 
-    def connection(self, token: str | None) -> _GuardedConnection:
+    def connection(self, token: str | None) -> Any:
         if token is None:
             raise sqlite3.ProgrammingError("canonical connection is closed")
         with self._lock:
@@ -225,12 +308,12 @@ class _CapabilityRegistry:
             cursors = [cursor_token for cursor_token, entry in self._cursors.items() if entry.connection_token == token]
             entries = [self._cursors.pop(cursor_token) for cursor_token in cursors]
         for entry in entries:
-            with suppress(sqlite3.Error):
+            with suppress(*_DATABASE_ERRORS):
                 entry.cursor.close()
         if connection is not None:
             connection.close()
 
-    def register_cursor(self, connection_token: str, cursor: sqlite3.Cursor) -> str:
+    def register_cursor(self, connection_token: str, cursor: Any) -> str:
         with self._lock:
             if connection_token not in self._connections:
                 cursor.close()
@@ -239,7 +322,7 @@ class _CapabilityRegistry:
             self._cursors[token] = _CursorEntry(connection_token=connection_token, cursor=cursor)
             return token
 
-    def cursor(self, token: str | None) -> sqlite3.Cursor:
+    def cursor(self, token: str | None) -> Any:
         if token is None:
             raise sqlite3.ProgrammingError("canonical cursor is closed")
         with self._lock:
@@ -254,8 +337,12 @@ class _CapabilityRegistry:
         with self._lock:
             entry = self._cursors.pop(token, None)
         if entry is not None:
-            with suppress(sqlite3.Error):
+            with suppress(*_DATABASE_ERRORS):
                 entry.cursor.close()
+
+    def has_open_connections(self) -> bool:
+        with self._lock:
+            return bool(self._connections)
 
 
 _CAPABILITY_REGISTRY = _CapabilityRegistry()
@@ -288,23 +375,34 @@ class CanonicalCursor:
         except StopIteration:
             self.close()
             raise
+        except sqlcipher.Error as error:
+            raise sqlite3.DatabaseError("protected database operation failed") from error
 
     def fetchone(self) -> Any:
-        row = _CAPABILITY_REGISTRY.cursor(self.__token).fetchone()
+        try:
+            row = _CAPABILITY_REGISTRY.cursor(self.__token).fetchone()
+        except sqlcipher.Error as error:
+            raise sqlite3.DatabaseError("protected database operation failed") from error
         if row is None:
             self.close()
         return row
 
     def fetchmany(self, size: int | None = None) -> list[Any]:
         cursor = _CAPABILITY_REGISTRY.cursor(self.__token)
-        rows = cursor.fetchmany() if size is None else cursor.fetchmany(size)
+        try:
+            rows = cursor.fetchmany() if size is None else cursor.fetchmany(size)
+        except sqlcipher.Error as error:
+            raise sqlite3.DatabaseError("protected database operation failed") from error
         if not rows:
             self.close()
         return rows
 
     def fetchall(self) -> list[Any]:
         try:
-            return _CAPABILITY_REGISTRY.cursor(self.__token).fetchall()
+            try:
+                return _CAPABILITY_REGISTRY.cursor(self.__token).fetchall()
+            except sqlcipher.Error as error:
+                raise sqlite3.DatabaseError("protected database operation failed") from error
         finally:
             self.close()
 
@@ -330,7 +428,7 @@ class CanonicalCursor:
             self.close()
 
 
-def _restricted_cursor(connection_token: str, cursor: sqlite3.Cursor) -> CanonicalCursor:
+def _restricted_cursor(connection_token: str, cursor: Any) -> CanonicalCursor:
     description = cursor.description
     lastrowid = cursor.lastrowid
     rowcount = cursor.rowcount
@@ -355,20 +453,32 @@ class CanonicalConnection:
         if token is None:
             raise sqlite3.ProgrammingError("canonical connection is closed")
         connection = _CAPABILITY_REGISTRY.connection(token)
-        return _restricted_cursor(token, connection.execute(sql, parameters))
+        try:
+            return _restricted_cursor(token, connection.execute(sql, parameters))
+        except sqlcipher.Error as error:
+            raise sqlite3.DatabaseError("protected database operation failed") from error
 
     def executemany(self, sql: str, parameters: Any) -> CanonicalCursor:
         token = self.__token
         if token is None:
             raise sqlite3.ProgrammingError("canonical connection is closed")
         connection = _CAPABILITY_REGISTRY.connection(token)
-        return _restricted_cursor(token, connection.executemany(sql, parameters))
+        try:
+            return _restricted_cursor(token, connection.executemany(sql, parameters))
+        except sqlcipher.Error as error:
+            raise sqlite3.DatabaseError("protected database operation failed") from error
 
     def commit(self) -> None:
-        _CAPABILITY_REGISTRY.connection(self.__token).commit()
+        try:
+            _CAPABILITY_REGISTRY.connection(self.__token).commit()
+        except sqlcipher.Error as error:
+            raise sqlite3.DatabaseError("protected database operation failed") from error
 
     def rollback(self) -> None:
-        _CAPABILITY_REGISTRY.connection(self.__token).rollback()
+        try:
+            _CAPABILITY_REGISTRY.connection(self.__token).rollback()
+        except sqlcipher.Error as error:
+            raise sqlite3.DatabaseError("protected database operation failed") from error
 
     @property
     def in_transaction(self) -> bool:
@@ -405,7 +515,43 @@ class DatabaseIntegrityReport:
     strict_tables: tuple[str, ...]
     quick_check: tuple[str, ...]
     foreign_key_violations: tuple[tuple[Any, ...], ...]
+    protection_profile: str
+    cipher_version: str | None
+    cipher_integrity: tuple[str, ...]
     errors: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class DatabaseRekeyReport:
+    operation_id: str
+    outcome: str
+    previous_key_version: str
+    active_key_version: str
+    backup_sha256: str
+
+
+@dataclass(frozen=True, slots=True)
+class DatabaseProtectionMigrationReport:
+    operation_id: str
+    outcome: str
+    plaintext_source_sha256: str
+    protected_database_sha256: str
+    plaintext_cleanup: str
+
+
+@dataclass(frozen=True, slots=True)
+class ProtectedDatabaseBackupReport:
+    protection_profile: str
+    database_sha256: str
+    size_bytes: int
+
+
+@dataclass(frozen=True, slots=True)
+class ProtectedDatabaseRestoreReport:
+    operation_id: str
+    outcome: str
+    restored_database_sha256: str
+    displaced_database_sha256: str
 
 
 def storage_profile_document() -> dict[str, Any]:
@@ -924,15 +1070,33 @@ def _canonical_authorizer(
     return _initialization_authorizer(action, arg1, arg2, database, trigger)
 
 
-def _configure_connection(connection: sqlite3.Connection, *, initialize: bool) -> None:
-    if sqlite3.sqlite_version_info < MINIMUM_SQLITE_VERSION:
+def _configure_connection(connection: Any, *, initialize: bool, protected: bool = False) -> None:
+    sqlite_version = sqlcipher.sqlite_version_info if protected else sqlite3.sqlite_version_info
+    if sqlite_version < MINIMUM_SQLITE_VERSION:
         raise StorageProblem("installed SQLite is older than the STRICT storage profile")
-    connection.setconfig(sqlite3.SQLITE_DBCONFIG_ENABLE_FKEY, True)
-    connection.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DDL, False)
-    connection.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, False)
-    connection.setconfig(sqlite3.SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, False)
-    connection.setconfig(sqlite3.SQLITE_DBCONFIG_TRUSTED_SCHEMA, False)
-    connection.setconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE, True)
+    if protected:
+        version = connection.execute("PRAGMA cipher_version").fetchone()
+        status = connection.execute("PRAGMA cipher_status").fetchone()
+        if version is None or not str(version[0]).startswith("4.12.") or status is None or str(status[0]) != "1":
+            raise StorageProblem("protected database runtime is unavailable")
+        connection.execute("PRAGMA cipher_plaintext_header_size=0")
+        cipher_expected = {
+            "cipher_page_size": "4096",
+            "cipher_use_hmac": "1",
+            "cipher_hmac_algorithm": "HMAC_SHA512",
+            "cipher_kdf_algorithm": "PBKDF2_HMAC_SHA512",
+        }
+        for pragma, cipher_value in cipher_expected.items():
+            row = connection.execute(f"PRAGMA {pragma}").fetchone()
+            if row is None or row[0] != cipher_value:
+                raise StorageProblem("protected database compatibility profile was not applied")
+    else:
+        connection.setconfig(sqlite3.SQLITE_DBCONFIG_ENABLE_FKEY, True)
+        connection.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DDL, False)
+        connection.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, False)
+        connection.setconfig(sqlite3.SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, False)
+        connection.setconfig(sqlite3.SQLITE_DBCONFIG_TRUSTED_SCHEMA, False)
+        connection.setconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE, True)
     connection.enable_load_extension(False)
     connection.set_authorizer(_initialization_authorizer)
     connection.execute("PRAGMA foreign_keys=ON")
@@ -961,17 +1125,54 @@ def _configure_connection(connection: sqlite3.Connection, *, initialize: bool) -
         connection.set_authorizer(_canonical_authorizer)
 
 
-def _connect_held(database: Path, *, check_same_thread: bool = True) -> _GuardedConnection:
+def _database_protection_configuration() -> _DatabaseProtectionConfiguration:
+    with _DATABASE_PROTECTION_LOCK:
+        configuration = _DATABASE_PROTECTION
+    if configuration.profile == "unconfigured":
+        raise StorageProblem("protected database key authority is not configured")
+    return configuration
+
+
+def _key_sqlcipher_connection(connection: Any, material: memoryview) -> None:
+    if len(material) != 32:
+        raise StorageProblem("protected database key material is invalid")
+    raw_hex = material.hex()
+    try:
+        connection.execute(f"PRAGMA key = \"x'{raw_hex}'\"")
+        connection.execute("PRAGMA cipher_compatibility=4")
+        connection.execute("PRAGMA cipher_plaintext_header_size=0")
+    finally:
+        raw_hex = ""
+
+
+def _connect_held(
+    database: Path,
+    *,
+    project_id: str | None,
+    create_key: bool = False,
+    check_same_thread: bool = True,
+    key_lease: DatabaseKeyLease | None = None,
+) -> Any:
     parent_before = database.parent.stat(follow_symlinks=False)
     before = database.stat(follow_symlinks=False)
+    configuration = _database_protection_configuration()
+    protected = configuration.profile == SQLCIPHER_PROFILE
+    if protected and configuration.provider is None:
+        raise StorageProblem("protected database key authority is unavailable")
+    if protected and project_id is None:
+        raise StorageProblem("protected database project identity is required")
     descriptor: int | None = None
     handles: list[int] = []
-    connection: _GuardedConnection | None = None
+    connection: Any = None
     try:
         descriptor = os.open(database, os.O_RDONLY | getattr(os, "O_BINARY", 0))
         opened = os.fstat(descriptor)
         if (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino) or opened.st_nlink != 1:
             raise StorageProblem("database identity changed before open")
+        header = os.read(descriptor, len(_SQLCIPHER_HEADER))
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        if protected and not create_key and header == _SQLCIPHER_HEADER:
+            raise StorageProblem("production profile rejected a plaintext project database")
         handles = _open_windows_guards(database.parent, database)
         parent_after = database.parent.stat(follow_symlinks=False)
         if (parent_after.st_dev, parent_after.st_ino) != (parent_before.st_dev, parent_before.st_ino) or _redirect(
@@ -979,15 +1180,34 @@ def _connect_held(database: Path, *, check_same_thread: bool = True) -> _Guarded
         ):
             raise StorageProblem("database parent identity changed during open")
         uri = database.as_uri() + "?mode=rw"
-        connection = sqlite3.connect(
-            uri,
-            uri=True,
-            autocommit=True,
-            timeout=BUSY_TIMEOUT_MILLISECONDS / 1_000,
-            factory=_GuardedConnection,
-            check_same_thread=check_same_thread,
-        )
-        connection.row_factory = sqlite3.Row
+        if protected:
+            assert configuration.provider is not None
+            assert project_id is not None
+            key = configuration.provider.active_key(project_id, create=create_key) if key_lease is None else key_lease
+            try:
+                connection = sqlcipher.connect(
+                    uri,
+                    uri=True,
+                    isolation_level=None,
+                    timeout=BUSY_TIMEOUT_MILLISECONDS / 1_000,
+                    factory=_GuardedSqlCipherConnection,
+                    check_same_thread=check_same_thread,
+                )
+                key.use(lambda material: _key_sqlcipher_connection(connection, material))
+            finally:
+                if key_lease is None:
+                    key.close()
+            connection.row_factory = sqlcipher.Row
+        else:
+            connection = sqlite3.connect(
+                uri,
+                uri=True,
+                autocommit=True,
+                timeout=BUSY_TIMEOUT_MILLISECONDS / 1_000,
+                factory=_GuardedConnection,
+                check_same_thread=check_same_thread,
+            )
+            connection.row_factory = sqlite3.Row
         after = database.stat(follow_symlinks=False)
         if (after.st_dev, after.st_ino) != (before.st_dev, before.st_ino) or after.st_nlink != 1 or _redirect(database):
             raise StorageProblem("database identity changed during open")
@@ -996,7 +1216,7 @@ def _connect_held(database: Path, *, check_same_thread: bool = True) -> _Guarded
         descriptor = None
         handles = []
         return connection
-    except (OSError, sqlite3.Error) as error:
+    except (OSError, DatabaseKeyProblem, *_DATABASE_ERRORS) as error:
         raise StorageProblem("canonical database could not be opened") from error
     finally:
         if connection is not None and descriptor is not None:
@@ -1021,7 +1241,7 @@ def _schema_profile_errors(
             FROM schema_metadata WHERE singleton=1
             """
         ).fetchone()
-    except sqlite3.Error:
+    except _DATABASE_ERRORS:
         metadata = None
     if metadata is None or tuple(metadata) != (
         DATABASE_SCHEMA_VERSION,
@@ -1047,16 +1267,27 @@ def _open_canonical_database(
     check_same_thread: bool,
 ) -> CanonicalConnection:
     database = _canonical_database_path(Path(path), must_exist=True)
+    configuration = _database_protection_configuration()
+    if configuration.profile == SQLCIPHER_PROFILE and expected_project_id is None:
+        raise StorageProblem("protected database project identity is required")
     if expected_project_id is not None:
         expected_project_id, _ = _project_identity(expected_project_id)
-    connection = _connect_held(database, check_same_thread=check_same_thread)
+    connection = _connect_held(
+        database,
+        project_id=expected_project_id,
+        check_same_thread=check_same_thread,
+    )
     try:
-        _configure_connection(connection, initialize=False)
+        _configure_connection(
+            connection,
+            initialize=False,
+            protected=configuration.profile == SQLCIPHER_PROFILE,
+        )
         errors = _schema_profile_errors(connection, expected_project_id)
         if errors:
             raise StorageProblem("canonical database profile is incompatible")
         return CanonicalConnection(_CAPABILITY_REGISTRY.register_connection(connection))
-    except (sqlite3.Error, StorageProblem) as error:
+    except (*_DATABASE_ERRORS, StorageProblem) as error:
         connection.close()
         if isinstance(error, StorageProblem):
             raise
@@ -1126,6 +1357,9 @@ def database_integrity_report(
     strict_tables: tuple[str, ...] = ()
     quick_check: tuple[str, ...] = ()
     foreign_key_violations: tuple[tuple[Any, ...], ...] = ()
+    protection = database_protection_profile()
+    cipher_version: str | None = None
+    cipher_integrity: tuple[str, ...] = ()
     try:
         errors.extend(_schema_profile_errors(connection, expected_project_id))
         application_id = int(connection.execute("PRAGMA application_id").fetchone()[0])
@@ -1143,13 +1377,21 @@ def database_integrity_report(
         )
         quick_check = tuple(str(row[0]) for row in connection.execute("PRAGMA quick_check"))
         foreign_key_violations = tuple(tuple(row) for row in connection.execute("PRAGMA foreign_key_check"))
+        if protection == SQLCIPHER_PROFILE:
+            version = connection.execute("PRAGMA cipher_version").fetchone()
+            cipher_version = None if version is None else str(version[0])
+            cipher_integrity = tuple(str(row[0]) for row in connection.execute("PRAGMA cipher_integrity_check"))
+            if cipher_version is None or not cipher_version.startswith("4.12."):
+                errors.append("cipher-version-mismatch")
+            if cipher_integrity:
+                errors.append("cipher-integrity-check-failed")
         if quick_check != ("ok",):
             errors.append("quick-check-failed")
         if foreign_key_violations:
             errors.append("foreign-key-check-failed")
         if journal_mode != "wal" or foreign_keys is not True:
             errors.append("connection-profile-mismatch")
-    except sqlite3.Error:
+    except _DATABASE_ERRORS:
         errors.append("integrity-check-unavailable")
     return DatabaseIntegrityReport(
         ok=not errors,
@@ -1161,6 +1403,9 @@ def database_integrity_report(
         strict_tables=strict_tables,
         quick_check=quick_check,
         foreign_key_violations=foreign_key_violations,
+        protection_profile=protection,
+        cipher_version=cipher_version,
+        cipher_integrity=cipher_integrity,
         errors=tuple(dict.fromkeys(errors)),
     )
 
@@ -1177,7 +1422,7 @@ def initialize_database(
     project_id, project_id_scheme = _project_identity(project_id)
     created_at = _normalize_utc_millisecond(project_created_at)
     descriptor: int | None = None
-    connection: _GuardedConnection | None = None
+    connection: Any = None
     created = False
     succeeded = False
     try:
@@ -1195,8 +1440,13 @@ def initialize_database(
             or (status.st_dev, status.st_ino) != (path_status.st_dev, path_status.st_ino)
         ):
             raise StorageProblem("new database identity is not exclusive")
-        connection = _connect_held(database)
-        _configure_connection(connection, initialize=True)
+        configuration = _database_protection_configuration()
+        connection = _connect_held(database, project_id=project_id, create_key=True)
+        _configure_connection(
+            connection,
+            initialize=True,
+            protected=configuration.profile == SQLCIPHER_PROFILE,
+        )
         connection.execute("BEGIN IMMEDIATE")
         try:
             connection.execute(f"PRAGMA application_id={APPLICATION_ID}")
@@ -1243,9 +1493,13 @@ def initialize_database(
         opened = os.fstat(descriptor)
         if (after.st_dev, after.st_ino) != (opened.st_dev, opened.st_ino) or after.st_nlink != 1:
             raise StorageProblem("new database identity changed during initialization")
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        header = os.read(descriptor, len(_SQLCIPHER_HEADER))
+        if configuration.profile == SQLCIPHER_PROFILE and header == _SQLCIPHER_HEADER:
+            raise StorageProblem("protected database initialization produced plaintext")
         succeeded = True
         return report
-    except (OSError, sqlite3.Error) as error:
+    except (OSError, *_DATABASE_ERRORS) as error:
         raise StorageProblem("canonical database initialization failed") from error
     finally:
         if connection is not None:
@@ -1256,3 +1510,745 @@ def initialize_database(
             for candidate in (database, Path(str(database) + "-wal"), Path(str(database) + "-shm")):
                 with suppress(OSError):
                     candidate.unlink(missing_ok=True)
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        while block := stream.read(1024 * 1024):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _atomic_json(path: Path, document: dict[str, Any]) -> None:
+    payload = (json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")) + "\n").encode()
+    temporary = path.with_name(f".{path.name}.{secrets.token_hex(8)}.tmp")
+    descriptor: int | None = None
+    try:
+        descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "wb", closefd=True) as stream:
+            descriptor = None
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        with suppress(OSError):
+            temporary.unlink(missing_ok=True)
+
+
+def _create_exclusive_database_file(path: Path) -> None:
+    if not path.is_absolute() or "\x00" in str(path):
+        raise StorageProblem("protected database output path is invalid")
+    parent = path.parent
+    created = False
+    valid = False
+    descriptor: int | None = None
+    try:
+        if _redirect(parent) or not parent.is_dir() or parent.resolve(strict=True) != parent:
+            raise StorageProblem("protected database output parent is unavailable or redirected")
+        if path.exists() or _redirect(path):
+            raise StorageProblem("protected database output already exists")
+        descriptor = os.open(
+            path,
+            os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
+            0o600,
+        )
+        created = True
+        opened = os.fstat(descriptor)
+        visible = path.stat(follow_symlinks=False)
+        if (
+            not stat.S_ISREG(opened.st_mode)
+            or opened.st_nlink != 1
+            or visible.st_nlink != 1
+            or (opened.st_dev, opened.st_ino) != (visible.st_dev, visible.st_ino)
+        ):
+            raise StorageProblem("protected database output identity is invalid")
+        valid = True
+    except StorageProblem:
+        raise
+    except OSError as error:
+        raise StorageProblem("protected database output could not be created") from error
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        if created and not valid:
+            with suppress(OSError):
+                path.unlink(missing_ok=True)
+
+
+def _remove_database_sidecars(path: Path) -> None:
+    for suffix in ("-wal", "-shm"):
+        sidecar = Path(str(path) + suffix)
+        if sidecar.exists() and sidecar.stat(follow_symlinks=False).st_size:
+            raise StorageProblem("protected database retained live sidecar state")
+        sidecar.unlink(missing_ok=True)
+
+
+def _verify_protected_database_file(
+    path: Path,
+    project_id: str,
+    key: DatabaseKeyLease,
+    *,
+    checkpoint: bool = False,
+) -> None:
+    connection = _connect_held(path, project_id=project_id, key_lease=key)
+    try:
+        _configure_connection(connection, initialize=False, protected=True)
+        if _schema_profile_errors(connection, project_id):
+            raise StorageProblem("protected database backup profile is incompatible")
+        if tuple(str(row[0]) for row in connection.execute("PRAGMA cipher_integrity_check")):
+            raise StorageProblem("protected database backup failed cipher integrity")
+        if tuple(str(row[0]) for row in connection.execute("PRAGMA quick_check")) != ("ok",):
+            raise StorageProblem("protected database backup failed logical integrity")
+        if tuple(connection.execute("PRAGMA foreign_key_check")):
+            raise StorageProblem("protected database backup failed referential integrity")
+        if checkpoint:
+            connection.set_authorizer(_initialization_authorizer)
+            result = tuple(int(value) for value in connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+            if result != (0, 0, 0):
+                raise StorageProblem("protected database backup could not checkpoint")
+    except (*_DATABASE_ERRORS,) as error:
+        raise StorageProblem("protected database backup verification failed") from error
+    finally:
+        connection.close()
+    _remove_database_sidecars(path)
+
+
+def create_protected_database_backup(
+    path: Path,
+    destination: Path,
+    *,
+    project_id: str,
+) -> ProtectedDatabaseBackupReport:
+    """Create and verify one encrypted, self-contained SQLCipher database backup."""
+
+    project_id, _ = _project_identity(project_id)
+    database = _canonical_database_path(Path(path), must_exist=True)
+    backup = Path(destination)
+    if backup == database:
+        raise StorageProblem("protected database backup cannot replace the canonical database")
+    configuration = _database_protection_configuration()
+    if configuration.profile != SQLCIPHER_PROFILE or configuration.provider is None:
+        raise StorageProblem("protected database backup requires the production protection profile")
+    _create_exclusive_database_file(backup)
+    source: Any | None = None
+    target: Any | None = None
+    succeeded = False
+    try:
+        with configuration.provider.active_key(project_id, create=False) as key:
+            source = _connect_held(database, project_id=project_id, key_lease=key)
+            target = _connect_held(backup, project_id=project_id, key_lease=key)
+            _configure_connection(source, initialize=False, protected=True)
+            _configure_connection(target, initialize=True, protected=True)
+            source.set_authorizer(_initialization_authorizer)
+            checkpoint = tuple(int(value) for value in source.execute("PRAGMA wal_checkpoint(PASSIVE)").fetchone())
+            if checkpoint[0] != 0 or checkpoint[1] != checkpoint[2]:
+                raise StorageProblem("protected database source could not reach a backup checkpoint")
+            source.backup(target, pages=256, sleep=0.01)
+            target.set_authorizer(_initialization_authorizer)
+            target_checkpoint = tuple(
+                int(value) for value in target.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()
+            )
+            if target_checkpoint != (0, 0, 0):
+                raise StorageProblem("protected database backup could not checkpoint")
+            target.close()
+            target = None
+            source.close()
+            source = None
+            _verify_protected_database_file(backup, project_id, key)
+        with backup.open("rb") as stream:
+            if stream.read(len(_SQLCIPHER_HEADER)) == _SQLCIPHER_HEADER:
+                raise StorageProblem("protected database backup unexpectedly contains plaintext")
+        os.chmod(backup, 0o600)
+        succeeded = True
+        return ProtectedDatabaseBackupReport(
+            protection_profile=SQLCIPHER_PROFILE,
+            database_sha256=_file_sha256(backup),
+            size_bytes=backup.stat(follow_symlinks=False).st_size,
+        )
+    except (*_DATABASE_ERRORS, OSError) as error:
+        raise StorageProblem("protected database backup failed") from error
+    finally:
+        if target is not None:
+            target.close()
+        if source is not None:
+            source.close()
+        if not succeeded:
+            for candidate in (backup, Path(str(backup) + "-wal"), Path(str(backup) + "-shm")):
+                with suppress(OSError):
+                    candidate.unlink(missing_ok=True)
+
+
+def restore_protected_database_backup(
+    backup_path: Path,
+    path: Path,
+    *,
+    project_id: str,
+    operation_id: str,
+) -> ProtectedDatabaseRestoreReport:
+    """Verify and atomically restore one protected database, rolling back on publication failure."""
+
+    validate_database_key_identity(project_id, operation_id)
+    database = _canonical_database_path(Path(path), must_exist=True)
+    backup = Path(backup_path)
+    try:
+        backup_status = backup.stat(follow_symlinks=False)
+        if (
+            not backup.is_absolute()
+            or _redirect(backup)
+            or not stat.S_ISREG(backup_status.st_mode)
+            or backup_status.st_nlink != 1
+            or backup.resolve(strict=True) != backup
+        ):
+            raise StorageProblem("protected database backup authority is invalid")
+    except StorageProblem:
+        raise
+    except OSError as error:
+        raise StorageProblem("protected database backup authority is unavailable") from error
+    configuration = _database_protection_configuration()
+    if configuration.profile != SQLCIPHER_PROFILE or configuration.provider is None:
+        raise StorageProblem("protected database restore requires the production protection profile")
+    if _CAPABILITY_REGISTRY.has_open_connections():
+        raise StorageProblem("protected database restore requires a quiescent Core database boundary")
+    staging = database.parent.parent / ".tmp"
+    if not staging.is_dir() or _redirect(staging) or staging.resolve(strict=True) != staging:
+        raise StorageProblem("protected database restore staging authority is unavailable")
+    candidate = staging / f"database-restore-{operation_id}.candidate.sqlite3"
+    quarantine = staging / f"database-restore-{operation_id}.displaced.sqlite3"
+    failed = staging / f"database-restore-{operation_id}.failed.sqlite3"
+    if candidate.exists() or quarantine.exists() or failed.exists():
+        raise StorageProblem("protected database restore artifacts already exist")
+    with configuration.provider.active_key(project_id, create=False) as key:
+        _verify_protected_database_file(backup, project_id, key)
+        _verify_protected_database_file(database, project_id, key, checkpoint=True)
+        before_sha256 = _file_sha256(database)
+        _create_exclusive_database_file(candidate)
+        try:
+            shutil.copyfile(backup, candidate)
+            with candidate.open("r+b") as stream:
+                stream.flush()
+                os.fsync(stream.fileno())
+            _verify_protected_database_file(candidate, project_id, key)
+            restored_sha256 = _file_sha256(candidate)
+            os.replace(database, quarantine)
+            try:
+                os.replace(candidate, database)
+                verified = _open_with_key_lease(database, project_id, key)
+                verified.close()
+            except BaseException:
+                try:
+                    if database.exists():
+                        os.replace(database, failed)
+                    os.replace(quarantine, database)
+                except OSError as rollback_error:
+                    raise StorageProblem("protected database restore requires manual recovery") from rollback_error
+                with suppress(OSError):
+                    failed.unlink(missing_ok=True)
+                raise
+            try:
+                quarantine.unlink()
+                outcome = "restored"
+            except OSError:
+                outcome = "restored-displaced-ciphertext-retained"
+            return ProtectedDatabaseRestoreReport(
+                operation_id=operation_id,
+                outcome=outcome,
+                restored_database_sha256=restored_sha256,
+                displaced_database_sha256=before_sha256,
+            )
+        except (*_DATABASE_ERRORS, OSError) as error:
+            raise StorageProblem("protected database restore failed") from error
+        finally:
+            with suppress(OSError):
+                candidate.unlink(missing_ok=True)
+
+
+def _rekey_paths(database: Path, operation_id: str) -> tuple[Path, Path, Path]:
+    project = database.parent.parent
+    staging = project / ".tmp"
+    if not staging.is_dir() or _redirect(staging) or staging.resolve(strict=True) != staging:
+        raise StorageProblem("database rekey staging authority is unavailable")
+    manifest = staging / f"database-rekey-{operation_id}.json"
+    backup = staging / f"database-rekey-{operation_id}.backup.sqlite3"
+    quarantine = staging / f"database-rekey-{operation_id}.unrecoverable.sqlite3"
+    return manifest, backup, quarantine
+
+
+def _open_with_key_lease(database: Path, project_id: str, key: DatabaseKeyLease) -> Any:
+    connection = _connect_held(database, project_id=project_id, key_lease=key)
+    try:
+        _configure_connection(connection, initialize=False, protected=True)
+        if _schema_profile_errors(connection, project_id):
+            raise StorageProblem("protected database profile is incompatible")
+        return connection
+    except BaseException:
+        connection.close()
+        raise
+
+
+def rekey_protected_database(
+    path: Path,
+    *,
+    project_id: str,
+    operation_id: str,
+    failure_hook: Callable[[str], None] | None = None,
+) -> DatabaseRekeyReport:
+    """Rekey one protected database with an encrypted rollback copy and resumable key activation."""
+
+    validate_database_key_identity(project_id, operation_id)
+    database = _canonical_database_path(Path(path), must_exist=True)
+    configuration = _database_protection_configuration()
+    if configuration.profile != SQLCIPHER_PROFILE or configuration.provider is None:
+        raise StorageProblem("database rekey requires the protected production profile")
+    manifest, backup, _quarantine = _rekey_paths(database, operation_id)
+    if manifest.exists() or backup.exists():
+        return recover_protected_database_rekey(database, project_id=project_id, operation_id=operation_id)
+
+    provider = configuration.provider
+    with provider.active_key(project_id, create=False) as active:
+        previous_version = active.version
+    with provider.staged_rekey(project_id, operation_id, create=True) as staged:
+        staged_version = staged.version
+
+    connection = _connect_held(database, project_id=project_id)
+    backup_sha256 = ""
+    try:
+        _configure_connection(connection, initialize=False, protected=True)
+        connection.set_authorizer(_initialization_authorizer)
+        checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+        if checkpoint != (0, 0, 0):
+            raise StorageProblem("protected database could not reach a rekey checkpoint")
+        shutil.copyfile(database, backup)
+        os.chmod(backup, 0o600)
+        with backup.open("r+b") as stream:
+            stream.flush()
+            os.fsync(stream.fileno())
+        backup_sha256 = _file_sha256(backup)
+        document = {
+            "schemaVersion": "1.0",
+            "documentType": "research-observatory-database-rekey-recovery",
+            "projectId": project_id,
+            "operationId": operation_id,
+            "database": "state/project.sqlite3",
+            "backup": f".tmp/{backup.name}",
+            "backupSha256": backup_sha256,
+            "previousKeyVersion": previous_version,
+            "stagedKeyVersion": staged_version,
+            "state": "prepared",
+        }
+        _atomic_json(manifest, document)
+        if failure_hook is not None:
+            failure_hook("after-prepared")
+        with provider.staged_rekey(project_id, operation_id, create=False) as staged:
+            staged.use(lambda material: _rekey_sqlcipher_connection(connection, material))
+        document["state"] = "database-rekeyed"
+        _atomic_json(manifest, document)
+        if failure_hook is not None:
+            failure_hook("after-database-rekeyed")
+    except BaseException:
+        raise
+    finally:
+        connection.close()
+
+    with provider.staged_rekey(project_id, operation_id, create=False) as staged:
+        candidate = _open_with_key_lease(database, project_id, staged)
+        try:
+            if tuple(str(row[0]) for row in candidate.execute("PRAGMA cipher_integrity_check")):
+                raise StorageProblem("protected database failed integrity after rekey")
+        finally:
+            candidate.close()
+    active_version = provider.activate_rekey(
+        project_id,
+        operation_id,
+        expected_active_version=previous_version,
+    )
+    document["state"] = "key-activated"
+    document["activeKeyVersion"] = active_version
+    _atomic_json(manifest, document)
+    if failure_hook is not None:
+        failure_hook("after-key-activated")
+    verified = open_canonical_database(database, expected_project_id=project_id)
+    verified.close()
+    backup.unlink()
+    manifest.unlink()
+    return DatabaseRekeyReport(operation_id, "rekeyed", previous_version, active_version, backup_sha256)
+
+
+def _rekey_sqlcipher_connection(connection: Any, material: memoryview) -> None:
+    if len(material) != 32:
+        raise StorageProblem("staged database key material is invalid")
+    raw_hex = material.hex()
+    try:
+        connection.execute(f"PRAGMA rekey = \"x'{raw_hex}'\"")
+    finally:
+        raw_hex = ""
+
+
+def recover_protected_database_rekey(
+    path: Path,
+    *,
+    project_id: str,
+    operation_id: str,
+) -> DatabaseRekeyReport:
+    """Resolve an interrupted rekey by proving the active key, staged key, or encrypted backup."""
+
+    validate_database_key_identity(project_id, operation_id)
+    database = _canonical_database_path(Path(path), must_exist=True)
+    configuration = _database_protection_configuration()
+    if configuration.profile != SQLCIPHER_PROFILE or configuration.provider is None:
+        raise StorageProblem("database rekey recovery requires the protected production profile")
+    manifest, backup, quarantine = _rekey_paths(database, operation_id)
+    try:
+        document = json.loads(manifest.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise StorageProblem("database rekey recovery manifest is unavailable") from error
+    if (
+        not isinstance(document, dict)
+        or document.get("projectId") != project_id
+        or document.get("operationId") != operation_id
+        or document.get("database") != "state/project.sqlite3"
+        or document.get("backup") != f".tmp/{backup.name}"
+        or not isinstance(document.get("backupSha256"), str)
+        or not isinstance(document.get("previousKeyVersion"), str)
+    ):
+        raise StorageProblem("database rekey recovery manifest is invalid")
+    backup_sha256 = str(document["backupSha256"])
+    previous_version = str(document["previousKeyVersion"])
+    provider = configuration.provider
+
+    try:
+        connection = open_canonical_database(database, expected_project_id=project_id)
+    except StorageProblem:
+        connection = None
+    if connection is not None:
+        connection.close()
+        with provider.active_key(project_id, create=False) as active:
+            active_version = active.version
+        backup.unlink(missing_ok=True)
+        manifest.unlink(missing_ok=True)
+        return DatabaseRekeyReport(
+            operation_id, "active-key-confirmed", previous_version, active_version, backup_sha256
+        )
+
+    staged_valid = False
+    try:
+        with provider.staged_rekey(project_id, operation_id, create=False) as staged:
+            candidate = _open_with_key_lease(database, project_id, staged)
+            candidate.close()
+            staged_valid = True
+    except DatabaseKeyProblem, StorageProblem:
+        staged_valid = False
+    if staged_valid:
+        try:
+            active_version = provider.activate_rekey(
+                project_id,
+                operation_id,
+                expected_active_version=previous_version,
+            )
+        except DatabaseKeyConflict:
+            with provider.active_key(project_id, create=False) as active:
+                active_version = active.version
+        verified = open_canonical_database(database, expected_project_id=project_id)
+        verified.close()
+        backup.unlink(missing_ok=True)
+        manifest.unlink(missing_ok=True)
+        return DatabaseRekeyReport(
+            operation_id, "staged-key-activated", previous_version, active_version, backup_sha256
+        )
+
+    if not backup.is_file() or _file_sha256(backup) != backup_sha256:
+        raise StorageProblem("database rekey recovery backup is invalid")
+    if quarantine.exists():
+        raise StorageProblem("database rekey recovery quarantine already exists")
+    os.replace(database, quarantine)
+    shutil.copyfile(backup, database)
+    os.chmod(database, 0o600)
+    restored = open_canonical_database(database, expected_project_id=project_id)
+    restored.close()
+    with provider.active_key(project_id, create=False) as active:
+        active_version = active.version
+    backup.unlink(missing_ok=True)
+    manifest.unlink(missing_ok=True)
+    return DatabaseRekeyReport(
+        operation_id, "encrypted-backup-restored", previous_version, active_version, backup_sha256
+    )
+
+
+_PLAINTEXT_MIGRATION_APPROVAL = "approve-plaintext-to-protected-v1"
+
+
+def _migration_paths(database: Path, operation_id: str) -> tuple[Path, Path, Path]:
+    project = database.parent.parent
+    staging = project / ".tmp"
+    if not staging.is_dir() or _redirect(staging) or staging.resolve(strict=True) != staging:
+        raise StorageProblem("database protection migration staging authority is unavailable")
+    manifest = staging / f"database-protection-migration-{operation_id}.json"
+    target = staging / f"database-protection-migration-{operation_id}.sqlcipher"
+    rollback = staging / f"database-protection-migration-{operation_id}.plaintext-rollback"
+    return manifest, target, rollback
+
+
+def _verify_plaintext_source(database: Path, project_id: str) -> Any:
+    with database.open("rb") as stream:
+        if stream.read(len(_SQLCIPHER_HEADER)) != _SQLCIPHER_HEADER:
+            raise StorageProblem("legacy database is not a plaintext SQLite source")
+    source = sqlcipher.connect(
+        database.as_uri() + "?mode=ro",
+        uri=True,
+        isolation_level=None,
+        timeout=BUSY_TIMEOUT_MILLISECONDS / 1_000,
+    )
+    try:
+        source.row_factory = sqlcipher.Row
+        source.enable_load_extension(False)
+        source.execute("PRAGMA trusted_schema=OFF")
+        source.execute("PRAGMA foreign_keys=ON")
+        if _schema_profile_errors(source, project_id):
+            raise StorageProblem("legacy plaintext database profile is incompatible")
+        report = tuple(str(row[0]) for row in source.execute("PRAGMA quick_check"))
+        if report != ("ok",) or tuple(source.execute("PRAGMA foreign_key_check")):
+            raise StorageProblem("legacy plaintext database failed integrity")
+        return source
+    except BaseException:
+        source.close()
+        raise
+
+
+def _export_plaintext_to_protected(
+    source: Any,
+    target: Path,
+    key: DatabaseKeyLease,
+) -> None:
+    if target.exists() or _redirect(target):
+        raise StorageProblem("protected migration target already exists")
+
+    def export(material: memoryview) -> None:
+        if len(material) != 32:
+            raise StorageProblem("protected database key material is invalid")
+        key_literal = f"x'{material.hex()}'"
+        attached = False
+        try:
+            source.execute("ATTACH DATABASE ? AS protected KEY ?", (str(target), key_literal))
+            attached = True
+            source.execute("SELECT sqlcipher_export('protected')").fetchone()
+            source.execute(f"PRAGMA protected.application_id={APPLICATION_ID}")
+            source.execute(f"PRAGMA protected.user_version={DATABASE_SCHEMA_VERSION}")
+            source.execute("DETACH DATABASE protected")
+            attached = False
+        finally:
+            key_literal = ""
+            if attached:
+                with suppress(sqlcipher.Error):
+                    source.execute("DETACH DATABASE protected")
+
+    key.use(export)
+
+
+def _verify_protected_candidate(target: Path, project_id: str, key: DatabaseKeyLease) -> None:
+    connection = _connect_held(target, project_id=project_id, key_lease=key)
+    try:
+        _configure_connection(connection, initialize=True, protected=True)
+        errors = _schema_profile_errors(connection, project_id)
+        if errors:
+            raise StorageProblem(f"protected migration target profile is incompatible: {','.join(errors)}")
+        if tuple(str(row[0]) for row in connection.execute("PRAGMA cipher_integrity_check")):
+            raise StorageProblem("protected migration target failed cipher integrity")
+        checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+        if checkpoint != (0, 0, 0):
+            raise StorageProblem("protected migration target could not checkpoint")
+    finally:
+        connection.close()
+    for suffix in ("-wal", "-shm"):
+        sidecar = Path(str(target) + suffix)
+        if sidecar.exists() and sidecar.stat().st_size:
+            raise StorageProblem("protected migration target retained live sidecar state")
+        sidecar.unlink(missing_ok=True)
+
+
+def _cleanup_plaintext_rollback(path: Path) -> str:
+    if not path.exists():
+        return "not-present"
+    try:
+        os.chmod(path, 0o600)
+        size = path.stat(follow_symlinks=False).st_size
+        with path.open("r+b", buffering=0) as stream:
+            block = b"\0" * (1024 * 1024)
+            remaining = size
+            while remaining:
+                chunk = min(remaining, len(block))
+                stream.write(block[:chunk])
+                remaining -= chunk
+            stream.flush()
+            os.fsync(stream.fileno())
+        path.unlink()
+        return "best-effort-overwrite-and-unlink"
+    except OSError:
+        with suppress(OSError):
+            os.chmod(path, 0o400)
+        return "cleanup-pending-read-only"
+
+
+def migrate_plaintext_database_to_protected(
+    path: Path,
+    *,
+    project_id: str,
+    operation_id: str,
+    approval_token: str,
+    failure_hook: Callable[[str], None] | None = None,
+) -> DatabaseProtectionMigrationReport:
+    """Copy a validated read-only legacy database into SQLCipher and atomically publish it."""
+
+    validate_database_key_identity(project_id, operation_id)
+    if approval_token != _PLAINTEXT_MIGRATION_APPROVAL:
+        raise StorageProblem("plaintext database migration requires explicit approval")
+    database = _canonical_database_path(Path(path), must_exist=True)
+    configuration = _database_protection_configuration()
+    if configuration.profile != SQLCIPHER_PROFILE or configuration.provider is None:
+        raise StorageProblem("plaintext migration requires the protected production profile")
+    manifest, target, rollback = _migration_paths(database, operation_id)
+    if manifest.exists():
+        return recover_plaintext_database_migration(database, project_id=project_id, operation_id=operation_id)
+    if target.exists() or rollback.exists():
+        raise StorageProblem("unbound database protection migration artifacts exist")
+
+    source = _verify_plaintext_source(database, project_id)
+    try:
+        source_sha256 = _file_sha256(database)
+        with configuration.provider.active_key(project_id, create=True) as key:
+            _export_plaintext_to_protected(source, target, key)
+            _verify_protected_candidate(target, project_id, key)
+        target_sha256 = _file_sha256(target)
+        document = {
+            "schemaVersion": "1.0",
+            "documentType": "research-observatory-database-protection-migration",
+            "projectId": project_id,
+            "operationId": operation_id,
+            "source": "state/project.sqlite3",
+            "target": f".tmp/{target.name}",
+            "rollback": f".tmp/{rollback.name}",
+            "plaintextSourceSha256": source_sha256,
+            "protectedTargetSha256": target_sha256,
+            "state": "prepared",
+        }
+        _atomic_json(manifest, document)
+        if failure_hook is not None:
+            failure_hook("after-prepared")
+    finally:
+        source.close()
+
+    os.chmod(database, 0o400)
+    os.replace(database, rollback)
+    document["state"] = "source-staged"
+    _atomic_json(manifest, document)
+    if failure_hook is not None:
+        failure_hook("after-source-staged")
+    os.replace(target, database)
+    document["state"] = "protected-published"
+    _atomic_json(manifest, document)
+    if failure_hook is not None:
+        failure_hook("after-protected-published")
+    verified = open_canonical_database(database, expected_project_id=project_id)
+    verified.close()
+    cleanup = _cleanup_plaintext_rollback(rollback)
+    if cleanup.startswith("cleanup-pending"):
+        document["state"] = cleanup
+        _atomic_json(manifest, document)
+    else:
+        manifest.unlink()
+    return DatabaseProtectionMigrationReport(operation_id, "protected", source_sha256, target_sha256, cleanup)
+
+
+def recover_plaintext_database_migration(
+    path: Path,
+    *,
+    project_id: str,
+    operation_id: str,
+) -> DatabaseProtectionMigrationReport:
+    """Resume or safely roll back an interrupted plaintext-to-SQLCipher publication."""
+
+    validate_database_key_identity(project_id, operation_id)
+    database = Path(path)
+    manifest, target, rollback = _migration_paths(database, operation_id)
+    try:
+        document = json.loads(manifest.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise StorageProblem("database protection migration manifest is unavailable") from error
+    if (
+        not isinstance(document, dict)
+        or document.get("projectId") != project_id
+        or document.get("operationId") != operation_id
+        or document.get("source") != "state/project.sqlite3"
+        or document.get("target") != f".tmp/{target.name}"
+        or document.get("rollback") != f".tmp/{rollback.name}"
+        or not isinstance(document.get("plaintextSourceSha256"), str)
+        or not isinstance(document.get("protectedTargetSha256"), str)
+    ):
+        raise StorageProblem("database protection migration manifest is invalid")
+    source_sha256 = str(document["plaintextSourceSha256"])
+    target_sha256 = str(document["protectedTargetSha256"])
+
+    try:
+        verified = open_canonical_database(database, expected_project_id=project_id)
+    except OSError, StorageProblem:
+        verified = None
+    if verified is not None:
+        verified.close()
+        cleanup = _cleanup_plaintext_rollback(rollback)
+        target.unlink(missing_ok=True)
+        if cleanup.startswith("cleanup-pending"):
+            document["state"] = cleanup
+            _atomic_json(manifest, document)
+        else:
+            manifest.unlink(missing_ok=True)
+        return DatabaseProtectionMigrationReport(
+            operation_id, "protected-recovered", source_sha256, target_sha256, cleanup
+        )
+
+    configuration = _database_protection_configuration()
+    if configuration.provider is None:
+        raise StorageProblem("database protection migration key is unavailable")
+    target_valid = target.is_file() and _file_sha256(target) == target_sha256
+    if target_valid:
+        try:
+            with configuration.provider.active_key(project_id, create=False) as key:
+                _verify_protected_candidate(target, project_id, key)
+        except DatabaseKeyProblem, StorageProblem:
+            target_valid = False
+    if target_valid:
+        if database.exists():
+            with database.open("rb") as stream:
+                header = stream.read(len(_SQLCIPHER_HEADER))
+            if header != _SQLCIPHER_HEADER:
+                raise StorageProblem("migration recovery found an unknown canonical database")
+            if rollback.exists():
+                raise StorageProblem("migration recovery found competing plaintext sources")
+            os.chmod(database, 0o400)
+            os.replace(database, rollback)
+        if not rollback.is_file() or _file_sha256(rollback) != source_sha256:
+            raise StorageProblem("migration recovery plaintext rollback is invalid")
+        os.replace(target, database)
+        verified = open_canonical_database(database, expected_project_id=project_id)
+        verified.close()
+        cleanup = _cleanup_plaintext_rollback(rollback)
+        if cleanup.startswith("cleanup-pending"):
+            document["state"] = cleanup
+            _atomic_json(manifest, document)
+        else:
+            manifest.unlink(missing_ok=True)
+        return DatabaseProtectionMigrationReport(
+            operation_id, "protected-recovered", source_sha256, target_sha256, cleanup
+        )
+
+    target.unlink(missing_ok=True)
+    if rollback.is_file() and _file_sha256(rollback) == source_sha256 and not database.exists():
+        os.replace(rollback, database)
+        os.chmod(database, 0o600)
+    if not database.is_file() or _file_sha256(database) != source_sha256:
+        raise StorageProblem("database protection migration cannot restore the plaintext source")
+    manifest.unlink(missing_ok=True)
+    return DatabaseProtectionMigrationReport(
+        operation_id, "plaintext-restored", source_sha256, target_sha256, "retained"
+    )

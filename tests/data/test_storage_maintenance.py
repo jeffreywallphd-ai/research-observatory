@@ -32,7 +32,7 @@ from research_observatory_core.ports.repositories import (  # noqa: E402
     AtomicRepositoryEvent,
 )
 from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
-from research_observatory_core.storage import initialize_database  # noqa: E402
+from research_observatory_core.storage import development_plaintext_database_fixture, initialize_database  # noqa: E402
 
 PROJECT_ID = "123e4567-e89b-42d3-a456-426614174020"
 CREATED_AT = "2026-08-18T16:00:00.000Z"
@@ -90,6 +90,8 @@ def cleanup_request(*categories: str) -> StorageCleanupRequest:
 
 class StorageMaintenanceTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-storage-maintenance-")
         self.parent = Path(self.temporary.name).resolve()
         self.project = self.parent / "project"
@@ -112,7 +114,10 @@ class StorageMaintenanceTests(unittest.TestCase):
         self.shared_cache.mkdir(mode=0o700)
 
     def tearDown(self) -> None:
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def create_store(self, policy: StoragePolicy | None = None):
         return create_local_object_store(

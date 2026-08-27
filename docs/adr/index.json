@@ -183,6 +183,15 @@
       "linkedTasks": [
         "CAP-02.S04.T03"
       ]
+    },
+    {
+      "id": "ADR-0020",
+      "path": "docs/adr/ADR-0020-protect-project-databases-with-sqlcipher-and-vault-backed-raw-keys.md",
+      "title": "Protect project databases with SQLCipher and vault-backed raw keys",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-02.S04.T04"
+      ]
     }
   ]
 }

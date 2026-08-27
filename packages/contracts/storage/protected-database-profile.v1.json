@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-protected-database-profile",
+  "profileId": "sqlcipher-4.12-community-wal-v1",
+  "logicalDatabaseProfile": "sqlite-wal-v1",
+  "engine": "sqlcipher-community",
+  "engineCompatibility": "4.12.x",
+  "pythonBinding": "sqlcipher3-0.6.2",
+  "keyProfile": {
+    "material": "random-raw-256-bit",
+    "authority": "windows-current-user-dpapi-profile-vault",
+    "namespace": "project-database-distinct-from-object-and-export-keys",
+    "delivery": "callback-lease-zeroed-on-close",
+    "forbiddenDestinations": ["project-files", "exports", "logs", "environment", "process-arguments"]
+  },
+  "connectionControls": {
+    "plaintextHeaderBytes": 0,
+    "loadableExtensions": false,
+    "trustedSchema": false,
+    "integrityChecks": ["cipher_integrity_check", "quick_check", "foreign_key_check"]
+  },
+  "plaintextPolicy": "production-create-and-write-open-denied-development-fixture-only",
+  "migration": "explicit-consent-validated-copy-on-write-export-atomic-publication",
+  "backup": "encrypted-sqlite-backup-verified-before-return",
+  "restore": "quiescent-verified-copy-on-write-atomic-publication-with-rollback",
+  "rekey": "encrypted-backup-staged-vault-key-verify-before-cas-activation",
+  "keyLoss": "fail-closed-retain-ciphertext-no-silent-replacement",
+  "corruption": "fail-closed-retain-ciphertext-for-recovery",
+  "licensing": "sqlcipher-bsd-3-clause-and-sqlcipher3-zlib-notices-in-binary-distribution",
+  "residualProtection": "os-sign-in-full-disk-encryption-and-endpoint-security-still-required"
+}

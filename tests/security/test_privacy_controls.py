@@ -35,7 +35,10 @@ from research_observatory_core.ports.object_store import (  # noqa: E402
 from research_observatory_core.privacy import PrivacyPolicyProblem, ProjectPrivacyService  # noqa: E402
 from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
 from research_observatory_core.repositories import sqlite_privacy_policy_repository  # noqa: E402
-from research_observatory_core.storage import open_canonical_database  # noqa: E402
+from research_observatory_core.storage import (  # noqa: E402
+    development_plaintext_database_fixture,
+    open_canonical_database,
+)
 
 TOKEN = "0123456789abcdef" * 4
 AUTHORITY = "127.0.0.1:49152"
@@ -90,6 +93,8 @@ def stored_object(project_id: str) -> ObjectAccessRequest:
 
 class PrivacyControlTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-privacy-controls-")
         self.parent = Path(self.temporary.name).resolve(strict=True)
         self.lifecycle = ProjectLifecycleService()
@@ -105,8 +110,11 @@ class PrivacyControlTests(unittest.TestCase):
         self.privacy = ProjectPrivacyService(self.lifecycle, sqlite_privacy_policy_repository)
 
     def tearDown(self) -> None:
-        self.lifecycle.shutdown()
-        self.temporary.cleanup()
+        try:
+            self.lifecycle.shutdown()
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def open(self) -> None:
         self.lifecycle.open(root=str(self.root), trace_id=TRACE)

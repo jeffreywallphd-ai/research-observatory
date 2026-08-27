@@ -16,7 +16,8 @@ Windows current-user DPAPI
       -> connector-token records
       -> signing-trust records
       -> object-encryption key records
-      -> later database/export/recovery namespaces
+      -> project-database key and staged-rekey records
+      -> later export/recovery namespaces
 ```
 
 Core calls `CryptProtectData` and `CryptUnprotectData` with a null prompt and
@@ -37,7 +38,7 @@ bytes, so a researcher can restore a known-good backup or recovery artifact.
 
 Every request declares the calling capability, one closed contract purpose
 (`provider-authentication`, `connector-authentication`, `signing-verification`,
-or `object-encryption`), and an audit context. Arbitrary canonical identifiers
+`object-encryption`, or `database-encryption`), and an audit context. Arbitrary canonical identifiers
 cannot be promoted into an audit purpose. The
 audit projection retains that bounded capability/purpose attribution plus the
 operation/outcome, bounded reason, audit context, and opaque keyed reference
@@ -57,6 +58,12 @@ its stable key-provider port to `encryption-key-material/object-store/object-key
 First use creates the 256-bit key; later process starts retrieve the same value.
 An explicitly injected `None` remains available to deterministic recovery tests
 and produces the existing key-unavailable state without rewriting project data.
+
+The protected-database provider uses the same vault boundary but an independent
+`project-database` subject/name namespace and the `database-encryption` purpose.
+It supports one active key plus operation-scoped staged rekey material; only a
+successful protected-database verification can compare-and-swap the staged key
+into active authority. Database key material never enters the project package.
 
 ## Recovery and residual threat
 

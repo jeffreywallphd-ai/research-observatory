@@ -119,3 +119,7 @@ The project-scoped offline/telemetry defaults, informed egress-consent boundary,
 append-only retention policy, and preview-bound logical cache cleanup are
 documented in [`privacy-controls.md`](privacy-controls.md) and governed by
 ADR-0019.
+The SQLCipher 4.12 Windows production database profile, DPAPI-backed raw project
+keys, protected migration/backup/restore/rekey behavior, packaging, licensing,
+and residual at-rest threat boundary are documented in
+[`local-sqlite-storage.md`](local-sqlite-storage.md) and governed by ADR-0020.
