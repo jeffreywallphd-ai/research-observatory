@@ -1,0 +1,21 @@
+{
+  "task_id": "CAP-02.S04.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
+  "submission_record_commit": "b7b1f2bc44fb59f71c7160ce811ce69f6c02b280",
+  "reviewer": "nash-independent-reviewer",
+  "result": "changes-requested",
+  "notes": "Exact-commit scope, recovery provenance, privacy defaults, consent, session, audit, UI, and evidence bindings pass, but destructive cache cleanup lacks stable root-identity binding across inventory-to-rename and can delete substituted canonical project data; remediation and independent rereview are required.",
+  "findings": [
+    {
+      "id": "CAP-02.S04.T03-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Cache cleanup can delete substituted canonical project data",
+      "reproduction": "After the confirmation inventory returns but before cache.rename(tombstone), replace the validated project cache pathname with another same-project directory such as config. The implementation renames, audits, and recursively deletes whichever directory now occupies the cache pathname because it does not bind or recheck the cache root identity across the destructive boundary. Existing tests cover changed contents and a redirect present before preview, but not this swap window.",
+      "required_remediation": "In a strict-descendant candidate, capture a stable root identity during confirmation inventory, move with a no-follow platform-safe primitive, and verify the staged tombstone is the exact inventoried directory and remains inside the project-local staging root before audit commit or deletion. On mismatch, preserve or restore canonical data and fail closed. Add adversarial swap and redirect/substitution tests proving byte-stable canonical data, no success audit, no cleared result, and safe recovery."
+    }
+  ],
+  "closures": []
+}

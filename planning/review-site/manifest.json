@@ -1256,68 +1256,123 @@
             {
               "task_id": "CAP-02.S04.T03",
               "title": "Create privacy, telemetry, retention, and secure-deletion settings",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "nash-independent-reviewer",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-27T22:17:29+00:00",
+                "notes": "Exact-commit scope, recovery provenance, privacy defaults, consent, session, audit, UI, and evidence bindings pass, but destructive cache cleanup lacks stable root-identity binding across inventory-to-rename and can delete substituted canonical project data; remediation and independent rereview are required."
               },
               "review_control": {
                 "version": 1,
-                "attempts": [],
-                "current_submission": {
-                  "id": "R01",
-                  "submitted_by": "codex",
-                  "submitted_at": "2026-08-27T22:12:10+00:00",
-                  "candidate_commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
-                  "base_commit": "8f23c995aeddb9009359298ae8009646ed284227",
-                  "branch": "codex/w1-windows-local-runtime",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-02.S04.T03.json",
-                    "sha256": "9925d97e3e90ab7b088a38ebf04009e4573aa8e011d2ca03c76d802e2bef7d5e",
-                    "commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
-                    "recorded_at": "2026-08-27T22:12:10+00:00"
-                  },
-                  "acceptance_criteria_sha256": "b06d42b31c1ea4423ab56c4fa4f57a2f23e89c995e8bc1cd6afd8089e0ad8976",
-                  "changed_paths": [
-                    "docs/planning-implementation-plan.md",
-                    "planning/backlog.yaml",
-                    "planning/governance-migrations/GOV-MAINT-0003.json",
-                    "planning/governance-migrations/GOV-MAINT-0003.review-R01.json",
-                    "planning/review-site/CAP-02/CAP-02.S04.html",
-                    "planning/review-site/manifest.json",
-                    "planning/status-summary.md",
-                    "tests/foundation/test_task_recovery.py",
-                    "tests/foundation/test_taskctl_workflow.py",
-                    "tools/taskctl.py"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-recovery.json",
-                    ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
-                    ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract",
-                    ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
-                    ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave validate W1; git diff --check"
-                  ],
-                  "deferred_checks": [
-                    "Supply-chain scanning is deferred because the immutable candidate changes no dependency or toolchain input. CAP-02.S04 slice review will exercise T01-T04 together across secret storage, application lock, privacy policy, protected database, failure/restart/recovery, accessibility, and downstream handoffs. Complete repository, packaging, performance, security, and Windows deployment qualification remains mandatory at the W1 checkpoint and exit review."
-                  ],
-                  "selection_rationale": "This high-risk privacy and approved-reference task controls research-content egress, consent, retention, cache deletion, project/session authority, redacted auditing, and truthful physical-erasure disclosure across Core contracts and the compiled desktop. Selected coverage therefore includes the full desktop application verifier, full local-security unit suite, focused privacy/portable-contract tests, exact approved-reference lineage, canonical planning/backlog integrity, and the recovery controller's immutable-candidate and atomic-persistence checks. Dependency scanning, SQLCipher/database protection, storage performance, and complete cross-capability deployment qualification are deferred because this recovered immutable candidate changes no dependencies, database engine, packaging inputs, or performance contract and those surfaces belong to T04, slice review, checkpoints, and W1 exit.",
-                  "selection_sha256": "f1de4d6920eb957055ff18351b554ed196c524d9c006852694da7e2b4b588b4b",
-                  "prior_attempt_id": null,
-                  "open_finding_ids": [],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "desktop:application",
-                    "security-local:unit",
-                    "foundation:ui-change",
-                    "foundation:backlog",
-                    "foundation:backlog-views"
-                  ],
-                  "packet_sha256": "0f4cae567fead9baff9622f3795030f40d33ca7dacf3a4e6c0fe0a9b0a891eeb"
-                }
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-08-27T22:12:10+00:00",
+                      "candidate_commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
+                      "base_commit": "8f23c995aeddb9009359298ae8009646ed284227",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-02.S04.T03.json",
+                        "sha256": "9925d97e3e90ab7b088a38ebf04009e4573aa8e011d2ca03c76d802e2bef7d5e",
+                        "commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
+                        "recorded_at": "2026-08-27T22:12:10+00:00"
+                      },
+                      "acceptance_criteria_sha256": "b06d42b31c1ea4423ab56c4fa4f57a2f23e89c995e8bc1cd6afd8089e0ad8976",
+                      "changed_paths": [
+                        "docs/planning-implementation-plan.md",
+                        "planning/backlog.yaml",
+                        "planning/governance-migrations/GOV-MAINT-0003.json",
+                        "planning/governance-migrations/GOV-MAINT-0003.review-R01.json",
+                        "planning/review-site/CAP-02/CAP-02.S04.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md",
+                        "tests/foundation/test_task_recovery.py",
+                        "tests/foundation/test_taskctl_workflow.py",
+                        "tools/taskctl.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-recovery.json",
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
+                        ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract",
+                        ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave validate W1; git diff --check"
+                      ],
+                      "deferred_checks": [
+                        "Supply-chain scanning is deferred because the immutable candidate changes no dependency or toolchain input. CAP-02.S04 slice review will exercise T01-T04 together across secret storage, application lock, privacy policy, protected database, failure/restart/recovery, accessibility, and downstream handoffs. Complete repository, packaging, performance, security, and Windows deployment qualification remains mandatory at the W1 checkpoint and exit review."
+                      ],
+                      "selection_rationale": "This high-risk privacy and approved-reference task controls research-content egress, consent, retention, cache deletion, project/session authority, redacted auditing, and truthful physical-erasure disclosure across Core contracts and the compiled desktop. Selected coverage therefore includes the full desktop application verifier, full local-security unit suite, focused privacy/portable-contract tests, exact approved-reference lineage, canonical planning/backlog integrity, and the recovery controller's immutable-candidate and atomic-persistence checks. Dependency scanning, SQLCipher/database protection, storage performance, and complete cross-capability deployment qualification are deferred because this recovered immutable candidate changes no dependencies, database engine, packaging inputs, or performance contract and those surfaces belong to T04, slice review, checkpoints, and W1 exit.",
+                      "selection_sha256": "f1de4d6920eb957055ff18351b554ed196c524d9c006852694da7e2b4b588b4b",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "desktop:application",
+                        "security-local:unit",
+                        "foundation:ui-change",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "packet_sha256": "0f4cae567fead9baff9622f3795030f40d33ca7dacf3a4e6c0fe0a9b0a891eeb"
+                    },
+                    "review": {
+                      "reviewer": "nash-independent-reviewer",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-08-27T22:17:29+00:00",
+                      "notes": "Exact-commit scope, recovery provenance, privacy defaults, consent, session, audit, UI, and evidence bindings pass, but destructive cache cleanup lacks stable root-identity binding across inventory-to-rename and can delete substituted canonical project data; remediation and independent rereview are required."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-02.S04.T03.review-R01.json",
+                      "sha256": "dffdca12fa8dfde259dbf92d02ea434b827d527f2766f55b4c7e1059d8194b0b"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-02.S04.T03-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Cache cleanup can delete substituted canonical project data",
+                        "reproduction": "After the confirmation inventory returns but before cache.rename(tombstone), replace the validated project cache pathname with another same-project directory such as config. The implementation renames, audits, and recursively deletes whichever directory now occupies the cache pathname because it does not bind or recheck the cache root identity across the destructive boundary. Existing tests cover changed contents and a redirect present before preview, but not this swap window.",
+                        "required_remediation": "In a strict-descendant candidate, capture a stable root identity during confirmation inventory, move with a no-follow platform-safe primitive, and verify the staged tombstone is the exact inventoried directory and remains inside the project-local staging root before audit commit or deletion. On mismatch, preserve or restore canonical data and fail closed. Add adversarial swap and redirect/substitution tests proving byte-stable canonical data, no success audit, no cleared result, and safe recovery."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-02.S04.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-08-27T22:12:10+00:00",
+                      "reviewed_at": "2026-08-27T22:17:29+00:00",
+                      "duration_seconds": 319,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 1,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "desktop:application",
+                        "security-local:unit",
+                        "foundation:ui-change",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
               }
             },
             {
