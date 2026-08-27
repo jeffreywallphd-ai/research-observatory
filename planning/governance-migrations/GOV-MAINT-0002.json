@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0002",
+  "title": "Reuse the authenticated W1.A04 witness boundary during exact T03 recovery",
+  "status": "implemented-pending-independent-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "predecessor": {
+    "commit": "2a6978e333dc1615c09b51ef1fc9e90e775fcf22",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "resumeCommit": "dc17b554f3d876ec90ed701ea675fb5ec9756272",
+    "blockedTask": "CAP-02.S04.T03",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "trigger": {
+    "denial": "At the exact committed dc17b55 resume boundary, taskctl recover CAP-02.S04.T03 rejected artifacts/evidence/W1.A04.B00.json as untracked source outside the authorized transition.",
+    "atomicity": "The denial occurred before persistence; T03 remained BLOCKED, W1 was then paused at a quiescent boundary, and the witness remained untracked, unstaged, and byte-exact.",
+    "diagnosis": "Exact T03 recovery runs full immutable GRR semantic validation, which requires the retained historical witness, after a clean-repository preflight that rejected the same witness. GOV-MAINT-0001 already independently authenticated the one safe W1 witness path for resume; recovery did not reuse that boundary."
+  },
+  "authority": "This maintenance preserves the approved W1, W1.A03, W1.A04, and exact T03 recovery authority. It does not resume W1, recover or approve T03, claim another task, change product or experience scope, modify a release gate, authorize external effects, weaken any other untracked-source denial, or rewrite historical evidence.",
+  "intendedDelta": {
+    "implementation": "Use GOV-MAINT-0001's exact W1-only historical-witness authenticator as the allowed-untracked input to the existing exact CAP-02.S04.T03 recovery cleanliness check. All later recovery authority, immutable task/manifest/resume binding, recomputed product checks, compare-and-swap, schema, and semantic validations remain unchanged.",
+    "failClosed": [
+      "Only artifacts/evidence/W1.A04.B00.json can be admitted, and only with the exact raw hash, schema, document type, W1.A04.B00 identity, candidate commit, released GRR-0002 hold, W1 target, and minimum control revision already independently reviewed in GOV-MAINT-0001.",
+      "Any additional untracked path, tracked modification, missing or forged witness, wrong Wave, old control revision, or unreleased hold remains denied.",
+      "The exact T03 recovery still requires a clean committed direct-child Wave resume containing only its five authorized generated modifications.",
+      "The exact committed task-recovery manifest, W1.A03 authority, released GRR-0001 hold, security checkpoint, protected product bytes, recomputed checks, and validated atomic persistence remain mandatory."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0002.json",
+      "tests/foundation/test_task_recovery.py",
+      "tools/taskctl.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The change touches only exact historical task-recovery cleanliness. Selected coverage is the full exact task-recovery suite, focused witness authentication and Wave-resume tests, canonical backlog validation, and governed Python quality. Product privacy and contract recomputation remains inside the real recovery command and is not weakened.",
+    "results": [
+      {
+        "check": "full exact task-recovery suite",
+        "result": "passed",
+        "detail": "All 12 exact task-recovery tests passed, including lawful projection, real atomic persistence, competing-writer denial, manifest and authority tampering, static-contract rewrites, dirty/stale/wrong-task denials, immutable recovery history, and the real-Git direct-child resume boundary."
+      },
+      {
+        "check": "focused witness and Wave-resume regression selection",
+        "result": "passed-with-disclosed-baseline-fixture",
+        "detail": "The exact witness authentication, resume append, wrong-identity, and historical-binding tests passed. The pre-existing test_wave_resume_history_is_append_only_and_only_resume_may_append fixture now reports Append-only Wave resume history changed for W1 instead of its expected Unauthorized Wave resume history append because canonical W1 truthfully contains the newly committed W1.R01 record. This maintenance changes neither that test nor resume-history behavior and does not use the failing assertion as approval evidence."
+      },
+      {
+        "check": "governed Python quality",
+        "result": "passed",
+        "detail": "Ruff formatting, Ruff lint, and mypy passed for all 140 governed Python files."
+      },
+      {
+        "check": "canonical backlog validation",
+        "result": "passed",
+        "detail": "The paused canonical backlog validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates."
+      }
+    ]
+  },
+  "rollback": "Do not adopt, integrate, or resume W1 if affected checks or independent review fail. Revert only this strict descendant to the committed 2a6978e pause boundary; T03 remains BLOCKED, W1 remains PAUSED, and the witness remains untracked and byte-exact.",
+  "review": null
+}

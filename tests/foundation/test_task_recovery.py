@@ -158,7 +158,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         with (
             patch.object(taskctl, "git_execution_identity", return_value=defaults["git_execution_identity"]),
             patch.object(taskctl, "discover_repository", return_value=REPO),
-            patch.object(taskctl, "require_clean_repository"),
+            patch.object(taskctl, "require_clean_repository") as require_clean,
             patch.object(taskctl, "validate", return_value=defaults["validate"]),
             patch.object(
                 taskctl,
@@ -184,6 +184,10 @@ class ExactTaskRecoveryTests(unittest.TestCase):
             patch.object(taskctl, "persist") as persist,
         ):
             taskctl.command_recover(self.args(), data, capabilities, slices, tasks, gates)
+        require_clean.assert_called_once_with(
+            REPO,
+            allowed_untracked={"artifacts/evidence/W1.A04.B00.json"},
+        )
         return persist
 
     def test_manifest_matches_schema_and_exact_repository_lineage(self) -> None:

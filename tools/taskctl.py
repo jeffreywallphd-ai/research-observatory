@@ -8757,7 +8757,10 @@ def command_recover(args, data, capabilities, slices, tasks, gates) -> None:
     if branch != EXACT_T03_RECOVERY["branch"]:
         raise SystemExit("Exact T03 recovery requires the approved Codex branch")
     repo = discover_repository(args.file)
-    require_clean_repository(repo)
+    require_clean_repository(
+        repo,
+        allowed_untracked=wave_resume_allowed_untracked(data, EXACT_T03_RECOVERY["wave_id"], repo),
+    )
     preflight_errors = validate(data, capabilities, slices, tasks, gates, repo=repo)
     if preflight_errors:
         raise SystemExit("Exact T03 recovery preflight failed:\n- " + "\n- ".join(preflight_errors))
