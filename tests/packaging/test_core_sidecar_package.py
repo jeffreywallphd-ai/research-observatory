@@ -159,9 +159,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             self.assertLessEqual(manifest["totalBytes"], 134_217_728)
             packaged_paths = tuple(item["path"].casefold() for item in manifest["files"])
             self.assertIn("third_party_notices.txt", packaged_paths)
-            self.assertTrue(
-                any("/sqlcipher3/_sqlite3" in path and path.endswith(".pyd") for path in packaged_paths)
-            )
+            self.assertTrue(any("/sqlcipher3/_sqlite3" in path and path.endswith(".pyd") for path in packaged_paths))
             for excluded_module in ("mypy", "pip", "pytest", "setuptools", "yaml"):
                 self.assertFalse(
                     any(f"/{excluded_module}/" in f"/{path}/" for path in packaged_paths),
