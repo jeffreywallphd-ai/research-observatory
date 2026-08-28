@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5d08f4314e8086c5daf60e7e479124cdcc6094a02e88836efde1ecedcafaf78a
+source_sha256: e4ae371b9446e41ab0190f13f20778291218ee06e45fbc7b4e0a41aebe356bcd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2885,7 +2885,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Credentials and policy-sensitive configuration are isolated from ordinary project content.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

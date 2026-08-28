@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S04",
+  "stateCommit": "f569be49f05461944e35465b30165bc2d5f8edb3",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-02/CAP-02.S04-local-secrets-profiles-and-privacy-controls.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "outcome": "The Windows local product isolates credentials and encryption keys in a current-user DPAPI-backed profile vault, removes sensitive workspace authority and content on application lock, keeps telemetry and provider egress local/off by default with explicit informed consent and truthful deletion limits, and protects every production project database with SQLCipher using distinct vault-backed raw keys, verified migration, backup, restore, rekey, restart, and failure recovery.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-02.S04.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-02.S04.T01.purpose-remediation.json",
+          "sha256": "208f07ec0debc0f2cd67920b1c9106f7f63ef983f9627fdcf88bcf934a625408"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-02.S04.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-02.S04.T02.remediation-01.json",
+          "sha256": "ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07"
+        },
+        {
+          "path": "artifacts/evidence/task-reviews/CAP-02.S04.T02/R02.json",
+          "sha256": "1695547279e474359eba02f77bb10f53a74d146fd492ee8311cdb73aedf0cbcb"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-02.S04.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-02.S04.T03.R03.json",
+          "sha256": "cd9a8a60718964588da9556837bd7090bbe19b750eaaa8574091e0cce5b12624"
+        },
+        {
+          "path": "artifacts/evidence/CAP-02.S04.T03.review-R03.json",
+          "sha256": "d6bee288eb8c4782bf0172fbd86991cb53256e5022d2bedf180685a35dcccb3b"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-02.S04.T04",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-02.S04.T04.json",
+          "sha256": "632be1a6bcd872e06f38760d407a89ed3c1530309a5b2a2e455e4b994a88a04f"
+        },
+        {
+          "path": "artifacts/evidence/CAP-02.S04.T04.review-R01.json",
+          "sha256": "c94ed00dcb25e53d3502a04259533afcd2346ab80470d4a6e56e5bbd9947d475"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04-slice-desktop-f569be4.json",
+      "exitCode": 0,
+      "result": "The exact task-approved state passed UI-component verification; desktop lint, typecheck, tests and production build; Rust formatting, clippy with warnings denied, tests and workspace build; and the compiled browser frame. Application-lock reconciliation, cancellation boundary, locked-only content, privacy settings, consent workflow, keyboard/focus/live-region behavior, responsive light/dark cases, and zero unexpected requests all passed. Report SHA-256: 0a0f041c55b2221aaa38d3ddd7f40d7f4694170d656bd1366f6051b8cebb2e55."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 55 security tests passed in 3.770 seconds with one expected directory-symlink skip because the current Windows token cannot create it. The suite covers DPAPI containment and restart, exact credential purpose/scope, corruption and unprotect recovery, concurrent key creation, application-lock source boundaries, local/off privacy and consent, cache-deletion TOCTOU defenses, SQLCipher plaintext denial, key loss, corruption, migration, backup/restore, rekey, redaction, and supply-chain policy invariants."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/data -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 101 data tests passed in 35.657 seconds. The integrated data path covers the credential-backed encrypted object store, production-versus-explicit-fixture database authority, project create/relocate/restart, strict schema and repository ports, v1-v4 migrations, interruption and cancellation recovery, storage quotas and cleanup, key rotation, SQLCipher performance evidence authority, and retained performance-baseline integrity."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_credential_store_contract tests.contracts.test_privacy_policy_contract tests.contracts.test_protected_database_contract tests.service.test_project_lifecycle tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 41 strict portable-contract and local-service integration tests passed in 6.897 seconds. They prove closed credential/application-lock/privacy/database profiles, authenticated local API behavior, consent and cache confirmation, project restart and incompatibility recovery, wrong-profile denial, local transport confinement, redacted failures, and stable Core process handoff."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts/tmp/CAP-02.S04-slice-security-f569be4.json",
+      "exitCode": 0,
+      "result": "The live normalized supply-chain scan passed 601 packages and 152 findings with zero unexcepted blockers and zero policy errors. The only current exceptions are exact independently reviewed development-only TypeScript native-compiler findings through 2026-09-04; they do not expand the product runtime. Report SHA-256: 25b8a6fd80f0594eee898217aa32a7db16f271a13cee35797584da40e5c20fca."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\protected_database_performance_check.py --repo . --report artifacts/tmp/CAP-02.S04-slice-protected-database-performance-f569be4.json",
+      "exitCode": 0,
+      "result": "All seven-sample SQLCipher distributions passed on Windows 11 x64. P95 open was 3.747 ms, representative query 4.758 ms, integrity 5.111 ms, backup 29.753 ms, plaintext migration 111.952 ms, and rekey 32.679 ms, all below the approved absolute budgets. Report SHA-256: c6e4d8358bc53529677fd50bde47b4d782ec5555cb06759381467ee3d1b870cd."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py -v",
+      "exitCode": 0,
+      "result": "Six Windows package tests passed in 21.990 seconds with one expected symlink-privilege skip. A real PyInstaller/Python 3.14.6 frozen sidecar included SQLCipher, PyNaCl, _cffi_backend, governed migrations and notices, ran without system Python, and rejected missing or substituted runtime inventory."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1 --head bd4baaec3b13d55e4f938cc5bfbf9ff6ec150a97; .venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "exitCode": 0,
+      "result": "Both immutable UI implementation ranges pass the approved-reference gate and bind only their declared desktop files to RO-UI-ACADEMIC-MINIMAL-1.3 and reference package SHA-256 db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; architecture_check.py; adr_check.py; taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; uv lock --check; git diff --check",
+      "exitCode": 0,
+      "result": "All 148 governed Python files passed formatting, Ruff and mypy; architecture passed 13 areas, 12 modules, five stable interfaces and three deployment profiles; all 20 ADRs, the 20-capability/117-slice/359-task backlog, generated views, complete approved W1 packet, 69-package uv lock, and patch hygiene passed. Build-manifest generation also passed; its exact-state version is marked dirty only by the separately hash-protected untracked W1.A04.B00 recovery witness, while the tracked tree is clean and the reviewed T04 product candidate retains a clean build manifest."
+    }
+  ],
+  "integratedBehavior": [
+    "Windows credentials and project database/object keys are distinct, current-user DPAPI-protected records under one verified profile-vault authority. Callers supply a closed capability, purpose and scope and receive short-lived zeroed leases; secret values and identifying scope do not enter project databases, exports, support bundles, command lines, environment dumps, or default audit output.",
+    "The native desktop supervisor owns application lock. Manual, inactivity, startup/reconciliation failure and restart paths invalidate protected generations, cancel Core work, clear previews and renderer project state, and render only the accessible locked surface. Unlock uses a non-persisting Windows prompt, validates the same Windows SID with bounded backoff, zeroes transient credential buffers, and starts a fresh Core capability without claiming account isolation.",
+    "Project privacy defaults to offline provider policy and telemetry off. Non-offline egress requires the exact project, provider mode, disclosure revision and informed acknowledgement; append-only revisions survive restart. Cache deletion requires a one-time preview and stable Windows identities, excludes canonical state, denies redirects and late namespace insertion, publishes a redacted audit, and distinguishes logical removal, best-effort cleanup and cryptographic erasure honestly.",
+    "Production project creation/open composes SQLCipher 4.12 before the first SQL operation using a random per-project raw 256-bit database key from the profile vault. Writable plaintext opens fail closed outside the explicit test fixture. Migration requires consent and publishes only the verified encrypted copy; backup/restore and rekey retain a recoverable prior authority until the new encrypted database passes integrity and restart verification.",
+    "The strict credential-store, application-lock, privacy-policy and protected-database contracts expose portable versions and policy outcomes without Windows paths, secret bytes, SQLite connections, renderer state, or provider-specific DTOs. CAP-02 storage and future capabilities consume those ports rather than private adapter state."
+  ],
+  "failureAndRecoveryCoverage": [
+    "corrupt or unavailable DPAPI authority, vault redirect, concurrent record creation, compare-and-swap conflict, audit publication failure, invalid purpose/scope, key rotation and restart",
+    "cancelled/denied/rate-limited Windows reauthentication, different SID, native event loss or reordering, lock during Core and support work, Core restart failure, corrupt configuration, buffer and handle lifetime",
+    "missing or stale consent, cross-project/session access, stale privacy revision or cache preview, canonical insertion, root/child substitution, symlink/hardlink/redirect, audit failure, cleanup-pending quarantine and truthful physical-erasure limitation",
+    "writable plaintext denial, missing/wrong/rotated key, ciphertext/database corruption, explicit-consent migration, migration/rekey/restore publication interruption, encrypted backup corruption, rollback retention and restart",
+    "substituted package inventory, missing native/runtime files, absent system Python, dependency exception mismatch/expiry, license/notice inventory and redacted diagnostics"
+  ],
+  "profileSelection": {
+    "desktop": "The complete desktop application verifier ran because the slice owns a native authentication/cancellation boundary and approved user-facing lock/privacy workflows.",
+    "securityLocal": "The complete security suite and live normalized supply-chain scan ran because every slice task touches secrets, privacy, destructive cleanup, cryptography or dependency policy.",
+    "data": "The complete data suite plus the dedicated SQLCipher distribution ran because T04 replaces the production database authority and crosses migration, backup, restart and recovery boundaries shared with T01 and CAP-02 storage.",
+    "e2eLocal": "No active tests/e2e/test_*.py files exist. Representative end-to-end local behavior instead ran through the compiled desktop browser, real Windows DPAPI and SQLCipher adapters, authenticated Core API, project lifecycle, full data/security suites, and real frozen package. The absent system-level suite is not represented as passed.",
+    "waveExit": "The complete repository/deployment matrix remains mandatory once at W1 exit. A prior governed foundation attempt retained 72 failures and 16 errors in retired GRR/GCR/live-campaign fixtures whose historical byte and stopped-state assumptions no longer match the lawfully active W1 history. Independent T04 review found no product-storage failure, but these fixtures must be reconciled before W1 can qualify."
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "remaining W1 CAP-03 and CAP-07 contributions",
+      "contract": "credential-store, application-lock, privacy-policy and protected-database v1 profiles plus authenticated local Core APIs",
+      "ready": true,
+      "notes": "Consumers can create and reopen protected local projects, request bounded secret purposes, and evaluate local/egress policy without importing vault files, keys, SQLite connections, native prompt state or renderer internals."
+    },
+    {
+      "consumer": "later export/recovery and model-provider capabilities",
+      "contract": "distinct export/recovery-key and provider-egress extension points",
+      "ready": true,
+      "notes": "The slice intentionally does not implement CAP-02.S05 portable export/recovery UX or remote provider integrations; it preserves separate keys and explicit policy seams for those later approved contributions."
+    }
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "No system-level tests/e2e/test_*.py command is active; the compiled desktop/Core/real-adapter/package union supplies the slice path, while complete cross-capability W1 qualification remains due at Wave exit.",
+      "The prior full foundation attempt's 72 failures and 16 errors are retained adverse evidence. They are historical governance/live-boundary fixture assumptions rather than T04 product failures, but they must be reconciled before the W1 exit matrix can pass.",
+      "One security directory-symlink test and one package file-symlink test skip because the current Windows token cannot create symlinks. Redirect, hardlink, stable-identity, source-boundary and package-inventory denial coverage passed; release-authoritative Windows qualification remains due at W1 exit.",
+      "Two exact development-only TypeScript native-compiler security exceptions expire on 2026-09-04. Upgrade and remove them at the first patched stable compiler; they provide no exception for product runtime or shipped artifacts.",
+      "The protected untracked W1.A04.B00 witness intentionally makes an exact-state build version display dirty. Its SHA-256 remains 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and it must not be staged, rewritten or deleted."
+    ]
+  }
+}

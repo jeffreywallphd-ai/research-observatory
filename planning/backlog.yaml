@@ -4153,7 +4153,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-02.S03.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-02.S04.T01
       capability_id: CAP-02
@@ -5432,11 +5432,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-02.S04.integration.json
+      notes: All four task reviews are approved and the exact-state affected slice union passes. Submit for independent security
+        and privacy review; retain absent system E2E and historical governance-fixture failures as mandatory W1-exit debt.
   - id: CAP-02.S05
     title: Backup, restore, relocation, and lab portability
     outcome: Researchers can protect and move projects without breaking identities, provenance, or evidence links.
