@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-07.S01.T01",
+  "commit": "f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa",
+  "baseCommit": "dc0fba09a468390ce729ab1225a7b3df49fb6441",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S01.T03.newline-fix.json",
+    "artifacts/evidence/CAP-03.S01.T03.review-R03.json",
+    "artifacts/evidence/CAP-03.S01.integration.json",
+    "artifacts/evidence/CAP-03.S01.integration.review.json",
+    "docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md",
+    "docs/adr/ADR-0021-adopt-provider-neutral-model-task-and-result-contracts.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/domain-compatibility.md",
+    "docs/architecture/model-gateway-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/domain/compatibility.generated.ts",
+    "packages/contracts/domain/compatibility.test.ts",
+    "packages/contracts/domain/domain-compatibility-authorities.v1.json",
+    "packages/contracts/domain/generate-compatibility.mjs",
+    "packages/contracts/model-gateway/README.md",
+    "packages/contracts/model-gateway/fixtures/valid-generation-result.v1.json",
+    "packages/contracts/model-gateway/fixtures/valid-generation-task.v1.json",
+    "packages/contracts/model-gateway/generate.mjs",
+    "packages/contracts/model-gateway/generated.ts",
+    "packages/contracts/model-gateway/model-task.schema.json",
+    "packages/contracts/model-gateway/model-task.template.py.txt",
+    "packages/contracts/model-gateway/model-task.template.ts.txt",
+    "packages/contracts/model-gateway/model-task.test.ts",
+    "packages/contracts/package.json",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/CAP-07/CAP-07.S01.html",
+    "planning/review-site/CAP-07/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/src/research_observatory_core/domain_compatibility.py",
+    "services/core-api/src/research_observatory_core/model_gateway_contracts.py",
+    "tests/ai/README.md",
+    "tests/ai/test_model_gateway_contracts.py",
+    "tests/foundation/test_adr_check.py"
+  ],
+  "checks": [
+    {
+      "command": "node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; node packages/contracts/model-gateway/generate.mjs --check; packages\\contracts\\node_modules\\.bin\\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run",
+      "exitCode": 0,
+      "result": "All four deterministic generators were current, strict TypeScript compilation passed, and all 39 tests across six portable-contract test files passed at exact candidate f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa. The five model-gateway cases cover every task kind, complete pinned results, immutable ownership, explicit unsupported features, raw-content/unknown-field denial, token accounting, citation closure, route substitution, and canonical schema identity."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/ai -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All five AI contract tests passed. Draft 2020-12 and the generated Python runtime accept the complete fixtures, return deeply immutable snapshots, emit content-free unsupported-feature assessments, and reject task/result mismatch, content injection, accounting drift, citation drift, pinned substitution, and dangerous object keys."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py -v; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py -v; .venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 38 Core service tests, 39 Python portable-contract tests, and six Windows packaging tests passed, with one expected file-symlink skip for this Windows token. The real PyInstaller sidecar build and artifact verifier passed; this T01 contract-only module is source-valid without claiming provider execution or a packaged Core composition change."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.foundation.test_adr_check",
+      "exitCode": 0,
+      "result": "All 37 affected build-manifest, quality-scope, repository-structure, and ADR workflow tests passed. The exact accepted ADR registry assertion now covers the already-present ADR-0019 and ADR-0020 plus task-owned ADR-0021 instead of retaining its stale ADR-0018 ceiling."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-07.S01.T01-quality-f0f47b5.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 156 governed Python files, including the generated model-gateway runtime and AI tests. Report SHA-256: 74b968124c4733be7189e2b3dc8848ef65733b7fd04212a0c5dfefc8aff9bf38."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 7ff3c8d089006d59e61c0d34aec5c47dae0bd044 --head f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa",
+      "exitCode": 0,
+      "result": "The 13-area architecture contract passed. The 21-record ADR registry inspected all 23 task-owned changed paths and accepted ADR-0021 as the durable projection of the provider-neutral model-task decision already approved in the immutable W1 packet."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-07.S01.T01-build-manifest-f0f47b5.json",
+      "exitCode": 0,
+      "result": "Build provenance passed at exact candidate f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa and includes the model-task schema in the governed schema inventory. The dirty label is solely the protected untracked W1.A04.B00 witness. Report SHA-256: e988e8a6f76434940d905bf8e8a86da7430e73a6831643f88fd130b9760140b6."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog, generated views, 150-page planning site, and immutable approved W1 packet passed. CAP-07.S01.T01 remained the formally owned in-progress lease throughout implementation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile ai --profile service --affected-base 7ff3c8d089006d59e61c0d34aec5c47dae0bd044 --affected-head f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-07.S01.T01-affected-selection-f0f47b5.json",
+      "exitCode": 0,
+      "result": "The governed affected selector passed for AI and service ownership and identified service, contracts, packaging, AI, Python quality, foundation governance, and build controls. Report SHA-256: 6be3b3c9997a04ff8d708a9b8256d0b832623b0f63f64f5e27076738e77703a6. The broad fallback was caused only by unmapped packaging/build-inputs.json; directly affected suites and controls were run, while unrelated foundation/UI inventories remain reserved for W1 exit."
+    },
+    {
+      "command": "git diff --check 7ff3c8d089006d59e61c0d34aec5c47dae0bd044..f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa; Get-FileHash -Algorithm SHA256 artifacts/evidence/W1.A04.B00.json",
+      "exitCode": 0,
+      "result": "Patch hygiene passed. The protected W1.A04.B00 witness remained untracked, unstaged, and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The strict Draft 2020-12 contract defines explicit embedding, reranking, classification, NLI, structured-extraction, generation, moderation, and tool-call task inputs. Inputs carry immutable aggregate/revision/content hashes rather than raw research content, paths, credentials, or provider SDK objects.",
+        "Every result requires provider/model/runtime/version/configuration/evaluation route state, request hash, trace identity, policy decision, queue/execution/total latency, token-reporting state, validation outcome, confidence, citation state, output state, and stable diagnostics.",
+        "Pinned selected routes must exactly match the approved execution constraint. Unsupported required features return model-task-feature-unsupported with no selected route, output, or copied research content; successful results require an allowed policy, selected route, accepted validation, task-matching output, consistent token totals, and input-bound required citations."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All 39 TypeScript contract tests, five Python AI tests, 39 Python contract tests, and 38 service tests passed at the exact candidate.",
+        "Expected coverage includes all eight task kinds and a complete pinned generation result. Material boundaries include unsupported capability, raw-content and unknown-field injection, dangerous keys, request mismatch, invalid token total, citation drift, route substitution, and post-decode input mutation.",
+        "Both generated runtimes are bound to the canonical schema SHA-256 and return owned deeply immutable snapshots."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The schema, exact fixtures, deterministic generator/templates, generated TypeScript and Python runtimes, contract package export/typecheck scope, build schema inventory, Python quality inventory, AI test boundary, Core and contract documentation, architecture map, and accepted ADR-0021 were updated together.",
+        "The portable result envelope is the content-free audit/provenance fact for this contract task. Durable audit persistence remains assigned to CAP-03.S03; this task does not claim a provider adapter, network route, model runtime, prompt registry, routing engine, database migration, UI, or model weight.",
+        "The only adjacent correction updates the ADR registry unit test to the exact accepted records already present through ADR-0021. The claim-to-candidate diff also contains the separately reviewed CAP-03.S01 portability and slice-approval lineage because this task was formally paused and reopened without rewriting its original base SHA; those inherited commits are not represented as new CAP-07 implementation scope."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task introduces a shared public model-task contract, generated cross-language decoders, strict untrusted-input validation, reproducibility pins, policy/usage/validation provenance, and a governed build-schema input. Verification therefore covers exact generation, strict TypeScript compilation, all portable TypeScript contracts, AI failure/adversarial cases, full service/contracts/packaging suites with a real frozen sidecar, affected foundation controls, repository-wide Python quality, architecture/ADR coverage, build provenance, planning integrity, and patch/witness safety. No dependency, provider SDK, network, database, UI, or model artifact changed.",
+    "selectedCommandIds": [
+      "ai:unit",
+      "service:unit",
+      "contracts:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "The complete foundation and cross-capability repository/deployment matrix remains mandatory at W1 exit. Unrelated UI reference, agent-protocol, fixture-corpus, benchmark, and CI inventories were not replayed solely because the selector does not yet map packaging/build-inputs.json; the directly affected schema inventory, manifest, package, service, contract, AI, quality, architecture, and ADR controls all passed.",
+      "Provider discovery/capability manifests, routing/fallback/deadline execution, local model runtime and weight lifecycle, approved remote egress, prompt/schema registry, cost budgets, evaluation operations, and durable audit persistence belong to later approved CAP-07/CAP-03 tasks and are not claimed here.",
+      "CAP-07.S01 integrated end-to-end and adversarial slice review follows completion of its remaining tasks. Cross-capability security, performance, cancellation, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa against CAP-07.S01.T01. Prioritize schema/generated parity, all eight task-specific shapes, raw-content/provider-type exclusion, complete result provenance, pinned-route exactness, explicit unsupported-feature denial, policy/validation/token/citation semantic closure, cross-language immutable ownership, ADR authority, and whether later provider/routing/runtime duties remain correctly out of scope. Treat dc0fba..7ff3c8d paths as inherited, already-reviewed CAP-03 pause/resume lineage rather than CAP-07 implementation."
+  }
+}

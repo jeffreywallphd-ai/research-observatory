@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 4f2a50a488f0dbc71a9ea5db935cf39e686c210d039805d2de68319b7633e6c3
+source_sha256: f050199cd00e935e0806ff084945ab4199752967059a2e96d2d1ad8222f25350
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 271 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 47 |
 | `DEFERRED` | 36 |
 
@@ -356,6 +356,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
+| `CAP-07.S01.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -422,4 +423,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-07.S01.T01` Define model task interfaces and result envelopes | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-07.S01.T01` Define model task interfaces and result envelopes | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
