@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S01.T03",
+  "commit": "f9b97b50cb3b4fa42db4aa415ea2bb82544de285",
+  "baseCommit": "bf7ddc41c48ea5db259d7868de6fb15d7797ac1e",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/README.md",
+    "docs/architecture/domain-compatibility.md",
+    "docs/architecture/domain-contracts.md",
+    "docs/architecture/domain-lifecycles.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/domain/compatibility.generated.ts",
+    "packages/contracts/domain/compatibility.template.py.txt",
+    "packages/contracts/domain/compatibility.template.ts.txt",
+    "packages/contracts/domain/compatibility.test.ts",
+    "packages/contracts/domain/domain-compatibility.schema.json",
+    "packages/contracts/domain/domain-compatibility.v1.json",
+    "packages/contracts/domain/fixtures/domain-contract-release.current.v1.json",
+    "packages/contracts/domain/fixtures/domain-contract-release.prior.v0.1.json",
+    "packages/contracts/domain/generate-compatibility.mjs",
+    "packages/contracts/package.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/domain_compatibility.py",
+    "tests/contracts/test_domain_compatibility.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_domain_compatibility_service.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate-compatibility.mjs --check; packages\\contracts\\node_modules\\.bin\\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run",
+      "exitCode": 0,
+      "result": "All three domain generators were current, strict TypeScript compilation passed, and all 32 tests across five contract test files passed. Compatibility cases bind exact source hashes, recognize the one prior bridge, gate additive/deprecated/breaking proposals, negotiate two and three roles deterministically, deny hostile inputs with stable codes, and prove immutable outputs."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py",
+      "exitCode": 0,
+      "result": "All 37 portable-contract tests passed. Draft 2020-12 validation, raw source SHA-256 bindings, current/prior release fixtures, additive/deprecation/breaking policy, exact common negotiation, denial behavior, and immutable Python projections passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 38 Core service tests passed. Compatibility restart is deterministic, the optional server can constrain the exact common version, and boundary denial exposes only stable content-free diagnostics."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All 38 affected foundation/packaging tests passed with one expected Windows file-symlink skip. The real PyInstaller artifact included research_observatory_core.domain_compatibility and retained strict required-module, build-input, quality-scope, and artifact-inventory checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-f9b97b5.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 154 governed Python files. Report SHA-256: 8026458fa87812c274457394385d6599a43c1bc9446f2b0b9cff4062b573bea6."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base bf7ddc41c48ea5db259d7868de6fb15d7797ac1e --head f9b97b50cb3b4fa42db4aa415ea2bb82544de285",
+      "exitCode": 0,
+      "result": "The architecture contract passed with 13 areas, 12 modules, five stable interfaces, and three deployment profiles; the ADR registry passed with 20 indexed records and six protected-path changes inspected. ADR-0013 already requires the explicit UUIDv4 reader bridge and T03 compatibility policy, so no new architecture decision was introduced."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-f9b97b5.json",
+      "exitCode": 0,
+      "result": "Build provenance passed for exact candidate f9b97b50cb3b4fa42db4aa415ea2bb82544de285 and includes domain-compatibility.schema.json in the governed schema set. The only dirty path is the protected W1.A04.B00 witness. Report SHA-256: 9c4ab1709d46d82d1169c2661c3f140f2d367612927ea80ff2de91fc8f5ab389."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The canonical backlog and generated projections passed, the 150-page planning site validated, and the complete immutable W1 packet remains explicitly approved and execution-ready."
+    },
+    {
+      "command": "$env:UV_CACHE_DIR='artifacts/tmp/uv-cache'; uv lock --check; git diff --check",
+      "exitCode": 0,
+      "result": "The exact 69-package Python lock resolved without drift and patch hygiene passed. The protected untracked W1.A04.B00 witness remained byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact policy classifies two additive, one deprecation, and nine breaking change kinds. Every breaking proposal requires a higher major version, accepted ADR identity, and source-preserving tested migration or reader bridge with exact from/to versions.",
+        "Current 1.0.0 and prior 0.1.0 release fixtures are schema-valid and hash-bound. The prior fixture is the ADR-0012 project UUIDv4 behavior admitted only through ADR-0013's read-only bridge; the current fixture binds the exact domain-core and lifecycle schema inventory.",
+        "Desktop and sidecar are mandatory, server is optional, roles are unique, schema-set identity must match exactly, and negotiation selects the highest exact common contract and event versions independent of input order. Unknown events deny and audit; unknown payload fields reject."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All 32 TypeScript, 37 Python contract, and 38 service tests passed at the exact candidate, plus 38 affected foundation/packaging tests with one expected symlink skip.",
+        "Material failures cover missing ADR/migration, same-major breaking change, mismatched migration endpoints, invalid deprecation windows, duplicate/missing roles, schema-set drift, no contract or event overlap, unknown fields, path/content-bearing hostile values, unsupported versions, and immutable restart behavior."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The language-neutral schema, exact policy, current/prior fixtures, deterministic generator, generated Python/TypeScript runtimes, architecture documentation, package export, build-schema inventory, Python quality inventory, and sidecar required-module inventory were updated together.",
+        "Stable diagnostics never copy input content. Unknown events are denied and audited by policy, while negotiation and change assessment expose only fixed diagnostic codes.",
+        "No API route, persistence schema, database migration, dependency, UI, server deployment, or unrelated product behavior was added. This task publishes the portable policy and the ADR-0013 reader bridge; future persisted breaking changes must supply their own accepted ADR and tested source-retaining migration."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task changes shared cross-language contract generation, compatibility interpretation, process-boundary negotiation, build-schema provenance, and frozen-sidecar inputs. The selected task-owned matrix therefore covers exact generation, schema/source hashing, strict type checking, current/prior behavior, breaking-change authority, hostile inputs, deterministic restart, all contract and service tests, a real frozen Windows sidecar, quality, architecture/ADR, build provenance, dependency locks, planning integrity, and the governed affected profile. The affected profile's unchanged 72/16 historical governance baseline is disclosed rather than represented as passing.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "service:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:unit"
+    ],
+    "deferred": [
+      "The governed affected foundation/service attempt reproduced the historical 72-failure/16-error governance fixture baseline unchanged from independently approved CAP-02.S04.T04 evidence. It remains mandatory reconciliation work before W1 exit qualification and is not represented as passing or deleted to make this task pass. Exact failed-run report SHA-256: 6c8d120feed8a7d9d1c369d18e2da9fd1f38138f0a033c9384cad3443bf541e2.",
+      "Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval, when the complete T01-T03 contract boundary is available.",
+      "Cross-capability end-to-end, performance, security, accessibility, cancellation, migration, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate f9b97b50cb3b4fa42db4aa415ea2bb82544de285. Prioritize source/hash generation integrity, current/prior fixture truth, ADR-0013 UUIDv4 bridge semantics, breaking-change ADR/migration enforcement, exact common process negotiation, event denial/audit policy, immutable/content-free failures, frozen-sidecar inclusion, and whether the disclosed unchanged 72/16 historical foundation baseline is safely deferred only to W1 exit rather than task-blocking."
+  }
+}
