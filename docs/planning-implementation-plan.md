@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3eeddacb2fe659fd5b55fa27568da34bbd934ded609f3165597490edfc442048
+source_sha256: 376aee5357729832d6a324b6850256377c8f074118c162be270e32816a4450e6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3179,7 +3179,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -3207,13 +3207,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-02.S04.T04.json` at `529d6ee50dc75ce4c7ceeb8a5c293acb99faecd0`
+
 ##### Review history — CAP-02.S04.T04
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `5ba45e5868b086e4362b8901db254af339ed1d80d5894544fe99cf8640e0a7ac`
+
+- Candidate / base / branch: `529d6ee50dc75ce4c7ceeb8a5c293acb99faecd0` / `819e32185f7d1b6e914cee45b7bcc487d891f7c8` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T13:21:05+00:00`
+- Evidence: `artifacts/evidence/CAP-02.S04.T04.json` / `632be1a6bcd872e06f38760d407a89ed3c1530309a5b2a2e455e4b994a88a04f` / `529d6ee50dc75ce4c7ceeb8a5c293acb99faecd0`
+- Acceptance-criteria SHA-256: `35b70463d0a11bd042b064c0d31635cd564a79974606629ec73ef62c2cc505c4`
+- Verification-selection SHA-256: `52299288c18a2957a8b30ba592ffff460125a4f7ea930481aa37ac3220e3b37d`
+- Changed paths: `docs/adr/ADR-0020-protect-project-databases-with-sqlcipher-and-vault-backed-raw-keys.md`, `docs/adr/index.json`, `docs/architecture/README.md`, `docs/architecture/local-credential-storage.md`, `docs/architecture/local-sqlite-storage.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/security/credential-store-profile.schema.json`, `packages/contracts/security/credential-store-profile.v1.json`, `packages/contracts/storage/protected-database-profile.schema.json`, `packages/contracts/storage/protected-database-profile.v1.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-02/CAP-02.S04.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `pyproject.toml`, `quality-scope.json`, `security-exceptions.json`, `services/core-api/README.md`, `services/core-api/THIRD_PARTY_NOTICES.txt`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/ports/credential_store.py`, `services/core-api/src/research_observatory_core/ports/database_keys.py`, `services/core-api/src/research_observatory_core/storage.py`, `services/core-api/src/research_observatory_core/windows_credentials.py`, `tests/__init__.py`, `tests/contracts/test_credential_store_contract.py`, `tests/contracts/test_protected_database_contract.py`, `tests/data/__init__.py`, `tests/data/test_encrypted_object_store.py`, `tests/data/test_local_object_store.py`, `tests/data/test_object_envelope_upgrades.py`, `tests/data/test_protected_database_performance_check.py`, `tests/data/test_sqlite_migrations.py`, `tests/data/test_sqlite_repositories.py`, `tests/data/test_sqlite_schema.py`, `tests/data/test_storage_maintenance.py`, `tests/database_key_fixtures.py`, `tests/packaging/test_core_sidecar_package.py`, `tests/security/test_privacy_controls.py`, `tests/security/test_protected_database.py`, `tests/security/test_windows_credentials.py`, `tests/service/test_project_lifecycle.py`, `tools/core_sidecar_build.py`, `tools/protected_database_performance_check.py`, `uv.lock`
+- Selected checks: `.venv\Scripts\python.exe tools\security_check.py --repo . --report artifacts/tmp/CAP-02.S04.T04-security-local-529d6ee.json`, `.venv\Scripts\python.exe -m unittest discover -s tests/security -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest discover -s tests/data -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py -v`, `.venv\Scripts\python.exe tools\protected_database_performance_check.py --repo . --report artifacts/tmp/CAP-02.S04.T04-protected-database-performance-529d6ee.json`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S04.T04-build-manifest-529d6ee.json`, `.venv\Scripts\python.exe tools\adr_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\planctl.py --repo . wave validate W1`, `.venv\Scripts\python.exe tools\planctl.py --repo . wave ready W1 --require-approved`, `uv lock --check`, `git diff --check`
+- Deferred checks: `The complete foundation unit and repository profile matrix remains mandatory at W1 exit. The attempted broad run and its historical-controller failures are retained as adverse evidence and must be resolved before W1 qualification.`, `The governed project-lifecycle and storage-maintenance performance commands are explicitly gate-bound to W1 exit by verification/affected-selection.json; T04's dedicated SQLCipher performance command passed.`, `e2e-local:system is inactive because tests/e2e/test_*.py does not yet exist; cross-capability happy, denial, cancellation, restart, and recovery qualification remains mandatory at slice/checkpoint/W1 exit.`
+- Selection rationale: T04 changes a high-risk local encryption, key-management, migration, backup/recovery, packaging, dependency, and cross-process service boundary. Task-level coverage therefore includes the complete security, data, service, contracts, and packaging suites; a live normalized Trivy scan; exact SQLCipher performance distributions; format/lint/type checks; lock integrity; ADR/build/backlog/Wave validation; and failure-path tests for plaintext denial, leakage, key loss, corruption, interrupted migration/rekey, backup/restore, and restart. A governed affected-selection attempt at 59bf98a passed repository, architecture, benchmark, build, UI, ADR, CI, quality, and packaging-smoke checks but its full 418-test foundation command failed with 72 failures and 16 errors in retired GCR/GRR/live-bound historical assertions after W1 advanced; report SHA-256 31b500da1fdd1f236f142d508b086ca7a11386522f045e3d615aa4c726143ff2. That adverse result is disclosed rather than represented as passing T04 evidence. AGENTS.md assigns the complete full-repository matrix to W1 exit, while the task evidence proves every credible T04 product, security, migration, dependency, packaging, contract, and platform-token boundary. The independent reviewer must treat any task-relevant reproduction or unsafe historical-control interaction as blocking.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### SLICE-backup-restore-relocation-and-lab-portability (`CAP-02.S05`) - Backup, restore, relocation, and lab portability
 
