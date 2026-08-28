@@ -44,6 +44,11 @@ tasks, dossiers, and exports. A strict command supplies actor, reason, expected
 revision, and idempotency identity but never a destination state. The validator
 derives one allowed transition from the exact portable profile before calling a
 persistence adapter; illegal or stale commands therefore publish no state.
+The package also includes the generated domain compatibility policy used at
+process boundaries. It recognizes the current native contract and the single
+prior UUIDv4 reader-bridge fixture, denies ungoverned breaking proposals, and
+performs deterministic exact-version negotiation without copying advertised
+payloads or component details into failures.
 
 ## Windows sidecar package
 

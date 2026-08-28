@@ -52,6 +52,10 @@ compatibility, deprecation, and migration rules.
 
 The T02 lifecycle profile, deterministic validators, persistence-boundary
 contract, and diagrams are documented in [Domain lifecycles](domain-lifecycles.md).
+Evolution of this contract is governed separately by
+[Domain compatibility](domain-compatibility.md); strict consumers do not infer
+compatibility from a version string or silently reinterpret legacy UUIDv4
+identity.
 
 ## Authority and generation
 
@@ -70,5 +74,6 @@ Run the focused contract checks with:
 
 The project manifest in ADR-0012 remains a documented version-1 UUIDv4 bridge.
 It is accepted only by that project-package contract and must not be passed as a
-canonical aggregate ID. T03 owns the explicit compatibility bridge or migration;
-no reader may silently relabel an existing UUIDv4 value as UUIDv7.
+canonical aggregate ID. The explicit bridge and migration rules live in
+[Domain compatibility](domain-compatibility.md); no reader may silently relabel
+an existing UUIDv4 value as UUIDv7.

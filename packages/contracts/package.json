@@ -5,7 +5,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "domain:check": "node domain/generate.mjs --check && node domain/generate-lifecycle.mjs --check",
+    "domain:check": "node domain/generate.mjs --check && node domain/generate-lifecycle.mjs --check && node domain/generate-compatibility.mjs --check",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "verify": "pnpm run domain:check && pnpm run typecheck && pnpm run test"
@@ -19,6 +19,7 @@
   "exports": {
     "./core-api": "./core-api/generated.ts",
     "./domain": "./domain/generated.ts",
+    "./domain-compatibility": "./domain/compatibility.generated.ts",
     "./domain-lifecycle": "./domain/lifecycle.generated.ts",
     "./project": "./project/index.ts"
   }
