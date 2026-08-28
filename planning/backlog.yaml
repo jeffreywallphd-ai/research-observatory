@@ -6058,11 +6058,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T14:22:02+00:00'
-      updated_at: '2026-08-28T15:49:39+00:00'
+      updated_at: '2026-08-28T16:04:19+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Compatibility policy candidate f9b97b50 is criterion-complete; independent review must evaluate
@@ -6073,6 +6073,11 @@ capabilities:
         sha256: e664dde57fde1fd4ed6ad979015ea606e94ff91042a015da4d8b5457828c634e
         commit: f9b97b50cb3b4fa42db4aa415ea2bb82544de285
         recorded_at: '2026-08-28T15:46:03+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S01.T03.review-fix.json
+        sha256: a3fd90778bd09a43830a26039eec45992060c254aa1a8db6b7a2d1b98847d7db
+        commit: abdc90764519dc931a17aba550d60c40dcdcea15
+        recorded_at: '2026-08-28T16:04:19+00:00'
       review: &id021
         reviewer: nash-independent-domain-compatibility-reviewer
         result: changes-requested
@@ -6090,7 +6095,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-28T15:49:39+00:00'
         expires_at: '2026-08-28T23:49:39+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -6265,7 +6270,87 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission: null
+        current_submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-08-28T16:04:19+00:00'
+          candidate_commit: abdc90764519dc931a17aba550d60c40dcdcea15
+          base_commit: f9b97b50cb3b4fa42db4aa415ea2bb82544de285
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S01.T03.review-fix.json
+            sha256: a3fd90778bd09a43830a26039eec45992060c254aa1a8db6b7a2d1b98847d7db
+            commit: abdc90764519dc931a17aba550d60c40dcdcea15
+            recorded_at: '2026-08-28T16:04:19+00:00'
+          acceptance_criteria_sha256: 364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1
+          changed_paths:
+          - artifacts/evidence/CAP-03.S01.T03.json
+          - artifacts/evidence/CAP-03.S01.T03.review-R01.json
+          - docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md
+          - docs/adr/index.json
+          - docs/architecture/domain-compatibility.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/README.md
+          - packages/contracts/domain/compatibility.generated.ts
+          - packages/contracts/domain/compatibility.template.py.txt
+          - packages/contracts/domain/compatibility.template.ts.txt
+          - packages/contracts/domain/compatibility.test.ts
+          - packages/contracts/domain/domain-compatibility-authorities.v1.json
+          - packages/contracts/domain/domain-compatibility.schema.json
+          - packages/contracts/domain/domain-event-catalog.v1.json
+          - packages/contracts/domain/generate-compatibility.mjs
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S01.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - services/core-api/src/research_observatory_core/domain_compatibility.py
+          - tests/contracts/test_domain_compatibility.py
+          selected_checks:
+          - node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check;
+            node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd
+            --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run
+          - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest
+            discover -s tests/service -p test_*.py
+          - .venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check
+            tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package
+          - .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-remediation-adr.json
+          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo
+            . --base bb823509f5dc8f482f17729a8d81aebdd493839d --head abdc90764519dc931a17aba550d60c40dcdcea15
+          - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-final.json
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
+            --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff
+            --check
+          deferred_checks:
+          - The governed affected foundation/service attempt from R01 reproduced the independently reviewed historical 72-failure/16-error
+            governance/live-boundary fixture baseline. The remediation does not touch those controls; reconciliation remains
+            mandatory at W1 exit and is not represented as passing.
+          - Durable audit persistence belongs to CAP-03.S03. T03 provides and proves the mandatory typed content-free audit
+            fact/callback boundary without claiming storage.
+          - Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval; cross-capability
+            full qualification remains mandatory at the applicable checkpoint and W1 exit.
+          selection_rationale: R01 isolated two blocking trust-boundary defects in shared generated compatibility controls.
+            The remediation therefore replays both exact findings and their hostile variants in TypeScript and Python, all
+            contract/service tests, generation/hash integrity, protected architecture/ADR controls, Python quality, a real
+            frozen Windows sidecar, build provenance, backlog/review projections, and W1 approval readiness. It does not expand
+            into later durable audit persistence or the historical W1-exit foundation baseline.
+          selection_sha256: d31c57a6ab2ccddb8e0c9b86f901fe6d4254f416c99902259f58f2a50c6eabe8
+          prior_attempt_id: R01
+          open_finding_ids:
+          - CAP-03.S01.T03-R01-F01
+          - CAP-03.S01.T03-R01-F02
+          root_cause_analysis: null
+          selected_command_ids:
+          - contracts:unit
+          - service:unit
+          - packaging:unit
+          - foundation:quality
+          - foundation:build-manifest
+          - foundation:adr
+          - foundation:backlog
+          - foundation:backlog-views
+          - foundation:unit
+          packet_sha256: 69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830
     platform_targets:
     - windows-x64
     completion:

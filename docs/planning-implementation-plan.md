@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dfdaa3b2769b63fc31744dbf9bc7ac330b65e83a2adcc794dde09ae6e472cd8a
+source_sha256: ccd7bcd091d58113d4ad68b5a6416b22589279fe1d3fbff3515ceca8157d4db6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3541,7 +3541,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3570,6 +3570,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S01.T03.json` at `f9b97b50cb3b4fa42db4aa415ea2bb82544de285`
+- `artifacts/evidence/CAP-03.S01.T03.review-fix.json` at `abdc90764519dc931a17aba550d60c40dcdcea15`
 
 ##### Review history — CAP-03.S01.T03
 
@@ -3606,7 +3607,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830`
+
+- Candidate / base / branch: `abdc90764519dc931a17aba550d60c40dcdcea15` / `f9b97b50cb3b4fa42db4aa415ea2bb82544de285` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T16:04:19+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S01.T03.review-fix.json` / `a3fd90778bd09a43830a26039eec45992060c254aa1a8db6b7a2d1b98847d7db` / `abdc90764519dc931a17aba550d60c40dcdcea15`
+- Acceptance-criteria SHA-256: `364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1`
+- Verification-selection SHA-256: `d31c57a6ab2ccddb8e0c9b86f901fe6d4254f416c99902259f58f2a50c6eabe8`
+- Changed paths: `artifacts/evidence/CAP-03.S01.T03.json`, `artifacts/evidence/CAP-03.S01.T03.review-R01.json`, `docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md`, `docs/adr/index.json`, `docs/architecture/domain-compatibility.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/domain/compatibility.generated.ts`, `packages/contracts/domain/compatibility.template.py.txt`, `packages/contracts/domain/compatibility.template.ts.txt`, `packages/contracts/domain/compatibility.test.ts`, `packages/contracts/domain/domain-compatibility-authorities.v1.json`, `packages/contracts/domain/domain-compatibility.schema.json`, `packages/contracts/domain/domain-event-catalog.v1.json`, `packages/contracts/domain/generate-compatibility.mjs`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S01.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/domain_compatibility.py`, `tests/contracts/test_domain_compatibility.py`
+- Selected checks: `node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-remediation-adr.json`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base bb823509f5dc8f482f17729a8d81aebdd493839d --head abdc90764519dc931a17aba550d60c40dcdcea15`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-final.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check`
+- Deferred checks: `The governed affected foundation/service attempt from R01 reproduced the independently reviewed historical 72-failure/16-error governance/live-boundary fixture baseline. The remediation does not touch those controls; reconciliation remains mandatory at W1 exit and is not represented as passing.`, `Durable audit persistence belongs to CAP-03.S03. T03 provides and proves the mandatory typed content-free audit fact/callback boundary without claiming storage.`, `Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval; cross-capability full qualification remains mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: R01 isolated two blocking trust-boundary defects in shared generated compatibility controls. The remediation therefore replays both exact findings and their hostile variants in TypeScript and Python, all contract/service tests, generation/hash integrity, protected architecture/ADR controls, Python quality, a real frozen Windows sidecar, build provenance, backlog/review projections, and W1 approval readiness. It does not expand into later durable audit persistence or the historical W1-exit foundation baseline.
+- Prior round / replayed open findings: `R01` / `CAP-03.S01.T03-R01-F01`, `CAP-03.S01.T03-R01-F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by nash-independent-domain-compatibility-reviewer at `2026-08-28T15:49:39+00:00`
 

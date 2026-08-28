@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S01.T03",
+  "commit": "abdc90764519dc931a17aba550d60c40dcdcea15",
+  "baseCommit": "f9b97b50cb3b4fa42db4aa415ea2bb82544de285",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S01.T03.json",
+    "sha256": "e664dde57fde1fd4ed6ad979015ea606e94ff91042a015da4d8b5457828c634e",
+    "commit": "f9b97b50cb3b4fa42db4aa415ea2bb82544de285",
+    "reason": "Independent R01 review found that breaking-change assessment trusted syntactically plausible caller assertions and that unknown-event deny-and-audit behavior was declarative only. This record preserves R01 and binds the focused strict-descendant authority-catalog and executable event-boundary remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S01.T03.json",
+    "artifacts/evidence/CAP-03.S01.T03.review-R01.json",
+    "docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md",
+    "docs/adr/index.json",
+    "docs/architecture/domain-compatibility.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/domain/compatibility.generated.ts",
+    "packages/contracts/domain/compatibility.template.py.txt",
+    "packages/contracts/domain/compatibility.template.ts.txt",
+    "packages/contracts/domain/compatibility.test.ts",
+    "packages/contracts/domain/domain-compatibility-authorities.v1.json",
+    "packages/contracts/domain/domain-compatibility.schema.json",
+    "packages/contracts/domain/domain-event-catalog.v1.json",
+    "packages/contracts/domain/generate-compatibility.mjs",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/domain_compatibility.py",
+    "tests/contracts/test_domain_compatibility.py"
+  ],
+  "checks": [
+    {
+      "command": "node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; packages\\contracts\\node_modules\\.bin\\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run",
+      "exitCode": 0,
+      "result": "All three generators were current, strict TypeScript compilation passed, and all 34 tests across five contract files passed. The eight compatibility tests include exact accepted authority, fabricated ADR, absent fixture, unknown authority, wrong evidence hash/status/scope, known and unknown events, unsupported versions, unknown payload fields, hostile-content redaction, exactly-one audit, audit failure, and immutability."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 39 portable-contract and 38 Core service tests passed. Generated Python has parity with TypeScript for authority matching, event denial, content-free audit facts, fail-closed publication, exact negotiation, and immutable projections."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All 38 affected foundation/packaging tests passed with one expected Windows symlink skip. A real PyInstaller sidecar included the regenerated compatibility module and retained required-module and artifact-inventory enforcement."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-remediation-adr.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 154 governed Python files. Report SHA-256: eadbf14009d7d27257e638afe4049d7b29515c3cc3c744c9c0a3427550965a0d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base bb823509f5dc8f482f17729a8d81aebdd493839d --head abdc90764519dc931a17aba550d60c40dcdcea15",
+      "exitCode": 0,
+      "result": "The architecture contract passed. The 20-record ADR registry inspected six changed paths and passed after ADR-0013 was append-only clarified and linked to T03, recording the already approved compatibility duty without reversing its decision."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-final.json",
+      "exitCode": 0,
+      "result": "Build provenance passed for exact strict-descendant candidate abdc90764519dc931a17aba550d60c40dcdcea15 with only the protected W1.A04.B00 witness dirty. Report SHA-256: 3dd728dfce13f3028e76df60eebe80f83905e2e9b798957e96fb947f576981bd."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check",
+      "exitCode": 0,
+      "result": "The 20-capability/117-slice/359-task backlog, generated projections, 150-page review site, approved W1 packet, and patch hygiene passed. The protected W1.A04.B00 witness remained byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Generated Python and TypeScript now accept a breaking change only when authorityId selects the exact embedded catalog entry and the proposal matches its change kind, ADR, version endpoints, strategy, source retention, and fixture path.",
+        "Generation verifies ADR-0013's Accepted status, exact decision scope, indexed task links, ADR bytes, UUIDv4 bridge fixture bytes, compatibility-test bytes, and source-schema/catalog hashes before emitting either runtime.",
+        "Both runtimes reject ADR-9999, a nonexistent/substituted fixture, an unknown authority, and catalog substitutions with wrong evidence hash, status, or task/decision scope using stable content-free codes."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact R01 reproductions and incremental authority/event boundaries pass in both generated runtimes alongside every original compatibility, domain-core, lifecycle, service, foundation, and frozen-sidecar test selected for this task.",
+        "Known lifecycle-transition envelopes pass without audit; unknown types and unsupported versions deny after exactly one immutable content-free audit callback; unknown payload fields deny before dispatch; callback failure remains a stable fail-closed denial."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The language-neutral schema now defines the event envelope, audit fact, and assessment. Separate exact authority and event catalogs are hash-bound into generated TypeScript and Python, and the architecture documentation states the persistence handoff without claiming durable audit storage.",
+        "ADR-0013 was clarified consistently with the already approved T03 slice contract and linked in the ADR index. No persistence schema, network route, dependency, UI, external service, or unrelated product behavior changed.",
+        "Audit facts contain only fixed schema/document/reason/policy/catalog-digest fields and never copy caller event type, payload, paths, credentials, or research content."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 isolated two blocking trust-boundary defects in shared generated compatibility controls. The remediation therefore replays both exact findings and their hostile variants in TypeScript and Python, all contract/service tests, generation/hash integrity, protected architecture/ADR controls, Python quality, a real frozen Windows sidecar, build provenance, backlog/review projections, and W1 approval readiness. It does not expand into later durable audit persistence or the historical W1-exit foundation baseline.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "service:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:unit"
+    ],
+    "deferred": [
+      "The governed affected foundation/service attempt from R01 reproduced the independently reviewed historical 72-failure/16-error governance/live-boundary fixture baseline. The remediation does not touch those controls; reconciliation remains mandatory at W1 exit and is not represented as passing.",
+      "Durable audit persistence belongs to CAP-03.S03. T03 provides and proves the mandatory typed content-free audit fact/callback boundary without claiming storage.",
+      "Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval; cross-capability full qualification remains mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S01.T03-R01-F01",
+      "CAP-03.S01.T03-R01-F02"
+    ],
+    "note": "Re-review only the exact R01 findings and strict-descendant f9b97b50cb3b4fa42db4aa415ea2bb82544de285..abdc90764519dc931a17aba550d60c40dcdcea15 range. Confirm hash-bound accepted ADR/migration/test authority, denial of every substituted authority case, executable event catalog/envelope validation, exactly-one content-free audit publication, fail-closed callback semantics, immutable parity outputs, ADR-0013/index consistency, and the exact supersession chain. Do not restart the entire audit."
+  }
+}
