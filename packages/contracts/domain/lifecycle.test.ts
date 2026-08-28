@@ -128,4 +128,23 @@ describe("portable domain lifecycle contract", () => {
     const restarted = snapshot("task", reopened.toState, reopened.revision);
     expect(prepareLifecycleTransition(restarted, command("task", "start", reopened.revision)).toState).toBe("in-progress");
   });
+
+  it("emits the maximum safe revision exactly and denies overflow before persistence", () => {
+    const maximum = Number.MAX_SAFE_INTEGER;
+    const emitted = prepareLifecycleTransition(
+      snapshot("project", "active", maximum - 1),
+      command("project", "archive", maximum - 1),
+    );
+    expect(emitted.revision).toBe(maximum);
+    expect(JSON.parse(lifecycleTransitionJson(emitted)).revision).toBe(maximum);
+
+    const writes: unknown[] = [];
+    const restarted = snapshot("project", emitted.toState, emitted.revision);
+    const requested = command("project", "reopen", emitted.revision);
+    expect(lifecycleTransitionErrors(restarted, requested)).toEqual(["lifecycle-revision-exhausted"]);
+    expect(() => applyLifecycleTransition(restarted, requested, (item) => writes.push(item))).toThrowError(
+      DomainLifecycleProblem,
+    );
+    expect(writes).toEqual([]);
+  });
 });

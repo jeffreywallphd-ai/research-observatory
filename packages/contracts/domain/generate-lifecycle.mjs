@@ -158,6 +158,7 @@ const PORTABLE_ID = /^[a-z][a-z0-9]*(?:[.:_-][a-z0-9]+){0,7}$/;
 const NAME = /^[a-z][a-z0-9]*(?:-[a-z0-9]+){0,7}$/;
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const UTC = /^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d{1,3}))?Z$/;
+const MAX_SAFE_REVISION = Number.MAX_SAFE_INTEGER;
 
 type JsonRecord = Readonly<Record<string, unknown>>;
 
@@ -243,6 +244,7 @@ export function lifecycleTransitionErrors(current: unknown, command: unknown): r
   if (errors.length > 0 || !validSnapshot(current) || !validCommand(command)) return errors;
   if (current.subjectKind !== command.subjectKind || current.aggregateId !== command.aggregateId) errors.push("lifecycle-subject-mismatch");
   if (current.revision !== command.expectedRevision) errors.push("lifecycle-revision-conflict");
+  if (current.revision === MAX_SAFE_REVISION) errors.push("lifecycle-revision-exhausted");
   const subject = SUBJECTS.get(current.subjectKind);
   if (!subject?.states.some((state) => state.id === current.state)) errors.push("lifecycle-state-unknown");
   if (!subject?.transitions.some((rule) => rule.from === current.state && rule.command === command.command)) errors.push("lifecycle-command-not-allowed");
@@ -333,6 +335,7 @@ _NAME = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+){0,7}$")
 _IDEMPOTENCY_KEY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 _UTC = re.compile(r"^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d{1,3}))?Z$")
 _ACTOR_KINDS = frozenset({"human", "system", "agent"})
+_SAFE_REVISION_MAX = 9_007_199_254_740_991
 
 
 def _record(value: object) -> Mapping[str, object] | None:
@@ -359,7 +362,7 @@ def _exact_keys(value: Mapping[str, object], expected: frozenset[str]) -> bool:
 
 
 def _safe_revision(value: object) -> bool:
-    return isinstance(value, int) and not isinstance(value, bool) and 0 <= value <= 9_007_199_254_740_991
+    return isinstance(value, int) and not isinstance(value, bool) and 0 <= value <= _SAFE_REVISION_MAX
 
 
 def _canonical_utc(value: object) -> bool:
@@ -469,6 +472,8 @@ def lifecycle_transition_errors(current: object, command: object) -> tuple[str, 
         errors.append("lifecycle-subject-mismatch")
     if snapshot["revision"] != request["expectedRevision"]:
         errors.append("lifecycle-revision-conflict")
+    if snapshot["revision"] == _SAFE_REVISION_MAX:
+        errors.append("lifecycle-revision-exhausted")
     subject = _SUBJECTS[cast(str, snapshot["subjectKind"])]
     states = cast(tuple[Mapping[str, object], ...], subject["states"])
     transitions = cast(tuple[Mapping[str, object], ...], subject["transitions"])
