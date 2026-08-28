@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 65f2dc6cf1028caeed1ef532c0d0ddd37963ebc863b6b7246540e8843d9d2861
+source_sha256: 20644d41105743bb4b66866d7f25c77ee9b135888f2ae87d1f5f6432d4231f21
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3792,13 +3792,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Desktop workflow with mode-specific defaults, examples, warnings, and explicit change-impact preview.
 
