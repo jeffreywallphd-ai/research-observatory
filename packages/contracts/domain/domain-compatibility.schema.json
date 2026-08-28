@@ -8,8 +8,10 @@
     "additive-change-does-not-change-major-version",
     "deprecation-requires-a-versioned-window-and-replacement",
     "breaking-change-requires-major-version-adr-and-tested-migration",
+    "breaking-change-authority-is-hash-bound-and-accepted",
     "migration-retains-source-and-matches-change-endpoints",
     "unknown-events-deny-and-audit",
+    "event-denials-publish-one-content-free-audit-fact",
     "negotiation-selects-highest-exact-common-versions",
     "negotiation-requires-one-role-each-and-one-schema-set"
   ],
@@ -228,6 +230,7 @@
         "changeKind",
         "artifactId",
         "adrId",
+        "authorityId",
         "migration",
         "deprecation"
       ],
@@ -244,6 +247,12 @@
             {"type": "string", "pattern": "^ADR-[0-9]{4}(?![\\s\\S])"}
           ]
         },
+        "authorityId": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/PortableId"}
+          ]
+        },
         "migration": {
           "oneOf": [
             {"type": "null"},
@@ -256,6 +265,41 @@
             {"$ref": "#/$defs/DeprecationWindow"}
           ]
         }
+      }
+    },
+    "DomainEventEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "documentType", "eventType", "eventVersion", "payload"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-domain-event-envelope"},
+        "eventType": {"$ref": "#/$defs/PortableId"},
+        "eventVersion": {"$ref": "#/$defs/Semver"},
+        "payload": {"type": "object"}
+      }
+    },
+    "CompatibilityAuditFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "documentType", "reasonCode", "policyVersion", "eventCatalogSha256"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-domain-compatibility-audit"},
+        "reasonCode": {"type": "string", "enum": ["compatibility-unknown-event", "compatibility-event-version-unsupported"]},
+        "policyVersion": {"const": "1.0.0"},
+        "eventCatalogSha256": {"$ref": "#/$defs/Sha256Id"}
+      }
+    },
+    "DomainEventAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed", "errors", "auditFact", "diagnosticCode"],
+      "properties": {
+        "allowed": {"type": "boolean"},
+        "errors": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "auditFact": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/CompatibilityAuditFact"}]},
+        "diagnosticCode": {"type": "string", "enum": ["compatibility-event-accepted", "compatibility-event-denied"]}
       }
     },
     "ComponentAdvertisement": {

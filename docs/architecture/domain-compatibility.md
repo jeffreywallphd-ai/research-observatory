@@ -16,12 +16,16 @@ either fixture if those governed bytes drift.
 |---|---|---|
 | Additive | Add an optional field or widen what a reader accepts within the same major version. | No ADR or migration is attached to the proposal. |
 | Deprecation | Mark a field for later removal within the same major version. | A versioned removal window and portable replacement are required. |
-| Breaking | Add a required field, remove or rename a field, narrow a reader, add to a closed enum, add/change an event, change identity, or repurpose meaning. | A new major version, accepted ADR, and source-retaining tested migration or reader bridge are all required. |
+| Breaking | Add a required field, remove or rename a field, narrow a reader, add to a closed enum, add/change an event, change identity, or repurpose meaning. | A new major version and an entry in the generated accepted-authority catalog are required. The entry binds the accepted ADR status/scope and exact bytes plus a source-retaining migration fixture and passing compatibility-test bytes. |
 
 Closed enums and event-type sets are deliberately breaking because the current
 strict consumers reject unknown values. A proposal with unknown fields, an
 invalid authority reference, a mismatched migration endpoint, or an unretained
 source fails closed with stable content-free diagnostic codes.
+The runtime never resolves caller-provided ADR or fixture paths. It accepts only
+the generated catalog entry whose source digests were verified when the module
+was generated, so a syntactically plausible fabricated ADR or absent fixture
+cannot authorize a breaking change.
 
 ## Current and prior contract
 
@@ -40,8 +44,16 @@ preserved source suitable for rollback or retry.
 
 ## Events and process negotiation
 
-Event envelopes carry an exact version. Unknown event types are denied and
-audited using stable codes; unknown payload fields are rejected. Desktop and
+Event envelopes carry an exact version and are checked against the generated,
+schema-hash-bound event catalog before dispatch. Unknown event types and event
+versions are denied only after exactly one mandatory content-free audit fact is
+published through the caller's typed callback. Audit facts contain the fixed
+reason, policy version, and event-catalog digest; they never copy the event type
+or payload. Publication failure fails closed with
+`compatibility-audit-publication-failed`. Durable audit storage belongs to the
+later audit implementation; this boundary defines and enforces the mandatory
+publication handoff without claiming persistence. Unknown payload fields are
+rejected without passing the payload downstream. Desktop and
 sidecar advertisements are mandatory, while a server advertisement is optional
 for the local-first profile. Each role appears once and advertises ordered,
 unique exact contract and event versions plus one schema-set identity.

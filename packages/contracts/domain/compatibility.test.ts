@@ -5,14 +5,20 @@ import { describe, expect, it } from "vitest";
 
 import {
   CURRENT_DOMAIN_RELEASE_SHA256,
+  DOMAIN_COMPATIBILITY_AUTHORITY_SHA256,
   DOMAIN_COMPATIBILITY_POLICY_SHA256,
   DOMAIN_COMPATIBILITY_SCHEMA_SHA256,
+  DOMAIN_EVENT_CATALOG_SHA256,
   DomainCompatibilityProblem,
   PRIOR_DOMAIN_RELEASE_SHA256,
+  assessDomainEvent,
   assessDomainChange,
+  breakingAuthorityCatalog,
+  breakingAuthorityCatalogErrors,
   contractReleases,
   domainCompatibilityNegotiationErrors,
   domainCompatibilityPolicy,
+  domainEventCatalog,
   negotiateDomainCompatibility,
   readCompatibility,
   type ComponentAdvertisement,
@@ -42,9 +48,34 @@ function proposal(kind: string, fromVersion = "1.0.0", toVersion = "1.1.0"): Rec
     changeKind: kind,
     artifactId: "domain.aggregate",
     adrId: null,
+    authorityId: null,
     migration: null,
     deprecation: null,
   };
+}
+
+function lifecyclePayload(): Record<string, unknown> {
+  return {
+    schemaVersion: "1.0",
+    documentType: "research-observatory-domain-lifecycle-transition",
+    profileVersion: "1.0.0",
+    subjectKind: "project",
+    aggregateId: "018f47f2-4c75-7b7f-8000-000000000001",
+    fromState: "draft",
+    toState: "active",
+    command: "activate",
+    transitionKind: "normal",
+    priorRevision: 0,
+    revision: 1,
+    actor: { actorType: "human", actorId: "researcher" },
+    reason: { reasonCode: "approved", detail: null },
+    occurredAt: "2026-08-28T12:00:00.000Z",
+    idempotencyKey: "transition-1",
+  };
+}
+
+function eventEnvelope(eventType = "domain.lifecycle-transition", eventVersion = "1.0.0"): Record<string, unknown> {
+  return { schemaVersion: "1.0", documentType: "research-observatory-domain-event-envelope", eventType, eventVersion, payload: lifecyclePayload() };
 }
 
 describe("portable domain compatibility policy", () => {
@@ -54,6 +85,8 @@ describe("portable domain compatibility policy", () => {
       ["domain-compatibility.v1.json", DOMAIN_COMPATIBILITY_POLICY_SHA256],
       ["fixtures/domain-contract-release.prior.v0.1.json", PRIOR_DOMAIN_RELEASE_SHA256],
       ["fixtures/domain-contract-release.current.v1.json", CURRENT_DOMAIN_RELEASE_SHA256],
+      ["domain-compatibility-authorities.v1.json", DOMAIN_COMPATIBILITY_AUTHORITY_SHA256],
+      ["domain-event-catalog.v1.json", DOMAIN_EVENT_CATALOG_SHA256],
     ] as const;
     for (const [path, expected] of paths) {
       expect(createHash("sha256").update(readFileSync(fileURLToPath(new URL(path, root)))).digest("hex")).toBe(expected);
@@ -87,22 +120,70 @@ describe("portable domain compatibility policy", () => {
     deprecated.deprecation = { since: "1.1.0", removalNotBefore: "1.2.0", replacement: "domain.new-field" };
     expect(assessDomainChange(deprecated)).toMatchObject({ classification: "deprecation", allowed: true });
 
-    const breaking = proposal("change-identity-format", "1.0.0", "2.0.0");
+    const breaking = proposal("change-identity-format", "0.1.0", "1.0.0");
     expect(assessDomainChange(breaking).errors).toEqual([
       "compatibility-breaking-adr-required",
       "compatibility-breaking-migration-required",
+      "compatibility-breaking-authority-required",
     ]);
     breaking.adrId = "ADR-0013";
+    breaking.authorityId = "authority.uuidv4-project-to-uuidv7-domain";
     breaking.migration = {
       id: "legacy-project-uuidv4-to-canonical-uuidv7",
-      fromVersion: "1.0.0",
-      toVersion: "2.0.0",
+      fromVersion: "0.1.0",
+      toVersion: "1.0.0",
       strategy: "reader-bridge",
       sourceRetention: "preserved",
       testFixture: "packages/contracts/project/fixtures/valid-project-manifest.v1.json",
     };
     expect(assessDomainChange(breaking)).toMatchObject({ classification: "breaking", allowed: true, errors: [] });
+    const fabricatedAdr = structuredClone(breaking);
+    fabricatedAdr.adrId = "ADR-9999";
+    expect(assessDomainChange(fabricatedAdr).errors).toContain("compatibility-breaking-authority-mismatch");
+    const absentFixture = structuredClone(breaking);
+    (absentFixture.migration as Record<string, unknown>).testFixture = "fixtures/does-not-exist.json";
+    expect(assessDomainChange(absentFixture).errors).toContain("compatibility-breaking-authority-mismatch");
+    const unknownAuthority = structuredClone(breaking);
+    unknownAuthority.authorityId = "authority.fabricated";
+    expect(assessDomainChange(unknownAuthority).errors).toContain("compatibility-breaking-authority-unknown");
     expect(assessDomainChange(proposal("remove-field")).errors).toContain("compatibility-breaking-major-required");
+  });
+
+  it("rejects substituted authority evidence, status, and scope", () => {
+    expect(breakingAuthorityCatalogErrors(breakingAuthorityCatalog())).toEqual([]);
+    const wrongHash = structuredClone(breakingAuthorityCatalog()) as Record<string, any>;
+    wrongHash.authorities[0].adr.sha256 = "0".repeat(64);
+    expect(breakingAuthorityCatalogErrors(wrongHash)).toEqual(["compatibility-breaking-authority-evidence-mismatch"]);
+    const wrongStatus = structuredClone(breakingAuthorityCatalog()) as Record<string, any>;
+    wrongStatus.authorities[0].adr.status = "Proposed";
+    expect(breakingAuthorityCatalogErrors(wrongStatus)).toEqual(["compatibility-breaking-authority-status-not-accepted"]);
+    const wrongScope = structuredClone(breakingAuthorityCatalog()) as Record<string, any>;
+    wrongScope.authorities[0].applicableTask = "CAP-99.S99.T99";
+    expect(breakingAuthorityCatalogErrors(wrongScope)).toEqual(["compatibility-breaking-authority-scope-mismatch"]);
+  });
+
+  it("enforces the event catalog and emits exactly one content-free audit fact", () => {
+    const audit: unknown[] = [];
+    expect(assessDomainEvent(eventEnvelope(), (fact) => audit.push(fact))).toMatchObject({ allowed: true, auditFact: null });
+    expect(audit).toHaveLength(0);
+
+    const denied = assessDomainEvent(eventEnvelope("private.manuscript-secret"), (fact) => audit.push(fact));
+    expect(denied).toMatchObject({ allowed: false, errors: ["compatibility-unknown-event"] });
+    expect(audit).toHaveLength(1);
+    expect(JSON.stringify(audit[0])).not.toContain("private");
+    expect(Object.isFrozen(audit[0])).toBe(true);
+
+    const unknownField = eventEnvelope();
+    (unknownField.payload as Record<string, unknown>).privateText = "unpublished manuscript";
+    expect(assessDomainEvent(unknownField, (fact) => audit.push(fact)).errors).toEqual(["compatibility-event-payload-unknown-field"]);
+    expect(audit).toHaveLength(1);
+
+    expect(assessDomainEvent(eventEnvelope("domain.lifecycle-transition", "2.0.0"), (fact) => audit.push(fact)).errors)
+      .toEqual(["compatibility-event-version-unsupported"]);
+    expect(audit).toHaveLength(2);
+    expect(() => assessDomainEvent(eventEnvelope("domain.unknown"), () => { throw new Error("offline"); }))
+      .toThrowError(new DomainCompatibilityProblem(["compatibility-audit-publication-failed"]));
+    expect((domainEventCatalog().events as ReadonlyArray<unknown>)).toHaveLength(2);
   });
 
   it("selects the highest exact common contract and event versions independent of role order", () => {
