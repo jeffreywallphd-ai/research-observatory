@@ -109,7 +109,7 @@ const adrText = adrBytes.toString("utf8");
 assert(/^status: Accepted$/m.test(adrText) && adrText.includes(`decision_scope: ${expectedScope}`) && adrText.includes("CAP-03.S01.T03"), "ADR status and scope");
 const adrIndex = JSON.parse(readFileSync(resolve(repo, "docs/adr/index.json"), "utf8"));
 const indexedAdr = adrIndex.records.find((item) => item.id === "ADR-0013");
-assert(indexedAdr?.status === "Accepted" && indexedAdr.path === acceptedAuthority.adr.path && JSON.stringify(indexedAdr.linkedTasks) === JSON.stringify(["CAP-03.S01.T01"]), "ADR index authority");
+assert(indexedAdr?.status === "Accepted" && indexedAdr.path === acceptedAuthority.adr.path && JSON.stringify(indexedAdr.linkedTasks) === JSON.stringify(["CAP-03.S01.T01", "CAP-03.S01.T03"]), "ADR index authority");
 const authorityMigration = acceptedAuthority.migration;
 assert(authorityMigration.id === bridge.id && authorityMigration.strategy === bridge.strategy && authorityMigration.sourceRetention === bridge.sourceRetention, "authority migration");
 assert(authorityMigration.fixturePath === bridge.testFixture, "authority fixture path");

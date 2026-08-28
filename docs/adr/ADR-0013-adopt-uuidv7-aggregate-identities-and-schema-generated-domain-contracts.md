@@ -7,6 +7,7 @@ deciders:
   - W1 repository-owner pre-Wave approval at 594e63be501711d67d17a4aef176bb9b6a8748be
 linked_tasks:
   - CAP-03.S01.T01
+  - CAP-03.S01.T03
 decision_scope: Portable aggregate and revision identity, UUID minting authority, common scholarly value objects, and deterministic Python/TypeScript generation from the core domain schema.
 affected_paths:
   - packages/contracts/domain/**
@@ -78,6 +79,15 @@ by ADR-0012. It is not silently reinterpreted as UUIDv7. CAP-03.S01.T03 must
 publish the compatible bridge or migration before a persisted canonical
 aggregate relies on that legacy project identity.
 
+CAP-03.S01.T03 realizes that existing compatibility duty through a generated,
+hash-bound accepted-authority catalog. Breaking-change assessment accepts only
+the catalog entry whose ADR status/scope, version endpoints, source-retaining
+bridge fixture, and compatibility test bytes were verified by generation. The
+same generated boundary uses a schema-hash-bound event catalog: unknown event
+types or versions fail before dispatch and require exactly one bounded,
+content-free audit-publication callback. Callback failure remains a denial;
+durable audit persistence belongs to the later provenance/audit slice.
+
 ## Consequences
 
 Portable identities no longer encode a machine path, user identity, provider,
@@ -110,3 +120,4 @@ identity and observed alternative.
 ## Task links
 
 - `CAP-03.S01.T01`
+- `CAP-03.S01.T03`

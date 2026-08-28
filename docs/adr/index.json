@@ -123,7 +123,8 @@
       "title": "Adopt UUIDv7 aggregate identities and schema-generated domain contracts",
       "status": "Accepted",
       "linkedTasks": [
-        "CAP-03.S01.T01"
+        "CAP-03.S01.T01",
+        "CAP-03.S01.T03"
       ]
     },
     {
