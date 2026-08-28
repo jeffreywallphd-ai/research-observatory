@@ -222,6 +222,35 @@ class DomainLifecycleContractTests(unittest.TestCase):
         self.assertEqual("in-progress", second["toState"])
         self.assertEqual(2, second["revision"])
 
+    def test_maximum_safe_revision_is_serializable_and_overflow_never_persists(self) -> None:
+        maximum = 9_007_199_254_740_991
+        emitted = prepare_lifecycle_transition(
+            snapshot("project", "active", maximum - 1),
+            command("project", "archive", maximum - 1),
+        )
+        self.assertEqual(maximum, emitted["revision"])
+        serialized = json.loads(lifecycle_transition_json(emitted))
+        self.assertEqual(maximum, serialized["revision"])
+
+        schema = json.loads((self.profile_root / "domain-lifecycle.schema.json").read_bytes())
+        validator = Draft202012Validator(
+            {
+                "$schema": schema["$schema"],
+                "$defs": schema["$defs"],
+                "$ref": "#/$defs/LifecycleTransition",
+            }
+        )
+        self.assertEqual([], list(validator.iter_errors(serialized)))
+
+        repository = RecordingRepository()
+        restarted = snapshot("project", str(emitted["toState"]), maximum)
+        requested = command("project", "reopen", maximum)
+        self.assertEqual(("lifecycle-revision-exhausted",), lifecycle_transition_errors(restarted, requested))
+        with self.assertRaises(DomainLifecycleProblem) as exhausted:
+            repository.apply(restarted, requested)
+        self.assertEqual("lifecycle-revision-exhausted", exhausted.exception.code)
+        self.assertEqual([], repository.writes)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -166,6 +166,10 @@ stateDiagram-v2
   meanings are never repurposed.
 - A revision conflict returns `lifecycle-revision-conflict`; the caller must reload
   current state and make a new authorized judgment rather than overwriting it.
+- A snapshot already at the maximum portable safe revision returns
+  `lifecycle-revision-exhausted` before persistence. The contract is not widened
+  and no runtime may emit a revision that its schema or another runtime cannot
+  represent exactly.
 - Transition creation is deterministic. Persistence, provenance/outbox emission,
   and aggregate-specific invariant checks compose around this validation boundary
   in their owning slices.
