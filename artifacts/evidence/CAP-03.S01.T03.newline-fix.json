@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S01.T03",
+  "commit": "9a464e4c190dce1ec328644e15ece192f865e4a3",
+  "baseCommit": "abdc90764519dc931a17aba550d60c40dcdcea15",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S01.T03.review-fix.json",
+    "sha256": "a3fd90778bd09a43830a26039eec45992060c254aa1a8db6b7a2d1b98847d7db",
+    "commit": "abdc90764519dc931a17aba550d60c40dcdcea15",
+    "reason": "CAP-03.S01 integration reproduced checkout-newline-sensitive authority evidence hashing after R02 approval. This strict-descendant record preserves R01/R02 and binds the focused canonical-text portability remediation plus its clean-checkout regression evidence."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S01.T03.review-R02.json",
+    "artifacts/evidence/CAP-03.S01.T03.review-fix.json",
+    "docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md",
+    "docs/architecture/domain-compatibility.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/domain/compatibility.generated.ts",
+    "packages/contracts/domain/compatibility.test.ts",
+    "packages/contracts/domain/domain-compatibility-authorities.v1.json",
+    "packages/contracts/domain/generate-compatibility.mjs",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/CAP-07/CAP-07.S01.html",
+    "planning/review-site/CAP-07/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/domain_compatibility.py"
+  ],
+  "checks": [
+    {
+      "command": "git switch main; git switch codex/w1-windows-local-runtime; node packages/contracts/domain/generate-compatibility.mjs --check",
+      "exitCode": 0,
+      "result": "A clean branch round trip reproduced Git's Windows checkout conversion and the compatibility generator remained current. The exact R02 candidate had failed this check before remediation."
+    },
+    {
+      "command": "node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; packages\\contracts\\node_modules\\.bin\\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run",
+      "exitCode": 0,
+      "result": "All generators were current, strict TypeScript compilation passed, and all 34 contract tests passed. The compatibility suite now proves that LF and simulated CRLF checkouts yield the same governed-text evidence digest while semantic drift remains detectable."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 39 portable-contract and 38 Core service tests passed. A final focused replay also passed all eight TypeScript and eight Python compatibility cases after regeneration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All 38 affected foundation and packaging tests passed against exact candidate 9a464e4c190dce1ec328644e15ece192f865e4a3, with one expected Windows symlink skip. The real PyInstaller sidecar included the regenerated compatibility module."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-newline-final-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 154 governed Python files. Report SHA-256: aaf47db10236e54e7a688188c2664d1a8226994a50a96a87ae163aa7642f6cfa."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base abdc90764519dc931a17aba550d60c40dcdcea15 --head 9a464e4c190dce1ec328644e15ece192f865e4a3",
+      "exitCode": 0,
+      "result": "The architecture contract passed. The 20-record ADR registry inspected 18 changed paths and accepted the append-only ADR-0013 clarification that governed text uses canonical UTF-8 LF hashing while binary fixture authority remains raw-byte-bound."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-newline-final-build.json",
+      "exitCode": 0,
+      "result": "Build provenance passed for exact candidate 9a464e4c190dce1ec328644e15ece192f865e4a3 with only the protected W1.A04.B00 witness dirty. Report SHA-256: 1711072d382b077a0c74e39e8f62526c1dd1cb1303a69482aff7bcc09c1b47f5."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog, generated views, approved W1 packet, and patch hygiene passed. The protected W1.A04.B00 witness remained byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Accepted breaking-change authority remains exact and hash-bound, but governed textual evidence is now canonicalized to UTF-8 LF before hashing so a Git LF/CRLF checkout conversion cannot fabricate authority drift.",
+        "Binary migration fixtures remain bound to raw bytes. The generator proves LF/CRLF digest parity, verifies the accepted ADR, migration fixture, compatibility tests, schemas, and catalogs, and rejects semantic substitutions.",
+        "A clean main-to-codex branch checkout round trip now passes generator currency on Windows where the R02 candidate failed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All 34 TypeScript contract tests, 39 Python contract tests, 38 service tests, and 38 affected foundation/packaging tests pass, plus focused eight-case parity replays in both generated runtimes.",
+        "The compatibility test reads its own governed source and proves canonical LF and simulated CRLF representations yield the catalog digest while semantic content changes still fail generation and validation."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The generator normalizes only governed textual authority inputs and generated-module comparisons. It preserves raw-byte hashing for binary fixtures and does not weaken ADR status, scope, task-link, version, strategy, source-retention, event-catalog, or audit controls.",
+        "Architecture and planning documentation record the portable hashing rule. ADR-0013 is append-only clarified consistently with its accepted decision; no persistence schema, network route, dependency, UI, or unrelated product behavior changed.",
+        "The formal task reopen and downstream CAP-07 block are retained in backlog history until this task and CAP-03.S01 integration are independently approved."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Slice integration exposed a portability failure in shared generated compatibility controls: raw text bytes and exact generated-module bytes changed under Windows Git newline conversion even though governed semantics did not. The focused remediation changes hashing and generator comparison behavior, so verification covers clean-checkout reproduction, canonicalization regression, all contract/service tests, a real frozen sidecar, Python quality, architecture/ADR consistency, provenance, planning controls, and patch hygiene. Existing authority and audit findings were already closed in R02 and are preserved rather than re-audited wholesale.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "service:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:unit"
+    ],
+    "deferred": [
+      "The independently reviewed historical 72-failure/16-error governance and live-boundary fixture baseline is outside this newline remediation. Its W1-exit reconciliation remains mandatory and is not represented as passing.",
+      "Durable audit persistence remains assigned to CAP-03.S03; this change preserves the already-approved typed content-free audit boundary without claiming storage.",
+      "CAP-03.S01 integrated qualification and independent slice review immediately follow R03 approval; cross-capability full qualification remains mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "rootCauseAnalysis": "The original authority catalog treated raw filesystem bytes as the identity of governed textual evidence and compared generated textual output byte-for-byte. On Windows, Git may materialize the same committed text with CRLF instead of LF, so a branch checkout changed the local byte representation, invalidated the compatibility-test digest, and made generated output appear stale without any semantic change. Earlier task checks ran before a branch round trip and therefore did not exercise this platform boundary. R03 defines canonical UTF-8 LF hashing for governed text, retains raw hashing for binary fixtures, normalizes generated-text comparison, adds an LF/CRLF regression, and proves the fix after a clean branch round trip.",
+    "note": "Independently review only the strict-descendant abdc90764519dc931a17aba550d60c40dcdcea15..9a464e4c190dce1ec328644e15ece192f865e4a3 portability change. Reproduce generator currency after a Windows checkout, verify LF/CRLF canonical hash parity and semantic-drift denial, confirm raw binary fixture hashes remain unchanged, and confirm the append-only ADR/documentation clarification matches executable behavior. Preserve the closed R01 authority/audit findings unless this increment regresses them."
+  }
+}
