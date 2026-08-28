@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0c7a52492348c5f8e0c029e51f403abb4d77953691d6487593964d4bdb24afca
+source_sha256: ba25fb206e80ad71775607a79cfe04f3c504cea5aa0fd5f55af114cbbc6b0fea
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3689,7 +3689,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T01 - Model the versioned research intent contract
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3716,6 +3716,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S02.T01.json` at `035a1e833ae0628d48bf1d29d31af73260a6adda`
+- `artifacts/evidence/CAP-03.S02.T01.review-fix.json` at `deb3430ec489afb07f87b003e5aee8a7402b34b6`
 
 ##### Review history — CAP-03.S02.T01
 
@@ -3751,7 +3752,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `ffcef80b5e8718d5ec136b1a9a2a2a08b2d69b0b68e42fa1ecad8530b7c68d10`
+
+- Candidate / base / branch: `deb3430ec489afb07f87b003e5aee8a7402b34b6` / `035a1e833ae0628d48bf1d29d31af73260a6adda` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T19:05:23+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T01.review-fix.json` / `2bf400b2e25838443a097baf044da1a083b1c051e3e17fc8c45333e047d6562d` / `deb3430ec489afb07f87b003e5aee8a7402b34b6`
+- Acceptance-criteria SHA-256: `9f31790ed11507e8efe2f2a6456d612793c67f178b7995080721f349848a6dad`
+- Verification-selection SHA-256: `22b055158429ce1c98700f8074b751c093bf17655ccbe945973f9459671d0681`
+- Changed paths: `artifacts/evidence/CAP-03.S02.T01.json`, `artifacts/evidence/CAP-03.S02.T01.review-R01.json`, `docs/adr/ADR-0023-use-mode-specific-researcher-controlled-intent-policy-vocabulary.md`, `docs/architecture/research-intent-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/intent/generate.mjs`, `packages/contracts/intent/generated.ts`, `packages/contracts/intent/research-intent.schema.json`, `packages/contracts/intent/research-intent.template.py.txt`, `packages/contracts/intent/research-intent.template.ts.txt`, `packages/contracts/intent/research-intent.test.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/CAP-03/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/research_intent_contracts.py`, `tests/contracts/test_research_intent_contracts.py`
+- Selected checks: `workspace-node packages/contracts/intent/generate.mjs --check; workspace-node packages/contracts/node_modules/typescript/bin/tsc -p packages/contracts/tsconfig.json --noEmit; workspace-node packages/contracts/node_modules/vitest/vitest.mjs run (cwd packages/contracts)`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py`, `.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.foundation.test_adr_check`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S02.T01-quality-deb3430.json`, `.venv\Scripts\python.exe tools/adr_check.py --repo . --base 035a1e833ae0628d48bf1d29d31af73260a6adda --head deb3430ec489afb07f87b003e5aee8a7402b34b6; .venv\Scripts\python.exe tools/architecture_check.py --repo .`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S02.T01-build-manifest-deb3430.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; .venv\Scripts\python.exe tools/repository_structure_check.py --repo .; git diff --check 035a1e833ae0628d48bf1d29d31af73260a6adda..deb3430ec489afb07f87b003e5aee8a7402b34b6`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile service --affected-base 035a1e833ae0628d48bf1d29d31af73260a6adda --affected-head deb3430ec489afb07f87b003e5aee8a7402b34b6 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S02.T01-affected-selection-deb3430.json`
+- Deferred checks: `The exact complete service profile previously run at R01 candidate 035a1e833ae0628d48bf1d29d31af73260a6adda remains FAIL only on the known historical governance/recovery foundation-unit baseline (71 failures/16 errors), which the independent R01 reviewer confirmed contains no task-owned contract, service, packaging, ADR, architecture, quality, or build defect. Under AGENTS.md remediation review replays the prior finding plus the incremental risk boundary rather than restarting that unrelated audit; complete reconciliation remains mandatory at W1 exit.`, `Persistence, migration, editor/UI, change-reason capture, active-intent selection, service-boundary enforcement, workflow-profile navigation, and provenance-ledger storage remain later approved CAP-03.S02/CAP-03.S03 tasks and are not claimed here.`, `CAP-03.S02 integrated end-to-end and adversarial slice review follows T02/T03; complete cross-capability security, accessibility, performance, cancellation, restart, recovery, packaging, and release qualification remain mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: CAP-03.S02.T01-R01-F01 demonstrated that structurally valid revisions could contradict immutable researcher authority, local-only egress, and mode-specific stopping. Because the remediation changes a public generated cross-language contract and untrusted-input validation, verification replays each R01 exploit in both runtimes, proves valid level/egress/seven-mode boundaries, runs all portable contracts plus service/real packaging/affected foundation boundaries, and checks generation, quality, architecture, ADR, build, planning, and witness integrity. No dependency, database, migration, UI, network, provider, credential, or external-service behavior changed.
+- Prior round / replayed open findings: `R01` / `CAP-03.S02.T01-R01-F01`
+- Root-cause escalation: The initial schema bounded action spelling but not authority meaning, while generated semantic checks treated the mayAcceptIntent/mayChangeScope flags, required gates, egress destinations, and stopping conditions as independent fields. The stopping validator used any-match intersection, so one lawful condition masked an incompatible condition. R02 closes those relationships with one canonical action vocabulary and level rank, one egress destination/gate invariant, and one required-plus-subset stopping rule, implemented identically in generated TypeScript and Python and covered by parity tests.
 
 **Current latest-review projection:** `changes-requested` by codex-independent at `2026-08-28T18:54:35+00:00`
 

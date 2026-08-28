@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 0c7a52492348c5f8e0c029e51f403abb4d77953691d6487593964d4bdb24afca
+source_sha256: ba25fb206e80ad71775607a79cfe04f3c504cea5aa0fd5f55af114cbbc6b0fea
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 270 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 48 |
 | `DEFERRED` | 36 |
 
@@ -356,7 +356,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
-| `CAP-03.S02.T01` | `append-only v1` | 1 | `-` | changes-requested / codex-independent | `CAP-03.S02.T01-R01-F01` |
+| `CAP-03.S02.T01` | `append-only v1` | 1 | `R02` | changes-requested / codex-independent | `CAP-03.S02.T01-R01-F01` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -424,4 +424,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S02.T01` Model the versioned research intent contract | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S02.T01` Model the versioned research intent contract | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
