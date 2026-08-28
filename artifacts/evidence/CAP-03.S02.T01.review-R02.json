@@ -1,0 +1,17 @@
+{
+  "task_id": "CAP-03.S02.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "deb3430ec489afb07f87b003e5aee8a7402b34b6",
+  "submission_record_commit": "3a7fec4e2c300129896e9f9146f099a1764704ac",
+  "reviewer": "codex-independent",
+  "result": "approved",
+  "notes": "Focused remediation review replayed CAP-03.S02.T01-R01-F01 and the incremental generated-contract boundary. The exact strict-descendant candidate now uses a closed non-consequential action vocabulary, enforces action/autonomy-level ordering, keeps intent acceptance and scope changes outside machine authority, reconciles local-only and approved egress with destination and human-gate state, and requires every stopping condition to belong to the selected mode while retaining a mode-required condition. Resource-budget is permitted only as a secondary cross-mode bound. All seven lawful mode sets and every autonomy-level boundary pass in equivalent generated TypeScript and Python runtimes. Generator/schema parity, immutable ownership, governing-reference behavior, append-only R01 history, and persistence/UI/enforcement/provenance nonclaims remain intact. No blocking finding remains.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S02.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "At exact candidate deb3430ec489afb07f87b003e5aee8a7402b34b6, the original accept-intent, change-scope, and external-egress action strings are rejected by the closed schema vocabulary in both runtimes; mixed systematic/technical stopping returns stopping-rule-matches-epistemic-mode; local-only destination or external-egress-gate contradictions deny; and approved non-local egress requires both an opaque destination and external-egress human gate. Independent replay passed generator currency, strict TypeScript compilation, 14/14 TypeScript intent tests and 12/12 Python intent tests. Those suites cover human-only, suggest, prepare-reversible, and execute-reversible action ceilings; all seven mode-required condition sets with resource-budget as the only universal secondary condition; missing/contradictory egress gates; valid approved egress; dangerous inputs; and immutable output parity."
+    }
+  ]
+}
