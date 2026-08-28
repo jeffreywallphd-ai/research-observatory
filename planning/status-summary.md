@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3e550d99133c92da2cfe73139bd121a32ae2edcd8751312246949beb77231504
+source_sha256: 2649c360aeb839ffd1ec81fb37792af91a5fbd664de97288de6b5129120bb72f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,8 +52,9 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 272 |
-| `READY` | 1 |
-| `DONE` | 47 |
+| `IN_PROGRESS` | 1 |
+| `BLOCKED` | 1 |
+| `DONE` | 46 |
 | `DEFERRED` | 36 |
 
 ### Wave amendment lifecycle
@@ -363,7 +364,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 8/15 | 28/48 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 8/15 | 27/48 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -382,11 +383,11 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-delivery-foundation (`CAP-00`) — Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
-| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 3/20 | - |
+| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 2/20 | `CAP-03.S01.T03` |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
-| CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 0/5 | 0/15 | - |
+| CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 0/5 | 0/15 | `CAP-07.S01.T01` |
 | CAP-evidence-verification (`CAP-08`) — Evidence schemas, extraction, verification, and adjudication | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-scholarly-graph-synthesis (`CAP-09`) — Scholarly graph, comparison sets, synthesis, and reproducibility | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-novelty-opportunities (`CAP-10`) — Novelty auditing, research opportunities, and plural research modes | `NONE` | `PENDING` | 0/7 | 0/21 | - |
@@ -419,4 +420,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-03.S01.T03` Publish versioning and compatibility policy for domain APIs | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-07.S01.T01` Define model task interfaces and result envelopes | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
