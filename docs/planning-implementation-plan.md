@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 59bc82d42f611aed55fee58e24d9873b916e83f28acff48a4dffae6e7c19301b
+source_sha256: 0c7a52492348c5f8e0c029e51f403abb4d77953691d6487593964d4bdb24afca
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3681,7 +3681,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Every project declares its scholarly purpose, scope, evidence rules, autonomy, and stopping logic before consequential automation.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3689,13 +3689,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T01 - Model the versioned research intent contract
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-01.S01.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / codex-independent (`changes-requested`)
 
 **Objective:** Schema for research question, contribution intent, epistemic mode, unit/level, source scope, evidence types, novelty standard, autonomy, and stopping rule.
 
@@ -3719,9 +3719,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `183e3a19c4860c7bbdd2bffa4e453cb2cf0fa1fb2fa69c4e60f88a8b7175e44c`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `183e3a19c4860c7bbdd2bffa4e453cb2cf0fa1fb2fa69c4e60f88a8b7175e44c`
 
 - Candidate / base / branch: `035a1e833ae0628d48bf1d29d31af73260a6adda` / `1bee927d2e96c6be8fa88fe32b66e92d94c1c390` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T18:49:38+00:00`
@@ -3735,11 +3737,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / codex-independent / `2026-08-28T18:54:35+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T01.review-R01.json` / `0614e2d049787676a38e1a6b57beddb115b8ce50184bb8ba746eed008ad717da`
 
-**Currently open findings:** -
+**Review notes:** The exact candidate and submission binding, seven epistemic mode branches, draft unknown/not-applicable behavior, accepted completeness, compact governing-reference projection, immediate structural lineage, canonical identities, deep immutable ownership, dangerous-key/unknown-field/calendar denial, generated TypeScript/Python parity, sidecar inclusion, ADR-0022/ADR-0023 authority, and strict persistence/UI/enforcement/provenance nonclaims are otherwise supported. Independent replay passed generator currency, strict TypeScript compilation, 12/12 TypeScript intent tests, 10/10 Python intent tests, and 6/6 packaging tests with one expected Windows-token symlink skip. The supplied service-profile report's 71 failures and 16 errors are confined to the previously disclosed historical governance/recovery fixture baseline; no task-owned intent, contract, Core service, package, ADR, build, architecture, or quality failure appears there. One consolidated high-severity authority and policy-closure finding remains in both generated runtimes.
+
+**Findings opened:**
+
+- `CAP-03.S02.T01-R01-F01` `high` blocking=`True` criterion=`1` — Accepted intent permits contradictory machine authority, local-only egress actions, and cross-mode stopping conditions; reproduce: At exact candidate 035a1e833ae0628d48bf1d29d31af73260a6adda, load valid-systematic-intent.v1.json and call generated Python research_intent_revision_errors (generated TypeScript researchIntentRevisionErrors has equivalent logic). Setting autonomy.allowedActions to ['accept-intent','change-scope'] returns (); setting it to ['external-egress'] while egressPolicy remains local-only also returns (); and setting systematic stoppingRule.conditions to ['coverage-threshold','benchmark-complete'] returns (). The validator checks mayAcceptIntent/mayChangeScope and required gates but never reconciles allowedActions with those immutable authority denials or local-only egress. stoppingMatches uses expected.some/has, so one permitted condition masks any incompatible condition. This contradicts ADR-0023's guarantees that machine authority can never accept intent or change scope, local-only egress has no external destination authority, and stopping conditions are typed by epistemic mode. A downstream consumer can therefore receive a valid accepted governing revision whose declared machine actions and stopping policy conflict with its supposedly authoritative safety fields.; remediate: In a strict-descendant R02 candidate, define a bounded canonical action vocabulary or reserved-action denial that makes allowedActions consistent with autonomy level, mayAcceptIntent=false, mayChangeScope=false, required human gates, and egressPolicy. At minimum, reject any action that grants intent acceptance or scope mutation, and reject external-egress action authority under local-only mode; if approved egress actions are represented, require the external-egress human gate and a nonempty approved destination set. Change mode-specific stopping validation so every declared condition belongs to the selected mode's allowed set (while retaining the required minimum condition semantics), rather than accepting a mixed set when any one condition matches. Generate identical Python/TypeScript behavior and add parity tests for reserved accept/scope actions, local-only egress action, missing egress gate, mixed-mode stopping, all seven lawful condition sets, and valid boundary cases. Preserve R01 append-only and do not claim runtime enforcement or persistence.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by codex-independent at `2026-08-28T18:54:35+00:00`
+
+**Latest notes:** The exact candidate and submission binding, seven epistemic mode branches, draft unknown/not-applicable behavior, accepted completeness, compact governing-reference projection, immediate structural lineage, canonical identities, deep immutable ownership, dangerous-key/unknown-field/calendar denial, generated TypeScript/Python parity, sidecar inclusion, ADR-0022/ADR-0023 authority, and strict persistence/UI/enforcement/provenance nonclaims are otherwise supported. Independent replay passed generator currency, strict TypeScript compilation, 12/12 TypeScript intent tests, 10/10 Python intent tests, and 6/6 packaging tests with one expected Windows-token symlink skip. The supplied service-profile report's 71 failures and 16 errors are confined to the previously disclosed historical governance/recovery fixture baseline; no task-owned intent, contract, Core service, package, ADR, build, architecture, or quality failure appears there. One consolidated high-severity authority and policy-closure finding remains in both generated runtimes.
+
+**Currently open findings:** `CAP-03.S02.T01-R01-F01`
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
