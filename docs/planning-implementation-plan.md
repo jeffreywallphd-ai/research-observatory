@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ac2056daeb67b2b6323a20909cae9ea5cd08a9bd18f98471cd924304a4e07cb1
+source_sha256: 9458cd157deab2a7a6ae42254f86d084286b565007e60efa5258dcb56cbc6a48
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3436,15 +3436,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Latest notes:** Second remediation independently closes relative-path, Python immutable-base, and TypeScript prototype-copy findings; all original controls remain passing.
 
-#### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
+#### - [x] CAP-03.S01.T02 - Define aggregate state machines and invariants
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T01`
 
-**Owner / review:** codex / nash-independent-domain-lifecycle-reviewer (`changes-requested`)
+**Owner / review:** codex / nash-independent-domain-lifecycle-reviewer (`approved`)
 
 **Objective:** Explicit lifecycle diagrams and validators for projects, corpus items, documents, evidence records, decisions, tasks, dossiers, and exports.
 
@@ -3469,7 +3469,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S01.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -3501,7 +3501,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `19fe3060c12fa5fa1e3c5b5764045c162f24eeb7e28499a9b59365014af35e61`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `19fe3060c12fa5fa1e3c5b5764045c162f24eeb7e28499a9b59365014af35e61`
 
 - Candidate / base / branch: `bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e` / `0e98f656857855e0162833d5a3973dca30019bae` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T14:17:58+00:00`
@@ -3515,15 +3517,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-03.S01.T02-R01-F01`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by nash-independent-domain-lifecycle-reviewer at `2026-08-28T14:12:07+00:00`
+**Disposition / reviewer / time:** `approved` / nash-independent-domain-lifecycle-reviewer / `2026-08-28T14:20:04+00:00`
 
-**Latest notes:** The exact schema/profile hashes, generated Python and TypeScript parity, deterministic transition selection, strict hostile-input validation, actor/reason retention, immutable owned output, documented terminal/reopen rules, content-free failure codes, packaging inventory, and ordinary restart paths are supported by the frozen evidence and focused replay. One blocking safe-revision boundary defect remains: both generated runtimes accept the schema-maximum current revision and persist a transition whose revision exceeds the contract and JavaScript safe-integer ceiling.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S01.T02.review-R02.json` / `68335140c9f4208a67a53cc6d503b7f72b070936a83ba289c7d72c8f82bb4df1`
 
-**Currently open findings:** `CAP-03.S01.T02-R01-F01`
+**Review notes:** Focused R02 replay closes the sole R01 overflow finding. Both generated runtimes now emit and canonically serialize the exact safe maximum from maximum-minus-one, while a restarted maximum-revision snapshot returns only lifecycle-revision-exhausted and invokes persistence zero times. Python validates the maximum transition against the unchanged Draft 2020-12 schema; TypeScript and Python use exact stable-code parity. Generator currency, all 26 TypeScript contract tests, and the 10 focused Python lifecycle contract/service tests pass. The schema and lifecycle-profile bytes and hashes remain unchanged, the R01 ledger is append-only, and the strict-descendant evidence supersession is exact.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S01.T02-R01-F01` `fixed` — artifacts/evidence/CAP-03.S01.T02.review-fix.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by nash-independent-domain-lifecycle-reviewer at `2026-08-28T14:20:04+00:00`
+
+**Latest notes:** Focused R02 replay closes the sole R01 overflow finding. Both generated runtimes now emit and canonically serialize the exact safe maximum from maximum-minus-one, while a restarted maximum-revision snapshot returns only lifecycle-revision-exhausted and invokes persistence zero times. Python validates the maximum transition against the unchanged Draft 2020-12 schema; TypeScript and Python use exact stable-code parity. Generator currency, all 26 TypeScript contract tests, and the 10 focused Python lifecycle contract/service tests pass. The schema and lifecycle-profile bytes and hashes remain unchanged, the R01 ledger is append-only, and the strict-descendant evidence supersession is exact.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

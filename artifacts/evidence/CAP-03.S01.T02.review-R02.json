@@ -1,0 +1,17 @@
+{
+  "task_id": "CAP-03.S01.T02",
+  "attempt_id": "R02",
+  "candidate_commit": "bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e",
+  "submission_record_commit": "c6ae059da5af86ef99973201395a43e8b6902afe",
+  "reviewer": "nash-independent-domain-lifecycle-reviewer",
+  "result": "approved",
+  "notes": "Focused R02 replay closes the sole R01 overflow finding. Both generated runtimes now emit and canonically serialize the exact safe maximum from maximum-minus-one, while a restarted maximum-revision snapshot returns only lifecycle-revision-exhausted and invokes persistence zero times. Python validates the maximum transition against the unchanged Draft 2020-12 schema; TypeScript and Python use exact stable-code parity. Generator currency, all 26 TypeScript contract tests, and the 10 focused Python lifecycle contract/service tests pass. The schema and lifecycle-profile bytes and hashes remain unchanged, the R01 ledger is append-only, and the strict-descendant evidence supersession is exact.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S01.T02-R01-F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-03.S01.T02.review-fix.json"
+    }
+  ]
+}
