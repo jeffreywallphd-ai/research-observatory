@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-03.S01",
+  "stateCommit": "6dffc8b97bb410889bd3b0d5692f862eef4abe68",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-03/CAP-03.S01-canonical-identifiers-and-domain-contracts.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "outcome": "The local Windows product now has one portable, generated domain-contract boundary for canonical UUIDv7 aggregate and revision identities, source and scholarly value objects, deterministic aggregate lifecycles, prior-version compatibility, exact breaking-change authority, event denial and audit facts, and desktop-sidecar-server version negotiation. Python and TypeScript consume the same hash-bound schemas, policies, catalogs, fixtures, and generated semantics without importing persistence or UI implementation state.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-03.S01.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S01.T01.review-fix-2.json",
+          "sha256": "4c0dbe6c87484ed4d775061ccde1e1fb435978efc37acf543e915b11e7d6a931"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S01.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S01.T02.review-fix.json",
+          "sha256": "777726f9c94d8e3e7ca2055274b279c2aed930e8e28de10ef3b95d545d6f6508"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S01.T02.review-R02.json",
+          "sha256": "68335140c9f4208a67a53cc6d503b7f72b070936a83ba289c7d72c8f82bb4df1"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S01.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S01.T03.newline-fix.json",
+          "sha256": "fd3981c6b7d74c02889653fd395c56dcf841af822d346985619c0aabe9b93768"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S01.T03.review-R03.json",
+          "sha256": "c71312875ae86df09996841ce8dfe8a3e87e458f325cda38c8a935278607ebca"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; packages\\contracts\\node_modules\\.bin\\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run",
+      "exitCode": 0,
+      "result": "All three domain generators were current, strict TypeScript compilation passed, and all 34 tests across five contract files passed. The union covers canonical identities and source values, disputed alternatives and hostile paths, deterministic lifecycles and revision boundaries, exact prior/current compatibility and negotiation, hash-bound breaking authority, unknown-event denial, content-free audit publication, and LF/CRLF checkout portability."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 39 portable-contract and 38 Core service tests passed. Python behavior matches TypeScript for canonical validation, immutable projections, safe revision arithmetic, illegal-transition denial, restart-stable compatibility, exact negotiation, unknown-event audit facts, hostile-content redaction, and audit callback failure."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All 38 affected foundation and packaging tests passed with one expected Windows symlink-privilege skip. A real PyInstaller 6.21.0/Python 3.14.6 Windows x64 sidecar included all three generated domain modules and retained exact required-module, runtime-inventory, and Pythonless-launch enforcement."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01-slice-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 154 governed Python files. Report SHA-256: 0b9b007bb40195b9f8086bcf31703eca70d998c3b0dfe327ed679779e5730f4a."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; $env:UV_CACHE_DIR='artifacts/tmp/uv-cache'; uv lock --check; git diff --check",
+      "exitCode": 0,
+      "result": "Architecture passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles. All 20 ADR records, the 20-capability/117-slice/359-task backlog, generated views and 150-page review site, approved W1 packet, 69-package lock, and patch hygiene passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01-slice-build.json",
+      "exitCode": 0,
+      "result": "Build provenance passed at exact all-task-approved state 6dffc8b97bb410889bd3b0d5692f862eef4abe68. The version is truthfully dirty only because the separately protected untracked W1.A04.B00 recovery witness remains present and byte-identical. Report SHA-256: 1b672e3022a3ab8e8fe71ca9dcdfcab8cbf999e40d3bd9e72c1af09e00ab4eed."
+    }
+  ],
+  "integratedBehavior": [
+    "The JSON Schema 2020-12 core model distinguishes canonical aggregate and immutable revision identity, observed and canonical labels, disputed alternatives, partial dates, rights, confidence, status, source references, provenance and typed scholarly aggregates. Generated Python and TypeScript reject UUIDv4 identities, path-bearing source references, malformed or non-finite values, false canonical certainty, and mutation of frozen results.",
+    "The lifecycle catalog defines deterministic commands, actor/reason requirements, emitted facts, optimistic revisions, terminal states and explicit reopen rules for projects, corpus items, documents, evidence records, decisions, tasks, dossiers and exports. Both runtimes deny illegal, stale, malformed, maximum-revision and unsafe-integer transitions before returning a persistable transition.",
+    "The compatibility policy freezes current and prior releases, additive/deprecation/breaking rules, exact highest-common negotiation, accepted ADR and reader-bridge authority, and a supported event catalog. Unknown types and unsupported versions deny after exactly one immutable content-free audit callback; unknown payload fields deny before dispatch; audit failure remains fail closed.",
+    "Governed textual authority uses canonical UTF-8 LF hashing so Windows Git checkout conversion cannot fabricate drift, while the migration fixture remains raw-byte-bound. Generation and runtime outputs stay deterministic across branch checkout and process restart without ambient filesystem reads during assessment.",
+    "The Core service and real frozen sidecar consume the generated modules through stable portable interfaces. The slice introduces no persistence schema, renderer route, external provider, hosted infrastructure, secret, network egress, or user-facing experience change."
+  ],
+  "failureAndRecoveryCoverage": [
+    "non-UUIDv7 and malformed identities, embedded absolute or traversal paths, invalid scholarly values, disputed state without alternatives, unknown fields, deep-freeze mutation and substituted schemas/fixtures",
+    "illegal or terminal lifecycle transitions, missing actor/reason, stale revision, maximum safe revision overflow, unsupported command, malformed state and cross-runtime parity drift",
+    "fabricated or unaccepted ADR, unknown authority, absent/substituted migration fixture, wrong authority status/scope/hash, breaking change without exact migration, no common component version and schema-set mismatch",
+    "unknown event type, unsupported event version, unknown payload field, hostile research content, more-than-once audit publication and audit callback failure",
+    "Windows LF/CRLF checkout conversion, semantic text substitution, raw binary fixture byte substitution, stale generated modules, missing frozen module and substituted package inventory"
+  ],
+  "profileSelection": {
+    "contracts": "The complete TypeScript contract package and Python portable-contract suite ran because the slice owns the shared language-neutral schemas, generators, fixtures and compatibility boundary.",
+    "service": "The complete Core service suite ran because generated identities, lifecycles and compatibility assessments are consumed at the trusted service boundary and must remain restart-stable and content-redacted.",
+    "packaging": "A real Windows frozen sidecar build ran because all three generated modules are required production inputs and T03 changed their generated identity.",
+    "securityRights": "Task and slice tests exercised the credible boundary risks: hostile identifiers and paths, false scholarly certainty, forged change authority, unknown events, content redaction, immutable audit facts and fail-closed publication. The complete unrelated security profile is deferred to its owning slices and W1 exit.",
+    "accessibilityUi": "Not applicable to this contract-only slice: no route, component, interaction, theme or user-facing reference changed. Downstream UI must render the explicit disputed and unresolved states under its own approved reference and review.",
+    "performance": "No production persistence loop or query path is introduced; schema validation is limited to boundaries and the test union completes without an observed resource issue. No dedicated domain microbenchmark exists, so no percentile performance qualification is claimed. Any later hot-path use must establish a governed benchmark; complete Windows resource qualification remains mandatory at W1 exit.",
+    "e2eLocal": "No active tests/e2e/test_*.py system command exists. Representative end-to-end local behavior instead ran from the language-neutral source schemas through both generated runtimes, the trusted Core service, and a real frozen Windows sidecar. The absent system-level suite is not represented as passed.",
+    "waveExit": "The complete repository and deployment-profile matrix runs once at W1 exit. The previously disclosed historical governance/live-boundary fixture baseline remains mandatory reconciliation work and is not represented as passing here."
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-02 persistence and later CAP-03 research-workflow slices",
+      "contract": "canonical core schema, UUIDv7 aggregate/revision identity, lifecycle transition results, versioned compatibility releases and immutable generated Python interfaces",
+      "ready": true,
+      "notes": "Consumers can persist returned validated values and transitions without importing generator internals, UI state or database objects. Durable provenance/outbox/audit persistence remains assigned to its approved downstream slices."
+    },
+    {
+      "consumer": "CAP-07 model task, provider and routing contracts",
+      "contract": "portable identity, version, source, audit, compatibility and desktop-sidecar negotiation semantics",
+      "ready": true,
+      "notes": "CAP-07 can define provider/model result envelopes against stable domain identities and explicit version policy. It must not treat model output as authority or bypass later provenance, rights and durable audit controls."
+    },
+    {
+      "consumer": "future hosted adapters and generated clients",
+      "contract": "same language-neutral schema and exact component negotiation boundary",
+      "ready": true,
+      "notes": "Hosted deployment remains future work; this slice introduces no cloud infrastructure and preserves exact-denial behavior when schema sets or versions are incompatible."
+    }
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "No active system-level tests/e2e/test_*.py command or dedicated domain microbenchmark exists; neither is represented as passed. The generated-runtime/Core/frozen-sidecar path establishes this slice boundary, while complete system and Windows resource qualification remain due at W1 exit.",
+      "Durable provenance, outbox and compatibility-audit storage are explicit downstream responsibilities; this slice supplies typed immutable transition/event/audit facts and does not claim persistence.",
+      "The prior full foundation attempt's 72 failures and 16 errors are retained adverse evidence for historical governance/live-boundary fixture assumptions. They are not domain-contract failures, but they must be reconciled before W1 exit qualification.",
+      "One packaging symlink test skips because the current Windows token cannot create file symlinks. Required-module and artifact-inventory denial, real frozen inclusion and Pythonless execution passed; release-authoritative Windows qualification remains due at W1 exit.",
+      "The protected untracked W1.A04.B00 witness intentionally makes exact-state build provenance display dirty. Its SHA-256 remains 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and it must not be staged, rewritten or deleted."
+    ]
+  }
+}
