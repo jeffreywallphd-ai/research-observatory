@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S01.T02",
+  "commit": "0e98f656857855e0162833d5a3973dca30019bae",
+  "baseCommit": "a3d6d4b9d6ad13617118021752d4a097760f8f6c",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/README.md",
+    "docs/architecture/domain-contracts.md",
+    "docs/architecture/domain-lifecycles.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/domain/domain-lifecycle.schema.json",
+    "packages/contracts/domain/domain-lifecycle.v1.json",
+    "packages/contracts/domain/generate-lifecycle.mjs",
+    "packages/contracts/domain/lifecycle.generated.ts",
+    "packages/contracts/domain/lifecycle.test.ts",
+    "packages/contracts/package.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/domain_lifecycles.py",
+    "tests/contracts/test_domain_lifecycles.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_domain_lifecycle_service.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/vitest/vitest.mjs run --root packages/contracts",
+      "exitCode": 0,
+      "result": "Both domain generators were current, strict TypeScript compilation passed, and all 25 tests across four contract test files passed. Every declared transition is replayed in the lifecycle suite, with explicit illegal, stale, mismatched, path-bearing, extra-field, terminal, reopen, ownership, and restart cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 35 Core service tests passed. The lifecycle service cases prove validation completes before the persistence callback, restart composes from the exact emitted revision, and stale or hostile commands return only content-free stable codes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py",
+      "exitCode": 0,
+      "result": "All 30 portable-contract tests passed. The lifecycle tests validate the profile and snapshot/command/transition wire shapes against Draft 2020-12, bind exact source hashes, replay every rule in Python, and verify deterministic immutable output."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected file-symlink skip. The real PyInstaller artifact included research_observatory_core.domain_lifecycles, ran without system Python, and retained strict required-module and artifact-inventory checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T02-quality-0e98f65.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 151 governed Python files. Report SHA-256: 61e956c027eb5cdf8693e86e5c2dde8e15b29ddd9886aa96e204a349078ea09d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "The architecture contract passed with 13 areas, 12 modules, five stable interfaces, and three deployment profiles; the ADR registry passed with 20 indexed records. ADR-0013 and the approved T02 slice plan already assign aggregate-specific lifecycle rules to this task, so no new architecture decision was introduced."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T02-build-manifest-0e98f65.json",
+      "exitCode": 0,
+      "result": "Build provenance passed for exact candidate 0e98f656857855e0162833d5a3973dca30019bae and includes domain-lifecycle.schema.json SHA-256 77d82e9fe47c51c7b4bc70c38c203497a0323081a00eb0a0ac899c5849bcb3a3. The only dirty path is the protected W1.A04.B00 witness. Report SHA-256: 0f93fd5cf47e7fa208bdc400f7e4a210b62c87188b5b9f0b959f464c8b89afea."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The canonical backlog and generated projections passed, the 150-page planning site validated, and the complete immutable W1 packet remains explicitly approved and execution-ready."
+    },
+    {
+      "command": "uv lock --check; git diff --check",
+      "exitCode": 0,
+      "result": "The exact 69-package Python lock resolved without drift and patch hygiene passed. The protected untracked W1.A04.B00 witness remained byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact versioned profile covers projects, corpus items, documents, evidence records, decisions, tasks, dossiers, and exports. Current state plus command selects at most one destination; callers cannot supply the destination.",
+        "Python and TypeScript validators reject malformed, unknown, illegal, stale, or mismatched input before the persistence callback. Successful transitions retain bounded actor, reason, canonical UTC time, idempotency identity, and revision prior+1 in an owned immutable result.",
+        "The architecture guide contains explicit Mermaid diagrams for all eight subjects and documents every terminal state, permitted reopen rule, irreversible terminal, stable error behavior, and restart composition."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All 25 TypeScript contract tests, 30 Python contract tests, and 35 service tests passed at the exact candidate.",
+        "Material boundaries include illegal command before persistence, optimistic revision conflict, unknown state, aggregate mismatch, path-bearing actor, control-character reason, unknown field, immutable ownership, explicit terminal reopen, irreversible deletion, and restart at the emitted revision."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The language-neutral schema now declares profile, snapshot, command, actor/reason, and emitted-transition wire shapes; the exact profile is bound into generated Python and TypeScript with schema/profile SHA-256 constants.",
+        "Documentation, package exports, build-schema inventory, Python quality inventory, sidecar required-module inventory, and its strict packaging test were updated. The transition itself is the portable audit fact carrying actor, reason, time, command, prior/new revision, and idempotency identity.",
+        "No persistence schema or migration changed because this task defines the framework-neutral validation boundary and invokes persistence only through a callback after successful validation. No API route, UI, dependency, product scope, or unrelated aggregate behavior was added."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task introduces a shared cross-language lifecycle contract, validates untrusted commands at the service boundary, and changes the frozen sidecar inventory. The selected matrix therefore covers exact generation, strict type checking, every lifecycle rule and hostile boundary in both languages, all service and contract tests, a real frozen Windows sidecar build, quality, architecture/ADR, build provenance, dependency-lock integrity, backlog projections, and W1 approval continuity.",
+    "selectedCommandIds": [
+      "service:unit",
+      "contracts:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "The complete foundation and repository/deployment profile matrix remains mandatory at W1 exit. The repository retains the previously disclosed historical-control fixture failures from the broad foundation attempt; none is a lifecycle-contract or service failure, and no broad run is represented as passing here.",
+      "Cross-slice compatibility/deprecation/migration and integrated CAP-03.S01 qualification are deferred to T03 and the independent slice review, where the complete approved slice boundary is available.",
+      "Cross-capability end-to-end, performance, security, accessibility, cancellation, migration, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate 0e98f656857855e0162833d5a3973dca30019bae. Prioritize schema/generated parity, deterministic destination selection, validate-before-persist behavior, concurrency revision checks, actor/reason audit retention, terminal/reopen completeness, immutable ownership, stable content-free errors, sidecar packaging, and whether T03 compatibility duties remain correctly out of scope."
+  }
+}
