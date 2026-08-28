@@ -26,6 +26,10 @@ The runtime never resolves caller-provided ADR or fixture paths. It accepts only
 the generated catalog entry whose source digests were verified when the module
 was generated, so a syntactically plausible fabricated ADR or absent fixture
 cannot authorize a breaking change.
+Governed text evidence uses a canonical UTF-8 serialization with LF newlines
+before SHA-256 calculation. This preserves the exact logical source identity
+across Git checkouts without making Windows CRLF conversion invalidate the
+generator; binary fixture evidence remains hashed as raw bytes.
 
 ## Current and prior contract
 

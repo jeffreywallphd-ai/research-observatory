@@ -160,6 +160,15 @@ describe("portable domain compatibility policy", () => {
     const wrongScope = structuredClone(breakingAuthorityCatalog()) as Record<string, any>;
     wrongScope.authorities[0].applicableTask = "CAP-99.S99.T99";
     expect(breakingAuthorityCatalogErrors(wrongScope)).toEqual(["compatibility-breaking-authority-scope-mismatch"]);
+
+    const authority = (breakingAuthorityCatalog().authorities as ReadonlyArray<Record<string, unknown>>)[0]!;
+    const migration = authority.migration as Record<string, unknown>;
+    const source = readFileSync(fileURLToPath(new URL("compatibility.test.ts", root)), "utf8");
+    const canonical = source.replace(/\r\n?/g, "\n");
+    const crlfCheckout = canonical.replaceAll("\n", "\r\n");
+    const digest = (text: string) => createHash("sha256").update(text.replace(/\r\n?/g, "\n"), "utf8").digest("hex");
+    expect(digest(canonical)).toBe(migration.compatibilityTestSha256);
+    expect(digest(crlfCheckout)).toBe(migration.compatibilityTestSha256);
   });
 
   it("enforces the event catalog and emits exactly one content-free audit fact", () => {
