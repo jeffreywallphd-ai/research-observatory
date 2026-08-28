@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b8dde9841b4155f488cde5af109369af24501f0bc3ce035c61fba186705645eb
+source_sha256: 08f96c1f42d54cccec541bb34aca3f330fa0df3e2da3ccbe3364975c75e2cd36
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3438,13 +3438,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Explicit lifecycle diagrams and validators for projects, corpus items, documents, evidence records, decisions, tasks, dossiers, and exports.
 
