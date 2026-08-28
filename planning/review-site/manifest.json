@@ -2843,107 +2843,183 @@
             {
               "task_id": "CAP-03.S02.T02",
               "title": "Implement guided intent creation and revision UI",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:nash",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-28T20:05:25+00:00",
+                "notes": "The exact candidate/evidence lineage, schema-generated TypeScript/Python API parity, SQLite revision/provenance/outbox transaction, compare-and-swap conflict handling, restart reconstruction, immediate immutable revision linkage, content hashing, scope-impact preview binding, incomplete-draft non-launchability, approved UI-reference lineage, boundary states, capability inventory, and dependent-task nonclaims are otherwise supported. Independent focused replay passed 19 intent/Core API service tests, 3/3 desktop intent tests, and 9/9 generated Core API contract tests. The supplied broader evidence is truthful about its selected boundaries. Two acceptance-bound public mutation/audit defects remain."
               },
               "review_control": {
                 "version": 1,
-                "attempts": [],
-                "current_submission": {
-                  "id": "R01",
-                  "submitted_by": "codex",
-                  "submitted_at": "2026-08-28T20:00:35+00:00",
-                  "candidate_commit": "b93b7e4c8735c278c026f55b5b42c7b3f2d21850",
-                  "base_commit": "198edd87be8147087ac87f282c12d099fe1a943d",
-                  "branch": "codex/w1-windows-local-runtime",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-03.S02.T02.json",
-                    "sha256": "4c9256561c4c18c91d9fa5f1caae5e08a0fe710d0ad479048e42657f5c7ad149",
-                    "commit": "b93b7e4c8735c278c026f55b5b42c7b3f2d21850",
-                    "recorded_at": "2026-08-28T20:00:35+00:00"
-                  },
-                  "acceptance_criteria_sha256": "a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb",
-                  "changed_paths": [
-                    "apps/desktop/README.md",
-                    "apps/desktop/scripts/assemble-application.mjs",
-                    "apps/desktop/src/app.css",
-                    "apps/desktop/src/app/ApplicationRuntime.tsx",
-                    "apps/desktop/src/app/IntentWorkspace.test.tsx",
-                    "apps/desktop/src/app/IntentWorkspace.tsx",
-                    "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
-                    "docs/planning-implementation-plan.md",
-                    "packages/contracts/core-api/README.md",
-                    "packages/contracts/core-api/generated.test.ts",
-                    "packages/contracts/core-api/generated.ts",
-                    "packages/contracts/core-api/openapi.json",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-03/CAP-03.S02.html",
-                    "planning/review-site/manifest.json",
-                    "planning/status-summary.md",
-                    "quality-scope.json",
-                    "services/core-api/README.md",
-                    "services/core-api/src/research_observatory_core/app.py",
-                    "services/core-api/src/research_observatory_core/main.py",
-                    "services/core-api/src/research_observatory_core/models.py",
-                    "services/core-api/src/research_observatory_core/modules.py",
-                    "services/core-api/src/research_observatory_core/ports/repositories.py",
-                    "services/core-api/src/research_observatory_core/repositories.py",
-                    "services/core-api/src/research_observatory_core/research_intents.py",
-                    "tests/desktop/test_desktop_app_check.py",
-                    "tests/service/README.md",
-                    "tests/service/fixtures/valid-intent-draft-request.json",
-                    "tests/service/test_core_api.py",
-                    "tests/service/test_research_intents.py",
-                    "tools/core_api_contract.py",
-                    "tools/desktop_app_check.py"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
-                    ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test in packages/contracts",
-                    "npm test; npm run typecheck; npm run build in apps/desktop",
-                    ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
-                    ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only; ui_change_gate.py; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py",
-                    ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
-                    ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
-                    ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile service --affected-base 198edd87be8147087ac87f282c12d099fe1a943d --affected-head b93b7e4c8735c278c026f55b5b42c7b3f2d21850 --deferred-gate W1-exit --selection-only; build_manifest.py; git diff --check; witness SHA-256"
-                  ],
-                  "deferred_checks": [
-                    "The complete desktop and service profiles include the broad foundation baseline and desktop performance command; under AGENTS.md these are deferred to the CAP-03.S02 integration review/checkpoint and W1 exit rather than replayed for an ordinary task.",
-                    "The controlled 64-capture visual-regression runner passed on the identical product tree before commit-order reconstruction but did not complete on the final retry. Route, workflow, accessibility, token, approved-reference, product-build, browser inspection, and built-frame checks passed at the exact final candidate; the complete capture matrix remains deferred to slice review.",
-                    "CAP-03.S02.T03 owns runtime tool/gate/output/stopping policy enforcement. Complete cross-capability security, accessibility, performance, cancellation, recovery, and packaging qualification remains mandatory at the applicable integration checkpoint and W1 exit."
-                  ],
-                  "selection_rationale": "This medium-risk vertical slice crosses a strict public Core API contract, local SQLite transaction boundary, immutable audit/outbox lineage, restart recovery, generated TypeScript client, and a governed desktop UI. Selected checks therefore cover service success/failure/restart behavior, cross-language contract denial, renderer interaction and boundary states, exact approved-reference lineage, tokens/routes/workflows/accessibility, built-product capability inventory and network denial, real Windows sidecar packaging, Python quality, architecture boundaries, planning authority, build provenance, affected-selection truth, and witness safety. No dependency or migration version changed and no external provider, credential, cloud, or destructive data path was introduced.",
-                  "selection_sha256": "d0a672705a2c9013efdd67fcb009ea2f81617e23af127c08f2932fa0731aaa12",
-                  "prior_attempt_id": null,
-                  "open_finding_ids": [],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "foundation:architecture",
-                    "foundation:backlog-views",
-                    "foundation:build-manifest",
-                    "foundation:ui-reference",
-                    "foundation:ui-change",
-                    "foundation:quality",
-                    "foundation:backlog",
-                    "desktop:application",
-                    "desktop:unit",
-                    "desktop:ui-reference-integrity",
-                    "desktop:ui-token",
-                    "desktop:ui-route-page",
-                    "desktop:ui-workflow",
-                    "desktop:ui-accessibility",
-                    "contracts:unit",
-                    "service:unit",
-                    "packaging:unit"
-                  ],
-                  "packet_sha256": "c6969991c914bc8c0cf35a76cbf159e161ceb0637456ca41f551f4adb7a5df6d"
-                }
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-08-28T20:00:35+00:00",
+                      "candidate_commit": "b93b7e4c8735c278c026f55b5b42c7b3f2d21850",
+                      "base_commit": "198edd87be8147087ac87f282c12d099fe1a943d",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S02.T02.json",
+                        "sha256": "4c9256561c4c18c91d9fa5f1caae5e08a0fe710d0ad479048e42657f5c7ad149",
+                        "commit": "b93b7e4c8735c278c026f55b5b42c7b3f2d21850",
+                        "recorded_at": "2026-08-28T20:00:35+00:00"
+                      },
+                      "acceptance_criteria_sha256": "a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb",
+                      "changed_paths": [
+                        "apps/desktop/README.md",
+                        "apps/desktop/scripts/assemble-application.mjs",
+                        "apps/desktop/src/app.css",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/IntentWorkspace.test.tsx",
+                        "apps/desktop/src/app/IntentWorkspace.tsx",
+                        "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/README.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "packages/contracts/core-api/openapi.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-03/CAP-03.S02.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/README.md",
+                        "services/core-api/src/research_observatory_core/app.py",
+                        "services/core-api/src/research_observatory_core/main.py",
+                        "services/core-api/src/research_observatory_core/models.py",
+                        "services/core-api/src/research_observatory_core/modules.py",
+                        "services/core-api/src/research_observatory_core/ports/repositories.py",
+                        "services/core-api/src/research_observatory_core/repositories.py",
+                        "services/core-api/src/research_observatory_core/research_intents.py",
+                        "tests/desktop/test_desktop_app_check.py",
+                        "tests/service/README.md",
+                        "tests/service/fixtures/valid-intent-draft-request.json",
+                        "tests/service/test_core_api.py",
+                        "tests/service/test_research_intents.py",
+                        "tools/core_api_contract.py",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test in packages/contracts",
+                        "npm test; npm run typecheck; npm run build in apps/desktop",
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
+                        ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only; ui_change_gate.py; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+                        ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile service --affected-base 198edd87be8147087ac87f282c12d099fe1a943d --affected-head b93b7e4c8735c278c026f55b5b42c7b3f2d21850 --deferred-gate W1-exit --selection-only; build_manifest.py; git diff --check; witness SHA-256"
+                      ],
+                      "deferred_checks": [
+                        "The complete desktop and service profiles include the broad foundation baseline and desktop performance command; under AGENTS.md these are deferred to the CAP-03.S02 integration review/checkpoint and W1 exit rather than replayed for an ordinary task.",
+                        "The controlled 64-capture visual-regression runner passed on the identical product tree before commit-order reconstruction but did not complete on the final retry. Route, workflow, accessibility, token, approved-reference, product-build, browser inspection, and built-frame checks passed at the exact final candidate; the complete capture matrix remains deferred to slice review.",
+                        "CAP-03.S02.T03 owns runtime tool/gate/output/stopping policy enforcement. Complete cross-capability security, accessibility, performance, cancellation, recovery, and packaging qualification remains mandatory at the applicable integration checkpoint and W1 exit."
+                      ],
+                      "selection_rationale": "This medium-risk vertical slice crosses a strict public Core API contract, local SQLite transaction boundary, immutable audit/outbox lineage, restart recovery, generated TypeScript client, and a governed desktop UI. Selected checks therefore cover service success/failure/restart behavior, cross-language contract denial, renderer interaction and boundary states, exact approved-reference lineage, tokens/routes/workflows/accessibility, built-product capability inventory and network denial, real Windows sidecar packaging, Python quality, architecture boundaries, planning authority, build provenance, affected-selection truth, and witness safety. No dependency or migration version changed and no external provider, credential, cloud, or destructive data path was introduced.",
+                      "selection_sha256": "d0a672705a2c9013efdd67fcb009ea2f81617e23af127c08f2932fa0731aaa12",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "contracts:unit",
+                        "service:unit",
+                        "packaging:unit"
+                      ],
+                      "packet_sha256": "c6969991c914bc8c0cf35a76cbf159e161ceb0637456ca41f551f4adb7a5df6d"
+                    },
+                    "review": {
+                      "reviewer": "agent:nash",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-08-28T20:05:25+00:00",
+                      "notes": "The exact candidate/evidence lineage, schema-generated TypeScript/Python API parity, SQLite revision/provenance/outbox transaction, compare-and-swap conflict handling, restart reconstruction, immediate immutable revision linkage, content hashing, scope-impact preview binding, incomplete-draft non-launchability, approved UI-reference lineage, boundary states, capability inventory, and dependent-task nonclaims are otherwise supported. Independent focused replay passed 19 intent/Core API service tests, 3/3 desktop intent tests, and 9/9 generated Core API contract tests. The supplied broader evidence is truthful about its selected boundaries. Two acceptance-bound public mutation/audit defects remain."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S02.T02.review-R01.json",
+                      "sha256": "3ee623c19869c68ee173deb7ccf2117ce5109cedb9ab3bd22b9bcefa7d2be433"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S02.T02-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Immutable draft and audit records fabricate rather than authenticate the human actor",
+                        "reproduction": "At exact candidate b93b7e4c8735c278c026f55b5b42c7b3f2d21850, inspect services/core-api/src/research_observatory_core/research_intents.py:_build_revision: every save sets createdBy to {'actorType':'human','actorId':new_uuid_v7()} without receiving an actor from the authenticated request or project identity authority. Inspect repositories.py:_SqliteIntentRevisionRepository.append: the same transaction writes provenance_events with actor_type='human' and actor_id=NULL. The public /projects/intent/drafts route passes only command, trace ID, and optional idempotency key. The focused persistence test confirms only ('intent.draft.saved','human') and never asserts a real actor binding. Thus successive edits by one researcher receive unrelated invented human identities, while the durable audit row cannot identify any actor at all. This contradicts the evidence claim of immutable provenance, the repository's no-invented-identity rule, and the systems-design requirement for stable actor IDs and audit identity.",
+                        "required_remediation": "In a strict-descendant R02 candidate, obtain one authenticated stable local actor identity from the existing OS-local/project authority boundary and thread it through the public route, service command, revision createdBy, provenance event, and SQLite append. Require the revision and audit row to carry the exact same non-null actor identity and type, deny missing/substituted/cross-project actor authority before persistence, and keep errors content-free. Add public-route and direct repository tests proving stable identity across revisions/restart, exact revision/audit/outbox binding, spoof denial, and full transaction rollback. Do not generate an identity merely to label it human and do not claim institutional identity work assigned to later waves."
+                      },
+                      {
+                        "id": "CAP-03.S02.T02-R01-F02",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Advertised idempotency key cannot replay a successfully committed draft",
+                        "reproduction": "The new public POST /projects/intent/drafts accepts Idempotency-Key and stores it under the database's UNIQUE(project_id,idempotency_key) outbox constraint, but ResearchIntentService._save checks command.expectedRevision against the now-current revision before the repository sees the key. After a request with expectedRevision=0 and key K commits revision 1, replaying the identical request and K (for example after a lost response or process restart) returns RO-CORE-INTENT-REVISION-CONFLICT. If a caller changes expectedRevision to 1, the request is no longer the same command and reaches a unique-key write failure rather than an authenticated replay. No T02 test covers same-key/same-command replay or same-key/different-command denial. This makes the public retry identity misleading and can turn an uncertain successful save into an unrecoverable client error despite the durable outbox record.",
+                        "required_remediation": "Make draft mutation idempotency deterministic and restart-safe: require or clearly define the key at the public boundary, derive/store an exact command fingerprint and committed revision result, and check an existing key before optimistic-revision rejection. Return the original immutable projection for the same key and fingerprint; deny key reuse with any changed command/project/actor; preserve exactly one revision, provenance event, and outbox row. Add route/service/repository tests for response-loss replay before and after restart, different-command reuse, stale expected revision with a genuinely new key, competing writers, and rollback. If this endpoint intentionally provides no idempotent retry contract, remove the Idempotency-Key surface and outbox-key implication rather than silently accepting a key that cannot replay."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-03.S02.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-08-28T20:00:35+00:00",
+                      "reviewed_at": "2026-08-28T20:05:25+00:00",
+                      "duration_seconds": 290,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 1,
+                        "medium": 1,
+                        "low": 0,
+                        "blocking": 2,
+                        "total": 2
+                      },
+                      "command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "contracts:unit",
+                        "service:unit",
+                        "packaging:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
               }
             },
             {

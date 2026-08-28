@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8c1ac6d0ffaf8eda83694322d22619b41785667b938359f77bb42e69acc8ac84
+source_sha256: 2499384df02127a9c144ad6dd8ce4144e2d8cace932774d54a5f2ed6fa8b030a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 269 |
 | `READY` | 1 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 49 |
 | `DEFERRED` | 36 |
 
@@ -357,7 +357,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
-| `CAP-03.S02.T02` | `append-only v1` | 0 | `R01` | - / - | - |
+| `CAP-03.S02.T02` | `append-only v1` | 1 | `-` | changes-requested / agent:nash | `CAP-03.S02.T02-R01-F01`, `CAP-03.S02.T02-R01-F02` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -425,4 +425,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S02.T02` Implement guided intent creation and revision UI | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S02.T02` Implement guided intent creation and revision UI | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |

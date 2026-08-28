@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8c1ac6d0ffaf8eda83694322d22619b41785667b938359f77bb42e69acc8ac84
+source_sha256: 2499384df02127a9c144ad6dd8ce4144e2d8cace932774d54a5f2ed6fa8b030a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3792,13 +3792,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:nash (`changes-requested`)
 
 **Objective:** Desktop workflow with mode-specific defaults, examples, warnings, and explicit change-impact preview.
 
@@ -3823,9 +3823,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `c6969991c914bc8c0cf35a76cbf159e161ceb0637456ca41f551f4adb7a5df6d`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `c6969991c914bc8c0cf35a76cbf159e161ceb0637456ca41f551f4adb7a5df6d`
 
 - Candidate / base / branch: `b93b7e4c8735c278c026f55b5b42c7b3f2d21850` / `198edd87be8147087ac87f282c12d099fe1a943d` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T20:00:35+00:00`
@@ -3839,11 +3841,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / agent:nash / `2026-08-28T20:05:25+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T02.review-R01.json` / `3ee623c19869c68ee173deb7ccf2117ce5109cedb9ab3bd22b9bcefa7d2be433`
 
-**Currently open findings:** -
+**Review notes:** The exact candidate/evidence lineage, schema-generated TypeScript/Python API parity, SQLite revision/provenance/outbox transaction, compare-and-swap conflict handling, restart reconstruction, immediate immutable revision linkage, content hashing, scope-impact preview binding, incomplete-draft non-launchability, approved UI-reference lineage, boundary states, capability inventory, and dependent-task nonclaims are otherwise supported. Independent focused replay passed 19 intent/Core API service tests, 3/3 desktop intent tests, and 9/9 generated Core API contract tests. The supplied broader evidence is truthful about its selected boundaries. Two acceptance-bound public mutation/audit defects remain.
+
+**Findings opened:**
+
+- `CAP-03.S02.T02-R01-F01` `high` blocking=`True` criterion=`1` — Immutable draft and audit records fabricate rather than authenticate the human actor; reproduce: At exact candidate b93b7e4c8735c278c026f55b5b42c7b3f2d21850, inspect services/core-api/src/research_observatory_core/research_intents.py:_build_revision: every save sets createdBy to {'actorType':'human','actorId':new_uuid_v7()} without receiving an actor from the authenticated request or project identity authority. Inspect repositories.py:_SqliteIntentRevisionRepository.append: the same transaction writes provenance_events with actor_type='human' and actor_id=NULL. The public /projects/intent/drafts route passes only command, trace ID, and optional idempotency key. The focused persistence test confirms only ('intent.draft.saved','human') and never asserts a real actor binding. Thus successive edits by one researcher receive unrelated invented human identities, while the durable audit row cannot identify any actor at all. This contradicts the evidence claim of immutable provenance, the repository's no-invented-identity rule, and the systems-design requirement for stable actor IDs and audit identity.; remediate: In a strict-descendant R02 candidate, obtain one authenticated stable local actor identity from the existing OS-local/project authority boundary and thread it through the public route, service command, revision createdBy, provenance event, and SQLite append. Require the revision and audit row to carry the exact same non-null actor identity and type, deny missing/substituted/cross-project actor authority before persistence, and keep errors content-free. Add public-route and direct repository tests proving stable identity across revisions/restart, exact revision/audit/outbox binding, spoof denial, and full transaction rollback. Do not generate an identity merely to label it human and do not claim institutional identity work assigned to later waves.
+- `CAP-03.S02.T02-R01-F02` `medium` blocking=`True` criterion=`2` — Advertised idempotency key cannot replay a successfully committed draft; reproduce: The new public POST /projects/intent/drafts accepts Idempotency-Key and stores it under the database's UNIQUE(project_id,idempotency_key) outbox constraint, but ResearchIntentService._save checks command.expectedRevision against the now-current revision before the repository sees the key. After a request with expectedRevision=0 and key K commits revision 1, replaying the identical request and K (for example after a lost response or process restart) returns RO-CORE-INTENT-REVISION-CONFLICT. If a caller changes expectedRevision to 1, the request is no longer the same command and reaches a unique-key write failure rather than an authenticated replay. No T02 test covers same-key/same-command replay or same-key/different-command denial. This makes the public retry identity misleading and can turn an uncertain successful save into an unrecoverable client error despite the durable outbox record.; remediate: Make draft mutation idempotency deterministic and restart-safe: require or clearly define the key at the public boundary, derive/store an exact command fingerprint and committed revision result, and check an existing key before optimistic-revision rejection. Return the original immutable projection for the same key and fingerprint; deny key reuse with any changed command/project/actor; preserve exactly one revision, provenance event, and outbox row. Add route/service/repository tests for response-loss replay before and after restart, different-command reuse, stale expected revision with a genuinely new key, competing writers, and rollback. If this endpoint intentionally provides no idempotent retry contract, remove the Idempotency-Key surface and outbox-key implication rather than silently accepting a key that cannot replay.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:nash at `2026-08-28T20:05:25+00:00`
+
+**Latest notes:** The exact candidate/evidence lineage, schema-generated TypeScript/Python API parity, SQLite revision/provenance/outbox transaction, compare-and-swap conflict handling, restart reconstruction, immediate immutable revision linkage, content hashing, scope-impact preview binding, incomplete-draft non-launchability, approved UI-reference lineage, boundary states, capability inventory, and dependent-task nonclaims are otherwise supported. Independent focused replay passed 19 intent/Core API service tests, 3/3 desktop intent tests, and 9/9 generated Core API contract tests. The supplied broader evidence is truthful about its selected boundaries. Two acceptance-bound public mutation/audit defects remain.
+
+**Currently open findings:** `CAP-03.S02.T02-R01-F01`, `CAP-03.S02.T02-R01-F02`
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
