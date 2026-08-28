@@ -197,7 +197,13 @@ def product_build_errors(repo: Path) -> list[str]:
         "schemaVersion": "1.0",
         "documentType": "desktop-product-build-manifest",
         "buildRole": "tauri-frontend",
-        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03"],
+        "implementedCapabilities": [
+            "CAP-01",
+            "CAP-02.S01.T03",
+            "CAP-02.S04.T02",
+            "CAP-02.S04.T03",
+            "CAP-03.S02.T02",
+        ],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
     }
@@ -831,7 +837,13 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         errors.append("desktop production runtime retains an unresolved Node environment expression")
     details: dict[str, Any] = {
         "pages": 0,
-        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03"],
+        "implementedCapabilities": [
+            "CAP-01",
+            "CAP-02.S01.T03",
+            "CAP-02.S04.T02",
+            "CAP-02.S04.T03",
+            "CAP-03.S02.T02",
+        ],
         "referenceOnlyPages": 0,
         "commandFocus": False,
         "skipLink": False,
