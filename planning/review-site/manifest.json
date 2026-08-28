@@ -1864,20 +1864,267 @@
             {
               "task_id": "CAP-03.S01.T02",
               "title": "Define aggregate state machines and invariants",
-              "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "status": "DONE",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "nash-independent-domain-lifecycle-reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-08-28T14:20:04+00:00",
+                "notes": "Focused R02 replay closes the sole R01 overflow finding. Both generated runtimes now emit and canonically serialize the exact safe maximum from maximum-minus-one, while a restarted maximum-revision snapshot returns only lifecycle-revision-exhausted and invokes persistence zero times. Python validates the maximum transition against the unchanged Draft 2020-12 schema; TypeScript and Python use exact stable-code parity. Generator currency, all 26 TypeScript contract tests, and the 10 focused Python lifecycle contract/service tests pass. The schema and lifecycle-profile bytes and hashes remain unchanged, the R01 ledger is append-only, and the strict-descendant evidence supersession is exact."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-08-28T14:09:27+00:00",
+                      "candidate_commit": "0e98f656857855e0162833d5a3973dca30019bae",
+                      "base_commit": "a3d6d4b9d6ad13617118021752d4a097760f8f6c",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S01.T02.json",
+                        "sha256": "eaf01d84e42ed270dd7a6cde584eadcc9f680b84e6645a8ebbf70f2f7bf5d749",
+                        "commit": "0e98f656857855e0162833d5a3973dca30019bae",
+                        "recorded_at": "2026-08-28T14:09:27+00:00"
+                      },
+                      "acceptance_criteria_sha256": "06e35549321e8b7695f6114a2707ae8a3753199a086e36b63f38125ab5e00855",
+                      "changed_paths": [
+                        "docs/architecture/README.md",
+                        "docs/architecture/domain-contracts.md",
+                        "docs/architecture/domain-lifecycles.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/README.md",
+                        "packages/contracts/domain/domain-lifecycle.schema.json",
+                        "packages/contracts/domain/domain-lifecycle.v1.json",
+                        "packages/contracts/domain/generate-lifecycle.mjs",
+                        "packages/contracts/domain/lifecycle.generated.ts",
+                        "packages/contracts/domain/lifecycle.test.ts",
+                        "packages/contracts/package.json",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-03/CAP-03.S01.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/README.md",
+                        "services/core-api/packaging/sidecar-build.json",
+                        "services/core-api/src/research_observatory_core/domain_lifecycles.py",
+                        "tests/contracts/test_domain_lifecycles.py",
+                        "tests/packaging/test_core_sidecar_package.py",
+                        "tests/service/test_domain_lifecycle_service.py",
+                        "tools/core_sidecar_build.py"
+                      ],
+                      "selected_checks": [
+                        ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/vitest/vitest.mjs run --root packages/contracts",
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py",
+                        ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T02-quality-0e98f65.json",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T02-build-manifest-0e98f65.json",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+                        "uv lock --check; git diff --check"
+                      ],
+                      "deferred_checks": [
+                        "The complete foundation and repository/deployment profile matrix remains mandatory at W1 exit. The repository retains the previously disclosed historical-control fixture failures from the broad foundation attempt; none is a lifecycle-contract or service failure, and no broad run is represented as passing here.",
+                        "Cross-slice compatibility/deprecation/migration and integrated CAP-03.S01 qualification are deferred to T03 and the independent slice review, where the complete approved slice boundary is available.",
+                        "Cross-capability end-to-end, performance, security, accessibility, cancellation, migration, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit."
+                      ],
+                      "selection_rationale": "This high-risk task introduces a shared cross-language lifecycle contract, validates untrusted commands at the service boundary, and changes the frozen sidecar inventory. The selected matrix therefore covers exact generation, strict type checking, every lifecycle rule and hostile boundary in both languages, all service and contract tests, a real frozen Windows sidecar build, quality, architecture/ADR, build provenance, dependency-lock integrity, backlog projections, and W1 approval continuity.",
+                      "selection_sha256": "ef04cc11b9bd25d23e2126a1ba3cdd56c7fb55226e33084e4a61cf4833293cd9",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "service:unit",
+                        "contracts:unit",
+                        "packaging:unit",
+                        "foundation:quality",
+                        "foundation:build-manifest",
+                        "foundation:adr",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "packet_sha256": "47d6a474fec3c3957ec24a8fe9547cd69051937e464dc51acfffdeaacc69acef"
+                    },
+                    "review": {
+                      "reviewer": "nash-independent-domain-lifecycle-reviewer",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-08-28T14:12:07+00:00",
+                      "notes": "The exact schema/profile hashes, generated Python and TypeScript parity, deterministic transition selection, strict hostile-input validation, actor/reason retention, immutable owned output, documented terminal/reopen rules, content-free failure codes, packaging inventory, and ordinary restart paths are supported by the frozen evidence and focused replay. One blocking safe-revision boundary defect remains: both generated runtimes accept the schema-maximum current revision and persist a transition whose revision exceeds the contract and JavaScript safe-integer ceiling."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S01.T02.review-R01.json",
+                      "sha256": "a68fc27692c6c498de9d205fc431d830d0c243211253b29e50e2943ad3dda154"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S01.T02-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Maximum valid revision produces and persists an invalid transition revision",
+                        "reproduction": "At exact candidate 0e98f656857855e0162833d5a3973dca30019bae, supply a valid project snapshot in state active with revision 9007199254740991 and a matching archive command with expectedRevision 9007199254740991. Python apply_lifecycle_transition returns and invokes the persistence callback once with priorRevision 9007199254740991 and revision 9007199254740992. The same unchecked snapshot.revision + 1 exists in packages/contracts/domain/lifecycle.generated.ts. However packages/contracts/domain/domain-lifecycle.schema.json defines SafeRevision maximum 9007199254740991, so the emitted transition violates its own wire schema and TypeScript crosses Number.MAX_SAFE_INTEGER. Existing lifecycle tests pass because they do not exercise this accepted boundary.",
+                        "required_remediation": "In a strict-descendant candidate, make both generated runtimes reject any otherwise-valid command whose successful transition would exceed SafeRevision before invoking persistence, using one stable content-free error code with exact Python/TypeScript parity. Add acceptance-bound tests at maximum-minus-one (successful emission at the maximum), maximum (denied with zero persistence calls), and restart/serialization validation of the maximum valid emitted transition. Keep the schema/profile hashes and generator outputs exact and do not widen the safe-integer contract."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-03.S01.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-08-28T14:09:27+00:00",
+                      "reviewed_at": "2026-08-28T14:12:07+00:00",
+                      "duration_seconds": 160,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 1,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "service:unit",
+                        "contracts:unit",
+                        "packaging:unit",
+                        "foundation:quality",
+                        "foundation:build-manifest",
+                        "foundation:adr",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  },
+                  {
+                    "submission": {
+                      "id": "R02",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-08-28T14:17:58+00:00",
+                      "candidate_commit": "bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e",
+                      "base_commit": "0e98f656857855e0162833d5a3973dca30019bae",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S01.T02.review-fix.json",
+                        "sha256": "777726f9c94d8e3e7ca2055274b279c2aed930e8e28de10ef3b95d545d6f6508",
+                        "commit": "bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e",
+                        "recorded_at": "2026-08-28T14:17:58+00:00"
+                      },
+                      "acceptance_criteria_sha256": "06e35549321e8b7695f6114a2707ae8a3753199a086e36b63f38125ab5e00855",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-03.S01.T02.json",
+                        "artifacts/evidence/CAP-03.S01.T02.review-R01.json",
+                        "docs/architecture/domain-lifecycles.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/domain/generate-lifecycle.mjs",
+                        "packages/contracts/domain/lifecycle.generated.ts",
+                        "packages/contracts/domain/lifecycle.test.ts",
+                        "planning/backlog.yaml",
+                        "planning/status-summary.md",
+                        "services/core-api/src/research_observatory_core/domain_lifecycles.py",
+                        "tests/contracts/test_domain_lifecycles.py"
+                      ],
+                      "selected_checks": [
+                        ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/vitest/vitest.mjs run --root packages/contracts",
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T02-remediation-quality-bf3f2a3.json; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T02-remediation-build-bf3f2a3.json; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check"
+                      ],
+                      "deferred_checks": [
+                        "The real Windows sidecar packaging test passed for the original candidate and was not replayed because the remediation changes only pure generated transition arithmetic and tests; the module name/import inventory is unchanged.",
+                        "The complete foundation/repository matrix and previously disclosed historical-control fixture remediation remain mandatory at W1 exit.",
+                        "T03 compatibility evolution and integrated CAP-03.S01 qualification remain owned by the next task and slice review."
+                      ],
+                      "selection_rationale": "R01 isolated one high blocking arithmetic boundary in the generated lifecycle validators. The focused remediation replays that exact finding in both runtimes, all lifecycle rules, full contract and service suites, generated-code quality, architecture/ADR, build provenance, and backlog integrity; unrelated security, data, UI, dependency, and packaging behavior did not change.",
+                      "selection_sha256": "14e9155b82be918772d7d816ee111f81707038dcae80da4d7469505a8118b99b",
+                      "prior_attempt_id": "R01",
+                      "open_finding_ids": [
+                        "CAP-03.S01.T02-R01-F01"
+                      ],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "service:unit",
+                        "contracts:unit",
+                        "foundation:quality",
+                        "foundation:build-manifest",
+                        "foundation:adr",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "packet_sha256": "19fe3060c12fa5fa1e3c5b5764045c162f24eeb7e28499a9b59365014af35e61"
+                    },
+                    "review": {
+                      "reviewer": "nash-independent-domain-lifecycle-reviewer",
+                      "result": "approved",
+                      "reviewed_at": "2026-08-28T14:20:04+00:00",
+                      "notes": "Focused R02 replay closes the sole R01 overflow finding. Both generated runtimes now emit and canonically serialize the exact safe maximum from maximum-minus-one, while a restarted maximum-revision snapshot returns only lifecycle-revision-exhausted and invokes persistence zero times. Python validates the maximum transition against the unchanged Draft 2020-12 schema; TypeScript and Python use exact stable-code parity. Generator currency, all 26 TypeScript contract tests, and the 10 focused Python lifecycle contract/service tests pass. The schema and lifecycle-profile bytes and hashes remain unchanged, the R01 ledger is append-only, and the strict-descendant evidence supersession is exact."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S01.T02.review-R02.json",
+                      "sha256": "68335140c9f4208a67a53cc6d503b7f72b070936a83ba289c7d72c8f82bb4df1"
+                    },
+                    "findings": [],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-03.S01.T02-R01-F01",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-03.S01.T02.review-fix.json"
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-03.S01.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R02",
+                      "submitted_at": "2026-08-28T14:17:58+00:00",
+                      "reviewed_at": "2026-08-28T14:20:04+00:00",
+                      "duration_seconds": 126,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "service:unit",
+                        "contracts:unit",
+                        "foundation:quality",
+                        "foundation:build-manifest",
+                        "foundation:adr",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R01",
+                        "replayed_finding_ids": [
+                          "CAP-03.S01.T02-R01-F01"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-03.S01.T02-R01-F01"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             },
             {
               "task_id": "CAP-03.S01.T03",
               "title": "Publish versioning and compatibility policy for domain APIs",
-              "status": "NOT_STARTED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
