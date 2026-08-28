@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T02",
+  "commit": "a60d3e9704a4d59dd1d0310437bd6d486057500b",
+  "baseCommit": "b93b7e4c8735c278c026f55b5b42c7b3f2d21850",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S02.T02.json",
+    "sha256": "4c9256561c4c18c91d9fa5f1caae5e08a0fe710d0ad479048e42657f5c7ad149",
+    "commit": "b93b7e4c8735c278c026f55b5b42c7b3f2d21850",
+    "reason": "Remediates CAP-03.S02.T02-R01-F01 and CAP-03.S02.T02-R01-F02 without changing the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S02.T02.json",
+    "artifacts/evidence/CAP-03.S02.T02.review-R01.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/README.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/authentication.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/data/test_object_envelope_upgrades.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/security/test_protected_database.py",
+    "tests/security/test_windows_credentials.py",
+    "tests/service/test_research_intents.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 44 Core API service tests passed. Focused cases prove a stable actor across revisions and restart, route-level actor-header spoof denial, missing-actor fail-closed behavior, exact revision/provenance identity, restart-safe exact replay, changed command/actor/project denial, stale-new-key conflict, competing-writer convergence, and transaction rollback."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/data -p test_*.py",
+      "exitCode": 0,
+      "result": "All 102 data/storage tests passed. The suite covers fresh schema v6 plus backup-first migrations from every supported v1-v5 authority, exact schema/profile hashes, preserved legacy actor identifiers, accepted UUIDv7 actors, migration history, recovery manifests, failure rollback, and retry."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py",
+      "exitCode": 0,
+      "result": "All 56 local-security tests passed with one expected privilege skip. Real Windows current-user DPAPI coverage proves the actor identity is opaque and restart-stable and that tampering fails closed without replacing recoverable ciphertext; protected-database migration and corruption denial remain green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test in packages/contracts; core_api_contract.py --check",
+      "exitCode": 0,
+      "result": "All 51 Python contract tests, all 56 TypeScript contract tests, and checked-in OpenAPI/generated-client parity passed. The public save route now requires the bounded idempotency header while preserving strict response decoding."
+    },
+    {
+      "command": "npm test; npm run typecheck; npm run build in apps/desktop",
+      "exitCode": 0,
+      "result": "All 53 desktop tests passed, strict TypeScript compilation passed, and both the functional product and approved-reference conformance fixture built successfully against the regenerated Core API contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected symlink-privilege skip; the real PyInstaller build includes the stable-actor composition, schema-v6 migration, and idempotent repository implementation."
+    },
+    {
+      "command": "quality_check.py; architecture_check.py; ui_change_gate.py --base 198edd87be8147087ac87f282c12d099fe1a943d --head a60d3e9704a4d59dd1d0310437bd6d486057500b",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed across 160 governed Python files; the 13-area architecture contract passed; and the cumulative UI gate remains bound to RO-UI-ACADEMIC-MINIMAL-1.3 with no remediation UI changes or errors."
+    },
+    {
+      "command": "taskctl.py validate; planctl.py wave ready W1 --require-approved; backlog_views.py --check; plan_review_check.py; verify.py --profile desktop --profile service --profile data --profile security-local --selection-only",
+      "exitCode": 0,
+      "result": "The approved active W1 campaign, sole-task ownership, backlog, 150-page review site, and generated views validate. Git-derived selection covers the complete desktop/service/data/security command inventory and defers only desktop and storage performance to W1 exit."
+    },
+    {
+      "command": "git diff --check; protected W1.A04.B00 witness SHA-256",
+      "exitCode": 0,
+      "result": "Patch hygiene passed. The sole dirty path is the intentionally untracked, unstaged historical witness artifacts/evidence/W1.A04.B00.json, preserved byte-identically at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R01-F01 is remediated by resolving one UUIDv7 actor from the current Windows user's DPAPI-protected profile vault. Missing or corrupt actor authority fails closed before project persistence, and inbound actor assertion headers are denied as spoof attempts.",
+        "The exact same non-null actor ID and human type are carried into every immutable revision and its append-only provenance fact. Restart and successive revision tests prove the identity is stable; no institutional or remote identity is claimed.",
+        "Schema v6 is a forward-only, backup-first migration that widens only provenance actor authority to retained canonical identifiers or UUIDv7. It preserves rows, reinstalls the exact append-only triggers/index, records immutable migration history, and supports every exact v1-v5 source."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "R01-F02 is remediated by requiring the public idempotency key and binding it to the manifest project, stable actor, canonical command digest, domain project, immutable revision digest, provenance event, and outbox event in the same transaction.",
+        "Replay is checked before optimistic-revision rejection and again under BEGIN IMMEDIATE. An identical retry before or after restart returns the original immutable projection; changed project, actor, or command reuse is denied, and a genuinely new stale command retains the normal revision conflict.",
+        "Adversarial tests prove two competing identical writers converge on exactly one revision, one binding, one provenance event, and one outbox row, while malformed authority and persistence failure roll back all four surfaces."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Core API, repository port/adapter, Windows composition, OpenAPI/generated client, portable storage profile, migration-recovery contract, documentation, and Windows/data/service/security tests changed together at exact candidate a60d3e9704a4d59dd1d0310437bd6d486057500b.",
+        "The immutable R01 submission and review ledger remain ancestral and both blocking finding IDs are replayed explicitly for independent closure.",
+        "The remediation introduces no cloud, institutional identity, dependency, governed UI reference, downstream workflow policy, or release claim. Those approved dependent-task and W1-exit duties remain unchanged."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S02.T02-R01-F01 exposed fabricated audit identity across the public route, OS-local authority, immutable revision, provenance schema, migration, and packaged Windows composition. CAP-03.S02.T02-R01-F02 exposed restart and concurrency correctness across the public contract, service ordering, SQLite transaction, provenance, and outbox. The remediation therefore selected complete service, data, local-security, portable-contract, desktop, and packaging tests; exact Windows DPAPI and migration adversarial cases; generated-contract parity; architecture/quality; cumulative design-first lineage; and workflow integrity. No dependency changed, so a new live supply-chain scan is not credible task-local coverage. Desktop and storage performance and the complete cross-capability matrix remain gate-bound to W1 exit.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "contracts:unit",
+      "packaging:unit",
+      "service:unit",
+      "data:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "No dependency or lockfile changed, so the prior live supply-chain result remains applicable rather than being replayed for this source/schema remediation.",
+      "Desktop performance, project-lifecycle performance, storage-maintenance performance, and the complete repository/deployment matrix remain mandatory at their approved integration checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S02.T02-R01-F01",
+      "CAP-03.S02.T02-R01-F02"
+    ],
+    "note": "Independently review exact strict-descendant candidate a60d3e9704a4d59dd1d0310437bd6d486057500b and replay both R01 findings. Verify stable current-user actor authority, missing/substituted/tampered denial, exact revision/provenance binding, v1-v5 migration preservation, restart-safe replay before revision conflict, changed-binding denial, competing-writer convergence, atomic rollback, generated contract parity, and the stated W1-exit deferrals."
+  }
+}

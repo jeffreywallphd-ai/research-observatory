@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2499384df02127a9c144ad6dd8ce4144e2d8cace932774d54a5f2ed6fa8b030a
+source_sha256: e9ea1affc07a183a12e3426679b73786170bf26cf89cdf5061bb63f355e75a29
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3792,7 +3792,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3820,6 +3820,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S02.T02.json` at `b93b7e4c8735c278c026f55b5b42c7b3f2d21850`
+- `artifacts/evidence/CAP-03.S02.T02.R02.json` at `a60d3e9704a4d59dd1d0310437bd6d486057500b`
 
 ##### Review history — CAP-03.S02.T02
 
@@ -3856,7 +3857,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `02e259f56dce0d5ef9e2b47e87cb3b2718af7f83ee52598f2364004dffb114a9`
+
+- Candidate / base / branch: `a60d3e9704a4d59dd1d0310437bd6d486057500b` / `b93b7e4c8735c278c026f55b5b42c7b3f2d21850` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T20:34:32+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T02.R02.json` / `4ba4303d7281f9a0a10d2464cc9beb535508a94edeea550dd554c83ab91cb08c` / `a60d3e9704a4d59dd1d0310437bd6d486057500b`
+- Acceptance-criteria SHA-256: `a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb`
+- Verification-selection SHA-256: `ba50623da3e82dbf2414d0d960704131d963c0b3cedf0928db0c4989dbf2f1fc`
+- Changed paths: `artifacts/evidence/CAP-03.S02.T02.json`, `artifacts/evidence/CAP-03.S02.T02.review-R01.json`, `docs/architecture/local-sqlite-storage.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/README.md`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/README.md`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/authentication.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `services/core-api/src/research_observatory_core/storage.py`, `services/core-api/src/research_observatory_core/windows_credentials.py`, `tests/data/test_object_envelope_upgrades.py`, `tests/data/test_sqlite_migrations.py`, `tests/security/test_protected_database.py`, `tests/security/test_windows_credentials.py`, `tests/service/test_research_intents.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/data -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/security -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test in packages/contracts; core_api_contract.py --check`, `npm test; npm run typecheck; npm run build in apps/desktop`, `.venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py`, `quality_check.py; architecture_check.py; ui_change_gate.py --base 198edd87be8147087ac87f282c12d099fe1a943d --head a60d3e9704a4d59dd1d0310437bd6d486057500b`, `taskctl.py validate; planctl.py wave ready W1 --require-approved; backlog_views.py --check; plan_review_check.py; verify.py --profile desktop --profile service --profile data --profile security-local --selection-only`, `git diff --check; protected W1.A04.B00 witness SHA-256`
+- Deferred checks: `No dependency or lockfile changed, so the prior live supply-chain result remains applicable rather than being replayed for this source/schema remediation.`, `Desktop performance, project-lifecycle performance, storage-maintenance performance, and the complete repository/deployment matrix remain mandatory at their approved integration checkpoint and W1 exit.`
+- Selection rationale: CAP-03.S02.T02-R01-F01 exposed fabricated audit identity across the public route, OS-local authority, immutable revision, provenance schema, migration, and packaged Windows composition. CAP-03.S02.T02-R01-F02 exposed restart and concurrency correctness across the public contract, service ordering, SQLite transaction, provenance, and outbox. The remediation therefore selected complete service, data, local-security, portable-contract, desktop, and packaging tests; exact Windows DPAPI and migration adversarial cases; generated-contract parity; architecture/quality; cumulative design-first lineage; and workflow integrity. No dependency changed, so a new live supply-chain scan is not credible task-local coverage. Desktop and storage performance and the complete cross-capability matrix remain gate-bound to W1 exit.
+- Prior round / replayed open findings: `R01` / `CAP-03.S02.T02-R01-F01`, `CAP-03.S02.T02-R01-F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by agent:nash at `2026-08-28T20:05:25+00:00`
 
