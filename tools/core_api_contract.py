@@ -416,14 +416,12 @@ function decodeIntentRevisionSummary(value: unknown): IntentRevisionSummary | nu
 
 export function decodeIntentWorkspaceProjection(value: unknown): IntentWorkspaceProjection | null {
   const candidate = record(value);
-  if (!candidate || !exactKeys(candidate, ["schemaVersion", "projectId", "current", "governingIntent", "history"])) return null;
+  if (!candidate || !exactKeys(candidate, ["schemaVersion", "projectId", "current", "history"])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId) || !Array.isArray(candidate.history)
     || candidate.history.length > 100) return null;
   const current = candidate.current === null ? null : decodeIntentDraftProjection(candidate.current);
-  const governingIntent = candidate.governingIntent === null ? null : decodeIntentGoverningReference(candidate.governingIntent);
   const history = candidate.history.map(decodeIntentRevisionSummary);
-  if ((candidate.current !== null && current === null) || (candidate.governingIntent !== null && governingIntent === null)
-    || history.some((item) => item === null)) return null;
+  if ((candidate.current !== null && current === null) || history.some((item) => item === null)) return null;
   if (history.some((item, index) => index > 0 && (item?.revision ?? 0) >= (history[index - 1]?.revision ?? 0))) return null;
   if ((current === null) !== (history.length === 0)
     || (current && (current.revision !== history[0]?.revision
@@ -433,14 +431,7 @@ export function decodeIntentWorkspaceProjection(value: unknown): IntentWorkspace
       || current.primaryUseCase !== history[0]?.primaryUseCase
       || current.status !== history[0]?.status
       || current.unresolvedDecisions.length !== history[0]?.unresolvedDecisionCount))) return null;
-  if (governingIntent && current?.status === "accepted"
-    && (governingIntent.intentId !== current.intentId || governingIntent.revisionId !== current.revisionId
-      || governingIntent.revision !== current.revision
-      || governingIntent.revisionContentHash !== current.revisionContentHash)) return null;
-  return {
-    schemaVersion: "1.0", projectId: candidate.projectId, current, governingIntent,
-    history: history as IntentRevisionSummary[],
-  };
+  return { schemaVersion: "1.0", projectId: candidate.projectId, current, history: history as IntentRevisionSummary[] };
 }
 
 export function decodeIntentGoverningReference(value: unknown): IntentGoverningReference | null {

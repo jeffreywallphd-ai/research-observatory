@@ -419,10 +419,15 @@ class ResearchIntentServiceTests(unittest.TestCase):
         )
         self.assertEqual(accepted, restarted.accept(command, trace_id="d" * 32, idempotency_key="c" * 32))
         workspace = restarted.workspace(self.root)
-        self.assertIsNotNone(workspace.governing_intent)
-        assert workspace.governing_intent is not None
-        self.assertEqual(workspace.governing_intent.revision, accepted.revision)
-        self.assertEqual(workspace.governing_intent.revision_content_hash, accepted.revision_content_hash)
+        self.assertEqual(workspace.current, accepted)
+        policy = restarted.evaluate_policy(
+            IntentPolicyRequest(root=self.root, action="propose-query", subject_type="human"),
+            trace_id=TRACE,
+        )
+        self.assertIsNotNone(policy.governing_intent)
+        assert policy.governing_intent is not None
+        self.assertEqual(policy.governing_intent.revision, accepted.revision)
+        self.assertEqual(policy.governing_intent.revision_content_hash, accepted.revision_content_hash)
 
         connection = sqlite3.connect(Path(self.root) / "state" / "project.sqlite3")
         try:
