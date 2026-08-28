@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0dc1d1b35d58aa04bcac2660140e86778964aff5fed149b2ed49667654e25bb7
+source_sha256: 3a832289f7b7c10943912224c4f0f65c16f4ffd23686d30e358c9903a212fcc4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3438,13 +3438,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / nash-independent-domain-lifecycle-reviewer (`changes-requested`)
 
 **Objective:** Explicit lifecycle diagrams and validators for projects, corpus items, documents, evidence records, decisions, tasks, dossiers, and exports.
 
@@ -3468,9 +3468,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S01.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `47d6a474fec3c3957ec24a8fe9547cd69051937e464dc51acfffdeaacc69acef`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `47d6a474fec3c3957ec24a8fe9547cd69051937e464dc51acfffdeaacc69acef`
 
 - Candidate / base / branch: `0e98f656857855e0162833d5a3973dca30019bae` / `a3d6d4b9d6ad13617118021752d4a097760f8f6c` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T14:09:27+00:00`
@@ -3484,11 +3486,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / nash-independent-domain-lifecycle-reviewer / `2026-08-28T14:12:07+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S01.T02.review-R01.json` / `a68fc27692c6c498de9d205fc431d830d0c243211253b29e50e2943ad3dda154`
 
-**Currently open findings:** -
+**Review notes:** The exact schema/profile hashes, generated Python and TypeScript parity, deterministic transition selection, strict hostile-input validation, actor/reason retention, immutable owned output, documented terminal/reopen rules, content-free failure codes, packaging inventory, and ordinary restart paths are supported by the frozen evidence and focused replay. One blocking safe-revision boundary defect remains: both generated runtimes accept the schema-maximum current revision and persist a transition whose revision exceeds the contract and JavaScript safe-integer ceiling.
+
+**Findings opened:**
+
+- `CAP-03.S01.T02-R01-F01` `high` blocking=`True` criterion=`1` — Maximum valid revision produces and persists an invalid transition revision; reproduce: At exact candidate 0e98f656857855e0162833d5a3973dca30019bae, supply a valid project snapshot in state active with revision 9007199254740991 and a matching archive command with expectedRevision 9007199254740991. Python apply_lifecycle_transition returns and invokes the persistence callback once with priorRevision 9007199254740991 and revision 9007199254740992. The same unchecked snapshot.revision + 1 exists in packages/contracts/domain/lifecycle.generated.ts. However packages/contracts/domain/domain-lifecycle.schema.json defines SafeRevision maximum 9007199254740991, so the emitted transition violates its own wire schema and TypeScript crosses Number.MAX_SAFE_INTEGER. Existing lifecycle tests pass because they do not exercise this accepted boundary.; remediate: In a strict-descendant candidate, make both generated runtimes reject any otherwise-valid command whose successful transition would exceed SafeRevision before invoking persistence, using one stable content-free error code with exact Python/TypeScript parity. Add acceptance-bound tests at maximum-minus-one (successful emission at the maximum), maximum (denied with zero persistence calls), and restart/serialization validation of the maximum valid emitted transition. Keep the schema/profile hashes and generator outputs exact and do not widen the safe-integer contract.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by nash-independent-domain-lifecycle-reviewer at `2026-08-28T14:12:07+00:00`
+
+**Latest notes:** The exact schema/profile hashes, generated Python and TypeScript parity, deterministic transition selection, strict hostile-input validation, actor/reason retention, immutable owned output, documented terminal/reopen rules, content-free failure codes, packaging inventory, and ordinary restart paths are supported by the frozen evidence and focused replay. One blocking safe-revision boundary defect remains: both generated runtimes accept the schema-maximum current revision and persist a transition whose revision exceeds the contract and JavaScript safe-integer ceiling.
+
+**Currently open findings:** `CAP-03.S01.T02-R01-F01`
 
 #### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 0dc1d1b35d58aa04bcac2660140e86778964aff5fed149b2ed49667654e25bb7
+source_sha256: 3a832289f7b7c10943912224c4f0f65c16f4ffd23686d30e358c9903a212fcc4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 274 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 45 |
 | `DEFERRED` | 36 |
 
@@ -353,7 +353,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S04.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-reviewer | - |
 | `CAP-02.S04.T04` | `append-only v1` | 1 | `-` | approved / nash-independent-security-reviewer | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
-| `CAP-03.S01.T02` | `append-only v1` | 0 | `R01` | - / - | - |
+| `CAP-03.S01.T02` | `append-only v1` | 1 | `-` | changes-requested / nash-independent-domain-lifecycle-reviewer | `CAP-03.S01.T02-R01-F01` |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -420,4 +420,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S01.T02` Define aggregate state machines and invariants | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S01.T02` Define aggregate state machines and invariants | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
