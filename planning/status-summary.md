@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dfdaa3b2769b63fc31744dbf9bc7ac330b65e83a2adcc794dde09ae6e472cd8a
+source_sha256: ccd7bcd091d58113d4ad68b5a6416b22589279fe1d3fbff3515ceca8157d4db6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 273 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 46 |
 | `DEFERRED` | 36 |
 
@@ -354,7 +354,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S04.T04` | `append-only v1` | 1 | `-` | approved / nash-independent-security-reviewer | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
-| `CAP-03.S01.T03` | `append-only v1` | 1 | `-` | changes-requested / nash-independent-domain-compatibility-reviewer | `CAP-03.S01.T03-R01-F01`, `CAP-03.S01.T03-R01-F02` |
+| `CAP-03.S01.T03` | `append-only v1` | 1 | `R02` | changes-requested / nash-independent-domain-compatibility-reviewer | `CAP-03.S01.T03-R01-F01`, `CAP-03.S01.T03-R01-F02` |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -421,4 +421,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S01.T03` Publish versioning and compatibility policy for domain APIs | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S01.T03` Publish versioning and compatibility policy for domain APIs | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
