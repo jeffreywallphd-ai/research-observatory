@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 20de811964f55a23d71a5d2fcab4f77883238fe8b2b7e4dcdda2a9a2fe4d2e0b
+source_sha256: 8c1ac6d0ffaf8eda83694322d22619b41785667b938359f77bb42e69acc8ac84
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3792,7 +3792,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3817,13 +3817,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S02.T02.json` at `b93b7e4c8735c278c026f55b5b42c7b3f2d21850`
+
 ##### Review history — CAP-03.S02.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `c6969991c914bc8c0cf35a76cbf159e161ceb0637456ca41f551f4adb7a5df6d`
+
+- Candidate / base / branch: `b93b7e4c8735c278c026f55b5b42c7b3f2d21850` / `198edd87be8147087ac87f282c12d099fe1a943d` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T20:00:35+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T02.json` / `4c9256561c4c18c91d9fa5f1caae5e08a0fe710d0ad479048e42657f5c7ad149` / `b93b7e4c8735c278c026f55b5b42c7b3f2d21850`
+- Acceptance-criteria SHA-256: `a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb`
+- Verification-selection SHA-256: `d0a672705a2c9013efdd67fcb009ea2f81617e23af127c08f2932fa0731aaa12`
+- Changed paths: `apps/desktop/README.md`, `apps/desktop/scripts/assemble-application.mjs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/IntentWorkspace.test.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `artifacts/evidence/ui-change/CAP-03.S02.T02.json`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/README.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/README.md`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/modules.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `tests/desktop/test_desktop_app_check.py`, `tests/service/README.md`, `tests/service/fixtures/valid-intent-draft-request.json`, `tests/service/test_core_api.py`, `tests/service/test_research_intents.py`, `tools/core_api_contract.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test in packages/contracts`, `npm test; npm run typecheck; npm run build in apps/desktop`, `.venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py`, `.venv\Scripts\python.exe tools/desktop_app_check.py --repo . --built-frame-only; ui_change_gate.py; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py`, `.venv\Scripts\python.exe tools/quality_check.py --repo .; .venv\Scripts\python.exe tools/architecture_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile desktop --profile service --affected-base 198edd87be8147087ac87f282c12d099fe1a943d --affected-head b93b7e4c8735c278c026f55b5b42c7b3f2d21850 --deferred-gate W1-exit --selection-only; build_manifest.py; git diff --check; witness SHA-256`
+- Deferred checks: `The complete desktop and service profiles include the broad foundation baseline and desktop performance command; under AGENTS.md these are deferred to the CAP-03.S02 integration review/checkpoint and W1 exit rather than replayed for an ordinary task.`, `The controlled 64-capture visual-regression runner passed on the identical product tree before commit-order reconstruction but did not complete on the final retry. Route, workflow, accessibility, token, approved-reference, product-build, browser inspection, and built-frame checks passed at the exact final candidate; the complete capture matrix remains deferred to slice review.`, `CAP-03.S02.T03 owns runtime tool/gate/output/stopping policy enforcement. Complete cross-capability security, accessibility, performance, cancellation, recovery, and packaging qualification remains mandatory at the applicable integration checkpoint and W1 exit.`
+- Selection rationale: This medium-risk vertical slice crosses a strict public Core API contract, local SQLite transaction boundary, immutable audit/outbox lineage, restart recovery, generated TypeScript client, and a governed desktop UI. Selected checks therefore cover service success/failure/restart behavior, cross-language contract denial, renderer interaction and boundary states, exact approved-reference lineage, tokens/routes/workflows/accessibility, built-product capability inventory and network denial, real Windows sidecar packaging, Python quality, architecture boundaries, planning authority, build provenance, affected-selection truth, and witness safety. No dependency or migration version changed and no external provider, credential, cloud, or destructive data path was introduced.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 

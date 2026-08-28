@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T02",
+  "commit": "b93b7e4c8735c278c026f55b5b42c7b3f2d21850",
+  "baseCommit": "198edd87be8147087ac87f282c12d099fe1a943d",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/service/README.md",
+    "tests/service/fixtures/valid-intent-draft-request.json",
+    "tests/service/test_core_api.py",
+    "tests/service/test_research_intents.py",
+    "tools/core_api_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 41 Core API service tests passed at exact candidate b93b7e4c8735c278c026f55b5b42c7b3f2d21850. Coverage includes durable incomplete draft creation, atomic immutable revision/provenance/outbox persistence, exact scope-impact preview and acknowledgement, optimistic conflict denial, restart recovery, lineage validation, local-only egress, human authority, and route-level success and failure boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test in packages/contracts",
+      "exitCode": 0,
+      "result": "All 51 Python contract tests and all 56 TypeScript tests across seven files passed. Strict decoders reject malformed intent summaries, mismatched current/history identities, unsafe launch-ready projections, and invalid preview acknowledgement tokens while preserving generated OpenAPI parity."
+    },
+    {
+      "command": "npm test; npm run typecheck; npm run build in apps/desktop",
+      "exitCode": 0,
+      "result": "All 53 desktop renderer tests across twelve files passed, strict TypeScript compilation passed, and the functional product plus reference conformance fixture built successfully. The tests cover fourteen use cases, mode defaults, draft saving, explicit scope-impact acknowledgement, immutable revision comparison, disabled gated launch, project absence, loading, offline, denied, error, and recovery states."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected Windows symlink-privilege skip. The real PyInstaller build completed and included the composed Core API implementation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only; ui_change_gate.py; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py",
+      "exitCode": 0,
+      "result": "The built product advertises CAP-03.S02.T02, contains no network requests or critical boundary violations, and preserves application-lock, keyboard, responsive, recovery, and trust-frame contracts. The design-first gate binds exactly three UI implementation files to approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2. Approved reference integrity, 109 tokens, 32 routes, 521 region contracts, fourteen workflow profiles, 390 keyboard cases, and 64 responsive cases passed. Report SHA-256 values: desktop 15a894ba7e19d97805b7b3d5ee0281d1b00231314cf254dc39a87250f81a0e66; reference ca74c94f7a7b7f82b38adcbcb5ba1ca8c35fc30361cfb9ce7c72bdef1cba642a; tokens 632bb6c9174e5ace57f527d43d41111bcb41975c9ee791b092e9c35eecc14ed5; routes 2f17cd9098f288621ede2df6fd3099dbb04fd6113acc23e10f74150caad90a83; workflows 41523d50bec954463e9e272ebfd47e86e8ba5ae68df2f62d2f840832155900ae; accessibility 22648554b2e36a4874f853c8a7d5d7fb5f4c25eed3d1c16bb7ace8d678fcf668."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed across all 160 governed Python files. The architecture contract passed across 13 areas, 12 modules, five stable interfaces, and three deployment profiles; persistence remains behind its port and production composition root. Quality report SHA-256: 5deb25638e12a01239bb1147aa689d7813cb4e6d1a437aafa0e041702d31b70f."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The 20-capability/117-slice/359-task backlog validates, W1 remains one immutable approved and active campaign, CAP-03.S02.T01 is DONE, and CAP-03.S02.T02 remains the sole owned in-progress task. The 150-page planning review site and all W1 binding plans remain approved."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile service --affected-base 198edd87be8147087ac87f282c12d099fe1a943d --affected-head b93b7e4c8735c278c026f55b5b42c7b3f2d21850 --deferred-gate W1-exit --selection-only; build_manifest.py; git diff --check; witness SHA-256",
+      "exitCode": 0,
+      "result": "The Git-derived selector passed for the exact desktop/service task range and deferred only desktop performance to W1 exit. Build provenance passed at 0.1.0+gb93b7e4.dirty; dirty status is solely the authenticated untracked W1.A04.B00 historical witness. Selection report SHA-256: 15eba63a62859ce25b1967fdcccecf262f4495ca4adc4448ceff2db186af79c7. Build report SHA-256: 1a60a785f64afc91e35c11eb3fedc681086844e9679941e71cf2d1809739198e. Patch hygiene passed, and the protected witness remains untracked, unstaged, and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Corpus, evidence, novelty, and stopping changes are written only after the service returns an exact impact preview token bound to the current revision and proposed scope; stale, altered, or unacknowledged changes fail closed.",
+        "Every accepted save creates a new immutable revision with rationale, prior revision identity/hash, provenance event, and outbox record in one transaction. Existing revisions are compared rather than overwritten, and restart replay preserves sequence and lineage.",
+        "Incomplete intent contracts can be saved durably as drafts, but the service projection and desktop action keep launchReady false and the gated analysis control disabled."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact candidate passed 41 Core API tests, 51 Python contract tests, 56 TypeScript contract tests, 53 desktop tests, 25 focused desktop/UI-gate control tests, and six packaging tests.",
+        "Material failure coverage includes missing project, malformed and cross-project identity, incomplete draft, changed scope without preview, altered or stale acknowledgement, concurrent writer conflict, persistence rollback, service restart, invalid lineage, unavailable repository, offline/denied/error UI boundaries, and disabled launch.",
+        "The product build and built-frame inspection expose Research intent only as an implemented capability and make no network requests or fabricated research claims."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The Core API models, port, SQLite adapter, composition root, OpenAPI/generated clients, fixture, desktop workflow, documentation, and test inventories were updated together. Existing schema-v5 settings, provenance_events, and outbox_events provide the required durable envelope, so no migration was necessary.",
+        "The UI implementation is bound to the unchanged approved RO-UI-ACADEMIC-MINIMAL-1.3 reference by artifacts/evidence/ui-change/CAP-03.S02.T02.json; the gate proves the additive Python inventory preceded every UI implementation commit.",
+        "Scope is confined to intent drafting/revision and its exact capability inventory. Runtime tool-policy enforcement, active governing intent selection, downstream workflow adaptation, and full slice/W1 qualification remain assigned to approved dependent work."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This medium-risk vertical slice crosses a strict public Core API contract, local SQLite transaction boundary, immutable audit/outbox lineage, restart recovery, generated TypeScript client, and a governed desktop UI. Selected checks therefore cover service success/failure/restart behavior, cross-language contract denial, renderer interaction and boundary states, exact approved-reference lineage, tokens/routes/workflows/accessibility, built-product capability inventory and network denial, real Windows sidecar packaging, Python quality, architecture boundaries, planning authority, build provenance, affected-selection truth, and witness safety. No dependency or migration version changed and no external provider, credential, cloud, or destructive data path was introduced.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "contracts:unit",
+      "service:unit",
+      "packaging:unit"
+    ],
+    "deferred": [
+      "The complete desktop and service profiles include the broad foundation baseline and desktop performance command; under AGENTS.md these are deferred to the CAP-03.S02 integration review/checkpoint and W1 exit rather than replayed for an ordinary task.",
+      "The controlled 64-capture visual-regression runner passed on the identical product tree before commit-order reconstruction but did not complete on the final retry. Route, workflow, accessibility, token, approved-reference, product-build, browser inspection, and built-frame checks passed at the exact final candidate; the complete capture matrix remains deferred to slice review.",
+      "CAP-03.S02.T03 owns runtime tool/gate/output/stopping policy enforcement. Complete cross-capability security, accessibility, performance, cancellation, recovery, and packaging qualification remains mandatory at the applicable integration checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate b93b7e4c8735c278c026f55b5b42c7b3f2d21850 against CAP-03.S02.T02. Prioritize silent scope-change denial, acknowledgement binding, immutable revision/audit/outbox atomicity, concurrent-writer and restart behavior, draft non-launchability, fourteen-use-case guidance, boundary-state truthfulness, generated contract parity, approved-reference lineage, capability inventory, and the stated dependent-task and Wave-exit deferrals."
+  }
+}
