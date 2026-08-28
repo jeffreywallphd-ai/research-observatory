@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8635265b8a468e74ab564326c83a2203517d66bfccda7b1c79461f51d61f74d0
+source_sha256: b639a188a98860fe81262c455973a3ce21ab7842e98ae9d07ae8b7e001d921cc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3388,7 +3388,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A small stable core model defines records, documents, evidence, decisions, workflows, ontologies, graphs, opportunities, and monitoring events.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3681,7 +3681,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Every project declares its scholarly purpose, scope, evidence rules, autonomy, and stopping logic before consequential automation.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3689,7 +3689,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T01 - Model the versioned research intent contract
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

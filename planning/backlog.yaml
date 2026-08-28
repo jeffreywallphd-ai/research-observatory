@@ -5646,7 +5646,7 @@ capabilities:
     depends_on:
     - CAP-00.S02.T01
     - CAP-00.S05.T03
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-03.S01.T01
       capability_id: CAP-03
@@ -6549,14 +6549,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: APPROVED
+      reviewer: nash-independent-domain-contract-slice-reviewer
+      reviewed_at: '2026-08-28T16:33:37+00:00'
       evidence:
       - artifacts/evidence/CAP-03.S01.integration.json
-      notes: All three tasks are independently approved; the affected cross-language contract, Core service, Windows frozen-sidecar,
-        denial, restart, migration/compatibility, architecture, provenance and planning union passes. Independent slice review
-        is required before completion.
+      notes: 'Independent slice review approved exact submission 440dda3d06296960a94452c6d17ca48d52d5c022 with no findings
+        after task-evidence hash verification and replay of generators, TypeScript/Python contracts, Core service, and real
+        Windows sidecar. Ledger: artifacts/evidence/CAP-03.S01.integration.review.json; SHA-256 3c0b88bccc0f74e54bcd93c65ef2844fbd7addcfc3c67b00a378ceae85b6abb8.'
   - id: CAP-03.S02
     title: Research intent contract and mode governance
     outcome: Every project declares its scholarly purpose, scope, evidence rules, autonomy, and stopping logic before consequential
@@ -6570,7 +6570,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T03
     - CAP-01.S01.T02
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-03.S02.T01
       capability_id: CAP-03
@@ -6599,11 +6599,11 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-28T16:33:37+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

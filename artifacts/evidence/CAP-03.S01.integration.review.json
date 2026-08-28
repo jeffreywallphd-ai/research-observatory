@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-03.S01",
+  "submissionCommit": "440dda3d06296960a94452c6d17ca48d52d5c022",
+  "integrationEvidence": {
+    "path": "artifacts/evidence/CAP-03.S01.integration.json",
+    "sha256": "91362087bd20e2ae86c244666d89b20ce7fa97bb366b42e6aa1bd81e7f3153fc",
+    "stateCommit": "6dffc8b97bb410889bd3b0d5692f862eef4abe68"
+  },
+  "reviewer": "nash-independent-slice-contract-reviewer",
+  "disposition": "approved",
+  "notes": "The exact frozen CAP-03.S01 submission composes the three independently approved task outcomes into one portable contract boundary. Canonical UUIDv7 identities and scholarly value objects, deterministic revision-safe lifecycles, current/prior compatibility and exact breaking authority, content-free fail-closed event audit behavior, generated Python/TypeScript parity, Windows checkout-stable generation, Core consumption, and frozen-sidecar packaging are mutually consistent and supported by exact commit-bound evidence. No unresolved acceptance-bound finding remains.",
+  "checks": [
+    {
+      "check": "exact submission, state, plan, and evidence binding",
+      "result": "passed",
+      "details": "440dda3 resolves to 440dda3d06296960a94452c6d17ca48d52d5c022 and is the direct child of all-task-approved state 6dffc8b97bb410889bd3b0d5692f862eef4abe68. Integration evidence SHA-256 is 91362087bd20e2ae86c244666d89b20ce7fa97bb366b42e6aa1bd81e7f3153fc. The approved plan identity and all five task evidence/review references reproduce their declared hashes."
+    },
+    {
+      "check": "task review history and finding fold",
+      "result": "passed",
+      "details": "CAP-03.S01.T01 through T03 are DONE with approved latest independent dispositions. Earlier adverse rounds remain append-only; T02's maximum-revision finding and T03's authority and audit findings have explicit strict-descendant closures, while T03 R03 preserves those closures. No open finding is omitted from the integration readiness claim."
+    },
+    {
+      "check": "cross-language generators, schemas, and compatibility boundary",
+      "result": "passed",
+      "details": "Independent replay of all three generator currency checks, strict TypeScript compilation, and the complete contract package passed 34/34 tests. It covered canonical identity/value validation, deterministic lifecycle and safe revision boundaries, prior/current compatibility, exact ADR/migration authority, component negotiation, unknown-event and hostile-payload denial, immutable outputs, and canonical LF/CRLF text hashing with raw-byte-bound binary fixtures."
+    },
+    {
+      "check": "Python parity and Core service consumption",
+      "result": "passed",
+      "details": "The complete Python contract suite passed 39/39 and the Core service suite passed 38/38. Both runtimes agree on validation and stable error codes, stale and terminal transition denials, maximum-safe revision behavior, restart-stable negotiation, exact authority checks, exactly-one content-free audit publication, and fail-closed audit callback failure. Core consumes the generated public modules rather than generator, persistence, or UI internals."
+    },
+    {
+      "check": "production sidecar integration and clean-checkout portability",
+      "result": "passed",
+      "details": "The focused frozen-sidecar package suite passed 6/6 with one expected Windows-token symlink-privilege skip. A real PyInstaller Windows x64 build included the generated domain, lifecycle, and compatibility modules and preserved required-module, inventory-substitution, and Pythonless-launch controls. Generator currency at the frozen submission independently confirmed Windows checkout portability."
+    },
+    {
+      "check": "architecture, plan, and downstream handoff",
+      "result": "passed",
+      "details": "The integrated behavior matches the approved CAP-03.S01 plan and the accepted UUIDv7, portability, compatibility, event, and modular-Core decisions. CAP-02 can persist validated public values and transition results, and CAP-07 can bind model/provider envelopes to the public identity, source, version, negotiation, and audit contracts without importing private generator, database, or UI implementation state. Durable persistence and model authority remain separately governed downstream responsibilities."
+    }
+  ],
+  "findings": [],
+  "residuals": [
+    {
+      "id": "CAP-03.S01-RESIDUAL-E2E-PERFORMANCE",
+      "disposition": "deferred-to-w1-exit",
+      "details": "No active tests/e2e/test_*.py command or dedicated domain microbenchmark exists, and neither is represented as passed. The schema-to-generated-runtime-to-Core-to-frozen-sidecar union establishes this slice boundary; complete cross-capability system and Windows resource qualification remain mandatory at W1 exit."
+    },
+    {
+      "id": "CAP-03.S01-RESIDUAL-DURABILITY",
+      "disposition": "downstream-owned",
+      "details": "Durable provenance, transactional outbox, compatibility-audit storage, and migration execution remain assigned to approved downstream slices. This slice supplies typed immutable transition, event, compatibility, and audit facts and does not claim durable persistence."
+    },
+    {
+      "id": "CAP-03.S01-RESIDUAL-FOUNDATION",
+      "disposition": "deferred-to-w1-exit",
+      "details": "The disclosed historical foundation run's 72 failures and 16 errors concern retired governance and live-boundary fixture assumptions rather than the domain contract, lifecycle, compatibility, event, or packaging behavior independently replayed here. They remain mandatory reconciliation work before W1 exit qualification."
+    },
+    {
+      "id": "CAP-03.S01-RESIDUAL-SYMLINK",
+      "disposition": "deferred-to-w1-exit",
+      "details": "One packaging symlink case skips because the current Windows token cannot create file symlinks. Required-module, artifact-inventory substitution, real frozen inclusion, and Pythonless execution passed; release-authoritative Windows qualification must retain or execute equivalent privileged coverage at W1 exit."
+    },
+    {
+      "id": "CAP-03.S01-RESIDUAL-WITNESS",
+      "disposition": "protected-control-artifact",
+      "details": "artifacts/evidence/W1.A04.B00.json remains untracked and unstaged with SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. It is outside slice product scope and was not modified."
+    }
+  ],
+  "taskctlSliceReviewNote": "APPROVED exact CAP-03.S01 integration submission 440dda3d06296960a94452c6d17ca48d52d5c022. The three task outcomes compose across canonical UUIDv7/value contracts, deterministic revision-safe lifecycles, prior/current compatibility and exact breaking authority, fail-closed content-free event audit, Python/TypeScript parity, Windows checkout portability, Core service use, and frozen-sidecar packaging. No blocking finding. Preserve the explicit E2E/performance, downstream durability, historical foundation-fixture, privileged-symlink, and protected-witness obligations for W1 exit."
+}

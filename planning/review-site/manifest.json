@@ -2553,7 +2553,7 @@
             {
               "task_id": "CAP-03.S02.T01",
               "title": "Model the versioned research intent contract",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
