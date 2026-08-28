@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ba25fb206e80ad71775607a79cfe04f3c504cea5aa0fd5f55af114cbbc6b0fea
+source_sha256: 65f2dc6cf1028caeed1ef532c0d0ddd37963ebc863b6b7246540e8843d9d2861
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3687,15 +3687,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-01.S01.T02`
 
-#### - [ ] CAP-03.S02.T01 - Model the versioned research intent contract
+#### - [x] CAP-03.S02.T01 - Model the versioned research intent contract
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-01.S01.T02`
 
-**Owner / review:** codex / codex-independent (`changes-requested`)
+**Owner / review:** codex / codex-independent (`approved`)
 
 **Objective:** Schema for research question, contribution intent, epistemic mode, unit/level, source scope, evidence types, novelty standard, autonomy, and stopping rule.
 
@@ -3720,7 +3720,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -3752,7 +3752,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `ffcef80b5e8718d5ec136b1a9a2a2a08b2d69b0b68e42fa1ecad8530b7c68d10`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `ffcef80b5e8718d5ec136b1a9a2a2a08b2d69b0b68e42fa1ecad8530b7c68d10`
 
 - Candidate / base / branch: `deb3430ec489afb07f87b003e5aee8a7402b34b6` / `035a1e833ae0628d48bf1d29d31af73260a6adda` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T19:05:23+00:00`
@@ -3766,15 +3768,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-03.S02.T01-R01-F01`
 - Root-cause escalation: The initial schema bounded action spelling but not authority meaning, while generated semantic checks treated the mayAcceptIntent/mayChangeScope flags, required gates, egress destinations, and stopping conditions as independent fields. The stopping validator used any-match intersection, so one lawful condition masked an incompatible condition. R02 closes those relationships with one canonical action vocabulary and level rank, one egress destination/gate invariant, and one required-plus-subset stopping rule, implemented identically in generated TypeScript and Python and covered by parity tests.
 
-**Current latest-review projection:** `changes-requested` by codex-independent at `2026-08-28T18:54:35+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent / `2026-08-28T19:08:52+00:00`
 
-**Latest notes:** The exact candidate and submission binding, seven epistemic mode branches, draft unknown/not-applicable behavior, accepted completeness, compact governing-reference projection, immediate structural lineage, canonical identities, deep immutable ownership, dangerous-key/unknown-field/calendar denial, generated TypeScript/Python parity, sidecar inclusion, ADR-0022/ADR-0023 authority, and strict persistence/UI/enforcement/provenance nonclaims are otherwise supported. Independent replay passed generator currency, strict TypeScript compilation, 12/12 TypeScript intent tests, 10/10 Python intent tests, and 6/6 packaging tests with one expected Windows-token symlink skip. The supplied service-profile report's 71 failures and 16 errors are confined to the previously disclosed historical governance/recovery fixture baseline; no task-owned intent, contract, Core service, package, ADR, build, architecture, or quality failure appears there. One consolidated high-severity authority and policy-closure finding remains in both generated runtimes.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T01.review-R02.json` / `1e1c58cbb0a3e540992ea039733681982e924e3d2b797d0bbeb9acf5459fc013`
 
-**Currently open findings:** `CAP-03.S02.T01-R01-F01`
+**Review notes:** Focused remediation review replayed CAP-03.S02.T01-R01-F01 and the incremental generated-contract boundary. The exact strict-descendant candidate now uses a closed non-consequential action vocabulary, enforces action/autonomy-level ordering, keeps intent acceptance and scope changes outside machine authority, reconciles local-only and approved egress with destination and human-gate state, and requires every stopping condition to belong to the selected mode while retaining a mode-required condition. Resource-budget is permitted only as a secondary cross-mode bound. All seven lawful mode sets and every autonomy-level boundary pass in equivalent generated TypeScript and Python runtimes. Generator/schema parity, immutable ownership, governing-reference behavior, append-only R01 history, and persistence/UI/enforcement/provenance nonclaims remain intact. No blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S02.T01-R01-F01` `fixed` — At exact candidate deb3430ec489afb07f87b003e5aee8a7402b34b6, the original accept-intent, change-scope, and external-egress action strings are rejected by the closed schema vocabulary in both runtimes; mixed systematic/technical stopping returns stopping-rule-matches-epistemic-mode; local-only destination or external-egress-gate contradictions deny; and approved non-local egress requires both an opaque destination and external-egress human gate. Independent replay passed generator currency, strict TypeScript compilation, 14/14 TypeScript intent tests and 12/12 Python intent tests. Those suites cover human-only, suggest, prepare-reversible, and execute-reversible action ceilings; all seven mode-required condition sets with resource-budget as the only universal secondary condition; missing/contradictory egress gates; valid approved egress; dangerous inputs; and immutable output parity.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent at `2026-08-28T19:08:52+00:00`
+
+**Latest notes:** Focused remediation review replayed CAP-03.S02.T01-R01-F01 and the incremental generated-contract boundary. The exact strict-descendant candidate now uses a closed non-consequential action vocabulary, enforces action/autonomy-level ordering, keeps intent acceptance and scope changes outside machine authority, reconciles local-only and approved egress with destination and human-gate state, and requires every stopping condition to belong to the selected mode while retaining a mode-required condition. Resource-budget is permitted only as a secondary cross-mode bound. All seven lawful mode sets and every autonomy-level boundary pass in equivalent generated TypeScript and Python runtimes. Generator/schema parity, immutable ownership, governing-reference behavior, append-only R01 history, and persistence/UI/enforcement/provenance nonclaims remain intact. No blocking finding remains.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
