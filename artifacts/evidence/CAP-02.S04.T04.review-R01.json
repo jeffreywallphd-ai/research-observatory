@@ -1,0 +1,11 @@
+{
+  "task_id": "CAP-02.S04.T04",
+  "attempt_id": "R01",
+  "candidate_commit": "529d6ee50dc75ce4c7ceeb8a5c293acb99faecd0",
+  "submission_record_commit": "9bf6f82f8c26066b915e29c2901512f0b14c3ea2",
+  "reviewer": "nash-independent-security-reviewer",
+  "result": "approved",
+  "notes": "The exact candidate satisfies the T04 security gate. SQLCipher 4.12 with per-project DPAPI-protected raw keys is fail-closed against plaintext production open, missing or wrong keys, corruption, redirected storage, and unavailable credential authority. Encrypted backup/restore, explicit-consent plaintext migration, staged rekey, interruption recovery, rollback retention, key containment, redacted diagnostics, Windows packaging, notices, performance budgets, strict contracts, and the live zero-unexcepted-blocker supply-chain result are supported by the exact evidence and independent replay. The two TypeScript native-compiler exceptions are exactly the independently approved development-only seven-day renewals through 2026-09-04 and grant no product-runtime exception. Independent replay passed 55 security tests (one Windows-token symlink skip), 101 data tests, 13 protected-database security/contract tests, and six packaging tests (one Windows-token symlink skip), including a frozen sidecar build. The disclosed 72 failures and 16 errors in the historical foundation run are stale governance/live-boundary fixture assumptions, not encrypted-storage failures; the sole T04-adjacent assertion binds recovered T03 bytes for packages/contracts/README.md and is invalidated by this task's lawful reviewed contracts update. Those historical fixtures must be reconciled before W1 exit qualification, but they are safe to defer from this task review and do not weaken T04 acceptance evidence.",
+  "findings": [],
+  "closures": []
+}
