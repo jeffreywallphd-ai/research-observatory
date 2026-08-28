@@ -1,0 +1,21 @@
+{
+  "task_id": "CAP-07.S01.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa",
+  "submission_record_commit": "229303c9160e0567b5a229fb77bd591417689ee1",
+  "reviewer": "codex-independent",
+  "result": "changes-requested",
+  "notes": "The exact submission and inherited CAP-03 pause/resume lineage are truthfully disclosed. The Draft 2020-12 schema, deterministic generator, generated Python/TypeScript schema hash, all eight task-specific input shapes, strict unknown/raw-content/unsafe-key exclusion, pinned route matching, immutable owned snapshots, explicit content-free unsupported-feature result, ADR-0021 authority, quality/build inventory, and later-task nonclaims are otherwise supported. Independent replay passed generator currency, strict TypeScript compilation, 5/5 TypeScript gateway tests, and 5/5 Python gateway tests. One consolidated high-severity semantic-closure finding remains in both generated runtimes.",
+  "findings": [
+    {
+      "id": "CAP-07.S01.T01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Result validation does not close over declared task budgets, returned output identity, or optional citation sources",
+      "reproduction": "At exact candidate f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa, load valid-generation-task.v1.json and valid-generation-result.v1.json and call Python model_result_errors (the generated TypeScript modelResultErrors has the same logic). Set reported usage to inputTokens=10000001, outputTokens=1000001, totalTokens=11000002 even though the task declares maxInputTokens=4096 and maxOutputTokens=1024; set queueMs=40000000, executionMs=40000000, totalMs=80000000 even though deadlineMs=30000; and set validation.outputHash to sha256:999... while the returned artifact.contentHash remains sha256:555.... The result is accepted with errors (). Then set citationRequirement=optional and substitute the supplied citation sourceContentHash with sha256:aaa... not present in any task input; it is also accepted with errors (). See model-task.template.ts.txt lines 317-346 and the equivalent Python template: token checking only proves arithmetic, latency only proves component sum, outputHash is not bound to the returned artifact, and source closure is conditional on citations being required. This contradicts ADR-0021's declared token bounds and attributable validation/citation metadata, and permits a nominally validated result to overrun its request contract or attribute output/evidence to unrelated immutable content.",
+      "required_remediation": "In a strict-descendant R02 candidate, add identical generated Python/TypeScript semantic checks that: reported input/output usage does not exceed the task's declared maxima; successful total latency does not exceed the task deadline (or, if the contract deliberately records post-deadline terminal results, defines and tests an explicit status-bound exception rather than silently accepting success); an accepted artifact-bearing output has validation.outputHash equal to its artifact.contentHash and rejected/not-run validation has state-consistent null/error metadata; and every supplied citation closes over a task input reference regardless of whether citations are required or optional. Apply equivalent task-specific closure to indexed outputs where input indices/labels/cardinality must derive from the corresponding input. Add adversarial parity tests for each substituted/over-budget case plus valid boundary-equality cases, regenerate both runtimes, and update the criterion evidence without rewriting R01."
+    }
+  ],
+  "closures": []
+}

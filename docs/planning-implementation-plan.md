@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f050199cd00e935e0806ff084945ab4199752967059a2e96d2d1ad8222f25350
+source_sha256: 912842d05186044f63c1cf2075ad5939f3e09386b14ef364701e95eb9121392a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6348,7 +6348,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6356,13 +6356,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T01 - Define model task interfaces and result envelopes
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-00.S03.T03`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / codex-independent (`changes-requested`)
 
 **Objective:** Contracts for embedding, reranking, classification, NLI, structured extraction, generation, tool use, token accounting, confidence, and citations.
 
@@ -6386,9 +6386,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-07.S01.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0e1559eb1f40edcb6c6c173c2dfcff2220bdc5da90c31dfaf12f947211993a18`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `0e1559eb1f40edcb6c6c173c2dfcff2220bdc5da90c31dfaf12f947211993a18`
 
 - Candidate / base / branch: `f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa` / `dc0fba09a468390ce729ab1225a7b3df49fb6441` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T17:01:30+00:00`
@@ -6402,11 +6404,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / codex-independent / `2026-08-28T17:05:30+00:00`
 
-**Latest notes:** Reopened: The blocking CAP-03.S01 checkout-portability defect is fixed in exact candidate 9a464e4, independently approved at task R03, and the complete CAP-03.S01 slice is independently approved at submission 440dda3; the recorded resume condition is satisfied.
+**Immutable review ledger:** `artifacts/evidence/CAP-07.S01.T01.review-R01.json` / `034c5b7ce70e4790c3a6db58aca85a01b666b496c922ec1fb67120ea65bf475c`
 
-**Currently open findings:** -
+**Review notes:** The exact submission and inherited CAP-03 pause/resume lineage are truthfully disclosed. The Draft 2020-12 schema, deterministic generator, generated Python/TypeScript schema hash, all eight task-specific input shapes, strict unknown/raw-content/unsafe-key exclusion, pinned route matching, immutable owned snapshots, explicit content-free unsupported-feature result, ADR-0021 authority, quality/build inventory, and later-task nonclaims are otherwise supported. Independent replay passed generator currency, strict TypeScript compilation, 5/5 TypeScript gateway tests, and 5/5 Python gateway tests. One consolidated high-severity semantic-closure finding remains in both generated runtimes.
+
+**Findings opened:**
+
+- `CAP-07.S01.T01-R01-F01` `high` blocking=`True` criterion=`1` — Result validation does not close over declared task budgets, returned output identity, or optional citation sources; reproduce: At exact candidate f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa, load valid-generation-task.v1.json and valid-generation-result.v1.json and call Python model_result_errors (the generated TypeScript modelResultErrors has the same logic). Set reported usage to inputTokens=10000001, outputTokens=1000001, totalTokens=11000002 even though the task declares maxInputTokens=4096 and maxOutputTokens=1024; set queueMs=40000000, executionMs=40000000, totalMs=80000000 even though deadlineMs=30000; and set validation.outputHash to sha256:999... while the returned artifact.contentHash remains sha256:555.... The result is accepted with errors (). Then set citationRequirement=optional and substitute the supplied citation sourceContentHash with sha256:aaa... not present in any task input; it is also accepted with errors (). See model-task.template.ts.txt lines 317-346 and the equivalent Python template: token checking only proves arithmetic, latency only proves component sum, outputHash is not bound to the returned artifact, and source closure is conditional on citations being required. This contradicts ADR-0021's declared token bounds and attributable validation/citation metadata, and permits a nominally validated result to overrun its request contract or attribute output/evidence to unrelated immutable content.; remediate: In a strict-descendant R02 candidate, add identical generated Python/TypeScript semantic checks that: reported input/output usage does not exceed the task's declared maxima; successful total latency does not exceed the task deadline (or, if the contract deliberately records post-deadline terminal results, defines and tests an explicit status-bound exception rather than silently accepting success); an accepted artifact-bearing output has validation.outputHash equal to its artifact.contentHash and rejected/not-run validation has state-consistent null/error metadata; and every supplied citation closes over a task input reference regardless of whether citations are required or optional. Apply equivalent task-specific closure to indexed outputs where input indices/labels/cardinality must derive from the corresponding input. Add adversarial parity tests for each substituted/over-budget case plus valid boundary-equality cases, regenerate both runtimes, and update the criterion evidence without rewriting R01.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by codex-independent at `2026-08-28T17:05:30+00:00`
+
+**Latest notes:** The exact submission and inherited CAP-03 pause/resume lineage are truthfully disclosed. The Draft 2020-12 schema, deterministic generator, generated Python/TypeScript schema hash, all eight task-specific input shapes, strict unknown/raw-content/unsafe-key exclusion, pinned route matching, immutable owned snapshots, explicit content-free unsupported-feature result, ADR-0021 authority, quality/build inventory, and later-task nonclaims are otherwise supported. Independent replay passed generator currency, strict TypeScript compilation, 5/5 TypeScript gateway tests, and 5/5 Python gateway tests. One consolidated high-severity semantic-closure finding remains in both generated runtimes.
+
+**Currently open findings:** `CAP-07.S01.T01-R01-F01`
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
