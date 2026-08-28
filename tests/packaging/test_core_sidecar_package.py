@@ -49,6 +49,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 ],
                 "hiddenModules": [
                     "_cffi_backend",
+                    "research_observatory_core.domain_lifecycles",
                     "research_observatory_core.migrations.runner",
                     "research_observatory_core.object_store",
                     "research_observatory_core.ports.credential_store",
@@ -63,6 +64,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         self.assertIn("_cffi_backend", contract["requiredModules"])
         self.assertIn("alembic", contract["requiredModules"])
         self.assertIn("nacl", contract["requiredModules"])
+        self.assertIn("research_observatory_core.domain_lifecycles", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
         self.assertIn("sqlcipher3", contract["requiredModules"])
         self.assertEqual(

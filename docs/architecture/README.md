@@ -101,6 +101,10 @@ The W1 local project package and classified storage contract are documented in
 The shared UUIDv7 identity, revision, scholarly value-object, and generated
 contract boundary is documented in
 [`domain-contracts.md`](domain-contracts.md) and governed by ADR-0013.
+The deterministic project, corpus-item, document, evidence-record, decision,
+task, dossier, and export lifecycle profiles, terminal/reopen rules, and
+validate-before-persist boundary are documented in
+[`domain-lifecycles.md`](domain-lifecycles.md).
 The versioned local SQLite identity, STRICT schema, connection, WAL, checkpoint,
 and integrity boundary is documented in
 [`local-sqlite-storage.md`](local-sqlite-storage.md) and governed by ADR-0014.

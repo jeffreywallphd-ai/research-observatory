@@ -119,6 +119,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
         ],
         "hiddenModules": [
             "_cffi_backend",
+            "research_observatory_core.domain_lifecycles",
             "research_observatory_core.migrations.runner",
             "research_observatory_core.object_store",
             "research_observatory_core.ports.credential_store",
