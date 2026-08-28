@@ -57,6 +57,9 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
                 "ADR-0016",
                 "ADR-0017",
                 "ADR-0018",
+                "ADR-0019",
+                "ADR-0020",
+                "ADR-0021",
             },
             set(records),
         )
@@ -72,6 +75,9 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
         self.assertIn("CAP-02.S03.T02", records["ADR-0016"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-02.S04.T01", records["ADR-0017"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-02.S04.T02", records["ADR-0018"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-02.S04.T03", records["ADR-0019"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-02.S04.T04", records["ADR-0020"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-07.S01.T01", records["ADR-0021"]["metadata"]["linked_tasks"])
 
     def test_unindexed_adr_file_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
