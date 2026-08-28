@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 376aee5357729832d6a324b6850256377c8f074118c162be270e32816a4450e6
+source_sha256: 5d08f4314e8086c5daf60e7e479124cdcc6094a02e88836efde1ecedcafaf78a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3177,15 +3177,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
+#### - [x] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S04.T01`, `CAP-02.S02.T03`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / nash-independent-security-reviewer (`approved`)
 
 **Objective:** ADR-selected production protection for the SQLite project database using SQLCipher or an evaluated equivalent, with Windows credential-backed keys, migration, rekey, recovery, and performance evidence.
 
@@ -3213,9 +3213,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-02.S04.T04
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `5ba45e5868b086e4362b8901db254af339ed1d80d5894544fe99cf8640e0a7ac`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `5ba45e5868b086e4362b8901db254af339ed1d80d5894544fe99cf8640e0a7ac`
 
 - Candidate / base / branch: `529d6ee50dc75ce4c7ceeb8a5c293acb99faecd0` / `819e32185f7d1b6e914cee45b7bcc487d891f7c8` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T13:21:05+00:00`
@@ -3229,9 +3231,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / nash-independent-security-reviewer / `2026-08-28T13:26:34+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-02.S04.T04.review-R01.json` / `c94ed00dcb25e53d3502a04259533afcd2346ab80470d4a6e56e5bbd9947d475`
+
+**Review notes:** The exact candidate satisfies the T04 security gate. SQLCipher 4.12 with per-project DPAPI-protected raw keys is fail-closed against plaintext production open, missing or wrong keys, corruption, redirected storage, and unavailable credential authority. Encrypted backup/restore, explicit-consent plaintext migration, staged rekey, interruption recovery, rollback retention, key containment, redacted diagnostics, Windows packaging, notices, performance budgets, strict contracts, and the live zero-unexcepted-blocker supply-chain result are supported by the exact evidence and independent replay. The two TypeScript native-compiler exceptions are exactly the independently approved development-only seven-day renewals through 2026-09-04 and grant no product-runtime exception. Independent replay passed 55 security tests (one Windows-token symlink skip), 101 data tests, 13 protected-database security/contract tests, and six packaging tests (one Windows-token symlink skip), including a frozen sidecar build. The disclosed 72 failures and 16 errors in the historical foundation run are stale governance/live-boundary fixture assumptions, not encrypted-storage failures; the sole T04-adjacent assertion binds recovered T03 bytes for packages/contracts/README.md and is invalidated by this task's lawful reviewed contracts update. Those historical fixtures must be reconciled before W1 exit qualification, but they are safe to defer from this task review and do not weaken T04 acceptance evidence.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by nash-independent-security-reviewer at `2026-08-28T13:26:34+00:00`
+
+**Latest notes:** The exact candidate satisfies the T04 security gate. SQLCipher 4.12 with per-project DPAPI-protected raw keys is fail-closed against plaintext production open, missing or wrong keys, corruption, redirected storage, and unavailable credential authority. Encrypted backup/restore, explicit-consent plaintext migration, staged rekey, interruption recovery, rollback retention, key containment, redacted diagnostics, Windows packaging, notices, performance budgets, strict contracts, and the live zero-unexcepted-blocker supply-chain result are supported by the exact evidence and independent replay. The two TypeScript native-compiler exceptions are exactly the independently approved development-only seven-day renewals through 2026-09-04 and grant no product-runtime exception. Independent replay passed 55 security tests (one Windows-token symlink skip), 101 data tests, 13 protected-database security/contract tests, and six packaging tests (one Windows-token symlink skip), including a frozen sidecar build. The disclosed 72 failures and 16 errors in the historical foundation run are stale governance/live-boundary fixture assumptions, not encrypted-storage failures; the sole T04-adjacent assertion binds recovered T03 bytes for packages/contracts/README.md and is invalidated by this task's lawful reviewed contracts update. Those historical fixtures must be reconciled before W1 exit qualification, but they are safe to defer from this task review and do not weaken T04 acceptance evidence.
 
 **Currently open findings:** -
 
