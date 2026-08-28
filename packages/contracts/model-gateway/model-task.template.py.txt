@@ -197,7 +197,12 @@ def model_task_errors(value: object) -> tuple[str, ...]:
         return tuple(errors)
     task = cast(Mapping[str, Any], value)
     task_input = cast(Mapping[str, Any], task["input"])
-    return () if task_input["kind"] == task["taskKind"] else ("task-input-kind-matches-task-kind",)
+    semantic_errors: list[str] = []
+    if task_input["kind"] != task["taskKind"]:
+        semantic_errors.append("task-input-kind-matches-task-kind")
+    if task_input["kind"] == "reranking" and task_input["topK"] > len(task_input["candidates"]):
+        semantic_errors.append("reranking-top-k-within-candidate-count")
+    return tuple(semantic_errors)
 
 
 def decode_model_task(value: object) -> ModelTaskSnapshot | None:
@@ -249,6 +254,53 @@ def _selected_route_matches_pin(route: Mapping[str, Any], pin: Mapping[str, Any]
     )
 
 
+def _indexed_output_errors(task: Mapping[str, Any], result: Mapping[str, Any]) -> list[str]:
+    task_input = cast(Mapping[str, Any], task["input"])
+    output = _record(result["output"])
+    if output is None:
+        return []
+    errors: list[str] = []
+    if task["taskKind"] == "reranking":
+        items = cast(Sequence[Mapping[str, Any]], output["items"])
+        candidates = cast(Sequence[object], task_input["candidates"])
+        indices = [cast(int, item["inputIndex"]) for item in items]
+        if (
+            len(items) > cast(int, task_input["topK"])
+            or len(items) > len(candidates)
+            or any(index >= len(candidates) for index in indices)
+            or len(set(indices)) != len(indices)
+        ):
+            errors.append("reranking-output-closes-over-candidates")
+    if task["taskKind"] == "classification":
+        items = cast(Sequence[Mapping[str, Any]], output["items"])
+        inputs = cast(Sequence[object], task_input["items"])
+        labels = frozenset(cast(Sequence[str], task_input["labels"]))
+        identities = [(item["inputIndex"], item["label"]) for item in items]
+        if any(cast(int, item["inputIndex"]) >= len(inputs) or item["label"] not in labels for item in items) or len(
+            set(identities)
+        ) != len(identities):
+            errors.append("classification-output-closes-over-items-and-labels")
+    if task["taskKind"] == "nli":
+        scores = cast(Sequence[Mapping[str, Any]], output["scores"])
+        labels = frozenset({"entailment", "contradiction", "neutral", "uncertain"})
+        score_labels = [cast(str, item["label"]) for item in scores]
+        if (
+            any(item["inputIndex"] != 0 or item["label"] not in labels for item in scores)
+            or len(set(score_labels)) != len(score_labels)
+            or output["label"] not in score_labels
+        ):
+            errors.append("nli-output-closes-over-task")
+    if task["taskKind"] == "moderation":
+        items = cast(Sequence[Mapping[str, Any]], output["items"])
+        inputs = cast(Sequence[object], task_input["items"])
+        identities = [(item["inputIndex"], item["label"]) for item in items]
+        if any(cast(int, item["inputIndex"]) >= len(inputs) for item in items) or len(set(identities)) != len(
+            identities
+        ):
+            errors.append("moderation-output-closes-over-items")
+    return errors
+
+
 def model_result_errors(task_value: object, result_value: object) -> tuple[str, ...]:
     task = decode_model_task(task_value)
     if task is None:
@@ -273,6 +325,7 @@ def model_result_errors(task_value: object, result_value: object) -> tuple[str, 
     route = cast(Mapping[str, Any], result["route"])
     policy = cast(Mapping[str, Any], result["policyDecision"])
     validation = cast(Mapping[str, Any], result["validation"])
+    requirements = cast(Mapping[str, Any], task["requirements"])
     successful = result["status"] in ("succeeded", "degraded")
     if successful:
         if output is None or output.get("kind") != task["taskKind"]:
@@ -284,6 +337,8 @@ def model_result_errors(task_value: object, result_value: object) -> tuple[str, 
     latency = cast(Mapping[str, int], result["latency"])
     if latency["totalMs"] < latency["queueMs"] + latency["executionMs"]:
         errors.append("latency-total-covers-queue-and-execution")
+    if successful and latency["totalMs"] > requirements["deadlineMs"]:
+        errors.append("successful-result-within-task-deadline")
     usage = cast(Mapping[str, Any], result["usage"])
     if usage["reporting"] == "reported":
         token_values = (usage["inputTokens"], usage["outputTokens"], usage["totalTokens"])
@@ -292,30 +347,57 @@ def model_result_errors(task_value: object, result_value: object) -> tuple[str, 
             or usage["totalTokens"] != usage["inputTokens"] + usage["outputTokens"]
         ):
             errors.append("reported-token-total-equals-input-plus-output")
+        elif (
+            usage["inputTokens"] > requirements["maxInputTokens"]
+            or usage["outputTokens"] > requirements["maxOutputTokens"]
+        ):
+            errors.append("reported-usage-within-task-bounds")
     elif any(usage[key] is not None for key in ("inputTokens", "outputTokens", "totalTokens")):
         errors.append("unreported-token-values-are-null")
+    artifact = _record(output.get("artifact")) if output is not None else None
+    if validation["outcome"] == "accepted":
+        if validation["outputHash"] is None or validation["errorCodes"]:
+            errors.append("accepted-validation-has-output-hash-and-no-errors")
+        if artifact is not None and validation["outputHash"] != artifact["contentHash"]:
+            errors.append("accepted-artifact-validation-hash-matches-output")
+        if not successful:
+            errors.append("accepted-validation-requires-successful-output")
+    if validation["outcome"] == "rejected":
+        if validation["outputHash"] is None or not validation["errorCodes"]:
+            errors.append("rejected-validation-has-output-hash-and-errors")
+        if result["status"] != "failed":
+            errors.append("rejected-validation-requires-failed-status")
+    if validation["outcome"] == "not-run" and (validation["outputHash"] is not None or validation["errorCodes"]):
+        errors.append("not-run-validation-has-no-output-or-errors")
     citations = cast(Sequence[Mapping[str, Any]], result["citations"])
     if (result["citationStatus"] == "supplied") != bool(citations):
         errors.append("citation-status-matches-citations")
-    requirements = cast(Mapping[str, Any], task["requirements"])
-    if successful and requirements["citationRequirement"] == "required":
+    if citations:
         task_input = cast(Mapping[str, Any], task["input"])
         inputs = {
             (item["aggregateId"], item["revisionId"], item["contentHash"]) for item in _content_references(task_input)
         }
-        if (
-            not citations
-            or result["citationStatus"] != "supplied"
-            or any(
-                (item["sourceAggregateId"], item["sourceRevisionId"], item["sourceContentHash"]) not in inputs
-                for item in citations
-            )
+        if any(
+            (item["sourceAggregateId"], item["sourceRevisionId"], item["sourceContentHash"]) not in inputs
+            for item in citations
         ):
-            errors.append("required-citations-close-over-task-input-references")
+            errors.append("supplied-citations-close-over-task-input-references")
+    if (
+        successful
+        and requirements["citationRequirement"] == "required"
+        and (not citations or result["citationStatus"] != "supplied")
+    ):
+        errors.append("required-citations-are-supplied")
     if requirements["citationRequirement"] == "not-applicable" and (
         result["citationStatus"] != "not-applicable" or citations
     ):
         errors.append("not-applicable-citations-are-empty")
+    if (
+        requirements["citationRequirement"] != "not-applicable"
+        and not citations
+        and result["citationStatus"] != "not-supplied"
+    ):
+        errors.append("citation-status-matches-task-requirement")
     execution = cast(Mapping[str, Any], task["execution"])
     if (
         execution["mode"] == "pinned"
@@ -323,6 +405,8 @@ def model_result_errors(task_value: object, result_value: object) -> tuple[str, 
         and not _selected_route_matches_pin(route, execution)
     ):
         errors.append("pinned-execution-route-matches-result-route")
+    if successful and output is not None and output.get("kind") == task["taskKind"]:
+        errors.extend(_indexed_output_errors(task, result))
     diagnostics = cast(Sequence[Mapping[str, Any]], result["diagnostics"])
     if result["status"] == "unsupported" and (
         route["selection"] != "none"

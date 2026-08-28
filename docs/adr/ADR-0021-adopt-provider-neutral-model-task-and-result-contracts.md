@@ -68,8 +68,13 @@ total latency, token-reporting state, validation outcome, confidence,
 citation state, output or null, and stable content-free diagnostics. Successful
 and degraded results require an allowed policy decision, selected route,
 accepted validation, and an output matching the task kind. Other statuses carry
-no output. Required citations must close over immutable content references in
-the task.
+no output. Reported usage cannot exceed the task token bounds, and a successful
+result cannot exceed its declared deadline. Accepted artifact output is bound
+to validation by the same content hash; rejected and not-run validation states
+carry state-consistent output hashes and error codes. Every supplied citation,
+whether required or optional, must close over an immutable task input.
+Reranking, classification, NLI, and moderation scores also close over the
+corresponding input indices, labels, and cardinality.
 
 Feature matching is fail-closed. A valid task with unsupported required
 features produces `model-task-feature-unsupported`; an unsupported result has
@@ -103,8 +108,9 @@ an existing field or overload the generation envelope.
 - all eight task-specific input envelopes;
 - complete pinned route and result provenance;
 - explicit content-free unsupported-feature behavior;
-- rejection of raw-content injection, unknown fields, request mismatch, token
-  inconsistency, citation drift, and pinned-route substitution; and
+- rejection of raw-content injection, unknown fields, request mismatch,
+  over-budget or inconsistent usage, deadline overrun, validation-hash drift,
+  citation drift, indexed-output drift, and pinned-route substitution; and
 - owned immutable snapshots in both generated runtimes.
 
 ## Task links
