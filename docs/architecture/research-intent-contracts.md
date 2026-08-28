@@ -47,9 +47,15 @@ epistemic mode.
 ## Researcher authority and safety
 
 Autonomy never grants authority to accept intent or change scope. Those human
-gates are mandatory, as is human confirmation of stopping. Local-only egress
-has no destinations; approved egress modes name at least one opaque approved
-destination identity. T03 must evaluate these declarations at service
+gates are mandatory, as is human confirmation of stopping. Allowed actions are
+drawn from a closed vocabulary and cannot exceed the selected human-only,
+suggest, prepare-reversible, or execute-reversible level. Intent acceptance,
+scope mutation, and direct external-egress authority are not actions in that
+vocabulary. Every stopping condition must belong to the selected mode; a shared
+resource-budget condition is secondary and cannot replace the mode's required
+condition. Local-only egress has neither destinations nor an external-egress
+gate; approved egress modes name at least one opaque approved destination and
+require that human gate. T03 must evaluate these declarations at service
 boundaries and record the governing revision; this contract does not claim that
 enforcement early.
 

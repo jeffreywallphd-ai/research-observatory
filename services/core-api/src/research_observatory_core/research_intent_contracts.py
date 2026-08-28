@@ -15,7 +15,7 @@ type FrozenJsonValue = None | bool | int | float | str | tuple["FrozenJsonValue"
 type ResearchIntentRevisionSnapshot = Mapping[str, FrozenJsonValue]
 type ResearchIntentReferenceSnapshot = Mapping[str, FrozenJsonValue]
 
-RESEARCH_INTENT_SCHEMA_SHA256 = "a30594480e27b4e14a3f7150da332fc16ec428a0cfb82622cba90e10a391f247"
+RESEARCH_INTENT_SCHEMA_SHA256 = "b5a9a94b6a9854e0db40996d140780d776b3a640464c9b7cf6b235aaeb4d3a7a"
 _RESEARCH_INTENT_SCHEMA: dict[str, Any] = json.loads(r"""{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://research-observatory.local/contracts/intent/research-intent.schema.json",
@@ -31,6 +31,7 @@ _RESEARCH_INTENT_SCHEMA: dict[str, Any] = json.loads(r"""{
     "accepted-revision-is-decision-complete",
     "intent-acceptance-is-human",
     "autonomy-retains-researcher-authority",
+    "autonomy-actions-match-level",
     "stopping-rule-matches-epistemic-mode",
     "source-temporal-range-is-ordered",
     "egress-policy-is-consistent"
@@ -63,6 +64,16 @@ _RESEARCH_INTENT_SCHEMA: dict[str, Any] = json.loads(r"""{
     "ShortCode": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9._-]{0,99}(?![\\s\\S])"
+    },
+    "AutonomyAction": {
+      "enum": [
+        "propose-query",
+        "recommend-stopping",
+        "prepare-screening-batch",
+        "prepare-draft-output",
+        "execute-approved-query",
+        "execute-approved-screening-batch"
+      ]
     },
     "SpecifiedStatement": {
       "type": "object",
@@ -361,10 +372,10 @@ _RESEARCH_INTENT_SCHEMA: dict[str, Any] = json.loads(r"""{
         },
         "allowedActions": {
           "type": "array",
-          "maxItems": 64,
+          "maxItems": 6,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/ShortCode"
+            "$ref": "#/$defs/AutonomyAction"
           }
         },
         "requiredHumanGates": {
@@ -1152,7 +1163,7 @@ def _accepted_complete(revision: Mapping[str, Any]) -> bool:
 def _stopping_matches(revision: Mapping[str, Any]) -> bool:
     stopping = cast(Mapping[str, Any], revision["stoppingRule"])
     conditions = set(cast(Sequence[str], stopping["conditions"]))
-    expected = {
+    required = {
         "systematic": {"source-exhaustion", "coverage-threshold"},
         "theory": {"interpretive-saturation", "researcher-decision"},
         "hermeneutic": {"interpretive-saturation", "researcher-decision"},
@@ -1161,7 +1172,28 @@ def _stopping_matches(revision: Mapping[str, Any]) -> bool:
         "novelty": {"nearest-prior-work-challenged"},
         "empirical": {"protocol-complete", "researcher-decision"},
     }
-    return bool(conditions & expected[cast(str, revision["epistemicMode"])])
+    mode_required = required[cast(str, revision["epistemicMode"])]
+    return bool(conditions & mode_required) and conditions <= mode_required | {"resource-budget"}
+
+
+def _autonomy_actions_match(revision: Mapping[str, Any]) -> bool:
+    autonomy = cast(Mapping[str, Any], revision["autonomy"])
+    level_rank = {
+        "human-only": 0,
+        "suggest": 1,
+        "prepare-reversible": 2,
+        "execute-reversible": 3,
+    }
+    action_rank = {
+        "propose-query": 1,
+        "recommend-stopping": 1,
+        "prepare-screening-batch": 2,
+        "prepare-draft-output": 2,
+        "execute-approved-query": 3,
+        "execute-approved-screening-batch": 3,
+    }
+    selected_rank = level_rank[cast(str, autonomy["level"])]
+    return all(action_rank.get(action, selected_rank + 1) <= selected_rank for action in autonomy["allowedActions"])
 
 
 def _primary_use_case_matches(revision: Mapping[str, Any]) -> bool:
@@ -1230,6 +1262,8 @@ def research_intent_revision_errors(value: object) -> tuple[str, ...]:
         or stopping["requiresHumanConfirmation"] is not True
     ):
         errors.append("autonomy-retains-researcher-authority")
+    if not _autonomy_actions_match(revision):
+        errors.append("autonomy-actions-match-level")
     if not _stopping_matches(revision):
         errors.append("stopping-rule-matches-epistemic-mode")
     source_scope = cast(Mapping[str, Any], revision["sourceScope"])
@@ -1238,7 +1272,10 @@ def research_intent_revision_errors(value: object) -> tuple[str, ...]:
         errors.append("source-temporal-range-is-ordered")
     egress = cast(Mapping[str, Any], revision["egressPolicy"])
     destinations = cast(Sequence[str], egress["approvedDestinationIds"])
-    if (egress["mode"] == "local-only" and destinations) or (egress["mode"] != "local-only" and not destinations):
+    has_egress_gate = "external-egress" in gates
+    if (egress["mode"] == "local-only" and (destinations or has_egress_gate)) or (
+        egress["mode"] != "local-only" and (not destinations or not has_egress_gate)
+    ):
         errors.append("egress-policy-is-consistent")
     return tuple(errors)
 

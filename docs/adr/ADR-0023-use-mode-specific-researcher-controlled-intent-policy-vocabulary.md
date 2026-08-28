@@ -63,12 +63,19 @@ systematic work; saturation or researcher decision for theory, hermeneutic, and
 critical work; benchmark completion for technical work; nearest-prior-work
 challenge for novelty; and protocol completion or researcher decision for
 empirical work. All stopping requires human confirmation.
+Every declared stopping condition must belong to the selected mode's closed
+condition set; `resource-budget` is the only cross-mode secondary condition and
+cannot replace the mode's required completion or researcher-decision condition.
 
 Autonomy is bounded to human-only, suggestion, reversible preparation, or
-reversible execution. The contract always denies machine authority to accept
-intent or change scope and always retains explicit human gates for both. Egress
-is declared as local-only or an approved mode with at least one opaque approved
-destination identity; enforcement remains T03 work.
+reversible execution. Allowed actions use a closed vocabulary and each action
+is capped by the selected autonomy level. That vocabulary excludes intent
+acceptance, scope mutation, and direct external-egress authority. The contract
+always denies machine authority to accept intent or change scope and always
+retains explicit human gates for both. Egress is declared as local-only with no
+destination or egress gate, or as an approved mode with at least one opaque
+approved destination identity and an explicit external-egress human gate;
+enforcement remains T03 work.
 
 ## Consequences
 
@@ -88,7 +95,10 @@ decision.
 - mode/requirements and mode/use-case mismatch denial;
 - valid mode-sensitive not-applicable states and invalid systematic omission;
 - source temporal ordering, evidence, novelty, and egress consistency;
-- mode-specific stopping conditions and mandatory human confirmation; and
+- closed mode-specific stopping sets, required completion semantics, and
+  mandatory human confirmation;
+- bounded action vocabulary and autonomy-level compatibility;
+- local-only and approved-egress gate/destination consistency; and
 - denial of AI acceptance or autonomy that can accept intent/change scope.
 
 ## Task links

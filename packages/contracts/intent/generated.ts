@@ -3,6 +3,7 @@
 
 export type EpistemicMode = "systematic" | "theory" | "technical" | "hermeneutic" | "critical" | "novelty" | "empirical";
 export type IntentRevisionStatus = "draft" | "proposed" | "accepted" | "superseded" | "rejected";
+export type AutonomyAction = "propose-query" | "recommend-stopping" | "prepare-screening-batch" | "prepare-draft-output" | "execute-approved-query" | "execute-approved-screening-batch";
 export interface ResearchIntentReference {
   readonly schemaVersion: "1.0";
   readonly documentType: "research-observatory-research-intent-reference";
@@ -31,7 +32,7 @@ export interface ResearchIntentRevision {
 export type ResearchIntentRevisionSnapshot = Readonly<ResearchIntentRevision>;
 export type ResearchIntentReferenceSnapshot = Readonly<ResearchIntentReference>;
 
-export const RESEARCH_INTENT_SCHEMA_SHA256 = "a30594480e27b4e14a3f7150da332fc16ec428a0cfb82622cba90e10a391f247";
+export const RESEARCH_INTENT_SCHEMA_SHA256 = "b5a9a94b6a9854e0db40996d140780d776b3a640464c9b7cf6b235aaeb4d3a7a";
 const RESEARCH_INTENT_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://research-observatory.local/contracts/intent/research-intent.schema.json",
@@ -47,6 +48,7 @@ const RESEARCH_INTENT_SCHEMA = {
     "accepted-revision-is-decision-complete",
     "intent-acceptance-is-human",
     "autonomy-retains-researcher-authority",
+    "autonomy-actions-match-level",
     "stopping-rule-matches-epistemic-mode",
     "source-temporal-range-is-ordered",
     "egress-policy-is-consistent"
@@ -79,6 +81,16 @@ const RESEARCH_INTENT_SCHEMA = {
     "ShortCode": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9._-]{0,99}(?![\\s\\S])"
+    },
+    "AutonomyAction": {
+      "enum": [
+        "propose-query",
+        "recommend-stopping",
+        "prepare-screening-batch",
+        "prepare-draft-output",
+        "execute-approved-query",
+        "execute-approved-screening-batch"
+      ]
     },
     "SpecifiedStatement": {
       "type": "object",
@@ -377,10 +389,10 @@ const RESEARCH_INTENT_SCHEMA = {
         },
         "allowedActions": {
           "type": "array",
-          "maxItems": 64,
+          "maxItems": 6,
           "uniqueItems": true,
           "items": {
-            "$ref": "#/$defs/ShortCode"
+            "$ref": "#/$defs/AutonomyAction"
           }
         },
         "requiredHumanGates": {
@@ -1131,15 +1143,40 @@ function acceptedComplete(revision: JsonRecord): boolean {
 function stoppingMatches(revision: JsonRecord): boolean {
   const conditions = record(revision.stoppingRule)?.conditions;
   if (!Array.isArray(conditions)) return false;
-  const has = (...expected: string[]) => expected.some((item) => conditions.includes(item));
-  switch (revision.epistemicMode) {
-    case "systematic": return has("source-exhaustion", "coverage-threshold");
-    case "theory": case "hermeneutic": case "critical": return has("interpretive-saturation", "researcher-decision");
-    case "technical": return has("benchmark-complete", "researcher-decision");
-    case "novelty": return has("nearest-prior-work-challenged");
-    case "empirical": return has("protocol-complete", "researcher-decision");
-    default: return false;
-  }
+  const required: Record<string, readonly string[]> = {
+    systematic: ["source-exhaustion", "coverage-threshold"],
+    theory: ["interpretive-saturation", "researcher-decision"],
+    hermeneutic: ["interpretive-saturation", "researcher-decision"],
+    critical: ["interpretive-saturation", "researcher-decision"],
+    technical: ["benchmark-complete", "researcher-decision"],
+    novelty: ["nearest-prior-work-challenged"],
+    empirical: ["protocol-complete", "researcher-decision"],
+  };
+  const modeRequired = required[String(revision.epistemicMode)];
+  if (!modeRequired) return false;
+  const allowed = new Set([...modeRequired, "resource-budget"]);
+  return modeRequired.some((item) => conditions.includes(item)) && conditions.every((item) => typeof item === "string" && allowed.has(item));
+}
+
+function autonomyActionsMatch(revision: JsonRecord): boolean {
+  const autonomy = record(revision.autonomy);
+  if (!autonomy || !Array.isArray(autonomy.allowedActions)) return false;
+  const levelRank: Record<string, number> = {
+    "human-only": 0,
+    suggest: 1,
+    "prepare-reversible": 2,
+    "execute-reversible": 3,
+  };
+  const actionRank: Record<string, number> = {
+    "propose-query": 1,
+    "recommend-stopping": 1,
+    "prepare-screening-batch": 2,
+    "prepare-draft-output": 2,
+    "execute-approved-query": 3,
+    "execute-approved-screening-batch": 3,
+  };
+  const selectedRank = levelRank[String(autonomy.level)];
+  return selectedRank !== undefined && autonomy.allowedActions.every((item) => typeof item === "string" && actionRank[item] !== undefined && actionRank[item] <= selectedRank);
 }
 
 function primaryUseCaseMatches(revision: JsonRecord): boolean {
@@ -1176,12 +1213,14 @@ export function researchIntentRevisionErrors(value: unknown): readonly string[] 
   const autonomy = record(revision.autonomy)!;
   const gates = autonomy.requiredHumanGates as unknown[];
   if (autonomy.mayAcceptIntent !== false || autonomy.mayChangeScope !== false || !gates.includes("intent-acceptance") || !gates.includes("scope-change") || record(revision.stoppingRule)?.requiresHumanConfirmation !== true) errors.push("autonomy-retains-researcher-authority");
+  if (!autonomyActionsMatch(revision)) errors.push("autonomy-actions-match-level");
   if (!stoppingMatches(revision)) errors.push("stopping-rule-matches-epistemic-mode");
   const temporal = record(record(revision.sourceScope)?.temporalCoverage);
   if (temporal?.kind === "bounded" && typeof temporal.startYear === "number" && typeof temporal.endYear === "number" && temporal.startYear > temporal.endYear) errors.push("source-temporal-range-is-ordered");
   const egress = record(revision.egressPolicy)!;
   const destinations = egress.approvedDestinationIds as unknown[];
-  if ((egress.mode === "local-only" && destinations.length !== 0) || (egress.mode !== "local-only" && destinations.length === 0)) errors.push("egress-policy-is-consistent");
+  const hasEgressGate = gates.includes("external-egress");
+  if ((egress.mode === "local-only" && (destinations.length !== 0 || hasEgressGate)) || (egress.mode !== "local-only" && (destinations.length === 0 || !hasEgressGate))) errors.push("egress-policy-is-consistent");
   return errors;
 }
 

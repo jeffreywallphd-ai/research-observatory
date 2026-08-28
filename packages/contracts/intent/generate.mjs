@@ -32,6 +32,7 @@ const semanticRules = [
   "accepted-revision-is-decision-complete",
   "intent-acceptance-is-human",
   "autonomy-retains-researcher-authority",
+  "autonomy-actions-match-level",
   "stopping-rule-matches-epistemic-mode",
   "source-temporal-range-is-ordered",
   "egress-policy-is-consistent",
