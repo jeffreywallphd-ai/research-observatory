@@ -38,6 +38,13 @@ contracts. Regenerate or check them with `tools/core_api_contract.py`. The API c
 behavior only; `design/ui-reference` remains a governed experience reference
 and is not served or embedded by this process.
 
+The Core package includes generated, framework-neutral aggregate lifecycle
+validators for projects, corpus items, documents, evidence records, decisions,
+tasks, dossiers, and exports. A strict command supplies actor, reason, expected
+revision, and idempotency identity but never a destination state. The validator
+derives one allowed transition from the exact portable profile before calling a
+persistence adapter; illegal or stale commands therefore publish no state.
+
 ## Windows sidecar package
 
 `packaging/sidecar-build.json` fixes the W0-W5 release package to a

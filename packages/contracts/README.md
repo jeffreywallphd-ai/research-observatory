@@ -33,7 +33,12 @@ value objects for observed wording, alternatives, source anchors, epistemic
 status, confidence, rights, and external identifiers. The Draft 2020-12 schema
 is language-neutral authority; `node domain/generate.mjs --check` proves the
 checked-in TypeScript and Python contracts match its exact bytes. Aggregate
-lifecycles and compatibility evolution remain separate governed contracts.
+lifecycles remain a separate governed contract: `domain-lifecycle.schema.json`
+and `domain-lifecycle.v1.json` define eight deterministic state machines whose
+generated Python and TypeScript validators derive the destination, require
+actor/reason and optimistic revision identity, reject unknown commands before
+persistence, and make terminal/reopen rules explicit. Compatibility evolution
+remains owned by the next approved CAP-03.S01 task.
 
 `storage/` defines the exact portable `sqlite-wal-v1` profile: application and
 schema identity, UUID/timestamp representation, scalar-only STRICT table

@@ -66,6 +66,7 @@
     "services/core-api/src/research_observatory_core/config.py",
     "services/core-api/src/research_observatory_core/contract.py",
     "services/core-api/src/research_observatory_core/domain_contracts.py",
+    "services/core-api/src/research_observatory_core/domain_lifecycles.py",
     "services/core-api/src/research_observatory_core/logging.py",
     "services/core-api/src/research_observatory_core/main.py",
     "services/core-api/src/research_observatory_core/migrations/__init__.py",
@@ -139,6 +140,7 @@
     "tests/contracts/test_privacy_policy_contract.py",
     "tests/contracts/test_protected_database_contract.py",
     "tests/contracts/test_domain_contracts.py",
+    "tests/contracts/test_domain_lifecycles.py",
     "tests/contracts/test_support_bundle_contract.py",
     "tests/data/test_project_lifecycle_performance_check.py",
     "tests/data/__init__.py",
@@ -157,6 +159,7 @@
     "tests/security/test_privacy_controls.py",
     "tests/security/test_windows_credentials.py",
     "tests/service/test_core_api.py",
+    "tests/service/test_domain_lifecycle_service.py",
     "tests/service/test_project_lifecycle.py"
   ]
 }

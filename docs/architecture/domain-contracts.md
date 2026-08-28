@@ -50,6 +50,9 @@ Aggregate-specific fields and lifecycle transitions are intentionally not in
 this common envelope. CAP-03.S01.T02 owns lifecycle invariants; T03 owns
 compatibility, deprecation, and migration rules.
 
+The T02 lifecycle profile, deterministic validators, persistence-boundary
+contract, and diagrams are documented in [Domain lifecycles](domain-lifecycles.md).
+
 ## Authority and generation
 
 `domain-core.schema.json` is the Draft 2020-12 wire authority. The schema also

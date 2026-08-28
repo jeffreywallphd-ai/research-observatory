@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-domain-lifecycle-profile",
+  "profileVersion": "1.0.0",
+  "subjects": [
+    {
+      "subjectKind": "project",
+      "initialState": "active",
+      "states": [
+        {"id": "active", "terminal": false, "description": "The project accepts governed work."},
+        {"id": "archived", "terminal": false, "description": "The project is retained read-only until explicitly reopened."},
+        {"id": "deleted", "terminal": true, "description": "The project identity records an irreversible confirmed deletion."}
+      ],
+      "transitions": [
+        {"command": "archive", "from": "active", "to": "archived", "kind": "normal"},
+        {"command": "reopen", "from": "archived", "to": "active", "kind": "reopen"},
+        {"command": "delete", "from": "active", "to": "deleted", "kind": "normal"},
+        {"command": "delete", "from": "archived", "to": "deleted", "kind": "normal"}
+      ]
+    },
+    {
+      "subjectKind": "corpus-item",
+      "initialState": "candidate",
+      "states": [
+        {"id": "candidate", "terminal": false, "description": "The item awaits an inclusion judgment."},
+        {"id": "included", "terminal": false, "description": "The item is included under the current corpus criteria."},
+        {"id": "excluded", "terminal": false, "description": "The item is excluded under a recorded reason."},
+        {"id": "withdrawn", "terminal": true, "description": "The item is retained historically but cannot re-enter this corpus identity."}
+      ],
+      "transitions": [
+        {"command": "include", "from": "candidate", "to": "included", "kind": "normal"},
+        {"command": "exclude", "from": "candidate", "to": "excluded", "kind": "normal"},
+        {"command": "reconsider", "from": "included", "to": "candidate", "kind": "reopen"},
+        {"command": "reconsider", "from": "excluded", "to": "candidate", "kind": "reopen"},
+        {"command": "withdraw", "from": "candidate", "to": "withdrawn", "kind": "normal"},
+        {"command": "withdraw", "from": "included", "to": "withdrawn", "kind": "normal"},
+        {"command": "withdraw", "from": "excluded", "to": "withdrawn", "kind": "normal"}
+      ]
+    },
+    {
+      "subjectKind": "document",
+      "initialState": "registered",
+      "states": [
+        {"id": "registered", "terminal": false, "description": "Document identity exists but content availability is not yet established."},
+        {"id": "available", "terminal": false, "description": "Verified content is available under the current rights decision."},
+        {"id": "unavailable", "terminal": false, "description": "Content is currently unavailable without erasing its identity or history."},
+        {"id": "retired", "terminal": true, "description": "The document identity is retained but accepts no further lifecycle transitions."}
+      ],
+      "transitions": [
+        {"command": "make-available", "from": "registered", "to": "available", "kind": "normal"},
+        {"command": "make-available", "from": "unavailable", "to": "available", "kind": "reopen"},
+        {"command": "mark-unavailable", "from": "registered", "to": "unavailable", "kind": "normal"},
+        {"command": "mark-unavailable", "from": "available", "to": "unavailable", "kind": "normal"},
+        {"command": "retire", "from": "registered", "to": "retired", "kind": "normal"},
+        {"command": "retire", "from": "available", "to": "retired", "kind": "normal"},
+        {"command": "retire", "from": "unavailable", "to": "retired", "kind": "normal"}
+      ]
+    },
+    {
+      "subjectKind": "evidence-record",
+      "initialState": "proposed",
+      "states": [
+        {"id": "proposed", "terminal": false, "description": "The evidence record awaits a researcher judgment."},
+        {"id": "accepted", "terminal": false, "description": "The record is accepted for its declared use and scope."},
+        {"id": "disputed", "terminal": false, "description": "Material disagreement is recorded without forcing resolution."},
+        {"id": "rejected", "terminal": true, "description": "The proposed revision is rejected but may be explicitly reopened."},
+        {"id": "superseded", "terminal": true, "description": "A later immutable record has replaced this record for active use."}
+      ],
+      "transitions": [
+        {"command": "accept", "from": "proposed", "to": "accepted", "kind": "normal"},
+        {"command": "dispute", "from": "proposed", "to": "disputed", "kind": "normal"},
+        {"command": "reject", "from": "proposed", "to": "rejected", "kind": "normal"},
+        {"command": "dispute", "from": "accepted", "to": "disputed", "kind": "normal"},
+        {"command": "accept", "from": "disputed", "to": "accepted", "kind": "normal"},
+        {"command": "reject", "from": "disputed", "to": "rejected", "kind": "normal"},
+        {"command": "supersede", "from": "accepted", "to": "superseded", "kind": "normal"},
+        {"command": "supersede", "from": "disputed", "to": "superseded", "kind": "normal"},
+        {"command": "reopen", "from": "rejected", "to": "proposed", "kind": "reopen"}
+      ]
+    },
+    {
+      "subjectKind": "decision",
+      "initialState": "proposed",
+      "states": [
+        {"id": "proposed", "terminal": false, "description": "A decision proposal awaits authorized judgment."},
+        {"id": "accepted", "terminal": false, "description": "The proposal is the current accepted decision."},
+        {"id": "rejected", "terminal": true, "description": "The proposal is rejected but may be explicitly reopened."},
+        {"id": "superseded", "terminal": true, "description": "A later accepted decision has replaced this one."}
+      ],
+      "transitions": [
+        {"command": "accept", "from": "proposed", "to": "accepted", "kind": "normal"},
+        {"command": "reject", "from": "proposed", "to": "rejected", "kind": "normal"},
+        {"command": "supersede", "from": "accepted", "to": "superseded", "kind": "normal"},
+        {"command": "reopen", "from": "rejected", "to": "proposed", "kind": "reopen"}
+      ]
+    },
+    {
+      "subjectKind": "task",
+      "initialState": "pending",
+      "states": [
+        {"id": "pending", "terminal": false, "description": "The task exists but its dependencies are not yet satisfied."},
+        {"id": "ready", "terminal": false, "description": "The task is dependency-eligible for execution."},
+        {"id": "in-progress", "terminal": false, "description": "An authorized actor is executing the task."},
+        {"id": "blocked", "terminal": false, "description": "A recorded condition currently prevents execution."},
+        {"id": "completed", "terminal": true, "description": "The task met its acceptance conditions but may be explicitly reopened."},
+        {"id": "cancelled", "terminal": true, "description": "The task was cancelled but may be explicitly reopened when authority permits."}
+      ],
+      "transitions": [
+        {"command": "make-ready", "from": "pending", "to": "ready", "kind": "normal"},
+        {"command": "start", "from": "ready", "to": "in-progress", "kind": "normal"},
+        {"command": "block", "from": "ready", "to": "blocked", "kind": "normal"},
+        {"command": "block", "from": "in-progress", "to": "blocked", "kind": "normal"},
+        {"command": "resume", "from": "blocked", "to": "ready", "kind": "reopen"},
+        {"command": "complete", "from": "in-progress", "to": "completed", "kind": "normal"},
+        {"command": "cancel", "from": "pending", "to": "cancelled", "kind": "normal"},
+        {"command": "cancel", "from": "ready", "to": "cancelled", "kind": "normal"},
+        {"command": "cancel", "from": "in-progress", "to": "cancelled", "kind": "normal"},
+        {"command": "cancel", "from": "blocked", "to": "cancelled", "kind": "normal"},
+        {"command": "reopen", "from": "completed", "to": "ready", "kind": "reopen"},
+        {"command": "reopen", "from": "cancelled", "to": "ready", "kind": "reopen"}
+      ]
+    },
+    {
+      "subjectKind": "dossier",
+      "initialState": "draft",
+      "states": [
+        {"id": "draft", "terminal": false, "description": "The dossier is mutable working material."},
+        {"id": "in-review", "terminal": false, "description": "The dossier is frozen for an authorized review."},
+        {"id": "changes-requested", "terminal": false, "description": "The review returned bounded required changes."},
+        {"id": "approved", "terminal": false, "description": "The dossier is the current approved revision."},
+        {"id": "superseded", "terminal": true, "description": "A later approved dossier revision has replaced this one."}
+      ],
+      "transitions": [
+        {"command": "submit", "from": "draft", "to": "in-review", "kind": "normal"},
+        {"command": "request-changes", "from": "in-review", "to": "changes-requested", "kind": "normal"},
+        {"command": "revise", "from": "changes-requested", "to": "draft", "kind": "reopen"},
+        {"command": "approve", "from": "in-review", "to": "approved", "kind": "normal"},
+        {"command": "reopen", "from": "approved", "to": "draft", "kind": "reopen"},
+        {"command": "supersede", "from": "approved", "to": "superseded", "kind": "normal"}
+      ]
+    },
+    {
+      "subjectKind": "export",
+      "initialState": "requested",
+      "states": [
+        {"id": "requested", "terminal": false, "description": "An authorized export request awaits execution."},
+        {"id": "preparing", "terminal": false, "description": "The bounded export is being assembled and verified."},
+        {"id": "ready", "terminal": false, "description": "A verified export is available under its retention policy."},
+        {"id": "failed", "terminal": true, "description": "The attempt failed without publication and may be retried explicitly."},
+        {"id": "cancelled", "terminal": true, "description": "The attempt was cancelled without publication and may be reopened explicitly."},
+        {"id": "expired", "terminal": true, "description": "The export authority and retained package have expired."}
+      ],
+      "transitions": [
+        {"command": "begin", "from": "requested", "to": "preparing", "kind": "normal"},
+        {"command": "publish", "from": "preparing", "to": "ready", "kind": "normal"},
+        {"command": "fail", "from": "preparing", "to": "failed", "kind": "normal"},
+        {"command": "cancel", "from": "requested", "to": "cancelled", "kind": "normal"},
+        {"command": "cancel", "from": "preparing", "to": "cancelled", "kind": "normal"},
+        {"command": "expire", "from": "ready", "to": "expired", "kind": "normal"},
+        {"command": "retry", "from": "failed", "to": "requested", "kind": "reopen"},
+        {"command": "reopen", "from": "cancelled", "to": "requested", "kind": "reopen"}
+      ]
+    }
+  ]
+}
