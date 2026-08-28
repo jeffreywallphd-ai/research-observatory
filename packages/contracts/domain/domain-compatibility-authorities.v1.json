@@ -23,7 +23,7 @@
         "fixturePath": "packages/contracts/project/fixtures/valid-project-manifest.v1.json",
         "fixtureSha256": "f4bc0bd218fa8f42d71861c4bea539cef6d80d8031eac21ce8626e06f71e13e0",
         "compatibilityTestPath": "packages/contracts/domain/compatibility.test.ts",
-        "compatibilityTestSha256": "1e2e7eae0f8fb185904bf27822509822b11c1f4d7cef75f1f271a6dda9b65d2a"
+        "compatibilityTestSha256": "d86d4c97b4c5171d143f06b104b0b40a9a65b41b5ffe7393fd0f1323b046e54a"
       }
     }
   ]

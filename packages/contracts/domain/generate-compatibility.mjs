@@ -29,6 +29,7 @@ const outputs = {
 const bytes = Object.fromEntries(Object.entries(sources).map(([key, path]) => [key, readFileSync(path)]));
 const documents = Object.fromEntries(Object.entries(bytes).map(([key, value]) => [key, JSON.parse(value.toString("utf8"))]));
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
+const canonicalTextSha256 = (value) => sha256(Buffer.from(value.toString("utf8").replace(/\r\n?/g, "\n"), "utf8"));
 const semverPattern = /^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])$/;
 const compareSemver = (left, right) => {
   const l = left.split(".").map(Number);
@@ -41,6 +42,7 @@ const compareSemver = (left, right) => {
 const assert = (condition, message) => {
   if (!condition) throw new Error(`domain compatibility source invalid: ${message}`);
 };
+assert(canonicalTextSha256(Buffer.from("one\ntwo\n")) === canonicalTextSha256(Buffer.from("one\r\ntwo\r\n")), "canonical text newline parity");
 
 const { schema, policy, prior, current } = documents;
 const { authority, eventCatalog } = documents;
@@ -104,7 +106,7 @@ assert(acceptedAuthority.applicableTask === "CAP-03.S01.T03", "authority task sc
 assert(acceptedAuthority.adr?.id === "ADR-0013" && acceptedAuthority.adr.status === "Accepted" && acceptedAuthority.adr.decisionScope === expectedScope, "accepted ADR authority");
 const adrPath = resolve(repo, acceptedAuthority.adr.path);
 const adrBytes = readFileSync(adrPath);
-assert(acceptedAuthority.adr.sha256 === sha256(adrBytes), "ADR evidence digest");
+assert(acceptedAuthority.adr.sha256 === canonicalTextSha256(adrBytes), "ADR evidence digest");
 const adrText = adrBytes.toString("utf8");
 assert(/^status: Accepted$/m.test(adrText) && adrText.includes(`decision_scope: ${expectedScope}`) && adrText.includes("CAP-03.S01.T03"), "ADR status and scope");
 const adrIndex = JSON.parse(readFileSync(resolve(repo, "docs/adr/index.json"), "utf8"));
@@ -115,7 +117,7 @@ assert(authorityMigration.id === bridge.id && authorityMigration.strategy === br
 assert(authorityMigration.fixturePath === bridge.testFixture, "authority fixture path");
 assert(authorityMigration.fixtureSha256 === sha256(readFileSync(resolve(repo, authorityMigration.fixturePath))), "authority fixture digest");
 assert(authorityMigration.compatibilityTestPath === "packages/contracts/domain/compatibility.test.ts", "authority test path");
-assert(authorityMigration.compatibilityTestSha256 === sha256(readFileSync(resolve(repo, authorityMigration.compatibilityTestPath))), "authority test digest");
+assert(authorityMigration.compatibilityTestSha256 === canonicalTextSha256(readFileSync(resolve(repo, authorityMigration.compatibilityTestPath))), "authority test digest");
 
 assert(eventCatalog.schemaVersion === "1.0" && eventCatalog.documentType === "research-observatory-domain-event-catalog" && eventCatalog.catalogVersion === "1.0.0", "event catalog identity");
 assert(eventCatalog.payloadSchemaId === `sha256:${sha256(bytes.domainLifecycle)}`, "event payload schema binding");
@@ -144,7 +146,7 @@ const replacements = {
   "@@EVENT_CATALOG_JSON@@": JSON.stringify(eventCatalog),
 };
 const render = (path) => {
-  let rendered = readFileSync(path, "utf8");
+  let rendered = readFileSync(path, "utf8").replace(/\r\n?/g, "\n");
   for (const [token, value] of Object.entries(replacements)) rendered = rendered.replaceAll(token, value);
   assert(!rendered.includes("@@"), `unresolved template token in ${path}`);
   return rendered;
