@@ -84,3 +84,11 @@ usage, validation, confidence, and citation state. Pinned tasks deny silent
 substitution, and unsupported required features fail explicitly before provider
 execution. The Draft 2020-12 schema deterministically generates matching
 TypeScript and Python immutable decoders.
+
+`intent/` defines the versioned Research Intent revision and downstream
+governing-reference boundary. Revisions retain immediate predecessor identity
+and content hash, explicit rationale and decision state, seven mode-specific
+requirement branches, source/evidence/novelty/autonomy/stopping/egress policy,
+and distinct unknown/not-applicable states. Only a complete human-accepted
+revision can yield a governing reference. Its Draft 2020-12 schema generates
+matching TypeScript and Python immutable decoders.

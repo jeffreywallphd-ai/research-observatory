@@ -57,6 +57,12 @@ closure, and returns stable content-free unsupported-feature diagnostics. It
 does not choose a model or call a provider; those responsibilities remain in
 later CAP-07 routing and adapter tasks.
 
+The generated Research Intent decoder validates immutable revision lineage,
+mode-sensitive completeness, source/evidence/novelty scope, researcher-retained
+autonomy and stopping authority, and exact accepted governing references. It
+does not persist the accepted-current pointer, render revision UI, or enforce
+operations; those remain later CAP-03.S02 tasks.
+
 ## Windows sidecar package
 
 `packaging/sidecar-build.json` fixes the W0-W5 release package to a

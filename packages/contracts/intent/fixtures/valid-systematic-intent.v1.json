@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-research-intent-revision",
+  "contractVersion": "1.0.0",
+  "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a1",
+  "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a2",
+  "revision": 1,
+  "parentRevision": null,
+  "projectId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a3",
+  "revisionContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "createdAt": "2026-08-28T12:00:00Z",
+  "createdBy": {
+    "actorType": "human",
+    "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a4"
+  },
+  "status": "accepted",
+  "revisionRationale": "Establish the initial reproducible review intent.",
+  "primaryUseCase": "systematic-review",
+  "epistemicMode": "systematic",
+  "researchQuestion": {
+    "state": "specified",
+    "value": "How do local-first research systems preserve source traceability?"
+  },
+  "contributionIntent": {
+    "state": "specified",
+    "value": "Synthesize design requirements and their empirical support."
+  },
+  "phenomenon": {
+    "state": "specified",
+    "value": "Source-traceable scholarly reasoning systems"
+  },
+  "unitOfAnalysis": {
+    "state": "specified",
+    "value": "Research software system"
+  },
+  "levelOfAnalysis": {
+    "state": "specified",
+    "value": "System and researcher workflow"
+  },
+  "sourceScope": {
+    "state": "specified",
+    "sourceKinds": ["peer-reviewed-article", "conference-paper"],
+    "languages": ["en"],
+    "temporalCoverage": {
+      "kind": "bounded",
+      "startYear": 2000,
+      "endYear": 2026
+    },
+    "privateReports": "excluded",
+    "rationale": "Use public scholarly sources for the initial review."
+  },
+  "evidenceTypes": ["empirical-study", "systematic-review"],
+  "noveltyStandard": {
+    "state": "specified",
+    "standard": "bounded-comparative",
+    "rationale": "Novelty claims must be bounded against identified prior work."
+  },
+  "autonomy": {
+    "level": "prepare-reversible",
+    "allowedActions": ["propose-query", "prepare-screening-batch"],
+    "requiredHumanGates": ["intent-acceptance", "scope-change", "evidence-adjudication", "claim-approval"],
+    "mayAcceptIntent": false,
+    "mayChangeScope": false
+  },
+  "stoppingRule": {
+    "conditions": ["source-exhaustion", "coverage-threshold"],
+    "rationale": "Stop only after planned sources and coverage checks are complete.",
+    "requiresHumanConfirmation": true
+  },
+  "egressPolicy": {
+    "mode": "local-only",
+    "approvedDestinationIds": []
+  },
+  "unresolvedDecisions": [],
+  "modeRequirements": {
+    "kind": "systematic",
+    "protocol": "systematic-review",
+    "inclusionLogic": "Predeclared criteria with retained exclusion reasons.",
+    "comprehensivenessTarget": "exhaustive"
+  },
+  "decision": {
+    "disposition": "accepted",
+    "actorType": "human",
+    "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a4",
+    "decidedAt": "2026-08-28T12:05:00Z",
+    "rationale": "The researcher confirmed the scope, evidence standard, authority, and stopping rule."
+  }
+}
