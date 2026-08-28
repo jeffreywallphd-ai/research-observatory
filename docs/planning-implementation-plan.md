@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 08f96c1f42d54cccec541bb34aca3f330fa0df3e2da3ccbe3364975c75e2cd36
+source_sha256: 0dc1d1b35d58aa04bcac2660140e86778964aff5fed149b2ed49667654e25bb7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3438,7 +3438,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3462,13 +3462,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S01.T02.json` at `0e98f656857855e0162833d5a3973dca30019bae`
+
 ##### Review history — CAP-03.S01.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `47d6a474fec3c3957ec24a8fe9547cd69051937e464dc51acfffdeaacc69acef`
+
+- Candidate / base / branch: `0e98f656857855e0162833d5a3973dca30019bae` / `a3d6d4b9d6ad13617118021752d4a097760f8f6c` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T14:09:27+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S01.T02.json` / `eaf01d84e42ed270dd7a6cde584eadcc9f680b84e6645a8ebbf70f2f7bf5d749` / `0e98f656857855e0162833d5a3973dca30019bae`
+- Acceptance-criteria SHA-256: `06e35549321e8b7695f6114a2707ae8a3753199a086e36b63f38125ab5e00855`
+- Verification-selection SHA-256: `ef04cc11b9bd25d23e2126a1ba3cdd56c7fb55226e33084e4a61cf4833293cd9`
+- Changed paths: `docs/architecture/README.md`, `docs/architecture/domain-contracts.md`, `docs/architecture/domain-lifecycles.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/domain/domain-lifecycle.schema.json`, `packages/contracts/domain/domain-lifecycle.v1.json`, `packages/contracts/domain/generate-lifecycle.mjs`, `packages/contracts/domain/lifecycle.generated.ts`, `packages/contracts/domain/lifecycle.test.ts`, `packages/contracts/package.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S01.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/README.md`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/domain_lifecycles.py`, `tests/contracts/test_domain_lifecycles.py`, `tests/packaging/test_core_sidecar_package.py`, `tests/service/test_domain_lifecycle_service.py`, `tools/core_sidecar_build.py`
+- Selected checks: `.local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/node_modules/vitest/vitest.mjs run --root packages/contracts`, `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py`, `.venv\Scripts\python.exe -m unittest tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T02-quality-0e98f65.json`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo .`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T02-build-manifest-0e98f65.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved`, `uv lock --check; git diff --check`
+- Deferred checks: `The complete foundation and repository/deployment profile matrix remains mandatory at W1 exit. The repository retains the previously disclosed historical-control fixture failures from the broad foundation attempt; none is a lifecycle-contract or service failure, and no broad run is represented as passing here.`, `Cross-slice compatibility/deprecation/migration and integrated CAP-03.S01 qualification are deferred to T03 and the independent slice review, where the complete approved slice boundary is available.`, `Cross-capability end-to-end, performance, security, accessibility, cancellation, migration, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: This high-risk task introduces a shared cross-language lifecycle contract, validates untrusted commands at the service boundary, and changes the frozen sidecar inventory. The selected matrix therefore covers exact generation, strict type checking, every lifecycle rule and hostile boundary in both languages, all service and contract tests, a real frozen Windows sidecar build, quality, architecture/ADR, build provenance, dependency-lock integrity, backlog projections, and W1 approval continuity.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
