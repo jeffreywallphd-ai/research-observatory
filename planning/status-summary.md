@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2222620a6b717f2512b0709c032a55a33417eaad56e6323b2f61cc316ed0000b
+source_sha256: dfdaa3b2769b63fc31744dbf9bc7ac330b65e83a2adcc794dde09ae6e472cd8a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -354,6 +354,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S04.T04` | `append-only v1` | 1 | `-` | approved / nash-independent-security-reviewer | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
+| `CAP-03.S01.T03` | `append-only v1` | 1 | `-` | changes-requested / nash-independent-domain-compatibility-reviewer | `CAP-03.S01.T03-R01-F01`, `CAP-03.S01.T03-R01-F02` |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |

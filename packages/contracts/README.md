@@ -38,11 +38,14 @@ and `domain-lifecycle.v1.json` define eight deterministic state machines whose
 generated Python and TypeScript validators derive the destination, require
 actor/reason and optimistic revision identity, reject unknown commands before
 persistence, and make terminal/reopen rules explicit. The compatibility schema,
-exact policy, current/prior release fixtures, and generated TypeScript/Python
-runtimes classify additive, deprecated, and breaking evolution. They require an
-ADR plus a source-retaining tested migration for breaking changes, preserve the
-legacy UUIDv4 reader bridge, and select only the highest exact common contract
-and event versions advertised by desktop, sidecar, and optional server roles.
+exact policy, accepted-authority catalog, event catalog, current/prior release
+fixtures, and generated TypeScript/Python runtimes classify additive,
+deprecated, and breaking evolution. Breaking changes must match hash-bound
+accepted ADR, migration fixture, and compatibility-test evidence. The boundary
+preserves the legacy UUIDv4 reader bridge, rejects unknown event payload fields,
+publishes exactly one bounded content-free audit fact for an unknown
+event/version, and selects only the highest exact common contract and event
+versions advertised by desktop, sidecar, and optional server roles.
 
 `storage/` defines the exact portable `sqlite-wal-v1` profile: application and
 schema identity, UUID/timestamp representation, scalar-only STRICT table

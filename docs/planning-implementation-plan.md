@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2222620a6b717f2512b0709c032a55a33417eaad56e6323b2f61cc316ed0000b
+source_sha256: dfdaa3b2769b63fc31744dbf9bc7ac330b65e83a2adcc794dde09ae6e472cd8a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3547,7 +3547,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-03.S01.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / nash-independent-domain-compatibility-reviewer (`changes-requested`)
 
 **Objective:** Semantic rules for additive/breaking schema change, deprecation, migration, event compatibility, and desktop-sidecar-server negotiation.
 
@@ -3567,13 +3567,52 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/taskctl.py validate
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S01.T03.json` at `f9b97b50cb3b4fa42db4aa415ea2bb82544de285`
+
 ##### Review history — CAP-03.S01.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `2ded47b0291885a365f823ad5fb01bbe2f1cdc3ce1069bba6ced14b9a268ac9b`
+
+- Candidate / base / branch: `f9b97b50cb3b4fa42db4aa415ea2bb82544de285` / `bf7ddc41c48ea5db259d7868de6fb15d7797ac1e` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T15:46:03+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S01.T03.json` / `e664dde57fde1fd4ed6ad979015ea606e94ff91042a015da4d8b5457828c634e` / `f9b97b50cb3b4fa42db4aa415ea2bb82544de285`
+- Acceptance-criteria SHA-256: `364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1`
+- Verification-selection SHA-256: `05a48c33165076cbb2307eddf2a65de0695e8851e1ddaf8e576cff5c8592ced0`
+- Changed paths: `docs/architecture/README.md`, `docs/architecture/domain-compatibility.md`, `docs/architecture/domain-contracts.md`, `docs/architecture/domain-lifecycles.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/domain/compatibility.generated.ts`, `packages/contracts/domain/compatibility.template.py.txt`, `packages/contracts/domain/compatibility.template.ts.txt`, `packages/contracts/domain/compatibility.test.ts`, `packages/contracts/domain/domain-compatibility.schema.json`, `packages/contracts/domain/domain-compatibility.v1.json`, `packages/contracts/domain/fixtures/domain-contract-release.current.v1.json`, `packages/contracts/domain/fixtures/domain-contract-release.prior.v0.1.json`, `packages/contracts/domain/generate-compatibility.mjs`, `packages/contracts/package.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S01.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/README.md`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/domain_compatibility.py`, `tests/contracts/test_domain_compatibility.py`, `tests/packaging/test_core_sidecar_package.py`, `tests/service/test_domain_compatibility_service.py`, `tools/core_sidecar_build.py`
+- Selected checks: `.local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-f9b97b5.json`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base bf7ddc41c48ea5db259d7868de6fb15d7797ac1e --head f9b97b50cb3b4fa42db4aa415ea2bb82544de285`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-f9b97b5.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved`, `$env:UV_CACHE_DIR='artifacts/tmp/uv-cache'; uv lock --check; git diff --check`
+- Deferred checks: `The governed affected foundation/service attempt reproduced the historical 72-failure/16-error governance fixture baseline unchanged from independently approved CAP-02.S04.T04 evidence. It remains mandatory reconciliation work before W1 exit qualification and is not represented as passing or deleted to make this task pass. Exact failed-run report SHA-256: 6c8d120feed8a7d9d1c369d18e2da9fd1f38138f0a033c9384cad3443bf541e2.`, `Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval, when the complete T01-T03 contract boundary is available.`, `Cross-capability end-to-end, performance, security, accessibility, cancellation, migration, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: This high-risk task changes shared cross-language contract generation, compatibility interpretation, process-boundary negotiation, build-schema provenance, and frozen-sidecar inputs. The selected task-owned matrix therefore covers exact generation, schema/source hashing, strict type checking, current/prior behavior, breaking-change authority, hostile inputs, deterministic restart, all contract and service tests, a real frozen Windows sidecar, quality, architecture/ADR, build provenance, dependency locks, planning integrity, and the governed affected profile. The affected profile's unchanged 72/16 historical governance baseline is disclosed rather than represented as passing.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / nash-independent-domain-compatibility-reviewer / `2026-08-28T15:49:39+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S01.T03.review-R01.json` / `5fd63b0fa9ec8c9f963490a9c58420a641ab208fdf12e3d682732555ca27f5c0`
+
+**Review notes:** The frozen schema, policy and release-fixture hashes are exact; the current schema-set is derived from domain-core and domain-lifecycle bytes, the prior set is derived from the UUIDv4 project-manifest schema, and ADR-0013's read-only bridge fixture is present and generator-verified. Cross-runtime generation, deterministic exact-common desktop/sidecar/optional-server negotiation, strict advertisements, immutable outputs, stable content-free diagnostics, and sidecar/build integration are otherwise supported. Focused replay passed all 32 TypeScript contract tests and nine Python compatibility contract/service tests. The disclosed 72 failures and 16 errors reproduce the already reviewed historical governance/live-boundary fixture drift and reveal no T03 implementation failure, so they remain mandatory W1-exit remediation rather than a separate task finding. Two task-owned compatibility controls are nevertheless incomplete.
+
+**Findings opened:**
+
+- `CAP-03.S01.T03-R01-F01` `high` blocking=`True` criterion=`1` — Breaking-change approval trusts unverified ADR and migration assertions; reproduce: At exact candidate f9b97b50cb3b4fa42db4aa415ea2bb82544de285, call assess_domain_change with a remove-field proposal from 1.0.0 to 2.0.0, adrId ADR-9999, and a migration whose id is invented-migration and testFixture is fixtures/does-not-exist.json but whose syntactic fields, endpoints, strategy and sourceRetention are valid. Python returns classification breaking, allowed true, errors empty, diagnosticCode compatibility-change-accepted; the generated TypeScript applies the same checks. The implementation validates only ADR syntax and a relative fixture string. It does not bind the ADR to an accepted repository decision or bind the migration/bridge to an existing, tested, source-retaining fixture. This contradicts the acceptance rule that breaking changes require an accepted ADR and migration path and makes the evidence claim of authority enforcement false.; remediate: In a strict-descendant candidate, make breaking assessment consume or embed a deterministic hash-bound catalog of accepted ADR authority and reviewed migration/reader-bridge evidence, and reject unknown, unaccepted, mismatched, missing, or substituted authority in both runtimes with stable content-free parity codes. At minimum, prove ADR identity/status/scope, exact from/to versions, strategy/source-retention, fixture existence and immutable digest, and a bound passing compatibility test. Add Python and TypeScript denial tests using ADR-9999, nonexistent/substituted fixtures, wrong evidence hash/status/scope, and valid exact authority. Preserve pure deterministic runtime behavior by generating the authenticated catalog rather than performing ambient filesystem reads during assessment.
+- `CAP-03.S01.T03-R01-F02` `medium` blocking=`True` criterion=`3` — Unknown-event deny-and-audit behavior is declared but not executable; reproduce: Search the exact candidate's generator and generated Python/TypeScript modules for unknownEvent, deny-and-audit, audit, event payload validation, or an event assessment API. The only runtime occurrence is the frozen policy literal; there is no event envelope schema, supported-event catalog, validator, denial function, or audit callback/result. The tests only assert that the policy object contains unknownEvent=deny-and-audit and exercise version overlap during component negotiation. Therefore an unknown event or payload with unknown fields cannot be submitted to this contract boundary and proven rejected or audited, despite the plan placing event compatibility in T03 scope and the evidence claiming that unknown events deny and audit while unknown payload fields reject.; remediate: Add a minimal language-neutral versioned event-envelope/assessment contract and generated Python/TypeScript validation boundary that accepts an exact supported-event catalog, rejects unknown versions/types and unknown payload fields before dispatch, and produces or invokes one bounded content-free audit fact for every unknown-event denial. Bind the supported catalog and schemas by hashes, preserve immutable results, and add parity tests for known event, unknown event with exactly one audit, unknown field, unsupported version, hostile content redaction, and audit publication failure semantics. If durable audit publication belongs to a later slice, expose and test the mandatory typed audit fact/callback here without claiming persistence.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by nash-independent-domain-compatibility-reviewer at `2026-08-28T15:49:39+00:00`
+
+**Latest notes:** The frozen schema, policy and release-fixture hashes are exact; the current schema-set is derived from domain-core and domain-lifecycle bytes, the prior set is derived from the UUIDv4 project-manifest schema, and ADR-0013's read-only bridge fixture is present and generator-verified. Cross-runtime generation, deterministic exact-common desktop/sidecar/optional-server negotiation, strict advertisements, immutable outputs, stable content-free diagnostics, and sidecar/build integration are otherwise supported. Focused replay passed all 32 TypeScript contract tests and nine Python compatibility contract/service tests. The disclosed 72 failures and 16 errors reproduce the already reviewed historical governance/live-boundary fixture drift and reveal no T03 implementation failure, so they remain mandatory W1-exit remediation rather than a separate task finding. Two task-owned compatibility controls are nevertheless incomplete.
+
+**Currently open findings:** `CAP-03.S01.T03-R01-F01`, `CAP-03.S01.T03-R01-F02`
 
 ### SLICE-research-intent-contract-and-mode-governance (`CAP-03.S02`) - Research intent contract and mode governance
 

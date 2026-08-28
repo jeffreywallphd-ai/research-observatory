@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-domain-event-catalog",
+  "catalogVersion": "1.0.0",
+  "payloadSchemaId": "sha256:77d82e9fe47c51c7b4bc70c38c203497a0323081a00eb0a0ac899c5849bcb3a3",
+  "events": [
+    {
+      "eventType": "domain.lifecycle-transition",
+      "eventVersion": "0.1.0",
+      "payloadDocumentType": "research-observatory-domain-lifecycle-transition",
+      "payloadRequiredFields": ["schemaVersion", "documentType", "profileVersion", "subjectKind", "aggregateId", "fromState", "toState", "command", "transitionKind", "priorRevision", "revision", "actor", "reason", "occurredAt", "idempotencyKey"],
+      "payloadAllowedFields": ["schemaVersion", "documentType", "profileVersion", "subjectKind", "aggregateId", "fromState", "toState", "command", "transitionKind", "priorRevision", "revision", "actor", "reason", "occurredAt", "idempotencyKey"]
+    },
+    {
+      "eventType": "domain.lifecycle-transition",
+      "eventVersion": "1.0.0",
+      "payloadDocumentType": "research-observatory-domain-lifecycle-transition",
+      "payloadRequiredFields": ["schemaVersion", "documentType", "profileVersion", "subjectKind", "aggregateId", "fromState", "toState", "command", "transitionKind", "priorRevision", "revision", "actor", "reason", "occurredAt", "idempotencyKey"],
+      "payloadAllowedFields": ["schemaVersion", "documentType", "profileVersion", "subjectKind", "aggregateId", "fromState", "toState", "command", "transitionKind", "priorRevision", "revision", "actor", "reason", "occurredAt", "idempotencyKey"]
+    }
+  ]
+}
