@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e9ea1affc07a183a12e3426679b73786170bf26cf89cdf5061bb63f355e75a29
+source_sha256: 9d923cef7d0ca6e1ab21d26b0ef4e9adda494a91dc2b42462558c8e398d963b6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3790,15 +3790,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
+#### - [x] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T01`
 
-**Owner / review:** codex / agent:nash (`changes-requested`)
+**Owner / review:** codex / agent:nash (`approved`)
 
 **Objective:** Desktop workflow with mode-specific defaults, examples, warnings, and explicit change-impact preview.
 
@@ -3824,7 +3824,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -3857,7 +3857,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `02e259f56dce0d5ef9e2b47e87cb3b2718af7f83ee52598f2364004dffb114a9`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `02e259f56dce0d5ef9e2b47e87cb3b2718af7f83ee52598f2364004dffb114a9`
 
 - Candidate / base / branch: `a60d3e9704a4d59dd1d0310437bd6d486057500b` / `b93b7e4c8735c278c026f55b5b42c7b3f2d21850` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T20:34:32+00:00`
@@ -3871,15 +3873,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-03.S02.T02-R01-F01`, `CAP-03.S02.T02-R01-F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:nash at `2026-08-28T20:05:25+00:00`
+**Disposition / reviewer / time:** `approved` / agent:nash / `2026-08-28T20:40:22+00:00`
 
-**Latest notes:** The exact candidate/evidence lineage, schema-generated TypeScript/Python API parity, SQLite revision/provenance/outbox transaction, compare-and-swap conflict handling, restart reconstruction, immediate immutable revision linkage, content hashing, scope-impact preview binding, incomplete-draft non-launchability, approved UI-reference lineage, boundary states, capability inventory, and dependent-task nonclaims are otherwise supported. Independent focused replay passed 19 intent/Core API service tests, 3/3 desktop intent tests, and 9/9 generated Core API contract tests. The supplied broader evidence is truthful about its selected boundaries. Two acceptance-bound public mutation/audit defects remain.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T02.review-R02.json` / `07d552e122fd594028e633749959f7acb091e6910812c24506bbceaf8b6dee6d`
 
-**Currently open findings:** `CAP-03.S02.T02-R01-F01`, `CAP-03.S02.T02-R01-F02`
+**Review notes:** Focused remediation review replayed both open R01 blockers and expanded only across the affected identity, migration, public-contract, SQLite transaction, audit, outbox, concurrency, and packaging boundary. The exact strict-descendant candidate resolves one opaque UUIDv7 actor from the current Windows user's DPAPI-protected profile vault; missing, malformed, tampered, redirected, or spoofed actor authority fails closed before project persistence, while revision createdBy and append-only provenance retain the same non-null actor. Schema v6 is forward-only and backup-first, preserves v1-v5 data and legacy actor identifiers, and retains exact current profile/schema bindings. Public idempotency now binds project, actor, canonical command digest, committed revision, provenance, and outbox, checks replay before optimistic conflict and again under BEGIN IMMEDIATE, returns the immutable committed projection for an exact retry, and denies changed command/project/actor reuse. Independent replay confirmed competing identical writers converge to one four-surface commit and injected persistence failure rolls back all surfaces. Generated OpenAPI/TypeScript parity and package inclusion remain exact. No blocking finding remains and later persistence/UI/enforcement/provenance duties are not overclaimed.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S02.T02-R01-F01` `fixed` — At exact candidate a60d3e9704a4d59dd1d0310437bd6d486057500b, WindowsLocalActorIdentityProvider creates or reads one UUIDv7 from the guarded current-profile vault as a DPAPI-protected authenticated record, retains corrupted ciphertext, and never accepts an inbound actor assertion. ResearchIntentService requires that resolved actor and binds it identically into revision createdBy and IntentAuditEvent; the SQLite adapter requires a UUIDv7 human actor and writes the same non-null value into provenance in the revision/idempotency/provenance/outbox transaction. Independent replay of tests.security.test_windows_credentials and tests.service.test_research_intents proved stable restart identity, opaque protected bytes, tamper fail-closed behavior, spoof and missing-authority denial, stable successive-revision identity, exact revision/provenance binding, and rollback. Migration replay proved v1-v5 preservation into v6, including retained legacy actor identifiers and accepted new UUIDv7 authority.
+- `CAP-03.S02.T02-R01-F02` `fixed` — At exact candidate a60d3e9704a4d59dd1d0310437bd6d486057500b, the required public idempotency key is bound to manifest project, stable actor, canonical command SHA-256, domain project, revision digest, provenance event, and outbox event. ResearchIntentService performs authenticated replay before reading and rejecting a stale expected revision, while the repository repeats the replay under BEGIN IMMEDIATE before its compare-and-swap write. Independent service replay proved exact retry before/after service restart returns the original immutable projection; changed command, actor, project, and genuinely stale new-key cases deny with stable conflicts; two simultaneous identical writers produce exactly one revision, binding, provenance event, and outbox row; and injected outbox failure leaves all four surfaces empty.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:nash at `2026-08-28T20:40:22+00:00`
+
+**Latest notes:** Focused remediation review replayed both open R01 blockers and expanded only across the affected identity, migration, public-contract, SQLite transaction, audit, outbox, concurrency, and packaging boundary. The exact strict-descendant candidate resolves one opaque UUIDv7 actor from the current Windows user's DPAPI-protected profile vault; missing, malformed, tampered, redirected, or spoofed actor authority fails closed before project persistence, while revision createdBy and append-only provenance retain the same non-null actor. Schema v6 is forward-only and backup-first, preserves v1-v5 data and legacy actor identifiers, and retains exact current profile/schema bindings. Public idempotency now binds project, actor, canonical command digest, committed revision, provenance, and outbox, checks replay before optimistic conflict and again under BEGIN IMMEDIATE, returns the immutable committed projection for an exact retry, and denies changed command/project/actor reuse. Independent replay confirmed competing identical writers converge to one four-surface commit and injected persistence failure rolls back all surfaces. Generated OpenAPI/TypeScript parity and package inclusion remain exact. No blocking finding remains and later persistence/UI/enforcement/provenance duties are not overclaimed.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
