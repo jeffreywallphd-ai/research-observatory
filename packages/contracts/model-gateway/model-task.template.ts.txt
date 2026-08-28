@@ -112,6 +112,7 @@ export type ModelConfidence =
   | { readonly kind: "not-reported" | "not-applicable" };
 export interface ModelCitation { readonly sourceAggregateId: string; readonly sourceRevisionId: string; readonly sourceContentHash: string; readonly locatorHash: string; }
 export interface ModelDiagnostic { readonly code: string; readonly retryable: boolean; readonly partialOutputDisposition: "none" | "discarded" | "retained-unvalidated"; }
+export interface IndexedScore { readonly inputIndex: number; readonly label: string; readonly score: number; }
 export type ModelTaskOutput = Readonly<Record<string, unknown>> & { readonly kind: ModelTaskKind };
 
 export interface ModelResultEnvelope {
@@ -269,7 +270,10 @@ function contentReferences(value: unknown): ContentReference[] {
 }
 
 function semanticTaskErrors(task: ModelTaskSpec): string[] {
-  return task.input.kind === task.taskKind ? [] : ["task-input-kind-matches-task-kind"];
+  const errors: string[] = [];
+  if (task.input.kind !== task.taskKind) errors.push("task-input-kind-matches-task-kind");
+  if (task.input.kind === "reranking" && task.input.topK > task.input.candidates.length) errors.push("reranking-top-k-within-candidate-count");
+  return errors;
 }
 
 export function modelTaskErrors(value: unknown): readonly string[] {
@@ -311,6 +315,39 @@ function selectedRouteMatchesPin(route: SelectedModelRoute, pin: PinnedExecution
     && route.evaluationVersion === pin.evaluationVersion;
 }
 
+function indexedOutputErrors(task: ModelTaskSpec, result: ModelResultEnvelope): string[] {
+  const input = record(task.input);
+  const output = record(result.output);
+  if (!input || !output) return [];
+  const errors: string[] = [];
+  if (task.taskKind === "reranking") {
+    const items = output.items as readonly IndexedScore[];
+    const candidates = input.candidates as readonly unknown[];
+    const indices = items.map((item) => item.inputIndex);
+    if (items.length > (input.topK as number) || items.length > candidates.length || indices.some((index) => index >= candidates.length) || new Set(indices).size !== indices.length) errors.push("reranking-output-closes-over-candidates");
+  }
+  if (task.taskKind === "classification") {
+    const items = output.items as readonly IndexedScore[];
+    const inputs = input.items as readonly unknown[];
+    const labels = new Set(input.labels as readonly string[]);
+    const identities = items.map((item) => `${item.inputIndex}|${item.label}`);
+    if (items.some((item) => item.inputIndex >= inputs.length || !labels.has(item.label)) || new Set(identities).size !== identities.length) errors.push("classification-output-closes-over-items-and-labels");
+  }
+  if (task.taskKind === "nli") {
+    const scores = output.scores as readonly IndexedScore[];
+    const labels = new Set(["entailment", "contradiction", "neutral", "uncertain"]);
+    const scoreLabels = scores.map((item) => item.label);
+    if (scores.some((item) => item.inputIndex !== 0 || !labels.has(item.label)) || new Set(scoreLabels).size !== scoreLabels.length || !scoreLabels.includes(output.label as string)) errors.push("nli-output-closes-over-task");
+  }
+  if (task.taskKind === "moderation") {
+    const items = output.items as readonly IndexedScore[];
+    const inputs = input.items as readonly unknown[];
+    const identities = items.map((item) => `${item.inputIndex}|${item.label}`);
+    if (items.some((item) => item.inputIndex >= inputs.length) || new Set(identities).size !== identities.length) errors.push("moderation-output-closes-over-items");
+  }
+  return errors;
+}
+
 export function modelResultErrors(taskValue: unknown, resultValue: unknown): readonly string[] {
   const task = decodeModelTask(taskValue);
   if (!task) return ["model-result-task-invalid"];
@@ -328,17 +365,35 @@ export function modelResultErrors(taskValue: unknown, resultValue: unknown): rea
     if (result.route.selection !== "selected" || result.validation.outcome !== "accepted" || result.policyDecision.outcome !== "allowed") errors.push("successful-result-requires-selected-route-and-accepted-validation");
   } else if (result.output !== null) errors.push("non-success-result-carries-no-output");
   if (result.latency.totalMs < result.latency.queueMs + result.latency.executionMs) errors.push("latency-total-covers-queue-and-execution");
+  if (successful && result.latency.totalMs > task.requirements.deadlineMs) errors.push("successful-result-within-task-deadline");
   const usage = result.usage;
   if (usage.reporting === "reported") {
     if (usage.inputTokens === null || usage.outputTokens === null || usage.totalTokens === null || usage.totalTokens !== usage.inputTokens + usage.outputTokens) errors.push("reported-token-total-equals-input-plus-output");
+    else if (usage.inputTokens > task.requirements.maxInputTokens || usage.outputTokens > task.requirements.maxOutputTokens) errors.push("reported-usage-within-task-bounds");
   } else if (usage.inputTokens !== null || usage.outputTokens !== null || usage.totalTokens !== null) errors.push("unreported-token-values-are-null");
-  if ((result.citationStatus === "supplied") !== (result.citations.length > 0)) errors.push("citation-status-matches-citations");
-  if (successful && task.requirements.citationRequirement === "required") {
-    const inputs = new Set(contentReferences(task.input).map((item) => `${item.aggregateId}|${item.revisionId}|${item.contentHash}`));
-    if (result.citations.length === 0 || result.citationStatus !== "supplied" || result.citations.some((citation) => !inputs.has(`${citation.sourceAggregateId}|${citation.sourceRevisionId}|${citation.sourceContentHash}`))) errors.push("required-citations-close-over-task-input-references");
+  const validation = result.validation;
+  const artifact = record(result.output)?.artifact;
+  const artifactRecord = record(artifact);
+  if (validation.outcome === "accepted") {
+    if (validation.outputHash === null || validation.errorCodes.length !== 0) errors.push("accepted-validation-has-output-hash-and-no-errors");
+    if (artifactRecord && validation.outputHash !== artifactRecord.contentHash) errors.push("accepted-artifact-validation-hash-matches-output");
+    if (!successful) errors.push("accepted-validation-requires-successful-output");
   }
+  if (validation.outcome === "rejected") {
+    if (validation.outputHash === null || validation.errorCodes.length === 0) errors.push("rejected-validation-has-output-hash-and-errors");
+    if (result.status !== "failed") errors.push("rejected-validation-requires-failed-status");
+  }
+  if (validation.outcome === "not-run" && (validation.outputHash !== null || validation.errorCodes.length !== 0)) errors.push("not-run-validation-has-no-output-or-errors");
+  if ((result.citationStatus === "supplied") !== (result.citations.length > 0)) errors.push("citation-status-matches-citations");
+  if (result.citations.length > 0) {
+    const inputs = new Set(contentReferences(task.input).map((item) => `${item.aggregateId}|${item.revisionId}|${item.contentHash}`));
+    if (result.citations.some((citation) => !inputs.has(`${citation.sourceAggregateId}|${citation.sourceRevisionId}|${citation.sourceContentHash}`))) errors.push("supplied-citations-close-over-task-input-references");
+  }
+  if (successful && task.requirements.citationRequirement === "required" && (result.citations.length === 0 || result.citationStatus !== "supplied")) errors.push("required-citations-are-supplied");
   if (task.requirements.citationRequirement === "not-applicable" && (result.citationStatus !== "not-applicable" || result.citations.length !== 0)) errors.push("not-applicable-citations-are-empty");
+  if (task.requirements.citationRequirement !== "not-applicable" && result.citations.length === 0 && result.citationStatus !== "not-supplied") errors.push("citation-status-matches-task-requirement");
   if (task.execution.mode === "pinned" && result.route.selection === "selected" && !selectedRouteMatchesPin(result.route, task.execution)) errors.push("pinned-execution-route-matches-result-route");
+  if (successful && result.output?.kind === task.taskKind) errors.push(...indexedOutputErrors(task, result));
   if (result.status === "unsupported") {
     const codes = new Set(result.diagnostics.map((item) => item.code));
     if (result.route.selection !== "none" || result.policyDecision.outcome !== "denied" || result.validation.outcome !== "not-run" || !codes.has("model-task-feature-unsupported")) errors.push("unsupported-required-features-fail-explicitly");

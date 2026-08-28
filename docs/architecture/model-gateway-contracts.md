@@ -36,8 +36,12 @@ Every result records the request hash and trace identity plus:
 
 Successful or degraded results require an allowed decision, selected route,
 accepted validation, and a task-matching output. Non-success results cannot
-carry output. Reported token totals must add up, required citations must point
-to task inputs, and selected routes for pinned tasks must match every pin.
+carry output. Reported token totals must add up and remain within the task
+bounds; successful latency must stay within the task deadline. Accepted
+artifact validation uses the artifact content hash, validation state controls
+hash/error metadata, every supplied citation points to a task input, and
+indexed scores remain within task-specific input/label/cardinality bounds.
+Selected routes for pinned tasks must match every pin.
 
 Unsupported required features fail before provider execution with
 `model-task-feature-unsupported`. The failure has no provider route, output, or

@@ -41,12 +41,19 @@ assert(JSON.stringify(schema.$defs.TaskKind?.enum) === JSON.stringify([
 ]), "task-kind catalog");
 assert(JSON.stringify(schema["x-research-observatory-semanticRules"]) === JSON.stringify([
   "task-input-kind-matches-task-kind",
+  "reranking-top-k-within-candidate-count",
   "successful-result-output-kind-matches-task-kind",
   "successful-result-requires-selected-route-and-accepted-validation",
   "non-success-result-carries-no-output",
   "reported-token-total-equals-input-plus-output",
-  "required-citations-close-over-task-input-references",
+  "reported-usage-within-task-bounds",
+  "successful-result-within-task-deadline",
+  "validation-state-and-output-hash-consistent",
+  "supplied-citations-close-over-task-input-references",
+  "required-citations-are-supplied",
+  "citation-status-matches-task-requirement",
   "pinned-execution-route-matches-result-route",
+  "indexed-output-closes-over-task-inputs",
   "unsupported-required-features-fail-explicitly",
 ]), "semantic-rule catalog");
 
