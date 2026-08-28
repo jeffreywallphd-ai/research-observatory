@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T03",
+  "commit": "610a01c1e0c357e6c02f069d45ec5e09c26cbf45",
+  "baseCommit": "3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/research-intent-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/service/test_core_api.py",
+    "tests/service/test_research_intents.py",
+    "tools/core_api_contract.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 49 Core API service tests passed at exact candidate 610a01c1e0c357e6c02f069d45ec5e09c26cbf45. The policy cases prove exact human acceptance, restart-safe acceptance replay, all six required epistemic modes, happy-path tool allowance, gate/autonomy/egress/stopping denials, no-accepted-intent denial, content-free audit persistence, atomic audit rollback, and the public acceptance/evaluation routes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\contracts -p test_*.py; packages\\contracts\\node_modules\\.bin\\vitest.CMD run core-api\\generated.test.ts; packages\\contracts\\node_modules\\.bin\\tsc.CMD --noEmit -p packages\\contracts\\tsconfig.json; .venv\\Scripts\\python.exe tools\\core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 51 Python contract tests and all nine focused generated-client tests passed; strict TypeScript compilation and checked-in OpenAPI/generated-client parity passed. Strict decoders and client methods cover accepted revisions, policy requests, decisions, output labels, compact governing references, and problem responses."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\security -p test_*.py; .venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts\\tmp\\CAP-03.S02.T03-security-local-610a01c.json",
+      "exitCode": 0,
+      "result": "All 56 local-security tests passed with one expected Windows privilege skip. The live supply-chain inventory examined 601 packages and 152 findings with zero blocking findings. Security report SHA-256: 7adcc34216390b1ee75c636f177250026aafc75e40135adf403960c9d720ec47."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\packaging -p test_*.py; .venv\\Scripts\\python.exe tools\\packaging_smoke_check.py --repo .",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected symlink-privilege skip, including a real PyInstaller build. Locked packaging-source smoke checks passed with the intent acceptance and policy modules included through the existing Core API composition."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 160 governed Python files were formatted; Ruff and mypy passed. The 13-area architecture contract and all 12 required repository modules passed without introducing a new deployment boundary or dependency."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e --head 610a01c1e0c357e6c02f069d45ec5e09c26cbf45; .venv\\Scripts\\python.exe tools\\adr_check.py --repo .; .venv\\Scripts\\python.exe tools\\ci_check.py --repo .",
+      "exitCode": 0,
+      "result": "The final base-to-candidate diff contains zero governed UI files, so no experience-reference change is claimed. All 23 indexed ADRs and the pinned least-privilege CI contract passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools\\planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog, generated views, 150-page review site, active W1 campaign, and immutable W1 approval passed. CAP-03.S02.T03 remains the sole owned in-progress task."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-03.S02.T03-build-manifest-610a01c.json; .venv\\Scripts\\python.exe tools\\verify.py --repo . --profile service --profile security-local --affected-base 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e --affected-head 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 --deferred-gate W1-exit --selection-only --report artifacts\\tmp\\CAP-03.S02.T03-final-selection-610a01c.json",
+      "exitCode": 0,
+      "result": "Build provenance passed at exact candidate 610a01c1e0c357e6c02f069d45ec5e09c26cbf45. Build-manifest SHA-256: ca9ab4f7b45b9b71be1e73418672f48644f61005012030adf8acf5c8a6de3e45. The conservative Git-derived selector passed with no unknown paths; selection-report SHA-256: b33506ac6673b0e18e335db0652b07e8002170a3ffb736621463d36ed96ca6ce."
+    },
+    {
+      "command": "git diff --check 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e..610a01c1e0c357e6c02f069d45ec5e09c26cbf45; Get-FileHash -Algorithm SHA256 artifacts\\evidence\\W1.A04.B00.json",
+      "exitCode": 0,
+      "result": "Patch hygiene passed. The protected historical W1.A04.B00 witness remains untracked, unstaged, and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "POST /projects/intent/acceptances creates an immutable accepted revision only from the exact current decision-complete draft and current content hash, attributes it to the stable local human actor, and commits the revision, provenance, outbox, and idempotency authority atomically.",
+        "POST /projects/intent/policy/evaluations resolves the latest accepted intent and returns an allow, deny, recommend-human, or require-confirmation disposition with a compact governing reference, reason code, explanation, remediation, and mode-specific output label.",
+        "Systematic, theory, technical, hermeneutic, critical, and novelty tests prove mode-specific stopping and output labels. Required gates never self-authorize; local-only intent denies external egress; autonomy constraints deny excessive tool action; stopping requires human confirmation; and resource budget cannot be the sole completion condition.",
+        "Each policy decision is recorded as content-free local audit metadata plus an intent.policy.evaluated provenance fact in one transaction. Audit failure fails the request closed and leaves no partial decision."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Happy-path coverage proves an allowed bounded action under an exact accepted intent, an output label derived from the active epistemic mode, restart-stable acceptance replay, and API-level acceptance followed by policy evaluation.",
+        "Material failure and boundary coverage proves denial with an explanation when no accepted intent exists, exact-hash acceptance rejection, gate-bypass prevention, autonomy denial, external-egress denial, stopping confirmation, stale/reused idempotency denial, and atomic rollback when policy audit persistence fails.",
+        "The exact candidate passed 49 service tests, 51 Python contract tests, nine focused generated-client tests, 56 local-security tests, six packaging tests, strict TypeScript, OpenAPI parity, Python quality, architecture, repository, planning, build, and patch-integrity checks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The Core API models/routes/service, repository port and SQLite adapter, immutable audit/provenance behavior, OpenAPI and generated client, module capability advertisement, service/contract tests, architecture contract documentation, implementation plan, and routine renewed W1 lease changed together at the exact candidate.",
+        "Intent idempotency binding version 1.1 adds eventType while remaining backward-compatible with version 1.0 draft bindings, preventing acceptance keys from replaying a different intent event without adding a migration or weakening existing stored authority.",
+        "No dependency, schema migration, cloud/institutional service, governed UI reference, or unrelated product workflow changed. The initial candidate's renderer-only governing-reference adaptation was removed in strict descendant 45c8d4a, leaving zero net UI files and keeping policy enforcement at the service boundary assigned by the task."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S02.T03 is a high-risk epistemic-governance and service-boundary task: it adds exact human acceptance, active-intent policy enforcement, public Core API contracts, atomic audit persistence, generated clients, mode-specific labels/stopping, and gate/autonomy/egress denial. Verification therefore covers the complete service unit inventory; all six required modes and adversarial policy branches; public route composition; strict Python and TypeScript contract parity; local-security and supply-chain checks; Windows sidecar packaging; Python quality; architecture/repository boundaries; no-net-UI confirmation; planning/lease integrity; build provenance; and protected-witness safety. No dependency, database schema migration, UI, provider, network client, or external service changed. The conservative affected selector also requested the entire foundation unit inventory because task claim/projection files are safety-sensitive; an attempted full discovery reached unrelated historical governance/recovery fixture failures and was stopped after extended silence. Because T03 changes no workflow/control implementation, the exact affected foundation tools, planning validation, and task-specific tests are the acceptance-relevant boundary; historical foundation reconciliation remains mandatory at W1 exit and is not represented as passing here.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:ci",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "security-local:supply-chain",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "The conservative affected selector classified the claim/projection paths as safety-sensitive and selected full foundation discovery. That overbroad inventory was attempted, exposed historical workflow/governance/recovery fixture failures after its earlier groups passed, and was stopped after extended silent execution. T03 changes no automation, recovery, or governance implementation. Exact task-relevant repository, architecture, ADR, CI, quality, build, UI-change, planning, service, contract, packaging, and security checks passed; complete historical foundation reconciliation remains mandatory at W1 exit.",
+      "The first affected-profile execution at parent candidate 816f90f0b5e96602079c136fa412e273d420c846 passed the 395.88-second benchmark and every preceding foundation check, then failed only foundation:ui-change because one renderer state adaptation lacked governed UI evidence. Strict descendant product candidate 45c8d4a68ffdce926b2d0e78d8ced28067807bda removes that net UI change; exact evidence candidate 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 adds only the routine renewed W1 lease. The exact final UI gate, focused contract/service tests, quality, build, and affected selection all pass. The broad benchmark is not misrepresented as exact-final evidence and remains in the W1-exit matrix.",
+      "Complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows qualification remain mandatory at the CAP-03.S02 slice integration review, applicable checkpoint, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "epistemic-governance-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 against CAP-03.S02.T03. Product candidate 45c8d4a68ffdce926b2d0e78d8ced28067807bda is its immediate product ancestor and the sole descendant delta is routine W1 lease renewal. Prioritize exact human acceptance authority and idempotency, latest-accepted intent resolution, all six required epistemic modes, gate/autonomy/egress/stopping denial semantics, resource-budget non-completion, compact governing references and output labels, content-free atomic policy audit, strict OpenAPI/client decoders, backward compatibility of intent idempotency bindings, zero net UI scope, and whether the disclosed historical foundation deferral is bounded correctly to W1 exit rather than masking an acceptance-bound regression."
+  }
+}
