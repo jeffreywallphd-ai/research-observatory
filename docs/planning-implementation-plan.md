@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 344b554b82a0db1b7fd3a94ff1983903232cb6c02d10a7e6721ce211826ee318
+source_sha256: 83e4413f80e81a76bca0fd53fc7b80cc4e3f9640b872859ac3ed40309bae63ee
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3539,9 +3539,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
+#### - [x] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3575,7 +3575,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S01.T03
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -3639,7 +3639,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S01.T03-R01-F01` `fixed` — artifacts/evidence/CAP-03.S01.T03.review-fix.json
 - `CAP-03.S01.T03-R01-F02` `fixed` — artifacts/evidence/CAP-03.S01.T03.review-fix.json
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `201a77f7c2c9ff3a983a44689ee0ca37ecc721049bd09e888c8259943f5db43c`
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `201a77f7c2c9ff3a983a44689ee0ca37ecc721049bd09e888c8259943f5db43c`
 
 - Candidate / base / branch: `9a464e4c190dce1ec328644e15ece192f865e4a3` / `abdc90764519dc931a17aba550d60c40dcdcea15` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T16:22:21+00:00`
@@ -3653,9 +3655,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R02` / -
 - Root-cause escalation: The original authority catalog treated raw filesystem bytes as the identity of governed textual evidence and compared generated textual output byte-for-byte. On Windows, Git may materialize the same committed text with CRLF instead of LF, so a branch checkout changed the local byte representation, invalidated the compatibility-test digest, and made generated output appear stale without any semantic change. Earlier task checks ran before a branch round trip and therefore did not exercise this platform boundary. R03 defines canonical UTF-8 LF hashing for governed text, retains raw hashing for binary fixtures, normalizes generated-text comparison, adds an LF/CRLF regression, and proves the fix after a clean branch round trip.
 
-**Current latest-review projection:** `approved` by nash-independent-domain-compatibility-reviewer at `2026-08-28T16:06:38+00:00`
+**Disposition / reviewer / time:** `approved` / nash-independent-domain-compatibility-reviewer / `2026-08-28T16:24:34+00:00`
 
-**Latest notes:** Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority catalog. Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures, and altered status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known lifecycle event, reject unknown fields before dispatch, and publish exactly one immutable content-free audit fact for unknown type or unsupported version; audit callback failure raises only compatibility-audit-publication-failed. Generator currency, 34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation pass. R01 evidence and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly deferred to CAP-03.S03; no blocking finding remains.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S01.T03.review-R03.json` / `c71312875ae86df09996841ce8dfe8a3e87e458f325cda38c8a935278607ebca`
+
+**Review notes:** Focused R03 review approves the newline-portability increment with no findings. The compatibility generator is current after the Windows checkout boundary. Governed textual ADR and compatibility-test evidence is hashed after narrowly scoped UTF-8 LF normalization: LF and simulated CRLF representations produce the same catalog digest, while semantic modification produces a different digest. The migration fixture remains raw-byte-bound and rejects any byte addition. Generated output comparison is newline-normalized without weakening source semantics or authority checks. All 34 TypeScript contract tests and 11 focused Python compatibility contract/service tests pass, including the already-approved hash-bound breaking authority, forged/substituted authority denials, executable event catalog, exactly-one content-free audit callback, audit-failure denial, and immutable parity behavior. The append-only ADR and architecture clarifications accurately describe canonical text hashing and raw fixture identity. R02's closures of CAP-03.S01.T03-R01-F01 and CAP-03.S01.T03-R01-F02 remain valid.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by nash-independent-domain-compatibility-reviewer at `2026-08-28T16:24:34+00:00`
+
+**Latest notes:** Focused R03 review approves the newline-portability increment with no findings. The compatibility generator is current after the Windows checkout boundary. Governed textual ADR and compatibility-test evidence is hashed after narrowly scoped UTF-8 LF normalization: LF and simulated CRLF representations produce the same catalog digest, while semantic modification produces a different digest. The migration fixture remains raw-byte-bound and rejects any byte addition. Generated output comparison is newline-normalized without weakening source semantics or authority checks. All 34 TypeScript contract tests and 11 focused Python compatibility contract/service tests pass, including the already-approved hash-bound breaking authority, forged/substituted authority denials, executable event catalog, exactly-one content-free audit callback, audit-failure denial, and immutable parity behavior. The append-only ADR and architecture clarifications accurately describe canonical text hashing and raw fixture identity. R02's closures of CAP-03.S01.T03-R01-F01 and CAP-03.S01.T03-R01-F02 remain valid.
 
 **Currently open findings:** -
 
@@ -6330,7 +6348,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

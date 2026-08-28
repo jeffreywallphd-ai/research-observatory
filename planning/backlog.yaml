@@ -6058,12 +6058,12 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T14:22:02+00:00'
-      updated_at: '2026-08-28T16:22:21+00:00'
-      completed_at: null
+      updated_at: '2026-08-28T16:24:34+00:00'
+      completed_at: '2026-08-28T16:24:34+00:00'
       blocker: null
       implementation_notes: Compatibility policy candidate f9b97b50 is criterion-complete; independent review must evaluate
         the disclosed unchanged 72/16 historical foundation baseline.
@@ -6086,22 +6086,19 @@ capabilities:
       review: &id021
         reviewer: nash-independent-domain-compatibility-reviewer
         result: approved
-        reviewed_at: '2026-08-28T16:06:38+00:00'
-        notes: Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority
-          against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test
-          hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority catalog.
-          Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures, and altered
-          status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known lifecycle event,
-          reject unknown fields before dispatch, and publish exactly one immutable content-free audit fact for unknown type
-          or unsupported version; audit callback failure raises only compatibility-audit-publication-failed. Generator currency,
-          34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation pass. R01 evidence
-          and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly
-          deferred to CAP-03.S03; no blocking finding remains.
+        reviewed_at: '2026-08-28T16:24:34+00:00'
+        notes: 'Focused R03 review approves the newline-portability increment with no findings. The compatibility generator
+          is current after the Windows checkout boundary. Governed textual ADR and compatibility-test evidence is hashed after
+          narrowly scoped UTF-8 LF normalization: LF and simulated CRLF representations produce the same catalog digest, while
+          semantic modification produces a different digest. The migration fixture remains raw-byte-bound and rejects any
+          byte addition. Generated output comparison is newline-normalized without weakening source semantics or authority
+          checks. All 34 TypeScript contract tests and 11 focused Python compatibility contract/service tests pass, including
+          the already-approved hash-bound breaking authority, forged/substituted authority denials, executable event catalog,
+          exactly-one content-free audit callback, audit-failure denial, and immutable parity behavior. The append-only ADR
+          and architecture clarifications accurately describe canonical text hashing and raw fixture identity. R02''s closures
+          of CAP-03.S01.T03-R01-F01 and CAP-03.S01.T03-R01-F02 remain valid.'
       base_sha: bf7ddc41c48ea5db259d7868de6fb15d7797ac1e
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-28T16:13:19+00:00'
-        expires_at: '2026-08-29T00:13:19+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -6370,7 +6367,20 @@ capabilities:
             - foundation:backlog-views
             - foundation:unit
             packet_sha256: 69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830
-          review: *id021
+          review:
+            reviewer: nash-independent-domain-compatibility-reviewer
+            result: approved
+            reviewed_at: '2026-08-28T16:06:38+00:00'
+            notes: Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority
+              against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test
+              hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority
+              catalog. Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures,
+              and altered status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known
+              lifecycle event, reject unknown fields before dispatch, and publish exactly one immutable content-free audit
+              fact for unknown type or unsupported version; audit callback failure raises only compatibility-audit-publication-failed.
+              Generator currency, 34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation
+              pass. R01 evidence and ledger remain append-only and the strict-descendant supersession is exact. Durable audit
+              storage remains correctly deferred to CAP-03.S03; no blocking finding remains.
           ledger:
             path: artifacts/evidence/CAP-03.S01.T03.review-R02.json
             sha256: 26747b39e47772e997573e47460745b630bc35b15a7cf89eafcb41e39798975a
@@ -6415,90 +6425,126 @@ capabilities:
               closed_finding_ids:
               - CAP-03.S01.T03-R01-F01
               - CAP-03.S01.T03-R01-F02
-        current_submission:
-          id: R03
-          submitted_by: codex
-          submitted_at: '2026-08-28T16:22:21+00:00'
-          candidate_commit: 9a464e4c190dce1ec328644e15ece192f865e4a3
-          base_commit: abdc90764519dc931a17aba550d60c40dcdcea15
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S01.T03.newline-fix.json
-            sha256: fd3981c6b7d74c02889653fd395c56dcf841af822d346985619c0aabe9b93768
-            commit: 9a464e4c190dce1ec328644e15ece192f865e4a3
-            recorded_at: '2026-08-28T16:22:21+00:00'
-          acceptance_criteria_sha256: 364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1
-          changed_paths:
-          - artifacts/evidence/CAP-03.S01.T03.review-R02.json
-          - artifacts/evidence/CAP-03.S01.T03.review-fix.json
-          - docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md
-          - docs/architecture/domain-compatibility.md
-          - docs/planning-implementation-plan.md
-          - packages/contracts/domain/compatibility.generated.ts
-          - packages/contracts/domain/compatibility.test.ts
-          - packages/contracts/domain/domain-compatibility-authorities.v1.json
-          - packages/contracts/domain/generate-compatibility.mjs
-          - planning/backlog.yaml
-          - planning/review-site/CAP-03/CAP-03.S01.html
-          - planning/review-site/CAP-07/CAP-07.S01.html
-          - planning/review-site/CAP-07/index.html
-          - planning/review-site/index.html
-          - planning/review-site/manifest.json
-          - planning/review-site/waves/W1.html
-          - planning/status-summary.md
-          - services/core-api/src/research_observatory_core/domain_compatibility.py
-          selected_checks:
-          - git switch main; git switch codex/w1-windows-local-runtime; node packages/contracts/domain/generate-compatibility.mjs
-            --check
-          - node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check;
-            node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd
-            --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run
-          - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest
-            discover -s tests/service -p test_*.py
-          - .venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check
-            tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package
-          - .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-newline-final-quality.json
-          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo
-            . --base abdc90764519dc931a17aba550d60c40dcdcea15 --head 9a464e4c190dce1ec328644e15ece192f865e4a3
-          - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-newline-final-build.json
-          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
-            --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff
-            --check
-          deferred_checks:
-          - The independently reviewed historical 72-failure/16-error governance and live-boundary fixture baseline is outside
-            this newline remediation. Its W1-exit reconciliation remains mandatory and is not represented as passing.
-          - Durable audit persistence remains assigned to CAP-03.S03; this change preserves the already-approved typed content-free
-            audit boundary without claiming storage.
-          - CAP-03.S01 integrated qualification and independent slice review immediately follow R03 approval; cross-capability
-            full qualification remains mandatory at the applicable checkpoint and W1 exit.
-          selection_rationale: 'Slice integration exposed a portability failure in shared generated compatibility controls:
-            raw text bytes and exact generated-module bytes changed under Windows Git newline conversion even though governed
-            semantics did not. The focused remediation changes hashing and generator comparison behavior, so verification
-            covers clean-checkout reproduction, canonicalization regression, all contract/service tests, a real frozen sidecar,
-            Python quality, architecture/ADR consistency, provenance, planning controls, and patch hygiene. Existing authority
-            and audit findings were already closed in R02 and are preserved rather than re-audited wholesale.'
-          selection_sha256: 80133d1cb1dd7a70d212ce73ebbb9e356697230e7a01fc5c00edb10fa6d72c79
-          prior_attempt_id: R02
-          open_finding_ids: []
-          root_cause_analysis: The original authority catalog treated raw filesystem bytes as the identity of governed textual
-            evidence and compared generated textual output byte-for-byte. On Windows, Git may materialize the same committed
-            text with CRLF instead of LF, so a branch checkout changed the local byte representation, invalidated the compatibility-test
-            digest, and made generated output appear stale without any semantic change. Earlier task checks ran before a branch
-            round trip and therefore did not exercise this platform boundary. R03 defines canonical UTF-8 LF hashing for governed
-            text, retains raw hashing for binary fixtures, normalizes generated-text comparison, adds an LF/CRLF regression,
-            and proves the fix after a clean branch round trip.
-          selected_command_ids:
-          - contracts:unit
-          - service:unit
-          - packaging:unit
-          - foundation:quality
-          - foundation:build-manifest
-          - foundation:adr
-          - foundation:backlog
-          - foundation:backlog-views
-          - foundation:unit
-          packet_sha256: 201a77f7c2c9ff3a983a44689ee0ca37ecc721049bd09e888c8259943f5db43c
+        - submission:
+            id: R03
+            submitted_by: codex
+            submitted_at: '2026-08-28T16:22:21+00:00'
+            candidate_commit: 9a464e4c190dce1ec328644e15ece192f865e4a3
+            base_commit: abdc90764519dc931a17aba550d60c40dcdcea15
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S01.T03.newline-fix.json
+              sha256: fd3981c6b7d74c02889653fd395c56dcf841af822d346985619c0aabe9b93768
+              commit: 9a464e4c190dce1ec328644e15ece192f865e4a3
+              recorded_at: '2026-08-28T16:22:21+00:00'
+            acceptance_criteria_sha256: 364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1
+            changed_paths:
+            - artifacts/evidence/CAP-03.S01.T03.review-R02.json
+            - artifacts/evidence/CAP-03.S01.T03.review-fix.json
+            - docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md
+            - docs/architecture/domain-compatibility.md
+            - docs/planning-implementation-plan.md
+            - packages/contracts/domain/compatibility.generated.ts
+            - packages/contracts/domain/compatibility.test.ts
+            - packages/contracts/domain/domain-compatibility-authorities.v1.json
+            - packages/contracts/domain/generate-compatibility.mjs
+            - planning/backlog.yaml
+            - planning/review-site/CAP-03/CAP-03.S01.html
+            - planning/review-site/CAP-07/CAP-07.S01.html
+            - planning/review-site/CAP-07/index.html
+            - planning/review-site/index.html
+            - planning/review-site/manifest.json
+            - planning/review-site/waves/W1.html
+            - planning/status-summary.md
+            - services/core-api/src/research_observatory_core/domain_compatibility.py
+            selected_checks:
+            - git switch main; git switch codex/w1-windows-local-runtime; node packages/contracts/domain/generate-compatibility.mjs
+              --check
+            - node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check;
+              node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd
+              --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run
+            - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest
+              discover -s tests/service -p test_*.py
+            - .venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check
+              tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package
+            - .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-newline-final-quality.json
+            - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo
+              . --base abdc90764519dc931a17aba550d60c40dcdcea15 --head 9a464e4c190dce1ec328644e15ece192f865e4a3
+            - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-newline-final-build.json
+            - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
+              --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff
+              --check
+            deferred_checks:
+            - The independently reviewed historical 72-failure/16-error governance and live-boundary fixture baseline is outside
+              this newline remediation. Its W1-exit reconciliation remains mandatory and is not represented as passing.
+            - Durable audit persistence remains assigned to CAP-03.S03; this change preserves the already-approved typed content-free
+              audit boundary without claiming storage.
+            - CAP-03.S01 integrated qualification and independent slice review immediately follow R03 approval; cross-capability
+              full qualification remains mandatory at the applicable checkpoint and W1 exit.
+            selection_rationale: 'Slice integration exposed a portability failure in shared generated compatibility controls:
+              raw text bytes and exact generated-module bytes changed under Windows Git newline conversion even though governed
+              semantics did not. The focused remediation changes hashing and generator comparison behavior, so verification
+              covers clean-checkout reproduction, canonicalization regression, all contract/service tests, a real frozen sidecar,
+              Python quality, architecture/ADR consistency, provenance, planning controls, and patch hygiene. Existing authority
+              and audit findings were already closed in R02 and are preserved rather than re-audited wholesale.'
+            selection_sha256: 80133d1cb1dd7a70d212ce73ebbb9e356697230e7a01fc5c00edb10fa6d72c79
+            prior_attempt_id: R02
+            open_finding_ids: []
+            root_cause_analysis: The original authority catalog treated raw filesystem bytes as the identity of governed textual
+              evidence and compared generated textual output byte-for-byte. On Windows, Git may materialize the same committed
+              text with CRLF instead of LF, so a branch checkout changed the local byte representation, invalidated the compatibility-test
+              digest, and made generated output appear stale without any semantic change. Earlier task checks ran before a
+              branch round trip and therefore did not exercise this platform boundary. R03 defines canonical UTF-8 LF hashing
+              for governed text, retains raw hashing for binary fixtures, normalizes generated-text comparison, adds an LF/CRLF
+              regression, and proves the fix after a clean branch round trip.
+            selected_command_ids:
+            - contracts:unit
+            - service:unit
+            - packaging:unit
+            - foundation:quality
+            - foundation:build-manifest
+            - foundation:adr
+            - foundation:backlog
+            - foundation:backlog-views
+            - foundation:unit
+            packet_sha256: 201a77f7c2c9ff3a983a44689ee0ca37ecc721049bd09e888c8259943f5db43c
+          review: *id021
+          ledger:
+            path: artifacts/evidence/CAP-03.S01.T03.review-R03.json
+            sha256: c71312875ae86df09996841ce8dfe8a3e87e458f325cda38c8a935278607ebca
+          findings: []
+          closures: []
+          telemetry:
+            task_id: CAP-03.S01.T03
+            amendment_id: null
+            attempt_id: R03
+            submitted_at: '2026-08-28T16:22:21+00:00'
+            reviewed_at: '2026-08-28T16:24:34+00:00'
+            duration_seconds: 133
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - contracts:unit
+            - service:unit
+            - packaging:unit
+            - foundation:quality
+            - foundation:build-manifest
+            - foundation:adr
+            - foundation:backlog
+            - foundation:backlog-views
+            - foundation:unit
+            remediation:
+              prior_attempt_id: R02
+              replayed_finding_ids: []
+              closed_finding_ids: []
+        current_submission: null
       cancellation: null
     platform_targets:
     - windows-x64
@@ -10397,7 +10443,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T03
     - CAP-00.S03.T03
-    status: READY
+    status: NOT_STARTED
     tasks:
     - id: CAP-07.S01.T01
       capability_id: CAP-07
