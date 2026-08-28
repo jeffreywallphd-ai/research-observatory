@@ -173,3 +173,6 @@ stateDiagram-v2
 - Transition creation is deterministic. Persistence, provenance/outbox emission,
   and aggregate-specific invariant checks compose around this validation boundary
   in their owning slices.
+- Adding or changing a state, command, or emitted event follows the explicit
+  classification and negotiation rules in
+  [Domain compatibility](domain-compatibility.md).

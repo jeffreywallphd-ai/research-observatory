@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/domain/domain-compatibility.schema.json",
+  "title": "Research Observatory domain compatibility policy",
+  "x-research-observatory-semanticRules": [
+    "versions-are-strict-safe-semver",
+    "release-and-change-lists-are-unique-and-ordered",
+    "additive-change-does-not-change-major-version",
+    "deprecation-requires-a-versioned-window-and-replacement",
+    "breaking-change-requires-major-version-adr-and-tested-migration",
+    "migration-retains-source-and-matches-change-endpoints",
+    "unknown-events-deny-and-audit",
+    "negotiation-selects-highest-exact-common-versions",
+    "negotiation-requires-one-role-each-and-one-schema-set"
+  ],
+  "$ref": "#/$defs/CompatibilityPolicy",
+  "$defs": {
+    "Semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])(?![\\s\\S])"
+    },
+    "PortableId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.:_-][a-z0-9]+){0,11}(?![\\s\\S])"
+    },
+    "Sha256Id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}(?![\\s\\S])"
+    },
+    "ChangeKind": {
+      "type": "string",
+      "enum": [
+        "add-optional-field",
+        "widen-reader-type",
+        "deprecate-field",
+        "add-required-field",
+        "remove-field",
+        "rename-field",
+        "narrow-reader-type",
+        "add-closed-enum-member",
+        "add-event-type",
+        "change-event-payload",
+        "change-identity-format",
+        "repurpose-meaning"
+      ]
+    },
+    "ChangeRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["changeKind", "classification", "requirements"],
+      "properties": {
+        "changeKind": {"$ref": "#/$defs/ChangeKind"},
+        "classification": {"type": "string", "enum": ["additive", "deprecation", "breaking"]},
+        "requirements": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 2,
+          "items": {"type": "string", "enum": ["adr", "migration", "deprecation-window"]}
+        }
+      }
+    },
+    "ContractRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "contractFamily",
+        "contractVersion",
+        "identityFormat",
+        "readerMode",
+        "writerMode",
+        "schemaSetId"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-domain-contract-release"},
+        "contractFamily": {"const": "research-observatory-domain"},
+        "contractVersion": {"$ref": "#/$defs/Semver"},
+        "identityFormat": {
+          "type": "string",
+          "enum": ["legacy-project-uuidv4-bridge", "canonical-uuidv7"]
+        },
+        "readerMode": {"type": "string", "enum": ["native", "bridge-required"]},
+        "writerMode": {"type": "string", "enum": ["native", "denied"]},
+        "schemaSetId": {"$ref": "#/$defs/Sha256Id"}
+      }
+    },
+    "Bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "fromVersion",
+        "toVersion",
+        "adrId",
+        "strategy",
+        "sourceRetention",
+        "testFixture"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/PortableId"},
+        "fromVersion": {"$ref": "#/$defs/Semver"},
+        "toVersion": {"$ref": "#/$defs/Semver"},
+        "adrId": {"type": "string", "pattern": "^ADR-[0-9]{4}(?![\\s\\S])"},
+        "strategy": {"type": "string", "enum": ["reader-bridge", "verified-copy-on-write"]},
+        "sourceRetention": {"const": "preserved"},
+        "testFixture": {
+          "type": "string",
+          "maxLength": 240,
+          "pattern": "^(?![A-Za-z]:|/|\\\\|.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+(?![\\s\\S])"
+        }
+      }
+    },
+    "CompatibilityPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "policyVersion",
+        "contractFamily",
+        "priorContractVersion",
+        "currentContractVersion",
+        "changeRules",
+        "eventPolicy",
+        "negotiation",
+        "bridges"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-domain-compatibility-policy"},
+        "policyVersion": {"const": "1.0.0"},
+        "contractFamily": {"const": "research-observatory-domain"},
+        "priorContractVersion": {"$ref": "#/$defs/Semver"},
+        "currentContractVersion": {"$ref": "#/$defs/Semver"},
+        "changeRules": {
+          "type": "array",
+          "minItems": 12,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/ChangeRule"}
+        },
+        "eventPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["envelopeVersioned", "unknownEvent", "payloadUnknownFields", "supportedVersions"],
+          "properties": {
+            "envelopeVersioned": {"const": true},
+            "unknownEvent": {"const": "deny-and-audit"},
+            "payloadUnknownFields": {"const": "reject"},
+            "supportedVersions": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 8,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/Semver"}
+            }
+          }
+        },
+        "negotiation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["roles", "selection", "schemaSet", "noOverlap"],
+          "properties": {
+            "roles": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "prefixItems": [
+                {"const": "desktop"},
+                {"const": "sidecar"},
+                {"const": "server"}
+              ],
+              "items": false
+            },
+            "selection": {"const": "highest-exact-common"},
+            "schemaSet": {"const": "exact-match"},
+            "noOverlap": {"const": "deny"}
+          }
+        },
+        "bridges": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/Bridge"}
+        }
+      }
+    },
+    "MigrationPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "fromVersion", "toVersion", "strategy", "sourceRetention", "testFixture"],
+      "properties": {
+        "id": {"$ref": "#/$defs/PortableId"},
+        "fromVersion": {"$ref": "#/$defs/Semver"},
+        "toVersion": {"$ref": "#/$defs/Semver"},
+        "strategy": {"type": "string", "enum": ["reader-bridge", "verified-copy-on-write"]},
+        "sourceRetention": {"const": "preserved"},
+        "testFixture": {
+          "type": "string",
+          "maxLength": 240,
+          "pattern": "^(?![A-Za-z]:|/|\\\\|.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+(?![\\s\\S])"
+        }
+      }
+    },
+    "DeprecationWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["since", "removalNotBefore", "replacement"],
+      "properties": {
+        "since": {"$ref": "#/$defs/Semver"},
+        "removalNotBefore": {"$ref": "#/$defs/Semver"},
+        "replacement": {"$ref": "#/$defs/PortableId"}
+      }
+    },
+    "ChangeProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "fromVersion",
+        "toVersion",
+        "changeKind",
+        "artifactId",
+        "adrId",
+        "migration",
+        "deprecation"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-domain-change-proposal"},
+        "fromVersion": {"$ref": "#/$defs/Semver"},
+        "toVersion": {"$ref": "#/$defs/Semver"},
+        "changeKind": {"$ref": "#/$defs/ChangeKind"},
+        "artifactId": {"$ref": "#/$defs/PortableId"},
+        "adrId": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "pattern": "^ADR-[0-9]{4}(?![\\s\\S])"}
+          ]
+        },
+        "migration": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/MigrationPath"}
+          ]
+        },
+        "deprecation": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/DeprecationWindow"}
+          ]
+        }
+      }
+    },
+    "ComponentAdvertisement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "role",
+        "componentVersion",
+        "contractFamily",
+        "supportedContractVersions",
+        "supportedEventVersions",
+        "schemaSetId"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-domain-compatibility-advertisement"},
+        "role": {"type": "string", "enum": ["desktop", "sidecar", "server"]},
+        "componentVersion": {"$ref": "#/$defs/Semver"},
+        "contractFamily": {"const": "research-observatory-domain"},
+        "supportedContractVersions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/Semver"}
+        },
+        "supportedEventVersions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/Semver"}
+        },
+        "schemaSetId": {"$ref": "#/$defs/Sha256Id"}
+      }
+    },
+    "NegotiationResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "contractVersion",
+        "eventVersion",
+        "schemaSetId",
+        "roles",
+        "diagnosticCode"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-domain-compatibility-negotiation"},
+        "contractVersion": {"$ref": "#/$defs/Semver"},
+        "eventVersion": {"$ref": "#/$defs/Semver"},
+        "schemaSetId": {"$ref": "#/$defs/Sha256Id"},
+        "roles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {"type": "string", "enum": ["desktop", "sidecar", "server"]}
+        },
+        "diagnosticCode": {"const": "compatibility-negotiated"}
+      }
+    }
+  }
+}

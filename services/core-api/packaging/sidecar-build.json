@@ -22,6 +22,7 @@
     ],
     "hiddenModules": [
       "_cffi_backend",
+      "research_observatory_core.domain_compatibility",
       "research_observatory_core.domain_lifecycles",
       "research_observatory_core.migrations.runner",
       "research_observatory_core.object_store",
@@ -42,6 +43,7 @@
     "pydantic",
     "pydantic_settings",
     "research_observatory_core",
+    "research_observatory_core.domain_compatibility",
     "research_observatory_core.domain_lifecycles",
     "sqlalchemy",
     "sqlcipher3",

@@ -105,6 +105,9 @@ The deterministic project, corpus-item, document, evidence-record, decision,
 task, dossier, and export lifecycle profiles, terminal/reopen rules, and
 validate-before-persist boundary are documented in
 [`domain-lifecycles.md`](domain-lifecycles.md).
+Domain change classification, prior-version bridging, event compatibility, and
+desktop-sidecar-server negotiation are documented in
+[`domain-compatibility.md`](domain-compatibility.md).
 The versioned local SQLite identity, STRICT schema, connection, WAL, checkpoint,
 and integrity boundary is documented in
 [`local-sqlite-storage.md`](local-sqlite-storage.md) and governed by ADR-0014.

@@ -37,8 +37,12 @@ lifecycles remain a separate governed contract: `domain-lifecycle.schema.json`
 and `domain-lifecycle.v1.json` define eight deterministic state machines whose
 generated Python and TypeScript validators derive the destination, require
 actor/reason and optimistic revision identity, reject unknown commands before
-persistence, and make terminal/reopen rules explicit. Compatibility evolution
-remains owned by the next approved CAP-03.S01 task.
+persistence, and make terminal/reopen rules explicit. The compatibility schema,
+exact policy, current/prior release fixtures, and generated TypeScript/Python
+runtimes classify additive, deprecated, and breaking evolution. They require an
+ADR plus a source-retaining tested migration for breaking changes, preserve the
+legacy UUIDv4 reader bridge, and select only the highest exact common contract
+and event versions advertised by desktop, sidecar, and optional server roles.
 
 `storage/` defines the exact portable `sqlite-wal-v1` profile: application and
 schema identity, UUID/timestamp representation, scalar-only STRICT table

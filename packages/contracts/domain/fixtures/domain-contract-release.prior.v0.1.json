@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-domain-contract-release",
+  "contractFamily": "research-observatory-domain",
+  "contractVersion": "0.1.0",
+  "identityFormat": "legacy-project-uuidv4-bridge",
+  "readerMode": "bridge-required",
+  "writerMode": "denied",
+  "schemaSetId": "sha256:1f9604bf780bc9182ad09b38119929c3af17276ed35599b79706e331c37ba8a9"
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-domain-compatibility-policy",
+  "policyVersion": "1.0.0",
+  "contractFamily": "research-observatory-domain",
+  "priorContractVersion": "0.1.0",
+  "currentContractVersion": "1.0.0",
+  "changeRules": [
+    {"changeKind": "add-optional-field", "classification": "additive", "requirements": []},
+    {"changeKind": "widen-reader-type", "classification": "additive", "requirements": []},
+    {"changeKind": "deprecate-field", "classification": "deprecation", "requirements": ["deprecation-window"]},
+    {"changeKind": "add-required-field", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "remove-field", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "rename-field", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "narrow-reader-type", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "add-closed-enum-member", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "add-event-type", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "change-event-payload", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "change-identity-format", "classification": "breaking", "requirements": ["adr", "migration"]},
+    {"changeKind": "repurpose-meaning", "classification": "breaking", "requirements": ["adr", "migration"]}
+  ],
+  "eventPolicy": {
+    "envelopeVersioned": true,
+    "unknownEvent": "deny-and-audit",
+    "payloadUnknownFields": "reject",
+    "supportedVersions": ["0.1.0", "1.0.0"]
+  },
+  "negotiation": {
+    "roles": ["desktop", "sidecar", "server"],
+    "selection": "highest-exact-common",
+    "schemaSet": "exact-match",
+    "noOverlap": "deny"
+  },
+  "bridges": [
+    {
+      "id": "legacy-project-uuidv4-to-canonical-uuidv7",
+      "fromVersion": "0.1.0",
+      "toVersion": "1.0.0",
+      "adrId": "ADR-0013",
+      "strategy": "reader-bridge",
+      "sourceRetention": "preserved",
+      "testFixture": "packages/contracts/project/fixtures/valid-project-manifest.v1.json"
+    }
+  ]
+}
