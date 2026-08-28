@@ -516,7 +516,6 @@ class IntentWorkspaceProjection(ContractModel):
     schema_version: str = CORE_API_SCHEMA_VERSION
     project_id: str = Field(pattern=(r"^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"))
     current: IntentDraftProjection | None
-    governing_intent: IntentGoverningReference | None
     history: tuple[IntentRevisionSummary, ...] = Field(max_length=100)
 
 

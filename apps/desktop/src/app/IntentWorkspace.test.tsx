@@ -31,7 +31,6 @@ const emptyWorkspace: IntentWorkspaceProjection = {
   schemaVersion: "1.0",
   projectId: project.projectId,
   current: null,
-  governingIntent: null,
   history: [],
 };
 

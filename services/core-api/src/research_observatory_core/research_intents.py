@@ -910,11 +910,9 @@ class ResearchIntentService:
         project_id: str,
     ) -> IntentWorkspaceProjection:
         revisions = self._read(repository)
-        accepted = next((revision for revision in revisions if revision["status"] == "accepted"), None)
         return IntentWorkspaceProjection(
             project_id=project_id,
             current=_projection(revisions[0]) if revisions else None,
-            governing_intent=_governing_reference(accepted),
             history=tuple(_summary(revision) for revision in revisions[:_MAX_HISTORY]),
         )
 

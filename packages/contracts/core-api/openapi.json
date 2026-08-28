@@ -1448,16 +1448,6 @@
               }
             ]
           },
-          "governingIntent": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/IntentGoverningReference"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "history": {
             "items": {
               "$ref": "#/components/schemas/IntentRevisionSummary"
@@ -1480,7 +1470,6 @@
         "required": [
           "projectId",
           "current",
-          "governingIntent",
           "history"
         ],
         "title": "IntentWorkspaceProjection",

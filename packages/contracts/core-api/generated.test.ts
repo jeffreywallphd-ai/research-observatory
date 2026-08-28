@@ -394,7 +394,6 @@ describe("generated Core API client", () => {
       schemaVersion: "1.0",
       projectId: "11111111-1111-4111-8111-111111111111",
       current,
-      governingIntent: null,
       history: [summary],
     };
     const impact = {
