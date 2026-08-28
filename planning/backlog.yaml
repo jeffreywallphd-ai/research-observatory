@@ -7428,15 +7428,21 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T20:43:04+00:00'
-      updated_at: '2026-08-28T20:43:04+00:00'
+      updated_at: '2026-08-28T21:54:33+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Exact candidate 610a01c submitted for epistemic-governance review; historical full-foundation
+        fixture debt remains disclosed for W1 exit.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S02.T03.json
+        sha256: 13a8a3810e190e52915ab0947af1ddda68f39816bc2b38db617d66209ba0821f
+        commit: 610a01c1e0c357e6c02f069d45ec5e09c26cbf45
+        recorded_at: '2026-08-28T21:54:33+00:00'
       review:
         reviewer: null
         result: null
@@ -7447,10 +7453,117 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-28T20:43:04+00:00'
         expires_at: '2026-08-29T04:43:04+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-08-28T21:54:33+00:00'
+          candidate_commit: 610a01c1e0c357e6c02f069d45ec5e09c26cbf45
+          base_commit: 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S02.T03.json
+            sha256: 13a8a3810e190e52915ab0947af1ddda68f39816bc2b38db617d66209ba0821f
+            commit: 610a01c1e0c357e6c02f069d45ec5e09c26cbf45
+            recorded_at: '2026-08-28T21:54:33+00:00'
+          acceptance_criteria_sha256: 7c39d7c4e651d5e56f68bd2b6eef9c3b26174b593a38be30c0d83d1b1cf2213c
+          changed_paths:
+          - docs/architecture/research-intent-contracts.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/generated.test.ts
+          - packages/contracts/core-api/generated.ts
+          - packages/contracts/core-api/openapi.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S02.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - services/core-api/src/research_observatory_core/app.py
+          - services/core-api/src/research_observatory_core/models.py
+          - services/core-api/src/research_observatory_core/modules.py
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/research_intents.py
+          - tests/service/test_core_api.py
+          - tests/service/test_research_intents.py
+          - tools/core_api_contract.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest discover -s tests\service -p test_*.py
+          - .venv\Scripts\python.exe -m unittest discover -s tests\contracts -p test_*.py; packages\contracts\node_modules\.bin\vitest.CMD
+            run core-api\generated.test.ts; packages\contracts\node_modules\.bin\tsc.CMD --noEmit -p packages\contracts\tsconfig.json;
+            .venv\Scripts\python.exe tools\core_api_contract.py --repo . --check
+          - .venv\Scripts\python.exe -m unittest discover -s tests\security -p test_*.py; .venv\Scripts\python.exe tools\security_check.py
+            --repo . --report artifacts\tmp\CAP-03.S02.T03-security-local-610a01c.json
+          - .venv\Scripts\python.exe -m unittest discover -s tests\packaging -p test_*.py; .venv\Scripts\python.exe tools\packaging_smoke_check.py
+            --repo .
+          - .venv\Scripts\python.exe tools\quality_check.py --repo .; .venv\Scripts\python.exe tools\architecture_check.py
+            --repo .; .venv\Scripts\python.exe tools\repository_structure_check.py --repo .
+          - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e --head
+            610a01c1e0c357e6c02f069d45ec5e09c26cbf45; .venv\Scripts\python.exe tools\adr_check.py --repo .; .venv\Scripts\python.exe
+            tools\ci_check.py --repo .
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate; .venv\Scripts\python.exe tools\backlog_views.py
+            --repo . --check; .venv\Scripts\python.exe tools\planctl.py --repo . wave ready W1 --require-approved
+          - .venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts\tmp\CAP-03.S02.T03-build-manifest-610a01c.json;
+            .venv\Scripts\python.exe tools\verify.py --repo . --profile service --profile security-local --affected-base 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e
+            --affected-head 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 --deferred-gate W1-exit --selection-only --report artifacts\tmp\CAP-03.S02.T03-final-selection-610a01c.json
+          - git diff --check 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e..610a01c1e0c357e6c02f069d45ec5e09c26cbf45; Get-FileHash
+            -Algorithm SHA256 artifacts\evidence\W1.A04.B00.json
+          deferred_checks:
+          - The conservative affected selector classified the claim/projection paths as safety-sensitive and selected full
+            foundation discovery. That overbroad inventory was attempted, exposed historical workflow/governance/recovery
+            fixture failures after its earlier groups passed, and was stopped after extended silent execution. T03 changes
+            no automation, recovery, or governance implementation. Exact task-relevant repository, architecture, ADR, CI,
+            quality, build, UI-change, planning, service, contract, packaging, and security checks passed; complete historical
+            foundation reconciliation remains mandatory at W1 exit.
+          - The first affected-profile execution at parent candidate 816f90f0b5e96602079c136fa412e273d420c846 passed the 395.88-second
+            benchmark and every preceding foundation check, then failed only foundation:ui-change because one renderer state
+            adaptation lacked governed UI evidence. Strict descendant product candidate 45c8d4a68ffdce926b2d0e78d8ced28067807bda
+            removes that net UI change; exact evidence candidate 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 adds only the routine
+            renewed W1 lease. The exact final UI gate, focused contract/service tests, quality, build, and affected selection
+            all pass. The broad benchmark is not misrepresented as exact-final evidence and remains in the W1-exit matrix.
+          - Complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility,
+            performance, packaging, and Windows qualification remain mandatory at the CAP-03.S02 slice integration review,
+            applicable checkpoint, and W1 exit.
+          selection_rationale: 'CAP-03.S02.T03 is a high-risk epistemic-governance and service-boundary task: it adds exact
+            human acceptance, active-intent policy enforcement, public Core API contracts, atomic audit persistence, generated
+            clients, mode-specific labels/stopping, and gate/autonomy/egress denial. Verification therefore covers the complete
+            service unit inventory; all six required modes and adversarial policy branches; public route composition; strict
+            Python and TypeScript contract parity; local-security and supply-chain checks; Windows sidecar packaging; Python
+            quality; architecture/repository boundaries; no-net-UI confirmation; planning/lease integrity; build provenance;
+            and protected-witness safety. No dependency, database schema migration, UI, provider, network client, or external
+            service changed. The conservative affected selector also requested the entire foundation unit inventory because
+            task claim/projection files are safety-sensitive; an attempted full discovery reached unrelated historical governance/recovery
+            fixture failures and was stopped after extended silence. Because T03 changes no workflow/control implementation,
+            the exact affected foundation tools, planning validation, and task-specific tests are the acceptance-relevant
+            boundary; historical foundation reconciliation remains mandatory at W1 exit and is not represented as passing
+            here.'
+          selection_sha256: 50e427d791a52eb29c94ac6b687c45dcbc5f3025a29cc2a875d0b7e9de394751
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:build-manifest
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:ci
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:repository-structure
+          - foundation:backlog
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          - security-local:supply-chain
+          - security-local:unit
+          packet_sha256: c0fbaa1a20d3e87e0f5ba0458b8d1ca8259b9f3d6b982537327d9f7936fd2882
     platform_targets:
     - windows-x64
     completion:
