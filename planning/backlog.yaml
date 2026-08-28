@@ -7428,12 +7428,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: DONE
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T20:43:04+00:00'
-      updated_at: '2026-08-28T21:57:31+00:00'
-      completed_at: '2026-08-28T21:57:31+00:00'
+      updated_at: '2026-08-28T22:02:11+00:00'
+      completed_at: null
       blocker: null
       implementation_notes: Exact candidate 610a01c submitted for epistemic-governance review; historical full-foundation
         fixture debt remains disclosed for W1 exit.
@@ -7464,8 +7464,11 @@ capabilities:
           service, packaging, security, and zero-net-UI checks are recorded as passing, so the remaining full reconciliation
           is safely retained for the mandatory W1-exit matrix rather than represented as task evidence.
       base_sha: 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e
-      lease: null
-      verification_state: passed
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-28T22:02:11+00:00'
+        expires_at: '2026-08-29T06:02:11+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -7620,6 +7623,7 @@ capabilities:
               replayed_finding_ids: []
               closed_finding_ids: []
         current_submission: null
+      cancellation: null
     platform_targets:
     - windows-x64
     completion:
