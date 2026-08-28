@@ -2124,7 +2124,7 @@
             {
               "task_id": "CAP-03.S01.T03",
               "title": "Publish versioning and compatibility policy for domain APIs",
-              "status": "DONE",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "nash-independent-domain-compatibility-reviewer",
@@ -3634,7 +3634,7 @@
             {
               "task_id": "CAP-07.S01.T01",
               "title": "Define model task interfaces and result envelopes",
-              "status": "READY",
+              "status": "BLOCKED",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,

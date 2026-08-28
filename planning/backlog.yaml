@@ -6058,12 +6058,12 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: DONE
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T14:22:02+00:00'
-      updated_at: '2026-08-28T16:06:38+00:00'
-      completed_at: '2026-08-28T16:06:38+00:00'
+      updated_at: '2026-08-28T16:13:19+00:00'
+      completed_at: null
       blocker: null
       implementation_notes: Compatibility policy candidate f9b97b50 is criterion-complete; independent review must evaluate
         the disclosed unchanged 72/16 historical foundation baseline.
@@ -6093,8 +6093,11 @@ capabilities:
           and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly
           deferred to CAP-03.S03; no blocking finding remains.
       base_sha: bf7ddc41c48ea5db259d7868de6fb15d7797ac1e
-      lease: null
-      verification_state: passed
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-28T16:13:19+00:00'
+        expires_at: '2026-08-29T00:13:19+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -6408,6 +6411,7 @@ capabilities:
               - CAP-03.S01.T03-R01-F01
               - CAP-03.S01.T03-R01-F02
         current_submission: null
+      cancellation: null
     platform_targets:
     - windows-x64
     completion:
@@ -10334,13 +10338,19 @@ capabilities:
       - ai
       verification_commands:
       - python tools/verify.py --profile ai
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-28T16:06:38+00:00'
+      status: BLOCKED
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-08-28T16:11:38+00:00'
+      updated_at: '2026-08-28T16:12:29+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Upstream CAP-03.S01 slice integration found checkout-newline-sensitive compatibility evidence hashing after
+          T03 approval; downstream model-contract work must not proceed until the upstream generator is deterministic on Windows.
+        next_action: Reopen CAP-03.S01.T03, canonicalize the governed text digest, add a CRLF portability regression, obtain
+          independent task review, approve CAP-03.S01 integration, then reopen this already-claimed task.
+        recorded_at: '2026-08-28T16:12:29+00:00'
+        owner: codex
       implementation_notes: ''
       evidence: []
       review:
@@ -10348,10 +10358,10 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
+      base_sha: dc0fba09a468390ce729ab1225a7b3df49fb6441
       lease: null
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-07.S01.T02

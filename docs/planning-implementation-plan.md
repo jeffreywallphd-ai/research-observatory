@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3e550d99133c92da2cfe73139bd121a32ae2edcd8751312246949beb77231504
+source_sha256: 2649c360aeb839ffd1ec81fb37792af91a5fbd664de97288de6b5129120bb72f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3539,9 +3539,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [x] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
+#### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
-**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6325,13 +6325,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T01 - Define model task interfaces and result envelopes
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-00.S03.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Contracts for embedding, reranking, classification, NLI, structured extraction, generation, tool use, token accounting, confidence, and citations.
 
