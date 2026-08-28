@@ -87,6 +87,9 @@ same generated boundary uses a schema-hash-bound event catalog: unknown event
 types or versions fail before dispatch and require exactly one bounded,
 content-free audit-publication callback. Callback failure remains a denial;
 durable audit persistence belongs to the later provenance/audit slice.
+Text evidence and generated text are compared after canonical UTF-8 LF newline
+normalization so ordinary Git checkout conversion cannot alter authority or
+generation results; binary migration fixtures remain raw-byte identities.
 
 ## Consequences
 
