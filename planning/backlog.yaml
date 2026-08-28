@@ -6058,12 +6058,12 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T14:22:02+00:00'
-      updated_at: '2026-08-28T16:04:19+00:00'
-      completed_at: null
+      updated_at: '2026-08-28T16:06:38+00:00'
+      completed_at: '2026-08-28T16:06:38+00:00'
       blocker: null
       implementation_notes: Compatibility policy candidate f9b97b50 is criterion-complete; independent review must evaluate
         the disclosed unchanged 72/16 historical foundation baseline.
@@ -6080,21 +6080,20 @@ capabilities:
         recorded_at: '2026-08-28T16:04:19+00:00'
       review: &id021
         reviewer: nash-independent-domain-compatibility-reviewer
-        result: changes-requested
-        reviewed_at: '2026-08-28T15:49:39+00:00'
-        notes: The frozen schema, policy and release-fixture hashes are exact; the current schema-set is derived from domain-core
-          and domain-lifecycle bytes, the prior set is derived from the UUIDv4 project-manifest schema, and ADR-0013's read-only
-          bridge fixture is present and generator-verified. Cross-runtime generation, deterministic exact-common desktop/sidecar/optional-server
-          negotiation, strict advertisements, immutable outputs, stable content-free diagnostics, and sidecar/build integration
-          are otherwise supported. Focused replay passed all 32 TypeScript contract tests and nine Python compatibility contract/service
-          tests. The disclosed 72 failures and 16 errors reproduce the already reviewed historical governance/live-boundary
-          fixture drift and reveal no T03 implementation failure, so they remain mandatory W1-exit remediation rather than
-          a separate task finding. Two task-owned compatibility controls are nevertheless incomplete.
+        result: approved
+        reviewed_at: '2026-08-28T16:06:38+00:00'
+        notes: Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority
+          against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test
+          hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority catalog.
+          Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures, and altered
+          status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known lifecycle event,
+          reject unknown fields before dispatch, and publish exactly one immutable content-free audit fact for unknown type
+          or unsupported version; audit callback failure raises only compatibility-audit-publication-failed. Generator currency,
+          34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation pass. R01 evidence
+          and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly
+          deferred to CAP-03.S03; no blocking finding remains.
       base_sha: bf7ddc41c48ea5db259d7868de6fb15d7797ac1e
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-28T15:49:39+00:00'
-        expires_at: '2026-08-28T23:49:39+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -6194,7 +6193,19 @@ capabilities:
             - foundation:backlog-views
             - foundation:unit
             packet_sha256: 2ded47b0291885a365f823ad5fb01bbe2f1cdc3ce1069bba6ced14b9a268ac9b
-          review: *id021
+          review:
+            reviewer: nash-independent-domain-compatibility-reviewer
+            result: changes-requested
+            reviewed_at: '2026-08-28T15:49:39+00:00'
+            notes: The frozen schema, policy and release-fixture hashes are exact; the current schema-set is derived from
+              domain-core and domain-lifecycle bytes, the prior set is derived from the UUIDv4 project-manifest schema, and
+              ADR-0013's read-only bridge fixture is present and generator-verified. Cross-runtime generation, deterministic
+              exact-common desktop/sidecar/optional-server negotiation, strict advertisements, immutable outputs, stable content-free
+              diagnostics, and sidecar/build integration are otherwise supported. Focused replay passed all 32 TypeScript
+              contract tests and nine Python compatibility contract/service tests. The disclosed 72 failures and 16 errors
+              reproduce the already reviewed historical governance/live-boundary fixture drift and reveal no T03 implementation
+              failure, so they remain mandatory W1-exit remediation rather than a separate task finding. Two task-owned compatibility
+              controls are nevertheless incomplete.
           ledger:
             path: artifacts/evidence/CAP-03.S01.T03.review-R01.json
             sha256: 5fd63b0fa9ec8c9f963490a9c58420a641ab208fdf12e3d682732555ca27f5c0
@@ -6270,87 +6281,133 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission:
-          id: R02
-          submitted_by: codex
-          submitted_at: '2026-08-28T16:04:19+00:00'
-          candidate_commit: abdc90764519dc931a17aba550d60c40dcdcea15
-          base_commit: f9b97b50cb3b4fa42db4aa415ea2bb82544de285
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S01.T03.review-fix.json
-            sha256: a3fd90778bd09a43830a26039eec45992060c254aa1a8db6b7a2d1b98847d7db
-            commit: abdc90764519dc931a17aba550d60c40dcdcea15
-            recorded_at: '2026-08-28T16:04:19+00:00'
-          acceptance_criteria_sha256: 364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1
-          changed_paths:
-          - artifacts/evidence/CAP-03.S01.T03.json
-          - artifacts/evidence/CAP-03.S01.T03.review-R01.json
-          - docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md
-          - docs/adr/index.json
-          - docs/architecture/domain-compatibility.md
-          - docs/planning-implementation-plan.md
-          - packages/contracts/README.md
-          - packages/contracts/domain/compatibility.generated.ts
-          - packages/contracts/domain/compatibility.template.py.txt
-          - packages/contracts/domain/compatibility.template.ts.txt
-          - packages/contracts/domain/compatibility.test.ts
-          - packages/contracts/domain/domain-compatibility-authorities.v1.json
-          - packages/contracts/domain/domain-compatibility.schema.json
-          - packages/contracts/domain/domain-event-catalog.v1.json
-          - packages/contracts/domain/generate-compatibility.mjs
-          - planning/backlog.yaml
-          - planning/review-site/CAP-03/CAP-03.S01.html
-          - planning/review-site/manifest.json
-          - planning/status-summary.md
-          - services/core-api/src/research_observatory_core/domain_compatibility.py
-          - tests/contracts/test_domain_compatibility.py
-          selected_checks:
-          - node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check;
-            node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd
-            --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run
-          - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest
-            discover -s tests/service -p test_*.py
-          - .venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check
-            tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package
-          - .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-remediation-adr.json
-          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo
-            . --base bb823509f5dc8f482f17729a8d81aebdd493839d --head abdc90764519dc931a17aba550d60c40dcdcea15
-          - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-final.json
-          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
-            --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff
-            --check
-          deferred_checks:
-          - The governed affected foundation/service attempt from R01 reproduced the independently reviewed historical 72-failure/16-error
-            governance/live-boundary fixture baseline. The remediation does not touch those controls; reconciliation remains
-            mandatory at W1 exit and is not represented as passing.
-          - Durable audit persistence belongs to CAP-03.S03. T03 provides and proves the mandatory typed content-free audit
-            fact/callback boundary without claiming storage.
-          - Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval; cross-capability
-            full qualification remains mandatory at the applicable checkpoint and W1 exit.
-          selection_rationale: R01 isolated two blocking trust-boundary defects in shared generated compatibility controls.
-            The remediation therefore replays both exact findings and their hostile variants in TypeScript and Python, all
-            contract/service tests, generation/hash integrity, protected architecture/ADR controls, Python quality, a real
-            frozen Windows sidecar, build provenance, backlog/review projections, and W1 approval readiness. It does not expand
-            into later durable audit persistence or the historical W1-exit foundation baseline.
-          selection_sha256: d31c57a6ab2ccddb8e0c9b86f901fe6d4254f416c99902259f58f2a50c6eabe8
-          prior_attempt_id: R01
-          open_finding_ids:
-          - CAP-03.S01.T03-R01-F01
-          - CAP-03.S01.T03-R01-F02
-          root_cause_analysis: null
-          selected_command_ids:
-          - contracts:unit
-          - service:unit
-          - packaging:unit
-          - foundation:quality
-          - foundation:build-manifest
-          - foundation:adr
-          - foundation:backlog
-          - foundation:backlog-views
-          - foundation:unit
-          packet_sha256: 69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830
+        - submission:
+            id: R02
+            submitted_by: codex
+            submitted_at: '2026-08-28T16:04:19+00:00'
+            candidate_commit: abdc90764519dc931a17aba550d60c40dcdcea15
+            base_commit: f9b97b50cb3b4fa42db4aa415ea2bb82544de285
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S01.T03.review-fix.json
+              sha256: a3fd90778bd09a43830a26039eec45992060c254aa1a8db6b7a2d1b98847d7db
+              commit: abdc90764519dc931a17aba550d60c40dcdcea15
+              recorded_at: '2026-08-28T16:04:19+00:00'
+            acceptance_criteria_sha256: 364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1
+            changed_paths:
+            - artifacts/evidence/CAP-03.S01.T03.json
+            - artifacts/evidence/CAP-03.S01.T03.review-R01.json
+            - docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md
+            - docs/adr/index.json
+            - docs/architecture/domain-compatibility.md
+            - docs/planning-implementation-plan.md
+            - packages/contracts/README.md
+            - packages/contracts/domain/compatibility.generated.ts
+            - packages/contracts/domain/compatibility.template.py.txt
+            - packages/contracts/domain/compatibility.template.ts.txt
+            - packages/contracts/domain/compatibility.test.ts
+            - packages/contracts/domain/domain-compatibility-authorities.v1.json
+            - packages/contracts/domain/domain-compatibility.schema.json
+            - packages/contracts/domain/domain-event-catalog.v1.json
+            - packages/contracts/domain/generate-compatibility.mjs
+            - planning/backlog.yaml
+            - planning/review-site/CAP-03/CAP-03.S01.html
+            - planning/review-site/manifest.json
+            - planning/status-summary.md
+            - services/core-api/src/research_observatory_core/domain_compatibility.py
+            - tests/contracts/test_domain_compatibility.py
+            selected_checks:
+            - node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check;
+              node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd
+              --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run
+            - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest
+              discover -s tests/service -p test_*.py
+            - .venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check
+              tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package
+            - .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-remediation-adr.json
+            - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo
+              . --base bb823509f5dc8f482f17729a8d81aebdd493839d --head abdc90764519dc931a17aba550d60c40dcdcea15
+            - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-final.json
+            - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
+              --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff
+              --check
+            deferred_checks:
+            - The governed affected foundation/service attempt from R01 reproduced the independently reviewed historical 72-failure/16-error
+              governance/live-boundary fixture baseline. The remediation does not touch those controls; reconciliation remains
+              mandatory at W1 exit and is not represented as passing.
+            - Durable audit persistence belongs to CAP-03.S03. T03 provides and proves the mandatory typed content-free audit
+              fact/callback boundary without claiming storage.
+            - Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval; cross-capability
+              full qualification remains mandatory at the applicable checkpoint and W1 exit.
+            selection_rationale: R01 isolated two blocking trust-boundary defects in shared generated compatibility controls.
+              The remediation therefore replays both exact findings and their hostile variants in TypeScript and Python, all
+              contract/service tests, generation/hash integrity, protected architecture/ADR controls, Python quality, a real
+              frozen Windows sidecar, build provenance, backlog/review projections, and W1 approval readiness. It does not
+              expand into later durable audit persistence or the historical W1-exit foundation baseline.
+            selection_sha256: d31c57a6ab2ccddb8e0c9b86f901fe6d4254f416c99902259f58f2a50c6eabe8
+            prior_attempt_id: R01
+            open_finding_ids:
+            - CAP-03.S01.T03-R01-F01
+            - CAP-03.S01.T03-R01-F02
+            root_cause_analysis: null
+            selected_command_ids:
+            - contracts:unit
+            - service:unit
+            - packaging:unit
+            - foundation:quality
+            - foundation:build-manifest
+            - foundation:adr
+            - foundation:backlog
+            - foundation:backlog-views
+            - foundation:unit
+            packet_sha256: 69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830
+          review: *id021
+          ledger:
+            path: artifacts/evidence/CAP-03.S01.T03.review-R02.json
+            sha256: 26747b39e47772e997573e47460745b630bc35b15a7cf89eafcb41e39798975a
+          findings: []
+          closures:
+          - finding_id: CAP-03.S01.T03-R01-F01
+            disposition: fixed
+            evidence: artifacts/evidence/CAP-03.S01.T03.review-fix.json
+          - finding_id: CAP-03.S01.T03-R01-F02
+            disposition: fixed
+            evidence: artifacts/evidence/CAP-03.S01.T03.review-fix.json
+          telemetry:
+            task_id: CAP-03.S01.T03
+            amendment_id: null
+            attempt_id: R02
+            submitted_at: '2026-08-28T16:04:19+00:00'
+            reviewed_at: '2026-08-28T16:06:38+00:00'
+            duration_seconds: 139
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - contracts:unit
+            - service:unit
+            - packaging:unit
+            - foundation:quality
+            - foundation:build-manifest
+            - foundation:adr
+            - foundation:backlog
+            - foundation:backlog-views
+            - foundation:unit
+            remediation:
+              prior_attempt_id: R01
+              replayed_finding_ids:
+              - CAP-03.S01.T03-R01-F01
+              - CAP-03.S01.T03-R01-F02
+              closed_finding_ids:
+              - CAP-03.S01.T03-R01-F01
+              - CAP-03.S01.T03-R01-F02
+        current_submission: null
     platform_targets:
     - windows-x64
     completion:
@@ -10248,7 +10305,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T03
     - CAP-00.S03.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-07.S01.T01
       capability_id: CAP-07
@@ -10277,11 +10334,11 @@ capabilities:
       - ai
       verification_commands:
       - python tools/verify.py --profile ai
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-28T16:06:38+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
