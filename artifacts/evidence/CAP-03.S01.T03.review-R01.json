@@ -1,0 +1,30 @@
+{
+  "task_id": "CAP-03.S01.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "f9b97b50cb3b4fa42db4aa415ea2bb82544de285",
+  "submission_record_commit": "7158afedefdb01ca29106cc84f4445e549a17f59",
+  "reviewer": "nash-independent-domain-compatibility-reviewer",
+  "result": "changes-requested",
+  "notes": "The frozen schema, policy and release-fixture hashes are exact; the current schema-set is derived from domain-core and domain-lifecycle bytes, the prior set is derived from the UUIDv4 project-manifest schema, and ADR-0013's read-only bridge fixture is present and generator-verified. Cross-runtime generation, deterministic exact-common desktop/sidecar/optional-server negotiation, strict advertisements, immutable outputs, stable content-free diagnostics, and sidecar/build integration are otherwise supported. Focused replay passed all 32 TypeScript contract tests and nine Python compatibility contract/service tests. The disclosed 72 failures and 16 errors reproduce the already reviewed historical governance/live-boundary fixture drift and reveal no T03 implementation failure, so they remain mandatory W1-exit remediation rather than a separate task finding. Two task-owned compatibility controls are nevertheless incomplete.",
+  "findings": [
+    {
+      "id": "CAP-03.S01.T03-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Breaking-change approval trusts unverified ADR and migration assertions",
+      "reproduction": "At exact candidate f9b97b50cb3b4fa42db4aa415ea2bb82544de285, call assess_domain_change with a remove-field proposal from 1.0.0 to 2.0.0, adrId ADR-9999, and a migration whose id is invented-migration and testFixture is fixtures/does-not-exist.json but whose syntactic fields, endpoints, strategy and sourceRetention are valid. Python returns classification breaking, allowed true, errors empty, diagnosticCode compatibility-change-accepted; the generated TypeScript applies the same checks. The implementation validates only ADR syntax and a relative fixture string. It does not bind the ADR to an accepted repository decision or bind the migration/bridge to an existing, tested, source-retaining fixture. This contradicts the acceptance rule that breaking changes require an accepted ADR and migration path and makes the evidence claim of authority enforcement false.",
+      "required_remediation": "In a strict-descendant candidate, make breaking assessment consume or embed a deterministic hash-bound catalog of accepted ADR authority and reviewed migration/reader-bridge evidence, and reject unknown, unaccepted, mismatched, missing, or substituted authority in both runtimes with stable content-free parity codes. At minimum, prove ADR identity/status/scope, exact from/to versions, strategy/source-retention, fixture existence and immutable digest, and a bound passing compatibility test. Add Python and TypeScript denial tests using ADR-9999, nonexistent/substituted fixtures, wrong evidence hash/status/scope, and valid exact authority. Preserve pure deterministic runtime behavior by generating the authenticated catalog rather than performing ambient filesystem reads during assessment."
+    },
+    {
+      "id": "CAP-03.S01.T03-R01-F02",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Unknown-event deny-and-audit behavior is declared but not executable",
+      "reproduction": "Search the exact candidate's generator and generated Python/TypeScript modules for unknownEvent, deny-and-audit, audit, event payload validation, or an event assessment API. The only runtime occurrence is the frozen policy literal; there is no event envelope schema, supported-event catalog, validator, denial function, or audit callback/result. The tests only assert that the policy object contains unknownEvent=deny-and-audit and exercise version overlap during component negotiation. Therefore an unknown event or payload with unknown fields cannot be submitted to this contract boundary and proven rejected or audited, despite the plan placing event compatibility in T03 scope and the evidence claiming that unknown events deny and audit while unknown payload fields reject.",
+      "required_remediation": "Add a minimal language-neutral versioned event-envelope/assessment contract and generated Python/TypeScript validation boundary that accepts an exact supported-event catalog, rejects unknown versions/types and unknown payload fields before dispatch, and produces or invokes one bounded content-free audit fact for every unknown-event denial. Bind the supported catalog and schemas by hashes, preserve immutable results, and add parity tests for known event, unknown event with exactly one audit, unknown field, unsupported version, hostile content redaction, and audit publication failure semantics. If durable audit publication belongs to a later slice, expose and test the mandatory typed audit fact/callback here without claiming persistence."
+    }
+  ],
+  "closures": []
+}
