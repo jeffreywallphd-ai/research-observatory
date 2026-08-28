@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 406b3ff7a0af0dd5028e5112a2a0db71840a8b5d1c7932d5cfa894066693a2f6
+source_sha256: b7c0085dfad1bd7a23403cf12b770583ab64cf2514cc6cdeff9054a6e69b54e6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6354,15 +6354,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-00.S03.T03`
 
-#### - [ ] CAP-07.S01.T01 - Define model task interfaces and result envelopes
+#### - [x] CAP-07.S01.T01 - Define model task interfaces and result envelopes
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-00.S03.T03`
 
-**Owner / review:** codex / codex-independent (`changes-requested`)
+**Owner / review:** codex / codex-independent (`approved`)
 
 **Objective:** Contracts for embedding, reranking, classification, NLI, structured extraction, generation, tool use, token accounting, confidence, and citations.
 
@@ -6387,7 +6387,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-07.S01.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -6419,7 +6419,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `59857ca41a8b84f5c156c3bac749d4a8a1890fa7075f2c143b59c0278edc6ac4`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `59857ca41a8b84f5c156c3bac749d4a8a1890fa7075f2c143b59c0278edc6ac4`
 
 - Candidate / base / branch: `e4f70e7c87d06f0b09ac8da46465bf957968ba79` / `f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T17:20:44+00:00`
@@ -6433,15 +6435,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-07.S01.T01-R01-F01`
 - Root-cause escalation: The initial generated validators treated schema validity and internal arithmetic as sufficient, but did not model semantic closure between task-declared resource limits and result-reported usage, task deadlines and successful latency, returned artifacts and accepted validation identity, supplied citations and immutable inputs, or indexed outputs and their task-specific input domains. R02 centralizes those invariants in equivalent generated TypeScript/Python semantic checks and adds parity tests at valid equality boundaries plus substituted and out-of-range cases.
 
-**Current latest-review projection:** `changes-requested` by codex-independent at `2026-08-28T17:05:30+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent / `2026-08-28T17:23:30+00:00`
 
-**Latest notes:** The exact submission and inherited CAP-03 pause/resume lineage are truthfully disclosed. The Draft 2020-12 schema, deterministic generator, generated Python/TypeScript schema hash, all eight task-specific input shapes, strict unknown/raw-content/unsafe-key exclusion, pinned route matching, immutable owned snapshots, explicit content-free unsupported-feature result, ADR-0021 authority, quality/build inventory, and later-task nonclaims are otherwise supported. Independent replay passed generator currency, strict TypeScript compilation, 5/5 TypeScript gateway tests, and 5/5 Python gateway tests. One consolidated high-severity semantic-closure finding remains in both generated runtimes.
+**Immutable review ledger:** `artifacts/evidence/CAP-07.S01.T01.review-R02.json` / `2e081c3e8402f7fb610dad62feeb63e7c436ee754e916d09f2a45f2c75da2349`
 
-**Currently open findings:** `CAP-07.S01.T01-R01-F01`
+**Review notes:** Focused remediation review replayed CAP-07.S01.T01-R01-F01 and the incremental generated-contract boundary. The exact strict-descendant candidate now enforces task token maxima, successful/degraded deadline, artifact-validation hash identity, rejected/not-run validation state, closure of every supplied citation, and task-specific indexed output bounds with equivalent generated TypeScript and Python behavior. Valid equality boundaries remain accepted. Generator/schema parity, explicit content-free unsupported-feature denial, exact pinned-route matching, immutable ownership, append-only R01 history, and later provider/registry/routing/runtime nonclaims remain intact. Independent replay passed generator currency, strict TypeScript compilation, 7/7 TypeScript gateway tests, and 7/7 Python gateway tests. No blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-07.S01.T01-R01-F01` `fixed` — At exact candidate e4f70e7c87d06f0b09ac8da46465bf957968ba79, the original combined Python reproduction now returns successful-result-within-task-deadline, reported-usage-within-task-bounds, accepted-artifact-validation-hash-matches-output, and supplied-citations-close-over-task-input-references. Generated TypeScript and Python tests independently exercise valid max-token/deadline equality, each +1 denial, accepted artifact hash substitution, rejected/not-run state inconsistency, optional foreign citations, impossible reranking topK, out-of-range and duplicate indexed outputs, undeclared classification labels, NLI label/index closure, moderation input closure, and task/output-kind substitution. All seven tests pass in each runtime, generation is current, and strict TypeScript compilation passes.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent at `2026-08-28T17:23:30+00:00`
+
+**Latest notes:** Focused remediation review replayed CAP-07.S01.T01-R01-F01 and the incremental generated-contract boundary. The exact strict-descendant candidate now enforces task token maxima, successful/degraded deadline, artifact-validation hash identity, rejected/not-run validation state, closure of every supplied citation, and task-specific indexed output bounds with equivalent generated TypeScript and Python behavior. Valid equality boundaries remain accepted. Generator/schema parity, explicit content-free unsupported-feature denial, exact pinned-route matching, immutable ownership, append-only R01 history, and later provider/registry/routing/runtime nonclaims remain intact. Independent replay passed generator currency, strict TypeScript compilation, 7/7 TypeScript gateway tests, and 7/7 Python gateway tests. No blocking finding remains.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
