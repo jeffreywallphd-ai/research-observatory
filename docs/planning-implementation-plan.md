@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9458cd157deab2a7a6ae42254f86d084286b565007e60efa5258dcb56cbc6a48
+source_sha256: 2222620a6b717f2512b0709c032a55a33417eaad56e6323b2f61cc316ed0000b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3541,13 +3541,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Semantic rules for additive/breaking schema change, deprecation, migration, event compatibility, and desktop-sidecar-server negotiation.
 
