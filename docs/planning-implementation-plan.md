@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4f2a50a488f0dbc71a9ea5db935cf39e686c210d039805d2de68319b7633e6c3
+source_sha256: f050199cd00e935e0806ff084945ab4199752967059a2e96d2d1ad8222f25350
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6356,7 +6356,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T01 - Define model task interfaces and result envelopes
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6380,13 +6380,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-07.S01.T01.json` at `f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa`
+
 ##### Review history — CAP-07.S01.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0e1559eb1f40edcb6c6c173c2dfcff2220bdc5da90c31dfaf12f947211993a18`
+
+- Candidate / base / branch: `f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa` / `dc0fba09a468390ce729ab1225a7b3df49fb6441` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T17:01:30+00:00`
+- Evidence: `artifacts/evidence/CAP-07.S01.T01.json` / `7e51063d1f1836afeb61001b316f0d19677c792e2fbe67e781df1258d28c3b6b` / `f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa`
+- Acceptance-criteria SHA-256: `477fa85a9cf899a84e9a91431a8211df9ebb657af7ca828dc3e08881c2c80f58`
+- Verification-selection SHA-256: `ab5e8430358ca78f5c2463d8c6f6ff164655b845f38db95a8b380d6a305f9758`
+- Changed paths: `artifacts/evidence/CAP-03.S01.T03.newline-fix.json`, `artifacts/evidence/CAP-03.S01.T03.review-R03.json`, `artifacts/evidence/CAP-03.S01.integration.json`, `artifacts/evidence/CAP-03.S01.integration.review.json`, `docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md`, `docs/adr/ADR-0021-adopt-provider-neutral-model-task-and-result-contracts.md`, `docs/adr/index.json`, `docs/architecture/README.md`, `docs/architecture/domain-compatibility.md`, `docs/architecture/model-gateway-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/domain/compatibility.generated.ts`, `packages/contracts/domain/compatibility.test.ts`, `packages/contracts/domain/domain-compatibility-authorities.v1.json`, `packages/contracts/domain/generate-compatibility.mjs`, `packages/contracts/model-gateway/README.md`, `packages/contracts/model-gateway/fixtures/valid-generation-result.v1.json`, `packages/contracts/model-gateway/fixtures/valid-generation-task.v1.json`, `packages/contracts/model-gateway/generate.mjs`, `packages/contracts/model-gateway/generated.ts`, `packages/contracts/model-gateway/model-task.schema.json`, `packages/contracts/model-gateway/model-task.template.py.txt`, `packages/contracts/model-gateway/model-task.template.ts.txt`, `packages/contracts/model-gateway/model-task.test.ts`, `packages/contracts/package.json`, `packages/contracts/tsconfig.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S01.html`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/CAP-07/CAP-07.S01.html`, `planning/review-site/CAP-07/index.html`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/README.md`, `services/core-api/src/research_observatory_core/domain_compatibility.py`, `services/core-api/src/research_observatory_core/model_gateway_contracts.py`, `tests/ai/README.md`, `tests/ai/test_model_gateway_contracts.py`, `tests/foundation/test_adr_check.py`
+- Selected checks: `node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; node packages/contracts/model-gateway/generate.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run`, `.venv\Scripts\python.exe -m unittest discover -s tests/ai -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py -v; .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py -v; .venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.foundation.test_adr_check`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-07.S01.T01-quality-f0f47b5.json`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base 7ff3c8d089006d59e61c0d34aec5c47dae0bd044 --head f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-07.S01.T01-build-manifest-f0f47b5.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile ai --profile service --affected-base 7ff3c8d089006d59e61c0d34aec5c47dae0bd044 --affected-head f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-07.S01.T01-affected-selection-f0f47b5.json`, `git diff --check 7ff3c8d089006d59e61c0d34aec5c47dae0bd044..f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa; Get-FileHash -Algorithm SHA256 artifacts/evidence/W1.A04.B00.json`
+- Deferred checks: `The complete foundation and cross-capability repository/deployment matrix remains mandatory at W1 exit. Unrelated UI reference, agent-protocol, fixture-corpus, benchmark, and CI inventories were not replayed solely because the selector does not yet map packaging/build-inputs.json; the directly affected schema inventory, manifest, package, service, contract, AI, quality, architecture, and ADR controls all passed.`, `Provider discovery/capability manifests, routing/fallback/deadline execution, local model runtime and weight lifecycle, approved remote egress, prompt/schema registry, cost budgets, evaluation operations, and durable audit persistence belong to later approved CAP-07/CAP-03 tasks and are not claimed here.`, `CAP-07.S01 integrated end-to-end and adversarial slice review follows completion of its remaining tasks. Cross-capability security, performance, cancellation, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: This high-risk task introduces a shared public model-task contract, generated cross-language decoders, strict untrusted-input validation, reproducibility pins, policy/usage/validation provenance, and a governed build-schema input. Verification therefore covers exact generation, strict TypeScript compilation, all portable TypeScript contracts, AI failure/adversarial cases, full service/contracts/packaging suites with a real frozen sidecar, affected foundation controls, repository-wide Python quality, architecture/ADR coverage, build provenance, planning integrity, and patch/witness safety. No dependency, provider SDK, network, database, UI, or model artifact changed.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** Reopened: The blocking CAP-03.S01 checkout-portability defect is fixed in exact candidate 9a464e4, independently approved at task R03, and the complete CAP-03.S01 slice is independently approved at submission 440dda3; the recorded resume condition is satisfied.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
