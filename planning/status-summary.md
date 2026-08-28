@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2649c360aeb839ffd1ec81fb37792af91a5fbd664de97288de6b5129120bb72f
+source_sha256: 344b554b82a0db1b7fd3a94ff1983903232cb6c02d10a7e6721ce211826ee318
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,8 +52,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 272 |
-| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 46 |
 | `DEFERRED` | 36 |
 
@@ -355,7 +355,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S04.T04` | `append-only v1` | 1 | `-` | approved / nash-independent-security-reviewer | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
-| `CAP-03.S01.T03` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
+| `CAP-03.S01.T03` | `append-only v1` | 2 | `R03` | approved / nash-independent-domain-compatibility-reviewer | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -422,5 +422,5 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S01.T03` Publish versioning and compatibility policy for domain APIs | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S01.T03` Publish versioning and compatibility policy for domain APIs | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
 | `CAP-07.S01.T01` Define model task interfaces and result envelopes | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |

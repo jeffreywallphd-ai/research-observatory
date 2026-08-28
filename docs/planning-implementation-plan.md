@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2649c360aeb839ffd1ec81fb37792af91a5fbd664de97288de6b5129120bb72f
+source_sha256: 344b554b82a0db1b7fd3a94ff1983903232cb6c02d10a7e6721ce211826ee318
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3541,7 +3541,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3571,6 +3571,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S01.T03.json` at `f9b97b50cb3b4fa42db4aa415ea2bb82544de285`
 - `artifacts/evidence/CAP-03.S01.T03.review-fix.json` at `abdc90764519dc931a17aba550d60c40dcdcea15`
+- `artifacts/evidence/CAP-03.S01.T03.newline-fix.json` at `9a464e4c190dce1ec328644e15ece192f865e4a3`
 
 ##### Review history — CAP-03.S01.T03
 
@@ -3638,7 +3639,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S01.T03-R01-F01` `fixed` — artifacts/evidence/CAP-03.S01.T03.review-fix.json
 - `CAP-03.S01.T03-R01-F02` `fixed` — artifacts/evidence/CAP-03.S01.T03.review-fix.json
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `201a77f7c2c9ff3a983a44689ee0ca37ecc721049bd09e888c8259943f5db43c`
+
+- Candidate / base / branch: `9a464e4c190dce1ec328644e15ece192f865e4a3` / `abdc90764519dc931a17aba550d60c40dcdcea15` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T16:22:21+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S01.T03.newline-fix.json` / `fd3981c6b7d74c02889653fd395c56dcf841af822d346985619c0aabe9b93768` / `9a464e4c190dce1ec328644e15ece192f865e4a3`
+- Acceptance-criteria SHA-256: `364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1`
+- Verification-selection SHA-256: `80133d1cb1dd7a70d212ce73ebbb9e356697230e7a01fc5c00edb10fa6d72c79`
+- Changed paths: `artifacts/evidence/CAP-03.S01.T03.review-R02.json`, `artifacts/evidence/CAP-03.S01.T03.review-fix.json`, `docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md`, `docs/architecture/domain-compatibility.md`, `docs/planning-implementation-plan.md`, `packages/contracts/domain/compatibility.generated.ts`, `packages/contracts/domain/compatibility.test.ts`, `packages/contracts/domain/domain-compatibility-authorities.v1.json`, `packages/contracts/domain/generate-compatibility.mjs`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S01.html`, `planning/review-site/CAP-07/CAP-07.S01.html`, `planning/review-site/CAP-07/index.html`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/domain_compatibility.py`
+- Selected checks: `git switch main; git switch codex/w1-windows-local-runtime; node packages/contracts/domain/generate-compatibility.mjs --check`, `node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-newline-final-quality.json`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base abdc90764519dc931a17aba550d60c40dcdcea15 --head 9a464e4c190dce1ec328644e15ece192f865e4a3`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-newline-final-build.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check`
+- Deferred checks: `The independently reviewed historical 72-failure/16-error governance and live-boundary fixture baseline is outside this newline remediation. Its W1-exit reconciliation remains mandatory and is not represented as passing.`, `Durable audit persistence remains assigned to CAP-03.S03; this change preserves the already-approved typed content-free audit boundary without claiming storage.`, `CAP-03.S01 integrated qualification and independent slice review immediately follow R03 approval; cross-capability full qualification remains mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: Slice integration exposed a portability failure in shared generated compatibility controls: raw text bytes and exact generated-module bytes changed under Windows Git newline conversion even though governed semantics did not. The focused remediation changes hashing and generator comparison behavior, so verification covers clean-checkout reproduction, canonicalization regression, all contract/service tests, a real frozen sidecar, Python quality, architecture/ADR consistency, provenance, planning controls, and patch hygiene. Existing authority and audit findings were already closed in R02 and are preserved rather than re-audited wholesale.
+- Prior round / replayed open findings: `R02` / -
+- Root-cause escalation: The original authority catalog treated raw filesystem bytes as the identity of governed textual evidence and compared generated textual output byte-for-byte. On Windows, Git may materialize the same committed text with CRLF instead of LF, so a branch checkout changed the local byte representation, invalidated the compatibility-test digest, and made generated output appear stale without any semantic change. Earlier task checks ran before a branch round trip and therefore did not exercise this platform boundary. R03 defines canonical UTF-8 LF hashing for governed text, retains raw hashing for binary fixtures, normalizes generated-text comparison, adds an LF/CRLF regression, and proves the fix after a clean branch round trip.
 
 **Current latest-review projection:** `approved` by nash-independent-domain-compatibility-reviewer at `2026-08-28T16:06:38+00:00`
 
