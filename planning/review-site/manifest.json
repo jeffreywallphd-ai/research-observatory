@@ -1864,7 +1864,7 @@
             {
               "task_id": "CAP-03.S01.T02",
               "title": "Define aggregate state machines and invariants",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
