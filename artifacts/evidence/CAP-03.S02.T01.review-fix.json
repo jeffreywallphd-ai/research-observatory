@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T01",
+  "commit": "deb3430ec489afb07f87b003e5aee8a7402b34b6",
+  "baseCommit": "035a1e833ae0628d48bf1d29d31af73260a6adda",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S02.T01.json",
+    "sha256": "840250c5db4bb1db66bd4e9cc5bfed90eff9c287f2a7edcd5f5b21e424b9aebe",
+    "commit": "035a1e833ae0628d48bf1d29d31af73260a6adda",
+    "reason": "R01 identified incomplete semantic closure among allowed actions, autonomy level, human gates, egress policy, and mode-specific stopping. This strict-descendant R02 packet preserves R01 and binds a closed action vocabulary, level ordering, gate/destination consistency, all-condition mode closure, and equivalent generated TypeScript/Python adversarial evidence."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S02.T01.json",
+    "artifacts/evidence/CAP-03.S02.T01.review-R01.json",
+    "docs/adr/ADR-0023-use-mode-specific-researcher-controlled-intent-policy-vocabulary.md",
+    "docs/architecture/research-intent-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/intent/generate.mjs",
+    "packages/contracts/intent/generated.ts",
+    "packages/contracts/intent/research-intent.schema.json",
+    "packages/contracts/intent/research-intent.template.py.txt",
+    "packages/contracts/intent/research-intent.template.ts.txt",
+    "packages/contracts/intent/research-intent.test.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/research_intent_contracts.py",
+    "tests/contracts/test_research_intent_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": "workspace-node packages/contracts/intent/generate.mjs --check; workspace-node packages/contracts/node_modules/typescript/bin/tsc -p packages/contracts/tsconfig.json --noEmit; workspace-node packages/contracts/node_modules/vitest/vitest.mjs run (cwd packages/contracts)",
+      "exitCode": 0,
+      "result": "Intent generation was current, strict TypeScript compilation passed, and all 55 portable-contract tests passed. The 14 intent tests replay R01's reserved accept/scope/egress actions, mixed-mode stopping, and missing-gate cases; cover all seven lawful mode condition sets with the universal secondary resource-budget boundary; and accept exact human-only, suggest, prepare, execute, and approved-egress boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 51 Python portable-contract tests and 38 Core service tests passed. The 12 Python intent cases provide parity for the reserved-action, autonomy-level, mixed-mode stopping, seven-mode, destination/gate, and valid-boundary semantics without changing service lifecycle or persistence behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected Windows file-symlink privilege skip. A real PyInstaller build analyzed and bundled the remediated generated research-intent runtime."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.foundation.test_adr_check",
+      "exitCode": 0,
+      "result": "All 37 affected build-manifest, quality-scope, repository-structure, and ADR workflow tests passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S02.T01-quality-deb3430.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 158 governed Python files. Report SHA-256: 4291934e626189775fa5bbadb47a892c728a2585d5bd2d958560f9ea189f4189."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 035a1e833ae0628d48bf1d29d31af73260a6adda --head deb3430ec489afb07f87b003e5aee8a7402b34b6; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "The 23-record ADR registry inspected all 20 strict-descendant paths and accepted the ADR-0023 clarification and complete package affected-path binding. The 13-area architecture contract passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S02.T01-build-manifest-deb3430.json",
+      "exitCode": 0,
+      "result": "Build provenance passed at exact candidate deb3430ec489afb07f87b003e5aee8a7402b34b6; the dirty label is solely the protected untracked W1.A04.B00 witness. Report SHA-256: edb0785deb8553ac94315eea938c8af775819f4e69edf639ae6c878fa4d4a64d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .; git diff --check 035a1e833ae0628d48bf1d29d31af73260a6adda..deb3430ec489afb07f87b003e5aee8a7402b34b6",
+      "exitCode": 0,
+      "result": "The 20-capability/117-slice/359-task backlog, generated views, 150-page planning site, immutable approved W1 packet, repository structure, and strict-descendant patch hygiene passed. The protected W1.A04.B00 witness remained untracked, unstaged, and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile service --affected-base 035a1e833ae0628d48bf1d29d31af73260a6adda --affected-head deb3430ec489afb07f87b003e5aee8a7402b34b6 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S02.T01-affected-selection-deb3430.json",
+      "exitCode": 0,
+      "result": "Affected selection passed and conservatively selected the full service inventory because the append-only R01 evidence/ledger paths are not product path-map entries. Report SHA-256: aeb726f8d1759977d2ab501a8b9b0173da16a5b959f2ba7e8978f22bcfed68ff. The remediation-owned contracts, service, packaging, quality, build, architecture, ADR, repository, and planning boundaries all passed directly."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The schema now permits only six non-consequential actions: two suggestion actions, two reversible-preparation actions, and two approved reversible-execution actions. Intent acceptance, scope mutation, and direct external-egress authority are not members of the vocabulary.",
+        "Equivalent generated validators order human-only, suggest, prepare-reversible, and execute-reversible levels and reject any allowed action above the selected level while continuing to require false mayAcceptIntent/mayChangeScope plus intent-acceptance and scope-change human gates.",
+        "Every declared stopping condition must belong to the selected mode's closed set, and at least one mode-required condition must be present; resource-budget is allowed only as a secondary cross-mode condition. Non-local egress requires both an opaque approved destination and the external-egress human gate, while local-only permits neither."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fourteen TypeScript and twelve Python research-intent tests pass with equivalent denials for accept-intent, change-scope, external-egress, action/level escalation, systematic-plus-technical stopping, non-local egress without a gate, and local-only egress with a contradictory gate.",
+        "Valid boundaries cover empty human-only actions, suggestion-only actions, prepare-reversible actions, execute-approved actions at execute-reversible, all seven lawful mode stopping sets with resource-budget, and approved-redacted egress with one destination plus the external-egress human gate.",
+        "All 55 TypeScript contracts, 51 Python contracts, 38 service tests, and six packaging tests pass, preserving the original revision, governing-reference, lineage, draft, ownership, and sidecar behavior."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The semantic-rule catalog, closed schema vocabulary, deterministic generator, TypeScript/Python templates and outputs, parity tests, package documentation, architecture contract, and accepted ADR-0023 are synchronized; generation, strict compilation, quality, architecture, ADR, and build provenance pass.",
+        "No migration, persistence, UI, service enforcement, provider, network, credential, dependency, or external-system behavior changed. Runtime enforcement and durable audit remain later approved task duties.",
+        "The original R01 evidence and finding ledger remain append-only and are included in the exact strict-descendant changed-path boundary."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S02.T01-R01-F01 demonstrated that structurally valid revisions could contradict immutable researcher authority, local-only egress, and mode-specific stopping. Because the remediation changes a public generated cross-language contract and untrusted-input validation, verification replays each R01 exploit in both runtimes, proves valid level/egress/seven-mode boundaries, runs all portable contracts plus service/real packaging/affected foundation boundaries, and checks generation, quality, architecture, ADR, build, planning, and witness integrity. No dependency, database, migration, UI, network, provider, credential, or external-service behavior changed.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "service:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "The exact complete service profile previously run at R01 candidate 035a1e833ae0628d48bf1d29d31af73260a6adda remains FAIL only on the known historical governance/recovery foundation-unit baseline (71 failures/16 errors), which the independent R01 reviewer confirmed contains no task-owned contract, service, packaging, ADR, architecture, quality, or build defect. Under AGENTS.md remediation review replays the prior finding plus the incremental risk boundary rather than restarting that unrelated audit; complete reconciliation remains mandatory at W1 exit.",
+      "Persistence, migration, editor/UI, change-reason capture, active-intent selection, service-boundary enforcement, workflow-profile navigation, and provenance-ledger storage remain later approved CAP-03.S02/CAP-03.S03 tasks and are not claimed here.",
+      "CAP-03.S02 integrated end-to-end and adversarial slice review follows T02/T03; complete cross-capability security, accessibility, performance, cancellation, restart, recovery, packaging, and release qualification remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S02.T01-R01-F01"
+    ],
+    "rootCauseAnalysis": "The initial schema bounded action spelling but not authority meaning, while generated semantic checks treated the mayAcceptIntent/mayChangeScope flags, required gates, egress destinations, and stopping conditions as independent fields. The stopping validator used any-match intersection, so one lawful condition masked an incompatible condition. R02 closes those relationships with one canonical action vocabulary and level rank, one egress destination/gate invariant, and one required-plus-subset stopping rule, implemented identically in generated TypeScript and Python and covered by parity tests.",
+    "note": "Independently review exact candidate deb3430ec489afb07f87b003e5aee8a7402b34b6. Replay CAP-03.S02.T01-R01-F01 in both generated runtimes; verify reserved accept/scope/egress denial, all autonomy level boundaries, local-only and approved-egress gate/destination consistency, required-plus-all-allowed stopping behavior for every mode, generator/schema parity, append-only R01 history, and persistence/UI/enforcement/provenance nonclaims."
+  }
+}
