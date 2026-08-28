@@ -16,6 +16,7 @@ REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
+from research_observatory_core.domain_contracts import is_uuid_v7  # noqa: E402
 from research_observatory_core.logging import build_log_record  # noqa: E402
 from research_observatory_core.main import _parser  # noqa: E402
 from research_observatory_core.object_store import create_local_object_store  # noqa: E402
@@ -34,6 +35,7 @@ from research_observatory_core.storage import development_plaintext_database_fix
 from research_observatory_core.windows_credentials import (  # noqa: E402
     WindowsCredentialStore,
     WindowsDatabaseKeyProvider,
+    WindowsLocalActorIdentityProvider,
     WindowsObjectMasterKeyProvider,
 )
 
@@ -104,6 +106,25 @@ class WindowsCredentialStoreTests(unittest.TestCase):
             self.assertNotIn("primary-api-key", projection)
             self.assertRegex(event.reference_token, "^[0-9a-f]{32}$")  # type: ignore[attr-defined]
         self.assertRegex(first.version, "^[0-9a-f]{32}$")
+
+    def test_local_actor_identity_is_stable_opaque_and_fails_closed_on_tamper(self) -> None:
+        first = WindowsLocalActorIdentityProvider(self.vault).actor_id()
+        restarted = WindowsLocalActorIdentityProvider(self.vault).actor_id()
+
+        self.assertTrue(is_uuid_v7(first))
+        self.assertEqual(first, restarted)
+        protected = self.vault / ".local-actor-v1.dpapi"
+        original = protected.read_bytes()
+        self.assertNotIn(first.encode("ascii"), original)
+
+        tampered = original[:-1] + bytes((original[-1] ^ 0x40,))
+        protected.write_bytes(tampered)
+        with self.assertRaises((SecretCorrupt, SecretUnavailable)):
+            WindowsLocalActorIdentityProvider(self.vault).actor_id()
+        self.assertEqual(tampered, protected.read_bytes())
+
+        protected.write_bytes(original)
+        self.assertEqual(first, WindowsLocalActorIdentityProvider(self.vault).actor_id())
 
     def test_corruption_and_os_unprotect_failure_retain_recoverable_ciphertext(self) -> None:
         secret = b"recoverable-secret-material"

@@ -17,7 +17,7 @@ from typing import Any
 
 from alembic.migration import MigrationContext
 from alembic.operations import Operations
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Connection
 from sqlalchemy.pool import StaticPool
 
@@ -35,6 +35,109 @@ _BACKUP_ROOT_NAME = "migration-backups"
 _BACKUP_FILE_NAME = "project.sqlite3"
 _MANIFEST_FILE_NAME = "recovery-manifest.json"
 _FAILURE_FILE_NAME = "failure.json"
+
+
+class _ActorIdentityMigration:
+    """Exact inline v5-to-v6 migration kept inside the governed runner inventory."""
+
+    revision = "0006_actor_identity"
+    down_revision = v0005_object_creation_source.revision
+    source_schema_version = 5
+    target_schema_version = 6
+    TARGET_SCHEMA_SHA256 = storage.EXPECTED_SCHEMA_SHA256
+    TARGET_PROFILE_SHA256 = storage.EXPECTED_PROFILE_SHA256
+    MATERIAL_MIGRATION_STEPS = (
+        "provenance-v5-authority-drop",
+        "provenance-v5-rename",
+        "provenance-v6-create",
+        "provenance-v6-copy",
+        "provenance-v5-drop",
+        "provenance-v6-authority-create",
+        "metadata-v5-authority-drop",
+        "metadata-v5-rename",
+        "metadata-v6-create",
+        "metadata-v6-copy",
+        "metadata-v5-drop",
+        "migration-history-insert",
+        "user-version-advance",
+    )
+
+    @staticmethod
+    def _migration_step_completed(_step: str) -> None:
+        """Private deterministic failpoint seam for transactional rollback proof."""
+
+    @classmethod
+    def apply(cls, operations: Operations, parameters: dict[str, Any]) -> None:
+        if parameters.get("targetSchemaSha256") != cls.TARGET_SCHEMA_SHA256:
+            raise ValueError("migration target schema authority mismatch")
+        if parameters.get("targetProfileSha256") != cls.TARGET_PROFILE_SHA256:
+            raise ValueError("migration target profile authority mismatch")
+        bind = operations.get_bind()
+        if bind is None:
+            raise ValueError("online migration connection is required")
+        operations.execute("DROP TRIGGER provenance_events_no_update")
+        operations.execute("DROP TRIGGER provenance_events_no_delete")
+        operations.execute("DROP INDEX provenance_events_project_time")
+        cls._migration_step_completed("provenance-v5-authority-drop")
+        operations.rename_table("provenance_events", "provenance_events_v5")
+        cls._migration_step_completed("provenance-v5-rename")
+        operations.execute(storage.PROVENANCE_EVENTS_V6_DDL)
+        cls._migration_step_completed("provenance-v6-create")
+        operations.execute("INSERT INTO provenance_events SELECT * FROM provenance_events_v5")
+        cls._migration_step_completed("provenance-v6-copy")
+        operations.drop_table("provenance_events_v5")
+        cls._migration_step_completed("provenance-v5-drop")
+        for statement in parameters["provenanceAuthority"]:
+            operations.execute(statement)
+        cls._migration_step_completed("provenance-v6-authority-create")
+
+        operations.execute("DROP TRIGGER schema_metadata_no_update")
+        operations.execute("DROP TRIGGER schema_metadata_no_delete")
+        cls._migration_step_completed("metadata-v5-authority-drop")
+        operations.rename_table("schema_metadata", "schema_metadata_v5")
+        cls._migration_step_completed("metadata-v5-rename")
+        operations.execute(storage.SCHEMA_METADATA_V6_DDL)
+        cls._migration_step_completed("metadata-v6-create")
+        bind.execute(
+            text(
+                """
+                INSERT INTO schema_metadata (
+                    singleton, schema_version, database_profile, application_id,
+                    profile_sha256, schema_sha256, created_at
+                )
+                SELECT singleton, 6, database_profile, application_id,
+                       :profile_sha256, :schema_sha256, created_at
+                FROM schema_metadata_v5
+                """
+            ),
+            {"profile_sha256": cls.TARGET_PROFILE_SHA256, "schema_sha256": cls.TARGET_SCHEMA_SHA256},
+        )
+        cls._migration_step_completed("metadata-v6-copy")
+        operations.drop_table("schema_metadata_v5")
+        cls._migration_step_completed("metadata-v5-drop")
+        for statement in parameters["schemaMetadataTriggers"]:
+            operations.execute(statement)
+        bind.execute(
+            text(
+                """
+                INSERT INTO schema_migrations (
+                    migration_id, from_schema_version, to_schema_version, applied_at,
+                    backup_manifest_sha256, source_schema_sha256, target_schema_sha256,
+                    migration_tool
+                ) VALUES (
+                    :migration_id, 5, 6, :applied_at, :backup_manifest_sha256,
+                    :source_schema_sha256, :target_schema_sha256, 'alembic-1.18.5'
+                )
+                """
+            ),
+            parameters,
+        )
+        cls._migration_step_completed("migration-history-insert")
+        operations.execute("PRAGMA user_version=6")
+        cls._migration_step_completed("user-version-advance")
+
+
+v0006_actor_identity = _ActorIdentityMigration
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,12 +186,14 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.PREVIOUS_DATABASE_SCHEMA_VERSION,
             storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION,
             storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION,
+            storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
             v0003_object_envelopes.revision,
             v0004_object_envelope_upgrades.revision,
             v0005_object_creation_source.revision,
+            v0006_actor_identity.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -200,6 +305,10 @@ _SUPPORTED_PROFILES = {
     storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION: (
         storage.OBJECT_ENVELOPE_UPGRADE_PROFILE_SHA256,
         storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+    ),
+    storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION: (
+        storage.OBJECT_CREATION_SOURCE_PROFILE_SHA256,
+        storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -336,7 +445,7 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
     if schema_version == storage.OLDEST_DATABASE_SCHEMA_VERSION:
         return not rows
     if not rows:
-        return True  # Fresh initialization at v2/v3/v4/v5 has no applied migration.
+        return True  # Fresh initialization at a supported schema has no applied migration.
     expected_rows: list[tuple[object, ...]] = []
     cursor = 0
     if schema_version >= 2 and rows[cursor][0] == v0002_schema_history.revision:
@@ -392,13 +501,34 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
         and expected_rows[-1][0] == v0003_object_envelopes.revision
     ):
         return False
-    if schema_version == storage.DATABASE_SCHEMA_VERSION:
+    if (
+        schema_version >= storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION
+        and cursor < len(rows)
+        and rows[cursor][0] == v0005_object_creation_source.revision
+    ):
         expected_rows.append(
             (
                 v0005_object_creation_source.revision,
                 4,
                 5,
                 storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+                storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+            )
+        )
+        cursor += 1
+    if (
+        schema_version >= storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION
+        and expected_rows
+        and expected_rows[-1][0] == v0004_object_envelope_upgrades.revision
+    ):
+        return False
+    if schema_version == storage.DATABASE_SCHEMA_VERSION:
+        expected_rows.append(
+            (
+                v0006_actor_identity.revision,
+                5,
+                6,
+                storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
                 storage.EXPECTED_SCHEMA_SHA256,
             )
         )
@@ -446,9 +576,14 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0005_object_creation_source.down_revision == v0004_object_envelope_upgrades.revision
         and v0005_object_creation_source.source_schema_version
         == storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION
-        and v0005_object_creation_source.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0005_object_creation_source.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0005_object_creation_source.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0005_object_creation_source.target_schema_version == storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION
+        and v0005_object_creation_source.TARGET_SCHEMA_SHA256 == storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256
+        and v0005_object_creation_source.TARGET_PROFILE_SHA256 == storage.OBJECT_CREATION_SOURCE_PROFILE_SHA256
+        and v0006_actor_identity.down_revision == v0005_object_creation_source.revision
+        and v0006_actor_identity.source_schema_version == storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION
+        and v0006_actor_identity.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0006_actor_identity.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0006_actor_identity.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -458,17 +593,25 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0003_object_envelopes.revision,
             v0004_object_envelope_upgrades.revision,
             v0005_object_creation_source.revision,
+            v0006_actor_identity.revision,
         )
     if source_version == v0003_object_envelopes.source_schema_version:
         return (
             v0003_object_envelopes.revision,
             v0004_object_envelope_upgrades.revision,
             v0005_object_creation_source.revision,
+            v0006_actor_identity.revision,
         )
     if source_version == v0004_object_envelope_upgrades.source_schema_version:
-        return (v0004_object_envelope_upgrades.revision, v0005_object_creation_source.revision)
+        return (
+            v0004_object_envelope_upgrades.revision,
+            v0005_object_creation_source.revision,
+            v0006_actor_identity.revision,
+        )
     if source_version == v0005_object_creation_source.source_schema_version:
-        return (v0005_object_creation_source.revision,)
+        return (v0005_object_creation_source.revision, v0006_actor_identity.revision)
+    if source_version == v0006_actor_identity.source_schema_version:
+        return (v0006_actor_identity.revision,)
     raise MigrationProblem("migration-source-version-unsupported")
 
 
@@ -1172,17 +1315,35 @@ def _run_migrations(
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )
-    v0005_object_creation_source.apply(
+    if source_schema_version <= storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION:
+        v0005_object_creation_source.apply(
+            operations,
+            {
+                "migration_id": v0005_object_creation_source.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+                "target_schema_sha256": storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                "targetProfileSha256": storage.OBJECT_CREATION_SOURCE_PROFILE_SHA256,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
+    v0006_actor_identity.apply(
         operations,
         {
-            "migration_id": v0005_object_creation_source.revision,
+            "migration_id": v0006_actor_identity.revision,
             "applied_at": applied_at,
             "backup_manifest_sha256": backup_manifest_sha256,
-            "source_schema_sha256": storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+            "source_schema_sha256": storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
             "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
             "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
             "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
             "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            "provenanceAuthority": (
+                *storage._immutable_triggers("provenance_events", "provenance events are append-only"),
+                "CREATE INDEX provenance_events_project_time ON provenance_events (project_id, occurred_at, event_id)",
+            ),
         },
     )
 

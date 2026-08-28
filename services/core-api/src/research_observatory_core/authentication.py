@@ -122,4 +122,7 @@ class LocalAuthenticationMiddleware:
         if not secrets.compare_digest(candidate, self._digest):
             await self._deny(send, status=401, code="RO-CORE-AUTH-REQUIRED", authenticate=True)
             return
+        if any(_header_values(scope, name) for name in (b"x-actor-id", b"x-actor-type", b"x-research-actor-id")):
+            await self._deny(send, status=403, code="RO-CORE-ACTOR-SPOOF-DENIED")
+            return
         await self.app(scope, receive, send)

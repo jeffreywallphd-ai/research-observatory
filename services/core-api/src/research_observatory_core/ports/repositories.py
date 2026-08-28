@@ -41,6 +41,10 @@ class RepositoryConflict(RepositoryProblem):
     code = "RO-CORE-REPOSITORY-CONFLICT"
 
 
+class RepositoryIdempotencyConflict(RepositoryConflict):
+    code = "RO-CORE-REPOSITORY-IDEMPOTENCY-CONFLICT"
+
+
 class RepositoryTransactionFailed(RepositoryProblem):
     code = "RO-CORE-REPOSITORY-TRANSACTION-FAILED"
 
@@ -139,7 +143,10 @@ class IntentAuditEvent:
     event_type: str
     occurred_at: str
     trace_id: str
+    actor_type: Literal["human"]
+    actor_id: str
     record_sha256: str
+    command_sha256: str
     idempotency_key: str
 
 
@@ -176,6 +183,15 @@ class PrivacyPolicyRepository(Protocol):
 class IntentRevisionRepository(Protocol):
     def read(self) -> tuple[IntentRevisionRecord, ...]: ...
 
+    def replay(
+        self,
+        *,
+        manifest_project_id: str,
+        actor_id: str,
+        idempotency_key: str,
+        command_sha256: str,
+    ) -> IntentRevisionRecord | None: ...
+
     def append(
         self,
         *,
@@ -184,7 +200,7 @@ class IntentRevisionRepository(Protocol):
         manifest_project_id: str,
         record: IntentRevisionRecord,
         event: IntentAuditEvent,
-    ) -> None: ...
+    ) -> IntentRevisionRecord: ...
 
 
 @runtime_checkable
@@ -222,6 +238,7 @@ __all__ = [
     "PrivacyPolicyRepository",
     "PrivacySetting",
     "RepositoryConflict",
+    "RepositoryIdempotencyConflict",
     "RepositoryNotFound",
     "RepositoryProblem",
     "RepositoryTransactionFailed",

@@ -67,10 +67,17 @@ including when every decision field is complete.
 
 Intent revisions, the manifest-UUIDv4 to domain-UUIDv7 bridge, provenance facts,
 and pending outbox facts commit atomically through the existing canonical SQLite
-`settings`, `provenance_events`, and `outbox_events` tables. No schema migration
-is required for CAP-03.S02.T02: schema version 5 already provides those immutable
-storage and audit contracts. Restart reads revalidate the retained lineage
-before projecting a current draft.
+`settings`, `provenance_events`, and `outbox_events` tables. Schema version 6
+extends provenance actor authority to UUIDv7 while preserving prior canonical
+actor identifiers through a backup-first forward migration. One stable UUIDv7
+researcher identity is protected by current-user DPAPI in the local profile
+vault; request headers cannot substitute it, and the revision and provenance
+fact retain the exact same non-null identity. Draft saves require a canonical
+idempotency key. Its project, actor, exact command digest, committed revision,
+provenance event, and outbox event are bound atomically, so replay after response
+loss or restart returns the original immutable revision while changed reuse is
+denied. Restart reads revalidate the retained lineage before projecting a
+current draft.
 
 ## Windows sidecar package
 

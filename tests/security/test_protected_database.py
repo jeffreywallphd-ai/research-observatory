@@ -345,13 +345,13 @@ class ProtectedDatabaseTests(unittest.TestCase):
 
         self.assertEqual(result.status, "migrated")
         self.assertEqual(result.source_schema_version, 4)
-        self.assertEqual(result.target_schema_version, 5)
+        self.assertEqual(result.target_schema_version, 6)
         self.assertIsNotNone(result.backup_relative_path)
         backup = self.root / str(result.backup_relative_path)
         self.assertNotEqual(backup.read_bytes()[:16], b"SQLite format 3\x00")
         connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
-            self.assertEqual(connection.execute("PRAGMA user_version").fetchone()[0], 5)
+            self.assertEqual(connection.execute("PRAGMA user_version").fetchone()[0], 6)
         finally:
             connection.close()
 

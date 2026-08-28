@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import secrets
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -12,7 +11,7 @@ from itertools import pairwise
 from pathlib import Path
 from typing import Any, cast
 
-from .domain_contracts import new_uuid_v7
+from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .logging import emit_log_record
 from .models import (
     IntentDraftProjection,
@@ -27,6 +26,7 @@ from .ports.repositories import (
     IntentRevisionRecord,
     IntentRevisionRepository,
     RepositoryConflict,
+    RepositoryIdempotencyConflict,
     RepositoryProblem,
 )
 from .projects import ProjectLifecycleService
@@ -42,6 +42,17 @@ class _UnavailableIntentRepository(IntentRevisionRepository):
     def read(self) -> tuple[IntentRevisionRecord, ...]:
         raise RepositoryProblem("research intent repository is unavailable")
 
+    def replay(
+        self,
+        *,
+        manifest_project_id: str,
+        actor_id: str,
+        idempotency_key: str,
+        command_sha256: str,
+    ) -> IntentRevisionRecord | None:
+        del manifest_project_id, actor_id, idempotency_key, command_sha256
+        raise RepositoryProblem("research intent repository is unavailable")
+
     def append(
         self,
         *,
@@ -50,7 +61,7 @@ class _UnavailableIntentRepository(IntentRevisionRepository):
         manifest_project_id: str,
         record: IntentRevisionRecord,
         event: IntentAuditEvent,
-    ) -> None:
+    ) -> IntentRevisionRecord:
         del expected_revision, domain_project_id, manifest_project_id, record, event
         raise RepositoryProblem("research intent repository is unavailable")
 
@@ -172,6 +183,17 @@ def _timestamp() -> str:
 
 def _canonical_json(value: object) -> str:
     return json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+
+
+def _command_sha256(command: IntentDraftRequest, *, manifest_project_id: str, actor_id: str) -> str:
+    payload = {
+        "actor": {"actorId": actor_id, "actorType": "human"},
+        "command": command.model_dump(mode="json", by_alias=True),
+        "manifestProjectId": manifest_project_id,
+        "operation": "intent.draft.save",
+        "schemaVersion": "1.0",
+    }
+    return hashlib.sha256(_canonical_json(payload).encode("utf-8")).hexdigest()
 
 
 def _statement(value: str) -> dict[str, str]:
@@ -332,6 +354,7 @@ def _build_revision(
     *,
     prior: Mapping[str, object] | None,
     domain_project_id: str,
+    actor_id: str,
 ) -> dict[str, object]:
     revision_number = command.expected_revision + 1
     intent_id = cast(str, prior["intentId"]) if prior is not None else new_uuid_v7()
@@ -357,7 +380,7 @@ def _build_revision(
         "projectId": domain_project_id,
         "revisionContentHash": "sha256:" + "0" * 64,
         "createdAt": now,
-        "createdBy": {"actorType": "human", "actorId": new_uuid_v7()},
+        "createdBy": {"actorType": "human", "actorId": actor_id},
         "status": "draft",
         "revisionRationale": command.revision_rationale.strip(),
         "primaryUseCase": command.primary_use_case,
@@ -569,13 +592,21 @@ class ResearchIntentService:
         projects: ProjectLifecycleService,
         *,
         repository_factory: _RepositoryFactory,
+        local_actor_id: str | None,
     ) -> None:
+        if local_actor_id is not None and not is_uuid_v7(local_actor_id):
+            raise ValueError("local actor identity must be a UUIDv7")
         self._projects = projects
         self._repository_factory = repository_factory
+        self._local_actor_id = local_actor_id
 
     @classmethod
     def unavailable(cls, projects: ProjectLifecycleService) -> ResearchIntentService:
-        return cls(projects, repository_factory=lambda _path, _project_id: _UnavailableIntentRepository())
+        return cls(
+            projects,
+            repository_factory=lambda _path, _project_id: _UnavailableIntentRepository(),
+            local_actor_id=None,
+        )
 
     def workspace(self, root: str) -> IntentWorkspaceProjection:
         return self._projects.perform_open_project_action(
@@ -598,8 +629,18 @@ class ResearchIntentService:
         command: IntentDraftRequest,
         *,
         trace_id: str,
-        idempotency_key: str | None = None,
+        idempotency_key: str,
     ) -> IntentDraftProjection:
+        actor_id = self._local_actor_id
+        if actor_id is None:
+            raise _problem(
+                status=503,
+                code="RO-CORE-INTENT-ACTOR-UNAVAILABLE",
+                title="Local researcher identity is unavailable",
+                detail="The current Windows profile could not supply the stable local actor authority.",
+                remediation="Restore the current-user profile vault before saving an intent revision.",
+                retryable=True,
+            )
         return self._projects.perform_open_project_action(
             root=command.root,
             require_write=True,
@@ -609,6 +650,7 @@ class ResearchIntentService:
                 command,
                 trace_id=trace_id,
                 idempotency_key=idempotency_key,
+                actor_id=actor_id,
             ),
         )
 
@@ -663,8 +705,51 @@ class ResearchIntentService:
         command: IntentDraftRequest,
         *,
         trace_id: str,
-        idempotency_key: str | None,
+        idempotency_key: str,
+        actor_id: str,
     ) -> IntentDraftProjection:
+        command_sha256 = _command_sha256(
+            command,
+            manifest_project_id=manifest_project_id,
+            actor_id=actor_id,
+        )
+        try:
+            replay = repository.replay(
+                manifest_project_id=manifest_project_id,
+                actor_id=actor_id,
+                idempotency_key=idempotency_key,
+                command_sha256=command_sha256,
+            )
+        except RepositoryIdempotencyConflict as error:
+            raise _problem(
+                status=409,
+                code="RO-CORE-INTENT-IDEMPOTENCY-CONFLICT",
+                title="Intent command key was already used",
+                detail="The idempotency key is bound to a different project, actor, or draft command.",
+                remediation="Do not reuse command keys. Reload the project and issue a new key for a new command.",
+            ) from error
+        except RepositoryProblem as error:
+            raise _problem(
+                status=500,
+                code="RO-CORE-INTENT-WRITE-FAILED",
+                title="Research intent draft was not saved",
+                detail="The local idempotency authority could not be validated.",
+                remediation="The prior revision remains authoritative. Run project health checks before retrying.",
+                retryable=True,
+            ) from error
+        if replay is not None:
+            try:
+                decoded = _decoded_records((replay,))[0]
+            except IndexError as error:
+                raise _problem(
+                    status=500,
+                    code="RO-CORE-INTENT-WRITE-FAILED",
+                    title="Research intent draft was not saved",
+                    detail="The committed idempotent result could not be validated.",
+                    remediation="Keep the prior revision authoritative and run project health checks.",
+                ) from error
+            return _projection(decoded)
+
         revisions = self._read(repository)
         current = _projection(revisions[0]) if revisions else None
         current_revision = current.revision if current is not None else 0
@@ -697,7 +782,12 @@ class ResearchIntentService:
             )
         prior = revisions[0] if revisions else None
         domain_project_id = cast(str, prior["projectId"]) if prior is not None else new_uuid_v7()
-        revision = _build_revision(command, prior=prior, domain_project_id=domain_project_id)
+        revision = _build_revision(
+            command,
+            prior=prior,
+            domain_project_id=domain_project_id,
+            actor_id=actor_id,
+        )
         content_json = _canonical_json(revision)
         digest = hashlib.sha256(content_json.encode("utf-8")).hexdigest()
         now = cast(str, revision["createdAt"])
@@ -707,17 +797,28 @@ class ResearchIntentService:
             event_type="intent.draft.saved",
             occurred_at=now,
             trace_id=trace_id,
+            actor_type="human",
+            actor_id=actor_id,
             record_sha256=digest,
-            idempotency_key=idempotency_key or secrets.token_hex(16),
+            command_sha256=command_sha256,
+            idempotency_key=idempotency_key,
         )
         try:
-            repository.append(
+            committed = repository.append(
                 expected_revision=current_revision,
                 domain_project_id=domain_project_id,
                 manifest_project_id=manifest_project_id,
                 record=IntentRevisionRecord(revision=current_revision + 1, content_json=content_json),
                 event=event,
             )
+        except RepositoryIdempotencyConflict as error:
+            raise _problem(
+                status=409,
+                code="RO-CORE-INTENT-IDEMPOTENCY-CONFLICT",
+                title="Intent command key was already used",
+                detail="The idempotency key is bound to a different project, actor, or draft command.",
+                remediation="Do not reuse command keys. Reload the project and issue a new key for a new command.",
+            ) from error
         except RepositoryConflict as error:
             raise _problem(
                 status=409,
@@ -740,7 +841,8 @@ class ResearchIntentService:
             level="INFO",
             fields={"reasonCode": "intent-draft-saved", "traceId": trace_id},
         )
-        return _projection(revision)
+        decoded = _decoded_records((committed,))[0]
+        return _projection(decoded)
 
 
 __all__ = ["IntentProblem", "ResearchIntentService"]

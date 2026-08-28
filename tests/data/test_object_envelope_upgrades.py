@@ -171,7 +171,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
 
         store = create_local_object_store(self.root, PROJECT_ID, key_provider=self.provider)
 
-        self.assertEqual(5, storage.DATABASE_SCHEMA_VERSION)
+        self.assertEqual(6, storage.DATABASE_SCHEMA_VERSION)
         self.assertNotEqual(plaintext, physical.read_bytes())
         self.assertNotIn(plaintext, physical.read_bytes())
         self.assertEqual((), tuple(self.root.rglob("*.upgrade-rollback")))
@@ -264,6 +264,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
         application = create_runtime_app(
             settings=CoreSettings(),
             database_key_provider=None,
+            local_actor_id="018f0000-0000-7000-8000-000000000001",
             profile_vault_root=profile_vault,
         )
         with TestClient(application):
@@ -299,6 +300,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             settings=CoreSettings(),
             object_key_provider=None,
             database_key_provider=None,
+            local_actor_id="018f0000-0000-7000-8000-000000000001",
         )
         with TestClient(application), self.assertRaises(ProjectLifecycleProblem) as raised:
             application.state.runtime.projects.open(root=str(unavailable_root), trace_id="f" * 32)
@@ -307,7 +309,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
         self.assertFalse((unavailable_root / ".locks" / "session.lock").exists())
         connection = sqlite3.connect(unavailable_database)
         try:
-            self.assertEqual(5, int(connection.execute("PRAGMA user_version").fetchone()[0]))
+            self.assertEqual(6, int(connection.execute("PRAGMA user_version").fetchone()[0]))
             self.assertEqual(
                 ("replacement-writing", "key-unavailable"),
                 tuple(connection.execute("SELECT phase, failure_code FROM object_envelope_upgrades").fetchone()),

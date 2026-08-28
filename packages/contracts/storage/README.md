@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-5 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-6 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -11,7 +11,7 @@ The profile is not an API for issuing SQL. Core owns the SQLite adapter, the
 desktop never opens the database, and downstream modules consume repository
 ports introduced by the storage slice. Ordinary connections deny schema DDL.
 The separately constructed T02 Alembic authority is never returned to ordinary
-callers: it checkpoints and validates exact supported version-1 through version-4 fixtures, reserves the
+callers: it checkpoints and validates exact supported version-1 through version-5 fixtures, reserves the
 writer, creates and verifies an online backup, and only then replaces the
 affected controls in one transaction. `sqlite-migration-recovery.schema.json`
 binds the immutable backup manifest to exact backup bytes, the reviewed revision,
@@ -27,6 +27,11 @@ Version 5 adds only bounded technical object creation-source metadata. Existing
 rows become `legacy-unreported`; that value reports missing technical history and
 does not invent a citation, research observation, actor claim, or scholarly
 provenance event.
+Version 6 preserves those contracts and extends the nullable provenance actor
+field to accept UUIDv7 profile actors as well as the earlier canonical technical
+identifiers. Its table-rebuild migration retains every provenance row, restores
+the append-only triggers and index, and advances immutable migration history only
+after the reviewed target schema is exact.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and

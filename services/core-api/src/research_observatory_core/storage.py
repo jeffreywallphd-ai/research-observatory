@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 5
+DATABASE_SCHEMA_VERSION = 6
+OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION = 5
 OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION = 4
 OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION = 3
 PREVIOUS_DATABASE_SCHEMA_VERSION = 2
@@ -113,7 +114,9 @@ OBJECT_ENVELOPE_SCHEMA_SHA256 = "246ad968bb1931732c827d0739882c0d59ce91a06c70758
 OBJECT_ENVELOPE_PROFILE_SHA256 = "78f1ea999a50641758b0b618af33dc18739d6d6c99644d97823af959583ac2d9"
 OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256 = "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
 OBJECT_ENVELOPE_UPGRADE_PROFILE_SHA256 = "12cd2d187b6abf8e3cc597288c103277f1079e77b2cd206ad2821730181dbffb"
-EXPECTED_SCHEMA_SHA256 = "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"
+OBJECT_CREATION_SOURCE_SCHEMA_SHA256 = "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"
+OBJECT_CREATION_SOURCE_PROFILE_SHA256 = "949f2d60ebe020ad8e8e049ac9d58307213d7aa7008025e5b340e543064ffaa7"
+EXPECTED_SCHEMA_SHA256 = "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -128,6 +131,7 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
         "aggregate": "uuid7-lowercase-text",
         "revision": "uuid7-lowercase-text",
         "event": "uuid7-lowercase-text",
+        "actor": "canonical-id-or-uuid7-lowercase-text",
         "setting": "uuid7-lowercase-text",
     },
     "timestampStorage": "utc-rfc3339-millisecond-text",
@@ -167,7 +171,7 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
 _PROFILE_SHA256 = hashlib.sha256(
     json.dumps(_PROFILE_DOCUMENT, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
 ).hexdigest()
-EXPECTED_PROFILE_SHA256 = "949f2d60ebe020ad8e8e049ac9d58307213d7aa7008025e5b340e543064ffaa7"
+EXPECTED_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834ecadf204f76aa771f"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -857,9 +861,28 @@ _V1_DDL_STATEMENTS = (
     "CREATE INDEX outbox_events_dispatch ON outbox_events (state, available_at, outbox_id)",
 )
 
+_PROVENANCE_EVENTS_V5_DDL = next(
+    statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE provenance_events" in statement
+)
+PROVENANCE_EVENTS_V6_DDL = _PROVENANCE_EVENTS_V5_DDL.replace(
+    f"actor_id TEXT CHECK ({_identifier_check('actor_id', 200)}),",
+    f"actor_id TEXT CHECK (({_identifier_check('actor_id', 200)}) OR ({_uuid_check('actor_id', '7')})),",
+)
+if PROVENANCE_EVENTS_V6_DDL == _PROVENANCE_EVENTS_V5_DDL:
+    raise RuntimeError("compiled provenance actor migration differs from its source authority")
+SCHEMA_METADATA_V6_DDL = SCHEMA_METADATA_V5_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 5)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 6)",
+)
+
+_V6_BASE_DDL_STATEMENTS = tuple(
+    PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
+    for statement in _V1_DDL_STATEMENTS[1:]
+)
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V5_DDL,
-    *_V1_DDL_STATEMENTS[1:],
+    SCHEMA_METADATA_V6_DDL,
+    *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
     *OBJECT_ENVELOPE_COLUMNS,
