@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9d923cef7d0ca6e1ab21d26b0ef4e9adda494a91dc2b42462558c8e398d963b6
+source_sha256: 1c2321b028ad5530318a7249e42ac6b5f5492f96aab3f2a5cfc382b0c88268fb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3898,13 +3898,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Policy checks that constrain tools, required human gates, output labels, and stopping behavior according to the active contract.
 
