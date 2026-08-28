@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b639a188a98860fe81262c455973a3ce21ab7842e98ae9d07ae8b7e001d921cc
+source_sha256: 4f2a50a488f0dbc71a9ea5db935cf39e686c210d039805d2de68319b7633e6c3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6356,7 +6356,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T01 - Define model task interfaces and result envelopes
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6386,7 +6386,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: The blocking CAP-03.S01 checkout-portability defect is fixed in exact candidate 9a464e4, independently approved at task R03, and the complete CAP-03.S01 slice is independently approved at submission 440dda3; the recorded resume condition is satisfied.
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 

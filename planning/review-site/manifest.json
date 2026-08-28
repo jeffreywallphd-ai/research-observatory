@@ -3749,13 +3749,13 @@
             {
               "task_id": "CAP-07.S01.T01",
               "title": "Define model task interfaces and result envelopes",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": null
+                "notes": "Reopened: The blocking CAP-03.S01 checkout-portability defect is fixed in exact candidate 9a464e4, independently approved at task R03, and the complete CAP-03.S01 slice is independently approved at submission 440dda3; the recorded resume condition is satisfied."
               },
               "review_control": null
             },

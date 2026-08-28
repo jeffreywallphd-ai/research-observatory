@@ -10475,32 +10475,32 @@ capabilities:
       - ai
       verification_commands:
       - python tools/verify.py --profile ai
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T16:11:38+00:00'
-      updated_at: '2026-08-28T16:12:29+00:00'
+      updated_at: '2026-08-28T16:36:31+00:00'
       completed_at: null
-      blocker:
-        reason: Upstream CAP-03.S01 slice integration found checkout-newline-sensitive compatibility evidence hashing after
-          T03 approval; downstream model-contract work must not proceed until the upstream generator is deterministic on Windows.
-        next_action: Reopen CAP-03.S01.T03, canonicalize the governed text digest, add a CRLF portability regression, obtain
-          independent task review, approve CAP-03.S01 integration, then reopen this already-claimed task.
-        recorded_at: '2026-08-28T16:12:29+00:00'
-        owner: codex
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: null
+        notes: 'Reopened: The blocking CAP-03.S01 checkout-portability defect is fixed in exact candidate 9a464e4, independently
+          approved at task R03, and the complete CAP-03.S01 slice is independently approved at submission 440dda3; the recorded
+          resume condition is satisfied.'
       base_sha: dc0fba09a468390ce729ab1225a7b3df49fb6441
-      lease: null
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-28T16:36:31+00:00'
+        expires_at: '2026-08-29T00:36:31+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      cancellation: null
     - id: CAP-07.S01.T02
       capability_id: CAP-07
       slice_id: CAP-07.S01

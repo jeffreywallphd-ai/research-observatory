@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: b639a188a98860fe81262c455973a3ce21ab7842e98ae9d07ae8b7e001d921cc
+source_sha256: 4f2a50a488f0dbc71a9ea5db935cf39e686c210d039805d2de68319b7633e6c3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 271 |
 | `READY` | 1 |
-| `BLOCKED` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 47 |
 | `DEFERRED` | 36 |
 
@@ -422,4 +422,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-07.S01.T01` Define model task interfaces and result envelopes | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-07.S01.T01` Define model task interfaces and result envelopes | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
