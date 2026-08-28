@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ccd7bcd091d58113d4ad68b5a6416b22589279fe1d3fbff3515ceca8157d4db6
+source_sha256: 3e550d99133c92da2cfe73139bd121a32ae2edcd8751312246949beb77231504
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3539,15 +3539,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
+#### - [x] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T02`
 
-**Owner / review:** codex / nash-independent-domain-compatibility-reviewer (`changes-requested`)
+**Owner / review:** codex / nash-independent-domain-compatibility-reviewer (`approved`)
 
 **Objective:** Semantic rules for additive/breaking schema change, deprecation, migration, event compatibility, and desktop-sidecar-server negotiation.
 
@@ -3574,7 +3574,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S01.T03
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -3607,7 +3607,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830`
 
 - Candidate / base / branch: `abdc90764519dc931a17aba550d60c40dcdcea15` / `f9b97b50cb3b4fa42db4aa415ea2bb82544de285` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-28T16:04:19+00:00`
@@ -3621,11 +3623,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-03.S01.T03-R01-F01`, `CAP-03.S01.T03-R01-F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by nash-independent-domain-compatibility-reviewer at `2026-08-28T15:49:39+00:00`
+**Disposition / reviewer / time:** `approved` / nash-independent-domain-compatibility-reviewer / `2026-08-28T16:06:38+00:00`
 
-**Latest notes:** The frozen schema, policy and release-fixture hashes are exact; the current schema-set is derived from domain-core and domain-lifecycle bytes, the prior set is derived from the UUIDv4 project-manifest schema, and ADR-0013's read-only bridge fixture is present and generator-verified. Cross-runtime generation, deterministic exact-common desktop/sidecar/optional-server negotiation, strict advertisements, immutable outputs, stable content-free diagnostics, and sidecar/build integration are otherwise supported. Focused replay passed all 32 TypeScript contract tests and nine Python compatibility contract/service tests. The disclosed 72 failures and 16 errors reproduce the already reviewed historical governance/live-boundary fixture drift and reveal no T03 implementation failure, so they remain mandatory W1-exit remediation rather than a separate task finding. Two task-owned compatibility controls are nevertheless incomplete.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S01.T03.review-R02.json` / `26747b39e47772e997573e47460745b630bc35b15a7cf89eafcb41e39798975a`
 
-**Currently open findings:** `CAP-03.S01.T03-R01-F01`, `CAP-03.S01.T03-R01-F02`
+**Review notes:** Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority catalog. Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures, and altered status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known lifecycle event, reject unknown fields before dispatch, and publish exactly one immutable content-free audit fact for unknown type or unsupported version; audit callback failure raises only compatibility-audit-publication-failed. Generator currency, 34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation pass. R01 evidence and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly deferred to CAP-03.S03; no blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S01.T03-R01-F01` `fixed` — artifacts/evidence/CAP-03.S01.T03.review-fix.json
+- `CAP-03.S01.T03-R01-F02` `fixed` — artifacts/evidence/CAP-03.S01.T03.review-fix.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by nash-independent-domain-compatibility-reviewer at `2026-08-28T16:06:38+00:00`
+
+**Latest notes:** Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority catalog. Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures, and altered status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known lifecycle event, reject unknown fields before dispatch, and publish exactly one immutable content-free audit fact for unknown type or unsupported version; audit callback failure raises only compatibility-audit-publication-failed. Generator currency, 34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation pass. R01 evidence and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly deferred to CAP-03.S03; no blocking finding remains.
+
+**Currently open findings:** -
 
 ### SLICE-research-intent-contract-and-mode-governance (`CAP-03.S02`) - Research intent contract and mode governance
 
@@ -6298,7 +6317,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6306,7 +6325,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T01 - Define model task interfaces and result envelopes
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

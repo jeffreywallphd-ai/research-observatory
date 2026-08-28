@@ -1,0 +1,22 @@
+{
+  "task_id": "CAP-03.S01.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "abdc90764519dc931a17aba550d60c40dcdcea15",
+  "submission_record_commit": "ad35f75f2767121159abf71bdb61de973a5e6d81",
+  "reviewer": "nash-independent-domain-compatibility-reviewer",
+  "result": "approved",
+  "notes": "Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority catalog. Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures, and altered status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known lifecycle event, reject unknown fields before dispatch, and publish exactly one immutable content-free audit fact for unknown type or unsupported version; audit callback failure raises only compatibility-audit-publication-failed. Generator currency, 34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation pass. R01 evidence and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly deferred to CAP-03.S03; no blocking finding remains.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S01.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-03.S01.T03.review-fix.json"
+    },
+    {
+      "finding_id": "CAP-03.S01.T03-R01-F02",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-03.S01.T03.review-fix.json"
+    }
+  ]
+}
