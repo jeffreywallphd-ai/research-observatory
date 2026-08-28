@@ -159,7 +159,7 @@ for (const kind of ["typescript", "python"]) {
   try { actual = readFileSync(outputs[kind], "utf8"); } catch (error) {
     if (error?.code !== "ENOENT") throw error;
   }
-  if (actual === expected) continue;
+  if (actual?.replace(/\r\n?/g, "\n") === expected) continue;
   if (check) throw new Error(`${outputs[kind].slice(repo.length + 1)} is stale; run node packages/contracts/domain/generate-compatibility.mjs`);
   writeFileSync(outputs[kind], expected, "utf8");
   changed = true;
