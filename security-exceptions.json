@@ -68,19 +68,19 @@
     {
       "findingKey": "vulnerability|CVE-2026-39822|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:curie",
-      "reviewedAt": "2026-08-13",
-      "expiresAt": "2026-08-27",
-      "rationale": "The native TypeScript compiler is selected only by pinned development dependency TypeScript 7.0.2, runs on governed repository source rather than researcher or imported content, and is absent from the shipped app and sidecar. Version 7.0.2 remains latest stable while 7.1 is development-only; replace at the first patched stable release and remove this exception.",
+      "reviewedBy": "nash-independent-security-reviewer",
+      "reviewedAt": "2026-08-28",
+      "expiresAt": "2026-09-04",
+      "rationale": "The vulnerable Go os.Root code is embedded only in the pinned development-only @typescript/typescript-win32-x64 7.0.2 compiler. It runs on governed repository source and configuration, is not authorized to compile researcher/imported content, and is excluded from the shipped desktop application and Core sidecar. TypeScript 7.0.2 remains the latest stable release; 7.1.0-dev.20260828.1 is prerelease and is not an equivalent stable remediation. Renew for seven days only, evaluate each new stable release immediately, replace at the first stable build containing the fixed Go runtime, and remove this exception.",
       "ticket": "CAP-01.S04.T03"
     },
     {
       "findingKey": "vulnerability|CVE-2026-56852|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|golang.org/x/text",
       "status": "approved",
-      "reviewedBy": "agent:curie",
-      "reviewedAt": "2026-08-13",
-      "expiresAt": "2026-08-27",
-      "rationale": "The native TypeScript compiler is a pinned development-only tool that processes governed repository source and is absent from the shipped app and sidecar; the invalid-UTF-8 denial-of-service boundary does not enter production runtime. No patched stable TypeScript package exists, so replace it at the first patched stable release and remove this exception.",
+      "reviewedBy": "nash-independent-security-reviewer",
+      "reviewedAt": "2026-08-28",
+      "expiresAt": "2026-09-04",
+      "rationale": "The vulnerable golang.org/x/text code is embedded only in the pinned development-only @typescript/typescript-win32-x64 7.0.2 compiler. The invalid-UTF-8 denial-of-service boundary is limited to governed repository compilation and cannot enter the shipped desktop application or Core sidecar. TypeScript 7.0.2 remains the latest stable release; 7.1.0-dev.20260828.1 is prerelease and is not an equivalent stable remediation. Renew for seven days only, evaluate each new stable release immediately, replace at the first stable package containing x/text 0.39.0 or later, and remove this exception.",
       "ticket": "CAP-01.S04.T03"
     },
     {
