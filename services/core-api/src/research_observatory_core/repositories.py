@@ -16,7 +16,7 @@ from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, s
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
 from sqlalchemy.sql import ClauseElement
 
-from .domain_contracts import new_uuid_v7
+from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ports.repositories import (
     AggregateKind,
     AggregateRepository,
@@ -32,6 +32,7 @@ from .ports.repositories import (
     PrivacyPolicyRepository,
     PrivacySetting,
     RepositoryConflict,
+    RepositoryIdempotencyConflict,
     RepositoryNotFound,
     RepositoryProblem,
     RepositoryTransactionFailed,
@@ -278,6 +279,7 @@ def sqlite_privacy_policy_repository(path: Path, project_id: str) -> PrivacyPoli
 
 
 _INTENT_BRIDGE_KEY = "research-intent.project-id-bridge"
+_INTENT_IDEMPOTENCY_KEY = "research-intent.idempotency"
 _INTENT_REVISION_KEY = "research-intent.revision"
 
 
@@ -345,6 +347,149 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             raise _transaction_failure("research intent revision history is discontinuous")
         return tuple(records)
 
+    def replay(
+        self,
+        *,
+        manifest_project_id: str,
+        actor_id: str,
+        idempotency_key: str,
+        command_sha256: str,
+    ) -> IntentRevisionRecord | None:
+        if manifest_project_id != self._project_id:
+            raise RepositoryIdempotencyConflict("research intent project differs")
+        try:
+            connection = self._open()
+            try:
+                return self._replay_from_connection(
+                    connection,
+                    manifest_project_id=manifest_project_id,
+                    actor_id=actor_id,
+                    idempotency_key=idempotency_key,
+                    command_sha256=command_sha256,
+                )
+            finally:
+                connection.close()
+        except RepositoryIdempotencyConflict:
+            raise
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+            raise _transaction_failure("research intent idempotency replay failed") from None
+
+    def _replay_from_connection(
+        self,
+        connection: CanonicalConnection,
+        *,
+        manifest_project_id: str,
+        actor_id: str,
+        idempotency_key: str,
+        command_sha256: str,
+    ) -> IntentRevisionRecord | None:
+        if (
+            manifest_project_id != self._project_id
+            or not is_uuid_v7(actor_id)
+            or len(idempotency_key) != 32
+            or any(value not in "0123456789abcdef" for value in idempotency_key)
+            or len(command_sha256) != 64
+            or any(value not in "0123456789abcdef" for value in command_sha256)
+        ):
+            raise RepositoryIdempotencyConflict("research intent command authority differs")
+        rows = connection.execute(
+            "SELECT revision, value_type, text_value FROM settings "
+            "WHERE project_id=? AND setting_key=? ORDER BY revision",
+            (self._project_id, _INTENT_IDEMPOTENCY_KEY),
+        ).fetchall()
+        matches: list[tuple[int, dict[str, object]]] = []
+        expected_fields = {
+            "actorId",
+            "actorType",
+            "commandSha256",
+            "domainProjectId",
+            "eventId",
+            "idempotencyKey",
+            "manifestProjectId",
+            "outboxId",
+            "revision",
+            "revisionRecordSha256",
+            "schemaVersion",
+        }
+        for revision, value_type, text_value in rows:
+            if not isinstance(revision, int) or revision < 1 or value_type != "text" or not isinstance(text_value, str):
+                raise _transaction_failure("research intent idempotency record is invalid")
+            try:
+                binding = json.loads(text_value)
+            except json.JSONDecodeError, TypeError:
+                raise _transaction_failure("research intent idempotency record is invalid") from None
+            if (
+                not isinstance(binding, dict)
+                or set(binding) != expected_fields
+                or binding.get("schemaVersion") != "1.0"
+                or binding.get("revision") != revision
+                or binding.get("actorType") != "human"
+                or binding.get("manifestProjectId") != self._project_id
+                or not isinstance(binding.get("domainProjectId"), str)
+                or not is_uuid_v7(binding.get("actorId"))
+                or not is_uuid_v7(binding.get("eventId"))
+                or not is_uuid_v7(binding.get("outboxId"))
+                or not isinstance(binding.get("idempotencyKey"), str)
+                or not isinstance(binding.get("commandSha256"), str)
+                or not isinstance(binding.get("revisionRecordSha256"), str)
+            ):
+                raise _transaction_failure("research intent idempotency record is invalid")
+            if binding["idempotencyKey"] == idempotency_key:
+                matches.append((revision, cast(dict[str, object], binding)))
+        if not matches:
+            orphan = connection.execute(
+                "SELECT 1 FROM outbox_events WHERE project_id=? AND idempotency_key=?",
+                (self._project_id, idempotency_key),
+            ).fetchone()
+            if orphan is not None:
+                raise _transaction_failure("research intent idempotency binding is incomplete")
+            return None
+        if len(matches) != 1:
+            raise _transaction_failure("research intent idempotency binding is ambiguous")
+        revision, binding = matches[0]
+        if (
+            binding["actorId"] != actor_id
+            or binding["actorType"] != "human"
+            or binding["commandSha256"] != command_sha256
+            or binding["manifestProjectId"] != manifest_project_id
+        ):
+            raise RepositoryIdempotencyConflict("research intent command key is already bound")
+        revision_row = connection.execute(
+            "SELECT value_type, text_value FROM settings WHERE project_id=? AND setting_key=? AND revision=?",
+            (self._project_id, _INTENT_REVISION_KEY, revision),
+        ).fetchone()
+        if revision_row is None or revision_row[0] != "text" or not isinstance(revision_row[1], str):
+            raise _transaction_failure("research intent idempotency result is unavailable")
+        content_json = revision_row[1]
+        revision_digest = hashlib.sha256(content_json.encode("utf-8")).hexdigest()
+        if revision_digest != binding["revisionRecordSha256"]:
+            raise _transaction_failure("research intent idempotency result differs")
+        try:
+            revision_value = json.loads(content_json)
+        except json.JSONDecodeError, TypeError:
+            raise _transaction_failure("research intent idempotency result is invalid") from None
+        if (
+            not isinstance(revision_value, dict)
+            or revision_value.get("revision") != revision
+            or revision_value.get("projectId") != binding["domainProjectId"]
+            or revision_value.get("createdBy") != {"actorId": actor_id, "actorType": "human"}
+        ):
+            raise _transaction_failure("research intent idempotency result authority differs")
+        provenance = connection.execute(
+            "SELECT event_type, actor_type, actor_id, record_sha256 FROM provenance_events "
+            "WHERE project_id=? AND event_id=?",
+            (self._project_id, binding["eventId"]),
+        ).fetchone()
+        if provenance is None or tuple(provenance) != ("intent.draft.saved", "human", actor_id, revision_digest):
+            raise _transaction_failure("research intent provenance binding differs")
+        outbox = connection.execute(
+            "SELECT event_type, idempotency_key, record_sha256 FROM outbox_events WHERE project_id=? AND outbox_id=?",
+            (self._project_id, binding["outboxId"]),
+        ).fetchone()
+        if outbox is None or tuple(outbox) != ("intent.draft.saved", idempotency_key, command_sha256):
+            raise _transaction_failure("research intent outbox binding differs")
+        return IntentRevisionRecord(revision=revision, content_json=content_json)
+
     def append(
         self,
         *,
@@ -353,7 +498,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         manifest_project_id: str,
         record: IntentRevisionRecord,
         event: IntentAuditEvent,
-    ) -> None:
+    ) -> IntentRevisionRecord:
         if (
             manifest_project_id != self._project_id
             or expected_revision < 0
@@ -361,8 +506,26 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             or not record.content_json
             or len(record.content_json.encode("utf-8")) > 65_536
             or event.event_type != "intent.draft.saved"
+            or event.actor_type != "human"
+            or not is_uuid_v7(event.actor_id)
+            or len(event.idempotency_key) != 32
+            or any(value not in "0123456789abcdef" for value in event.idempotency_key)
+            or len(event.command_sha256) != 64
+            or any(value not in "0123456789abcdef" for value in event.command_sha256)
+            or hashlib.sha256(record.content_json.encode("utf-8")).hexdigest() != event.record_sha256
         ):
             raise _transaction_failure("research intent append is invalid")
+        try:
+            revision_value = json.loads(record.content_json)
+        except json.JSONDecodeError, TypeError:
+            raise _transaction_failure("research intent append is invalid") from None
+        if (
+            not isinstance(revision_value, dict)
+            or revision_value.get("revision") != record.revision
+            or revision_value.get("projectId") != domain_project_id
+            or revision_value.get("createdBy") != {"actorId": event.actor_id, "actorType": "human"}
+        ):
+            raise _transaction_failure("research intent append authority differs")
         bridge_json = json.dumps(
             {
                 "authority": "ADR-0013",
@@ -378,6 +541,16 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             connection = self._open()
             try:
                 connection.execute("BEGIN IMMEDIATE")
+                replay = self._replay_from_connection(
+                    connection,
+                    manifest_project_id=manifest_project_id,
+                    actor_id=event.actor_id,
+                    idempotency_key=event.idempotency_key,
+                    command_sha256=event.command_sha256,
+                )
+                if replay is not None:
+                    connection.execute("COMMIT")
+                    return replay
                 latest = connection.execute(
                     "SELECT COALESCE(MAX(revision), 0) FROM settings WHERE project_id=? AND setting_key=?",
                     (self._project_id, _INTENT_REVISION_KEY),
@@ -407,12 +580,37 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     value=record.content_json,
                     occurred_at=event.occurred_at,
                 )
+                idempotency_json = json.dumps(
+                    {
+                        "actorId": event.actor_id,
+                        "actorType": event.actor_type,
+                        "commandSha256": event.command_sha256,
+                        "domainProjectId": domain_project_id,
+                        "eventId": event.event_id,
+                        "idempotencyKey": event.idempotency_key,
+                        "manifestProjectId": manifest_project_id,
+                        "outboxId": event.outbox_id,
+                        "revision": record.revision,
+                        "revisionRecordSha256": event.record_sha256,
+                        "schemaVersion": "1.0",
+                    },
+                    ensure_ascii=True,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+                self._insert_text_setting(
+                    connection,
+                    key=_INTENT_IDEMPOTENCY_KEY,
+                    revision=record.revision,
+                    value=idempotency_json,
+                    occurred_at=event.occurred_at,
+                )
                 connection.execute(
                     """
                     INSERT INTO provenance_events (
                         event_id, project_id, revision_id, event_type, occurred_at,
                         trace_id, actor_type, actor_id, record_sha256
-                    ) VALUES (?, ?, NULL, ?, ?, ?, 'human', NULL, ?)
+                    ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         event.event_id,
@@ -420,6 +618,8 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                         event.event_type,
                         event.occurred_at,
                         event.trace_id,
+                        event.actor_type,
+                        event.actor_id,
                         event.record_sha256,
                     ),
                 )
@@ -438,10 +638,11 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                         event.occurred_at,
                         event.occurred_at,
                         event.idempotency_key,
-                        event.record_sha256,
+                        event.command_sha256,
                     ),
                 )
                 connection.execute("COMMIT")
+                return record
             except BaseException:
                 if connection.in_transaction:
                     connection.execute("ROLLBACK")

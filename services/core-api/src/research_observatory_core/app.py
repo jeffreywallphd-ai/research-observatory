@@ -462,8 +462,7 @@ def create_app(
     def save_intent_draft(
         request: Request,
         command: IntentDraftRequest,
-        idempotency_key: str | None = Header(
-            default=None,
+        idempotency_key: str = Header(
             alias="Idempotency-Key",
             pattern=r"^[0-9a-f]{32}$",
         ),

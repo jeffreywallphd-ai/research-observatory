@@ -34,12 +34,12 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-5 authority
+## Current version-6 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=5`, profile `sqlite-wal-v1` |
-| Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge is explicitly tagged |
+| Database identity | application ID `0x524f4253`, `user_version=6`, profile `sqlite-wal-v1` |
+| Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
 | Concurrency | WAL, normal locking, one writer, concurrent reader snapshots, 5-second busy timeout |
@@ -69,7 +69,7 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `aggregate_identities` | immutable project-scoped aggregate identity and kind |
 | `aggregate_revisions` | immutable common scholarly aggregate revision envelope |
 | `scholarly_records`, `documents`, `workflows`, `evidence`, `ontologies`, `decisions` | immutable kind extension rows keyed to a common revision |
-| `provenance_events` | append-only typed event metadata and record digest |
+| `provenance_events` | append-only typed event metadata, stable canonical/UUIDv7 actor authority, and record digest |
 | `settings` | append-only versioned, exactly-one-of typed scalar project settings |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
 
@@ -89,18 +89,21 @@ these are the only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v4
-profiles to current schema v5. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v5
+profiles to current schema v6. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-5 database is detected
+verified backup remains available. A current version-6 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
-creation routes. T03 owns SQLAlchemy repositories, optimistic
+creation routes. Version 6 rebuilds only the provenance table so a stable
+profile-scoped UUIDv7 researcher identity can be carried exactly while preserving
+legacy canonical actor identifiers, append-only triggers, indexes, and every
+prior row. T03 owns SQLAlchemy repositories, optimistic
 concurrency, transaction/outbox publication, and units of work. Central
 bootstrap/migration code is the only allowed source of schema SQL; domain and UI
 code must use the repository ports. Ordinary canonical access returns a

@@ -20,8 +20,10 @@ from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 from .app import create_app
 from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
 from .config import CoreSettings
+from .logging import emit_log_record
 from .migrations.runner import migration_framework_projection
 from .object_store import upgrade_local_object_envelopes
+from .ports.credential_store import CredentialStoreProblem
 from .ports.database_keys import DatabaseKeyProvider
 from .ports.object_store_keys import ObjectMasterKeyProvider
 from .privacy import ProjectPrivacyService
@@ -33,13 +35,18 @@ from .storage import (
     configure_protected_database_provider,
     database_protection_profile,
 )
-from .windows_credentials import create_windows_database_key_provider, create_windows_object_key_provider
+from .windows_credentials import (
+    create_windows_database_key_provider,
+    create_windows_local_actor_identity,
+    create_windows_object_key_provider,
+)
 
 EXIT_CONFIGURATION_ERROR = 2
 SUPERVISION_PROTOCOL_VERSION = "1.0"
 STARTING_DIAGNOSTIC_CODE = "RO-CORE-STARTING"
 _DEFAULT_OBJECT_KEY_PROVIDER = object()
 _DEFAULT_DATABASE_KEY_PROVIDER = object()
+_DEFAULT_LOCAL_ACTOR_ID = object()
 
 
 def create_runtime_app(
@@ -49,6 +56,7 @@ def create_runtime_app(
     expected_authority: str | None = None,
     object_key_provider: ObjectMasterKeyProvider | None | object = _DEFAULT_OBJECT_KEY_PROVIDER,
     database_key_provider: DatabaseKeyProvider | None | object = _DEFAULT_DATABASE_KEY_PROVIDER,
+    local_actor_id: str | None | object = _DEFAULT_LOCAL_ACTOR_ID,
     profile_vault_root: Path | None = None,
 ) -> FastAPI:
     """Compose Core with the Windows profile vault and mandatory pre-open upgrades."""
@@ -78,6 +86,24 @@ def create_runtime_app(
             raise ValueError("database-key provider is invalid")
         configure_protected_database_provider(database_key_provider)
 
+    if local_actor_id is _DEFAULT_LOCAL_ACTOR_ID:
+        if os.name == "nt":
+            try:
+                resolved_actor_id: str | None = create_windows_local_actor_identity(profile_vault_root)
+            except CredentialStoreProblem:
+                resolved_actor_id = None
+                emit_log_record(
+                    "security.local-actor-unavailable",
+                    level="ERROR",
+                    fields={"reasonCode": "local-actor-profile-authority-unavailable"},
+                )
+        else:
+            resolved_actor_id = None
+    elif local_actor_id is None or isinstance(local_actor_id, str):
+        resolved_actor_id = local_actor_id
+    else:
+        raise ValueError("local actor identity is invalid")
+
     projects = ProjectLifecycleService(
         object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)
     )
@@ -87,7 +113,11 @@ def create_runtime_app(
         expected_authority=expected_authority,
         projects=projects,
         privacy=ProjectPrivacyService(projects, sqlite_privacy_policy_repository),
-        intents=ResearchIntentService(projects, repository_factory=sqlite_intent_revision_repository),
+        intents=ResearchIntentService(
+            projects,
+            repository_factory=sqlite_intent_revision_repository,
+            local_actor_id=resolved_actor_id,
+        ),
     )
 
 

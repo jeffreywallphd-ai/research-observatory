@@ -22,6 +22,7 @@ from typing import Any, Protocol
 from nacl import bindings as sodium
 from nacl.exceptions import CryptoError
 
+from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .logging import emit_log_record
 from .ports.credential_store import (
     CredentialStore,
@@ -63,6 +64,9 @@ _MAX_SECRET_BYTES = 1024 * 1024
 _MAX_RECORD_BYTES = _MAX_SECRET_BYTES + 16 * 1024
 _VERSION = re.compile(r"^[0-9a-f]{32}$")
 _OBJECT_KEY_VERSION = "object-key-v1"
+_LOCAL_ACTOR_FILE = ".local-actor-v1.dpapi"
+_LOCAL_ACTOR_MAGIC = b"RO-LOCAL-ACTOR-V1\0"
+_LOCAL_ACTOR_BYTES = len(_LOCAL_ACTOR_MAGIC) + 36 + hashlib.sha256().digest_size
 _LOCAL_APP_DATA = uuid.UUID("f1b32785-6fba-4fcf-9d55-7b8e7f157091")
 
 
@@ -634,6 +638,60 @@ class WindowsCredentialStore(CredentialStore):
         return lease
 
 
+class WindowsLocalActorIdentityProvider:
+    """Resolve one opaque, stable human actor authority for the current OS profile."""
+
+    def __init__(self, root: Path, *, protector: _DataProtector | None = None) -> None:
+        candidate = Path(root)
+        if not candidate.is_absolute():
+            raise ValueError("local actor vault root must be absolute")
+        self._root = candidate
+        self._protector = protector if protector is not None else WindowsCurrentUserDataProtector()
+        if not callable(getattr(self._protector, "protect", None)) or not callable(
+            getattr(self._protector, "unprotect", None)
+        ):
+            raise ValueError("local actor data protector is invalid")
+        self._lock = _vault_lock(candidate)
+
+    def actor_id(self) -> str:
+        store = WindowsCredentialStore(self._root, protector=self._protector)
+        with self._lock:
+            store._ensure_root()
+            with _cross_process_lock(self._root):
+                path = self._root / _LOCAL_ACTOR_FILE
+                if not path.exists():
+                    actor_id = new_uuid_v7()
+                    actor_bytes = actor_id.encode("ascii")
+                    plaintext = bytearray(
+                        _LOCAL_ACTOR_MAGIC + actor_bytes + hashlib.sha256(_LOCAL_ACTOR_MAGIC + actor_bytes).digest()
+                    )
+                    try:
+                        protected = self._protector.protect(plaintext)
+                        with suppress(SecretConflict):
+                            store._atomic_write(path, protected, replace=False)
+                    finally:
+                        _zero(plaintext)
+                protected = store._read_private(path, maximum=64 * 1024, missing=SecretUnavailable)
+                plaintext = self._protector.unprotect(protected)
+                try:
+                    if len(plaintext) != _LOCAL_ACTOR_BYTES or not plaintext.startswith(_LOCAL_ACTOR_MAGIC):
+                        raise SecretCorrupt("protected local actor identity is invalid")
+                    actor_bytes = bytes(plaintext[len(_LOCAL_ACTOR_MAGIC) : len(_LOCAL_ACTOR_MAGIC) + 36])
+                    expected = hashlib.sha256(_LOCAL_ACTOR_MAGIC + actor_bytes).digest()
+                    observed = bytes(plaintext[-hashlib.sha256().digest_size :])
+                    if not hmac.compare_digest(observed, expected):
+                        raise SecretCorrupt("protected local actor identity authentication failed")
+                    try:
+                        actor_id = actor_bytes.decode("ascii")
+                    except UnicodeError:
+                        raise SecretCorrupt("protected local actor identity is invalid") from None
+                    if not is_uuid_v7(actor_id):
+                        raise SecretCorrupt("protected local actor identity is invalid")
+                    return actor_id
+                finally:
+                    _zero(plaintext)
+
+
 class WindowsDatabaseKeyProvider(DatabaseKeyProvider):
     """Store active and staged per-project SQLCipher keys below the DPAPI vault root."""
 
@@ -781,12 +839,19 @@ def create_windows_database_key_provider(root: Path | None = None) -> DatabaseKe
     )
 
 
+def create_windows_local_actor_identity(root: Path | None = None) -> str:
+    vault_root = default_windows_profile_vault_path() if root is None else Path(root)
+    return WindowsLocalActorIdentityProvider(vault_root).actor_id()
+
+
 __all__ = [
     "WindowsCredentialStore",
     "WindowsCurrentUserDataProtector",
     "WindowsDatabaseKeyProvider",
+    "WindowsLocalActorIdentityProvider",
     "WindowsObjectMasterKeyProvider",
     "create_windows_database_key_provider",
+    "create_windows_local_actor_identity",
     "create_windows_object_key_provider",
     "default_windows_profile_vault_path",
 ]
