@@ -10,6 +10,7 @@ linked_tasks:
   - CAP-03.S02.T03
 decision_scope: Epistemic-mode requirements, use-case compatibility, evidence and scope vocabulary, autonomy bounds, egress declaration, stopping conditions, and human authority.
 affected_paths:
+  - packages/contracts/README.md
   - packages/contracts/intent/**
   - services/core-api/src/research_observatory_core/research_intent_contracts.py
   - tests/contracts/test_research_intent_contracts.py
