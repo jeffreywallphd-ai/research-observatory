@@ -4153,7 +4153,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-02.S03.T02
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-02.S04.T01
       capability_id: CAP-02
@@ -5432,13 +5432,16 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: APPROVED
+      reviewer: nash-independent-slice-security-privacy-reviewer
+      reviewed_at: '2026-08-28T13:40:00+00:00'
       evidence:
       - artifacts/evidence/CAP-02.S04.integration.json
-      notes: All four task reviews are approved and the exact-state affected slice union passes. Submit for independent security
-        and privacy review; retain absent system E2E and historical governance-fixture failures as mandatory W1-exit debt.
+      notes: APPROVED exact CAP-02.S04 integration submission 3bc1676c76d7622d93c2403502094c7851a520e7. All four task outcomes
+        and reviews are commit-bound and integrated across DPAPI secrets, application lock/cancellation, offline privacy and
+        consent, safe cache deletion, SQLCipher migration/backup/rekey/recovery, package/supply-chain/performance, UI conformance,
+        and portable handoff. No blocking finding. Preserve the recorded E2E, symlink-token, expiring-exception, historical-foundation-fixture,
+        and protected-witness obligations for W1 exit.
   - id: CAP-02.S05
     title: Backup, restore, relocation, and lab portability
     outcome: Researchers can protect and move projects without breaking identities, provenance, or evidence links.

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-02.S04",
+  "submissionCommit": "3bc1676c76d7622d93c2403502094c7851a520e7",
+  "integrationEvidence": {
+    "path": "artifacts/evidence/CAP-02.S04.integration.json",
+    "stateCommit": "f569be49f05461944e35465b30165bc2d5f8edb3"
+  },
+  "reviewer": "nash-independent-slice-security-privacy-reviewer",
+  "disposition": "approved",
+  "notes": "The approved CAP-02.S04 outcome is integrated end to end at the exact frozen submission. Windows current-user DPAPI credential authority, purpose-scoped zeroed leases, application-lock cancellation and reconciliation, offline/default-off privacy, explicit revision-bound egress consent, cache deletion identity and rollback controls, SQLCipher-only production databases, explicit-consent migration, encrypted backup/restore, staged rekey and restart recovery, package and notice integrity, supply-chain policy, performance budgets, approved UI behavior, and portable downstream contracts are mutually consistent and supported by commit-bound task evidence and approved task histories. No unresolved acceptance-bound finding remains.",
+  "checks": [
+    {
+      "check": "exact submission and evidence binding",
+      "result": "passed",
+      "details": "HEAD and abbreviated submission resolve to 3bc1676c76d7622d93c2403502094c7851a520e7, whose sole parent is integration state f569be49f05461944e35465b30165bc2d5f8edb3; the submission delta is the integration manifest plus deterministic backlog and generated planning projections. Every task evidence/review SHA-256 referenced by the integration manifest matches the repository bytes."
+    },
+    {
+      "check": "canonical task and slice history",
+      "result": "passed",
+      "details": "CAP-02.S04.T01 through T04 are DONE with approved independent latest reviews, prior adverse findings are append-only and closed by strict descendant evidence, current submissions are absent, and CAP-02.S04 alone is in REVIEW with the canonical integration evidence attached."
+    },
+    {
+      "check": "independent security and data replay",
+      "result": "passed",
+      "details": "Independent task-review replay at the unchanged integrated product state passed 55 security tests with one Windows-token directory-symlink skip and 101 data tests. It covered DPAPI, secret containment, lock/privacy/cache controls, SQLCipher plaintext denial, key loss, corruption, migration, backup/restore, rekey, interruption recovery, and durable storage behavior."
+    },
+    {
+      "check": "independent portable contract and service replay",
+      "result": "passed",
+      "details": "41 credential, application-lock, privacy-policy, protected-database, project-lifecycle, and Core API contract/service tests passed in 6.431 seconds, including authenticated local transport, restart, cancellation/event reconciliation contracts, redacted failures, compatibility recovery, and strict profile denials."
+    },
+    {
+      "check": "independent SQLCipher performance replay",
+      "result": "passed",
+      "details": "Seven-sample Windows SQLCipher distributions passed all absolute budgets: p95 open 2.969 ms, query 3.769 ms, integrity 5.189 ms, backup 26.845 ms, plaintext migration 189.873 ms, and rekey 31.304 ms."
+    },
+    {
+      "check": "packaging, license, supply-chain, and UI evidence",
+      "result": "passed",
+      "details": "Exact integration evidence records a real frozen sidecar with SQLCipher and notices, package inventory substitution denials, a live scan with zero unexcepted blockers/policy errors, and both immutable desktop ranges passing RO-UI-ACADEMIC-MINIMAL-1.3 conformance. The two renewed native TypeScript compiler findings are development-only, exact, independently reviewed, and expire 2026-09-04."
+    }
+  ],
+  "findings": [],
+  "residuals": [
+    {
+      "id": "CAP-02.S04-RESIDUAL-E2E",
+      "disposition": "deferred-to-w1-exit",
+      "details": "No tests/e2e/test_*.py system command exists and it is not represented as passed. The compiled desktop, authenticated Core, real Windows DPAPI and SQLCipher, lifecycle, security/data, and frozen-package union establishes this slice outcome; complete cross-capability system qualification remains mandatory at W1 exit."
+    },
+    {
+      "id": "CAP-02.S04-RESIDUAL-SYMLINK",
+      "disposition": "deferred-to-w1-exit",
+      "details": "One directory-symlink security case and one file-symlink package case skip because this Windows token cannot create symlinks. Junction/redirect, hardlink, stable-identity, source-boundary, and package-inventory denials passed. Release-authoritative Windows qualification must retain or execute equivalent privileged coverage at W1 exit."
+    },
+    {
+      "id": "CAP-02.S04-RESIDUAL-SUPPLY-CHAIN",
+      "disposition": "time-bounded",
+      "details": "The exact two development-only TypeScript native-compiler exceptions expire 2026-09-04. Re-scan, upgrade to the first patched stable compiler, or obtain a new independent time-bounded decision before any qualification after expiry; they grant no shipped-runtime exception."
+    },
+    {
+      "id": "CAP-02.S04-RESIDUAL-FOUNDATION",
+      "disposition": "deferred-to-w1-exit",
+      "details": "The disclosed historical foundation run has 72 failures and 16 errors caused by retired recovery and live-campaign fixture assumptions. The only T04-adjacent failure is a stale recovered-T03 byte binding for packages/contracts/README.md after T04's lawful reviewed contract update. These do not invalidate the slice product behavior, but the full W1 exit matrix cannot pass until the fixtures are reconciled and rerun."
+    },
+    {
+      "id": "CAP-02.S04-RESIDUAL-WITNESS",
+      "disposition": "protected-control-artifact",
+      "details": "artifacts/evidence/W1.A04.B00.json remains the sole protected untracked and unstaged witness with SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c; it is outside product scope and was not modified."
+    }
+  ],
+  "taskctlSliceReviewNote": "APPROVED exact CAP-02.S04 integration submission 3bc1676c76d7622d93c2403502094c7851a520e7. All four task outcomes and reviews are commit-bound and integrated across DPAPI secrets, application lock/cancellation, offline privacy and consent, safe cache deletion, SQLCipher migration/backup/rekey/recovery, package/supply-chain/performance, UI conformance, and portable handoff. No blocking finding. Preserve the explicitly recorded E2E, symlink-token, expiring-exception, historical-foundation-fixture, and protected-witness obligations for W1 exit."
+}
