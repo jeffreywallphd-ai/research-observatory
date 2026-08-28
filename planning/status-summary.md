@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 9458cd157deab2a7a6ae42254f86d084286b565007e60efa5258dcb56cbc6a48
+source_sha256: 2222620a6b717f2512b0709c032a55a33417eaad56e6323b2f61cc316ed0000b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 273 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 46 |
 | `DEFERRED` | 36 |
 
@@ -381,7 +381,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-delivery-foundation (`CAP-00`) — Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
-| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 2/20 | - |
+| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 2/20 | `CAP-03.S01.T03` |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -418,4 +418,6 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-03.S01.T03` Publish versioning and compatibility policy for domain APIs | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
