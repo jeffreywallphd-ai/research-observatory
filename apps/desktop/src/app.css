@@ -3,7 +3,7 @@ html { color-scheme: light; background: var(--canvas); }
 html[data-theme="dark"] { color-scheme: dark; }
 body { margin: 0; min-width: 20rem; color: var(--text-default); background: var(--canvas); font: 400 var(--text-md) / var(--leading-normal) var(--font-sans); }
 a { color: var(--brand-700); }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, main:focus-visible { outline: 2px solid var(--brand-600); outline-offset: 3px; box-shadow: var(--focus-ring); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, main:focus-visible { outline: 2px solid var(--brand-600); outline-offset: 3px; box-shadow: var(--focus-ring); }
 .application-shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; }
 .skip-link { position: fixed; z-index: 30; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); padding: var(--space-2) var(--space-3); color: var(--text-inverse); background: var(--brand-700); border-radius: var(--radius-sm); transform: translateY(-180%); }
 .skip-link:focus { transform: translateY(0); }
@@ -50,6 +50,23 @@ main { min-width: 0; width: min(100%, 80rem); padding: var(--space-7); }
 .settings-save-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
 .settings-save-row span { color: var(--text-muted); }
 .deletion-limitations { display: grid; gap: var(--space-2); margin: 0; padding-inline-start: var(--space-5); }
+.intent-workspace, .intent-form { display: grid; gap: var(--space-5); }
+.intent-form .ro-panel { display: grid; align-content: start; gap: var(--space-3); }
+.intent-form label, .intent-form legend { color: var(--text-strong); font-weight: 700; }
+.intent-form input:not([type="checkbox"]), .intent-form select, .intent-form textarea { width: 100%; min-height: 2.75rem; padding: var(--space-2) var(--space-3); color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font: inherit; }
+.intent-form textarea { resize: vertical; }
+.intent-form fieldset { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0; padding: var(--space-4); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+.intent-form fieldset label { display: inline-flex; align-items: flex-start; gap: var(--space-2); color: var(--text-default); font-weight: 400; }
+.intent-form fieldset input { margin-block-start: var(--space-1); }
+.intent-two-column, .intent-three-column { display: grid; gap: var(--space-4); }
+.intent-two-column { grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); }
+.intent-three-column { grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
+.intent-three-column label { display: grid; gap: var(--space-2); }
+.intent-guidance, .intent-impact { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+.intent-guidance p, .intent-impact p { margin: 0; }
+.intent-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.intent-history { display: grid; gap: var(--space-2); margin: 0; padding-inline-start: var(--space-5); }
+.intent-history code { overflow-wrap: anywhere; }
 .diagnostics-workspace { display: grid; gap: var(--space-5); }
 .diagnostics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--space-4); }
 .diagnostics-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }

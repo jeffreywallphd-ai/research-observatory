@@ -37,7 +37,8 @@ cargo test --workspace --locked
 
 - `product-dist/` is the only Tauri `frontendDist` used by production and
   development. It contains authored React behavior for implemented capabilities,
-  currently one CAP-01 project-home route, plus an exact product manifest.
+  including the local project, privacy, diagnostics, and Research Intent
+  workspaces, plus an exact product manifest.
 - `dist/` is an offline reference-conformance fixture used only by verification.
   It is never configured as a Tauri frontend and is not a product or development
   application.
@@ -54,12 +55,20 @@ requirements, and page/workflow contracts; its HTML, illustrative prose, mock
 research records, future-capability routes, and nonfunctional actions are not
 product source.
 
-The current product exposes only `index.html`, the page that the reference
-coverage catalog assigns to CAP-01. `Ctrl+K` focuses the real command search,
+The current product exposes one local application entry at `index.html` and
+routes implemented workspaces within its authenticated shell. `Ctrl+K` focuses the real command search,
 `Ctrl+/` opens the keyboard-shortcut dialog, `Alt+H` returns focus to project
 home, skip navigation is first in the tab order, dialog focus is restored, and
 status changes use one polite live region. The shell contains no fabricated
 project, source, study, model, or workflow data.
+
+The Research Intent workspace is a project-scoped renderer over the generated
+Core client. Its fourteen use cases provide mode-specific guidance without
+silently changing researcher-authored prose. Corpus, primary-use-case, and
+novelty changes invalidate prior previews and require explicit review of
+affected workflows and outputs. Incomplete revisions remain durable drafts;
+the launch action stays disabled until a later governed acceptance task owns
+that transition.
 
 It also exposes a truthful local-service supervision boundary. In the Tauri
 host, Core starts automatically, reaches readiness over numeric loopback, and is

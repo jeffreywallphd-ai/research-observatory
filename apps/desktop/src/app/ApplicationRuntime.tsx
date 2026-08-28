@@ -9,6 +9,7 @@ import { LocalServiceBoundary } from "./LocalServiceBoundary";
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
 import { ProjectsWorkspace } from "./ProjectsWorkspace";
+import { IntentWorkspace } from "./IntentWorkspace";
 import {
   APPLICATION_LOCK_TIMEOUTS,
   decodeApplicationLockSnapshot,
@@ -159,7 +160,7 @@ export function ApplicationRuntime(): ReactNode {
   const [query, setQuery] = useState("");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
-  const [workspace, setWorkspace] = useState<"projects" | "home" | "settings" | "diagnostics">("home");
+  const [workspace, setWorkspace] = useState<"projects" | "home" | "intent" | "settings" | "diagnostics">("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
   const [applicationLock, setApplicationLock] = useState<ApplicationLockSnapshot>(() => hasNativeRuntime()
     ? {
@@ -469,6 +470,15 @@ export function ApplicationRuntime(): ReactNode {
       },
     },
     {
+      id: "open-research-intent",
+      label: "Open research intent",
+      description: "Define the governed research objective, scope, evidence policy, novelty standard, and stopping logic.",
+      run: () => {
+        setWorkspace("intent");
+        announce("Research Intent Contract workspace opened.");
+      },
+    },
+    {
       id: "open-project-settings",
       label: "Open project settings",
       description: "Review local privacy, egress, retention, and cache cleanup controls.",
@@ -537,6 +547,7 @@ export function ApplicationRuntime(): ReactNode {
           <nav>
             <button type="button" aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
             <button type="button" aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
+            <button type="button" aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
             <button type="button" aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
             <button type="button" aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
@@ -550,6 +561,8 @@ export function ApplicationRuntime(): ReactNode {
               selectedProject={currentProject}
               onProjectChange={setCurrentProject}
             />
+          ) : workspace === "intent" ? (
+            <IntentWorkspace project={currentProject} announce={announce} />
           ) : workspace === "home" ? <><div className="page-header">
             <Typography as="h1" variant="page-title">Desktop foundation</Typography>
             <Typography className="page-subtitle">
