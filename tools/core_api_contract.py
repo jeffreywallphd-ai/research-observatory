@@ -217,6 +217,68 @@ function canonicalProjectId(value: unknown): value is string {
   return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value);
 }
 
+function canonicalUuid7(value: unknown): value is string {
+  return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value);
+}
+
+function contentHash(value: unknown): value is string {
+  return typeof value === "string" && /^sha256:[0-9a-f]{64}$/.test(value);
+}
+
+function utcInstant(value: unknown): value is string {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value)
+    && Number.isFinite(Date.parse(value));
+}
+
+function boundedNarrative(value: unknown, minimum = 0): value is string {
+  return typeof value === "string" && value.length >= minimum && value.length <= 4000
+    && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value);
+}
+
+const INTENT_PRIMARY_USE_CASES = [
+  "rapid-orientation", "systematic-review", "living-review", "theory-synthesis", "hermeneutic-inquiry",
+  "critical-problematization", "technical-landscape", "novelty-audit", "empirical-study-design",
+  "empirical-study-to-article", "empirical-results-to-article", "theory-article-development",
+  "critical-article-development", "manuscript-review-revision",
+] as const;
+const INTENT_MODES = ["systematic", "theory", "technical", "hermeneutic", "critical", "novelty", "empirical"] as const;
+const INTENT_SOURCE_KINDS = [
+  "peer-reviewed-article", "conference-paper", "book", "chapter", "preprint", "technical-report", "dataset",
+  "standard", "patent", "thesis", "web-resource", "private-report",
+] as const;
+const INTENT_EVIDENCE_TYPES = [
+  "empirical-study", "systematic-review", "theoretical-work", "technical-evaluation", "standard", "dataset",
+  "interpretive-text", "stakeholder-account", "critical-analysis", "private-report",
+] as const;
+const INTENT_NOVELTY_STANDARDS = [
+  "bounded-comparative", "incremental", "theoretical", "methodological", "contextual", "critical", "interpretive", "not-claimed",
+] as const;
+const INTENT_AUTONOMY_LEVELS = ["human-only", "suggest", "prepare-reversible", "execute-reversible"] as const;
+const INTENT_STOPPING_CONDITIONS = [
+  "source-exhaustion", "coverage-threshold", "interpretive-saturation", "benchmark-complete",
+  "nearest-prior-work-challenged", "protocol-complete", "resource-budget", "researcher-decision",
+] as const;
+const INTENT_CHANGE_CATEGORIES = ["primary-use-case", "corpus-scope", "novelty-scope"] as const;
+
+function member<T extends string>(value: unknown, values: readonly T[]): value is T {
+  return typeof value === "string" && values.some((candidate) => candidate === value);
+}
+
+function uniqueMembers<T extends string>(value: unknown, values: readonly T[], maximum: number, minimum = 0): value is T[] {
+  return Array.isArray(value) && value.length >= minimum && value.length <= maximum
+    && value.every((item) => member(item, values)) && new Set(value).size === value.length;
+}
+
+function languageCodes(value: unknown): value is string[] {
+  return Array.isArray(value) && value.length <= 32 && new Set(value).size === value.length
+    && value.every((item) => typeof item === "string" && /^[a-z0-9][a-z0-9._-]{0,99}$/.test(item));
+}
+
+function stringList(value: unknown, maximum: number): value is string[] {
+  return Array.isArray(value) && value.length <= maximum && new Set(value).size === value.length
+    && value.every((item) => boundedText(item, 1, 240));
+}
+
 export function decodeVersionResponse(value: unknown): VersionResponse | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
@@ -284,6 +346,89 @@ export function decodeProjectProjection(value: unknown): ProjectProjection | nul
       return null;
   }
   return candidate as unknown as ProjectProjection;
+}
+
+export function decodeIntentDraftProjection(value: unknown): IntentDraftProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "intentId", "revisionId", "revision", "revisionContentHash", "createdAt", "status",
+    "primaryUseCase", "epistemicMode", "researchObjective", "contributionIntent", "phenomenon", "unitOfAnalysis",
+    "levelOfAnalysis", "sourceKinds", "languageCodes", "startYear", "endYear", "includePrivateReports",
+    "evidenceTypes", "noveltyStandard", "noveltyRationale", "autonomyLevel", "stoppingConditions",
+    "revisionRationale", "unresolvedDecisions", "decisionComplete", "canRequestAcceptance", "launchReady",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.intentId) || !canonicalUuid7(candidate.revisionId)
+    || candidate.intentId === candidate.revisionId || !integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER)
+    || !contentHash(candidate.revisionContentHash) || !utcInstant(candidate.createdAt) || candidate.status !== "draft"
+    || !member(candidate.primaryUseCase, INTENT_PRIMARY_USE_CASES) || !member(candidate.epistemicMode, INTENT_MODES)
+    || !boundedNarrative(candidate.researchObjective) || !boundedNarrative(candidate.contributionIntent)
+    || !boundedNarrative(candidate.phenomenon) || !boundedNarrative(candidate.unitOfAnalysis)
+    || !boundedNarrative(candidate.levelOfAnalysis)
+    || !uniqueMembers(candidate.sourceKinds, INTENT_SOURCE_KINDS, 32) || !languageCodes(candidate.languageCodes)
+    || (candidate.startYear !== null && !integer(candidate.startYear, 1000, 9999))
+    || (candidate.endYear !== null && !integer(candidate.endYear, 1000, 9999))
+    || ((candidate.startYear === null) !== (candidate.endYear === null))
+    || (typeof candidate.startYear === "number" && typeof candidate.endYear === "number" && candidate.startYear > candidate.endYear)
+    || typeof candidate.includePrivateReports !== "boolean"
+    || !uniqueMembers(candidate.evidenceTypes, INTENT_EVIDENCE_TYPES, 32)
+    || (candidate.noveltyStandard !== null && !member(candidate.noveltyStandard, INTENT_NOVELTY_STANDARDS))
+    || !boundedNarrative(candidate.noveltyRationale) || !member(candidate.autonomyLevel, INTENT_AUTONOMY_LEVELS)
+    || !uniqueMembers(candidate.stoppingConditions, INTENT_STOPPING_CONDITIONS, 3, 1)
+    || !boundedNarrative(candidate.revisionRationale, 1) || !stringList(candidate.unresolvedDecisions, 64)
+    || typeof candidate.decisionComplete !== "boolean" || typeof candidate.canRequestAcceptance !== "boolean"
+    || candidate.launchReady !== false) return null;
+  if (candidate.decisionComplete !== (candidate.unresolvedDecisions.length === 0)
+    || candidate.canRequestAcceptance !== candidate.decisionComplete) return null;
+  return candidate as unknown as IntentDraftProjection;
+}
+
+function decodeIntentRevisionSummary(value: unknown): IntentRevisionSummary | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "revision", "revisionId", "revisionContentHash", "createdAt", "status", "primaryUseCase", "unresolvedDecisionCount",
+  ])) return null;
+  if (!integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER) || !canonicalUuid7(candidate.revisionId)
+    || !contentHash(candidate.revisionContentHash) || !utcInstant(candidate.createdAt) || candidate.status !== "draft"
+    || !member(candidate.primaryUseCase, INTENT_PRIMARY_USE_CASES)
+    || !integer(candidate.unresolvedDecisionCount, 0, 64)) return null;
+  return candidate as unknown as IntentRevisionSummary;
+}
+
+export function decodeIntentWorkspaceProjection(value: unknown): IntentWorkspaceProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, ["schemaVersion", "projectId", "current", "history"])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId) || !Array.isArray(candidate.history)
+    || candidate.history.length > 100) return null;
+  const current = candidate.current === null ? null : decodeIntentDraftProjection(candidate.current);
+  const history = candidate.history.map(decodeIntentRevisionSummary);
+  if ((candidate.current !== null && current === null) || history.some((item) => item === null)) return null;
+  if (history.some((item, index) => index > 0 && (item?.revision ?? 0) >= (history[index - 1]?.revision ?? 0))) return null;
+  if ((current === null) !== (history.length === 0)
+    || (current && (current.revision !== history[0]?.revision
+      || current.revisionId !== history[0]?.revisionId
+      || current.revisionContentHash !== history[0]?.revisionContentHash
+      || current.createdAt !== history[0]?.createdAt
+      || current.primaryUseCase !== history[0]?.primaryUseCase
+      || current.status !== history[0]?.status
+      || current.unresolvedDecisions.length !== history[0]?.unresolvedDecisionCount))) return null;
+  return { schemaVersion: "1.0", projectId: candidate.projectId, current, history: history as IntentRevisionSummary[] };
+}
+
+export function decodeIntentImpactPreview(value: unknown): IntentImpactPreview | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "expectedRevision", "changeCategories", "affectedWorkflows", "affectedOutputs", "warnings",
+    "acknowledgementRequired", "acknowledgementToken",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !integer(candidate.expectedRevision, 0, Number.MAX_SAFE_INTEGER)
+    || !uniqueMembers(candidate.changeCategories, INTENT_CHANGE_CATEGORIES, 3)
+    || !stringList(candidate.affectedWorkflows, 32) || !stringList(candidate.affectedOutputs, 32)
+    || !stringList(candidate.warnings, 8) || typeof candidate.acknowledgementRequired !== "boolean"
+    || (candidate.acknowledgementToken !== null
+      && (typeof candidate.acknowledgementToken !== "string" || !/^[0-9a-f]{64}$/.test(candidate.acknowledgementToken)))) return null;
+  if (candidate.acknowledgementRequired !== (candidate.acknowledgementToken !== null)
+    || candidate.acknowledgementRequired !== (candidate.changeCategories.length > 0)) return null;
+  return candidate as unknown as IntentImpactPreview;
 }
 
 function decodeDeletionDisclosure(value: unknown): DeletionDisclosure | null {
@@ -470,6 +615,35 @@ function privacyUpdateBody(command: PrivacyPolicyUpdateRequest): string {
   });
 }
 
+function intentImpactBody(command: IntentImpactRequest): string {
+  if (!projectRoot(command.root) || !integer(command.expectedRevision, 0, Number.MAX_SAFE_INTEGER)
+    || !member(command.primaryUseCase, INTENT_PRIMARY_USE_CASES)
+    || !uniqueMembers(command.sourceKinds, INTENT_SOURCE_KINDS, 32) || !languageCodes(command.languageCodes)
+    || (command.startYear !== null && !integer(command.startYear, 1000, 9999))
+    || (command.endYear !== null && !integer(command.endYear, 1000, 9999))
+    || ((command.startYear === null) !== (command.endYear === null))
+    || (typeof command.startYear === "number" && typeof command.endYear === "number" && command.startYear > command.endYear)
+    || typeof command.includePrivateReports !== "boolean"
+    || (command.noveltyStandard !== null && !member(command.noveltyStandard, INTENT_NOVELTY_STANDARDS))) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify(command);
+}
+
+function intentDraftBody(command: IntentDraftRequest): string {
+  intentImpactBody(command);
+  if (!boundedNarrative(command.researchObjective) || !boundedNarrative(command.contributionIntent)
+    || !boundedNarrative(command.phenomenon) || !boundedNarrative(command.unitOfAnalysis)
+    || !boundedNarrative(command.levelOfAnalysis) || !uniqueMembers(command.evidenceTypes, INTENT_EVIDENCE_TYPES, 32)
+    || !boundedNarrative(command.noveltyRationale) || !member(command.autonomyLevel, INTENT_AUTONOMY_LEVELS)
+    || !uniqueMembers(command.stoppingConditions, INTENT_STOPPING_CONDITIONS, 3, 1)
+    || !boundedNarrative(command.revisionRationale, 1)
+    || (command.impactAcknowledgement !== null && !/^[0-9a-f]{64}$/.test(command.impactAcknowledgement))) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify(command);
+}
+
 export function parseOperationEventStream(body: string): readonly OperationProgressEvent[] {
   if (body.length > 1_048_576) throw new Error("RO-CORE-RESPONSE-INVALID");
   if (!body) return [];
@@ -543,6 +717,24 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         body: JSON.stringify({ root: command.root, confirmation: command.confirmation }),
         ifMatch: null, idempotencyKey: null,
       }, decodeProjectProjection);
+    },
+    async intent(command: ProjectRootRequest): Promise<IntentWorkspaceProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/intent", body: projectBody(command), ifMatch: null, idempotencyKey: null,
+      }, decodeIntentWorkspaceProjection);
+    },
+    async previewIntent(command: IntentImpactRequest): Promise<IntentImpactPreview> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/intent/preview", body: intentImpactBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeIntentImpactPreview);
+    },
+    async saveIntentDraft(command: IntentDraftRequest, idempotencyKey: string): Promise<IntentDraftProjection> {
+      if (!/^[0-9a-f]{32}$/.test(idempotencyKey)) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/intent/drafts", body: intentDraftBody(command),
+        ifMatch: null, idempotencyKey,
+      }, decodeIntentDraftProjection);
     },
     async privacy(command: ProjectPrivacyRequest): Promise<PrivacyPolicyProjection> {
       return await requestJson(transport, {
@@ -654,6 +846,9 @@ def render_typescript(openapi_bytes: bytes) -> bytes:
         "archive_project_projects_archive_post",
         "restore_project_projects_restore_post",
         "delete_project_projects_delete_post",
+        "project_intent_projects_intent_post",
+        "preview_intent_projects_intent_preview_post",
+        "save_intent_draft_projects_intent_drafts_post",
         "project_privacy_projects_privacy_post",
         "update_project_privacy_projects_privacy_update_post",
         "preview_project_cache_projects_privacy_cache_preview_post",

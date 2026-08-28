@@ -23,6 +23,9 @@ from .ports.repositories import (
     AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
+    IntentAuditEvent,
+    IntentRevisionRecord,
+    IntentRevisionRepository,
     KnowledgeStatus,
     PrivacyAuditEvent,
     PrivacyPolicyRecord,
@@ -272,6 +275,209 @@ def sqlite_privacy_policy_repository(path: Path, project_id: str) -> PrivacyPoli
     """Compose one privacy repository from lifecycle-validated project authority."""
 
     return _SqlitePrivacyPolicyRepository(path / "state" / "project.sqlite3", project_id)
+
+
+_INTENT_BRIDGE_KEY = "research-intent.project-id-bridge"
+_INTENT_REVISION_KEY = "research-intent.revision"
+
+
+class _SqliteIntentRevisionRepository(IntentRevisionRepository):
+    """SQLite adapter over the existing immutable settings/provenance/outbox schema."""
+
+    def __init__(self, database: Path, project_id: str) -> None:
+        if not database.is_absolute() or not project_id:
+            raise ValueError("intent repository authority is invalid")
+        self._database = database
+        self._project_id = project_id
+
+    def _open(self) -> CanonicalConnection:
+        return open_canonical_database(self._database, expected_project_id=self._project_id)
+
+    def read(self) -> tuple[IntentRevisionRecord, ...]:
+        try:
+            connection = self._open()
+            try:
+                bridge = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, _INTENT_BRIDGE_KEY),
+                ).fetchall()
+                rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision DESC LIMIT 100",
+                    (self._project_id, _INTENT_REVISION_KEY),
+                ).fetchall()
+            finally:
+                connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+            raise _transaction_failure("research intent read failed") from None
+        if not rows:
+            if bridge:
+                raise _transaction_failure("research intent bridge has no revision")
+            return ()
+        if len(bridge) != 1 or bridge[0][0] != 0 or bridge[0][1] != "text" or not isinstance(bridge[0][2], str):
+            raise _transaction_failure("research intent bridge is invalid")
+        try:
+            bridge_value = json.loads(bridge[0][2])
+        except json.JSONDecodeError, TypeError:
+            raise _transaction_failure("research intent bridge is invalid") from None
+        if (
+            not isinstance(bridge_value, dict)
+            or set(bridge_value) != {"authority", "domainProjectId", "manifestProjectId", "schemaVersion"}
+            or bridge_value["schemaVersion"] != "1.0"
+            or bridge_value["authority"] != "ADR-0013"
+            or bridge_value["manifestProjectId"] != self._project_id
+        ):
+            raise _transaction_failure("research intent bridge is invalid")
+        records: list[IntentRevisionRecord] = []
+        for revision, value_type, content_json in rows:
+            if (
+                not isinstance(revision, int)
+                or revision < 1
+                or value_type != "text"
+                or not isinstance(content_json, str)
+            ):
+                raise _transaction_failure("research intent revision is invalid")
+            records.append(IntentRevisionRecord(revision=revision, content_json=content_json))
+        if [record.revision for record in records] != list(
+            range(records[0].revision, max(0, records[0].revision - len(records)), -1)
+        ):
+            raise _transaction_failure("research intent revision history is discontinuous")
+        return tuple(records)
+
+    def append(
+        self,
+        *,
+        expected_revision: int,
+        domain_project_id: str,
+        manifest_project_id: str,
+        record: IntentRevisionRecord,
+        event: IntentAuditEvent,
+    ) -> None:
+        if (
+            manifest_project_id != self._project_id
+            or expected_revision < 0
+            or record.revision != expected_revision + 1
+            or not record.content_json
+            or len(record.content_json.encode("utf-8")) > 65_536
+            or event.event_type != "intent.draft.saved"
+        ):
+            raise _transaction_failure("research intent append is invalid")
+        bridge_json = json.dumps(
+            {
+                "authority": "ADR-0013",
+                "domainProjectId": domain_project_id,
+                "manifestProjectId": manifest_project_id,
+                "schemaVersion": "1.0",
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        try:
+            connection = self._open()
+            try:
+                connection.execute("BEGIN IMMEDIATE")
+                latest = connection.execute(
+                    "SELECT COALESCE(MAX(revision), 0) FROM settings WHERE project_id=? AND setting_key=?",
+                    (self._project_id, _INTENT_REVISION_KEY),
+                ).fetchone()[0]
+                if int(latest) != expected_revision:
+                    raise RepositoryConflict("research intent revision changed")
+                bridge = connection.execute(
+                    "SELECT text_value FROM settings WHERE project_id=? AND setting_key=? AND revision=0",
+                    (self._project_id, _INTENT_BRIDGE_KEY),
+                ).fetchone()
+                if expected_revision == 0:
+                    if bridge is not None:
+                        raise RepositoryConflict("research intent bridge already exists")
+                    self._insert_text_setting(
+                        connection,
+                        key=_INTENT_BRIDGE_KEY,
+                        revision=0,
+                        value=bridge_json,
+                        occurred_at=event.occurred_at,
+                    )
+                elif bridge is None or bridge[0] != bridge_json:
+                    raise RepositoryConflict("research intent project bridge changed")
+                self._insert_text_setting(
+                    connection,
+                    key=_INTENT_REVISION_KEY,
+                    revision=record.revision,
+                    value=record.content_json,
+                    occurred_at=event.occurred_at,
+                )
+                connection.execute(
+                    """
+                    INSERT INTO provenance_events (
+                        event_id, project_id, revision_id, event_type, occurred_at,
+                        trace_id, actor_type, actor_id, record_sha256
+                    ) VALUES (?, ?, NULL, ?, ?, ?, 'human', NULL, ?)
+                    """,
+                    (
+                        event.event_id,
+                        self._project_id,
+                        event.event_type,
+                        event.occurred_at,
+                        event.trace_id,
+                        event.record_sha256,
+                    ),
+                )
+                connection.execute(
+                    """
+                    INSERT INTO outbox_events (
+                        outbox_id, project_id, revision_id, event_type, occurred_at,
+                        available_at, state, attempt_count, published_at,
+                        idempotency_key, record_sha256
+                    ) VALUES (?, ?, NULL, ?, ?, ?, 'pending', 0, NULL, ?, ?)
+                    """,
+                    (
+                        event.outbox_id,
+                        self._project_id,
+                        event.event_type,
+                        event.occurred_at,
+                        event.occurred_at,
+                        event.idempotency_key,
+                        event.record_sha256,
+                    ),
+                )
+                connection.execute("COMMIT")
+            except BaseException:
+                if connection.in_transaction:
+                    connection.execute("ROLLBACK")
+                raise
+            finally:
+                connection.close()
+        except RepositoryConflict:
+            raise
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError:
+            raise _transaction_failure("research intent append failed") from None
+
+    def _insert_text_setting(
+        self,
+        connection: CanonicalConnection,
+        *,
+        key: str,
+        revision: int,
+        value: str,
+        occurred_at: str,
+    ) -> None:
+        connection.execute(
+            """
+            INSERT INTO settings (
+                setting_id, project_id, setting_key, revision, value_type,
+                text_value, integer_value, real_value, boolean_value,
+                created_at, modified_at
+            ) VALUES (?, ?, ?, ?, 'text', ?, NULL, NULL, NULL, ?, ?)
+            """,
+            (new_uuid_v7(), self._project_id, key, revision, value, occurred_at, occurred_at),
+        )
+
+
+def sqlite_intent_revision_repository(path: Path, project_id: str) -> IntentRevisionRepository:
+    """Compose intent persistence after lifecycle validation binds the project root."""
+
+    return _SqliteIntentRevisionRepository(path / "state" / "project.sqlite3", project_id)
 
 
 def _transaction_failure(message: str = "canonical repository transaction failed") -> RepositoryTransactionFailed:

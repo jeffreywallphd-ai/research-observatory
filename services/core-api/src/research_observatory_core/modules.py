@@ -52,6 +52,10 @@ def default_module_registry() -> ModuleRegistry:
     return ModuleRegistry(
         (
             ModuleDefinition(
+                module_id="intent",
+                capabilities=("intent.drafts", "intent.impact-preview", "intent.read"),
+            ),
+            ModuleDefinition(
                 module_id="operations",
                 capabilities=("operations.cancel", "operations.events", "operations.read"),
             ),
