@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-07.S01.T01",
+  "commit": "e4f70e7c87d06f0b09ac8da46465bf957968ba79",
+  "baseCommit": "f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-07.S01.T01.json",
+    "sha256": "7e51063d1f1836afeb61001b316f0d19677c792e2fbe67e781df1258d28c3b6b",
+    "commit": "f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa",
+    "reason": "R01 identified incomplete semantic closure between declared task bounds and returned results. This strict-descendant R02 packet preserves R01 and binds equivalent generated TypeScript/Python budget, deadline, validation, citation, and indexed-output checks plus adversarial parity evidence."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-07.S01.T01.json",
+    "artifacts/evidence/CAP-07.S01.T01.review-R01.json",
+    "docs/adr/ADR-0021-adopt-provider-neutral-model-task-and-result-contracts.md",
+    "docs/architecture/model-gateway-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/model-gateway/generate.mjs",
+    "packages/contracts/model-gateway/generated.ts",
+    "packages/contracts/model-gateway/model-task.schema.json",
+    "packages/contracts/model-gateway/model-task.template.py.txt",
+    "packages/contracts/model-gateway/model-task.template.ts.txt",
+    "packages/contracts/model-gateway/model-task.test.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-07/CAP-07.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/model_gateway_contracts.py",
+    "tests/ai/test_model_gateway_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": "node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; node packages/contracts/model-gateway/generate.mjs --check; packages\\contracts\\node_modules\\.bin\\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run --reporter=dot",
+      "exitCode": 0,
+      "result": "All four generators were current, strict TypeScript compilation passed, and all 41 portable contract tests passed. Seven model-gateway tests cover valid equality boundaries and adversarial budget, deadline, hash, citation, validation-state, indexed-output, and task/output-kind substitutions."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/ai -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
+      "exitCode": 0,
+      "result": "All 7 Python AI, 38 service, 39 Python contract, and 6 packaging tests passed, with one expected Windows symlink-permission skip. The packaging test completed a real PyInstaller sidecar build containing the generated runtime."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.foundation.test_adr_check",
+      "exitCode": 0,
+      "result": "All 37 affected foundation build-manifest, quality, repository-structure, and ADR tests passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-07.S01.T01-quality-e4f70e7.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 156 governed Python files. Report SHA-256: cc664161aba7e16942e92d71c69344b03bc9dffecc03769c0862f5d1026754fb."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base bf3fc9a0c528eb50376578e9a72606deb5d07ba8 --head e4f70e7c87d06f0b09ac8da46465bf957968ba79",
+      "exitCode": 0,
+      "result": "The architecture contract passed across 13 areas, 12 modules, 5 stable interfaces, and 3 deployment profiles. The 21-record ADR registry accepted the ten-path R02 clarification as consistent with accepted ADR-0021."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-07.S01.T01-build-manifest-e4f70e7.json",
+      "exitCode": 0,
+      "result": "Build provenance passed for exact candidate e4f70e7c87d06f0b09ac8da46465bf957968ba79 with only the protected W1.A04.B00 witness dirty. Report SHA-256: 6c48cd6c73a8e58f0563d24319d46793c35be6a04941fcdb270442b0b495e563."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog, generated views, approved W1 packet, and patch hygiene passed. The protected W1.A04.B00 witness remained byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile ai --profile service --affected-base bf3fc9a0c528eb50376578e9a72606deb5d07ba8 --affected-head e4f70e7c87d06f0b09ac8da46465bf957968ba79 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-07.S01.T01-affected-selection-e4f70e7.json",
+      "exitCode": 0,
+      "result": "Affected selection passed with no unknown paths and selected the AI, contract, service, packaging, Python-quality, repository-structure, agent-protocol, backlog-view, and foundation-unit boundaries. Report SHA-256: a936d90c12af55b31866c2d5ed915b660b4f90dd189ce60636eae165d07bcade."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Both generated runtimes now reject reported input/output tokens beyond task maxima, successful or degraded results beyond the task deadline, artifact-bearing accepted validations whose output hash does not match the returned artifact, and rejected/not-run validation metadata inconsistent with its state.",
+        "Every supplied citation closes over immutable task input references regardless of optional or required policy, and citation status must match the task requirement.",
+        "Reranking, classification, NLI, and moderation indexed outputs close over task cardinality, declared labels, uniqueness, and selected-score constraints. Unsupported features, pinned routes, request hashes, and provider/model/version/configuration provenance retain their prior explicit semantics."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Seven TypeScript and seven Python model-gateway tests pass with parity across valid max-token/deadline equality boundaries and adversarial +1 budget/deadline cases.",
+        "Tests also deny substituted artifact validation hashes, optional citation sources absent from task inputs, invalid rejected/not-run metadata, task/output-kind mismatch, impossible rerank topK, and out-of-range, duplicate, or undeclared indexed outputs while accepting valid boundary cases."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The semantic rule catalog, deterministic generator, generated TypeScript/Python runtimes, tests, ADR-0021 clarification, and architecture contract are synchronized; generator currency and strict compilation pass.",
+        "No provider SDK, route execution, network access, dependency version, migration, persistence schema, UI, raw content, or later-task model registry/routing behavior changed.",
+        "The R01 evidence and finding ledger remain append-only and are included in the exact strict-descendant changed-path boundary."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-07.S01.T01-R01-F01 showed that a structurally valid result could exceed task token/deadline bounds or substitute output/citation/index identities while appearing accepted. Because the remediation changes a public generated cross-language contract and untrusted-result validation, verification replays R01 in both runtimes, adds valid boundary and adversarial substitutions for every required closure, runs all portable contracts plus affected AI/service/packaging/foundation boundaries, and checks generator, quality, architecture, ADR, build-provenance, planning, and witness integrity. No dependency, network, database, provider implementation, or UI path changed.",
+    "selectedCommandIds": [
+      "ai:unit",
+      "service:unit",
+      "contracts:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "The complete foundation and cross-capability repository/deployment matrix remains mandatory at W1 exit; unrelated UI-reference, fixture-corpus, benchmark, CI, runtime, and packaging-smoke inventories are not replayed solely for this bounded semantic remediation.",
+      "Provider discovery/capability manifests, routing/fallback/deadline execution, local model runtime and weight lifecycle, approved remote egress, prompt/schema registry, cost budgets, evaluation operations, and durable audit persistence remain assigned to later approved tasks and are not claimed here.",
+      "CAP-07.S01 integrated end-to-end and adversarial slice review follows completion of T02 and T03; cross-capability security, performance, cancellation, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-07.S01.T01-R01-F01"
+    ],
+    "rootCauseAnalysis": "The initial generated validators treated schema validity and internal arithmetic as sufficient, but did not model semantic closure between task-declared resource limits and result-reported usage, task deadlines and successful latency, returned artifacts and accepted validation identity, supplied citations and immutable inputs, or indexed outputs and their task-specific input domains. R02 centralizes those invariants in equivalent generated TypeScript/Python semantic checks and adds parity tests at valid equality boundaries plus substituted and out-of-range cases.",
+    "note": "Independently review exact candidate e4f70e7c87d06f0b09ac8da46465bf957968ba79. Replay CAP-07.S01.T01-R01-F01 against both generated runtimes, verify each required budget, deadline, validation-state/hash, all-supplied-citation, and indexed-output closure plus valid equality boundaries, and confirm generator parity, unsupported/pinned-route behavior, append-only R01 history, and later-task nonclaims."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 912842d05186044f63c1cf2075ad5939f3e09386b14ef364701e95eb9121392a
+source_sha256: 406b3ff7a0af0dd5028e5112a2a0db71840a8b5d1c7932d5cfa894066693a2f6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6356,7 +6356,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T01 - Define model task interfaces and result envelopes
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6383,6 +6383,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-07.S01.T01.json` at `f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa`
+- `artifacts/evidence/CAP-07.S01.T01.review-fix.json` at `e4f70e7c87d06f0b09ac8da46465bf957968ba79`
 
 ##### Review history — CAP-07.S01.T01
 
@@ -6418,7 +6419,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `59857ca41a8b84f5c156c3bac749d4a8a1890fa7075f2c143b59c0278edc6ac4`
+
+- Candidate / base / branch: `e4f70e7c87d06f0b09ac8da46465bf957968ba79` / `f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T17:20:44+00:00`
+- Evidence: `artifacts/evidence/CAP-07.S01.T01.review-fix.json` / `28967a00f413267c2ccb82efb098e35d13350472db0a0885daba93ceb2c64c44` / `e4f70e7c87d06f0b09ac8da46465bf957968ba79`
+- Acceptance-criteria SHA-256: `477fa85a9cf899a84e9a91431a8211df9ebb657af7ca828dc3e08881c2c80f58`
+- Verification-selection SHA-256: `80d12ce96f789612ee8b83a4f650cecefc500e4bb3f2ef67682f94cc26993365`
+- Changed paths: `artifacts/evidence/CAP-07.S01.T01.json`, `artifacts/evidence/CAP-07.S01.T01.review-R01.json`, `docs/adr/ADR-0021-adopt-provider-neutral-model-task-and-result-contracts.md`, `docs/architecture/model-gateway-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/model-gateway/generate.mjs`, `packages/contracts/model-gateway/generated.ts`, `packages/contracts/model-gateway/model-task.schema.json`, `packages/contracts/model-gateway/model-task.template.py.txt`, `packages/contracts/model-gateway/model-task.template.ts.txt`, `packages/contracts/model-gateway/model-task.test.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-07/CAP-07.S01.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/model_gateway_contracts.py`, `tests/ai/test_model_gateway_contracts.py`
+- Selected checks: `node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; node packages/contracts/model-gateway/generate.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run --reporter=dot`, `.venv\Scripts\python.exe -m unittest discover -s tests/ai -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py`, `.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.foundation.test_adr_check`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-07.S01.T01-quality-e4f70e7.json`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base bf3fc9a0c528eb50376578e9a72606deb5d07ba8 --head e4f70e7c87d06f0b09ac8da46465bf957968ba79`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-07.S01.T01-build-manifest-e4f70e7.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile ai --profile service --affected-base bf3fc9a0c528eb50376578e9a72606deb5d07ba8 --affected-head e4f70e7c87d06f0b09ac8da46465bf957968ba79 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-07.S01.T01-affected-selection-e4f70e7.json`
+- Deferred checks: `The complete foundation and cross-capability repository/deployment matrix remains mandatory at W1 exit; unrelated UI-reference, fixture-corpus, benchmark, CI, runtime, and packaging-smoke inventories are not replayed solely for this bounded semantic remediation.`, `Provider discovery/capability manifests, routing/fallback/deadline execution, local model runtime and weight lifecycle, approved remote egress, prompt/schema registry, cost budgets, evaluation operations, and durable audit persistence remain assigned to later approved tasks and are not claimed here.`, `CAP-07.S01 integrated end-to-end and adversarial slice review follows completion of T02 and T03; cross-capability security, performance, cancellation, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: CAP-07.S01.T01-R01-F01 showed that a structurally valid result could exceed task token/deadline bounds or substitute output/citation/index identities while appearing accepted. Because the remediation changes a public generated cross-language contract and untrusted-result validation, verification replays R01 in both runtimes, adds valid boundary and adversarial substitutions for every required closure, runs all portable contracts plus affected AI/service/packaging/foundation boundaries, and checks generator, quality, architecture, ADR, build-provenance, planning, and witness integrity. No dependency, network, database, provider implementation, or UI path changed.
+- Prior round / replayed open findings: `R01` / `CAP-07.S01.T01-R01-F01`
+- Root-cause escalation: The initial generated validators treated schema validity and internal arithmetic as sufficient, but did not model semantic closure between task-declared resource limits and result-reported usage, task deadlines and successful latency, returned artifacts and accepted validation identity, supplied citations and immutable inputs, or indexed outputs and their task-specific input domains. R02 centralizes those invariants in equivalent generated TypeScript/Python semantic checks and adds parity tests at valid equality boundaries plus substituted and out-of-range cases.
 
 **Current latest-review projection:** `changes-requested` by codex-independent at `2026-08-28T17:05:30+00:00`
 
