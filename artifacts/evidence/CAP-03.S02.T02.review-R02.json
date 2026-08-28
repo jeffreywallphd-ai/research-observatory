@@ -1,0 +1,22 @@
+{
+  "task_id": "CAP-03.S02.T02",
+  "attempt_id": "R02",
+  "candidate_commit": "a60d3e9704a4d59dd1d0310437bd6d486057500b",
+  "submission_record_commit": "76607e6ac92a90b17e42538f1e9fa263efa610cc",
+  "reviewer": "agent:nash",
+  "result": "approved",
+  "notes": "Focused remediation review replayed both open R01 blockers and expanded only across the affected identity, migration, public-contract, SQLite transaction, audit, outbox, concurrency, and packaging boundary. The exact strict-descendant candidate resolves one opaque UUIDv7 actor from the current Windows user's DPAPI-protected profile vault; missing, malformed, tampered, redirected, or spoofed actor authority fails closed before project persistence, while revision createdBy and append-only provenance retain the same non-null actor. Schema v6 is forward-only and backup-first, preserves v1-v5 data and legacy actor identifiers, and retains exact current profile/schema bindings. Public idempotency now binds project, actor, canonical command digest, committed revision, provenance, and outbox, checks replay before optimistic conflict and again under BEGIN IMMEDIATE, returns the immutable committed projection for an exact retry, and denies changed command/project/actor reuse. Independent replay confirmed competing identical writers converge to one four-surface commit and injected persistence failure rolls back all surfaces. Generated OpenAPI/TypeScript parity and package inclusion remain exact. No blocking finding remains and later persistence/UI/enforcement/provenance duties are not overclaimed.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S02.T02-R01-F01",
+      "disposition": "fixed",
+      "evidence": "At exact candidate a60d3e9704a4d59dd1d0310437bd6d486057500b, WindowsLocalActorIdentityProvider creates or reads one UUIDv7 from the guarded current-profile vault as a DPAPI-protected authenticated record, retains corrupted ciphertext, and never accepts an inbound actor assertion. ResearchIntentService requires that resolved actor and binds it identically into revision createdBy and IntentAuditEvent; the SQLite adapter requires a UUIDv7 human actor and writes the same non-null value into provenance in the revision/idempotency/provenance/outbox transaction. Independent replay of tests.security.test_windows_credentials and tests.service.test_research_intents proved stable restart identity, opaque protected bytes, tamper fail-closed behavior, spoof and missing-authority denial, stable successive-revision identity, exact revision/provenance binding, and rollback. Migration replay proved v1-v5 preservation into v6, including retained legacy actor identifiers and accepted new UUIDv7 authority."
+    },
+    {
+      "finding_id": "CAP-03.S02.T02-R01-F02",
+      "disposition": "fixed",
+      "evidence": "At exact candidate a60d3e9704a4d59dd1d0310437bd6d486057500b, the required public idempotency key is bound to manifest project, stable actor, canonical command SHA-256, domain project, revision digest, provenance event, and outbox event. ResearchIntentService performs authenticated replay before reading and rejecting a stale expected revision, while the repository repeats the replay under BEGIN IMMEDIATE before its compare-and-swap write. Independent service replay proved exact retry before/after service restart returns the original immutable projection; changed command, actor, project, and genuinely stale new-key cases deny with stable conflicts; two simultaneous identical writers produce exactly one revision, binding, provenance event, and outbox row; and injected outbox failure leaves all four surfaces empty."
+    }
+  ]
+}
