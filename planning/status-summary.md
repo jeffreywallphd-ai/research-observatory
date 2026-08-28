@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 9d923cef7d0ca6e1ab21d26b0ef4e9adda494a91dc2b42462558c8e398d963b6
+source_sha256: 1c2321b028ad5530318a7249e42ac6b5f5492f96aab3f2a5cfc382b0c88268fb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 268 |
-| `READY` | 2 |
+| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 50 |
 | `DEFERRED` | 36 |
 
@@ -385,7 +386,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-delivery-foundation (`CAP-00`) — Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
-| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 1/6 | 5/20 | - |
+| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 1/6 | 5/20 | `CAP-03.S02.T03` |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -422,4 +423,6 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-03.S02.T03` Enforce mode and autonomy policy at service boundaries | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
