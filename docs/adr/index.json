@@ -202,6 +202,25 @@
       "linkedTasks": [
         "CAP-07.S01.T01"
       ]
+    },
+    {
+      "id": "ADR-0022",
+      "path": "docs/adr/ADR-0022-adopt-immutable-research-intent-revisions-and-governing-references.md",
+      "title": "Adopt immutable research intent revisions and governing references",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-03.S02.T01"
+      ]
+    },
+    {
+      "id": "ADR-0023",
+      "path": "docs/adr/ADR-0023-use-mode-specific-researcher-controlled-intent-policy-vocabulary.md",
+      "title": "Use mode-specific researcher-controlled intent policy vocabulary",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-03.S02.T01",
+        "CAP-03.S02.T03"
+      ]
     }
   ]
 }

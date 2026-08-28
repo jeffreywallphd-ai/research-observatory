@@ -135,3 +135,8 @@ execution constraints, result provenance, validation, usage, confidence,
 citations, and explicit unsupported-feature behavior are documented in
 [`model-gateway-contracts.md`](model-gateway-contracts.md) and governed by
 ADR-0021.
+The immutable Research Intent revision envelope, immediate predecessor lineage,
+mode-sensitive requirements, bounded autonomy/stopping vocabulary, human-only
+acceptance, and compact downstream governing reference are documented in
+[`research-intent-contracts.md`](research-intent-contracts.md) and governed by
+ADR-0022 and ADR-0023.
