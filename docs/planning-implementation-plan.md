@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b7c0085dfad1bd7a23403cf12b770583ab64cf2514cc6cdeff9054a6e69b54e6
+source_sha256: 23a0ceb01d4b63f034f73312e6568ff423378ca66b90a97a96cee9695019603d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3689,13 +3689,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T01 - Model the versioned research intent contract
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T03`, `CAP-01.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Schema for research question, contribution intent, epistemic mode, unit/level, source scope, evidence types, novelty standard, autonomy, and stopping rule.
 
