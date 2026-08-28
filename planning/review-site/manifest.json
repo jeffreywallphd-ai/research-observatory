@@ -2843,7 +2843,7 @@
             {
               "task_id": "CAP-03.S02.T02",
               "title": "Implement guided intent creation and revision UI",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
