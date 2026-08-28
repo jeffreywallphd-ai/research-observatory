@@ -1,0 +1,22 @@
+{
+  "root": "C:/Research/fixture",
+  "expectedRevision": 0,
+  "primaryUseCase": "theory-synthesis",
+  "researchObjective": "Explain how local-first research systems preserve scholarly traceability.",
+  "contributionIntent": "Integrate mechanisms and boundary conditions across the literature.",
+  "phenomenon": "Local-first scholarly reasoning",
+  "unitOfAnalysis": "Research software system",
+  "levelOfAnalysis": "System and researcher workflow",
+  "sourceKinds": ["peer-reviewed-article", "conference-paper"],
+  "languageCodes": ["en"],
+  "startYear": 2015,
+  "endYear": 2026,
+  "includePrivateReports": false,
+  "evidenceTypes": ["empirical-study", "theoretical-work"],
+  "noveltyStandard": "theoretical",
+  "noveltyRationale": "Bound claims against the nearest prior theoretical accounts.",
+  "autonomyLevel": "suggest",
+  "stoppingConditions": ["interpretive-saturation"],
+  "revisionRationale": "Save the researcher-authored intent as a local draft.",
+  "impactAcknowledgement": null
+}

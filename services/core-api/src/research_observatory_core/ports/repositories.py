@@ -122,6 +122,27 @@ class PrivacyAuditEvent:
     record_sha256: str
 
 
+@dataclass(frozen=True, slots=True)
+class IntentRevisionRecord:
+    """One detached immutable Research Intent revision document."""
+
+    revision: int
+    content_json: str
+
+
+@dataclass(frozen=True, slots=True)
+class IntentAuditEvent:
+    """Content-free provenance and outbox fact committed with one intent draft."""
+
+    event_id: str
+    outbox_id: str
+    event_type: str
+    occurred_at: str
+    trace_id: str
+    record_sha256: str
+    idempotency_key: str
+
+
 @runtime_checkable
 class AggregateRepository(Protocol):
     def get(self, aggregate_id: str) -> AggregateRevision: ...
@@ -152,6 +173,21 @@ class PrivacyPolicyRepository(Protocol):
 
 
 @runtime_checkable
+class IntentRevisionRepository(Protocol):
+    def read(self) -> tuple[IntentRevisionRecord, ...]: ...
+
+    def append(
+        self,
+        *,
+        expected_revision: int,
+        domain_project_id: str,
+        manifest_project_id: str,
+        record: IntentRevisionRecord,
+        event: IntentAuditEvent,
+    ) -> None: ...
+
+
+@runtime_checkable
 class UnitOfWork(Protocol):
     @property
     def aggregates(self) -> AggregateRepository: ...
@@ -177,6 +213,9 @@ __all__ = [
     "AggregateRevision",
     "AggregateRevisionDraft",
     "AtomicRepositoryEvent",
+    "IntentAuditEvent",
+    "IntentRevisionRecord",
+    "IntentRevisionRepository",
     "KnowledgeStatus",
     "PrivacyAuditEvent",
     "PrivacyPolicyRecord",

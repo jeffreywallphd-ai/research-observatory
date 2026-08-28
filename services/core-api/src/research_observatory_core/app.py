@@ -24,6 +24,11 @@ from .models import (
     CapabilitiesResponse,
     ConfigurationResponse,
     HealthResponse,
+    IntentDraftProjection,
+    IntentDraftRequest,
+    IntentImpactPreview,
+    IntentImpactRequest,
+    IntentWorkspaceProjection,
     ModuleResponse,
     ModulesResponse,
     OperationPage,
@@ -50,6 +55,7 @@ from .operations import (
 )
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
+from .research_intents import IntentProblem, ResearchIntentService
 from .transport import CoreProblem, TraceCorrelationMiddleware, problem_detail
 
 _ACTION_RESULT = TypeVar("_ACTION_RESULT")
@@ -62,6 +68,7 @@ class RuntimeContext:
     operations: OperationRegistry
     projects: ProjectLifecycleService
     privacy: ProjectPrivacyService
+    intents: ResearchIntentService
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -72,6 +79,7 @@ def create_app(
     operations: OperationRegistry | None = None,
     projects: ProjectLifecycleService | None = None,
     privacy: ProjectPrivacyService | None = None,
+    intents: ResearchIntentService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -82,12 +90,14 @@ def create_app(
         resolved_operations = operations if operations is not None else OperationRegistry()
         resolved_projects = projects if projects is not None else ProjectLifecycleService()
         resolved_privacy = privacy if privacy is not None else ProjectPrivacyService.unavailable(resolved_projects)
+        resolved_intents = intents if intents is not None else ResearchIntentService.unavailable(resolved_projects)
         context = RuntimeContext(
             settings=resolved_settings,
             modules=resolved_modules,
             operations=resolved_operations,
             projects=resolved_projects,
             privacy=resolved_privacy,
+            intents=resolved_intents,
         )
         app.state.runtime = context
         context.state = RuntimeState.READY
@@ -241,6 +251,27 @@ def create_app(
             raise project_problem(request, error) from error
         except PrivacyPolicyProblem as error:
             raise privacy_problem(request, error) from error
+
+    def intent_problem(request: Request, error: IntentProblem) -> CoreProblem:
+        return CoreProblem(
+            problem_detail(
+                status=error.status,
+                code=error.code,
+                title=error.title,
+                detail=error.detail,
+                trace_id=request.state.trace_id,
+                retryable=error.retryable,
+                remediation=error.remediation,
+            )
+        )
+
+    def run_intent_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+        except IntentProblem as error:
+            raise intent_problem(request, error) from error
 
     @app.get("/healthz", response_model=HealthResponse, tags=["runtime"])
     def health(request: Request) -> HealthResponse:
@@ -402,6 +433,48 @@ def create_app(
         return run_privacy_action(
             request,
             lambda: runtime(request).privacy.clear_cache(command, trace_id=request.state.trace_id),
+        )
+
+    @app.post(
+        "/projects/intent",
+        response_model=IntentWorkspaceProjection,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["intent"],
+    )
+    def project_intent(request: Request, command: ProjectRootRequest) -> IntentWorkspaceProjection:
+        return run_intent_action(request, lambda: runtime(request).intents.workspace(command.root))
+
+    @app.post(
+        "/projects/intent/preview",
+        response_model=IntentImpactPreview,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["intent"],
+    )
+    def preview_intent(request: Request, command: IntentImpactRequest) -> IntentImpactPreview:
+        return run_intent_action(request, lambda: runtime(request).intents.preview(command))
+
+    @app.post(
+        "/projects/intent/drafts",
+        response_model=IntentDraftProjection,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["intent"],
+    )
+    def save_intent_draft(
+        request: Request,
+        command: IntentDraftRequest,
+        idempotency_key: str | None = Header(
+            default=None,
+            alias="Idempotency-Key",
+            pattern=r"^[0-9a-f]{32}$",
+        ),
+    ) -> IntentDraftProjection:
+        return run_intent_action(
+            request,
+            lambda: runtime(request).intents.save_draft(
+                command,
+                trace_id=request.state.trace_id,
+                idempotency_key=idempotency_key,
+            ),
         )
 
     @app.get(

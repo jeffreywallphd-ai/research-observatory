@@ -26,7 +26,8 @@ from .ports.database_keys import DatabaseKeyProvider
 from .ports.object_store_keys import ObjectMasterKeyProvider
 from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleService
-from .repositories import sqlite_privacy_policy_repository
+from .repositories import sqlite_intent_revision_repository, sqlite_privacy_policy_repository
+from .research_intents import ResearchIntentService
 from .storage import (
     DEVELOPMENT_PLAINTEXT_PROFILE,
     configure_protected_database_provider,
@@ -86,6 +87,7 @@ def create_runtime_app(
         expected_authority=expected_authority,
         projects=projects,
         privacy=ProjectPrivacyService(projects, sqlite_privacy_policy_repository),
+        intents=ResearchIntentService(projects, repository_factory=sqlite_intent_revision_repository),
     )
 
 

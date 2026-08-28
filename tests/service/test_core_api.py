@@ -173,11 +173,14 @@ class CoreApiTests(unittest.TestCase):
         )
         self.assertEqual(
             [module["moduleId"] for module in modules.json()["modules"]],
-            ["operations", "privacy", "projects", "runtime"],
+            ["intent", "operations", "privacy", "projects", "runtime"],
         )
         self.assertEqual(
             capabilities.json()["capabilities"],
             [
+                "intent.drafts",
+                "intent.impact-preview",
+                "intent.read",
                 "operations.cancel",
                 "operations.events",
                 "operations.read",

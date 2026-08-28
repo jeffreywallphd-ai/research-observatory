@@ -214,6 +214,225 @@ class ProjectProjection(ContractModel):
         return self
 
 
+IntentPrimaryUseCase = Literal[
+    "rapid-orientation",
+    "systematic-review",
+    "living-review",
+    "theory-synthesis",
+    "hermeneutic-inquiry",
+    "critical-problematization",
+    "technical-landscape",
+    "novelty-audit",
+    "empirical-study-design",
+    "empirical-study-to-article",
+    "empirical-results-to-article",
+    "theory-article-development",
+    "critical-article-development",
+    "manuscript-review-revision",
+]
+IntentEpistemicMode = Literal["systematic", "theory", "technical", "hermeneutic", "critical", "novelty", "empirical"]
+IntentSourceKind = Literal[
+    "peer-reviewed-article",
+    "conference-paper",
+    "book",
+    "chapter",
+    "preprint",
+    "technical-report",
+    "dataset",
+    "standard",
+    "patent",
+    "thesis",
+    "web-resource",
+    "private-report",
+]
+IntentEvidenceType = Literal[
+    "empirical-study",
+    "systematic-review",
+    "theoretical-work",
+    "technical-evaluation",
+    "standard",
+    "dataset",
+    "interpretive-text",
+    "stakeholder-account",
+    "critical-analysis",
+    "private-report",
+]
+IntentNoveltyStandard = Literal[
+    "bounded-comparative",
+    "incremental",
+    "theoretical",
+    "methodological",
+    "contextual",
+    "critical",
+    "interpretive",
+    "not-claimed",
+]
+IntentAutonomyLevel = Literal["human-only", "suggest", "prepare-reversible", "execute-reversible"]
+IntentStoppingCondition = Literal[
+    "source-exhaustion",
+    "coverage-threshold",
+    "interpretive-saturation",
+    "benchmark-complete",
+    "nearest-prior-work-challenged",
+    "protocol-complete",
+    "resource-budget",
+    "researcher-decision",
+]
+IntentChangeCategory = Literal["primary-use-case", "corpus-scope", "novelty-scope"]
+
+
+class IntentImpactRequest(ContractModel):
+    root: str = Field(min_length=1, max_length=4096)
+    expected_revision: int = Field(ge=0, le=9_007_199_254_740_991)
+    primary_use_case: IntentPrimaryUseCase
+    source_kinds: tuple[IntentSourceKind, ...] = Field(max_length=32)
+    language_codes: tuple[str, ...] = Field(max_length=32)
+    start_year: int | None = Field(default=None, ge=1000, le=9999)
+    end_year: int | None = Field(default=None, ge=1000, le=9999)
+    include_private_reports: bool
+    novelty_standard: IntentNoveltyStandard | None
+
+    @model_validator(mode="after")
+    def validate_scope(self) -> IntentImpactRequest:
+        if len(set(self.source_kinds)) != len(self.source_kinds):
+            raise ValueError("source kinds must be unique")
+        if len(set(self.language_codes)) != len(self.language_codes):
+            raise ValueError("language codes must be unique")
+        if any(
+            not value
+            or len(value) > 100
+            or value != value.lower()
+            or not all(character.isascii() and (character.isalnum() or character in "._-") for character in value)
+            for value in self.language_codes
+        ):
+            raise ValueError("language codes must be canonical lower-case short codes")
+        if (self.start_year is None) != (self.end_year is None):
+            raise ValueError("temporal scope must provide both bounds or neither")
+        if self.start_year is not None and self.end_year is not None and self.start_year > self.end_year:
+            raise ValueError("temporal scope must be ordered")
+        return self
+
+
+class IntentDraftRequest(IntentImpactRequest):
+    research_objective: str = Field(max_length=4000)
+    contribution_intent: str = Field(max_length=4000)
+    phenomenon: str = Field(max_length=4000)
+    unit_of_analysis: str = Field(max_length=4000)
+    level_of_analysis: str = Field(max_length=4000)
+    evidence_types: tuple[IntentEvidenceType, ...] = Field(max_length=32)
+    novelty_rationale: str = Field(max_length=4000)
+    autonomy_level: IntentAutonomyLevel
+    stopping_conditions: tuple[IntentStoppingCondition, ...] = Field(min_length=1, max_length=3)
+    revision_rationale: str = Field(min_length=1, max_length=4000)
+    impact_acknowledgement: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def validate_draft_collections(self) -> IntentDraftRequest:
+        if len(set(self.evidence_types)) != len(self.evidence_types):
+            raise ValueError("evidence types must be unique")
+        if len(set(self.stopping_conditions)) != len(self.stopping_conditions):
+            raise ValueError("stopping conditions must be unique")
+        for value in (
+            self.research_objective,
+            self.contribution_intent,
+            self.phenomenon,
+            self.unit_of_analysis,
+            self.level_of_analysis,
+            self.novelty_rationale,
+            self.revision_rationale,
+        ):
+            if any(ord(character) < 32 and character not in "\n\r\t" for character in value):
+                raise ValueError("intent narrative contains unsupported control characters")
+        return self
+
+    def to_impact_request(self) -> IntentImpactRequest:
+        return IntentImpactRequest(
+            root=self.root,
+            expected_revision=self.expected_revision,
+            primary_use_case=self.primary_use_case,
+            source_kinds=self.source_kinds,
+            language_codes=self.language_codes,
+            start_year=self.start_year,
+            end_year=self.end_year,
+            include_private_reports=self.include_private_reports,
+            novelty_standard=self.novelty_standard,
+        )
+
+
+class IntentImpactPreview(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    expected_revision: int = Field(ge=0, le=9_007_199_254_740_991)
+    change_categories: tuple[IntentChangeCategory, ...] = Field(max_length=3)
+    affected_workflows: tuple[str, ...] = Field(max_length=32)
+    affected_outputs: tuple[str, ...] = Field(max_length=32)
+    warnings: tuple[str, ...] = Field(max_length=8)
+    acknowledgement_required: bool
+    acknowledgement_token: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def validate_acknowledgement(self) -> IntentImpactPreview:
+        if self.acknowledgement_required != (self.acknowledgement_token is not None):
+            raise ValueError("impact acknowledgement state is inconsistent")
+        return self
+
+
+class IntentDraftProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    intent_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    revision: int = Field(ge=1, le=9_007_199_254_740_991)
+    revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    created_at: str
+    status: Literal["draft"] = "draft"
+    primary_use_case: IntentPrimaryUseCase
+    epistemic_mode: IntentEpistemicMode
+    research_objective: str = Field(max_length=4000)
+    contribution_intent: str = Field(max_length=4000)
+    phenomenon: str = Field(max_length=4000)
+    unit_of_analysis: str = Field(max_length=4000)
+    level_of_analysis: str = Field(max_length=4000)
+    source_kinds: tuple[IntentSourceKind, ...] = Field(max_length=32)
+    language_codes: tuple[str, ...] = Field(max_length=32)
+    start_year: int | None = Field(default=None, ge=1000, le=9999)
+    end_year: int | None = Field(default=None, ge=1000, le=9999)
+    include_private_reports: bool
+    evidence_types: tuple[IntentEvidenceType, ...] = Field(max_length=32)
+    novelty_standard: IntentNoveltyStandard | None
+    novelty_rationale: str = Field(max_length=4000)
+    autonomy_level: IntentAutonomyLevel
+    stopping_conditions: tuple[IntentStoppingCondition, ...] = Field(min_length=1, max_length=3)
+    revision_rationale: str = Field(min_length=1, max_length=4000)
+    unresolved_decisions: tuple[str, ...] = Field(max_length=64)
+    decision_complete: bool
+    can_request_acceptance: bool
+    launch_ready: Literal[False] = False
+
+    @model_validator(mode="after")
+    def validate_decision_state(self) -> IntentDraftProjection:
+        if self.decision_complete != (not self.unresolved_decisions):
+            raise ValueError("intent decision-completeness projection is inconsistent")
+        if self.can_request_acceptance != self.decision_complete:
+            raise ValueError("only decision-complete drafts may request acceptance")
+        return self
+
+
+class IntentRevisionSummary(ContractModel):
+    revision: int = Field(ge=1, le=9_007_199_254_740_991)
+    revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    created_at: str
+    status: Literal["draft"] = "draft"
+    primary_use_case: IntentPrimaryUseCase
+    unresolved_decision_count: int = Field(ge=0, le=64)
+
+
+class IntentWorkspaceProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str = Field(pattern=(r"^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"))
+    current: IntentDraftProjection | None
+    history: tuple[IntentRevisionSummary, ...] = Field(max_length=100)
+
+
 class DeletionDisclosure(ContractModel):
     disclosure_version: Literal["secure-deletion-disclosure-v1"]
     scope: Literal["project-cache-only"]

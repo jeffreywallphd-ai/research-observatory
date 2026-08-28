@@ -35,5 +35,10 @@ inclusive-minimum/exclusive-maximum compatibility range. Failures use RFC 9457
 problem details with stable `RO-CORE-*` codes, an opaque 128-bit trace ID, and
 safe remediation. Operation status is identity-paged; cancellation is explicit;
 progress frames are monotonic SSE events replayed after an accepted sequence.
+The generated client also exposes strict Research Intent workspace,
+change-impact-preview, and draft-save calls. It rejects extra response fields,
+malformed UUIDv7 revision identities, mismatched current/history summaries,
+launchable draft projections, inconsistent impact tokens, invalid scope groups,
+and unbounded idempotency identities before values cross the renderer boundary.
 The current in-memory operation registry is an integration seam only—CAP-03 owns
 durable workflow state and creation behavior.

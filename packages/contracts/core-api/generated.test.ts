@@ -9,6 +9,9 @@ import {
   createCoreApiClient,
   decodeCacheClearPreview,
   decodeCacheClearResult,
+  decodeIntentDraftProjection,
+  decodeIntentImpactPreview,
+  decodeIntentWorkspaceProjection,
   decodePrivacyPolicyProjection,
   decodeProblemDetail,
   decodeProjectProjection,
@@ -342,5 +345,115 @@ describe("generated Core API client", () => {
       cacheRetentionDays: 30,
       egressConsentToken: null,
     })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+  });
+
+  it("binds intent drafts, exact impact acknowledgement, and non-launchable history", async () => {
+    const current = {
+      schemaVersion: "1.0",
+      intentId: "01890f47-eae0-7cc0-98c4-dc0c0c07398f",
+      revisionId: "01890f47-eae1-7cc0-98c4-dc0c0c07398f",
+      revision: 1,
+      revisionContentHash: `sha256:${"a".repeat(64)}`,
+      createdAt: "2026-08-28T19:00:00Z",
+      status: "draft",
+      primaryUseCase: "theory-synthesis",
+      epistemicMode: "theory",
+      researchObjective: "",
+      contributionIntent: "",
+      phenomenon: "",
+      unitOfAnalysis: "",
+      levelOfAnalysis: "",
+      sourceKinds: [],
+      languageCodes: [],
+      startYear: null,
+      endYear: null,
+      includePrivateReports: false,
+      evidenceTypes: [],
+      noveltyStandard: null,
+      noveltyRationale: "",
+      autonomyLevel: "suggest",
+      stoppingConditions: ["interpretive-saturation"],
+      revisionRationale: "Initial bounded draft.",
+      unresolvedDecisions: ["research-question", "source-scope"],
+      decisionComplete: false,
+      canRequestAcceptance: false,
+      launchReady: false,
+    } as const;
+    const summary = {
+      revision: current.revision,
+      revisionId: current.revisionId,
+      revisionContentHash: current.revisionContentHash,
+      createdAt: current.createdAt,
+      status: current.status,
+      primaryUseCase: current.primaryUseCase,
+      unresolvedDecisionCount: current.unresolvedDecisions.length,
+    };
+    const workspace = {
+      schemaVersion: "1.0",
+      projectId: "11111111-1111-4111-8111-111111111111",
+      current,
+      history: [summary],
+    };
+    const impact = {
+      schemaVersion: "1.0",
+      expectedRevision: 1,
+      changeCategories: ["corpus-scope"],
+      affectedWorkflows: ["Search Studio"],
+      affectedOutputs: ["Evidence Matrix"],
+      warnings: ["Prior work is retained."],
+      acknowledgementRequired: true,
+      acknowledgementToken: "b".repeat(64),
+    };
+    expect(decodeIntentDraftProjection(current)).toEqual(current);
+    expect(decodeIntentDraftProjection({ ...current, launchReady: true })).toBeNull();
+    expect(decodeIntentWorkspaceProjection(workspace)).toEqual(workspace);
+    expect(decodeIntentWorkspaceProjection({ ...workspace, history: [{ ...summary, revisionId: current.intentId }] })).toBeNull();
+    expect(decodeIntentImpactPreview(impact)).toEqual(impact);
+    expect(decodeIntentImpactPreview({ ...impact, acknowledgementToken: null })).toBeNull();
+
+    const requests: unknown[] = [];
+    const responses = [workspace, impact, current];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return response(200, responses.shift());
+    });
+    await client.intent({ root: "C:/Research/study-one" });
+    await client.previewIntent({
+      root: "C:/Research/study-one",
+      expectedRevision: 1,
+      primaryUseCase: "systematic-review",
+      sourceKinds: ["peer-reviewed-article"],
+      languageCodes: ["en"],
+      startYear: 2020,
+      endYear: 2026,
+      includePrivateReports: false,
+      noveltyStandard: "bounded-comparative",
+    });
+    await client.saveIntentDraft({
+      root: "C:/Research/study-one",
+      expectedRevision: 1,
+      impactAcknowledgement: "b".repeat(64),
+      primaryUseCase: "systematic-review",
+      researchObjective: "What is known?",
+      contributionIntent: "A bounded synthesis.",
+      phenomenon: "Evidence use",
+      unitOfAnalysis: "Study",
+      levelOfAnalysis: "Field",
+      sourceKinds: ["peer-reviewed-article"],
+      evidenceTypes: ["empirical-study"],
+      languageCodes: ["en"],
+      startYear: 2020,
+      endYear: 2026,
+      includePrivateReports: false,
+      noveltyStandard: "bounded-comparative",
+      noveltyRationale: "Compare the nearest syntheses.",
+      autonomyLevel: "suggest",
+      stoppingConditions: ["coverage-threshold"],
+      revisionRationale: "Refined after scope review.",
+    }, "c".repeat(32));
+    expect(requests.map((request) => (request as { path: string }).path)).toEqual([
+      "/projects/intent", "/projects/intent/preview", "/projects/intent/drafts",
+    ]);
+    expect(requests.at(-1)).toMatchObject({ idempotencyKey: "c".repeat(32) });
   });
 });

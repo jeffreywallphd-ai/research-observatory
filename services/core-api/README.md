@@ -57,11 +57,20 @@ closure, and returns stable content-free unsupported-feature diagnostics. It
 does not choose a model or call a provider; those responsibilities remain in
 later CAP-07 routing and adapter tasks.
 
-The generated Research Intent decoder validates immutable revision lineage,
-mode-sensitive completeness, source/evidence/novelty scope, researcher-retained
-autonomy and stopping authority, and exact accepted governing references. It
-does not persist the accepted-current pointer, render revision UI, or enforce
-operations; those remain later CAP-03.S02 tasks.
+The Research Intent application service validates immutable draft-revision
+lineage, mode-sensitive completeness, source/evidence/novelty scope,
+researcher-retained autonomy and stopping authority, and exact accepted
+governing references. It exposes project-scoped read, impact-preview, and draft
+save routes. Scope-affecting revisions require the exact preview token bound to
+the current revision and proposed boundary. A draft is never launch-ready,
+including when every decision field is complete.
+
+Intent revisions, the manifest-UUIDv4 to domain-UUIDv7 bridge, provenance facts,
+and pending outbox facts commit atomically through the existing canonical SQLite
+`settings`, `provenance_events`, and `outbox_events` tables. No schema migration
+is required for CAP-03.S02.T02: schema version 5 already provides those immutable
+storage and audit contracts. Restart reads revalidate the retained lineage
+before projecting a current draft.
 
 ## Windows sidecar package
 
