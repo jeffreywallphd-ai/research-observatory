@@ -33,12 +33,13 @@ describe("research intent contract", () => {
 
   it("accepts the mode-specific contract branches and their valid stopping boundaries", () => {
     const cases = [
-      ["theory", "theory-synthesis", { kind: "theory", synthesisApproach: "integrative", theoreticalLenses: ["institutional theory"] }, ["interpretive-saturation"]],
-      ["technical", "technical-landscape", { kind: "technical", evaluationTargets: ["local inference runtime"], benchmarkDimensions: ["latency"] }, ["benchmark-complete"]],
-      ["hermeneutic", "hermeneutic-inquiry", { kind: "hermeneutic", interpretiveTradition: "hermeneutic circle", iterationLogic: "Reading revises search and interpretation." }, ["interpretive-saturation"]],
-      ["critical", "critical-problematization", { kind: "critical", criticalTradition: "critical information systems", affectedStakeholders: ["research participants"], reflexivityCommitment: "Retain standpoint and exclusion memos." }, ["researcher-decision"]],
-      ["novelty", "novelty-audit", { kind: "novelty", opportunityTypes: ["theory-gap"], nearestPriorWorkChallenge: true }, ["nearest-prior-work-challenged"]],
-      ["empirical", "empirical-study-design", { kind: "empirical", studyType: "mixed-methods", designConstraints: ["local ethics review"] }, ["protocol-complete"]],
+      ["systematic", "systematic-review", { kind: "systematic", protocol: "systematic-review", inclusionLogic: "Predeclared criteria.", comprehensivenessTarget: "exhaustive" }, ["coverage-threshold", "resource-budget"]],
+      ["theory", "theory-synthesis", { kind: "theory", synthesisApproach: "integrative", theoreticalLenses: ["institutional theory"] }, ["interpretive-saturation", "resource-budget"]],
+      ["technical", "technical-landscape", { kind: "technical", evaluationTargets: ["local inference runtime"], benchmarkDimensions: ["latency"] }, ["benchmark-complete", "resource-budget"]],
+      ["hermeneutic", "hermeneutic-inquiry", { kind: "hermeneutic", interpretiveTradition: "hermeneutic circle", iterationLogic: "Reading revises search and interpretation." }, ["interpretive-saturation", "resource-budget"]],
+      ["critical", "critical-problematization", { kind: "critical", criticalTradition: "critical information systems", affectedStakeholders: ["research participants"], reflexivityCommitment: "Retain standpoint and exclusion memos." }, ["researcher-decision", "resource-budget"]],
+      ["novelty", "novelty-audit", { kind: "novelty", opportunityTypes: ["theory-gap"], nearestPriorWorkChallenge: true }, ["nearest-prior-work-challenged", "resource-budget"]],
+      ["empirical", "empirical-study-design", { kind: "empirical", studyType: "mixed-methods", designConstraints: ["local ethics review"] }, ["protocol-complete", "resource-budget"]],
     ] as const;
     for (const [mode, useCase, requirements, conditions] of cases) {
       const revision = fixture("valid-systematic-intent.v1.json");
@@ -120,6 +121,47 @@ describe("research intent contract", () => {
     expect(researchIntentRevisionErrors(authority)).toEqual(
       expect.arrayContaining(["intent-acceptance-is-human", "autonomy-retains-researcher-authority"]),
     );
+  });
+
+  it("bounds autonomous actions by vocabulary and autonomy level", () => {
+    for (const reserved of ["accept-intent", "change-scope", "external-egress"]) {
+      const revision = fixture("valid-systematic-intent.v1.json");
+      (revision.autonomy as Record<string, unknown>).allowedActions = [reserved];
+      expect(decodeResearchIntentRevision(revision), reserved).toBeNull();
+    }
+    const humanOnly = fixture("valid-systematic-intent.v1.json");
+    (humanOnly.autonomy as Record<string, unknown>).level = "human-only";
+    expect(researchIntentRevisionErrors(humanOnly)).toContain("autonomy-actions-match-level");
+    (humanOnly.autonomy as Record<string, unknown>).allowedActions = [];
+    expect(researchIntentRevisionErrors(humanOnly)).toEqual([]);
+    const suggest = fixture("valid-systematic-intent.v1.json");
+    (suggest.autonomy as Record<string, unknown>).level = "suggest";
+    (suggest.autonomy as Record<string, unknown>).allowedActions = ["prepare-screening-batch"];
+    expect(researchIntentRevisionErrors(suggest)).toContain("autonomy-actions-match-level");
+    (suggest.autonomy as Record<string, unknown>).allowedActions = ["propose-query", "recommend-stopping"];
+    expect(researchIntentRevisionErrors(suggest)).toEqual([]);
+    const execution = fixture("valid-systematic-intent.v1.json");
+    (execution.autonomy as Record<string, unknown>).allowedActions = ["execute-approved-query"];
+    expect(researchIntentRevisionErrors(execution)).toContain("autonomy-actions-match-level");
+    (execution.autonomy as Record<string, unknown>).level = "execute-reversible";
+    expect(researchIntentRevisionErrors(execution)).toEqual([]);
+  });
+
+  it("requires mode-closed stopping sets and human-gated approved egress", () => {
+    const mixed = fixture("valid-systematic-intent.v1.json");
+    (mixed.stoppingRule as Record<string, unknown>).conditions = ["coverage-threshold", "benchmark-complete"];
+    expect(researchIntentRevisionErrors(mixed)).toContain("stopping-rule-matches-epistemic-mode");
+
+    const missingGate = fixture("valid-systematic-intent.v1.json");
+    missingGate.egressPolicy = { mode: "approved-redacted", approvedDestinationIds: ["approved-provider"] };
+    expect(researchIntentRevisionErrors(missingGate)).toContain("egress-policy-is-consistent");
+    const gates = (missingGate.autonomy as Record<string, unknown>).requiredHumanGates as string[];
+    gates.push("external-egress");
+    expect(researchIntentRevisionErrors(missingGate)).toEqual([]);
+
+    const contradictoryGate = fixture("valid-systematic-intent.v1.json");
+    ((contradictoryGate.autonomy as Record<string, unknown>).requiredHumanGates as string[]).push("external-egress");
+    expect(researchIntentRevisionErrors(contradictoryGate)).toContain("egress-policy-is-consistent");
   });
 
   it("denies accepted revisions with unresolved or unspecified core intent", () => {

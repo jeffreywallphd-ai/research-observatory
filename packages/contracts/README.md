@@ -91,4 +91,6 @@ and content hash, explicit rationale and decision state, seven mode-specific
 requirement branches, source/evidence/novelty/autonomy/stopping/egress policy,
 and distinct unknown/not-applicable states. Only a complete human-accepted
 revision can yield a governing reference. Its Draft 2020-12 schema generates
-matching TypeScript and Python immutable decoders.
+matching TypeScript and Python immutable decoders. The contract uses a closed,
+level-bounded autonomy-action vocabulary, mode-closed stopping sets, and
+destination-plus-human-gate consistency for any approved egress declaration.

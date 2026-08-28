@@ -47,10 +47,21 @@ class ResearchIntentContractTests(unittest.TestCase):
     def test_all_epistemic_modes_have_distinct_valid_requirements_and_stopping_rules(self) -> None:
         cases: tuple[tuple[str, str, dict[str, Any], list[str]], ...] = (
             (
+                "systematic",
+                "systematic-review",
+                {
+                    "kind": "systematic",
+                    "protocol": "systematic-review",
+                    "inclusionLogic": "Predeclared criteria.",
+                    "comprehensivenessTarget": "exhaustive",
+                },
+                ["coverage-threshold", "resource-budget"],
+            ),
+            (
                 "theory",
                 "theory-synthesis",
                 {"kind": "theory", "synthesisApproach": "integrative", "theoreticalLenses": ["institutional theory"]},
-                ["interpretive-saturation"],
+                ["interpretive-saturation", "resource-budget"],
             ),
             (
                 "technical",
@@ -60,7 +71,7 @@ class ResearchIntentContractTests(unittest.TestCase):
                     "evaluationTargets": ["local inference runtime"],
                     "benchmarkDimensions": ["latency"],
                 },
-                ["benchmark-complete"],
+                ["benchmark-complete", "resource-budget"],
             ),
             (
                 "hermeneutic",
@@ -70,7 +81,7 @@ class ResearchIntentContractTests(unittest.TestCase):
                     "interpretiveTradition": "hermeneutic circle",
                     "iterationLogic": "Reading revises search and interpretation.",
                 },
-                ["interpretive-saturation"],
+                ["interpretive-saturation", "resource-budget"],
             ),
             (
                 "critical",
@@ -81,19 +92,19 @@ class ResearchIntentContractTests(unittest.TestCase):
                     "affectedStakeholders": ["research participants"],
                     "reflexivityCommitment": "Retain standpoint and exclusion memos.",
                 },
-                ["researcher-decision"],
+                ["researcher-decision", "resource-budget"],
             ),
             (
                 "novelty",
                 "novelty-audit",
                 {"kind": "novelty", "opportunityTypes": ["theory-gap"], "nearestPriorWorkChallenge": True},
-                ["nearest-prior-work-challenged"],
+                ["nearest-prior-work-challenged", "resource-budget"],
             ),
             (
                 "empirical",
                 "empirical-study-design",
                 {"kind": "empirical", "studyType": "mixed-methods", "designConstraints": ["local ethics review"]},
-                ["protocol-complete"],
+                ["protocol-complete", "resource-budget"],
             ),
         )
         for mode, use_case, requirements, conditions in cases:
@@ -180,6 +191,47 @@ class ResearchIntentContractTests(unittest.TestCase):
         reference = governing_research_intent_reference(revision)
         assert reference is not None
         self.assertEqual(2, reference["revision"])
+
+    def test_autonomous_actions_are_bounded_by_vocabulary_and_level(self) -> None:
+        for reserved in ("accept-intent", "change-scope", "external-egress"):
+            with self.subTest(reserved=reserved):
+                revision = fixture("valid-systematic-intent.v1.json")
+                revision["autonomy"]["allowedActions"] = [reserved]
+                self.assertIsNone(decode_research_intent_revision(revision))
+        human_only = fixture("valid-systematic-intent.v1.json")
+        human_only["autonomy"]["level"] = "human-only"
+        self.assertIn("autonomy-actions-match-level", research_intent_revision_errors(human_only))
+        human_only["autonomy"]["allowedActions"] = []
+        self.assertEqual((), research_intent_revision_errors(human_only))
+        suggest = fixture("valid-systematic-intent.v1.json")
+        suggest["autonomy"]["level"] = "suggest"
+        suggest["autonomy"]["allowedActions"] = ["prepare-screening-batch"]
+        self.assertIn("autonomy-actions-match-level", research_intent_revision_errors(suggest))
+        suggest["autonomy"]["allowedActions"] = ["propose-query", "recommend-stopping"]
+        self.assertEqual((), research_intent_revision_errors(suggest))
+        execution = fixture("valid-systematic-intent.v1.json")
+        execution["autonomy"]["allowedActions"] = ["execute-approved-query"]
+        self.assertIn("autonomy-actions-match-level", research_intent_revision_errors(execution))
+        execution["autonomy"]["level"] = "execute-reversible"
+        self.assertEqual((), research_intent_revision_errors(execution))
+
+    def test_stopping_sets_are_mode_closed_and_approved_egress_is_human_gated(self) -> None:
+        mixed = fixture("valid-systematic-intent.v1.json")
+        mixed["stoppingRule"]["conditions"] = ["coverage-threshold", "benchmark-complete"]
+        self.assertIn("stopping-rule-matches-epistemic-mode", research_intent_revision_errors(mixed))
+
+        missing_gate = fixture("valid-systematic-intent.v1.json")
+        missing_gate["egressPolicy"] = {
+            "mode": "approved-redacted",
+            "approvedDestinationIds": ["approved-provider"],
+        }
+        self.assertIn("egress-policy-is-consistent", research_intent_revision_errors(missing_gate))
+        missing_gate["autonomy"]["requiredHumanGates"].append("external-egress")
+        self.assertEqual((), research_intent_revision_errors(missing_gate))
+
+        contradictory_gate = fixture("valid-systematic-intent.v1.json")
+        contradictory_gate["autonomy"]["requiredHumanGates"].append("external-egress")
+        self.assertIn("egress-policy-is-consistent", research_intent_revision_errors(contradictory_gate))
 
     def test_accepted_revision_must_be_complete_before_downstream_reference(self) -> None:
         incomplete = fixture("valid-systematic-intent.v1.json")

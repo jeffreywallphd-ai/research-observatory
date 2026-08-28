@@ -13,6 +13,7 @@
     "accepted-revision-is-decision-complete",
     "intent-acceptance-is-human",
     "autonomy-retains-researcher-authority",
+    "autonomy-actions-match-level",
     "stopping-rule-matches-epistemic-mode",
     "source-temporal-range-is-ordered",
     "egress-policy-is-consistent"
@@ -45,6 +46,16 @@
     "ShortCode": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9._-]{0,99}(?![\\s\\S])"
+    },
+    "AutonomyAction": {
+      "enum": [
+        "propose-query",
+        "recommend-stopping",
+        "prepare-screening-batch",
+        "prepare-draft-output",
+        "execute-approved-query",
+        "execute-approved-screening-batch"
+      ]
     },
     "SpecifiedStatement": {
       "type": "object",
@@ -180,7 +191,7 @@
       "required": ["level", "allowedActions", "requiredHumanGates", "mayAcceptIntent", "mayChangeScope"],
       "properties": {
         "level": { "enum": ["human-only", "suggest", "prepare-reversible", "execute-reversible"] },
-        "allowedActions": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "$ref": "#/$defs/ShortCode" } },
+        "allowedActions": { "type": "array", "maxItems": 6, "uniqueItems": true, "items": { "$ref": "#/$defs/AutonomyAction" } },
         "requiredHumanGates": {
           "type": "array",
           "minItems": 2,
