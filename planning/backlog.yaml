@@ -6058,15 +6058,21 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T14:22:02+00:00'
-      updated_at: '2026-08-28T14:22:02+00:00'
+      updated_at: '2026-08-28T15:46:03+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Compatibility policy candidate f9b97b50 is criterion-complete; independent review must evaluate
+        the disclosed unchanged 72/16 historical foundation baseline.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S01.T03.json
+        sha256: e664dde57fde1fd4ed6ad979015ea606e94ff91042a015da4d8b5457828c634e
+        commit: f9b97b50cb3b4fa42db4aa415ea2bb82544de285
+        recorded_at: '2026-08-28T15:46:03+00:00'
       review:
         reviewer: null
         result: null
@@ -6077,10 +6083,105 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-28T14:22:02+00:00'
         expires_at: '2026-08-28T22:22:02+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-08-28T15:46:03+00:00'
+          candidate_commit: f9b97b50cb3b4fa42db4aa415ea2bb82544de285
+          base_commit: bf7ddc41c48ea5db259d7868de6fb15d7797ac1e
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S01.T03.json
+            sha256: e664dde57fde1fd4ed6ad979015ea606e94ff91042a015da4d8b5457828c634e
+            commit: f9b97b50cb3b4fa42db4aa415ea2bb82544de285
+            recorded_at: '2026-08-28T15:46:03+00:00'
+          acceptance_criteria_sha256: 364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1
+          changed_paths:
+          - docs/architecture/README.md
+          - docs/architecture/domain-compatibility.md
+          - docs/architecture/domain-contracts.md
+          - docs/architecture/domain-lifecycles.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/README.md
+          - packages/contracts/domain/compatibility.generated.ts
+          - packages/contracts/domain/compatibility.template.py.txt
+          - packages/contracts/domain/compatibility.template.ts.txt
+          - packages/contracts/domain/compatibility.test.ts
+          - packages/contracts/domain/domain-compatibility.schema.json
+          - packages/contracts/domain/domain-compatibility.v1.json
+          - packages/contracts/domain/fixtures/domain-contract-release.current.v1.json
+          - packages/contracts/domain/fixtures/domain-contract-release.prior.v0.1.json
+          - packages/contracts/domain/generate-compatibility.mjs
+          - packages/contracts/package.json
+          - packaging/build-inputs.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S01.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/README.md
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/domain_compatibility.py
+          - tests/contracts/test_domain_compatibility.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tests/service/test_domain_compatibility_service.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe
+            packages/contracts/domain/generate-lifecycle.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate-compatibility.mjs
+            --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false;
+            npm test --prefix packages/contracts -- --run
+          - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py
+          - .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py
+          - .venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check
+            tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package
+          - .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-f9b97b5.json
+          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo
+            . --base bf7ddc41c48ea5db259d7868de6fb15d7797ac1e --head f9b97b50cb3b4fa42db4aa415ea2bb82544de285
+          - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-f9b97b5.json
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
+            --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved
+          - $env:UV_CACHE_DIR='artifacts/tmp/uv-cache'; uv lock --check; git diff --check
+          deferred_checks:
+          - 'The governed affected foundation/service attempt reproduced the historical 72-failure/16-error governance fixture
+            baseline unchanged from independently approved CAP-02.S04.T04 evidence. It remains mandatory reconciliation work
+            before W1 exit qualification and is not represented as passing or deleted to make this task pass. Exact failed-run
+            report SHA-256: 6c8d120feed8a7d9d1c369d18e2da9fd1f38138f0a033c9384cad3443bf541e2.'
+          - Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval, when the complete
+            T01-T03 contract boundary is available.
+          - Cross-capability end-to-end, performance, security, accessibility, cancellation, migration, restart, recovery,
+            and release qualification remain mandatory at the applicable checkpoint and W1 exit.
+          selection_rationale: This high-risk task changes shared cross-language contract generation, compatibility interpretation,
+            process-boundary negotiation, build-schema provenance, and frozen-sidecar inputs. The selected task-owned matrix
+            therefore covers exact generation, schema/source hashing, strict type checking, current/prior behavior, breaking-change
+            authority, hostile inputs, deterministic restart, all contract and service tests, a real frozen Windows sidecar,
+            quality, architecture/ADR, build provenance, dependency locks, planning integrity, and the governed affected profile.
+            The affected profile's unchanged 72/16 historical governance baseline is disclosed rather than represented as
+            passing.
+          selection_sha256: 05a48c33165076cbb2307eddf2a65de0695e8851e1ddaf8e576cff5c8592ced0
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - contracts:unit
+          - service:unit
+          - packaging:unit
+          - foundation:quality
+          - foundation:build-manifest
+          - foundation:adr
+          - foundation:backlog
+          - foundation:backlog-views
+          - foundation:unit
+          packet_sha256: 2ded47b0291885a365f823ad5fb01bbe2f1cdc3ce1069bba6ced14b9a268ac9b
     platform_targets:
     - windows-x64
     completion:
