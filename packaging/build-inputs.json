@@ -22,6 +22,7 @@
     "packages/contracts/domain/domain-compatibility.schema.json",
     "packages/contracts/domain/domain-core.schema.json",
     "packages/contracts/domain/domain-lifecycle.schema.json",
+    "packages/contracts/model-gateway/model-task.schema.json",
     "packages/contracts/project/project-layout.schema.json",
     "packages/contracts/project/project-lifecycle-event.schema.json",
     "packages/contracts/project/project-lock.schema.json",

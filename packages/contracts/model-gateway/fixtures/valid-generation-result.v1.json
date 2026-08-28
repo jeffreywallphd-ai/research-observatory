@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-model-result",
+  "taskId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a1",
+  "taskKind": "generation",
+  "contractVersion": "1.0.0",
+  "requestHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "traceId": "0123456789abcdef0123456789abcdef",
+  "status": "succeeded",
+  "route": {
+    "selection": "selected",
+    "providerId": "local-runtime",
+    "providerVersion": "1.0.0",
+    "modelId": "scholar-small",
+    "modelVersion": "2026.08.1",
+    "runtimeId": "onnx-runtime",
+    "runtimeVersion": "1.23.0",
+    "configurationHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "evaluationId": "research-generation-baseline",
+    "evaluationVersion": "1.0.0"
+  },
+  "policyDecision": {
+    "decisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a6",
+    "policyVersion": "1.0.0",
+    "outcome": "allowed",
+    "reasonCodes": ["local-confidential-approved"]
+  },
+  "latency": {"queueMs": 2, "executionMs": 18, "totalMs": 20},
+  "usage": {"reporting": "reported", "inputTokens": 120, "outputTokens": 16, "totalTokens": 136},
+  "validation": {
+    "outcome": "accepted",
+    "validatorVersion": "1.0.0",
+    "outputHash": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+    "errorCodes": []
+  },
+  "confidence": {"kind": "quantified", "value": 0.82, "calibrationId": "generation-calibration"},
+  "citationStatus": "supplied",
+  "citations": [
+    {
+      "sourceAggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a4",
+      "sourceRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a5",
+      "sourceContentHash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "locatorHash": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+    }
+  ],
+  "output": {
+    "kind": "generation",
+    "artifact": {
+      "artifactId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a7",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a8",
+      "contentHash": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+      "mediaType": "application/json"
+    }
+  },
+  "diagnostics": []
+}

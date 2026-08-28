@@ -50,6 +50,13 @@ prior UUIDv4 reader-bridge fixture, denies ungoverned breaking proposals, and
 performs deterministic exact-version negotiation without copying advertised
 payloads or component details into failures.
 
+The generated model-gateway contract decoder provides Core's provider-neutral
+task boundary. It validates task-specific content references and complete
+result provenance, owns immutable snapshots, enforces pinned routes and citation
+closure, and returns stable content-free unsupported-feature diagnostics. It
+does not choose a model or call a provider; those responsibilities remain in
+later CAP-07 routing and adapter tasks.
+
 ## Windows sidecar package
 
 `packaging/sidecar-build.json` fixes the W0-W5 release package to a

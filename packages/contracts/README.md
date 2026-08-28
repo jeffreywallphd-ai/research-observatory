@@ -76,3 +76,11 @@ the explicit non-isolation residual threat.
 consent before non-offline preferences, per-task egress preview enforcement,
 non-automatic document retention review, and exact-preview-bound logical cache
 removal with explicit physical-erasure limitations.
+
+`model-gateway/` defines the provider-neutral model task and result boundary.
+Eight task-specific input envelopes carry immutable content references rather
+than raw research text; every result records exact route, policy, latency,
+usage, validation, confidence, and citation state. Pinned tasks deny silent
+substitution, and unsupported required features fail explicitly before provider
+execution. The Draft 2020-12 schema deterministically generates matching
+TypeScript and Python immutable decoders.
