@@ -5646,7 +5646,7 @@ capabilities:
     depends_on:
     - CAP-00.S02.T01
     - CAP-00.S05.T03
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-03.S01.T01
       capability_id: CAP-03
@@ -6549,11 +6549,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-03.S01.integration.json
+      notes: All three tasks are independently approved; the affected cross-language contract, Core service, Windows frozen-sidecar,
+        denial, restart, migration/compatibility, architecture, provenance and planning union passes. Independent slice review
+        is required before completion.
   - id: CAP-03.S02
     title: Research intent contract and mode governance
     outcome: Every project declares its scholarly purpose, scope, evidence rules, autonomy, and stopping logic before consequential

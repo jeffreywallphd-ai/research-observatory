@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 83e4413f80e81a76bca0fd53fc7b80cc4e3f9640b872859ac3ed40309bae63ee
+source_sha256: 8635265b8a468e74ab564326c83a2203517d66bfccda7b1c79461f51d61f74d0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3388,7 +3388,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A small stable core model defines records, documents, evidence, decisions, workflows, ontologies, graphs, opportunities, and monitoring events.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
