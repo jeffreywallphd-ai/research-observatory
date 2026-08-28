@@ -136,7 +136,7 @@ class IntentRevisionRecord:
 
 @dataclass(frozen=True, slots=True)
 class IntentAuditEvent:
-    """Content-free provenance and outbox fact committed with one intent draft."""
+    """Content-free provenance and outbox fact committed with one intent revision."""
 
     event_id: str
     outbox_id: str
@@ -148,6 +148,26 @@ class IntentAuditEvent:
     record_sha256: str
     command_sha256: str
     idempotency_key: str
+
+
+@dataclass(frozen=True, slots=True)
+class IntentPolicyDecisionRecord:
+    """One content-free, governing-reference-bound policy decision."""
+
+    decision_id: str
+    content_json: str
+
+
+@dataclass(frozen=True, slots=True)
+class IntentPolicyAuditEvent:
+    """Provenance fact committed with one content-free policy decision."""
+
+    event_id: str
+    occurred_at: str
+    trace_id: str
+    actor_type: Literal["human"]
+    actor_id: str
+    record_sha256: str
 
 
 @runtime_checkable
@@ -190,6 +210,7 @@ class IntentRevisionRepository(Protocol):
         actor_id: str,
         idempotency_key: str,
         command_sha256: str,
+        event_type: str = "intent.draft.saved",
     ) -> IntentRevisionRecord | None: ...
 
     def append(
@@ -201,6 +222,13 @@ class IntentRevisionRepository(Protocol):
         record: IntentRevisionRecord,
         event: IntentAuditEvent,
     ) -> IntentRevisionRecord: ...
+
+    def append_policy_decision(
+        self,
+        *,
+        record: IntentPolicyDecisionRecord,
+        event: IntentPolicyAuditEvent,
+    ) -> None: ...
 
 
 @runtime_checkable

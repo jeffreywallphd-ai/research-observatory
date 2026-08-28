@@ -14,15 +14,21 @@ from typing import Any, cast
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .logging import emit_log_record
 from .models import (
+    IntentAcceptRequest,
     IntentDraftProjection,
     IntentDraftRequest,
+    IntentGoverningReference,
     IntentImpactPreview,
     IntentImpactRequest,
+    IntentPolicyDecision,
+    IntentPolicyRequest,
     IntentRevisionSummary,
     IntentWorkspaceProjection,
 )
 from .ports.repositories import (
     IntentAuditEvent,
+    IntentPolicyAuditEvent,
+    IntentPolicyDecisionRecord,
     IntentRevisionRecord,
     IntentRevisionRepository,
     RepositoryConflict,
@@ -30,7 +36,11 @@ from .ports.repositories import (
     RepositoryProblem,
 )
 from .projects import ProjectLifecycleService
-from .research_intent_contracts import decode_research_intent_revision
+from .research_intent_contracts import (
+    decode_research_intent_revision,
+    governing_research_intent_reference,
+    research_intent_snapshot_json,
+)
 
 _RepositoryFactory = Callable[[Path, str], IntentRevisionRepository]
 _MAX_HISTORY = 100
@@ -49,8 +59,18 @@ class _UnavailableIntentRepository(IntentRevisionRepository):
         actor_id: str,
         idempotency_key: str,
         command_sha256: str,
+        event_type: str = "intent.draft.saved",
     ) -> IntentRevisionRecord | None:
-        del manifest_project_id, actor_id, idempotency_key, command_sha256
+        del manifest_project_id, actor_id, idempotency_key, command_sha256, event_type
+        raise RepositoryProblem("research intent repository is unavailable")
+
+    def append_policy_decision(
+        self,
+        *,
+        record: IntentPolicyDecisionRecord,
+        event: IntentPolicyAuditEvent,
+    ) -> None:
+        del record, event
         raise RepositoryProblem("research intent repository is unavailable")
 
     def append(
@@ -151,6 +171,24 @@ _OUTPUTS = {
     "manuscript-review-revision": ("Reviewer issue map", "Revision record", "Response letter"),
 }
 
+_GATE_ACTIONS = {
+    "accept-intent": "intent-acceptance",
+    "change-scope": "scope-change",
+    "external-egress": "external-egress",
+    "adjudicate-evidence": "evidence-adjudication",
+    "approve-claim": "claim-approval",
+    "publish-output": "publication",
+}
+_OUTPUT_LABELS = {
+    "systematic": "systematic-working-output",
+    "theory": "theory-working-output",
+    "technical": "technical-working-output",
+    "hermeneutic": "hermeneutic-working-output",
+    "critical": "critical-working-output",
+    "novelty": "novelty-working-output",
+    "empirical": "empirical-working-output",
+}
+
 
 @dataclass(slots=True)
 class IntentProblem(Exception):
@@ -191,6 +229,17 @@ def _command_sha256(command: IntentDraftRequest, *, manifest_project_id: str, ac
         "command": command.model_dump(mode="json", by_alias=True),
         "manifestProjectId": manifest_project_id,
         "operation": "intent.draft.save",
+        "schemaVersion": "1.0",
+    }
+    return hashlib.sha256(_canonical_json(payload).encode("utf-8")).hexdigest()
+
+
+def _accept_command_sha256(command: IntentAcceptRequest, *, manifest_project_id: str, actor_id: str) -> str:
+    payload = {
+        "actor": {"actorId": actor_id, "actorType": "human"},
+        "command": command.model_dump(mode="json", by_alias=True),
+        "manifestProjectId": manifest_project_id,
+        "operation": "intent.accept",
         "schemaVersion": "1.0",
     }
     return hashlib.sha256(_canonical_json(payload).encode("utf-8")).hexdigest()
@@ -416,6 +465,60 @@ def _build_revision(
     return revision
 
 
+def _build_acceptance(
+    command: IntentAcceptRequest,
+    *,
+    prior: Mapping[str, object],
+    actor_id: str,
+) -> dict[str, object]:
+    now = _timestamp()
+    revision = json.loads(research_intent_snapshot_json(cast(Any, prior)))
+    if not isinstance(revision, dict):
+        raise RepositoryProblem("research intent acceptance source is invalid")
+    revision.update(
+        {
+            "revisionId": new_uuid_v7(),
+            "revision": command.expected_revision + 1,
+            "parentRevision": {
+                "revisionId": prior["revisionId"],
+                "revision": prior["revision"],
+                "revisionContentHash": prior["revisionContentHash"],
+            },
+            "revisionContentHash": "sha256:" + "0" * 64,
+            "createdAt": now,
+            "createdBy": {"actorType": "human", "actorId": actor_id},
+            "status": "accepted",
+            "revisionRationale": command.decision_rationale.strip(),
+            "decision": {
+                "disposition": "accepted",
+                "actorType": "human",
+                "actorId": actor_id,
+                "decidedAt": now,
+                "rationale": command.decision_rationale.strip(),
+            },
+        }
+    )
+    revision["revisionContentHash"] = _content_hash(revision)
+    if decode_research_intent_revision(revision) is None:
+        raise _problem(
+            status=422,
+            code="RO-CORE-INTENT-ACCEPTANCE-CONTRACT-INVALID",
+            title="Research intent acceptance is inconsistent",
+            detail="The accepted revision does not satisfy the immutable intent contract.",
+            remediation="Reload the decision-complete draft and retry its explicit human acceptance.",
+        )
+    return cast(dict[str, object], revision)
+
+
+def _governing_reference(revision: Mapping[str, object] | None) -> IntentGoverningReference | None:
+    if revision is None:
+        return None
+    reference = governing_research_intent_reference(revision)
+    if reference is None:
+        return None
+    return IntentGoverningReference.model_validate(reference)
+
+
 def _projection(revision: Mapping[str, object]) -> IntentDraftProjection:
     source = cast(Mapping[str, object], revision["sourceScope"])
     novelty = cast(Mapping[str, object], revision["noveltyStandard"])
@@ -423,12 +526,14 @@ def _projection(revision: Mapping[str, object]) -> IntentDraftProjection:
     stopping = cast(Mapping[str, object], revision["stoppingRule"])
     unresolved = tuple(cast(Sequence[str], revision["unresolvedDecisions"]))
     temporal = cast(Mapping[str, object], source.get("temporalCoverage", {}))
+    accepted = revision["status"] == "accepted"
     return IntentDraftProjection(
         intent_id=cast(str, revision["intentId"]),
         revision_id=cast(str, revision["revisionId"]),
         revision=cast(int, revision["revision"]),
         revision_content_hash=cast(str, revision["revisionContentHash"]),
         created_at=cast(str, revision["createdAt"]),
+        status=cast(Any, revision["status"]),
         primary_use_case=cast(Any, revision["primaryUseCase"]),
         epistemic_mode=cast(Any, revision["epistemicMode"]),
         research_objective=_specified_value(revision["researchQuestion"]),
@@ -449,8 +554,8 @@ def _projection(revision: Mapping[str, object]) -> IntentDraftProjection:
         revision_rationale=cast(str, revision["revisionRationale"]),
         unresolved_decisions=unresolved,
         decision_complete=not unresolved,
-        can_request_acceptance=not unresolved,
-        launch_ready=False,
+        can_request_acceptance=not unresolved and not accepted,
+        launch_ready=accepted,
     )
 
 
@@ -461,6 +566,7 @@ def _summary(revision: Mapping[str, object]) -> IntentRevisionSummary:
         revision_id=cast(str, revision["revisionId"]),
         revision_content_hash=cast(str, revision["revisionContentHash"]),
         created_at=cast(str, revision["createdAt"]),
+        status=cast(Any, revision["status"]),
         primary_use_case=cast(Any, revision["primaryUseCase"]),
         unresolved_decision_count=len(unresolved),
     )
@@ -584,6 +690,91 @@ def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest)
     )
 
 
+def _policy_decision(
+    command: IntentPolicyRequest,
+    *,
+    accepted: Mapping[str, object] | None,
+) -> IntentPolicyDecision:
+    decision_id = new_uuid_v7()
+    evaluated_at = _timestamp()
+    governing = _governing_reference(accepted)
+    if accepted is None or governing is None:
+        return IntentPolicyDecision(
+            decision_id=decision_id,
+            evaluated_at=evaluated_at,
+            action=command.action,
+            subject_type=command.subject_type,
+            outcome="deny",
+            reason_code="no-active-accepted-intent",
+            explanation="Consequential work is denied because the project has no valid accepted intent revision.",
+            governing_intent=None,
+            required_gates=(),
+            output_label=None,
+            stopping_requires_human_confirmation=True,
+        )
+    mode = cast(str, accepted["epistemicMode"])
+    autonomy = cast(Mapping[str, object], accepted["autonomy"])
+    allowed = set(cast(Sequence[str], autonomy["allowedActions"]))
+    selected_stopping = set(cast(Sequence[str], cast(Mapping[str, object], accepted["stoppingRule"])["conditions"]))
+    output_label = cast(Any, _OUTPUT_LABELS[mode])
+    required_gates: tuple[Any, ...] = ()
+    outcome = "allow"
+    reason = "active-intent-allows-action"
+    explanation = "The action is permitted by the active accepted intent and is bound to its governing reference."
+
+    if command.action == "external-egress":
+        outcome = "deny"
+        reason = "active-intent-prohibits-external-egress"
+        explanation = (
+            "The active intent is local-only, so an external-egress gate cannot be bypassed or self-authorized."
+        )
+        required_gates = ("external-egress",)
+    elif command.action in _GATE_ACTIONS:
+        gate = cast(Any, _GATE_ACTIONS[command.action])
+        outcome = "require-confirmation"
+        reason = f"{gate}-requires-human-confirmation"
+        explanation = (
+            f"The {gate} gate remains under explicit human authority and cannot be satisfied by policy evaluation."
+        )
+        required_gates = (gate,)
+    elif command.action in {"recommend-stopping", "confirm-stopping"}:
+        if command.stopping_condition is None or command.stopping_condition not in selected_stopping:
+            outcome = "deny"
+            reason = "stopping-condition-not-governed"
+            explanation = "The requested stopping condition is absent from the active intent revision."
+        elif command.stopping_condition == "resource-budget" and len(selected_stopping) == 1:
+            outcome = "deny"
+            reason = "resource-budget-cannot-be-sole-stopping-rule"
+            explanation = "A resource budget is secondary and cannot independently establish scholarly completion."
+        else:
+            outcome = "recommend-human" if command.action == "recommend-stopping" else "require-confirmation"
+            reason = "stopping-requires-human-confirmation"
+            explanation = (
+                "The selected mode-specific stopping condition may be reported, but only a human may confirm stopping."
+            )
+    elif command.subject_type != "human" and command.action not in allowed:
+        outcome = "deny"
+        reason = "autonomy-level-prohibits-action"
+        explanation = "The active intent autonomy level does not permit this model or system action."
+    elif command.action == "prepare-draft-output":
+        required_gates = ("claim-approval", "publication")
+        explanation = "A labeled working draft may be prepared; claim approval and publication remain human gates."
+
+    return IntentPolicyDecision(
+        decision_id=decision_id,
+        evaluated_at=evaluated_at,
+        action=command.action,
+        subject_type=command.subject_type,
+        outcome=cast(Any, outcome),
+        reason_code=reason,
+        explanation=explanation,
+        governing_intent=governing,
+        required_gates=required_gates,
+        output_label=None if outcome == "deny" else output_label,
+        stopping_requires_human_confirmation=True,
+    )
+
+
 class ResearchIntentService:
     """Project-scoped application service for non-governing draft revisions."""
 
@@ -654,6 +845,52 @@ class ResearchIntentService:
             ),
         )
 
+    def accept(
+        self,
+        command: IntentAcceptRequest,
+        *,
+        trace_id: str,
+        idempotency_key: str,
+    ) -> IntentDraftProjection:
+        actor_id = self._require_actor()
+        return self._projects.perform_open_project_action(
+            root=command.root,
+            require_write=True,
+            action=lambda path, project_id: self._accept(
+                self._repository_factory(path, project_id),
+                project_id,
+                command,
+                trace_id=trace_id,
+                idempotency_key=idempotency_key,
+                actor_id=actor_id,
+            ),
+        )
+
+    def evaluate_policy(self, command: IntentPolicyRequest, *, trace_id: str) -> IntentPolicyDecision:
+        actor_id = self._require_actor()
+        return self._projects.perform_open_project_action(
+            root=command.root,
+            require_write=True,
+            action=lambda path, project_id: self._evaluate_policy(
+                self._repository_factory(path, project_id),
+                command,
+                trace_id=trace_id,
+                actor_id=actor_id,
+            ),
+        )
+
+    def _require_actor(self) -> str:
+        if self._local_actor_id is None:
+            raise _problem(
+                status=503,
+                code="RO-CORE-INTENT-ACTOR-UNAVAILABLE",
+                title="Local researcher identity is unavailable",
+                detail="The current Windows profile could not supply the stable local actor authority.",
+                remediation="Restore the current-user profile vault before changing or evaluating intent policy.",
+                retryable=True,
+            )
+        return self._local_actor_id
+
     def _read(self, repository: IntentRevisionRepository) -> tuple[Mapping[str, object], ...]:
         try:
             return _decoded_records(repository.read())
@@ -673,9 +910,11 @@ class ResearchIntentService:
         project_id: str,
     ) -> IntentWorkspaceProjection:
         revisions = self._read(repository)
+        accepted = next((revision for revision in revisions if revision["status"] == "accepted"), None)
         return IntentWorkspaceProjection(
             project_id=project_id,
             current=_projection(revisions[0]) if revisions else None,
+            governing_intent=_governing_reference(accepted),
             history=tuple(_summary(revision) for revision in revisions[:_MAX_HISTORY]),
         )
 
@@ -698,6 +937,177 @@ class ResearchIntentService:
             )
         return _impact(current, command)
 
+    def _accept(
+        self,
+        repository: IntentRevisionRepository,
+        manifest_project_id: str,
+        command: IntentAcceptRequest,
+        *,
+        trace_id: str,
+        idempotency_key: str,
+        actor_id: str,
+    ) -> IntentDraftProjection:
+        if not command.confirmed:
+            raise _problem(
+                status=409,
+                code="RO-CORE-INTENT-ACCEPTANCE-CONFIRMATION-REQUIRED",
+                title="Intent acceptance requires human confirmation",
+                detail="The intent-acceptance gate cannot be bypassed by an unconfirmed request.",
+                remediation="Review the exact decision-complete revision and explicitly confirm its acceptance.",
+            )
+        command_sha256 = _accept_command_sha256(
+            command,
+            manifest_project_id=manifest_project_id,
+            actor_id=actor_id,
+        )
+        try:
+            replay = repository.replay(
+                manifest_project_id=manifest_project_id,
+                actor_id=actor_id,
+                idempotency_key=idempotency_key,
+                command_sha256=command_sha256,
+                event_type="intent.accepted",
+            )
+        except RepositoryIdempotencyConflict as error:
+            raise _problem(
+                status=409,
+                code="RO-CORE-INTENT-IDEMPOTENCY-CONFLICT",
+                title="Intent command key was already used",
+                detail="The idempotency key is bound to a different project, actor, or intent command.",
+                remediation="Do not reuse command keys. Reload the project and issue a new key for a new command.",
+            ) from error
+        except RepositoryProblem as error:
+            raise _problem(
+                status=500,
+                code="RO-CORE-INTENT-WRITE-FAILED",
+                title="Research intent was not accepted",
+                detail="The local idempotency authority could not be validated.",
+                remediation="The prior governing revision remains authoritative. Run project health checks.",
+                retryable=True,
+            ) from error
+        if replay is not None:
+            return _projection(_decoded_records((replay,))[0])
+
+        revisions = self._read(repository)
+        if not revisions:
+            raise _problem(
+                status=409,
+                code="RO-CORE-INTENT-ACCEPTANCE-DRAFT-REQUIRED",
+                title="A decision-complete draft is required",
+                detail="No research intent draft exists for human acceptance.",
+                remediation="Save and review a decision-complete draft before accepting it.",
+            )
+        prior = revisions[0]
+        current = _projection(prior)
+        if (
+            current.status != "draft"
+            or not current.decision_complete
+            or command.expected_revision != current.revision
+            or command.expected_revision_content_hash != current.revision_content_hash
+        ):
+            raise _problem(
+                status=409,
+                code="RO-CORE-INTENT-ACCEPTANCE-REVISION-CONFLICT",
+                title="Intent acceptance is not bound to the current draft",
+                detail=(
+                    "The requested revision is incomplete, already decided, or differs from the exact current draft."
+                ),
+                remediation="Reload and review the current decision-complete draft before confirming acceptance.",
+            )
+        revision = _build_acceptance(command, prior=prior, actor_id=actor_id)
+        content_json = _canonical_json(revision)
+        digest = hashlib.sha256(content_json.encode("utf-8")).hexdigest()
+        event = IntentAuditEvent(
+            event_id=new_uuid_v7(),
+            outbox_id=new_uuid_v7(),
+            event_type="intent.accepted",
+            occurred_at=cast(str, revision["createdAt"]),
+            trace_id=trace_id,
+            actor_type="human",
+            actor_id=actor_id,
+            record_sha256=digest,
+            command_sha256=command_sha256,
+            idempotency_key=idempotency_key,
+        )
+        try:
+            committed = repository.append(
+                expected_revision=current.revision,
+                domain_project_id=cast(str, prior["projectId"]),
+                manifest_project_id=manifest_project_id,
+                record=IntentRevisionRecord(revision=current.revision + 1, content_json=content_json),
+                event=event,
+            )
+        except RepositoryConflict as error:
+            raise _problem(
+                status=409,
+                code="RO-CORE-INTENT-ACCEPTANCE-REVISION-CONFLICT",
+                title="Research intent changed before acceptance",
+                detail="Another local command committed the next intent revision first.",
+                remediation="Reload and review the current revision before accepting it.",
+            ) from error
+        except RepositoryProblem as error:
+            raise _problem(
+                status=500,
+                code="RO-CORE-INTENT-WRITE-FAILED",
+                title="Research intent was not accepted",
+                detail="The accepted revision, provenance fact, and outbox event did not commit atomically.",
+                remediation="The prior revision remains authoritative. Run project health checks before retrying.",
+                retryable=True,
+            ) from error
+        emit_log_record(
+            "intent.accepted",
+            level="INFO",
+            fields={"reasonCode": "intent-human-accepted", "traceId": trace_id},
+        )
+        return _projection(_decoded_records((committed,))[0])
+
+    def _evaluate_policy(
+        self,
+        repository: IntentRevisionRepository,
+        command: IntentPolicyRequest,
+        *,
+        trace_id: str,
+        actor_id: str,
+    ) -> IntentPolicyDecision:
+        revisions = self._read(repository)
+        accepted = next((revision for revision in revisions if revision["status"] == "accepted"), None)
+        decision = _policy_decision(command, accepted=accepted)
+        audit_value = {
+            "actorId": actor_id,
+            "decision": decision.model_dump(mode="json", by_alias=True),
+            "decisionId": decision.decision_id,
+            "eventType": "intent.policy.evaluated",
+            "schemaVersion": "1.0",
+        }
+        content_json = _canonical_json(audit_value)
+        try:
+            repository.append_policy_decision(
+                record=IntentPolicyDecisionRecord(decision_id=decision.decision_id, content_json=content_json),
+                event=IntentPolicyAuditEvent(
+                    event_id=new_uuid_v7(),
+                    occurred_at=decision.evaluated_at,
+                    trace_id=trace_id,
+                    actor_type="human",
+                    actor_id=actor_id,
+                    record_sha256=hashlib.sha256(content_json.encode("utf-8")).hexdigest(),
+                ),
+            )
+        except RepositoryProblem as error:
+            raise _problem(
+                status=500,
+                code="RO-CORE-INTENT-POLICY-AUDIT-FAILED",
+                title="Intent policy decision is unavailable",
+                detail="The content-free policy decision and its provenance fact could not be committed atomically.",
+                remediation="Keep the requested action stopped and run project health checks before retrying.",
+                retryable=True,
+            ) from error
+        emit_log_record(
+            "intent.policy.evaluated",
+            level="INFO",
+            fields={"reasonCode": decision.reason_code, "traceId": trace_id},
+        )
+        return decision
+
     def _save(
         self,
         repository: IntentRevisionRepository,
@@ -719,6 +1129,7 @@ class ResearchIntentService:
                 actor_id=actor_id,
                 idempotency_key=idempotency_key,
                 command_sha256=command_sha256,
+                event_type="intent.draft.saved",
             )
         except RepositoryIdempotencyConflict as error:
             raise _problem(

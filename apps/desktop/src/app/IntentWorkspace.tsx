@@ -230,6 +230,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
         schemaVersion: "1.0",
         projectId: previous?.projectId ?? project.projectId,
         current,
+        governingIntent: previous?.governingIntent ?? null,
         history: [
           { revision: current.revision, revisionId: current.revisionId, revisionContentHash: current.revisionContentHash, createdAt: current.createdAt, primaryUseCase: current.primaryUseCase, status: current.status, unresolvedDecisionCount: current.unresolvedDecisions.length },
           ...(previous?.history ?? []),

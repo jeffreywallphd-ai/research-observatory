@@ -10,7 +10,9 @@ import {
   decodeCacheClearPreview,
   decodeCacheClearResult,
   decodeIntentDraftProjection,
+  decodeIntentGoverningReference,
   decodeIntentImpactPreview,
+  decodeIntentPolicyDecision,
   decodeIntentWorkspaceProjection,
   decodePrivacyPolicyProjection,
   decodeProblemDetail,
@@ -392,6 +394,7 @@ describe("generated Core API client", () => {
       schemaVersion: "1.0",
       projectId: "11111111-1111-4111-8111-111111111111",
       current,
+      governingIntent: null,
       history: [summary],
     };
     const impact = {
@@ -404,15 +407,54 @@ describe("generated Core API client", () => {
       acknowledgementRequired: true,
       acknowledgementToken: "b".repeat(64),
     };
+    const accepted = {
+      ...current,
+      revisionId: "01890f47-eae2-7cc0-98c4-dc0c0c07398f",
+      revision: 2,
+      revisionContentHash: `sha256:${"d".repeat(64)}`,
+      createdAt: "2026-08-28T19:01:00Z",
+      status: "accepted",
+      unresolvedDecisions: [],
+      decisionComplete: true,
+      canRequestAcceptance: false,
+      launchReady: true,
+    } as const;
+    const governing = {
+      schemaVersion: "1.0",
+      documentType: "research-observatory-research-intent-reference",
+      contractVersion: "1.0.0",
+      intentId: accepted.intentId,
+      revisionId: accepted.revisionId,
+      revision: accepted.revision,
+      revisionContentHash: accepted.revisionContentHash,
+    } as const;
+    const decision = {
+      schemaVersion: "1.0",
+      decisionId: "01890f47-eae3-7cc0-98c4-dc0c0c07398f",
+      evaluatedAt: "2026-08-28T19:02:00Z",
+      action: "approve-claim",
+      subjectType: "model",
+      outcome: "require-confirmation",
+      reasonCode: "claim-approval-requires-human-confirmation",
+      explanation: "Claim approval remains under explicit human authority.",
+      governingIntent: governing,
+      requiredGates: ["claim-approval"],
+      outputLabel: "theory-working-output",
+      stoppingRequiresHumanConfirmation: true,
+    } as const;
     expect(decodeIntentDraftProjection(current)).toEqual(current);
     expect(decodeIntentDraftProjection({ ...current, launchReady: true })).toBeNull();
     expect(decodeIntentWorkspaceProjection(workspace)).toEqual(workspace);
     expect(decodeIntentWorkspaceProjection({ ...workspace, history: [{ ...summary, revisionId: current.intentId }] })).toBeNull();
     expect(decodeIntentImpactPreview(impact)).toEqual(impact);
     expect(decodeIntentImpactPreview({ ...impact, acknowledgementToken: null })).toBeNull();
+    expect(decodeIntentDraftProjection(accepted)).toEqual(accepted);
+    expect(decodeIntentGoverningReference(governing)).toEqual(governing);
+    expect(decodeIntentPolicyDecision(decision)).toEqual(decision);
+    expect(decodeIntentPolicyDecision({ ...decision, outcome: "deny", outputLabel: decision.outputLabel })).toBeNull();
 
     const requests: unknown[] = [];
-    const responses = [workspace, impact, current];
+    const responses = [workspace, impact, current, accepted, decision];
     const client = createCoreApiClient(async (request) => {
       requests.push(request);
       return response(200, responses.shift());
@@ -451,9 +493,23 @@ describe("generated Core API client", () => {
       stoppingConditions: ["coverage-threshold"],
       revisionRationale: "Refined after scope review.",
     }, "c".repeat(32));
+    await client.acceptIntent({
+      root: "C:/Research/study-one",
+      expectedRevision: 1,
+      expectedRevisionContentHash: current.revisionContentHash,
+      confirmed: true,
+      decisionRationale: "I reviewed and accept this exact revision.",
+    }, "d".repeat(32));
+    await client.evaluateIntentPolicy({
+      root: "C:/Research/study-one",
+      action: "approve-claim",
+      subjectType: "model",
+      stoppingCondition: null,
+    });
     expect(requests.map((request) => (request as { path: string }).path)).toEqual([
       "/projects/intent", "/projects/intent/preview", "/projects/intent/drafts",
+      "/projects/intent/acceptances", "/projects/intent/policy/evaluations",
     ]);
-    expect(requests.at(-1)).toMatchObject({ idempotencyKey: "c".repeat(32) });
+    expect(requests.at(-2)).toMatchObject({ idempotencyKey: "d".repeat(32) });
   });
 });

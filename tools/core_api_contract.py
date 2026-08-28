@@ -259,6 +259,21 @@ const INTENT_STOPPING_CONDITIONS = [
   "nearest-prior-work-challenged", "protocol-complete", "resource-budget", "researcher-decision",
 ] as const;
 const INTENT_CHANGE_CATEGORIES = ["primary-use-case", "corpus-scope", "novelty-scope"] as const;
+const INTENT_REVISION_STATUSES = ["draft", "accepted"] as const;
+const INTENT_POLICY_SUBJECTS = ["human", "model", "system"] as const;
+const INTENT_POLICY_ACTIONS = [
+  "accept-intent", "propose-query", "recommend-stopping", "prepare-screening-batch", "prepare-draft-output",
+  "execute-approved-query", "execute-approved-screening-batch", "change-scope", "external-egress",
+  "adjudicate-evidence", "approve-claim", "publish-output", "confirm-stopping",
+] as const;
+const INTENT_POLICY_OUTCOMES = ["allow", "deny", "recommend-human", "require-confirmation"] as const;
+const INTENT_HUMAN_GATES = [
+  "intent-acceptance", "scope-change", "external-egress", "evidence-adjudication", "claim-approval", "publication",
+] as const;
+const INTENT_OUTPUT_LABELS = [
+  "systematic-working-output", "theory-working-output", "technical-working-output",
+  "hermeneutic-working-output", "critical-working-output", "novelty-working-output", "empirical-working-output",
+] as const;
 
 function member<T extends string>(value: unknown, values: readonly T[]): value is T {
   return typeof value === "string" && values.some((candidate) => candidate === value);
@@ -359,7 +374,8 @@ export function decodeIntentDraftProjection(value: unknown): IntentDraftProjecti
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.intentId) || !canonicalUuid7(candidate.revisionId)
     || candidate.intentId === candidate.revisionId || !integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER)
-    || !contentHash(candidate.revisionContentHash) || !utcInstant(candidate.createdAt) || candidate.status !== "draft"
+    || !contentHash(candidate.revisionContentHash) || !utcInstant(candidate.createdAt)
+    || !member(candidate.status, INTENT_REVISION_STATUSES)
     || !member(candidate.primaryUseCase, INTENT_PRIMARY_USE_CASES) || !member(candidate.epistemicMode, INTENT_MODES)
     || !boundedNarrative(candidate.researchObjective) || !boundedNarrative(candidate.contributionIntent)
     || !boundedNarrative(candidate.phenomenon) || !boundedNarrative(candidate.unitOfAnalysis)
@@ -376,9 +392,12 @@ export function decodeIntentDraftProjection(value: unknown): IntentDraftProjecti
     || !uniqueMembers(candidate.stoppingConditions, INTENT_STOPPING_CONDITIONS, 3, 1)
     || !boundedNarrative(candidate.revisionRationale, 1) || !stringList(candidate.unresolvedDecisions, 64)
     || typeof candidate.decisionComplete !== "boolean" || typeof candidate.canRequestAcceptance !== "boolean"
-    || candidate.launchReady !== false) return null;
+    || typeof candidate.launchReady !== "boolean") return null;
   if (candidate.decisionComplete !== (candidate.unresolvedDecisions.length === 0)
-    || candidate.canRequestAcceptance !== candidate.decisionComplete) return null;
+    || (candidate.status === "draft"
+      && (candidate.canRequestAcceptance !== candidate.decisionComplete || candidate.launchReady))
+    || (candidate.status === "accepted"
+      && (!candidate.decisionComplete || candidate.canRequestAcceptance || !candidate.launchReady))) return null;
   return candidate as unknown as IntentDraftProjection;
 }
 
@@ -388,7 +407,8 @@ function decodeIntentRevisionSummary(value: unknown): IntentRevisionSummary | nu
     "revision", "revisionId", "revisionContentHash", "createdAt", "status", "primaryUseCase", "unresolvedDecisionCount",
   ])) return null;
   if (!integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER) || !canonicalUuid7(candidate.revisionId)
-    || !contentHash(candidate.revisionContentHash) || !utcInstant(candidate.createdAt) || candidate.status !== "draft"
+    || !contentHash(candidate.revisionContentHash) || !utcInstant(candidate.createdAt)
+    || !member(candidate.status, INTENT_REVISION_STATUSES)
     || !member(candidate.primaryUseCase, INTENT_PRIMARY_USE_CASES)
     || !integer(candidate.unresolvedDecisionCount, 0, 64)) return null;
   return candidate as unknown as IntentRevisionSummary;
@@ -396,12 +416,14 @@ function decodeIntentRevisionSummary(value: unknown): IntentRevisionSummary | nu
 
 export function decodeIntentWorkspaceProjection(value: unknown): IntentWorkspaceProjection | null {
   const candidate = record(value);
-  if (!candidate || !exactKeys(candidate, ["schemaVersion", "projectId", "current", "history"])) return null;
+  if (!candidate || !exactKeys(candidate, ["schemaVersion", "projectId", "current", "governingIntent", "history"])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId) || !Array.isArray(candidate.history)
     || candidate.history.length > 100) return null;
   const current = candidate.current === null ? null : decodeIntentDraftProjection(candidate.current);
+  const governingIntent = candidate.governingIntent === null ? null : decodeIntentGoverningReference(candidate.governingIntent);
   const history = candidate.history.map(decodeIntentRevisionSummary);
-  if ((candidate.current !== null && current === null) || history.some((item) => item === null)) return null;
+  if ((candidate.current !== null && current === null) || (candidate.governingIntent !== null && governingIntent === null)
+    || history.some((item) => item === null)) return null;
   if (history.some((item, index) => index > 0 && (item?.revision ?? 0) >= (history[index - 1]?.revision ?? 0))) return null;
   if ((current === null) !== (history.length === 0)
     || (current && (current.revision !== history[0]?.revision
@@ -411,7 +433,46 @@ export function decodeIntentWorkspaceProjection(value: unknown): IntentWorkspace
       || current.primaryUseCase !== history[0]?.primaryUseCase
       || current.status !== history[0]?.status
       || current.unresolvedDecisions.length !== history[0]?.unresolvedDecisionCount))) return null;
-  return { schemaVersion: "1.0", projectId: candidate.projectId, current, history: history as IntentRevisionSummary[] };
+  if (governingIntent && current?.status === "accepted"
+    && (governingIntent.intentId !== current.intentId || governingIntent.revisionId !== current.revisionId
+      || governingIntent.revision !== current.revision
+      || governingIntent.revisionContentHash !== current.revisionContentHash)) return null;
+  return {
+    schemaVersion: "1.0", projectId: candidate.projectId, current, governingIntent,
+    history: history as IntentRevisionSummary[],
+  };
+}
+
+export function decodeIntentGoverningReference(value: unknown): IntentGoverningReference | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "documentType", "contractVersion", "intentId", "revisionId", "revision", "revisionContentHash",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || candidate.documentType !== "research-observatory-research-intent-reference"
+    || !safeReleaseVersion(candidate.contractVersion) || !canonicalUuid7(candidate.intentId)
+    || !canonicalUuid7(candidate.revisionId) || candidate.intentId === candidate.revisionId
+    || !integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER) || !contentHash(candidate.revisionContentHash)) return null;
+  return candidate as unknown as IntentGoverningReference;
+}
+
+export function decodeIntentPolicyDecision(value: unknown): IntentPolicyDecision | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "decisionId", "evaluatedAt", "action", "subjectType", "outcome", "reasonCode", "explanation",
+    "governingIntent", "requiredGates", "outputLabel", "stoppingRequiresHumanConfirmation",
+  ])) return null;
+  const governing = candidate.governingIntent === null ? null : decodeIntentGoverningReference(candidate.governingIntent);
+  if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.decisionId) || !utcInstant(candidate.evaluatedAt)
+    || !member(candidate.action, INTENT_POLICY_ACTIONS) || !member(candidate.subjectType, INTENT_POLICY_SUBJECTS)
+    || !member(candidate.outcome, INTENT_POLICY_OUTCOMES)
+    || typeof candidate.reasonCode !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(candidate.reasonCode)
+    || !boundedText(candidate.explanation, 1, 1000)
+    || (candidate.governingIntent !== null && governing === null)
+    || !uniqueMembers(candidate.requiredGates, INTENT_HUMAN_GATES, 6)
+    || (candidate.outputLabel !== null && !member(candidate.outputLabel, INTENT_OUTPUT_LABELS))
+    || typeof candidate.stoppingRequiresHumanConfirmation !== "boolean") return null;
+  if (candidate.outcome === "deny" && candidate.outputLabel !== null) return null;
+  return { ...candidate, governingIntent: governing } as unknown as IntentPolicyDecision;
 }
 
 export function decodeIntentImpactPreview(value: unknown): IntentImpactPreview | null {
@@ -644,6 +705,21 @@ function intentDraftBody(command: IntentDraftRequest): string {
   return JSON.stringify(command);
 }
 
+function intentAcceptBody(command: IntentAcceptRequest): string {
+  if (!projectRoot(command.root) || !integer(command.expectedRevision, 1, Number.MAX_SAFE_INTEGER)
+    || !contentHash(command.expectedRevisionContentHash) || typeof command.confirmed !== "boolean"
+    || !boundedNarrative(command.decisionRationale, 1)) throw new Error("RO-CORE-REQUEST-INVALID");
+  return JSON.stringify(command);
+}
+
+function intentPolicyBody(command: IntentPolicyRequest): string {
+  if (!projectRoot(command.root) || !member(command.action, INTENT_POLICY_ACTIONS)
+    || !member(command.subjectType, INTENT_POLICY_SUBJECTS)
+    || (command.stoppingCondition !== null
+      && !member(command.stoppingCondition, INTENT_STOPPING_CONDITIONS))) throw new Error("RO-CORE-REQUEST-INVALID");
+  return JSON.stringify(command);
+}
+
 export function parseOperationEventStream(body: string): readonly OperationProgressEvent[] {
   if (body.length > 1_048_576) throw new Error("RO-CORE-RESPONSE-INVALID");
   if (!body) return [];
@@ -735,6 +811,19 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         method: "POST", path: "/projects/intent/drafts", body: intentDraftBody(command),
         ifMatch: null, idempotencyKey,
       }, decodeIntentDraftProjection);
+    },
+    async acceptIntent(command: IntentAcceptRequest, idempotencyKey: string): Promise<IntentDraftProjection> {
+      if (!/^[0-9a-f]{32}$/.test(idempotencyKey)) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/intent/acceptances", body: intentAcceptBody(command),
+        ifMatch: null, idempotencyKey,
+      }, decodeIntentDraftProjection);
+    },
+    async evaluateIntentPolicy(command: IntentPolicyRequest): Promise<IntentPolicyDecision> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/intent/policy/evaluations", body: intentPolicyBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeIntentPolicyDecision);
     },
     async privacy(command: ProjectPrivacyRequest): Promise<PrivacyPolicyProjection> {
       return await requestJson(transport, {
@@ -849,6 +938,8 @@ def render_typescript(openapi_bytes: bytes) -> bytes:
         "project_intent_projects_intent_post",
         "preview_intent_projects_intent_preview_post",
         "save_intent_draft_projects_intent_drafts_post",
+        "accept_intent_projects_intent_acceptances_post",
+        "evaluate_intent_policy_projects_intent_policy_evaluations_post",
         "project_privacy_projects_privacy_post",
         "update_project_privacy_projects_privacy_update_post",
         "preview_project_cache_projects_privacy_cache_preview_post",

@@ -178,8 +178,10 @@ class CoreApiTests(unittest.TestCase):
         self.assertEqual(
             capabilities.json()["capabilities"],
             [
+                "intent.acceptance",
                 "intent.drafts",
                 "intent.impact-preview",
+                "intent.policy-evaluation",
                 "intent.read",
                 "operations.cancel",
                 "operations.events",

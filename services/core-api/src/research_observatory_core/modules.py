@@ -53,7 +53,13 @@ def default_module_registry() -> ModuleRegistry:
         (
             ModuleDefinition(
                 module_id="intent",
-                capabilities=("intent.drafts", "intent.impact-preview", "intent.read"),
+                capabilities=(
+                    "intent.acceptance",
+                    "intent.drafts",
+                    "intent.impact-preview",
+                    "intent.policy-evaluation",
+                    "intent.read",
+                ),
             ),
             ModuleDefinition(
                 module_id="operations",
