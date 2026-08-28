@@ -130,3 +130,8 @@ The SQLCipher 4.12 Windows production database profile, DPAPI-backed raw project
 keys, protected migration/backup/restore/rekey behavior, packaging, licensing,
 and residual at-rest threat boundary are documented in
 [`local-sqlite-storage.md`](local-sqlite-storage.md) and governed by ADR-0020.
+The provider-neutral model task kinds, content-reference inputs, pinned
+execution constraints, result provenance, validation, usage, confidence,
+citations, and explicit unsupported-feature behavior are documented in
+[`model-gateway-contracts.md`](model-gateway-contracts.md) and governed by
+ADR-0021.

@@ -193,6 +193,15 @@
       "linkedTasks": [
         "CAP-02.S04.T04"
       ]
+    },
+    {
+      "id": "ADR-0021",
+      "path": "docs/adr/ADR-0021-adopt-provider-neutral-model-task-and-result-contracts.md",
+      "title": "Adopt provider-neutral model task and result contracts",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-07.S01.T01"
+      ]
     }
   ]
 }

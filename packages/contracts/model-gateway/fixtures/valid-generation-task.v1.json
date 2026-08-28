@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-model-task",
+  "taskId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a1",
+  "taskKind": "generation",
+  "contractVersion": "1.0.0",
+  "requestHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "traceId": "0123456789abcdef0123456789abcdef",
+  "requirements": {
+    "requiredFeatures": ["structured-output"],
+    "citationRequirement": "required",
+    "dataClass": "confidential",
+    "deadlineMs": 30000,
+    "maxInputTokens": 4096,
+    "maxOutputTokens": 512
+  },
+  "execution": {
+    "mode": "pinned",
+    "providerId": "local-runtime",
+    "providerVersion": "1.0.0",
+    "modelId": "scholar-small",
+    "modelVersion": "2026.08.1",
+    "runtimeId": "onnx-runtime",
+    "runtimeVersion": "1.23.0",
+    "configurationHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "evaluationId": "research-generation-baseline",
+    "evaluationVersion": "1.0.0"
+  },
+  "input": {
+    "kind": "generation",
+    "instruction": {
+      "aggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a2",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a3",
+      "contentHash": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "role": "instruction"
+    },
+    "context": [
+      {
+        "aggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a4",
+        "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a5",
+        "contentHash": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+        "role": "source"
+      }
+    ]
+  }
+}

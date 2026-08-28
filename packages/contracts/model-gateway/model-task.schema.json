@@ -1,0 +1,445 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/model-gateway/model-task.schema.json",
+  "title": "Research Observatory provider-neutral model task contract",
+  "oneOf": [
+    {"$ref": "#/$defs/ModelTaskSpec"},
+    {"$ref": "#/$defs/ModelResultEnvelope"}
+  ],
+  "x-research-observatory-semanticRules": [
+    "task-input-kind-matches-task-kind",
+    "successful-result-output-kind-matches-task-kind",
+    "successful-result-requires-selected-route-and-accepted-validation",
+    "non-success-result-carries-no-output",
+    "reported-token-total-equals-input-plus-output",
+    "required-citations-close-over-task-input-references",
+    "pinned-execution-route-matches-result-route",
+    "unsupported-required-features-fail-explicitly"
+  ],
+  "$defs": {
+    "UuidV7": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "SemanticVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "StableCode": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "maxLength": 96
+    },
+    "TaskKind": {
+      "enum": [
+        "embedding",
+        "reranking",
+        "classification",
+        "nli",
+        "structured-extraction",
+        "generation",
+        "moderation",
+        "tool-call"
+      ]
+    },
+    "ContentReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aggregateId", "revisionId", "contentHash", "role"],
+      "properties": {
+        "aggregateId": {"$ref": "#/$defs/UuidV7"},
+        "revisionId": {"$ref": "#/$defs/UuidV7"},
+        "contentHash": {"$ref": "#/$defs/Sha256"},
+        "role": {
+          "enum": ["instruction", "query", "candidate", "premise", "hypothesis", "source", "context", "tool-input"]
+        }
+      }
+    },
+    "SchemaReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaId", "schemaVersion", "schemaHash"],
+      "properties": {
+        "schemaId": {"$ref": "#/$defs/StableCode"},
+        "schemaVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "schemaHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "ArtifactReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "revisionId", "contentHash", "mediaType"],
+      "properties": {
+        "artifactId": {"$ref": "#/$defs/UuidV7"},
+        "revisionId": {"$ref": "#/$defs/UuidV7"},
+        "contentHash": {"$ref": "#/$defs/Sha256"},
+        "mediaType": {"type": "string", "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$", "maxLength": 96}
+      }
+    },
+    "DynamicExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {"mode": {"const": "dynamic"}}
+    },
+    "PinnedExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "providerId",
+        "providerVersion",
+        "modelId",
+        "modelVersion",
+        "runtimeId",
+        "runtimeVersion",
+        "configurationHash",
+        "evaluationId",
+        "evaluationVersion"
+      ],
+      "properties": {
+        "mode": {"const": "pinned"},
+        "providerId": {"$ref": "#/$defs/StableCode"},
+        "providerVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "modelId": {"$ref": "#/$defs/StableCode"},
+        "modelVersion": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$"},
+        "runtimeId": {"$ref": "#/$defs/StableCode"},
+        "runtimeVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "configurationHash": {"$ref": "#/$defs/Sha256"},
+        "evaluationId": {"$ref": "#/$defs/StableCode"},
+        "evaluationVersion": {"$ref": "#/$defs/SemanticVersion"}
+      }
+    },
+    "ExecutionConstraint": {
+      "oneOf": [
+        {"$ref": "#/$defs/DynamicExecution"},
+        {"$ref": "#/$defs/PinnedExecution"}
+      ]
+    },
+    "TaskRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiredFeatures", "citationRequirement", "dataClass", "deadlineMs", "maxInputTokens", "maxOutputTokens"],
+      "properties": {
+        "requiredFeatures": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/StableCode"}
+        },
+        "citationRequirement": {"enum": ["required", "optional", "not-applicable"]},
+        "dataClass": {"enum": ["public", "internal", "confidential", "restricted"]},
+        "deadlineMs": {"type": "integer", "minimum": 1, "maximum": 86400000},
+        "maxInputTokens": {"type": "integer", "minimum": 1, "maximum": 10000000},
+        "maxOutputTokens": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    },
+    "EmbeddingInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "items"],
+      "properties": {
+        "kind": {"const": "embedding"},
+        "items": {"type": "array", "minItems": 1, "maxItems": 4096, "items": {"$ref": "#/$defs/ContentReference"}}
+      }
+    },
+    "RerankingInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "query", "candidates", "topK"],
+      "properties": {
+        "kind": {"const": "reranking"},
+        "query": {"$ref": "#/$defs/ContentReference"},
+        "candidates": {"type": "array", "minItems": 1, "maxItems": 4096, "items": {"$ref": "#/$defs/ContentReference"}},
+        "topK": {"type": "integer", "minimum": 1, "maximum": 4096}
+      }
+    },
+    "ClassificationInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "items", "labels"],
+      "properties": {
+        "kind": {"const": "classification"},
+        "items": {"type": "array", "minItems": 1, "maxItems": 4096, "items": {"$ref": "#/$defs/ContentReference"}},
+        "labels": {"type": "array", "minItems": 2, "maxItems": 256, "uniqueItems": true, "items": {"$ref": "#/$defs/StableCode"}}
+      }
+    },
+    "NliInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "premise", "hypothesis"],
+      "properties": {
+        "kind": {"const": "nli"},
+        "premise": {"$ref": "#/$defs/ContentReference"},
+        "hypothesis": {"$ref": "#/$defs/ContentReference"}
+      }
+    },
+    "StructuredExtractionInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "sources", "outputSchema"],
+      "properties": {
+        "kind": {"const": "structured-extraction"},
+        "sources": {"type": "array", "minItems": 1, "maxItems": 256, "items": {"$ref": "#/$defs/ContentReference"}},
+        "outputSchema": {"$ref": "#/$defs/SchemaReference"}
+      }
+    },
+    "GenerationInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "instruction", "context"],
+      "properties": {
+        "kind": {"const": "generation"},
+        "instruction": {"$ref": "#/$defs/ContentReference"},
+        "context": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/ContentReference"}}
+      }
+    },
+    "ModerationInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "items", "policyId", "policyVersion"],
+      "properties": {
+        "kind": {"const": "moderation"},
+        "items": {"type": "array", "minItems": 1, "maxItems": 4096, "items": {"$ref": "#/$defs/ContentReference"}},
+        "policyId": {"$ref": "#/$defs/StableCode"},
+        "policyVersion": {"$ref": "#/$defs/SemanticVersion"}
+      }
+    },
+    "ToolCallInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "toolId", "toolVersion", "arguments", "inputSchema"],
+      "properties": {
+        "kind": {"const": "tool-call"},
+        "toolId": {"$ref": "#/$defs/StableCode"},
+        "toolVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "arguments": {"$ref": "#/$defs/ContentReference"},
+        "inputSchema": {"$ref": "#/$defs/SchemaReference"}
+      }
+    },
+    "TaskInput": {
+      "oneOf": [
+        {"$ref": "#/$defs/EmbeddingInput"},
+        {"$ref": "#/$defs/RerankingInput"},
+        {"$ref": "#/$defs/ClassificationInput"},
+        {"$ref": "#/$defs/NliInput"},
+        {"$ref": "#/$defs/StructuredExtractionInput"},
+        {"$ref": "#/$defs/GenerationInput"},
+        {"$ref": "#/$defs/ModerationInput"},
+        {"$ref": "#/$defs/ToolCallInput"}
+      ]
+    },
+    "ModelTaskSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "documentType", "taskId", "taskKind", "contractVersion", "requestHash", "traceId", "requirements", "execution", "input"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-model-task"},
+        "taskId": {"$ref": "#/$defs/UuidV7"},
+        "taskKind": {"$ref": "#/$defs/TaskKind"},
+        "contractVersion": {"const": "1.0.0"},
+        "requestHash": {"$ref": "#/$defs/Sha256"},
+        "traceId": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+        "requirements": {"$ref": "#/$defs/TaskRequirements"},
+        "execution": {"$ref": "#/$defs/ExecutionConstraint"},
+        "input": {"$ref": "#/$defs/TaskInput"}
+      }
+    },
+    "SelectedRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selection", "providerId", "providerVersion", "modelId", "modelVersion", "runtimeId", "runtimeVersion", "configurationHash", "evaluationId", "evaluationVersion"],
+      "properties": {
+        "selection": {"const": "selected"},
+        "providerId": {"$ref": "#/$defs/StableCode"},
+        "providerVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "modelId": {"$ref": "#/$defs/StableCode"},
+        "modelVersion": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$"},
+        "runtimeId": {"$ref": "#/$defs/StableCode"},
+        "runtimeVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "configurationHash": {"$ref": "#/$defs/Sha256"},
+        "evaluationId": {"$ref": "#/$defs/StableCode"},
+        "evaluationVersion": {"$ref": "#/$defs/SemanticVersion"}
+      }
+    },
+    "UnselectedRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selection", "providerId", "providerVersion", "modelId", "modelVersion", "runtimeId", "runtimeVersion", "configurationHash", "evaluationId", "evaluationVersion", "reasonCode"],
+      "properties": {
+        "selection": {"const": "none"},
+        "providerId": {"type": "null"},
+        "providerVersion": {"type": "null"},
+        "modelId": {"type": "null"},
+        "modelVersion": {"type": "null"},
+        "runtimeId": {"type": "null"},
+        "runtimeVersion": {"type": "null"},
+        "configurationHash": {"type": "null"},
+        "evaluationId": {"type": "null"},
+        "evaluationVersion": {"type": "null"},
+        "reasonCode": {"$ref": "#/$defs/StableCode"}
+      }
+    },
+    "ModelRoute": {"oneOf": [{"$ref": "#/$defs/SelectedRoute"}, {"$ref": "#/$defs/UnselectedRoute"}]},
+    "PolicyDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decisionId", "policyVersion", "outcome", "reasonCodes"],
+      "properties": {
+        "decisionId": {"$ref": "#/$defs/UuidV7"},
+        "policyVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "outcome": {"enum": ["allowed", "denied"]},
+        "reasonCodes": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/StableCode"}}
+      }
+    },
+    "Latency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queueMs", "executionMs", "totalMs"],
+      "properties": {
+        "queueMs": {"type": "integer", "minimum": 0, "maximum": 86400000},
+        "executionMs": {"type": "integer", "minimum": 0, "maximum": 86400000},
+        "totalMs": {"type": "integer", "minimum": 0, "maximum": 86400000}
+      }
+    },
+    "TokenUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reporting", "inputTokens", "outputTokens", "totalTokens"],
+      "properties": {
+        "reporting": {"enum": ["reported", "not-reported", "not-applicable"]},
+        "inputTokens": {"type": ["integer", "null"], "minimum": 0, "maximum": 1000000000},
+        "outputTokens": {"type": ["integer", "null"], "minimum": 0, "maximum": 1000000000},
+        "totalTokens": {"type": ["integer", "null"], "minimum": 0, "maximum": 1000000000}
+      }
+    },
+    "ValidationOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "validatorVersion", "outputHash", "errorCodes"],
+      "properties": {
+        "outcome": {"enum": ["accepted", "rejected", "not-run"]},
+        "validatorVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "outputHash": {"oneOf": [{"$ref": "#/$defs/Sha256"}, {"type": "null"}]},
+        "errorCodes": {"type": "array", "maxItems": 64, "uniqueItems": true, "items": {"$ref": "#/$defs/StableCode"}}
+      }
+    },
+    "Confidence": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "value", "calibrationId"],
+          "properties": {"kind": {"const": "quantified"}, "value": {"type": "number", "minimum": 0, "maximum": 1}, "calibrationId": {"$ref": "#/$defs/StableCode"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "value"],
+          "properties": {"kind": {"const": "qualitative"}, "value": {"enum": ["low", "medium", "high"]}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {"kind": {"enum": ["not-reported", "not-applicable"]}}
+        }
+      ]
+    },
+    "Citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceAggregateId", "sourceRevisionId", "sourceContentHash", "locatorHash"],
+      "properties": {
+        "sourceAggregateId": {"$ref": "#/$defs/UuidV7"},
+        "sourceRevisionId": {"$ref": "#/$defs/UuidV7"},
+        "sourceContentHash": {"$ref": "#/$defs/Sha256"},
+        "locatorHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "IndexedScore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputIndex", "label", "score"],
+      "properties": {
+        "inputIndex": {"type": "integer", "minimum": 0, "maximum": 4095},
+        "label": {"$ref": "#/$defs/StableCode"},
+        "score": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "EmbeddingOutput": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "artifact", "dimensions"],
+      "properties": {"kind": {"const": "embedding"}, "artifact": {"$ref": "#/$defs/ArtifactReference"}, "dimensions": {"type": "integer", "minimum": 1, "maximum": 1000000}}
+    },
+    "RerankingOutput": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "items"],
+      "properties": {"kind": {"const": "reranking"}, "items": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/IndexedScore"}}}
+    },
+    "ClassificationOutput": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "items"],
+      "properties": {"kind": {"const": "classification"}, "items": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/IndexedScore"}}}
+    },
+    "NliOutput": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "label", "scores"],
+      "properties": {"kind": {"const": "nli"}, "label": {"enum": ["entailment", "contradiction", "neutral", "uncertain"]}, "scores": {"type": "array", "minItems": 1, "maxItems": 4, "items": {"$ref": "#/$defs/IndexedScore"}}}
+    },
+    "ArtifactOutput": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "artifact"],
+      "properties": {"kind": {"enum": ["structured-extraction", "generation", "tool-call"]}, "artifact": {"$ref": "#/$defs/ArtifactReference"}}
+    },
+    "ModerationOutput": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "items"],
+      "properties": {"kind": {"const": "moderation"}, "items": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/IndexedScore"}}}
+    },
+    "TaskOutput": {
+      "oneOf": [
+        {"$ref": "#/$defs/EmbeddingOutput"},
+        {"$ref": "#/$defs/RerankingOutput"},
+        {"$ref": "#/$defs/ClassificationOutput"},
+        {"$ref": "#/$defs/NliOutput"},
+        {"$ref": "#/$defs/ArtifactOutput"},
+        {"$ref": "#/$defs/ModerationOutput"}
+      ]
+    },
+    "Diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "retryable", "partialOutputDisposition"],
+      "properties": {
+        "code": {"$ref": "#/$defs/StableCode"},
+        "retryable": {"type": "boolean"},
+        "partialOutputDisposition": {"enum": ["none", "discarded", "retained-unvalidated"]}
+      }
+    },
+    "ModelResultEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "documentType", "taskId", "taskKind", "contractVersion", "requestHash", "traceId", "status", "route", "policyDecision", "latency", "usage", "validation", "confidence", "citationStatus", "citations", "output", "diagnostics"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-model-result"},
+        "taskId": {"$ref": "#/$defs/UuidV7"},
+        "taskKind": {"$ref": "#/$defs/TaskKind"},
+        "contractVersion": {"const": "1.0.0"},
+        "requestHash": {"$ref": "#/$defs/Sha256"},
+        "traceId": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+        "status": {"enum": ["succeeded", "degraded", "denied", "failed", "cancelled", "unsupported"]},
+        "route": {"$ref": "#/$defs/ModelRoute"},
+        "policyDecision": {"$ref": "#/$defs/PolicyDecision"},
+        "latency": {"$ref": "#/$defs/Latency"},
+        "usage": {"$ref": "#/$defs/TokenUsage"},
+        "validation": {"$ref": "#/$defs/ValidationOutcome"},
+        "confidence": {"$ref": "#/$defs/Confidence"},
+        "citationStatus": {"enum": ["supplied", "not-supplied", "not-applicable"]},
+        "citations": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/Citation"}},
+        "output": {"oneOf": [{"$ref": "#/$defs/TaskOutput"}, {"type": "null"}]},
+        "diagnostics": {"type": "array", "maxItems": 64, "items": {"$ref": "#/$defs/Diagnostic"}}
+      }
+    }
+  }
+}
