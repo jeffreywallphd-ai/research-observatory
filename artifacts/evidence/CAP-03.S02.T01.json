@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T01",
+  "commit": "035a1e833ae0628d48bf1d29d31af73260a6adda",
+  "baseCommit": "1bee927d2e96c6be8fa88fe32b66e92d94c1c390",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/adr/ADR-0022-adopt-immutable-research-intent-revisions-and-governing-references.md",
+    "docs/adr/ADR-0023-use-mode-specific-researcher-controlled-intent-policy-vocabulary.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/research-intent-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/intent/fixtures/valid-systematic-intent.v1.json",
+    "packages/contracts/intent/fixtures/valid-systematic-reference.v1.json",
+    "packages/contracts/intent/generate.mjs",
+    "packages/contracts/intent/generated.ts",
+    "packages/contracts/intent/research-intent.schema.json",
+    "packages/contracts/intent/research-intent.template.py.txt",
+    "packages/contracts/intent/research-intent.template.ts.txt",
+    "packages/contracts/intent/research-intent.test.ts",
+    "packages/contracts/package.json",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-07/CAP-07.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/research_intent_contracts.py",
+    "tests/contracts/README.md",
+    "tests/contracts/test_research_intent_contracts.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": "workspace-node packages/contracts/domain/generate.mjs --check; workspace-node packages/contracts/domain/generate-lifecycle.mjs --check; workspace-node packages/contracts/domain/generate-compatibility.mjs --check; workspace-node packages/contracts/intent/generate.mjs --check; workspace-node packages/contracts/node_modules/typescript/bin/tsc -p packages/contracts/tsconfig.json --noEmit; workspace-node packages/contracts/node_modules/vitest/vitest.mjs run (cwd packages/contracts)",
+      "exitCode": 0,
+      "result": "All deterministic domain and intent generators were current under the bundled Node 24 runtime, strict TypeScript compilation passed, and all 53 tests across seven portable-contract test files passed at exact candidate 035a1e833ae0628d48bf1d29d31af73260a6adda. The twelve intent cases cover complete systematic intent and governing-reference fixtures plus every epistemic mode, incomplete drafts, human acceptance, immediate lineage, mode/use-case closure, stopping policy, unsafe collection, egress, temporal bounds, unknown fields, dangerous keys, and immutable owned decoding."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py",
+      "exitCode": 0,
+      "result": "All 49 Python portable-contract tests passed, including ten research-intent cases with schema/generated-runtime parity, every supported epistemic mode, draft/accepted boundaries, human authority, lineage, stopping, egress, temporal, untrusted-input, and deep-immutability coverage."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 38 Core API service tests passed at the exact candidate. The contract-only addition did not alter service startup, shutdown, compatibility, lifecycle, health, or persistence behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected Windows file-symlink privilege skip. The real PyInstaller build analyzed and bundled research_observatory_core.research_intent_contracts as a required hidden module and produced a verified sidecar artifact."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_repository_structure tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_adr_check",
+      "exitCode": 0,
+      "result": "All 37 affected repository-structure, build-manifest, quality-scope, and ADR workflow tests passed. The ADR registry assertion now covers the exact accepted records through task-owned ADR-0023."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S02.T01-quality-035a1e8.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 158 governed Python files, including the generated research-intent runtime and contract tests. Report SHA-256: d86ce6148bb5990d8488d61f3894d5ceb03024ee7eeeb4541d543cda603ba4583."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 1bee927d2e96c6be8fa88fe32b66e92d94c1c390 --head 035a1e833ae0628d48bf1d29d31af73260a6adda",
+      "exitCode": 0,
+      "result": "The 13-area architecture contract passed. The 23-record ADR registry inspected all 32 candidate paths and accepted ADR-0022 and ADR-0023 as durable projections of the immutable-revision, governing-reference, and mode-policy decisions already approved in the W1 packet."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "Repository structure, the 20-capability/117-slice/359-task backlog, generated backlog views, 150-page planning site, and immutable approved W1 packet passed. CAP-03.S02.T01 remained the sole formally owned in-progress task lease."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S02.T01-build-manifest-035a1e8.json",
+      "exitCode": 0,
+      "result": "Build provenance passed at exact candidate 035a1e833ae0628d48bf1d29d31af73260a6adda and includes the research-intent schema in the governed schema inventory. The dirty label is solely submission projections plus the protected untracked W1.A04.B00 witness. Report SHA-256: 1d6b6db98a3d6481e878dc759acda6213dd8f9566dd3852637f1934477da5cb0."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile service --affected-base 1bee927d2e96c6be8fa88fe32b66e92d94c1c390 --affected-head 035a1e833ae0628d48bf1d29d31af73260a6adda --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S02.T01-affected-selection-035a1e8.json",
+      "exitCode": 0,
+      "result": "The governed affected selector passed and classified the shared contract/build-input change as safety-sensitive. It selected the full service inventory because packaging/build-inputs.json is intentionally conservative/unmapped. Report SHA-256: 688908531ebf05a0450c5c71404d49c859aacbb4200816fbb437934743cb5138. Task-owned service, contracts, packaging, Python quality, build, architecture, ADR, repository, planning, and exact foundation unit boundaries were run directly and passed."
+    },
+    {
+      "command": "git diff --check 1bee927d2e96c6be8fa88fe32b66e92d94c1c390..035a1e833ae0628d48bf1d29d31af73260a6adda; Get-FileHash -Algorithm SHA256 artifacts/evidence/W1.A04.B00.json",
+      "exitCode": 0,
+      "result": "Patch hygiene passed. The protected W1.A04.B00 witness remained untracked, unstaged, and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The Draft 2020-12 envelope covers immutable intent/revision/project identities, contract version, revision sequence and immediate parent hash, canonical revision-content hash, rationale, primary use case, epistemic mode, research question, contribution intent, phenomenon, unit/level, source scope, evidence types, novelty standard, autonomy, stopping, egress, unresolved decisions, mode requirements, and decision state.",
+        "Accepted completeness varies across systematic, theory, technical, hermeneutic, critical, novelty, and empirical modes. Drafts may preserve explicit specified/unknown/not-applicable states and unresolved decisions but cannot become governing references.",
+        "Only a complete, human-accepted revision can yield a compact downstream reference carrying the exact intent, revision, contract-version, and revision-content-hash identity. Immediate lineage preserves the prior revision number, identifier, content hash, and revision rationale without overwriting prior versions."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All 53 TypeScript contract tests, 49 Python contract tests, 38 service tests, and six packaging tests passed at the exact candidate.",
+        "Expected coverage includes a complete systematic contract and governing reference plus valid complete accepted contracts for every supported mode.",
+        "Material failures and boundaries include incomplete accepted state, non-human acceptance, invalid or self-referential lineage, mode/use-case/requirement mismatch, unsafe or unbounded source collection, egress inconsistency, temporal inversion, dangerous keys, unknown fields, invalid calendar instants, and post-decode input mutation."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The canonical schema, exact fixtures, deterministic generator/templates, generated TypeScript and Python runtimes, package export/typecheck scope, build schema inventory, sidecar hidden-module contract, Python quality inventory, documentation, architecture map, and accepted ADR-0022/ADR-0023 were updated together.",
+        "The immutable envelope and compact governing reference are the portable contract/audit surface for this task. Database persistence, migrations, UI/editor behavior, runtime intent enforcement, workflow profile selection, and durable provenance-ledger storage remain assigned to later approved CAP-03.S02/CAP-03.S03 tasks and are not claimed here.",
+        "The claim-to-candidate diff includes workflow claim/projection state and the already-reviewed CAP-07.S01 completion lineage inherited from the candidate base transition; it is not represented as new CAP-03 product scope."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task introduces a shared public research-intent contract, generated cross-language decoders, strict untrusted-input validation, human-authority gates, immutable lineage, mode-specific completeness, downstream governing references, and governed build/packaging inputs. Verification therefore covers exact generation, strict TypeScript compilation, all portable TypeScript/Python contracts, mode and adversarial failure branches, full Core service and real Windows sidecar packaging suites, affected foundation controls, repository-wide Python quality, architecture/ADR coverage, build provenance, planning integrity, and patch/witness safety. No dependency, database, migration, UI, network, provider, credential, or external-service behavior changed.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "service:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "The exact complete service profile was also run at candidate 035a1e833ae0628d48bf1d29d31af73260a6adda and returned FAIL only in foundation:unit after all preceding repository, runtime, architecture, agent-protocol, backlog-view, fixture, benchmark, build, UI, ADR, CI, quality, and packaging-smoke controls passed. It reproduced the known historical recovery/governance snapshot baseline at 71 failures and 16 errors (prior recorded baseline: 72/16), including frozen GCR/GRR commit expectations, pre-resume PAUSED-state assertions, quiescence assumptions incompatible with the active W1 lease, and the previously deferred protected-candidate snapshot. No research-intent, portable-contract, Core service, packaging, ADR, architecture, quality, or build failure occurred. This repository-wide historical reconciliation remains mandatory at W1 exit under AGENTS.md. Full-profile report SHA-256: 82c6d24f8dd4114847c19a745bca286d5d17203f535a21a9b6b82a561bc4a355.",
+      "Persistence, migration, editor/UI, change-reason capture, active-intent selection, runtime enforcement, workflow-profile navigation, provenance-ledger storage, and cross-boundary end-to-end behavior belong to later approved tasks in CAP-03.S02 and CAP-03.S03 and are not claimed by this contract-only task.",
+      "CAP-03.S02 integrated end-to-end and adversarial slice review follows completion of T02 and T03. Complete cross-capability security, accessibility, performance, cancellation, restart, recovery, packaging, and release qualification remain mandatory at the applicable integration checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate 035a1e833ae0628d48bf1d29d31af73260a6adda against CAP-03.S02.T01. Prioritize schema/generated parity, all seven mode-specific completeness branches, explicit unknown/not-applicable draft semantics, immutable immediate lineage, revision/content hash closure, human acceptance and scope authority, stopping/egress safety, compact governing-reference identity, cross-language immutable ownership, sidecar inclusion, ADR authority, and whether persistence/UI/enforcement/provenance duties remain correctly out of scope. Confirm the failed full service profile is truthfully isolated to the known historical governance/recovery baseline and remains explicitly deferred to W1 exit rather than misrepresented as task success."
+  }
+}

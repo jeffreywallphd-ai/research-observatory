@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 23a0ceb01d4b63f034f73312e6568ff423378ca66b90a97a96cee9695019603d
+source_sha256: 59bc82d42f611aed55fee58e24d9873b916e83f28acff48a4dffae6e7c19301b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3689,7 +3689,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T01 - Model the versioned research intent contract
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3713,13 +3713,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S02.T01.json` at `035a1e833ae0628d48bf1d29d31af73260a6adda`
+
 ##### Review history — CAP-03.S02.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `183e3a19c4860c7bbdd2bffa4e453cb2cf0fa1fb2fa69c4e60f88a8b7175e44c`
+
+- Candidate / base / branch: `035a1e833ae0628d48bf1d29d31af73260a6adda` / `1bee927d2e96c6be8fa88fe32b66e92d94c1c390` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T18:49:38+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T01.json` / `840250c5db4bb1db66bd4e9cc5bfed90eff9c287f2a7edcd5f5b21e424b9aebe` / `035a1e833ae0628d48bf1d29d31af73260a6adda`
+- Acceptance-criteria SHA-256: `9f31790ed11507e8efe2f2a6456d612793c67f178b7995080721f349848a6dad`
+- Verification-selection SHA-256: `d0e79fe3618387ae965fe04e02d72d598b3682ac2dc55a2e98e522dec7286459`
+- Changed paths: `docs/adr/ADR-0022-adopt-immutable-research-intent-revisions-and-governing-references.md`, `docs/adr/ADR-0023-use-mode-specific-researcher-controlled-intent-policy-vocabulary.md`, `docs/adr/index.json`, `docs/architecture/README.md`, `docs/architecture/research-intent-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/intent/fixtures/valid-systematic-intent.v1.json`, `packages/contracts/intent/fixtures/valid-systematic-reference.v1.json`, `packages/contracts/intent/generate.mjs`, `packages/contracts/intent/generated.ts`, `packages/contracts/intent/research-intent.schema.json`, `packages/contracts/intent/research-intent.template.py.txt`, `packages/contracts/intent/research-intent.template.ts.txt`, `packages/contracts/intent/research-intent.test.ts`, `packages/contracts/package.json`, `packages/contracts/tsconfig.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-07/CAP-07.S01.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/README.md`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/research_intent_contracts.py`, `tests/contracts/README.md`, `tests/contracts/test_research_intent_contracts.py`, `tests/foundation/test_adr_check.py`, `tests/packaging/test_core_sidecar_package.py`, `tools/core_sidecar_build.py`
+- Selected checks: `workspace-node packages/contracts/domain/generate.mjs --check; workspace-node packages/contracts/domain/generate-lifecycle.mjs --check; workspace-node packages/contracts/domain/generate-compatibility.mjs --check; workspace-node packages/contracts/intent/generate.mjs --check; workspace-node packages/contracts/node_modules/typescript/bin/tsc -p packages/contracts/tsconfig.json --noEmit; workspace-node packages/contracts/node_modules/vitest/vitest.mjs run (cwd packages/contracts)`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py`, `.venv\Scripts\python.exe -m unittest tests.foundation.test_repository_structure tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_adr_check`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S02.T01-quality-035a1e8.json`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base 1bee927d2e96c6be8fa88fe32b66e92d94c1c390 --head 035a1e833ae0628d48bf1d29d31af73260a6adda`, `.venv\Scripts\python.exe tools/repository_structure_check.py --repo .; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S02.T01-build-manifest-035a1e8.json`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile service --affected-base 1bee927d2e96c6be8fa88fe32b66e92d94c1c390 --affected-head 035a1e833ae0628d48bf1d29d31af73260a6adda --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S02.T01-affected-selection-035a1e8.json`, `git diff --check 1bee927d2e96c6be8fa88fe32b66e92d94c1c390..035a1e833ae0628d48bf1d29d31af73260a6adda; Get-FileHash -Algorithm SHA256 artifacts/evidence/W1.A04.B00.json`
+- Deferred checks: `The exact complete service profile was also run at candidate 035a1e833ae0628d48bf1d29d31af73260a6adda and returned FAIL only in foundation:unit after all preceding repository, runtime, architecture, agent-protocol, backlog-view, fixture, benchmark, build, UI, ADR, CI, quality, and packaging-smoke controls passed. It reproduced the known historical recovery/governance snapshot baseline at 71 failures and 16 errors (prior recorded baseline: 72/16), including frozen GCR/GRR commit expectations, pre-resume PAUSED-state assertions, quiescence assumptions incompatible with the active W1 lease, and the previously deferred protected-candidate snapshot. No research-intent, portable-contract, Core service, packaging, ADR, architecture, quality, or build failure occurred. This repository-wide historical reconciliation remains mandatory at W1 exit under AGENTS.md. Full-profile report SHA-256: 82c6d24f8dd4114847c19a745bca286d5d17203f535a21a9b6b82a561bc4a355.`, `Persistence, migration, editor/UI, change-reason capture, active-intent selection, runtime enforcement, workflow-profile navigation, provenance-ledger storage, and cross-boundary end-to-end behavior belong to later approved tasks in CAP-03.S02 and CAP-03.S03 and are not claimed by this contract-only task.`, `CAP-03.S02 integrated end-to-end and adversarial slice review follows completion of T02 and T03. Complete cross-capability security, accessibility, performance, cancellation, restart, recovery, packaging, and release qualification remain mandatory at the applicable integration checkpoint and W1 exit.`
+- Selection rationale: This high-risk task introduces a shared public research-intent contract, generated cross-language decoders, strict untrusted-input validation, human-authority gates, immutable lineage, mode-specific completeness, downstream governing references, and governed build/packaging inputs. Verification therefore covers exact generation, strict TypeScript compilation, all portable TypeScript/Python contracts, mode and adversarial failure branches, full Core service and real Windows sidecar packaging suites, affected foundation controls, repository-wide Python quality, architecture/ADR coverage, build provenance, planning integrity, and patch/witness safety. No dependency, database, migration, UI, network, provider, credential, or external-service behavior changed.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
