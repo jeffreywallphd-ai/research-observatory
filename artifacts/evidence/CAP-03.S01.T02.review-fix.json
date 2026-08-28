@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S01.T02",
+  "commit": "bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e",
+  "baseCommit": "0e98f656857855e0162833d5a3973dca30019bae",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S01.T02.json",
+    "sha256": "eaf01d84e42ed270dd7a6cde584eadcc9f680b84e6645a8ebbf70f2f7bf5d749",
+    "commit": "0e98f656857855e0162833d5a3973dca30019bae",
+    "reason": "Independent R01 review found that both runtimes accepted the maximum safe current revision and emitted an unrepresentable revision before persistence. This record preserves the original packet and binds the focused strict-descendant overflow remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S01.T02.json",
+    "artifacts/evidence/CAP-03.S01.T02.review-R01.json",
+    "docs/architecture/domain-lifecycles.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/domain/generate-lifecycle.mjs",
+    "packages/contracts/domain/lifecycle.generated.ts",
+    "packages/contracts/domain/lifecycle.test.ts",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/domain_lifecycles.py",
+    "tests/contracts/test_domain_lifecycles.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json; .local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/node_modules/vitest/vitest.mjs run --root packages/contracts",
+      "exitCode": 0,
+      "result": "Both generators were current, strict TypeScript compilation passed, and all 26 tests across four contract files passed. The new parity regression proves maximum-minus-one emits and serializes the exact safe maximum, while a restarted maximum snapshot returns only lifecycle-revision-exhausted and invokes persistence zero times."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 31 portable-contract and 35 service tests passed. Python validates the maximum emitted transition against the unchanged Draft schema, preserves the exact integer through canonical serialization, and denies the reviewer reproduction before its recording repository receives a write."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T02-remediation-quality-bf3f2a3.json; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed for all 151 governed Python files; architecture and the 20-record ADR registry passed. Quality report SHA-256: 0930b2248e748a21deab31cabd79a0d1023f121bed36cb466aef751676a1b0c5."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T02-remediation-build-bf3f2a3.json; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "Build provenance passed for strict-descendant candidate bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e with only the protected W1.A04.B00 witness dirty; backlog structure/semantics, generated projections, and patch hygiene passed. Build report SHA-256: 887d513c6c12770217f767b8fa8e0fafcdc68b441c3914569c167dd6aa24f7c3."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Generated Python and TypeScript now append the same stable content-free lifecycle-revision-exhausted code whenever a valid current snapshot is already at the portable safe maximum.",
+        "At maximum-minus-one, both runtimes derive the approved transition and emit revision 9007199254740991 exactly. The Python result validates against the unchanged LifecycleTransition schema and both canonical serializers preserve the exact maximum.",
+        "Restarting from that emitted maximum and requesting another otherwise-valid transition is denied before persistence; the TypeScript writes array and Python recording repository both remain empty."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused maximum-minus-one, maximum, serialization/schema, restart, stable-code, and zero-write cases pass in both generated runtimes, alongside every original happy and hostile lifecycle test.",
+        "The full 31-test contract and 35-test service suites pass, replaying the prior R01 evidence boundary as well as the incremental overflow finding."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The remediation changes only the lifecycle generator and generated artifacts, cross-runtime regression tests, and the architecture failure-code documentation plus append-only review/evidence records.",
+        "The language-neutral schema and lifecycle profile hashes remain exactly 77d82e9fe47c51c7b4bc70c38c203497a0323081a00eb0a0ac899c5849bcb3a3 and 99386404ed393d385f223680a2dbafba10c995eadfc1e0c4d912e180322c5125. The safe-integer contract was not widened."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 isolated one high blocking arithmetic boundary in the generated lifecycle validators. The focused remediation replays that exact finding in both runtimes, all lifecycle rules, full contract and service suites, generated-code quality, architecture/ADR, build provenance, and backlog integrity; unrelated security, data, UI, dependency, and packaging behavior did not change.",
+    "selectedCommandIds": [
+      "service:unit",
+      "contracts:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "The real Windows sidecar packaging test passed for the original candidate and was not replayed because the remediation changes only pure generated transition arithmetic and tests; the module name/import inventory is unchanged.",
+      "The complete foundation/repository matrix and previously disclosed historical-control fixture remediation remain mandatory at W1 exit.",
+      "T03 compatibility evolution and integrated CAP-03.S01 qualification remain owned by the next task and slice review."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S01.T02-R01-F01"
+    ],
+    "note": "Re-review the exact R01 maximum-revision finding, strict-descendant 0e98f656857855e0162833d5a3973dca30019bae..bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e range, unchanged schema/profile bounds, cross-runtime stable-code parity, maximum serialization/schema validation, zero persistence writes, and supersession chain. Do not restart the entire audit."
+  }
+}

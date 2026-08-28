@@ -5746,11 +5746,11 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T13:42:49+00:00'
-      updated_at: '2026-08-28T14:12:07+00:00'
+      updated_at: '2026-08-28T14:17:58+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5760,6 +5760,11 @@ capabilities:
         sha256: eaf01d84e42ed270dd7a6cde584eadcc9f680b84e6645a8ebbf70f2f7bf5d749
         commit: 0e98f656857855e0162833d5a3973dca30019bae
         recorded_at: '2026-08-28T14:09:27+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S01.T02.review-fix.json
+        sha256: 777726f9c94d8e3e7ca2055274b279c2aed930e8e28de10ef3b95d545d6f6508
+        commit: bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e
+        recorded_at: '2026-08-28T14:17:58+00:00'
       review: &id020
         reviewer: nash-independent-domain-lifecycle-reviewer
         result: changes-requested
@@ -5774,7 +5779,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-28T14:12:07+00:00'
         expires_at: '2026-08-28T22:12:07+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -5914,7 +5919,69 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission: null
+        current_submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-08-28T14:17:58+00:00'
+          candidate_commit: bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e
+          base_commit: 0e98f656857855e0162833d5a3973dca30019bae
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S01.T02.review-fix.json
+            sha256: 777726f9c94d8e3e7ca2055274b279c2aed930e8e28de10ef3b95d545d6f6508
+            commit: bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e
+            recorded_at: '2026-08-28T14:17:58+00:00'
+          acceptance_criteria_sha256: 06e35549321e8b7695f6114a2707ae8a3753199a086e36b63f38125ab5e00855
+          changed_paths:
+          - artifacts/evidence/CAP-03.S01.T02.json
+          - artifacts/evidence/CAP-03.S01.T02.review-R01.json
+          - docs/architecture/domain-lifecycles.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/domain/generate-lifecycle.mjs
+          - packages/contracts/domain/lifecycle.generated.ts
+          - packages/contracts/domain/lifecycle.test.ts
+          - planning/backlog.yaml
+          - planning/status-summary.md
+          - services/core-api/src/research_observatory_core/domain_lifecycles.py
+          - tests/contracts/test_domain_lifecycles.py
+          selected_checks:
+          - .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe
+            packages/contracts/domain/generate-lifecycle.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/node_modules/typescript/bin/tsc
+            --noEmit -p packages/contracts/tsconfig.json; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/node_modules/vitest/vitest.mjs
+            run --root packages/contracts
+          - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest
+            discover -s tests/service -p test_*.py
+          - .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T02-remediation-quality-bf3f2a3.json;
+            .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo
+            .
+          - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T02-remediation-build-bf3f2a3.json;
+            .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
+            --repo . --check; git diff --check
+          deferred_checks:
+          - The real Windows sidecar packaging test passed for the original candidate and was not replayed because the remediation
+            changes only pure generated transition arithmetic and tests; the module name/import inventory is unchanged.
+          - The complete foundation/repository matrix and previously disclosed historical-control fixture remediation remain
+            mandatory at W1 exit.
+          - T03 compatibility evolution and integrated CAP-03.S01 qualification remain owned by the next task and slice review.
+          selection_rationale: R01 isolated one high blocking arithmetic boundary in the generated lifecycle validators. The
+            focused remediation replays that exact finding in both runtimes, all lifecycle rules, full contract and service
+            suites, generated-code quality, architecture/ADR, build provenance, and backlog integrity; unrelated security,
+            data, UI, dependency, and packaging behavior did not change.
+          selection_sha256: 14e9155b82be918772d7d816ee111f81707038dcae80da4d7469505a8118b99b
+          prior_attempt_id: R01
+          open_finding_ids:
+          - CAP-03.S01.T02-R01-F01
+          root_cause_analysis: null
+          selected_command_ids:
+          - service:unit
+          - contracts:unit
+          - foundation:quality
+          - foundation:build-manifest
+          - foundation:adr
+          - foundation:backlog
+          - foundation:backlog-views
+          packet_sha256: 19fe3060c12fa5fa1e3c5b5764045c162f24eeb7e28499a9b59365014af35e61
     - id: CAP-03.S01.T03
       capability_id: CAP-03
       slice_id: CAP-03.S01

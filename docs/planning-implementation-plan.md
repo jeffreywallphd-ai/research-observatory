@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3a832289f7b7c10943912224c4f0f65c16f4ffd23686d30e358c9903a212fcc4
+source_sha256: ac2056daeb67b2b6323a20909cae9ea5cd08a9bd18f98471cd924304a4e07cb1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3438,7 +3438,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3465,6 +3465,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S01.T02.json` at `0e98f656857855e0162833d5a3973dca30019bae`
+- `artifacts/evidence/CAP-03.S01.T02.review-fix.json` at `bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e`
 
 ##### Review history — CAP-03.S01.T02
 
@@ -3500,7 +3501,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `19fe3060c12fa5fa1e3c5b5764045c162f24eeb7e28499a9b59365014af35e61`
+
+- Candidate / base / branch: `bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e` / `0e98f656857855e0162833d5a3973dca30019bae` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T14:17:58+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S01.T02.review-fix.json` / `777726f9c94d8e3e7ca2055274b279c2aed930e8e28de10ef3b95d545d6f6508` / `bf3f2a38ceb7eedb5f7cd224a9495f0d1997b95e`
+- Acceptance-criteria SHA-256: `06e35549321e8b7695f6114a2707ae8a3753199a086e36b63f38125ab5e00855`
+- Verification-selection SHA-256: `14e9155b82be918772d7d816ee111f81707038dcae80da4d7469505a8118b99b`
+- Changed paths: `artifacts/evidence/CAP-03.S01.T02.json`, `artifacts/evidence/CAP-03.S01.T02.review-R01.json`, `docs/architecture/domain-lifecycles.md`, `docs/planning-implementation-plan.md`, `packages/contracts/domain/generate-lifecycle.mjs`, `packages/contracts/domain/lifecycle.generated.ts`, `packages/contracts/domain/lifecycle.test.ts`, `planning/backlog.yaml`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/domain_lifecycles.py`, `tests/contracts/test_domain_lifecycles.py`
+- Selected checks: `.local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/node_modules/vitest/vitest.mjs run --root packages/contracts`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T02-remediation-quality-bf3f2a3.json; .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo .`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T02-remediation-build-bf3f2a3.json; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; git diff --check`
+- Deferred checks: `The real Windows sidecar packaging test passed for the original candidate and was not replayed because the remediation changes only pure generated transition arithmetic and tests; the module name/import inventory is unchanged.`, `The complete foundation/repository matrix and previously disclosed historical-control fixture remediation remain mandatory at W1 exit.`, `T03 compatibility evolution and integrated CAP-03.S01 qualification remain owned by the next task and slice review.`
+- Selection rationale: R01 isolated one high blocking arithmetic boundary in the generated lifecycle validators. The focused remediation replays that exact finding in both runtimes, all lifecycle rules, full contract and service suites, generated-code quality, architecture/ADR, build provenance, and backlog integrity; unrelated security, data, UI, dependency, and packaging behavior did not change.
+- Prior round / replayed open findings: `R01` / `CAP-03.S01.T02-R01-F01`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by nash-independent-domain-lifecycle-reviewer at `2026-08-28T14:12:07+00:00`
 
