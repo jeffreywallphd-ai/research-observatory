@@ -66,6 +66,34 @@ or weakened human authority. Successful decoding takes ownership and returns a
 deeply immutable snapshot. Narrative is untrusted bounded data, never an
 instruction to the application or model.
 
+## Core service boundary
+
+The local Core API completes the authority handoff after draft creation:
+
+- `POST /projects/intent/acceptances` creates a new immutable `accepted`
+  revision only when a human confirms the exact current decision-complete draft
+  revision and content hash. The revision, provenance event, outbox event, and
+  idempotency binding commit atomically.
+- `POST /projects/intent/policy/evaluations` resolves the latest accepted
+  revision and evaluates one typed action against its epistemic mode, autonomy
+  level, human gates, local-only egress rule, output label, and stopping
+  conditions. It returns `allow`, `deny`, `recommend-human`, or
+  `require-confirmation` with the compact governing reference.
+
+Policy evaluation is not a capability token and cannot satisfy a human gate.
+Gate-bound actions always return a non-allow decision, local-only intent denies
+external egress, and stopping remains human-confirmed. Every evaluation writes
+a content-free decision record and matching provenance fact before returning;
+an audit failure therefore fails the requested action closed. Downstream
+services supply trusted subject context, call this boundary before
+consequential work, and retain the returned governing reference with resulting
+artifacts or operations.
+
+Policy audit excludes research questions, source content, manuscript text, and
+attempted payloads. It retains only action, subject type, outcome, reason,
+required gates, working-output label, stopping-confirmation state, and the
+immutable governing reference.
+
 ## Compatibility and packaging
 
 The contract version is `1.0.0`; no earlier Research Intent schema exists.

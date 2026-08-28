@@ -279,6 +279,41 @@ IntentStoppingCondition = Literal[
     "researcher-decision",
 ]
 IntentChangeCategory = Literal["primary-use-case", "corpus-scope", "novelty-scope"]
+IntentRevisionStatus = Literal["draft", "accepted"]
+IntentPolicySubject = Literal["human", "model", "system"]
+IntentHumanGate = Literal[
+    "intent-acceptance",
+    "scope-change",
+    "external-egress",
+    "evidence-adjudication",
+    "claim-approval",
+    "publication",
+]
+IntentPolicyAction = Literal[
+    "accept-intent",
+    "propose-query",
+    "recommend-stopping",
+    "prepare-screening-batch",
+    "prepare-draft-output",
+    "execute-approved-query",
+    "execute-approved-screening-batch",
+    "change-scope",
+    "external-egress",
+    "adjudicate-evidence",
+    "approve-claim",
+    "publish-output",
+    "confirm-stopping",
+]
+IntentPolicyOutcome = Literal["allow", "deny", "recommend-human", "require-confirmation"]
+IntentOutputLabel = Literal[
+    "systematic-working-output",
+    "theory-working-output",
+    "technical-working-output",
+    "hermeneutic-working-output",
+    "critical-working-output",
+    "novelty-working-output",
+    "empirical-working-output",
+]
 
 
 class IntentImpactRequest(ContractModel):
@@ -359,6 +394,54 @@ class IntentDraftRequest(IntentImpactRequest):
         )
 
 
+class IntentAcceptRequest(ContractModel):
+    root: str = Field(min_length=1, max_length=4096)
+    expected_revision: int = Field(ge=1, le=9_007_199_254_740_991)
+    expected_revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    confirmed: bool
+    decision_rationale: str = Field(min_length=1, max_length=4000)
+
+    @model_validator(mode="after")
+    def validate_rationale(self) -> IntentAcceptRequest:
+        if any(ord(character) < 32 and character not in "\n\r\t" for character in self.decision_rationale):
+            raise ValueError("intent acceptance rationale contains unsupported control characters")
+        return self
+
+
+class IntentPolicyRequest(ContractModel):
+    root: str = Field(min_length=1, max_length=4096)
+    action: IntentPolicyAction
+    subject_type: IntentPolicySubject
+    stopping_condition: IntentStoppingCondition | None = None
+
+
+class IntentGoverningReference(ContractModel):
+    schema_version: Literal["1.0"] = "1.0"
+    document_type: Literal["research-observatory-research-intent-reference"] = (
+        "research-observatory-research-intent-reference"
+    )
+    contract_version: str = Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")
+    intent_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    revision: int = Field(ge=1, le=9_007_199_254_740_991)
+    revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
+class IntentPolicyDecision(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    decision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    evaluated_at: str
+    action: IntentPolicyAction
+    subject_type: IntentPolicySubject
+    outcome: IntentPolicyOutcome
+    reason_code: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$", max_length=100)
+    explanation: str = Field(min_length=1, max_length=1000)
+    governing_intent: IntentGoverningReference | None
+    required_gates: tuple[IntentHumanGate, ...] = Field(max_length=6)
+    output_label: IntentOutputLabel | None
+    stopping_requires_human_confirmation: bool
+
+
 class IntentImpactPreview(ContractModel):
     schema_version: str = CORE_API_SCHEMA_VERSION
     expected_revision: int = Field(ge=0, le=9_007_199_254_740_991)
@@ -383,7 +466,7 @@ class IntentDraftProjection(ContractModel):
     revision: int = Field(ge=1, le=9_007_199_254_740_991)
     revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     created_at: str
-    status: Literal["draft"] = "draft"
+    status: IntentRevisionStatus = "draft"
     primary_use_case: IntentPrimaryUseCase
     epistemic_mode: IntentEpistemicMode
     research_objective: str = Field(max_length=4000)
@@ -405,14 +488,17 @@ class IntentDraftProjection(ContractModel):
     unresolved_decisions: tuple[str, ...] = Field(max_length=64)
     decision_complete: bool
     can_request_acceptance: bool
-    launch_ready: Literal[False] = False
+    launch_ready: bool = False
 
     @model_validator(mode="after")
     def validate_decision_state(self) -> IntentDraftProjection:
         if self.decision_complete != (not self.unresolved_decisions):
             raise ValueError("intent decision-completeness projection is inconsistent")
-        if self.can_request_acceptance != self.decision_complete:
-            raise ValueError("only decision-complete drafts may request acceptance")
+        if self.status == "draft":
+            if self.can_request_acceptance != self.decision_complete or self.launch_ready:
+                raise ValueError("only decision-complete drafts may request acceptance")
+        elif not self.decision_complete or self.can_request_acceptance or not self.launch_ready:
+            raise ValueError("accepted intent projection is inconsistent")
         return self
 
 
@@ -421,7 +507,7 @@ class IntentRevisionSummary(ContractModel):
     revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
     revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     created_at: str
-    status: Literal["draft"] = "draft"
+    status: IntentRevisionStatus = "draft"
     primary_use_case: IntentPrimaryUseCase
     unresolved_decision_count: int = Field(ge=0, le=64)
 
@@ -430,6 +516,7 @@ class IntentWorkspaceProjection(ContractModel):
     schema_version: str = CORE_API_SCHEMA_VERSION
     project_id: str = Field(pattern=(r"^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"))
     current: IntentDraftProjection | None
+    governing_intent: IntentGoverningReference | None
     history: tuple[IntentRevisionSummary, ...] = Field(max_length=100)
 
 

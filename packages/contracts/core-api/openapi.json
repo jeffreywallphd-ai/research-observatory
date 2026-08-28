@@ -335,6 +335,47 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "IntentAcceptRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmed": {
+            "title": "Confirmed",
+            "type": "boolean"
+          },
+          "decisionRationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Decisionrationale",
+            "type": "string"
+          },
+          "expectedRevision": {
+            "maximum": 9007199254740991.0,
+            "minimum": 1.0,
+            "title": "Expectedrevision",
+            "type": "integer"
+          },
+          "expectedRevisionContentHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Expectedrevisioncontenthash",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "expectedRevision",
+          "expectedRevisionContentHash",
+          "confirmed",
+          "decisionRationale"
+        ],
+        "title": "IntentAcceptRequest",
+        "type": "object"
+      },
       "IntentDraftProjection": {
         "additionalProperties": false,
         "properties": {
@@ -429,7 +470,6 @@
             "type": "array"
           },
           "launchReady": {
-            "const": false,
             "default": false,
             "title": "Launchready",
             "type": "boolean"
@@ -558,8 +598,11 @@
             "title": "Startyear"
           },
           "status": {
-            "const": "draft",
             "default": "draft",
+            "enum": [
+              "draft",
+              "accepted"
+            ],
             "title": "Status",
             "type": "string"
           },
@@ -861,6 +904,58 @@
         "title": "IntentDraftRequest",
         "type": "object"
       },
+      "IntentGoverningReference": {
+        "additionalProperties": false,
+        "properties": {
+          "contractVersion": {
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "documentType": {
+            "const": "research-observatory-research-intent-reference",
+            "default": "research-observatory-research-intent-reference",
+            "title": "Documenttype",
+            "type": "string"
+          },
+          "intentId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Intentid",
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 9007199254740991.0,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "revisionContentHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Revisioncontenthash",
+            "type": "string"
+          },
+          "revisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Revisionid",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "intentId",
+          "revisionId",
+          "revision",
+          "revisionContentHash"
+        ],
+        "title": "IntentGoverningReference",
+        "type": "object"
+      },
       "IntentImpactPreview": {
         "additionalProperties": false,
         "properties": {
@@ -1069,6 +1164,207 @@
         "title": "IntentImpactRequest",
         "type": "object"
       },
+      "IntentPolicyDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "accept-intent",
+              "propose-query",
+              "recommend-stopping",
+              "prepare-screening-batch",
+              "prepare-draft-output",
+              "execute-approved-query",
+              "execute-approved-screening-batch",
+              "change-scope",
+              "external-egress",
+              "adjudicate-evidence",
+              "approve-claim",
+              "publish-output",
+              "confirm-stopping"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "decisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Decisionid",
+            "type": "string"
+          },
+          "evaluatedAt": {
+            "title": "Evaluatedat",
+            "type": "string"
+          },
+          "explanation": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "governingIntent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IntentGoverningReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outcome": {
+            "enum": [
+              "allow",
+              "deny",
+              "recommend-human",
+              "require-confirmation"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "outputLabel": {
+            "anyOf": [
+              {
+                "enum": [
+                  "systematic-working-output",
+                  "theory-working-output",
+                  "technical-working-output",
+                  "hermeneutic-working-output",
+                  "critical-working-output",
+                  "novelty-working-output",
+                  "empirical-working-output"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outputlabel"
+          },
+          "reasonCode": {
+            "maxLength": 100,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "title": "Reasoncode",
+            "type": "string"
+          },
+          "requiredGates": {
+            "items": {
+              "enum": [
+                "intent-acceptance",
+                "scope-change",
+                "external-egress",
+                "evidence-adjudication",
+                "claim-approval",
+                "publication"
+              ],
+              "type": "string"
+            },
+            "maxItems": 6,
+            "title": "Requiredgates",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "stoppingRequiresHumanConfirmation": {
+            "title": "Stoppingrequireshumanconfirmation",
+            "type": "boolean"
+          },
+          "subjectType": {
+            "enum": [
+              "human",
+              "model",
+              "system"
+            ],
+            "title": "Subjecttype",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decisionId",
+          "evaluatedAt",
+          "action",
+          "subjectType",
+          "outcome",
+          "reasonCode",
+          "explanation",
+          "governingIntent",
+          "requiredGates",
+          "outputLabel",
+          "stoppingRequiresHumanConfirmation"
+        ],
+        "title": "IntentPolicyDecision",
+        "type": "object"
+      },
+      "IntentPolicyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "accept-intent",
+              "propose-query",
+              "recommend-stopping",
+              "prepare-screening-batch",
+              "prepare-draft-output",
+              "execute-approved-query",
+              "execute-approved-screening-batch",
+              "change-scope",
+              "external-egress",
+              "adjudicate-evidence",
+              "approve-claim",
+              "publish-output",
+              "confirm-stopping"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "stoppingCondition": {
+            "anyOf": [
+              {
+                "enum": [
+                  "source-exhaustion",
+                  "coverage-threshold",
+                  "interpretive-saturation",
+                  "benchmark-complete",
+                  "nearest-prior-work-challenged",
+                  "protocol-complete",
+                  "resource-budget",
+                  "researcher-decision"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stoppingcondition"
+          },
+          "subjectType": {
+            "enum": [
+              "human",
+              "model",
+              "system"
+            ],
+            "title": "Subjecttype",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "action",
+          "subjectType"
+        ],
+        "title": "IntentPolicyRequest",
+        "type": "object"
+      },
       "IntentRevisionSummary": {
         "additionalProperties": false,
         "properties": {
@@ -1113,8 +1409,11 @@
             "type": "string"
           },
           "status": {
-            "const": "draft",
             "default": "draft",
+            "enum": [
+              "draft",
+              "accepted"
+            ],
             "title": "Status",
             "type": "string"
           },
@@ -1149,6 +1448,16 @@
               }
             ]
           },
+          "governingIntent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IntentGoverningReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "history": {
             "items": {
               "$ref": "#/components/schemas/IntentRevisionSummary"
@@ -1171,6 +1480,7 @@
         "required": [
           "projectId",
           "current",
+          "governingIntent",
           "history"
         ],
         "title": "IntentWorkspaceProjection",
@@ -2277,6 +2587,79 @@
         ]
       }
     },
+    "/projects/intent/acceptances": {
+      "post": {
+        "operationId": "accept_intent_projects_intent_acceptances_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntentAcceptRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntentDraftProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Accept Intent",
+        "tags": [
+          "intent"
+        ]
+      }
+    },
     "/projects/intent/drafts": {
       "post": {
         "operationId": "save_intent_draft_projects_intent_drafts_post",
@@ -2345,6 +2728,67 @@
           }
         },
         "summary": "Save Intent Draft",
+        "tags": [
+          "intent"
+        ]
+      }
+    },
+    "/projects/intent/policy/evaluations": {
+      "post": {
+        "operationId": "evaluate_intent_policy_projects_intent_policy_evaluations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntentPolicyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntentPolicyDecision"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Evaluate Intent Policy",
         "tags": [
           "intent"
         ]

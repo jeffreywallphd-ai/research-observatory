@@ -24,10 +24,13 @@ from .models import (
     CapabilitiesResponse,
     ConfigurationResponse,
     HealthResponse,
+    IntentAcceptRequest,
     IntentDraftProjection,
     IntentDraftRequest,
     IntentImpactPreview,
     IntentImpactRequest,
+    IntentPolicyDecision,
+    IntentPolicyRequest,
     IntentWorkspaceProjection,
     ModuleResponse,
     ModulesResponse,
@@ -474,6 +477,38 @@ def create_app(
                 trace_id=request.state.trace_id,
                 idempotency_key=idempotency_key,
             ),
+        )
+
+    @app.post(
+        "/projects/intent/acceptances",
+        response_model=IntentDraftProjection,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["intent"],
+    )
+    def accept_intent(
+        request: Request,
+        command: IntentAcceptRequest,
+        idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
+    ) -> IntentDraftProjection:
+        return run_intent_action(
+            request,
+            lambda: runtime(request).intents.accept(
+                command,
+                trace_id=request.state.trace_id,
+                idempotency_key=idempotency_key,
+            ),
+        )
+
+    @app.post(
+        "/projects/intent/policy/evaluations",
+        response_model=IntentPolicyDecision,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["intent"],
+    )
+    def evaluate_intent_policy(request: Request, command: IntentPolicyRequest) -> IntentPolicyDecision:
+        return run_intent_action(
+            request,
+            lambda: runtime(request).intents.evaluate_policy(command, trace_id=request.state.trace_id),
         )
 
     @app.get(

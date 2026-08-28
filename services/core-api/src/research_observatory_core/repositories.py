@@ -24,6 +24,8 @@ from .ports.repositories import (
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
     IntentAuditEvent,
+    IntentPolicyAuditEvent,
+    IntentPolicyDecisionRecord,
     IntentRevisionRecord,
     IntentRevisionRepository,
     KnowledgeStatus,
@@ -280,6 +282,7 @@ def sqlite_privacy_policy_repository(path: Path, project_id: str) -> PrivacyPoli
 
 _INTENT_BRIDGE_KEY = "research-intent.project-id-bridge"
 _INTENT_IDEMPOTENCY_KEY = "research-intent.idempotency"
+_INTENT_POLICY_DECISION_KEY = "research-intent.policy-decision"
 _INTENT_REVISION_KEY = "research-intent.revision"
 
 
@@ -354,6 +357,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         actor_id: str,
         idempotency_key: str,
         command_sha256: str,
+        event_type: str = "intent.draft.saved",
     ) -> IntentRevisionRecord | None:
         if manifest_project_id != self._project_id:
             raise RepositoryIdempotencyConflict("research intent project differs")
@@ -366,6 +370,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     actor_id=actor_id,
                     idempotency_key=idempotency_key,
                     command_sha256=command_sha256,
+                    event_type=event_type,
                 )
             finally:
                 connection.close()
@@ -382,6 +387,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         actor_id: str,
         idempotency_key: str,
         command_sha256: str,
+        event_type: str,
     ) -> IntentRevisionRecord | None:
         if (
             manifest_project_id != self._project_id
@@ -390,6 +396,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             or any(value not in "0123456789abcdef" for value in idempotency_key)
             or len(command_sha256) != 64
             or any(value not in "0123456789abcdef" for value in command_sha256)
+            or event_type not in {"intent.draft.saved", "intent.accepted"}
         ):
             raise RepositoryIdempotencyConflict("research intent command authority differs")
         rows = connection.execute(
@@ -398,7 +405,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             (self._project_id, _INTENT_IDEMPOTENCY_KEY),
         ).fetchall()
         matches: list[tuple[int, dict[str, object]]] = []
-        expected_fields = {
+        legacy_fields = {
             "actorId",
             "actorType",
             "commandSha256",
@@ -411,6 +418,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             "revisionRecordSha256",
             "schemaVersion",
         }
+        current_fields = legacy_fields | {"eventType"}
         for revision, value_type, text_value in rows:
             if not isinstance(revision, int) or revision < 1 or value_type != "text" or not isinstance(text_value, str):
                 raise _transaction_failure("research intent idempotency record is invalid")
@@ -420,8 +428,10 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                 raise _transaction_failure("research intent idempotency record is invalid") from None
             if (
                 not isinstance(binding, dict)
-                or set(binding) != expected_fields
-                or binding.get("schemaVersion") != "1.0"
+                or frozenset(binding) not in {frozenset(legacy_fields), frozenset(current_fields)}
+                or binding.get("schemaVersion") not in {"1.0", "1.1"}
+                or (set(binding) == legacy_fields and binding.get("schemaVersion") != "1.0")
+                or (set(binding) == current_fields and binding.get("schemaVersion") != "1.1")
                 or binding.get("revision") != revision
                 or binding.get("actorType") != "human"
                 or binding.get("manifestProjectId") != self._project_id
@@ -447,11 +457,13 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         if len(matches) != 1:
             raise _transaction_failure("research intent idempotency binding is ambiguous")
         revision, binding = matches[0]
+        binding_event_type = cast(str, binding.get("eventType", "intent.draft.saved"))
         if (
             binding["actorId"] != actor_id
             or binding["actorType"] != "human"
             or binding["commandSha256"] != command_sha256
             or binding["manifestProjectId"] != manifest_project_id
+            or binding_event_type != event_type
         ):
             raise RepositoryIdempotencyConflict("research intent command key is already bound")
         revision_row = connection.execute(
@@ -480,13 +492,13 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             "WHERE project_id=? AND event_id=?",
             (self._project_id, binding["eventId"]),
         ).fetchone()
-        if provenance is None or tuple(provenance) != ("intent.draft.saved", "human", actor_id, revision_digest):
+        if provenance is None or tuple(provenance) != (binding_event_type, "human", actor_id, revision_digest):
             raise _transaction_failure("research intent provenance binding differs")
         outbox = connection.execute(
             "SELECT event_type, idempotency_key, record_sha256 FROM outbox_events WHERE project_id=? AND outbox_id=?",
             (self._project_id, binding["outboxId"]),
         ).fetchone()
-        if outbox is None or tuple(outbox) != ("intent.draft.saved", idempotency_key, command_sha256):
+        if outbox is None or tuple(outbox) != (binding_event_type, idempotency_key, command_sha256):
             raise _transaction_failure("research intent outbox binding differs")
         return IntentRevisionRecord(revision=revision, content_json=content_json)
 
@@ -505,7 +517,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             or record.revision != expected_revision + 1
             or not record.content_json
             or len(record.content_json.encode("utf-8")) > 65_536
-            or event.event_type != "intent.draft.saved"
+            or event.event_type not in {"intent.draft.saved", "intent.accepted"}
             or event.actor_type != "human"
             or not is_uuid_v7(event.actor_id)
             or len(event.idempotency_key) != 32
@@ -524,6 +536,8 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             or revision_value.get("revision") != record.revision
             or revision_value.get("projectId") != domain_project_id
             or revision_value.get("createdBy") != {"actorId": event.actor_id, "actorType": "human"}
+            or (event.event_type == "intent.draft.saved" and revision_value.get("status") != "draft")
+            or (event.event_type == "intent.accepted" and revision_value.get("status") != "accepted")
         ):
             raise _transaction_failure("research intent append authority differs")
         bridge_json = json.dumps(
@@ -547,6 +561,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     actor_id=event.actor_id,
                     idempotency_key=event.idempotency_key,
                     command_sha256=event.command_sha256,
+                    event_type=event.event_type,
                 )
                 if replay is not None:
                     connection.execute("COMMIT")
@@ -587,12 +602,13 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                         "commandSha256": event.command_sha256,
                         "domainProjectId": domain_project_id,
                         "eventId": event.event_id,
+                        "eventType": event.event_type,
                         "idempotencyKey": event.idempotency_key,
                         "manifestProjectId": manifest_project_id,
                         "outboxId": event.outbox_id,
                         "revision": record.revision,
                         "revisionRecordSha256": event.record_sha256,
-                        "schemaVersion": "1.0",
+                        "schemaVersion": "1.1",
                     },
                     ensure_ascii=True,
                     sort_keys=True,
@@ -653,6 +669,77 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             raise
         except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError:
             raise _transaction_failure("research intent append failed") from None
+
+    def append_policy_decision(
+        self,
+        *,
+        record: IntentPolicyDecisionRecord,
+        event: IntentPolicyAuditEvent,
+    ) -> None:
+        if (
+            not is_uuid_v7(record.decision_id)
+            or not record.content_json
+            or len(record.content_json.encode("utf-8")) > 16_384
+            or not is_uuid_v7(event.event_id)
+            or event.actor_type != "human"
+            or not is_uuid_v7(event.actor_id)
+            or hashlib.sha256(record.content_json.encode("utf-8")).hexdigest() != event.record_sha256
+        ):
+            raise _transaction_failure("research intent policy decision is invalid")
+        try:
+            value = json.loads(record.content_json)
+        except json.JSONDecodeError, TypeError:
+            raise _transaction_failure("research intent policy decision is invalid") from None
+        if (
+            not isinstance(value, dict)
+            or value.get("decisionId") != record.decision_id
+            or value.get("actorId") != event.actor_id
+            or value.get("eventType") != "intent.policy.evaluated"
+        ):
+            raise _transaction_failure("research intent policy authority differs")
+        try:
+            connection = self._open()
+            try:
+                connection.execute("BEGIN IMMEDIATE")
+                next_revision = int(
+                    connection.execute(
+                        "SELECT COALESCE(MAX(revision), 0) + 1 FROM settings WHERE project_id=? AND setting_key=?",
+                        (self._project_id, _INTENT_POLICY_DECISION_KEY),
+                    ).fetchone()[0]
+                )
+                self._insert_text_setting(
+                    connection,
+                    key=_INTENT_POLICY_DECISION_KEY,
+                    revision=next_revision,
+                    value=record.content_json,
+                    occurred_at=event.occurred_at,
+                )
+                connection.execute(
+                    """
+                    INSERT INTO provenance_events (
+                        event_id, project_id, revision_id, event_type, occurred_at,
+                        trace_id, actor_type, actor_id, record_sha256
+                    ) VALUES (?, ?, NULL, 'intent.policy.evaluated', ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        event.event_id,
+                        self._project_id,
+                        event.occurred_at,
+                        event.trace_id,
+                        event.actor_type,
+                        event.actor_id,
+                        event.record_sha256,
+                    ),
+                )
+                connection.execute("COMMIT")
+            except BaseException:
+                if connection.in_transaction:
+                    connection.execute("ROLLBACK")
+                raise
+            finally:
+                connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError:
+            raise _transaction_failure("research intent policy decision append failed") from None
 
     def _insert_text_setting(
         self,
