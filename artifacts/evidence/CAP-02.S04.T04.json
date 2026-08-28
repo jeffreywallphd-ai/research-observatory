@@ -1,0 +1,211 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T04",
+  "commit": "529d6ee50dc75ce4c7ceeb8a5c293acb99faecd0",
+  "baseCommit": "819e32185f7d1b6e914cee45b7bcc487d891f7c8",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/adr/ADR-0020-protect-project-databases-with-sqlcipher-and-vault-backed-raw-keys.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/local-credential-storage.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/security/credential-store-profile.schema.json",
+    "packages/contracts/security/credential-store-profile.v1.json",
+    "packages/contracts/storage/protected-database-profile.schema.json",
+    "packages/contracts/storage/protected-database-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "security-exceptions.json",
+    "services/core-api/README.md",
+    "services/core-api/THIRD_PARTY_NOTICES.txt",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/ports/credential_store.py",
+    "services/core-api/src/research_observatory_core/ports/database_keys.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/__init__.py",
+    "tests/contracts/test_credential_store_contract.py",
+    "tests/contracts/test_protected_database_contract.py",
+    "tests/data/__init__.py",
+    "tests/data/test_encrypted_object_store.py",
+    "tests/data/test_local_object_store.py",
+    "tests/data/test_object_envelope_upgrades.py",
+    "tests/data/test_protected_database_performance_check.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_repositories.py",
+    "tests/data/test_sqlite_schema.py",
+    "tests/data/test_storage_maintenance.py",
+    "tests/database_key_fixtures.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/security/test_privacy_controls.py",
+    "tests/security/test_protected_database.py",
+    "tests/security/test_windows_credentials.py",
+    "tests/service/test_project_lifecycle.py",
+    "tools/core_sidecar_build.py",
+    "tools/protected_database_performance_check.py",
+    "uv.lock"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts/tmp/CAP-02.S04.T04-security-local-529d6ee.json",
+      "exitCode": 0,
+      "result": "The pinned Trivy 0.73.0 live scan passed at the exact candidate: 601 packages, 152 normalized findings, zero unexcepted blocking findings, and zero policy errors. Report SHA-256: 512129977a9ac24dbe8b6dd061fd37a69abc277347a2224142b9bc36eff23b8f."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 55 local-security tests passed with one expected Windows-token directory-symlink skip. Coverage includes encrypted headers, plaintext denial, vault-backed keys, leakage checks, key loss, corruption, backup/restore, rekey, interrupted migration/rekey recovery, DPAPI credential isolation, privacy controls, and fail-closed supply-chain policy behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/data -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 101 data/storage tests passed. The suite covers strict SQLite schema and repository behavior, encrypted object storage, prior-version migration with verified restorable backups, rollback/retry boundaries, concurrency, restart recovery, maintenance safety, and the protected-database performance contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 32 Core service and project-lifecycle tests passed, including local transport denial, authenticated lifecycle, project compatibility, exclusive locks, damaged/incomplete project failure, exact package creation, archive/restore/delete, and restart behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 24 strict portable-contract tests passed, including the protected database, user-scoped credential store, privacy, object storage, project manifest, diagnostics, and generated domain contracts."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected file-symlink skip. The frozen sidecar ran without system Python, included the SQLCipher native runtime and third-party notice, enforced exact artifact inventory, and detected missing or substituted runtime content."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\protected_database_performance_check.py --repo . --report artifacts/tmp/CAP-02.S04.T04-protected-database-performance-529d6ee.json",
+      "exitCode": 0,
+      "result": "The seven-sample SQLCipher benchmark passed every absolute p95 budget: open 3.081 ms, representative query 4.115 ms, integrity 5.190 ms, backup 97.689 ms, plaintext migration 135.881 ms, and rekey 39.055 ms. Report SHA-256: bd8c80fb20082559f00aa13e1b5e8031737f63eaaf4c6287eecae60be12f5314."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 148 governed Python files passed formatting, Ruff, and mypy."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S04.T04-build-manifest-529d6ee.json",
+      "exitCode": 0,
+      "result": "The build manifest passed for candidate 0.1.0+g529d6ee with the complete repository schema inventory. The only dirty path was the independently authenticated untracked W1.A04 witness. Report SHA-256: a6ad72272e63b1eb1c2176bfd057a078409a27dda892b232a0c93045e7c74282."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "The ADR registry passed with 20 indexed records, including accepted ADR-0020."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The canonical backlog passed structural and semantic validation with 20 capabilities, 117 slices, 359 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated backlog projections matched the canonical ledger byte-for-byte."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . wave validate W1",
+      "exitCode": 0,
+      "result": "All W1-binding capability decisions and all 15 W1 slice plans validated in the immutable approved Wave packet; the 150-page planning review site passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The complete W1 packet remains explicitly approved and execution-ready."
+    },
+    {
+      "command": "uv lock --check",
+      "exitCode": 0,
+      "result": "The locked Python dependency graph resolved exactly 69 packages without lock drift."
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "Patch hygiene passed at the exact candidate; tracked files were clean and the protected W1.A04 witness retained SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The production PC/lab profile is the strict sqlcipher-4.12-community-wal-v1 contract. Production creation writes an encrypted header, ordinary open requires the exact vault key authority, and a writable plaintext database is rejected rather than replaced or silently upgraded.",
+        "Plaintext is available only through an explicitly named development fixture factory. Production plaintext migration requires explicit consent, constructs and verifies a protected candidate, publishes only the encrypted database, and retains restart-safe recovery authority across interrupted publication.",
+        "Strict contract tests reject plaintext algorithms, raw or file-backed keys, weakened key scope, and schema expansion."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Database keys are random per-project raw keys protected by the Windows user-scoped DPAPI credential store and leased through the credential port. Tests prove keys are absent from project files, backups, exports, diagnostics, environment dumps, process arguments, and structured logs.",
+        "Expected and adversarial tests cover encrypted backup/restore, prior protected-schema migration, plaintext migration, rekey, key loss, corruption, interrupted migration, interrupted rekey, restore publication failure, restart recovery, and concurrent credential access.",
+        "The full local-security suite passed on Windows x64; corruption and wrong-key paths emit SQLCipher internal diagnostics only in the controlled test process and fail closed without replacing the protected database."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Accepted ADR-0020 records the local attacker and lost-device assumptions, SQLCipher selection, Windows vault-backed raw keys, encrypted backup/migration/rekey/recovery behavior, licensing and packaging obligations, fallback/rollback rules, and residual dependence on OS account and full-disk protection.",
+        "The exact-candidate benchmark records median and nearest-rank p95 distributions for open, query, integrity, backup, plaintext migration, and rekey; every metric passed its absolute budget.",
+        "The frozen sidecar includes the SQLCipher native module and third-party notice and runs without system Python. The live supply-chain scan reports zero unexcepted blockers."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The 55-test security suite, 101-test data suite, 32-test service suite, 24-test contract suite, and six-test packaging suite cover normal creation/open/query and multiple material failure boundaries.",
+        "Material denial cases include plaintext production open, missing/wrong key, database corruption, backup corruption, migration interruption, rekey interruption, restore publication failure, redirected storage, hardlinks/symlinks where supported, concurrent writers, and unavailable credential authority.",
+        "One directory-symlink security case and one file-symlink packaging case were skipped because the current Windows token cannot create those links; corresponding redirect and hardlink denial paths passed and the skipped platform-token cases remain visible."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The change updates the database/credential ports, Core composition, migrations, strict portable profiles, documentation, ADR registry, packaging contract, dependency lock, test fixtures, and redacted audit behavior required by T04.",
+        "The build-input inventory change is a mechanical enumeration of 43 already-existing governance schemas exposed by the build-manifest gate; it changes no schema semantics or approved authority.",
+        "The only adjacent security maintenance is the independently reviewed seven-day renewal of exactly two development-only native TypeScript compiler findings after the live scan found no patched stable release. It changes no threshold, package, production runtime, or product authority; both exceptions expire 2026-09-04 and must be removed at the first patched stable release."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T04 changes a high-risk local encryption, key-management, migration, backup/recovery, packaging, dependency, and cross-process service boundary. Task-level coverage therefore includes the complete security, data, service, contracts, and packaging suites; a live normalized Trivy scan; exact SQLCipher performance distributions; format/lint/type checks; lock integrity; ADR/build/backlog/Wave validation; and failure-path tests for plaintext denial, leakage, key loss, corruption, interrupted migration/rekey, backup/restore, and restart. A governed affected-selection attempt at 59bf98a passed repository, architecture, benchmark, build, UI, ADR, CI, quality, and packaging-smoke checks but its full 418-test foundation command failed with 72 failures and 16 errors in retired GCR/GRR/live-bound historical assertions after W1 advanced; report SHA-256 31b500da1fdd1f236f142d508b086ca7a11386522f045e3d615aa4c726143ff2. That adverse result is disclosed rather than represented as passing T04 evidence. AGENTS.md assigns the complete full-repository matrix to W1 exit, while the task evidence proves every credible T04 product, security, migration, dependency, packaging, contract, and platform-token boundary. The independent reviewer must treat any task-relevant reproduction or unsafe historical-control interaction as blocking.",
+    "selectedCommandIds": [
+      "security-local:supply-chain",
+      "security-local:unit",
+      "data:unit",
+      "service:unit",
+      "contracts:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "The complete foundation unit and repository profile matrix remains mandatory at W1 exit. The attempted broad run and its historical-controller failures are retained as adverse evidence and must be resolved before W1 qualification.",
+      "The governed project-lifecycle and storage-maintenance performance commands are explicitly gate-bound to W1 exit by verification/affected-selection.json; T04's dedicated SQLCipher performance command passed.",
+      "e2e-local:system is inactive because tests/e2e/test_*.py does not yet exist; cross-capability happy, denial, cancellation, restart, and recovery qualification remains mandatory at slice/checkpoint/W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "security-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate 529d6ee50dc75ce4c7ceeb8a5c293acb99faecd0. Prioritize plaintext denial, vault-key containment, encrypted backup and migration integrity, rekey/key-loss/corruption/crash recovery, SQLCipher packaging and licensing, live supply-chain results, performance budgets, the exact two-record seven-day exception renewal, build-input scope, and whether the disclosed historical foundation failures are safely deferred rather than task-blocking."
+  }
+}

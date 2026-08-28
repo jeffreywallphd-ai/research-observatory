@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3eeddacb2fe659fd5b55fa27568da34bbd934ded609f3165597490edfc442048
+source_sha256: 376aee5357729832d6a324b6850256377c8f074118c162be270e32816a4450e6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 274 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 44 |
 | `DEFERRED` | 36 |
 
@@ -352,6 +352,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / cap02_s04_t01_security_review | - |
 | `CAP-02.S04.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `CAP-02.S04.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-reviewer | - |
+| `CAP-02.S04.T04` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -419,4 +420,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S04.T04` Select and implement the protected local project-database profile | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S04.T04` Select and implement the protected local project-database profile | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
