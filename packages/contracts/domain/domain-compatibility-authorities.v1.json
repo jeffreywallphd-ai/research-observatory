@@ -14,7 +14,7 @@
         "status": "Accepted",
         "decisionScope": "Portable aggregate and revision identity, UUID minting authority, common scholarly value objects, and deterministic Python/TypeScript generation from the core domain schema.",
         "path": "docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md",
-        "sha256": "b0a99951ad83939e5007412efba423981ee3167f145ef76b371d172fa0109536"
+        "sha256": "3f930f56a3a570d47c036a34c53391c8616db6dd81c0a729c2b3e665dfc8d9dc"
       },
       "migration": {
         "id": "legacy-project-uuidv4-to-canonical-uuidv7",
