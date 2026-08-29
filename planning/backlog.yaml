@@ -7000,12 +7000,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
-      status: DONE
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T19:12:19+00:00'
-      updated_at: '2026-08-28T20:40:22+00:00'
-      completed_at: '2026-08-28T20:40:22+00:00'
+      updated_at: '2026-08-29T12:57:01+00:00'
+      completed_at: null
       blocker: null
       implementation_notes: R02 remediates both blocking R01 findings with stable current-user actor authority and restart-safe
         transactional idempotency.
@@ -7037,8 +7037,11 @@ capabilities:
           parity and package inclusion remain exact. No blocking finding remains and later persistence/UI/enforcement/provenance
           duties are not overclaimed.
       base_sha: 198edd87be8147087ac87f282c12d099fe1a943d
-      lease: null
-      verification_state: passed
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-29T12:57:01+00:00'
+        expires_at: '2026-08-29T20:57:01+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -7400,6 +7403,7 @@ capabilities:
               - CAP-03.S02.T02-R01-F01
               - CAP-03.S02.T02-R01-F02
         current_submission: null
+      cancellation: null
     - id: CAP-03.S02.T03
       capability_id: CAP-03
       slice_id: CAP-03.S02
@@ -7428,12 +7432,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: DONE
+      status: NOT_STARTED
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T20:43:04+00:00'
-      updated_at: '2026-08-29T12:05:37+00:00'
-      completed_at: '2026-08-29T12:05:37+00:00'
+      updated_at: '2026-08-29T12:57:01+00:00'
+      completed_at: null
       blocker: null
       implementation_notes: Exact candidate 610a01c submitted for epistemic-governance review; historical full-foundation
         fixture debt remains disclosed for W1 exit.
@@ -7473,7 +7477,7 @@ capabilities:
           explicitly assigned to reopened CAP-03.S02.T02 and is not claimed by T03. No finding remains open.
       base_sha: 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e
       lease: null
-      verification_state: passed
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
