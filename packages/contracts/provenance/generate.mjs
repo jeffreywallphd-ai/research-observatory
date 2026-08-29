@@ -23,12 +23,15 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(`provenance contract source invalid: ${message}`);
 };
 const semanticRules = [
-  "actor-and-agent-match", "event-project-and-subject-match", "activity-time-is-ordered",
-  "event-time-matches-activity-end", "input-output-sets-are-disjoint", "entity-references-are-unique",
-  "entity-policy-does-not-weaken-event", "relations-close-over-event-objects",
+  "actor-and-agent-match", "event-project-and-subject-match", "subject-binds-exact-event-object",
+  "activity-time-is-ordered", "event-time-matches-activity-end", "input-output-revisions-are-disjoint",
+  "entity-references-are-unique", "identity-namespace-is-consistent", "entity-policy-does-not-weaken-event",
+  "relations-close-over-event-objects", "relation-identities-and-facts-are-unique",
+  "relation-roles-match-event-objects", "relation-outcome-matches-activity-status",
   "activity-agent-relation-is-complete", "input-use-relations-are-complete",
   "output-generation-relations-are-complete", "output-attribution-relations-are-complete",
-  "known-event-type-matches-activity", "known-event-shape-matches-operation", "causation-is-not-self",
+  "known-event-type-matches-activity", "known-event-relations-match-operation",
+  "known-event-shape-matches-operation", "causation-is-not-self",
 ];
 const knownMap = {
   "org.research-observatory.source.acquired.v1": "source-acquisition",
@@ -40,11 +43,39 @@ const knownMap = {
   "org.research-observatory.export.created.v1": "export",
   "org.research-observatory.entity.invalidated.v1": "invalidation",
 };
+const relationPolicy = {
+  roles: {
+    used: "input",
+    wasGeneratedBy: "output",
+    wasAssociatedWith: "activity-agent",
+    wasDerivedFrom: "output-to-input",
+    wasInvalidatedBy: "input",
+    wasAttributedTo: "output-agent",
+  },
+  knownNonSuccessful: {
+    "source-acquisition": {
+      failed: ["wasAssociatedWith"],
+      cancelled: ["wasAssociatedWith"],
+      denied: ["wasAssociatedWith"],
+    },
+    other: {
+      failed: ["used", "wasAssociatedWith"],
+      cancelled: ["used", "wasAssociatedWith"],
+      denied: ["wasAssociatedWith"],
+    },
+  },
+  knownSucceeded: {
+    "source-acquisition": ["wasGeneratedBy", "wasAssociatedWith", "wasAttributedTo"],
+    transformation: ["used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasAttributedTo"],
+    invalidation: ["wasAssociatedWith", "wasInvalidatedBy"],
+  },
+};
 assert(schema.$schema === "https://json-schema.org/draft/2020-12/schema", "schema draft");
 assert(schema.$ref === "#/$defs/ProvenanceEvent", "event root");
 assert(schema.$defs?.ProvenanceEvent?.properties?.specversion?.const === "1.0", "CloudEvents version");
 assert(JSON.stringify(schema["x-research-observatory-semanticRules"]) === JSON.stringify(semanticRules), "semantic rules");
 assert(JSON.stringify(schema["x-research-observatory-knownEventActivityMap"]) === JSON.stringify(knownMap), "known event map");
+assert(JSON.stringify(schema["x-research-observatory-relationPolicy"]) === JSON.stringify(relationPolicy), "relation policy");
 
 const replacements = {
   "@@SCHEMA_SHA256@@": sha256(Buffer.from(schemaText, "utf8")),

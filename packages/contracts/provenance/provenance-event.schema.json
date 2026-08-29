@@ -5,17 +5,23 @@
   "x-research-observatory-semanticRules": [
     "actor-and-agent-match",
     "event-project-and-subject-match",
+    "subject-binds-exact-event-object",
     "activity-time-is-ordered",
     "event-time-matches-activity-end",
-    "input-output-sets-are-disjoint",
+    "input-output-revisions-are-disjoint",
     "entity-references-are-unique",
+    "identity-namespace-is-consistent",
     "entity-policy-does-not-weaken-event",
     "relations-close-over-event-objects",
+    "relation-identities-and-facts-are-unique",
+    "relation-roles-match-event-objects",
+    "relation-outcome-matches-activity-status",
     "activity-agent-relation-is-complete",
     "input-use-relations-are-complete",
     "output-generation-relations-are-complete",
     "output-attribution-relations-are-complete",
     "known-event-type-matches-activity",
+    "known-event-relations-match-operation",
     "known-event-shape-matches-operation",
     "causation-is-not-self"
   ],
@@ -28,6 +34,33 @@
     "org.research-observatory.synthesis.produced.v1": "synthesis",
     "org.research-observatory.export.created.v1": "export",
     "org.research-observatory.entity.invalidated.v1": "invalidation"
+  },
+  "x-research-observatory-relationPolicy": {
+    "roles": {
+      "used": "input",
+      "wasGeneratedBy": "output",
+      "wasAssociatedWith": "activity-agent",
+      "wasDerivedFrom": "output-to-input",
+      "wasInvalidatedBy": "input",
+      "wasAttributedTo": "output-agent"
+    },
+    "knownNonSuccessful": {
+      "source-acquisition": {
+        "failed": ["wasAssociatedWith"],
+        "cancelled": ["wasAssociatedWith"],
+        "denied": ["wasAssociatedWith"]
+      },
+      "other": {
+        "failed": ["used", "wasAssociatedWith"],
+        "cancelled": ["used", "wasAssociatedWith"],
+        "denied": ["wasAssociatedWith"]
+      }
+    },
+    "knownSucceeded": {
+      "source-acquisition": ["wasGeneratedBy", "wasAssociatedWith", "wasAttributedTo"],
+      "transformation": ["used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasAttributedTo"],
+      "invalidation": ["wasAssociatedWith", "wasInvalidatedBy"]
+    }
   },
   "$ref": "#/$defs/ProvenanceEvent",
   "$defs": {
@@ -42,7 +75,7 @@
     "UtcInstant": {
       "type": "string",
       "format": "date-time",
-      "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z(?![\\s\\S])"
+      "pattern": "^(?!0000)[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z(?![\\s\\S])"
     },
     "Semver": {
       "type": "string",
@@ -125,15 +158,27 @@
     "NullableUuidV7": {
       "oneOf": [{"type": "null"}, {"$ref": "#/$defs/UuidV7"}]
     },
+    "ProvenanceEntityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entityId", "revisionId"],
+      "properties": {
+        "entityId": {"$ref": "#/$defs/UuidV7"},
+        "revisionId": {"$ref": "#/$defs/UuidV7"}
+      }
+    },
+    "NullableEntityReference": {
+      "oneOf": [{"type": "null"}, {"$ref": "#/$defs/ProvenanceEntityReference"}]
+    },
     "ProvenanceRelation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["relationId", "relationType", "entityId", "relatedEntityId", "activityId", "agentId", "occurredAt"],
+      "required": ["relationId", "relationType", "entity", "relatedEntity", "activityId", "agentId", "occurredAt"],
       "properties": {
         "relationId": {"$ref": "#/$defs/UuidV7"},
         "relationType": {"type": "string", "enum": ["used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasInvalidatedBy", "wasAttributedTo"]},
-        "entityId": {"$ref": "#/$defs/NullableUuidV7"},
-        "relatedEntityId": {"$ref": "#/$defs/NullableUuidV7"},
+        "entity": {"$ref": "#/$defs/NullableEntityReference"},
+        "relatedEntity": {"$ref": "#/$defs/NullableEntityReference"},
         "activityId": {"$ref": "#/$defs/NullableUuidV7"},
         "agentId": {"$ref": "#/$defs/NullableUuidV7"},
         "occurredAt": {"$ref": "#/$defs/UtcInstant"}
@@ -210,8 +255,15 @@
         "subject": {
           "type": "string",
           "minLength": 50,
-          "maxLength": 240,
-          "pattern": "^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/[a-z][a-z0-9-]{0,63}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+          "maxLength": 300,
+          "oneOf": [
+            {
+              "pattern": "^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/entity/[a-z][a-z0-9-]{0,63}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/revision/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+            },
+            {
+              "pattern": "^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/activity/[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+            }
+          ]
         },
         "time": {"$ref": "#/$defs/UtcInstant"},
         "dataschema": {"const": "urn:research-observatory:schema:provenance-event:1.0.0"},
