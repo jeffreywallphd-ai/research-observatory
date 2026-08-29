@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T03",
+  "commit": "08e81290382d208f10c5f460dcd32296b8e6da53",
+  "baseCommit": "c31bd843b85568e0bb51fdbd7247bf5fe9b64568",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/core-api/runtime-handshake.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/service/test_core_api.py",
+    "tests/service/test_provenance.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-desktop-application.json; .venv\\Scripts\\python.exe -m unittest discover -s tests/desktop -p test_*.py",
+      "exitCode": 0,
+      "result": "The desktop application check passed UI-component verification, lint, typecheck, 60 Vitest tests, production build, cargo fmt, clippy, 11 Rust tests, and Rust build. The separate canonical desktop Python suite passed all 51 tests. The lineage workspace tests exercise navigation plus exact UUIDv7 submission, ancestors and descendants, a synthesis output with an evidence-passage branch, prior same-entity and alternate visibility, invalidation, missing revisions, integrity-review, legacy events, read-only availability, closed-project denial, and invalid identifier rejection."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_*.py",
+      "exitCode": 0,
+      "result": "All 51 service tests, 59 portable Python contract tests, and six Windows sidecar packaging tests passed; one environment-specific packaging case was skipped by its existing contract. Exact lineage request/response binding, bounded traversal, content-free configuration/model/human identities, persistence, missing-reference and integrity-review paths, strict generated decoding, runtime capability advertisement, and the frozen packaged sidecar boundary are green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; ui_visual_regression_check.py",
+      "exitCode": 0,
+      "result": "Approved reference RO-UI-ACADEMIC-MINIMAL-1.3 remained reproducible and byte-valid. Token, 32-route, 14-workflow, accessibility/responsive, and deterministic Windows Chromium visual checks passed, including 64 light/dark captures at the two governed responsive viewports. No governed reference was changed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .; agent_protocol_check.py; backlog_views.py --check; quality_check.py; taskctl.py validate; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "Repository structure, revised durable-Wave protocol, generated backlog views, Ruff formatting/lint and mypy across 166 governed Python files, and the 20-capability/117-slice/359-task backlog passed. Candidate patch hygiene passed. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The desktop exposes Audit & lineage through the approved application navigation. From there, one exact UUIDv7 submission starts a bounded ancestors or descendants trace, satisfying the two-interaction navigation-plus-trace contract for output revisions attached to synthesis sentences, evidence fields, claims, or other outputs.",
+        "The sampled trace renders an exact synthesis.sentence selection and evidence.passage branch with entity/revision, event, activity, configuration/prompt-version hash, model/software/human role, time, and traversal depth. It exposes identifiers and governed metadata without raw research text, raw prompts, hidden rationale, or chain-of-thought.",
+        "All returned branches remain visible. Same-entity history is labeled neutrally as prior or later revision, other branches as upstream source/alternate or downstream output, and invalidation events expose stale state. Missing revisions, legacy events, and integrity-review state remain visible rather than being silently dropped."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact candidate passed the complete desktop application check, 51 desktop Python tests, 51 service tests, 59 portable Python contract tests, six packaging tests, and all affected UI conformance checks.",
+        "Material boundary coverage includes malformed revision IDs, mismatched response revision/direction, unknown response fields, invalid configuration hashes, closed or absent projects, missing referenced revisions, legacy events, integrity-review state, bounded pagination, and read-only inspection.",
+        "The generated TypeScript client, Core API, SQLite-backed repository path, exact runtime handshake, Rust supervisor fixtures, packaged sidecar, and desktop renderer agree on the new provenance.lineage.read capability and minimized lineage schema."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The provenance architecture contract documents the content-minimized lineage projection and its source, transformation, configuration, actor, audit, integrity, cursor, and missing-reference semantics. The generated OpenAPI/client and runtime handshake are synchronized with executable behavior.",
+        "No database schema or migration was required because T02 already persisted the canonical lineage authority; T03 adds the bounded read projection, exact public contract, capability discovery, approved-reference-conformant renderer, and tests without changing persisted authority.",
+        "No dependency version, external service, cloud path, raw-content exposure, governed UI reference, release authority, or unrelated product scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This task crosses a public generated Core API, SQLite provenance projection, exact per-launch runtime capability contract, Rust supervisor fixtures, and a governed desktop experience, so the selected checks cover the full desktop application build and Rust workspace, desktop/service/contract/packaging suites, every affected UI conformance dimension, Python quality, repository/backlog integrity, generated views, and witness safety. The deterministic affected-profile run at exact candidate 08e81290382d208f10c5f460dcd32296b8e6da53 stopped in foundation:unit with 72 failures and 16 errors after its preceding repository, agent-protocol, backlog-view, and quality controls passed. Report artifacts/tmp/CAP-03.S03.T03-R01-affected-verification.json has SHA-256 afade41c2c6a6d11ea28f3c25c35d969e3c4d03ef23e0409022ca58b549294d2. Every reported failure is a stale historical GCR/GRR/controller snapshot or pre-resume W1 state expectation; no T03 product command failed, and the aggregate stopped before reaching those product commands. The adverse result is preserved here rather than relabeled. Under the post-GOV-MIG-0001 risk-selected workflow, current validators and all acceptance-relevant product boundaries were then run directly and passed. Historical controller reconciliation remains mandatory at W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:agent-protocol",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "The known historical foundation:unit GCR/GRR/controller snapshot baseline remains adverse at 72 failures and 16 errors and must be reconciled or formally dispositioned before W1 exit qualification can pass; it is not attributed to this product candidate.",
+      "CAP-03.S03 independent slice review will replay the accumulated append-only persistence, retry/restart, migration, lineage, integrity-review, recovery, contract, and renderer risk union after T03 closes.",
+      "Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at Wave exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "rootCauseAnalysis": null,
+    "note": "Independently review exact candidate 08e81290382d208f10c5f460dcd32296b8e6da53. Verify two-interaction navigation/trace behavior, factual wasDerivedFrom direction semantics, visibility of prior and alternate branches, exact minimized source/transformation/configuration/actor/audit identities, stale and integrity-review paths, closed-project denial, generated client and runtime-capability synchronization, approved UI conformance, and truthful separation of the adverse historical foundation baseline from the green T03 product checks."
+  }
+}

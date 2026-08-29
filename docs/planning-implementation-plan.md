@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 83ed7b3f85d7a83f5cafb55b394b66ff5eef91fccf4f90993a3943caa0890133
+source_sha256: 8b0ade646a8bf790290e7e9e2a0f94d1f3786e26e2d3379c66974931771d0280
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4447,7 +4447,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4473,13 +4473,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S03.T03.R01.json` at `08e81290382d208f10c5f460dcd32296b8e6da53`
+
 ##### Review history — CAP-03.S03.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `3a343d9b6ad97390d53b173f4947ba5a66a110697d7aa2b0e4d940bacdb52715`
+
+- Candidate / base / branch: `08e81290382d208f10c5f460dcd32296b8e6da53` / `c31bd843b85568e0bb51fdbd7247bf5fe9b64568` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T21:16:03+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T03.R01.json` / `bd303197367014eacb05a44a4307f82907eb7dbf83d5954586d4bb9d6a288bae` / `08e81290382d208f10c5f460dcd32296b8e6da53`
+- Acceptance-criteria SHA-256: `c299ad69e411140034547ab16cbabcbffe86e3075a6e1fd43e0cf7718558e384`
+- Verification-selection SHA-256: `c9ce2e6ee6ff5510e481cb55320d418b4a67792cb9ba7935e1e293a4b9b5fd08`
+- Changed paths: `apps/desktop/src-tauri/examples/supervision_check.rs`, `apps/desktop/src-tauri/examples/supervisor_fixture.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.test.tsx`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.test.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.tsx`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/core-api/runtime-handshake.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/modules.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `tests/desktop/test_core_sidecar_performance_check.py`, `tests/service/test_core_api.py`, `tests/service/test_provenance.py`, `tools/core_api_contract.py`, `tools/core_sidecar_performance_check.py`
+- Selected checks: `.venv\Scripts\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-desktop-application.json; .venv\Scripts\python.exe -m unittest discover -s tests/desktop -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_*.py`, `.venv\Scripts\python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; ui_visual_regression_check.py`, `.venv\Scripts\python.exe tools/repository_structure_check.py --repo .; agent_protocol_check.py; backlog_views.py --check; quality_check.py; taskctl.py validate; git diff --check; protected witness hash`
+- Deferred checks: `The known historical foundation:unit GCR/GRR/controller snapshot baseline remains adverse at 72 failures and 16 errors and must be reconciled or formally dispositioned before W1 exit qualification can pass; it is not attributed to this product candidate.`, `CAP-03.S03 independent slice review will replay the accumulated append-only persistence, retry/restart, migration, lineage, integrity-review, recovery, contract, and renderer risk union after T03 closes.`, `Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at Wave exit.`
+- Selection rationale: This task crosses a public generated Core API, SQLite provenance projection, exact per-launch runtime capability contract, Rust supervisor fixtures, and a governed desktop experience, so the selected checks cover the full desktop application build and Rust workspace, desktop/service/contract/packaging suites, every affected UI conformance dimension, Python quality, repository/backlog integrity, generated views, and witness safety. The deterministic affected-profile run at exact candidate 08e81290382d208f10c5f460dcd32296b8e6da53 stopped in foundation:unit with 72 failures and 16 errors after its preceding repository, agent-protocol, backlog-view, and quality controls passed. Report artifacts/tmp/CAP-03.S03.T03-R01-affected-verification.json has SHA-256 afade41c2c6a6d11ea28f3c25c35d969e3c4d03ef23e0409022ca58b549294d2. Every reported failure is a stale historical GCR/GRR/controller snapshot or pre-resume W1 state expectation; no T03 product command failed, and the aggregate stopped before reaching those product commands. The adverse result is preserved here rather than relabeled. Under the post-GOV-MIG-0001 risk-selected workflow, current validators and all acceptance-relevant product boundaries were then run directly and passed. Historical controller reconciliation remains mandatory at W1 exit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### SLICE-portable-workflow-model-and-local-worker-fabric (`CAP-03.S04`) - Portable workflow model and local worker fabric
 
