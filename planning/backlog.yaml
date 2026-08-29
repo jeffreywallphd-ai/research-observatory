@@ -7432,7 +7432,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T20:43:04+00:00'
-      updated_at: '2026-08-28T22:02:11+00:00'
+      updated_at: '2026-08-29T11:56:28+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Exact candidate 610a01c submitted for epistemic-governance review; historical full-foundation
@@ -7466,8 +7466,8 @@ capabilities:
       base_sha: 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-28T22:02:11+00:00'
-        expires_at: '2026-08-29T06:02:11+00:00'
+        claimed_at: '2026-08-29T11:56:28+00:00'
+        expires_at: '2026-08-29T19:56:28+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
