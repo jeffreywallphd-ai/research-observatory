@@ -70,6 +70,7 @@ def default_module_registry() -> ModuleRegistry:
                 capabilities=("privacy.cache-cleanup", "privacy.policy"),
             ),
             ModuleDefinition(module_id="projects", capabilities=("projects.lifecycle",)),
+            ModuleDefinition(module_id="provenance", capabilities=("provenance.lineage.read",)),
             ModuleDefinition(module_id="runtime", capabilities=("runtime.contract", "runtime.status")),
         )
     )

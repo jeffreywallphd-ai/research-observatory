@@ -173,7 +173,7 @@ class CoreApiTests(unittest.TestCase):
         )
         self.assertEqual(
             [module["moduleId"] for module in modules.json()["modules"]],
-            ["intent", "operations", "privacy", "projects", "runtime"],
+            ["intent", "operations", "privacy", "projects", "provenance", "runtime"],
         )
         self.assertEqual(
             capabilities.json()["capabilities"],
@@ -189,6 +189,7 @@ class CoreApiTests(unittest.TestCase):
                 "privacy.cache-cleanup",
                 "privacy.policy",
                 "projects.lifecycle",
+                "provenance.lineage.read",
                 "runtime.contract",
                 "runtime.status",
             ],

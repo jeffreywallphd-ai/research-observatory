@@ -119,9 +119,11 @@ describe("audit and lineage workspace", () => {
 
   it("keeps selected, superseded, and alternate source records visible with integrity context", () => {
     const root = lineage.items[0]!;
-    expect(lineageNodeRole(root, root)).toBe("Selected output");
-    expect(lineageNodeRole(lineage.items[1]!, root)).toBe("Superseded revision");
-    expect(lineageNodeRole(lineage.items[2]!, root)).toBe("Source or alternate input");
+    expect(lineageNodeRole(root, root, "ancestors")).toBe("Selected output");
+    expect(lineageNodeRole(lineage.items[1]!, root, "ancestors")).toBe("Prior same-entity revision");
+    expect(lineageNodeRole(lineage.items[2]!, root, "ancestors")).toBe("Upstream source or alternate");
+    expect(lineageNodeRole(lineage.items[1]!, root, "descendants")).toBe("Later same-entity revision");
+    expect(lineageNodeRole(lineage.items[2]!, root, "descendants")).toBe("Downstream output");
 
     const html = renderToStaticMarkup(
       <AuditLineageWorkspace
@@ -136,8 +138,9 @@ describe("audit and lineage workspace", () => {
     expect(html).toContain("Exact output revision ID");
     expect(html).toContain("Trace lineage");
     expect(html).toContain("Selected output");
-    expect(html).toContain("Superseded revision");
-    expect(html).toContain("Source or alternate input");
+    expect(html).toContain("Prior same-entity revision");
+    expect(html).toContain("Upstream source or alternate");
+    expect(html).toContain("wasDerivedFrom ancestors traversal");
     expect(html).toContain("Stale or invalidated");
     expect(html).toContain("Integrity review required");
     expect(html).toContain(lineage.missingRevisionIds[0]);

@@ -18,7 +18,12 @@ const PAGE_SIZE = 50;
 const MAX_DEPTH = 8;
 
 type LineageDirection = ProvenanceLineageRequest["direction"];
-type LineageNodeRole = "Selected output" | "Superseded revision" | "Source or alternate input";
+type LineageNodeRole =
+  | "Selected output"
+  | "Prior same-entity revision"
+  | "Upstream source or alternate"
+  | "Later same-entity revision"
+  | "Downstream output";
 
 export interface AuditLineageWorkspaceProps {
   readonly project: ProjectProjection | null;
@@ -63,10 +68,17 @@ export function provenanceLineageRequest(
 export function lineageNodeRole(
   node: ProvenanceLineageNode,
   selected: ProvenanceLineageNode | undefined,
+  direction: LineageDirection,
 ): LineageNodeRole {
   if (node.depth === 0 && node.revisionId === selected?.revisionId) return "Selected output";
-  if (selected && node.entityId === selected.entityId) return "Superseded revision";
-  return "Source or alternate input";
+  if (direction === "ancestors") {
+    return selected && node.entityId === selected.entityId
+      ? "Prior same-entity revision"
+      : "Upstream source or alternate";
+  }
+  return selected && node.entityId === selected.entityId
+    ? "Later same-entity revision"
+    : "Downstream output";
 }
 
 function lineageNodeState(node: ProvenanceLineageNode): string {
@@ -237,12 +249,12 @@ export function AuditLineageWorkspace({
             {trace.items.length ? (
               <div className="lineage-table-scroll">
                 <table>
-                  <caption>Exact, content-free provenance records for the selected output revision</caption>
+                  <caption>Exact, content-free wasDerivedFrom {trace.direction} traversal for the selected output revision</caption>
                   <thead><tr><th scope="col">Relation and state</th><th scope="col">Entity revision</th><th scope="col">Transformation and configuration</th><th scope="col">Responsible actor</th><th scope="col">Audit event</th></tr></thead>
                   <tbody>
                     {trace.items.map((node) => (
                       <tr key={`${node.eventId}:${node.revisionId}`}>
-                        <td><strong>{lineageNodeRole(node, selected)}</strong><span>{lineageNodeState(node)} · depth {node.depth}</span></td>
+                        <td><strong>{lineageNodeRole(node, selected, trace.direction)}</strong><span>{lineageNodeState(node)} · depth {node.depth}</span></td>
                         <td><span>{node.entityKind}</span><code>{node.entityId}</code><code>{node.revisionId}</code></td>
                         <td><span>{node.activityType} · {node.activityStatus}</span><code>{node.activityId}</code><span>{node.configurationId} · {node.configurationVersion}</span><code>{node.configurationHash}</code></td>
                         <td><span>{node.agentType} · {node.agentRole}</span><code>{node.agentId}</code></td>

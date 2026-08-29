@@ -719,6 +719,7 @@ def validate_handshake(value: Any, pid: int) -> int:
             "privacy.cache-cleanup",
             "privacy.policy",
             "projects.lifecycle",
+            "provenance.lineage.read",
             "runtime.contract",
             "runtime.status",
         ]
@@ -806,6 +807,7 @@ def readiness_ok(port: int, capability_token: str) -> bool:
             "privacy.cache-cleanup",
             "privacy.policy",
             "projects.lifecycle",
+            "provenance.lineage.read",
             "runtime.contract",
             "runtime.status",
         ],
