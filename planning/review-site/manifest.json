@@ -4,7 +4,7 @@
   "baseline": "1.3",
   "supplemental_release": "1.3.4",
   "review_interface_release": "1.3.10",
-  "generated_at": "2026-08-29T18:56:34.231460+00:00",
+  "generated_at": "2026-08-29T18:59:51.061283+00:00",
   "entry_point": "index.html",
   "feedback_schema_version": "1.1",
   "waves": [
@@ -5028,7 +5028,7 @@
             {
               "task_id": "CAP-03.S03.T03",
               "title": "Create an audit and lineage inspection workspace",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
