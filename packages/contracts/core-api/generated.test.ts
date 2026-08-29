@@ -236,6 +236,43 @@ describe("generated Core API client", () => {
       const adversarial = createCoreApiClient(async () => response(200, invalid));
       await expect(adversarial.lineage(request)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
     }
+
+    const continuationRequest = { ...request, cursor: 50 };
+    for (const invalidContinuation of [
+      {
+        ...lineage,
+        items: [],
+        missingRevisionIds: [],
+        nextCursor: 50,
+        integrityState: "verified" as const,
+        exportAllowed: true,
+        exportDenialReason: null,
+      },
+      {
+        ...lineage,
+        items: [{ ...lineage.items[1]!, depth: 1 }],
+        missingRevisionIds: [],
+        nextCursor: 49,
+        integrityState: "verified" as const,
+        exportAllowed: true,
+        exportDenialReason: null,
+      },
+    ]) {
+      const adversarial = createCoreApiClient(async () => response(200, invalidContinuation));
+      await expect(adversarial.lineage(continuationRequest)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    }
+
+    const terminalContinuation = {
+      ...lineage,
+      items: [],
+      missingRevisionIds: [],
+      nextCursor: null,
+      integrityState: "verified" as const,
+      exportAllowed: true,
+      exportDenialReason: null,
+    };
+    const terminating = createCoreApiClient(async () => response(200, terminalContinuation));
+    await expect(terminating.lineage(continuationRequest)).resolves.toEqual(terminalContinuation);
   });
 
   it("decodes and evaluates only the exact compatible version envelope", async () => {

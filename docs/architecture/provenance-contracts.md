@@ -125,8 +125,12 @@ query for continuation pages and rejects duplicate cross-page facts.
 Audit events, human decisions, rights states, and local-export policy are
 separate governed regions in the desktop page. Core marks a content-minimized
 manifest export available only for a verified trace whose targets are not
-rights-restricted. The local manifest records its redaction and local-file-only
-egress decision; it never authorizes remote egress.
+rights-restricted. The renderer additionally requires pagination to reach a
+terminal cursor, preserves every integrity or rights denial monotonically while
+pages merge, and binds the export to the accepted revision, direction, page
+size, and depth bounds. The local manifest records complete pagination, its
+redaction, and its local-file-only egress decision; it never authorizes remote
+egress.
 
 The response deliberately contains no source text, passage text, prompt text,
 researcher name, secret, or model rationale. A configuration hash and version

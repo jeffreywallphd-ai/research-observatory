@@ -14,6 +14,7 @@ import {
   AuditLineageWorkspace,
   continuationLineageRequest,
   exportLineageManifest,
+  lineageManifestReady,
   lineageAvailability,
   lineageNodeRole,
   loadLineagePage,
@@ -201,6 +202,44 @@ describe("audit and lineage workspace", () => {
       .rejects.toThrow("RO-CORE-REQUEST-INVALID");
   });
 
+  it("terminates an empty continuation through the generated client and removes the renderer action", async () => {
+    const accepted = provenanceLineageRequest(project, lineage.revisionId, lineage.direction, 0);
+    const current = {
+      ...lineage,
+      items: [lineage.items[0]!],
+      missingRevisionIds: [],
+      nextCursor: 1,
+      integrityState: "verified" as const,
+      exportAllowed: true,
+      exportDenialReason: null,
+    };
+    const requests: CoreApiRequest[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return {
+        status: 200,
+        contentType: "application/json",
+        traceId: "0123456789abcdef0123456789abcdef",
+        etag: null,
+        body: JSON.stringify({ ...current, items: [], nextCursor: null }),
+      };
+    });
+    const terminalPage = await loadLineagePage(
+      client,
+      project,
+      lineage.revisionId,
+      lineage.direction,
+      1,
+      accepted,
+    );
+    const terminalTrace = mergeLineagePage(current, terminalPage.page, 1);
+    expect(requests).toHaveLength(1);
+    expect(terminalTrace.nextCursor).toBeNull();
+    expect(renderToStaticMarkup(
+      <AuditLineageWorkspace project={project} announce={() => undefined} initialTrace={terminalTrace} />,
+    )).not.toContain("Load more lineage");
+  });
+
   it("keeps selected, superseded, and alternate source records visible with integrity context", () => {
     const root = lineage.items[0]!;
     expect(lineageNodeRole(root, root, "ancestors")).toBe("Selected output");
@@ -247,11 +286,26 @@ describe("audit and lineage workspace", () => {
   });
 
   it("exports only a policy-approved content-minimized manifest and rejects incoherent page merges", () => {
-    const exportable = { ...lineage, integrityState: "verified" as const, exportAllowed: true, exportDenialReason: null };
-    const manifest = exportLineageManifest(exportable);
+    const acceptedQuery = provenanceLineageRequest(project, lineage.revisionId, lineage.direction, 0);
+    const exportable = {
+      ...lineage,
+      missingRevisionIds: [],
+      nextCursor: null,
+      integrityState: "verified" as const,
+      exportAllowed: true,
+      exportDenialReason: null,
+    };
+    const manifest = exportLineageManifest(exportable, acceptedQuery);
     expect(manifest).toContain('"manifestType": "content-minimized-lineage"');
+    expect(manifest).toContain('"completeness": "complete"');
+    expect(manifest).toContain('"maxDepth": 8');
     expect(manifest).toContain('"redaction": "research-content-and-raw-prompts-omitted"');
-    expect(() => exportLineageManifest(lineage)).toThrow("RO-CORE-EXPORT-DENIED");
+    expect(lineageManifestReady(exportable, acceptedQuery)).toBe(true);
+    expect(() => exportLineageManifest({ ...exportable, nextCursor: 4 }, acceptedQuery))
+      .toThrow("RO-CORE-EXPORT-DENIED");
+    expect(() => exportLineageManifest(lineage, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
+    expect(() => exportLineageManifest(exportable, { ...acceptedQuery, direction: "descendants" }))
+      .toThrow("RO-CORE-EXPORT-DENIED");
     expect(() => mergeLineagePage(
       { ...exportable, nextCursor: 3 },
       { ...exportable, items: [exportable.items[0]!], nextCursor: null },
@@ -260,6 +314,49 @@ describe("audit and lineage workspace", () => {
     expect(() => mergeLineagePage(
       { ...exportable, items: [{ ...exportable.items[0]!, depth: 2 }], nextCursor: 1 },
       { ...exportable, items: [{ ...exportable.items[1]!, depth: 1 }], nextCursor: null },
+      1,
+    )).toThrow("RO-CORE-RESPONSE-INVALID");
+
+    const integrityReview = { ...lineage, nextCursor: 4 };
+    const verifiedFinal = {
+      ...exportable,
+      items: [{
+        ...exportable.items[1]!,
+        factId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a0",
+      }],
+    };
+    const integrityMerged = mergeLineagePage(integrityReview, verifiedFinal, 4);
+    expect(integrityMerged).toMatchObject({
+      nextCursor: null,
+      integrityState: "integrity-review",
+      exportAllowed: false,
+      exportDenialReason: "integrity-review",
+    });
+    expect(() => exportLineageManifest(integrityMerged, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
+
+    const rightsDenied = {
+      ...exportable,
+      items: [exportable.items[0]!],
+      nextCursor: 1,
+      exportAllowed: false,
+      exportDenialReason: "rights-restricted" as const,
+    };
+    const rightsMerged = mergeLineagePage(rightsDenied, verifiedFinal, 1);
+    expect(rightsMerged).toMatchObject({ exportAllowed: false, exportDenialReason: "rights-restricted" });
+    expect(() => exportLineageManifest(rightsMerged, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
+
+    const terminal = mergeLineagePage(
+      { ...exportable, items: [exportable.items[0]!], nextCursor: 1 },
+      { ...exportable, items: [], nextCursor: null },
+      1,
+    );
+    expect(terminal.nextCursor).toBeNull();
+    expect(renderToStaticMarkup(
+      <AuditLineageWorkspace project={project} announce={() => undefined} initialTrace={terminal} />,
+    )).not.toContain("Load more lineage");
+    expect(() => mergeLineagePage(
+      { ...exportable, items: [exportable.items[0]!], nextCursor: 1 },
+      { ...exportable, items: [], nextCursor: 1 },
       1,
     )).toThrow("RO-CORE-RESPONSE-INVALID");
   });
