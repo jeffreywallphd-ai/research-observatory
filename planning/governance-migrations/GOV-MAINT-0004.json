@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0004",
   "title": "Atomically reopen a completed prerequisite and its completed dependents",
-  "status": "pending-remediation-review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "predecessor": {
@@ -84,7 +84,22 @@
       "reviewedCommit": "b4a83f849820223541a20495e89b1477acdb968e",
       "disposition": "CHANGES_REQUESTED",
       "path": "planning/governance-migrations/GOV-MAINT-0004.review-R02.json"
+    },
+    {
+      "reviewId": "GOV-MAINT-0004.R03",
+      "reviewedCommit": "9233b770504ffebf27f70134064e6a183780b05a",
+      "disposition": "APPROVED",
+      "path": "planning/governance-migrations/GOV-MAINT-0004.review-R03.json"
     }
   ],
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0004.R03",
+    "reviewedCommit": "9233b770504ffebf27f70134064e6a183780b05a",
+    "reviewer": "Galileo",
+    "reviewedAt": "2026-08-29T08:55:56-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0004.review-R03.json",
+    "sha256": "4a8a4259e71d769fdb56657f8c0627a1ae21c10e12e0bfae3f014551025ad8f7"
+  }
 }
