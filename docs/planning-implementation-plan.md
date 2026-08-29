@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d61dd839b5ed001711223b160ad452a4964718926c60df308217b534f2d554e8
+source_sha256: 3bc5cd5b46eecd17e228d003b86a5f66a4fcaf63c807c5820e316920c4f94dd7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4447,7 +4447,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4476,6 +4476,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S03.T03.R01.json` at `08e81290382d208f10c5f460dcd32296b8e6da53`
+- `artifacts/evidence/CAP-03.S03.T03.R02.json` at `9910ca3ae717ced397830125381e555901fd5abe`
 
 ##### Review history — CAP-03.S03.T03
 
@@ -4513,7 +4514,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `fc07e2ad369ea9dd1656df2fa39ba6926870d171d97fb2f886290f3c45ef2c89`
+
+- Candidate / base / branch: `9910ca3ae717ced397830125381e555901fd5abe` / `08e81290382d208f10c5f460dcd32296b8e6da53` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T23:20:55+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T03.R02.json` / `59cbdf203c9021738d0166a8c7bdbcd1bbcf0ea5b7637f833da2bd53cb98e654` / `9910ca3ae717ced397830125381e555901fd5abe`
+- Acceptance-criteria SHA-256: `c299ad69e411140034547ab16cbabcbffe86e3075a6e1fd43e0cf7718558e384`
+- Verification-selection SHA-256: `28f4cd209f56e7609b1485c9ce6316d424059064dd20186627a12e1a25e01936`
+- Changed paths: `apps/desktop/scripts/assemble-application.mjs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/AuditLineageWorkspace.test.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.tsx`, `apps/desktop/src/app/audit-lineage.conformance.json`, `artifacts/evidence/CAP-03.S03.T03.R01.json`, `artifacts/evidence/CAP-03.S03.T03.review-R01.json`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/provenance.py`, `services/core-api/src/research_observatory_core/repositories.py`, `tests/data/test_sqlite_repositories.py`, `tests/desktop/test_desktop_app_check.py`, `tests/service/test_provenance.py`, `tools/core_api_contract.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv\Scripts\python.exe tools\desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-R02-desktop-application.json; focused AuditLineageWorkspace Vitest and desktop TypeScript typecheck`, `.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py; discover tests/contracts; discover tests/packaging; tests.data.test_sqlite_repositories`, `generated Core client Vitest; contracts and desktop TypeScript typecheck; core_api_contract.py --check`, `ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; ui_visual_regression_check.py`, `architecture_check.py; repository_structure_check.py; agent_protocol_check.py; quality_check.py; backlog_views.py --check; taskctl.py validate; plan_review_check.py --repo .; build_manifest.py; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03 independent slice review will replay the accumulated append-only persistence, retry/restart, migration, lineage, integrity-review, recovery, generated-client, renderer, and adversarial integration union after T03 closes.`, `The two stale object-envelope schema-version assertions and the known historical foundation controller/recovery baseline must be reconciled or formally dispositioned before W1 exit qualification can pass; neither is attributed to this candidate.`, `Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at W1 exit.`
+- Selection rationale: R01 identified three acceptance-bound defects across persistence truth, a public generated client/pagination boundary, and a governed desktop experience. R02 therefore selects the real SQLite unit-of-work and Core service path, every portable provenance contract, request-aware generated-client adversarial cases, renderer continuation/export/conformance behavior, the complete desktop application build and Rust workspace, service/contract/packaging suites, exact repository tests, every governed UI conformance dimension, Python quality, architecture, generated contracts/views, task state, and witness safety. An exploratory full 109-test data sweep reported 107 passes and two stale object-envelope assertions that still expect database schema version 6 although the already-approved repository is at version 7; neither test reaches or is modified by the lineage projection, so they are preserved as W1-exit reconciliation debt rather than relabeled or changed inside T03. The previously recorded historical foundation profile remains adverse at 72 failures and 16 errors in stale GCR/GRR/controller and task-recovery expectations; it likewise remains mandatory W1-exit debt rather than a T03 product failure.
+- Prior round / replayed open findings: `R01` / `CAP-03.S03.T03-R01-F01`, `CAP-03.S03.T03-R01-F02`, `CAP-03.S03.T03-R01-F03`
+- Root-cause escalation: R01 treated lineage as one producing-output DTO per revision rather than a projection of independently identified portable relation facts, so valid output-free invalidations and multiple cross-aggregate derivations were not represented by the real product path. It also generated structurally strict but request-unaware decoding and let mutable form state drive continuation pages. Finally, it inferred React conformance from unchanged reference-package checks without mapping or testing the task-owned governed regions. R02 projects every applicable typed entity relation from canonical SQLite authority, carries valid invalidation/decision/rights facts through Core, binds client and renderer continuation to the accepted request, and adds an executable implementation conformance map plus factual region and export-policy tests.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-provenance-lineage-reviewer at `2026-08-29T21:30:55+00:00`
 
