@@ -1,0 +1,70 @@
+{
+  "task_id": "CAP-03.S03.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "f2c9c0aa6539af0067bf76711883b22a796ddbf3",
+  "submission_record_commit": "add0ccd6010de3b64af18bd1f55690253fbf6f5f",
+  "reviewer": "codex-independent-provenance-contract-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The frozen R02 evidence is authentic at SHA-256 2f58f1845a55e799582daea7a34d382abbec204b4c7bef79144867b7f8d1e0ee and Git blob 9775343bc3374bea2f65a79f8e65bd4a676405cc in submission record add0ccd6010de3b64af18bd1f55690253fbf6f5f. Candidate f2c9c0aa6539af0067bf76711883b22a796ddbf3 is a strict descendant of the R01 candidate, and all 19 declared changed paths exactly match the R01-candidate-to-R02-candidate range. Independent replay closes each concrete R01 reproduction: known-event lifecycle and relation roles now reject denied invalidation facts and wrong-role relations; composite entity/revision endpoints, exact subjects, relation identity/fact uniqueness, and the tested UUID collision set reject the prior ambiguity cases; and the Draft 2020-12 schema plus both runtimes now share the year 0001-9999 UTC boundary. The minimum and maximum accepted fixtures independently produced identical TypeScript/Python record hashes sha256:4bbfe90126752f9b034e5f7ca831c773a2d7b19d8206d6157298d8a478df0bf9 and sha256:45a9a4c5a7eb101c3cf7df463bd93da8f3d78dd4eb4609f202503c6acbab04a7. Repository Node 24 passed generation, strict TypeScript, all 15 focused provenance cases, and all 71 package contract tests. Seven Python contract tests and six package tests passed with one truthfully disclosed Windows file-symlink skip; the real PyInstaller sidecar included the changed provenance module and retained governed-inventory denial. Patch hygiene and the 19-file evidence inventory passed. ADR-0024 and the architecture handoff accurately describe most of the remediated known-event boundary, and the T02 persistence/outbox/lineage/checkpoint and later slice/W1 deferrals remain truthful. Approval is not available because two high-severity acceptance-bound gaps remain in the newly generalized boundary. Unknown future types can carry outputs with no generation or attribution relation and even retain those outputs after a failed activity, while the supposed stable identity model accepts one stable entity ID changing kind across revisions and omits the project UUID from its claimed global collision check. The protected artifacts/evidence/W1.A04.B00.json witness remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S03.T01.R02.json",
+      "sha256": "2f58f1845a55e799582daea7a34d382abbec204b4c7bef79144867b7f8d1e0ee",
+      "commit": "f2c9c0aa6539af0067bf76711883b22a796ddbf3"
+    },
+    {
+      "type": "independent-check",
+      "command": "repository Node 24 provenance generator; package strict TypeScript; focused and complete package Vitest",
+      "result": "PASS: generator current, strict TypeScript passed, 15/15 focused provenance tests and 71/71 complete package tests passed."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_provenance_contracts tests.packaging.test_core_sidecar_package",
+      "result": "PASS: 13 tests completed, one current-token file-symlink case skipped; real Windows x64 PyInstaller package imported the provenance runtime and passed governed inventory checks."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Direct generated TypeScript and Python decoder mutations at exact candidate",
+      "result": "R01 cases reject and UTC hashes match; both runtimes accept an unknown future event with an unlinked output in succeeded and failed states, accept a stable entity ID retyped from source-observation to document, and accept projectid equal to event id when the exact subject prefix is updated."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S03.T01-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Unknown future events bypass universal output and lifecycle relation completeness",
+      "reproduction": "At exact candidate f2c9c0aa6539af0067bf76711883b22a796ddbf3, load the valid source-acquisition fixture in either generated runtime, change type to org.research-observatory.future.observed.v2 and activityType to future-observation, leave the exact bound output and subject in place, and remove every relation except wasAssociatedWith. provenanceEventErrors/provenance_event_errors returns no errors even though the output has neither wasGeneratedBy nor wasAttributedTo. Then change activity.status to failed without removing the output; both runtimes still return no errors. The generic relation-role and outcome checks inspect only relations that happen to exist, while known-event shape and exact relation completeness are now entirely inside the knownActivity block. This regresses the R01 implementation's universal input/output completeness and permits T02 to persist an orphan output or a material output for an activity that explicitly failed. Unknown catalog meaning may remain uninterpreted, but the contract's own inputs, outputs, activity status, actor, and W3C PROV relation semantics are not unknown and must remain internally complete.",
+      "required_remediation": "Enforce type-independent structural provenance invariants before the known-event policy branch. Non-succeeded activities must not carry outputs. Every succeeded output must have exactly one wasGeneratedBy and wasAttributedTo relation to its exact revision and responsible agent; every input claimed as used must remain exact, and any derivation/invalidation fact must obey the existing role and outcome rules. Keep known types' stricter acquisition/transformation/invalidation matrices, but allow a future type only when its chosen structural shape is internally complete without assigning catalog meaning. Add matching TypeScript, Python, and schema-metadata tests for a valid unknown acquisition-like event, valid unknown transformation-like event, orphan succeeded output, failed output, missing attribution, and exact revision closure."
+    },
+    {
+      "id": "CAP-03.S03.T01-R02-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Stable entity kind and the claimed UUID namespace remain inconsistent",
+      "reproduction": "The candidate's own transformEvent/transform_event fixture copies the source entity, keeps the same stable entityId, changes only revisionId, and then changes entityKind from source-observation to document. Both generated runtimes return no errors for every lifecycle status, and the test describes the succeeded form as a valid same-stable-entity revision transformation. ADR-0013 and docs/architecture/local-sqlite-storage.md make aggregate identity and kind immutable across revisions; accepting this event lets one stable identity change meaning and makes lineage by entityId ambiguous even though relation endpoints now carry exact revisions. Independently, set the fixture's UUIDv7 projectid equal to the event id and update the exact subject's project prefix; both runtimes return no errors because globalIds excludes projectid, despite the R02 evidence claiming a global UUID namespace collision check. The subject grammar is also narrower than the governed PortableKey entityKind grammar: source.observation is a valid entityKind but no exact entity subject containing that kind can pass. These are contract-level identity inconsistencies that T02 persistence cannot safely infer away.",
+      "required_remediation": "Require every occurrence of one stable entityId in an event to retain one entityKind; update the valid same-entity revision fixture to preserve kind. A cross-kind transformation must mint a distinct stable entity identity and link the exact output revision to the exact input revision. Include a UUIDv7 project identity in the relevant collision set, or document and test a narrowly justified namespace exception instead of claiming global uniqueness. Harmonize the exact-subject kind segment with the accepted entityKind grammar, either by using one safely encodable grammar in both places or by narrowing the portable kind contract consistently. Add TypeScript and Python tests for same-ID/same-kind revisions, same-ID/different-kind denial, distinct-ID/cross-kind derivation, project/event collision, and every accepted subject-kind spelling."
+    }
+  ],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S03.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "The exact R01 known-event reproductions now fail in both generated runtimes. Denied, failed, and cancelled invalidation cannot assert wasInvalidatedBy; acquisition cannot add invalidation; used, generation, attribution, derivation, and invalidation endpoints are role-checked; and the known-event allowlist is status-aware. Fifteen TypeScript and seven Python cases cover all four statuses, wrong roles, and contradictory known relations. R02-F01 is a distinct forward-compatible completeness regression caused by moving universal output checks under knownActivity; it does not erase this concrete closure."
+    },
+    {
+      "finding_id": "CAP-03.S03.T01-R01-F02",
+      "disposition": "fixed",
+      "evidence": "The prior unbound subject, subject-kind mismatch, duplicate relation ID/fact, and one-relation-for-two-revisions reproductions now fail. Relations carry composite entityId/revisionId endpoints, closure and completeness use those exact references, relation IDs/facts are unique, and a same-stable-ID/different-revision event can be represented. R02-F02 separately records the newly exposed immutable-kind, project-namespace, and subject-grammar inconsistencies rather than reopening the exact R01 ambiguity."
+    },
+    {
+      "finding_id": "CAP-03.S03.T01-R01-F03",
+      "disposition": "fixed",
+      "evidence": "Schema, TypeScript, and Python all reject year zero and accept the explicit millisecond-Z UTC range from year 0001 through 9999. Independent minimum and maximum replay produced byte-identical cross-language canonical hashes sha256:4bbfe90126752f9b034e5f7ca831c773a2d7b19d8206d6157298d8a478df0bf9 and sha256:45a9a4c5a7eb101c3cf7df463bd93da8f3d78dd4eb4609f202503c6acbab04a7."
+    }
+  ]
+}
