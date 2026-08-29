@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8b0ade646a8bf790290e7e9e2a0f94d1f3786e26e2d3379c66974931771d0280
+source_sha256: d61dd839b5ed001711223b160ad452a4964718926c60df308217b534f2d554e8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 265 |
 | `READY` | 1 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 53 |
 | `DEFERRED` | 36 |
 
@@ -361,7 +361,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S02.T03` | `append-only v1` | 4 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
 | `CAP-03.S03.T01` | `append-only v1` | 3 | `-` | approved / codex-independent-provenance-contract-reviewer | - |
 | `CAP-03.S03.T02` | `append-only v1` | 3 | `-` | approved / codex-independent-provenance-ledger-reviewer | - |
-| `CAP-03.S03.T03` | `append-only v1` | 0 | `R01` | - / - | - |
+| `CAP-03.S03.T03` | `append-only v1` | 1 | `-` | changes-requested / codex-independent-provenance-lineage-reviewer | `CAP-03.S03.T03-R01-F01`, `CAP-03.S03.T03-R01-F02`, `CAP-03.S03.T03-R01-F03` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -429,4 +429,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S03.T03` Create an audit and lineage inspection workspace | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S03.T03` Create an audit and lineage inspection workspace | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
