@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0b1953eed5943d58bfb66ca1735997648eda69fccd0a1819da8d69c0f9c12337
+source_sha256: ac46d275d5057ce4762b8653f9daf6e6cc4f624d297b00aa21b7ee7798e585f7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4308,7 +4308,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4333,13 +4333,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S03.T02.R01.json` at `3680ecf86f455b8cbd6a10c27b63ae62c836e359`
+
 ##### Review history — CAP-03.S03.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `c20c04cbdc576e3d21b9e67bb0e77dc6f94bc4b44b055f4d77eccda90d2f03c4`
+
+- Candidate / base / branch: `3680ecf86f455b8cbd6a10c27b63ae62c836e359` / `822cf18e55fb30c78958216aa30f24398b8b66b4` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T17:56:07+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T02.R01.json` / `759c30ab7afeda398fdad5e3d9769eb7a33d13959a8aadadd8aaca2ff0bfdce2` / `3680ecf86f455b8cbd6a10c27b63ae62c836e359`
+- Acceptance-criteria SHA-256: `18a160b518276cf400818cb11f8929cd11c8b4fd1d57519cb8fbcab7dd6ac38d`
+- Verification-selection SHA-256: `e4ad5e6c065e52a404387065d922e7cddd9df9f89b80dbe9c1f42f0431649430`
+- Changed paths: `docs/architecture/local-sqlite-storage.md`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/provenance.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/data/test_local_object_store.py`, `tests/data/test_sqlite_migrations.py`, `tests/data/test_sqlite_repositories.py`, `tests/data/test_storage_maintenance.py`, `tests/packaging/test_core_sidecar_package.py`, `tests/service/test_provenance.py`, `tests/service/test_research_intents.py`, `tools/core_sidecar_build.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file`, `.venv\Scripts\python.exe tools\quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py --check; build_manifest.py --output artifacts/tmp/CAP-03.S03.T02-build-manifest.json`, `taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03.T03 owns retention, export, redaction-versus-deletion, repair, and integrity-review recovery policy enforcement.`, `CAP-03.S03 slice review will replay the accumulated portable-contract, migration, ledger, lineage, recovery, and adversarial integration union after T03 closes.`, `The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.`
+- Selection rationale: T02 changes a public cross-process contract, the canonical SQLite schema and backup-first migration chain, transaction atomicity, append-only evidence controls, package inventory, restart recovery, and integrity-review behavior. It therefore selected all affected contract, schema, repository, migration, object-store, storage-maintenance, service, research-intent, and real frozen-sidecar checks, plus quality, architecture, generated-contract, build, backlog, and approved-W1 controls. The data profile was run once and its only failure was the then-missing quality-scope entries; the exact candidate remediates and directly replays that boundary. Repeating its already-passing 576-second benchmark registry after a quality-inventory-only correction would add no credible defect detection. Full service/deployment and cross-capability qualification remains at the provenance slice checkpoint and W1 exit, as required by the revised risk-selected workflow.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
