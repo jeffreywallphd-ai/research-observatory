@@ -8,6 +8,8 @@ initiation_assessment:
   policy_version: "1.0"
   assessed_at: "YYYY-MM-DDTHH:MM:SSZ"
   estimation_unit: "one consistent effort unit"
+  implementation_baseline: "Tested strengths, weaknesses, debt, and reusable boundaries"
+  vision_architecture_best_practice_fit: "Whether the proposed outcome and plan remain the best fit"
   planned_items:
     - work_id: "CAP-XX.SYY.TZZ"
       effort: 10
