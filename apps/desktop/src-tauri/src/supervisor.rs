@@ -1,4 +1,6 @@
 use std::collections::VecDeque;
+#[cfg(feature = "integration-harness")]
+use std::ffi::OsString;
 use std::fs;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream};
@@ -21,6 +23,21 @@ const STOP_TIMEOUT: Duration = Duration::from_secs(5);
 const HEALTH_RETRY: Duration = Duration::from_millis(50);
 const MAX_DIAGNOSTICS: usize = 64;
 const CAPABILITY_TOKEN_BYTES: usize = 32;
+const EXPECTED_CORE_CAPABILITIES: &[&str] = &[
+    "intent.acceptance",
+    "intent.drafts",
+    "intent.impact-preview",
+    "intent.policy-evaluation",
+    "intent.read",
+    "operations.cancel",
+    "operations.events",
+    "operations.read",
+    "privacy.cache-cleanup",
+    "privacy.policy",
+    "projects.lifecycle",
+    "runtime.contract",
+    "runtime.status",
+];
 
 struct CapabilityToken([u8; CAPABILITY_TOKEN_BYTES]);
 
@@ -155,6 +172,10 @@ struct VersionResponse {
 pub struct SupervisorConfig {
     executable: PathBuf,
     working_directory: PathBuf,
+    #[cfg(feature = "integration-harness")]
+    integration_arguments: Vec<OsString>,
+    #[cfg(feature = "integration-harness")]
+    integration_environment: Vec<(OsString, OsString)>,
 }
 
 impl SupervisorConfig {
@@ -177,11 +198,40 @@ impl SupervisorConfig {
         Ok(Self {
             executable: canonical,
             working_directory,
+            #[cfg(feature = "integration-harness")]
+            integration_arguments: Vec::new(),
+            #[cfg(feature = "integration-harness")]
+            integration_environment: Vec::new(),
         })
     }
 
     pub fn from_resource_root(resource_root: &Path) -> Result<Self, &'static str> {
         Self::new(resource_root.join("core-sidecar").join(EXPECTED_EXECUTABLE))
+    }
+
+    #[cfg(feature = "integration-harness")]
+    pub fn for_integration_harness(
+        executable: PathBuf,
+        working_directory: PathBuf,
+        arguments: Vec<OsString>,
+        environment: Vec<(OsString, OsString)>,
+    ) -> Result<Self, &'static str> {
+        let metadata = fs::symlink_metadata(&executable).map_err(|_| "RO-CORE-NOT-PACKAGED")?;
+        if !metadata.file_type().is_file() || metadata.file_type().is_symlink() {
+            return Err("RO-CORE-INTEGRITY-FAILED");
+        }
+        let executable = dunce::canonicalize(executable).map_err(|_| "RO-CORE-INTEGRITY-FAILED")?;
+        let working_directory =
+            dunce::canonicalize(working_directory).map_err(|_| "RO-CORE-INTEGRITY-FAILED")?;
+        if !working_directory.is_dir() {
+            return Err("RO-CORE-INTEGRITY-FAILED");
+        }
+        Ok(Self {
+            executable,
+            working_directory,
+            integration_arguments: arguments,
+            integration_environment: environment,
+        })
     }
 }
 
@@ -572,6 +622,8 @@ fn launch(
     let capability_token =
         CapabilityToken::generate().map_err(|code| (RuntimeState::Crashed, code))?;
     let mut command = Command::new(&config.executable);
+    #[cfg(feature = "integration-harness")]
+    command.args(&config.integration_arguments);
     command
         .arg("--supervised")
         .current_dir(&config.working_directory)
@@ -588,6 +640,10 @@ fn launch(
     command.env("RO_CORE_BIND_HOST", "127.0.0.1");
     command.env("RO_CORE_BIND_PORT", "0");
     command.env("RO_CORE_LOG_LEVEL", "INFO");
+    #[cfg(feature = "integration-harness")]
+    for (name, value) in &config.integration_environment {
+        command.env(name, value);
+    }
     configure_hidden_process(&mut command);
 
     let mut child = command
@@ -713,8 +769,10 @@ fn canonical_unsigned(value: &str, minimum: u64, maximum: u64) -> bool {
 }
 
 fn bounded_project_text(value: &str, minimum: usize, maximum: usize) -> bool {
-    (minimum..=maximum).contains(&value.len())
-        && !value.chars().any(|character| character.is_control())
+    (minimum..=maximum).contains(&value.encode_utf16().count())
+        && !value
+            .chars()
+            .any(|character| matches!(character, '\u{0}'..='\u{1f}' | '\u{7f}'))
 }
 
 fn canonical_project_root(value: &str) -> bool {
@@ -722,11 +780,18 @@ fn canonical_project_root(value: &str) -> bool {
         return false;
     }
     let normalized = value.replace('\\', "/");
-    let absolute = normalized.starts_with('/')
-        || (normalized.len() >= 3
-            && normalized.as_bytes()[0].is_ascii_alphabetic()
-            && normalized.as_bytes()[1] == b':'
-            && normalized.as_bytes()[2] == b'/');
+    let absolute = if let Some(network) = normalized.strip_prefix("//") {
+        let mut parts = network.split('/');
+        parts.next().is_some_and(|part| !part.is_empty())
+            && parts.next().is_some_and(|part| !part.is_empty())
+            && network.matches('/').count() >= 2
+    } else {
+        normalized.starts_with('/')
+            || (normalized.len() >= 3
+                && normalized.as_bytes()[0].is_ascii_alphabetic()
+                && normalized.as_bytes()[1] == b':'
+                && normalized.as_bytes()[2] == b'/')
+    };
     absolute && normalized.split('/').all(|part| part != "..")
 }
 
@@ -734,19 +799,363 @@ fn exact_json_strings(
     body: &str,
     expected: &[&str],
 ) -> Option<serde_json::Map<String, serde_json::Value>> {
-    if body.is_empty() || body.len() > 16_384 {
+    exact_json_object(body, expected, 16_384).filter(|object| {
+        expected
+            .iter()
+            .all(|key| object.get(*key).is_some_and(serde_json::Value::is_string))
+    })
+}
+
+fn exact_json_object(
+    body: &str,
+    expected: &[&str],
+    maximum_bytes: usize,
+) -> Option<serde_json::Map<String, serde_json::Value>> {
+    if body.is_empty() || body.len() > maximum_bytes {
         return None;
     }
     let value = serde_json::from_str::<serde_json::Value>(body).ok()?;
     let object = value.as_object()?;
-    if object.len() != expected.len()
-        || !expected
-            .iter()
-            .all(|key| object.get(*key).is_some_and(serde_json::Value::is_string))
-    {
+    if object.len() != expected.len() || !expected.iter().all(|key| object.contains_key(*key)) {
         return None;
     }
     Some(object.clone())
+}
+
+fn canonical_lower_hex(value: &str, length: usize) -> bool {
+    value.len() == length
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+fn bounded_intent_narrative(value: &serde_json::Value, minimum: usize) -> bool {
+    value.as_str().is_some_and(|text| {
+        let length = text.encode_utf16().count();
+        (minimum..=4000).contains(&length)
+            && !text.chars().any(|character| {
+                matches!(
+                    character,
+                    '\u{0}'..='\u{8}' | '\u{b}' | '\u{c}' | '\u{e}'..='\u{1f}' | '\u{7f}'
+                )
+            })
+    })
+}
+
+fn intent_member(value: &serde_json::Value, allowed: &[&str]) -> bool {
+    value
+        .as_str()
+        .is_some_and(|candidate| allowed.contains(&candidate))
+}
+
+fn unique_intent_members(
+    value: &serde_json::Value,
+    allowed: &[&str],
+    minimum: usize,
+    maximum: usize,
+) -> bool {
+    let Some(items) = value.as_array() else {
+        return false;
+    };
+    if !(minimum..=maximum).contains(&items.len())
+        || !items.iter().all(|item| intent_member(item, allowed))
+    {
+        return false;
+    }
+    items.iter().enumerate().all(|(index, item)| {
+        items[..index]
+            .iter()
+            .all(|prior| prior.as_str() != item.as_str())
+    })
+}
+
+fn intent_language_codes(value: &serde_json::Value) -> bool {
+    let Some(items) = value.as_array() else {
+        return false;
+    };
+    if items.len() > 32 {
+        return false;
+    }
+    items.iter().enumerate().all(|(index, item)| {
+        let valid = item.as_str().is_some_and(|code| {
+            (1..=100).contains(&code.len())
+                && code.bytes().enumerate().all(|(position, byte)| {
+                    if position == 0 {
+                        byte.is_ascii_lowercase() || byte.is_ascii_digit()
+                    } else {
+                        byte.is_ascii_lowercase() || byte.is_ascii_digit() || b"._-".contains(&byte)
+                    }
+                })
+        });
+        valid
+            && items[..index]
+                .iter()
+                .all(|prior| prior.as_str() != item.as_str())
+    })
+}
+
+fn intent_revision(value: &serde_json::Value, minimum: u64) -> bool {
+    value
+        .as_u64()
+        .is_some_and(|revision| (minimum..=9_007_199_254_740_991).contains(&revision))
+}
+
+fn validate_intent_impact_fields(object: &serde_json::Map<String, serde_json::Value>) -> bool {
+    const PRIMARY_USE_CASES: &[&str] = &[
+        "rapid-orientation",
+        "systematic-review",
+        "living-review",
+        "theory-synthesis",
+        "hermeneutic-inquiry",
+        "critical-problematization",
+        "technical-landscape",
+        "novelty-audit",
+        "empirical-study-design",
+        "empirical-study-to-article",
+        "empirical-results-to-article",
+        "theory-article-development",
+        "critical-article-development",
+        "manuscript-review-revision",
+    ];
+    const SOURCE_KINDS: &[&str] = &[
+        "peer-reviewed-article",
+        "conference-paper",
+        "book",
+        "chapter",
+        "preprint",
+        "technical-report",
+        "dataset",
+        "standard",
+        "patent",
+        "thesis",
+        "web-resource",
+        "private-report",
+    ];
+    const NOVELTY_STANDARDS: &[&str] = &[
+        "bounded-comparative",
+        "incremental",
+        "theoretical",
+        "methodological",
+        "contextual",
+        "critical",
+        "interpretive",
+        "not-claimed",
+    ];
+    let Some(root) = object.get("root").and_then(serde_json::Value::as_str) else {
+        return false;
+    };
+    let temporal_scope = match (object.get("startYear"), object.get("endYear")) {
+        (Some(start), Some(end)) if start.is_null() && end.is_null() => true,
+        (Some(start), Some(end)) => start.as_u64().is_some_and(|start_year| {
+            end.as_u64().is_some_and(|end_year| {
+                (1000..=9999).contains(&start_year)
+                    && (1000..=9999).contains(&end_year)
+                    && start_year <= end_year
+            })
+        }),
+        _ => false,
+    };
+    let novelty = object
+        .get("noveltyStandard")
+        .is_some_and(|value| value.is_null() || intent_member(value, NOVELTY_STANDARDS));
+    canonical_project_root(root)
+        && object
+            .get("expectedRevision")
+            .is_some_and(|value| intent_revision(value, 0))
+        && object
+            .get("primaryUseCase")
+            .is_some_and(|value| intent_member(value, PRIMARY_USE_CASES))
+        && object
+            .get("sourceKinds")
+            .is_some_and(|value| unique_intent_members(value, SOURCE_KINDS, 0, 32))
+        && object
+            .get("languageCodes")
+            .is_some_and(intent_language_codes)
+        && temporal_scope
+        && object
+            .get("includePrivateReports")
+            .is_some_and(serde_json::Value::is_boolean)
+        && novelty
+}
+
+fn validate_intent_api_request(path: &str, body: &str) -> bool {
+    const MAX_INTENT_BODY_BYTES: usize = 262_144;
+    const IMPACT_KEYS: &[&str] = &[
+        "root",
+        "expectedRevision",
+        "primaryUseCase",
+        "sourceKinds",
+        "languageCodes",
+        "startYear",
+        "endYear",
+        "includePrivateReports",
+        "noveltyStandard",
+    ];
+    const EVIDENCE_TYPES: &[&str] = &[
+        "empirical-study",
+        "systematic-review",
+        "theoretical-work",
+        "technical-evaluation",
+        "standard",
+        "dataset",
+        "interpretive-text",
+        "stakeholder-account",
+        "critical-analysis",
+        "private-report",
+    ];
+    const AUTONOMY_LEVELS: &[&str] = &[
+        "human-only",
+        "suggest",
+        "prepare-reversible",
+        "execute-reversible",
+    ];
+    const STOPPING_CONDITIONS: &[&str] = &[
+        "source-exhaustion",
+        "coverage-threshold",
+        "interpretive-saturation",
+        "benchmark-complete",
+        "nearest-prior-work-challenged",
+        "protocol-complete",
+        "resource-budget",
+        "researcher-decision",
+    ];
+    const POLICY_ACTIONS: &[&str] = &[
+        "accept-intent",
+        "propose-query",
+        "recommend-stopping",
+        "prepare-screening-batch",
+        "prepare-draft-output",
+        "execute-approved-query",
+        "execute-approved-screening-batch",
+        "change-scope",
+        "external-egress",
+        "adjudicate-evidence",
+        "approve-claim",
+        "publish-output",
+        "confirm-stopping",
+    ];
+    if path == "/projects/intent" {
+        return exact_json_object(body, &["root"], MAX_INTENT_BODY_BYTES)
+            .and_then(|object| object["root"].as_str().map(canonical_project_root))
+            .unwrap_or(false);
+    }
+    if path == "/projects/intent/preview" {
+        return exact_json_object(body, IMPACT_KEYS, MAX_INTENT_BODY_BYTES)
+            .as_ref()
+            .is_some_and(validate_intent_impact_fields);
+    }
+    if path == "/projects/intent/drafts" {
+        let expected = [
+            IMPACT_KEYS,
+            &[
+                "researchObjective",
+                "contributionIntent",
+                "phenomenon",
+                "unitOfAnalysis",
+                "levelOfAnalysis",
+                "evidenceTypes",
+                "noveltyRationale",
+                "autonomyLevel",
+                "stoppingConditions",
+                "revisionRationale",
+                "impactAcknowledgement",
+            ],
+        ]
+        .concat();
+        let Some(object) = exact_json_object(body, &expected, MAX_INTENT_BODY_BYTES) else {
+            return false;
+        };
+        let acknowledgement = object.get("impactAcknowledgement").is_some_and(|value| {
+            value.is_null()
+                || value
+                    .as_str()
+                    .is_some_and(|hash| canonical_lower_hex(hash, 64))
+        });
+        return validate_intent_impact_fields(&object)
+            && [
+                "researchObjective",
+                "contributionIntent",
+                "phenomenon",
+                "unitOfAnalysis",
+                "levelOfAnalysis",
+                "noveltyRationale",
+            ]
+            .iter()
+            .all(|key| {
+                object
+                    .get(*key)
+                    .is_some_and(|value| bounded_intent_narrative(value, 0))
+            })
+            && object
+                .get("evidenceTypes")
+                .is_some_and(|value| unique_intent_members(value, EVIDENCE_TYPES, 0, 32))
+            && object
+                .get("autonomyLevel")
+                .is_some_and(|value| intent_member(value, AUTONOMY_LEVELS))
+            && object
+                .get("stoppingConditions")
+                .is_some_and(|value| unique_intent_members(value, STOPPING_CONDITIONS, 1, 3))
+            && object
+                .get("revisionRationale")
+                .is_some_and(|value| bounded_intent_narrative(value, 1))
+            && acknowledgement;
+    }
+    if path == "/projects/intent/acceptances" {
+        let Some(object) = exact_json_object(
+            body,
+            &[
+                "root",
+                "expectedRevision",
+                "expectedRevisionContentHash",
+                "confirmed",
+                "decisionRationale",
+            ],
+            MAX_INTENT_BODY_BYTES,
+        ) else {
+            return false;
+        };
+        return object
+            .get("root")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(canonical_project_root)
+            && object
+                .get("expectedRevision")
+                .is_some_and(|value| intent_revision(value, 1))
+            && object
+                .get("expectedRevisionContentHash")
+                .and_then(serde_json::Value::as_str)
+                .and_then(|value| value.strip_prefix("sha256:"))
+                .is_some_and(|hash| canonical_lower_hex(hash, 64))
+            && object
+                .get("confirmed")
+                .is_some_and(serde_json::Value::is_boolean)
+            && object
+                .get("decisionRationale")
+                .is_some_and(|value| bounded_intent_narrative(value, 1));
+    }
+    if path == "/projects/intent/policy/evaluations" {
+        let Some(object) = exact_json_object(
+            body,
+            &["root", "action", "subjectType", "stoppingCondition"],
+            MAX_INTENT_BODY_BYTES,
+        ) else {
+            return false;
+        };
+        return object
+            .get("root")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(canonical_project_root)
+            && object
+                .get("action")
+                .is_some_and(|value| intent_member(value, POLICY_ACTIONS))
+            && object
+                .get("subjectType")
+                .is_some_and(|value| intent_member(value, &["human", "model", "system"]))
+            && object
+                .get("stoppingCondition")
+                .is_some_and(|value| value.is_null() || intent_member(value, STOPPING_CONDITIONS));
+    }
+    false
 }
 
 fn validate_project_api_request(path: &str, body: &str) -> bool {
@@ -940,6 +1349,22 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
                 return Ok(());
             }
         }
+    }
+    if request.method == "POST"
+        && request.if_match.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_intent_api_request(&request.path, body))
+        && match request.path.as_str() {
+            "/projects/intent/drafts" | "/projects/intent/acceptances" => request
+                .idempotency_key
+                .as_deref()
+                .is_some_and(|value| canonical_lower_hex(value, 32)),
+            _ => request.idempotency_key.is_none(),
+        }
+    {
+        return Ok(());
     }
     if request.method == "POST"
         && request.if_match.is_none()
@@ -1239,17 +1664,11 @@ fn validate_handshake(
         || handshake.host != "127.0.0.1"
         || handshake.port == 0
         || !nonce_valid
-        || handshake.capabilities
-            != [
-                "operations.cancel",
-                "operations.events",
-                "operations.read",
-                "privacy.cache-cleanup",
-                "privacy.policy",
-                "projects.lifecycle",
-                "runtime.contract",
-                "runtime.status",
-            ]
+        || !handshake
+            .capabilities
+            .iter()
+            .map(String::as_str)
+            .eq(EXPECTED_CORE_CAPABILITIES.iter().copied())
         || handshake.database_compatibility.minimum != "0.1.0"
         || handshake.database_compatibility.maximum_exclusive != "0.2.0"
         || handshake.diagnostic_code != "RO-CORE-STARTING"
@@ -1450,17 +1869,11 @@ fn readiness_is_compatible(response: &[u8]) -> bool {
         && payload.service == "research-observatory-core"
         && payload.version == EXPECTED_BUILD
         && payload.state == "ready"
-        && payload.capabilities
-            == [
-                "operations.cancel",
-                "operations.events",
-                "operations.read",
-                "privacy.cache-cleanup",
-                "privacy.policy",
-                "projects.lifecycle",
-                "runtime.contract",
-                "runtime.status",
-            ]
+        && payload
+            .capabilities
+            .iter()
+            .map(String::as_str)
+            .eq(EXPECTED_CORE_CAPABILITIES.iter().copied())
         && payload.ready
 }
 
@@ -1696,7 +2109,7 @@ mod tests {
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",\"pid\":{},",
                 "\"host\":\"127.0.0.1\",\"port\":49152,",
                 "\"nonce\":\"0123456789abcdef0123456789abcdef\",",
-                "\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"runtime.contract\",\"runtime.status\"],",
+                "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"runtime.contract\",\"runtime.status\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}\n"
@@ -1704,6 +2117,75 @@ mod tests {
             pid
         )
         .into_bytes()
+    }
+
+    fn intent_impact_body() -> serde_json::Value {
+        serde_json::json!({
+            "root": "C:/Research/study-one",
+            "expectedRevision": 0,
+            "primaryUseCase": "systematic-review",
+            "sourceKinds": ["peer-reviewed-article", "private-report"],
+            "languageCodes": ["en", "en-us"],
+            "startYear": 2020,
+            "endYear": 2026,
+            "includePrivateReports": true,
+            "noveltyStandard": "bounded-comparative"
+        })
+    }
+
+    fn intent_draft_body() -> serde_json::Value {
+        let mut value = intent_impact_body();
+        let object = value.as_object_mut().expect("intent impact object");
+        object.insert(
+            "researchObjective".to_owned(),
+            serde_json::json!("Map the evidence."),
+        );
+        object.insert(
+            "contributionIntent".to_owned(),
+            serde_json::json!("Bound the contribution."),
+        );
+        object.insert(
+            "phenomenon".to_owned(),
+            serde_json::json!("Research workflows"),
+        );
+        object.insert(
+            "unitOfAnalysis".to_owned(),
+            serde_json::json!("Scholarly reports"),
+        );
+        object.insert("levelOfAnalysis".to_owned(), serde_json::json!("Document"));
+        object.insert(
+            "evidenceTypes".to_owned(),
+            serde_json::json!(["empirical-study"]),
+        );
+        object.insert(
+            "noveltyRationale".to_owned(),
+            serde_json::json!("A bounded comparison."),
+        );
+        object.insert("autonomyLevel".to_owned(), serde_json::json!("suggest"));
+        object.insert(
+            "stoppingConditions".to_owned(),
+            serde_json::json!(["coverage-threshold"]),
+        );
+        object.insert(
+            "revisionRationale".to_owned(),
+            serde_json::json!("Initial draft"),
+        );
+        object.insert("impactAcknowledgement".to_owned(), serde_json::Value::Null);
+        value
+    }
+
+    fn intent_request(
+        path: &str,
+        body: serde_json::Value,
+        idempotency_key: Option<&str>,
+    ) -> CoreApiRequest {
+        CoreApiRequest {
+            method: "POST".to_owned(),
+            path: path.to_owned(),
+            body: Some(serde_json::to_string(&body).expect("intent request JSON")),
+            if_match: None,
+            idempotency_key: idempotency_key.map(str::to_owned),
+        }
     }
 
     #[test]
@@ -1862,6 +2344,205 @@ mod tests {
                 })
                 .is_err(),
                 "{method} {path}",
+            );
+        }
+    }
+
+    #[test]
+    fn native_api_transport_accepts_all_generated_intent_request_shapes() {
+        let requests = [
+            intent_request(
+                "/projects/intent",
+                serde_json::json!({"root": "C:/Research/研究"}),
+                None,
+            ),
+            intent_request("/projects/intent/preview", intent_impact_body(), None),
+            intent_request(
+                "/projects/intent/drafts",
+                intent_draft_body(),
+                Some("0123456789abcdef0123456789abcdef"),
+            ),
+            intent_request(
+                "/projects/intent/acceptances",
+                serde_json::json!({
+                    "root": "C:/Research/study-one",
+                    "expectedRevision": 1,
+                    "expectedRevisionContentHash": format!("sha256:{}", "a".repeat(64)),
+                    "confirmed": true,
+                    "decisionRationale": "This decision-complete contract is governing."
+                }),
+                Some("abcdef0123456789abcdef0123456789"),
+            ),
+            intent_request(
+                "/projects/intent/policy/evaluations",
+                serde_json::json!({
+                    "root": "C:/Research/study-one",
+                    "action": "execute-approved-query",
+                    "subjectType": "system",
+                    "stoppingCondition": null
+                }),
+                None,
+            ),
+        ];
+        for request in requests {
+            assert!(
+                validate_api_request(&request).is_ok(),
+                "{} {}",
+                request.method,
+                request.path
+            );
+        }
+    }
+
+    #[test]
+    fn native_api_transport_denies_malformed_or_misbound_intent_requests() {
+        let key = Some("0123456789abcdef0123456789abcdef");
+        let mut cases = Vec::new();
+
+        let mut extra = intent_impact_body();
+        extra["unapprovedField"] = serde_json::json!(true);
+        cases.push(intent_request("/projects/intent/preview", extra, None));
+
+        let mut hostile_root = intent_impact_body();
+        hostile_root["root"] = serde_json::json!("C:/Research/../escape");
+        cases.push(intent_request(
+            "/projects/intent/preview",
+            hostile_root,
+            None,
+        ));
+
+        let mut invalid_revision = intent_impact_body();
+        invalid_revision["expectedRevision"] = serde_json::json!(9_007_199_254_740_992_u64);
+        cases.push(intent_request(
+            "/projects/intent/preview",
+            invalid_revision,
+            None,
+        ));
+
+        let mut invalid_vocabulary = intent_impact_body();
+        invalid_vocabulary["primaryUseCase"] = serde_json::json!("invented-mode");
+        cases.push(intent_request(
+            "/projects/intent/preview",
+            invalid_vocabulary,
+            None,
+        ));
+
+        let mut duplicate_scope = intent_impact_body();
+        duplicate_scope["sourceKinds"] = serde_json::json!(["book", "book"]);
+        cases.push(intent_request(
+            "/projects/intent/preview",
+            duplicate_scope,
+            None,
+        ));
+
+        let mut invalid_language = intent_impact_body();
+        invalid_language["languageCodes"] = serde_json::json!(["EN"]);
+        cases.push(intent_request(
+            "/projects/intent/preview",
+            invalid_language,
+            None,
+        ));
+
+        let mut partial_years = intent_impact_body();
+        partial_years["endYear"] = serde_json::Value::Null;
+        cases.push(intent_request(
+            "/projects/intent/preview",
+            partial_years,
+            None,
+        ));
+
+        let mut invalid_draft = intent_draft_body();
+        invalid_draft["stoppingConditions"] = serde_json::json!([]);
+        cases.push(intent_request(
+            "/projects/intent/drafts",
+            invalid_draft,
+            key,
+        ));
+
+        cases.push(intent_request(
+            "/projects/intent/drafts",
+            intent_draft_body(),
+            None,
+        ));
+        cases.push(intent_request(
+            "/projects/intent/drafts",
+            intent_draft_body(),
+            Some("ABCDEF0123456789ABCDEF0123456789"),
+        ));
+
+        let invalid_hash = serde_json::json!({
+            "root": "C:/Research/study-one",
+            "expectedRevision": 1,
+            "expectedRevisionContentHash": "a".repeat(64),
+            "confirmed": true,
+            "decisionRationale": "Confirmed"
+        });
+        cases.push(intent_request(
+            "/projects/intent/acceptances",
+            invalid_hash,
+            key,
+        ));
+        cases.push(intent_request(
+            "/projects/intent/acceptances",
+            serde_json::json!({
+                "root": "C:/Research/study-one",
+                "expectedRevision": 1,
+                "expectedRevisionContentHash": format!("sha256:{}", "a".repeat(64)),
+                "confirmed": true,
+                "decisionRationale": "x".repeat(4001)
+            }),
+            key,
+        ));
+
+        let invalid_policy = serde_json::json!({
+            "root": "C:/Research/study-one",
+            "action": "execute-unapproved-query",
+            "subjectType": "system",
+            "stoppingCondition": null
+        });
+        cases.push(intent_request(
+            "/projects/intent/policy/evaluations",
+            invalid_policy,
+            None,
+        ));
+        cases.push(intent_request(
+            "/projects/intent/policy/evaluations",
+            serde_json::json!({
+                "root": "C:/Research/study-one",
+                "action": "execute-approved-query",
+                "subjectType": "system",
+                "stoppingCondition": null
+            }),
+            key,
+        ));
+        cases.push(intent_request(
+            "/projects/intent/unapproved",
+            serde_json::json!({"root": "C:/Research/study-one"}),
+            None,
+        ));
+
+        let mut oversized = intent_request(
+            "/projects/intent",
+            serde_json::json!({"root": "C:/Research/study-one"}),
+            None,
+        );
+        oversized.body = Some(format!("{{\"root\":\"C:/{}\"}}", "a".repeat(262_145)));
+        cases.push(oversized);
+
+        let mut conditional = intent_request(
+            "/projects/intent",
+            serde_json::json!({"root": "C:/Research/study-one"}),
+            None,
+        );
+        conditional.if_match = Some("\"unexpected\"".to_owned());
+        cases.push(conditional);
+
+        for request in cases {
+            assert!(
+                validate_api_request(&request).is_err(),
+                "unexpectedly allowed {} with body {:?}",
+                request.path,
+                request.body
             );
         }
     }

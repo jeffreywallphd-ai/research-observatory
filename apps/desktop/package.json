@@ -11,6 +11,7 @@
     "lint": "node scripts/lint.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:intent-native": "node scripts/intent-native-integration.mjs",
     "build": "node scripts/clean-dist.mjs && vite build --config vite.product.config.ts && node scripts/assemble-application.mjs && vite build && node scripts/assemble-reference.mjs",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build",
     "tauri": "tauri",

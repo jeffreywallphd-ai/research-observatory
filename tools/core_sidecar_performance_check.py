@@ -708,6 +708,11 @@ def validate_handshake(value: Any, pid: int) -> int:
         or any(item not in "0123456789abcdef" for item in nonce)
         or value.get("capabilities")
         != [
+            "intent.acceptance",
+            "intent.drafts",
+            "intent.impact-preview",
+            "intent.policy-evaluation",
+            "intent.read",
             "operations.cancel",
             "operations.events",
             "operations.read",
@@ -790,6 +795,11 @@ def readiness_ok(port: int, capability_token: str) -> bool:
         "version": "0.1.0",
         "state": "ready",
         "capabilities": [
+            "intent.acceptance",
+            "intent.drafts",
+            "intent.impact-preview",
+            "intent.policy-evaluation",
+            "intent.read",
             "operations.cancel",
             "operations.events",
             "operations.read",
