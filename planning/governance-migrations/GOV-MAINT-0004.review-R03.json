@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0004.R03",
+  "maintenanceId": "GOV-MAINT-0004",
+  "reviewedCommit": "9233b770504ffebf27f70134064e6a183780b05a",
+  "priorReviewedCommit": "b4a83f849820223541a20495e89b1477acdb968e",
+  "predecessorCommit": "e5f80b52b4148506362abe989221a00fa5adbb51",
+  "reviewer": {
+    "identity": "Galileo",
+    "role": "independent-governance-control-maintenance-reviewer",
+    "agentTask": "/root/gov_maint_0004_review"
+  },
+  "reviewedAt": "2026-08-29T08:55:56-04:00",
+  "disposition": "APPROVED",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GOV-MAINT-0004-R01-F01",
+      "status": "CLOSED",
+      "resolution": "Cascade preserves T03 owner, branch, base, worktree, evidence references, and immutable review attempts. Initial evidence remains anchored to the first controlled submission's frozen base after a later lawful claim base."
+    },
+    {
+      "findingId": "GOV-MAINT-0004-R01-F02",
+      "status": "CLOSED",
+      "resolution": "The transitive graph follows both task dependencies and slice-level task dependencies."
+    }
+  ],
+  "verification": {
+    "focusedTests": "Six focused cascade/remediation tests and three evidence lifecycle, atomic submission, and remediation tests passed independently.",
+    "integratedPersistence": "A main-equivalent repository-bound cascade with every source snapshot and an actual external temporary-file replacement passed; T02 became IN_PROGRESS and T03 became NOT_STARTED with its historical identity, two evidence references, and two review attempts preserved.",
+    "futureClaimBase": "A second validated replacement after changing only T03's live base to 9233b770504ffebf27f70134064e6a183780b05a passed with zero semantic errors.",
+    "denialBoundaries": "Cross-Wave, frozen REVIEW slice, approved downstream slice, active/REVIEW dependent, missing opt-in, and approved release-gate paths all rejected fail-closed.",
+    "quality": "Ruff format, Ruff lint, mypy, canonical backlog validation, and patch hygiene passed.",
+    "priorReviewIntegrity": {
+      "GOV-MAINT-0004.R01": "442de0230546dd13be91d7e9b873e1b86571df74cbff4950cfef89a5c95a5267",
+      "GOV-MAINT-0004.R02": "b0a28e98dc0e672faee55050236e62bf05c74345717106740425e5608124adb2"
+    }
+  },
+  "filesEditedByReviewer": false
+}
