@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5ac90028f57863e0cc679753f505aceaa8dd332343bb4d0359fe8d1f08a0f0a1
+source_sha256: d3b1491e6fb9cf82be095cc1186eab9a532a080222ef810f33dfe73a98f2b116
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,8 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 268 |
 | `READY` | 1 |
-| `REVIEW` | 1 |
-| `DONE` | 50 |
+| `DONE` | 51 |
 | `DEFERRED` | 36 |
 
 ### Wave amendment lifecycle
@@ -358,7 +357,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-03.S02.T02` | `append-only v1` | 4 | `-` | approved / codex-independent-desktop-intent-reviewer | - |
-| `CAP-03.S02.T03` | `append-only v1` | 2 | `R03` | approved / codex-independent-epistemic-governance-reviewer | - |
+| `CAP-03.S02.T03` | `append-only v1` | 3 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -368,7 +367,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 9/15 | 31/48 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 9/15 | 32/48 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -387,7 +386,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-delivery-foundation (`CAP-00`) — Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
-| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 1/6 | 5/20 | `CAP-03.S02.T03` |
+| CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 1/6 | 6/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -424,6 +423,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-03.S02.T03` Enforce mode and autonomy policy at service boundaries | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+No task is currently active.

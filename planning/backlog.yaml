@@ -7815,12 +7815,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T20:43:04+00:00'
-      updated_at: '2026-08-29T13:45:30+00:00'
-      completed_at: null
+      updated_at: '2026-08-29T13:52:43+00:00'
+      completed_at: '2026-08-29T13:52:43+00:00'
       blocker: null
       implementation_notes: Exact candidate 610a01c submitted for epistemic-governance review; historical full-foundation
         fixture debt remains disclosed for W1 exit.
@@ -7843,31 +7843,36 @@ capabilities:
       review: &id025
         reviewer: codex-independent-epistemic-governance-reviewer
         result: approved
-        reviewed_at: '2026-08-29T12:05:37+00:00'
-        notes: Focused R02 remediation review found no blocking acceptance-bound defect. The exact strict-descendant candidate
-          caches only the newest contract-valid accepted revision from newest-first immutable history, never populates or
-          invalidates the governing snapshot from a draft, and reconstructs it from that history after process restart. Human
-          acceptance and policy evaluation share the ResearchIntentService policy-cache lock while every public project action
-          also remains serialized by the W1 ProjectLifecycleService mutex and protected from another Core process by the exclusive
-          local-project session lock. A successful acceptance commits before replacing the cached snapshot and cannot release
-          either synchronization boundary before replacement, so every later evaluation observes the new authority; a failed
-          acceptance leaves the prior snapshot authoritative. Exact replay of an older acceptance re-reads validated history
-          and restores the newest accepted revision rather than the replayed older result, preventing policy rollback. Policy
-          evaluation retains the lock through its atomic content-free decision/provenance append and returns no decision when
-          that append fails, so audit failure remains fail-closed. Independent replay passed all 50 Core service tests and
-          all 56 local-security tests with one expected Windows privilege skip; the focused intent suite proves cache hits,
-          later-acceptance replacement, old-replay nonrollback, restart reconstruction, six-mode output/gate behavior, autonomy
-          and egress denial, stopping confirmation, and audit failure. Python quality, backlog validation, exact evidence/blob
-          binding, patch hygiene, and the zero-net-UI gate also pass. The base-to-candidate range has no governed UI, dependency,
-          lockfile, schema, migration, or external-service delta. Two R02 Trivy reports truthfully record scanner ERROR with
-          empty findings while the unchanged graph retains the exact R01 passing 601-package scan; the packet explicitly defers
-          a successful live replay to CAP-03.S02 integration or W1 exit. The guided human-acceptance desktop path is likewise
-          explicitly assigned to reopened CAP-03.S02.T02 and is not claimed by T03. No finding remains open.
+        reviewed_at: '2026-08-29T13:52:43+00:00'
+        notes: Focused epistemic-governance revalidation found no blocking acceptance-bound defect. The frozen R03 evidence
+          is byte-exact at SHA-256 09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f, its Git blob matches
+          submission commit 8437591283bad6feba21f42acd517a706c9b684c, and exact candidate b11440f1723d251df858791178f5a5056c3b2a27
+          descends from both the approved T03 R02 candidate and the independently approved T02 R04 remediation. Git tree comparison
+          proves that the T03 ResearchIntentService, focused service tests, architecture note, and generated contract boundary
+          are unchanged from approved R02. The incremental T02 renderer path freezes one exact project root, revision ID/number,
+          full sha256 content hash, trimmed human rationale, confirmed command, and 32-hex idempotency key before calling
+          the real generated client; ambiguous response loss retains that immutable attempt and same-key replay returns Core's
+          authoritative accepted projection. The renderer installs that returned projection into current/history without creating
+          a local policy decision, and its only launch control remains unconditionally disabled. Independently replayed generated-client
+          and Core API/service cases preserve the exact accepted revision and content hash across acceptance, restart, replay,
+          and subsequent policy evaluation, so the desktop projection and T03 governing reference compose through the same
+          strict contract rather than through a renderer-local authority. ResearchIntentService still populates its cache
+          only from the newest contract-valid accepted history entry, replaces the snapshot after a successful atomic acceptance
+          and before any later evaluation, leaves prior authority intact on failure, and re-reads newest accepted history
+          after an older idempotent replay so authority cannot roll back. Policy evaluation retains the synchronization boundary
+          through atomic content-free decision/provenance persistence and returns no decision when audit persistence fails.
+          All six required modes retain governing-reference-bound working labels and claim/publication gates; gate bypass,
+          unauthorized autonomy, local-only egress, absent accepted intent, and stopping confirmation remain fail-closed with
+          compact explanations. Independent checks passed all 50 Core service tests, all 56 local-security tests with one
+          expected privilege skip, six focused renderer/coordinator tests, nine generated-client tests, both strict TypeScript
+          checks, the task-local zero-UI-delta gate, backlog validation, exact evidence/blob binding, and patch hygiene. The
+          R02/T02 and GOV-MAINT-0004 records in the range are truthfully disclosed ancestral integration history, not newly
+          claimed T03 implementation. The unchanged approved UI reference is not re-attributed to T03. Controlled visual capture
+          and a successful live supply-chain replay remain mandatory at CAP-03.S02 integration, while performance and the
+          complete cross-capability/platform matrix remain mandatory at W1 exit; none is represented as passing here. The
+          protected W1.A04.B00 witness remains unmodified. No finding remains open.
       base_sha: 1b53724882a8e41c8dc16c85c01b8ea3ed2e5b4d
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-29T13:39:09+00:00'
-        expires_at: '2026-08-29T21:39:09+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -8117,7 +8122,30 @@ capabilities:
             - service:unit
             - security-local:unit
             packet_sha256: 047bb443530248b4c6f1875ebda69ee14bb1e6a6e7d5b42143d724c57d70125a
-          review: *id025
+          review:
+            reviewer: codex-independent-epistemic-governance-reviewer
+            result: approved
+            reviewed_at: '2026-08-29T12:05:37+00:00'
+            notes: Focused R02 remediation review found no blocking acceptance-bound defect. The exact strict-descendant candidate
+              caches only the newest contract-valid accepted revision from newest-first immutable history, never populates
+              or invalidates the governing snapshot from a draft, and reconstructs it from that history after process restart.
+              Human acceptance and policy evaluation share the ResearchIntentService policy-cache lock while every public
+              project action also remains serialized by the W1 ProjectLifecycleService mutex and protected from another Core
+              process by the exclusive local-project session lock. A successful acceptance commits before replacing the cached
+              snapshot and cannot release either synchronization boundary before replacement, so every later evaluation observes
+              the new authority; a failed acceptance leaves the prior snapshot authoritative. Exact replay of an older acceptance
+              re-reads validated history and restores the newest accepted revision rather than the replayed older result,
+              preventing policy rollback. Policy evaluation retains the lock through its atomic content-free decision/provenance
+              append and returns no decision when that append fails, so audit failure remains fail-closed. Independent replay
+              passed all 50 Core service tests and all 56 local-security tests with one expected Windows privilege skip; the
+              focused intent suite proves cache hits, later-acceptance replacement, old-replay nonrollback, restart reconstruction,
+              six-mode output/gate behavior, autonomy and egress denial, stopping confirmation, and audit failure. Python
+              quality, backlog validation, exact evidence/blob binding, patch hygiene, and the zero-net-UI gate also pass.
+              The base-to-candidate range has no governed UI, dependency, lockfile, schema, migration, or external-service
+              delta. Two R02 Trivy reports truthfully record scanner ERROR with empty findings while the unchanged graph retains
+              the exact R01 passing 601-package scan; the packet explicitly defers a successful live replay to CAP-03.S02
+              integration or W1 exit. The guided human-acceptance desktop path is likewise explicitly assigned to reopened
+              CAP-03.S02.T02 and is not claimed by T03. No finding remains open.
           ledger:
             path: artifacts/evidence/CAP-03.S02.T03.review-R02.json
             sha256: ddbb59e4321f6e14243a797d532bab7dc614be92e5de8672f384e7a8b775816b
@@ -8154,97 +8182,138 @@ capabilities:
               prior_attempt_id: R01
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission:
-          id: R03
-          submitted_by: codex
-          submitted_at: '2026-08-29T13:45:30+00:00'
-          candidate_commit: b11440f1723d251df858791178f5a5056c3b2a27
-          base_commit: 04b70b3ed879c853e87c3547db27a2eb0ba11b31
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S02.T03.R03.json
-            sha256: 09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f
-            commit: b11440f1723d251df858791178f5a5056c3b2a27
-            recorded_at: '2026-08-29T13:45:30+00:00'
-          acceptance_criteria_sha256: 7c39d7c4e651d5e56f68bd2b6eef9c3b26174b593a38be30c0d83d1b1cf2213c
-          changed_paths:
-          - apps/desktop/README.md
-          - apps/desktop/src/app/IntentWorkspace.test.tsx
-          - apps/desktop/src/app/IntentWorkspace.tsx
-          - artifacts/evidence/CAP-03.S02.T02.R03.json
-          - artifacts/evidence/CAP-03.S02.T02.R04.json
-          - artifacts/evidence/CAP-03.S02.T02.review-R03.json
-          - artifacts/evidence/CAP-03.S02.T02.review-R04.json
-          - artifacts/evidence/CAP-03.S02.T03.R02.json
-          - artifacts/evidence/CAP-03.S02.T03.review-R02.json
-          - artifacts/evidence/ui-change/CAP-03.S02.T02.json
-          - docs/planning-implementation-plan.md
-          - planning/backlog.yaml
-          - planning/governance-migrations/GOV-MAINT-0004.json
-          - planning/governance-migrations/GOV-MAINT-0004.review-R01.json
-          - planning/governance-migrations/GOV-MAINT-0004.review-R02.json
-          - planning/governance-migrations/GOV-MAINT-0004.review-R03.json
-          - planning/review-site/CAP-03/CAP-03.S02.html
-          - planning/review-site/manifest.json
-          - planning/status-summary.md
-          - tests/foundation/test_taskctl_workflow.py
-          - tools/taskctl.py
-          selected_checks:
-          - .venv\Scripts\python.exe -m unittest discover -s tests\service -p test_*.py
-          - .venv\Scripts\python.exe -m unittest discover -s tests\security -p test_*.py
-          - npm run lint; npm test; npm run typecheck in apps/desktop; npm test -- core-api/generated.test.ts; npm run typecheck
-            in packages/contracts
-          - .venv\Scripts\python.exe -m unittest discover -s tests\packaging -p test_*.py; real PyInstaller build; .venv\Scripts\python.exe
-            tools\packaging_smoke_check.py --repo .
-          - .venv\Scripts\python.exe tools\quality_check.py --repo .; architecture_check.py; repository_structure_check.py;
-            taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved
-          - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base 1b53724882a8e41c8dc16c85c01b8ea3ed2e5b4d --head
-            b11440f1723d251df858791178f5a5056c3b2a27
-          - .venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts\tmp\CAP-03.S02.T03-R03-build-manifest-b11440f.json;
-            verify.py --profile desktop --profile service --profile security-local --affected-base 04b70b3ed879c853e87c3547db27a2eb0ba11b31
-            --affected-head b11440f1723d251df858791178f5a5056c3b2a27 --deferred-gate W1-exit --selection-only
-          - git diff --check 04b70b3ed879c853e87c3547db27a2eb0ba11b31..b11440f1723d251df858791178f5a5056c3b2a27; protected
-            W1.A04.B00 witness SHA-256
-          deferred_checks:
-          - The controlled visual-capture matrix is mandatory at CAP-03.S02 integration. Exact renderer/coordinator behavior,
-            generated-client transport, strict types, desktop build, and the accepted T02 cumulative UI gate already pass.
-          - The successful live supply-chain scanner replay explicitly deferred by T03 R02 remains mandatory at CAP-03.S02
-            integration or W1 exit and is not represented as passing in this packet.
-          - Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart,
-            recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint
-            and W1 exit.
-          selection_rationale: T03 was already independently approved, but its T02 dependency was later corrected at the renderer-to-generated-client
-            acceptance boundary. The credible integration risks are a renderer-local false acceptance claim, loss of the only
-            idempotency key after Core commits, policy evaluation against a draft or stale revision, rollback through replay
-            of an older acceptance, bypass of any of the six epistemic-mode gates, failure to persist decision/provenance
-            atomically, and Windows packaging divergence. Verification therefore replays the complete desktop and service
-            suites, focused real-client acceptance transport cases, generated-contract tests and strict types, local-security
-            units, real Windows sidecar packaging and smoke, quality/architecture/repository/planning controls, task-local
-            zero-UI-delta validation, exact affected-scope selection, build provenance, patch hygiene, and protected-witness
-            safety. T03 service behavior is unchanged from R02, so a successful live supply-chain replay and controlled visual
-            capture are retained for the imminent CAP-03.S02 integration review; desktop performance remains gate-bound to
-            W1 exit.
-          selection_sha256: 5d33afea4ae24b15d9cc9ffb4e337e8a5b858028ba560c59c075804626b88954
-          prior_attempt_id: R02
-          open_finding_ids: []
-          root_cause_analysis: null
-          selected_command_ids:
-          - foundation:architecture
-          - foundation:backlog-views
-          - foundation:build-manifest
-          - foundation:ui-change
-          - foundation:quality
-          - foundation:repository-structure
-          - foundation:backlog
-          - foundation:packaging-smoke
-          - desktop:application
-          - desktop:unit
-          - packaging:unit
-          - service:unit
-          - contracts:unit
-          - security-local:unit
-          packet_sha256: b1a01253d97a7337d5604e9cc1abf6bb0badfa953bf8b2a5f9bd54d5b8451a89
+        - submission:
+            id: R03
+            submitted_by: codex
+            submitted_at: '2026-08-29T13:45:30+00:00'
+            candidate_commit: b11440f1723d251df858791178f5a5056c3b2a27
+            base_commit: 04b70b3ed879c853e87c3547db27a2eb0ba11b31
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S02.T03.R03.json
+              sha256: 09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f
+              commit: b11440f1723d251df858791178f5a5056c3b2a27
+              recorded_at: '2026-08-29T13:45:30+00:00'
+            acceptance_criteria_sha256: 7c39d7c4e651d5e56f68bd2b6eef9c3b26174b593a38be30c0d83d1b1cf2213c
+            changed_paths:
+            - apps/desktop/README.md
+            - apps/desktop/src/app/IntentWorkspace.test.tsx
+            - apps/desktop/src/app/IntentWorkspace.tsx
+            - artifacts/evidence/CAP-03.S02.T02.R03.json
+            - artifacts/evidence/CAP-03.S02.T02.R04.json
+            - artifacts/evidence/CAP-03.S02.T02.review-R03.json
+            - artifacts/evidence/CAP-03.S02.T02.review-R04.json
+            - artifacts/evidence/CAP-03.S02.T03.R02.json
+            - artifacts/evidence/CAP-03.S02.T03.review-R02.json
+            - artifacts/evidence/ui-change/CAP-03.S02.T02.json
+            - docs/planning-implementation-plan.md
+            - planning/backlog.yaml
+            - planning/governance-migrations/GOV-MAINT-0004.json
+            - planning/governance-migrations/GOV-MAINT-0004.review-R01.json
+            - planning/governance-migrations/GOV-MAINT-0004.review-R02.json
+            - planning/governance-migrations/GOV-MAINT-0004.review-R03.json
+            - planning/review-site/CAP-03/CAP-03.S02.html
+            - planning/review-site/manifest.json
+            - planning/status-summary.md
+            - tests/foundation/test_taskctl_workflow.py
+            - tools/taskctl.py
+            selected_checks:
+            - .venv\Scripts\python.exe -m unittest discover -s tests\service -p test_*.py
+            - .venv\Scripts\python.exe -m unittest discover -s tests\security -p test_*.py
+            - npm run lint; npm test; npm run typecheck in apps/desktop; npm test -- core-api/generated.test.ts; npm run typecheck
+              in packages/contracts
+            - .venv\Scripts\python.exe -m unittest discover -s tests\packaging -p test_*.py; real PyInstaller build; .venv\Scripts\python.exe
+              tools\packaging_smoke_check.py --repo .
+            - .venv\Scripts\python.exe tools\quality_check.py --repo .; architecture_check.py; repository_structure_check.py;
+              taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved
+            - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base 1b53724882a8e41c8dc16c85c01b8ea3ed2e5b4d --head
+              b11440f1723d251df858791178f5a5056c3b2a27
+            - .venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts\tmp\CAP-03.S02.T03-R03-build-manifest-b11440f.json;
+              verify.py --profile desktop --profile service --profile security-local --affected-base 04b70b3ed879c853e87c3547db27a2eb0ba11b31
+              --affected-head b11440f1723d251df858791178f5a5056c3b2a27 --deferred-gate W1-exit --selection-only
+            - git diff --check 04b70b3ed879c853e87c3547db27a2eb0ba11b31..b11440f1723d251df858791178f5a5056c3b2a27; protected
+              W1.A04.B00 witness SHA-256
+            deferred_checks:
+            - The controlled visual-capture matrix is mandatory at CAP-03.S02 integration. Exact renderer/coordinator behavior,
+              generated-client transport, strict types, desktop build, and the accepted T02 cumulative UI gate already pass.
+            - The successful live supply-chain scanner replay explicitly deferred by T03 R02 remains mandatory at CAP-03.S02
+              integration or W1 exit and is not represented as passing in this packet.
+            - Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart,
+              recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint
+              and W1 exit.
+            selection_rationale: T03 was already independently approved, but its T02 dependency was later corrected at the
+              renderer-to-generated-client acceptance boundary. The credible integration risks are a renderer-local false
+              acceptance claim, loss of the only idempotency key after Core commits, policy evaluation against a draft or
+              stale revision, rollback through replay of an older acceptance, bypass of any of the six epistemic-mode gates,
+              failure to persist decision/provenance atomically, and Windows packaging divergence. Verification therefore
+              replays the complete desktop and service suites, focused real-client acceptance transport cases, generated-contract
+              tests and strict types, local-security units, real Windows sidecar packaging and smoke, quality/architecture/repository/planning
+              controls, task-local zero-UI-delta validation, exact affected-scope selection, build provenance, patch hygiene,
+              and protected-witness safety. T03 service behavior is unchanged from R02, so a successful live supply-chain
+              replay and controlled visual capture are retained for the imminent CAP-03.S02 integration review; desktop performance
+              remains gate-bound to W1 exit.
+            selection_sha256: 5d33afea4ae24b15d9cc9ffb4e337e8a5b858028ba560c59c075804626b88954
+            prior_attempt_id: R02
+            open_finding_ids: []
+            root_cause_analysis: null
+            selected_command_ids:
+            - foundation:architecture
+            - foundation:backlog-views
+            - foundation:build-manifest
+            - foundation:ui-change
+            - foundation:quality
+            - foundation:repository-structure
+            - foundation:backlog
+            - foundation:packaging-smoke
+            - desktop:application
+            - desktop:unit
+            - packaging:unit
+            - service:unit
+            - contracts:unit
+            - security-local:unit
+            packet_sha256: b1a01253d97a7337d5604e9cc1abf6bb0badfa953bf8b2a5f9bd54d5b8451a89
+          review: *id025
+          ledger:
+            path: artifacts/evidence/CAP-03.S02.T03.review-R03.json
+            sha256: 8ee8e5a28fe80020e9ffd56757b728d3e8c142f9ae0f5f554136471c6d1b04e3
+          findings: []
+          closures: []
+          telemetry:
+            task_id: CAP-03.S02.T03
+            amendment_id: null
+            attempt_id: R03
+            submitted_at: '2026-08-29T13:45:30+00:00'
+            reviewed_at: '2026-08-29T13:52:43+00:00'
+            duration_seconds: 433
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - foundation:architecture
+            - foundation:backlog-views
+            - foundation:build-manifest
+            - foundation:ui-change
+            - foundation:quality
+            - foundation:repository-structure
+            - foundation:backlog
+            - foundation:packaging-smoke
+            - desktop:application
+            - desktop:unit
+            - packaging:unit
+            - service:unit
+            - contracts:unit
+            - security-local:unit
+            remediation:
+              prior_attempt_id: R02
+              replayed_finding_ids: []
+              closed_finding_ids: []
+        current_submission: null
       cancellation: null
     platform_targets:
     - windows-x64
