@@ -77,6 +77,25 @@ synthesis, export, and invalidation. A structurally valid future type remains
 storable but is explicitly not interpreted until a compatible reader catalogs
 it.
 
+Every relation endpoint is the composite `(entityId, revisionId)` reference,
+never the stable entity ID alone. An entity subject records project, entity
+kind, stable identity, and exact revision; the only entity-less subject is the
+exact activity identity for a failed, cancelled, or denied source-acquisition
+attempt. Relation IDs and facts are unique within an event. A legitimate
+revision-to-revision transformation may reuse one stable entity ID, but its
+input and output revision IDs remain distinct and every `wasDerivedFrom` edge
+runs from the output revision to an input revision.
+
+Relation semantics are outcome-aware. `used` targets inputs;
+`wasGeneratedBy` and `wasAttributedTo` target outputs;
+`wasInvalidatedBy` targets inputs only for a succeeded invalidation; and result
+relations are forbidden for failed, cancelled, or denied activities. Denied
+activities cannot assert `used`. Failed or cancelled non-acquisition activities
+may record exact inputs they actually used, but never invented outputs or
+completed derivation/invalidation facts. Canonical UTC instants are the shared
+RFC 3339 millisecond-`Z` range from year 0001 through 9999; year zero is rejected
+by the schema and both generated runtimes.
+
 The envelope contains references and bounded classifications, never raw
 research or personal content. Optional large or sensitive event data is an
 opaque protected-object reference; there is no inline payload escape hatch.
@@ -119,8 +138,9 @@ hashes, identities, sensitivity/retention declarations, and unknown types.
 - Draft 2020-12 schema and valid fixture validation;
 - deterministic generator and exact schema-SHA binding;
 - equivalent TypeScript and Python success, hostile-input, actor/time/project,
-  relation-completeness, unknown-future-type, immutable-snapshot, and canonical
-  restart/hash tests;
+  exact-revision subject/endpoint, status/role relation-matrix, identity/fact
+  uniqueness, unknown-future-type, UTC-boundary, immutable-snapshot, and
+  canonical restart/hash tests;
 - package/type checks and frozen-sidecar module inventory;
 - architecture/ADR, build schema inventory, quality, service, and data checks;
 - T02 integration tests for atomic persistence, retry, restart, lineage,

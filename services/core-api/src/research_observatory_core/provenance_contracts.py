@@ -10,7 +10,7 @@ from hashlib import sha256
 from types import MappingProxyType
 from typing import Any, cast
 
-PROVENANCE_SCHEMA_SHA256 = "8f18303e6344c93ac69529edbfa6764b18aba309b9de70cf5f60c2368e600b23"
+PROVENANCE_SCHEMA_SHA256 = "905ed187737757c7fd9f610fe1edc7af34fd0af40c25ad39ebac9580ee9bd1e9"
 KNOWN_PROVENANCE_EVENT_ACTIVITIES: Mapping[str, str] = MappingProxyType(
     {
         "org.research-observatory.source.acquired.v1": "source-acquisition",
@@ -29,7 +29,7 @@ _DANGEROUS_KEYS = frozenset({"__proto__", "constructor", "prototype"})
 _UUID_V7 = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 _PROJECT_ID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 _UTC_INSTANT = re.compile(
-    r"^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T"
+    r"^(?!0000)[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T"
     r"(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\.[0-9]{3}Z$"
 )
 _SEMVER = re.compile(r"^(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})$")
@@ -37,9 +37,15 @@ _SHA256 = re.compile(r"^sha256:[0-9a-f]{64}$")
 _PORTABLE_KEY = re.compile(r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$")
 _EVENT_TYPE = re.compile(r"^org\.research-observatory\.[a-z][a-z0-9]*(?:\.[a-z][a-z0-9-]*){1,8}\.v[1-9][0-9]{0,5}$")
 _TRACEPARENT = re.compile(r"^00-(?!0{32})[0-9a-f]{32}-(?!0{16})[0-9a-f]{16}-[0-9a-f]{2}$")
-_SUBJECT = re.compile(
-    r"^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/"
-    r"[a-z][a-z0-9-]{0,63}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+_ENTITY_SUBJECT = re.compile(
+    r"^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/entity/"
+    r"[a-z][a-z0-9-]{0,63}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/revision/"
+    r"[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+)
+_ACTIVITY_SUBJECT = re.compile(
+    r"^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/activity/"
+    r"[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}/"
+    r"[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
 )
 _MEDIA_TYPE = re.compile(r"^[a-z0-9][a-z0-9!#$&^_.+-]{0,49}/[a-z0-9][a-z0-9!#$&^_.+-]{0,49}$")
 _SENSITIVITY = frozenset(
@@ -129,6 +135,18 @@ def _entity_errors(value: object, path: str, errors: list[str]) -> None:
         errors.append(f"{path}/retentionClass: enum")
 
 
+def _entity_reference_errors(value: object, path: str, errors: list[str]) -> None:
+    if value is None:
+        return
+    item = _record(value)
+    if item is None:
+        errors.append(f"{path}: object-or-null")
+        return
+    _exact_keys(item, ("entityId", "revisionId"), path, errors)
+    _string_pattern(item.get("entityId"), _UUID_V7, f"{path}/entityId", errors, 36)
+    _string_pattern(item.get("revisionId"), _UUID_V7, f"{path}/revisionId", errors, 36)
+
+
 def _relation_errors(value: object, path: str, errors: list[str]) -> None:
     item = _record(value)
     if item is None:
@@ -136,15 +154,15 @@ def _relation_errors(value: object, path: str, errors: list[str]) -> None:
         return
     _exact_keys(
         item,
-        ("relationId", "relationType", "entityId", "relatedEntityId", "activityId", "agentId", "occurredAt"),
+        ("relationId", "relationType", "entity", "relatedEntity", "activityId", "agentId", "occurredAt"),
         path,
         errors,
     )
     _string_pattern(item.get("relationId"), _UUID_V7, f"{path}/relationId", errors, 36)
     if item.get("relationType") not in _RELATION_TYPES:
         errors.append(f"{path}/relationType: enum")
-    _nullable_uuid(item.get("entityId"), f"{path}/entityId", errors)
-    _nullable_uuid(item.get("relatedEntityId"), f"{path}/relatedEntityId", errors)
+    _entity_reference_errors(item.get("entity"), f"{path}/entity", errors)
+    _entity_reference_errors(item.get("relatedEntity"), f"{path}/relatedEntity", errors)
     _nullable_uuid(item.get("activityId"), f"{path}/activityId", errors)
     _nullable_uuid(item.get("agentId"), f"{path}/agentId", errors)
     _utc_instant(item.get("occurredAt"), f"{path}/occurredAt", errors)
@@ -181,7 +199,13 @@ def _structural_errors(value: object) -> list[str]:
     if event.get("source") != "urn:research-observatory:core":
         errors.append("$/source: const")
     _string_pattern(event.get("type"), _EVENT_TYPE, "$/type", errors, 160)
-    _string_pattern(event.get("subject"), _SUBJECT, "$/subject", errors, 240)
+    subject = event.get("subject")
+    if (
+        not isinstance(subject, str)
+        or len(subject) > 300
+        or (_ENTITY_SUBJECT.fullmatch(subject) is None and _ACTIVITY_SUBJECT.fullmatch(subject) is None)
+    ):
+        errors.append("$/subject: pattern")
     _utc_instant(event.get("time"), "$/time", errors)
     if event.get("dataschema") != "urn:research-observatory:schema:provenance-event:1.0.0":
         errors.append("$/dataschema: const")
@@ -292,6 +316,20 @@ def _structural_errors(value: object) -> list[str]:
     return errors
 
 
+def _reference_key(reference: Mapping[str, Any]) -> tuple[str, str]:
+    return cast(str, reference["entityId"]), cast(str, reference["revisionId"])
+
+
+def _reference_or_none(value: object) -> tuple[str, str] | None:
+    if value is None:
+        return None
+    return _reference_key(cast(Mapping[str, Any], value))
+
+
+def _entity_subject(project_id: str, entity: Mapping[str, Any]) -> str:
+    return f"project/{project_id}/entity/{entity['entityKind']}/{entity['entityId']}/revision/{entity['revisionId']}"
+
+
 def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
     errors: list[str] = []
     data = cast(Mapping[str, Any], event["data"])
@@ -300,6 +338,12 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
     inputs = cast(Sequence[Mapping[str, Any]], data["inputs"])
     outputs = cast(Sequence[Mapping[str, Any]], data["outputs"])
     relations = cast(Sequence[Mapping[str, Any]], data["relations"])
+    all_entities = (*inputs, *outputs)
+    input_keys = {_reference_key(item) for item in inputs}
+    output_keys = {_reference_key(item) for item in outputs}
+    entity_keys = [_reference_key(item) for item in all_entities]
+    all_keys = set(entity_keys)
+
     if event["actorid"] != agent["agentId"]:
         errors.append("actor-and-agent-match")
     if not cast(str, event["subject"]).startswith(f"project/{event['projectid']}/"):
@@ -310,20 +354,47 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
         errors.append("event-time-matches-activity-end")
     if event["causationid"] == event["id"]:
         errors.append("causation-is-not-self")
-    input_ids = {cast(str, item["entityId"]) for item in inputs}
-    output_ids = {cast(str, item["entityId"]) for item in outputs}
-    if input_ids.intersection(output_ids):
-        errors.append("input-output-sets-are-disjoint")
-    all_entities = (*inputs, *outputs)
-    entity_keys = [(item["entityId"], item["revisionId"]) for item in all_entities]
-    if len(set(entity_keys)) != len(entity_keys):
+    if input_keys.intersection(output_keys):
+        errors.append("input-output-revisions-are-disjoint")
+    if len(all_keys) != len(entity_keys):
         errors.append("entity-references-are-unique")
     if any(
         item["sensitivity"] != event["sensitivity"] or item["retentionClass"] != event["retentionclass"]
         for item in all_entities
     ):
         errors.append("entity-policy-does-not-weaken-event")
-    all_ids = input_ids | output_ids
+
+    relation_ids = [cast(str, relation["relationId"]) for relation in relations]
+    revision_ids = [cast(str, entity["revisionId"]) for entity in all_entities]
+    global_ids = [
+        cast(str, event["id"]),
+        cast(str, activity["activityId"]),
+        cast(str, agent["agentId"]),
+        cast(str, event["correlationid"]),
+        *([] if event["causationid"] is None else [cast(str, event["causationid"])]),
+        *relation_ids,
+        *revision_ids,
+    ]
+    stable_entity_ids = {cast(str, entity["entityId"]) for entity in all_entities}
+    if len(set(global_ids)) != len(global_ids) or stable_entity_ids.intersection(global_ids):
+        errors.append("identity-namespace-is-consistent")
+
+    exact_activity_subject = (
+        f"project/{event['projectid']}/activity/{activity['activityType']}/{activity['activityId']}"
+    )
+    subject_entity = next(
+        (
+            entity
+            for entity in all_entities
+            if _entity_subject(cast(str, event["projectid"]), entity) == event["subject"]
+        ),
+        None,
+    )
+    if subject_entity is None and event["subject"] != exact_activity_subject:
+        errors.append("subject-binds-exact-event-object")
+    if all_entities and event["subject"] == exact_activity_subject:
+        errors.append("subject-binds-exact-event-object")
+
     expected_shape: Mapping[str, tuple[bool, bool, bool, bool]] = {
         "used": (True, False, True, False),
         "wasGeneratedBy": (True, False, True, False),
@@ -334,62 +405,78 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
     }
     relation_shape = True
     for relation in relations:
+        entity_key = _reference_or_none(relation["entity"])
+        related_key = _reference_or_none(relation["relatedEntity"])
         if not activity["startedAt"] <= relation["occurredAt"] <= activity["endedAt"]:
             relation_shape = False
-        if relation["entityId"] is not None and relation["entityId"] not in all_ids:
+        if entity_key is not None and entity_key not in all_keys:
             relation_shape = False
-        if relation["relatedEntityId"] is not None and relation["relatedEntityId"] not in all_ids:
+        if related_key is not None and related_key not in all_keys:
             relation_shape = False
         if relation["activityId"] is not None and relation["activityId"] != activity["activityId"]:
             relation_shape = False
         if relation["agentId"] is not None and relation["agentId"] != agent["agentId"]:
             relation_shape = False
-        values = (relation["entityId"], relation["relatedEntityId"], relation["activityId"], relation["agentId"])
+        values = (relation["entity"], relation["relatedEntity"], relation["activityId"], relation["agentId"])
         expected = expected_shape[cast(str, relation["relationType"])]
         if any((value is not None) != present for value, present in zip(values, expected, strict=True)):
             relation_shape = False
     if not relation_shape:
         errors.append("relations-close-over-event-objects")
-    if not any(
-        relation["relationType"] == "wasAssociatedWith"
-        and relation["activityId"] == activity["activityId"]
-        and relation["agentId"] == agent["agentId"]
+
+    relation_facts = [
+        (
+            relation["relationType"],
+            _reference_or_none(relation["entity"]),
+            _reference_or_none(relation["relatedEntity"]),
+            relation["activityId"],
+            relation["agentId"],
+            relation["occurredAt"],
+        )
+        for relation in relations
+    ]
+    if len(set(relation_ids)) != len(relation_ids) or len(set(relation_facts)) != len(relation_facts):
+        errors.append("relation-identities-and-facts-are-unique")
+
+    relation_roles_match = True
+    for relation in relations:
+        relation_type = cast(str, relation["relationType"])
+        entity_key = _reference_or_none(relation["entity"])
+        related_key = _reference_or_none(relation["relatedEntity"])
+        if relation_type == "used":
+            valid_role = entity_key is not None and entity_key in input_keys
+        elif relation_type in {"wasGeneratedBy", "wasAttributedTo"}:
+            valid_role = entity_key is not None and entity_key in output_keys
+        elif relation_type == "wasDerivedFrom":
+            valid_role = (
+                entity_key is not None
+                and related_key is not None
+                and entity_key != related_key
+                and entity_key in output_keys
+                and related_key in input_keys
+            )
+        elif relation_type == "wasInvalidatedBy":
+            valid_role = entity_key is not None and entity_key in input_keys
+        else:
+            valid_role = relation_type == "wasAssociatedWith"
+        if not valid_role:
+            relation_roles_match = False
+    if not relation_roles_match:
+        errors.append("relation-roles-match-event-objects")
+
+    produces_facts = {"wasGeneratedBy", "wasDerivedFrom", "wasInvalidatedBy", "wasAttributedTo"}
+    if activity["status"] != "succeeded" and any(
+        relation["relationType"] in produces_facts
+        or (activity["status"] == "denied" and relation["relationType"] == "used")
         for relation in relations
     ):
+        errors.append("relation-outcome-matches-activity-status")
+
+    association_count = sum(relation["relationType"] == "wasAssociatedWith" for relation in relations)
+    if association_count != 1:
         errors.append("activity-agent-relation-is-complete")
+
     known_activity = KNOWN_PROVENANCE_EVENT_ACTIVITIES.get(cast(str, event["type"]))
-    invalidation = known_activity == "invalidation"
-    required_input_relation = "wasInvalidatedBy" if invalidation else "used"
-    if any(
-        not any(
-            relation["relationType"] == required_input_relation
-            and relation["entityId"] == entity["entityId"]
-            and relation["activityId"] == activity["activityId"]
-            for relation in relations
-        )
-        for entity in inputs
-    ):
-        errors.append("input-use-relations-are-complete")
-    if any(
-        not any(
-            relation["relationType"] == "wasGeneratedBy"
-            and relation["entityId"] == entity["entityId"]
-            and relation["activityId"] == activity["activityId"]
-            for relation in relations
-        )
-        for entity in outputs
-    ):
-        errors.append("output-generation-relations-are-complete")
-    if any(
-        not any(
-            relation["relationType"] == "wasAttributedTo"
-            and relation["entityId"] == entity["entityId"]
-            and relation["agentId"] == agent["agentId"]
-            for relation in relations
-        )
-        for entity in outputs
-    ):
-        errors.append("output-attribution-relations-are-complete")
     if known_activity is not None and known_activity != activity["activityType"]:
         errors.append("known-event-type-matches-activity")
     if known_activity is not None:
@@ -403,7 +490,69 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
             valid_shape = bool(inputs) and bool(outputs)
         if not valid_shape:
             errors.append("known-event-shape-matches-operation")
-    return errors
+
+        if activity["status"] == "succeeded":
+            if known_activity == "source-acquisition":
+                allowed = {"wasAssociatedWith", "wasGeneratedBy", "wasAttributedTo"}
+            elif known_activity == "invalidation":
+                allowed = {"wasAssociatedWith", "wasInvalidatedBy"}
+            else:
+                allowed = {"used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasAttributedTo"}
+        elif activity["status"] == "denied" or known_activity == "source-acquisition":
+            allowed = {"wasAssociatedWith"}
+        else:
+            allowed = {"used", "wasAssociatedWith"}
+        if any(relation["relationType"] not in allowed for relation in relations):
+            errors.append("known-event-relations-match-operation")
+
+        if activity["status"] == "succeeded":
+            expected_subjects = inputs if known_activity == "invalidation" else outputs
+        else:
+            expected_subjects = () if known_activity == "source-acquisition" else inputs
+        valid_known_subject = (
+            event["subject"] == exact_activity_subject
+            if not expected_subjects
+            else any(
+                _entity_subject(cast(str, event["projectid"]), entity) == event["subject"]
+                for entity in expected_subjects
+            )
+        )
+        if not valid_known_subject:
+            errors.append("subject-binds-exact-event-object")
+
+        if activity["status"] == "succeeded":
+
+            def exact_relation_count(
+                relation_type: str,
+                entity: Mapping[str, Any],
+                related: Mapping[str, Any] | None = None,
+            ) -> int:
+                return sum(
+                    relation["relationType"] == relation_type
+                    and _reference_or_none(relation["entity"]) == _reference_key(entity)
+                    and _reference_or_none(relation["relatedEntity"])
+                    == (None if related is None else _reference_key(related))
+                    for relation in relations
+                )
+
+            if known_activity not in {"source-acquisition", "invalidation"} and any(
+                exact_relation_count("used", entity) != 1 for entity in inputs
+            ):
+                errors.append("input-use-relations-are-complete")
+            if known_activity == "invalidation" and any(
+                exact_relation_count("wasInvalidatedBy", entity) != 1 for entity in inputs
+            ):
+                errors.append("input-use-relations-are-complete")
+            if any(exact_relation_count("wasGeneratedBy", entity) != 1 for entity in outputs):
+                errors.append("output-generation-relations-are-complete")
+            if any(exact_relation_count("wasAttributedTo", entity) != 1 for entity in outputs):
+                errors.append("output-attribution-relations-are-complete")
+            if known_activity not in {"source-acquisition", "invalidation"} and any(
+                not any(exact_relation_count("wasDerivedFrom", output, input_) == 1 for input_ in inputs)
+                for output in outputs
+            ):
+                errors.append("output-generation-relations-are-complete")
+    return list(dict.fromkeys(errors))
 
 
 def _owned_frozen(value: object) -> Any:

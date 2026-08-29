@@ -3,7 +3,7 @@
   "id": "018f47a2-4d6b-7f78-9f2e-7fb76c86daa1",
   "source": "urn:research-observatory:core",
   "type": "org.research-observatory.source.acquired.v1",
-  "subject": "project/550e8400-e29b-41d4-a716-446655440000/source-observation/018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
+  "subject": "project/550e8400-e29b-41d4-a716-446655440000/entity/source-observation/018f47a2-4d6b-7f78-9f2e-7fb76c86dab1/revision/018f47a2-4d6b-7f78-9f2e-7fb76c86dab2",
   "time": "2026-08-29T15:00:01.000Z",
   "dataschema": "urn:research-observatory:schema:provenance-event:1.0.0",
   "datacontenttype": "application/json",
@@ -48,8 +48,11 @@
       {
         "relationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86daf1",
         "relationType": "wasGeneratedBy",
-        "entityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
-        "relatedEntityId": null,
+        "entity": {
+          "entityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
+          "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab2"
+        },
+        "relatedEntity": null,
         "activityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dae1",
         "agentId": null,
         "occurredAt": "2026-08-29T15:00:01.000Z"
@@ -57,8 +60,8 @@
       {
         "relationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86daf2",
         "relationType": "wasAssociatedWith",
-        "entityId": null,
-        "relatedEntityId": null,
+        "entity": null,
+        "relatedEntity": null,
         "activityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dae1",
         "agentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dac1",
         "occurredAt": "2026-08-29T15:00:01.000Z"
@@ -66,8 +69,11 @@
       {
         "relationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86daf3",
         "relationType": "wasAttributedTo",
-        "entityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
-        "relatedEntityId": null,
+        "entity": {
+          "entityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
+          "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab2"
+        },
+        "relatedEntity": null,
         "activityId": null,
         "agentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dac1",
         "occurredAt": "2026-08-29T15:00:01.000Z"

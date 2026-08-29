@@ -15,7 +15,7 @@ lower-case portable extensions:
 |---|---|
 | `id`, `projectid`, `actorid` | UUIDv7 event/actor identities; project retains the governed UUIDv4 bridge or UUIDv7. |
 | `type`, `schemaversion`, `dataschema` | Versioned event meaning and payload schema; future structural types can be retained without interpretation. |
-| `subject`, `time` | Portable project/entity subject and the exact UTC occurrence time. |
+| `subject`, `time` | Exact project/entity/revision subject (or the exact activity for an entity-less acquisition failure) and a year 0001-9999 canonical UTC occurrence time. |
 | `correlationid`, `causationid`, `traceparent` | Durable causal/correlation identity and W3C operational trace linkage without retaining telemetry. |
 | `sensitivity`, `retentionclass` | Closed content classification and retention duty that every referenced entity must preserve. |
 | `data` | One agent, one activity, exact input/output entity references, PROV relations, and an optional protected payload reference. |
@@ -38,7 +38,13 @@ classification, and time boundary passes; readers must not infer their meaning.
   impersonation token.
 - Relations use `used`, `wasGeneratedBy`, `wasAssociatedWith`,
   `wasDerivedFrom`, `wasInvalidatedBy`, and `wasAttributedTo`, and all endpoints
-  must close over the event's own objects.
+  carry both stable entity and exact revision identity and close over the
+  event's own objects. Relation IDs and facts are unique.
+- Relation roles and outcomes fail closed: use targets inputs; generation and
+  attribution target outputs; derivation runs from an output revision to a
+  distinct input revision; and invalidation is asserted only for a succeeded
+  invalidation. Failed, cancelled, and denied activities cannot assert completed
+  result facts, and denial cannot claim input use.
 - Sensitive detail, when needed, is a protected object identity/revision/hash
   and media type. It remains behind the object-store rights, access, encryption,
   egress, and retention boundary.
@@ -51,6 +57,11 @@ I-JSON subset. Python also returns the exact `sha256:` record identity. T02 will
 persist the original record, record hash, chain segment/checkpoint identity,
 and atomic outbox fact. A canonicalization or hash change starts a new segment;
 it never rewrites historical bytes.
+
+The two runtimes and Draft 2020-12 schema accept only canonical millisecond UTC
+instants from `0001-01-01T00:00:00.000Z` through
+`9999-12-31T23:59:59.999Z`. This explicit range avoids platform-specific year
+zero behavior and keeps wire validation, canonical bytes, and hashes aligned.
 
 Hash chains are tamper-evidence for supported operation, not legal
 nonrepudiation or protection from a fully compromised host. Checkpoint mismatch

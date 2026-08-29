@@ -50,11 +50,15 @@ export interface ProvenanceEntity {
   readonly sensitivity: ProvenanceSensitivity;
   readonly retentionClass: ProvenanceRetentionClass;
 }
+export interface ProvenanceEntityReference {
+  readonly entityId: string;
+  readonly revisionId: string;
+}
 export interface ProvenanceRelation {
   readonly relationId: string;
   readonly relationType: ProvenanceRelationType;
-  readonly entityId: string | null;
-  readonly relatedEntityId: string | null;
+  readonly entity: ProvenanceEntityReference | null;
+  readonly relatedEntity: ProvenanceEntityReference | null;
   readonly activityId: string | null;
   readonly agentId: string | null;
   readonly occurredAt: string;
@@ -112,13 +116,14 @@ type JsonRecord = Record<string, unknown>;
 const DANGEROUS_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 const PROJECT_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
-const UTC_INSTANT = /^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\.[0-9]{3}Z$/u;
+const UTC_INSTANT = /^(?!0000)[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\.[0-9]{3}Z$/u;
 const SEMVER = /^(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})$/u;
 const SHA256 = /^sha256:[0-9a-f]{64}$/u;
 const PORTABLE_KEY = /^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/u;
 const EVENT_TYPE = /^org\.research-observatory\.[a-z][a-z0-9]*(?:\.[a-z][a-z0-9-]*){1,8}\.v[1-9][0-9]{0,5}$/u;
 const TRACEPARENT = /^00-(?!0{32})[0-9a-f]{32}-(?!0{16})[0-9a-f]{16}-[0-9a-f]{2}$/u;
-const SUBJECT = /^project\/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[a-z][a-z0-9-]{0,63}\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
+const ENTITY_SUBJECT = /^project\/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/entity\/[a-z][a-z0-9-]{0,63}\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/revision\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
+const ACTIVITY_SUBJECT = /^project\/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/activity\/[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 const MEDIA_TYPE = /^[a-z0-9][a-z0-9!#$&^_.+-]{0,49}\/[a-z0-9][a-z0-9!#$&^_.+-]{0,49}$/u;
 const SENSITIVITY = new Set<ProvenanceSensitivity>([
   "public-metadata", "licensed-metadata", "open-full-text", "licensed-full-text", "private-research", "restricted",
@@ -180,14 +185,23 @@ function entityErrors(value: unknown, path: string, errors: string[]): void {
   if (!RETENTION.has(item.retentionClass as ProvenanceRetentionClass)) errors.push(`${path}/retentionClass: enum`);
 }
 
+function entityReferenceErrors(value: unknown, path: string, errors: string[]): void {
+  if (value === null) return;
+  const item = record(value);
+  if (!item) { errors.push(`${path}: object-or-null`); return; }
+  exactKeys(item, ["entityId", "revisionId"], path, errors);
+  stringPattern(item.entityId, UUID_V7, `${path}/entityId`, errors, 36);
+  stringPattern(item.revisionId, UUID_V7, `${path}/revisionId`, errors, 36);
+}
+
 function relationErrors(value: unknown, path: string, errors: string[]): void {
   const item = record(value);
   if (!item) { errors.push(`${path}: object`); return; }
-  exactKeys(item, ["relationId", "relationType", "entityId", "relatedEntityId", "activityId", "agentId", "occurredAt"], path, errors);
+  exactKeys(item, ["relationId", "relationType", "entity", "relatedEntity", "activityId", "agentId", "occurredAt"], path, errors);
   stringPattern(item.relationId, UUID_V7, `${path}/relationId`, errors, 36);
   if (!RELATION_TYPES.has(item.relationType as ProvenanceRelationType)) errors.push(`${path}/relationType: enum`);
-  nullableUuid(item.entityId, `${path}/entityId`, errors);
-  nullableUuid(item.relatedEntityId, `${path}/relatedEntityId`, errors);
+  entityReferenceErrors(item.entity, `${path}/entity`, errors);
+  entityReferenceErrors(item.relatedEntity, `${path}/relatedEntity`, errors);
   nullableUuid(item.activityId, `${path}/activityId`, errors);
   nullableUuid(item.agentId, `${path}/agentId`, errors);
   utcInstant(item.occurredAt, `${path}/occurredAt`, errors);
@@ -207,7 +221,11 @@ function structuralErrors(value: unknown): string[] {
   stringPattern(event.id, UUID_V7, "$/id", errors, 36);
   if (event.source !== "urn:research-observatory:core") errors.push("$/source: const");
   stringPattern(event.type, EVENT_TYPE, "$/type", errors, 160);
-  stringPattern(event.subject, SUBJECT, "$/subject", errors, 240);
+  if (
+    typeof event.subject !== "string"
+    || event.subject.length > 300
+    || (!ENTITY_SUBJECT.test(event.subject) && !ACTIVITY_SUBJECT.test(event.subject))
+  ) errors.push("$/subject: pattern");
   utcInstant(event.time, "$/time", errors);
   if (event.dataschema !== "urn:research-observatory:schema:provenance-event:1.0.0") errors.push("$/dataschema: const");
   if (event.datacontenttype !== "application/json") errors.push("$/datacontenttype: const");
@@ -268,55 +286,125 @@ function structuralErrors(value: unknown): string[] {
   return errors;
 }
 
+const referenceKey = (reference: ProvenanceEntityReference): string =>
+  `${reference.entityId}:${reference.revisionId}`;
+const entityReference = (entity: ProvenanceEntity): ProvenanceEntityReference => ({
+  entityId: entity.entityId,
+  revisionId: entity.revisionId,
+});
+const entitySubject = (projectId: string, entity: ProvenanceEntity): string =>
+  `project/${projectId}/entity/${entity.entityKind}/${entity.entityId}/revision/${entity.revisionId}`;
+
 function semanticErrors(event: ProvenanceEvent): string[] {
   const errors: string[] = [];
   const { activity, agent, inputs, outputs, relations } = event.data;
+  const allEntities = [...inputs, ...outputs];
+  const inputKeys = new Set(inputs.map((item) => referenceKey(item)));
+  const outputKeys = new Set(outputs.map((item) => referenceKey(item)));
+  const allEntityKeys = allEntities.map((item) => referenceKey(item));
+  const allKeys = new Set(allEntityKeys);
+  const refKeyOrNull = (reference: ProvenanceEntityReference | null): string | null =>
+    reference === null ? null : referenceKey(reference);
+
   if (event.actorid !== agent.agentId) errors.push("actor-and-agent-match");
   if (!event.subject.startsWith(`project/${event.projectid}/`)) errors.push("event-project-and-subject-match");
   if (activity.startedAt > activity.endedAt) errors.push("activity-time-is-ordered");
   if (event.time !== activity.endedAt) errors.push("event-time-matches-activity-end");
   if (event.causationid === event.id) errors.push("causation-is-not-self");
-  const inputIds = new Set(inputs.map((item) => item.entityId));
-  const outputIds = new Set(outputs.map((item) => item.entityId));
-  if ([...inputIds].some((id) => outputIds.has(id))) errors.push("input-output-sets-are-disjoint");
-  const allEntityKeys = [...inputs, ...outputs].map((item) => `${item.entityId}:${item.revisionId}`);
-  if (new Set(allEntityKeys).size !== allEntityKeys.length) errors.push("entity-references-are-unique");
-  if ([...inputs, ...outputs].some((item) => item.sensitivity !== event.sensitivity || item.retentionClass !== event.retentionclass)) {
+  if ([...inputKeys].some((key) => outputKeys.has(key))) errors.push("input-output-revisions-are-disjoint");
+  if (allKeys.size !== allEntityKeys.length) errors.push("entity-references-are-unique");
+  if (allEntities.some((item) => item.sensitivity !== event.sensitivity || item.retentionClass !== event.retentionclass)) {
     errors.push("entity-policy-does-not-weaken-event");
   }
-  const allIds = new Set([...inputIds, ...outputIds]);
+
+  const relationIds = relations.map((relation) => relation.relationId);
+  const revisionIds = allEntities.map((entity) => entity.revisionId);
+  const globalIds = [
+    event.id,
+    activity.activityId,
+    agent.agentId,
+    event.correlationid,
+    ...(event.causationid === null ? [] : [event.causationid]),
+    ...relationIds,
+    ...revisionIds,
+  ];
+  const stableEntityIds = new Set(allEntities.map((entity) => entity.entityId));
+  if (
+    new Set(globalIds).size !== globalIds.length
+    || [...stableEntityIds].some((entityId) => globalIds.includes(entityId))
+  ) errors.push("identity-namespace-is-consistent");
+
+  const exactActivitySubject = `project/${event.projectid}/activity/${activity.activityType}/${activity.activityId}`;
+  const subjectEntity = allEntities.find((entity) => entitySubject(event.projectid, entity) === event.subject);
+  if (subjectEntity === undefined && event.subject !== exactActivitySubject) {
+    errors.push("subject-binds-exact-event-object");
+  }
+  if (allEntities.length > 0 && event.subject === exactActivitySubject) {
+    errors.push("subject-binds-exact-event-object");
+  }
+
+  const expectedShape: Record<ProvenanceRelationType, readonly boolean[]> = {
+    used: [true, false, true, false],
+    wasGeneratedBy: [true, false, true, false],
+    wasAssociatedWith: [false, false, true, true],
+    wasDerivedFrom: [true, true, true, false],
+    wasInvalidatedBy: [true, false, true, false],
+    wasAttributedTo: [true, false, false, true],
+  };
   const relationShape = relations.every((relation) => {
     if (relation.occurredAt < activity.startedAt || relation.occurredAt > activity.endedAt) return false;
-    if (relation.entityId !== null && !allIds.has(relation.entityId)) return false;
-    if (relation.relatedEntityId !== null && !allIds.has(relation.relatedEntityId)) return false;
+    const entityKey = refKeyOrNull(relation.entity);
+    const relatedKey = refKeyOrNull(relation.relatedEntity);
+    if (entityKey !== null && !allKeys.has(entityKey)) return false;
+    if (relatedKey !== null && !allKeys.has(relatedKey)) return false;
     if (relation.activityId !== null && relation.activityId !== activity.activityId) return false;
     if (relation.agentId !== null && relation.agentId !== agent.agentId) return false;
-    const values = [relation.entityId, relation.relatedEntityId, relation.activityId, relation.agentId];
-    const expected: Record<ProvenanceRelationType, readonly boolean[]> = {
-      used: [true, false, true, false],
-      wasGeneratedBy: [true, false, true, false],
-      wasAssociatedWith: [false, false, true, true],
-      wasDerivedFrom: [true, true, true, false],
-      wasInvalidatedBy: [true, false, true, false],
-      wasAttributedTo: [true, false, false, true],
-    };
-    return expected[relation.relationType].every((present, index) => (values[index] !== null) === present);
+    const values = [relation.entity, relation.relatedEntity, relation.activityId, relation.agentId];
+    return expectedShape[relation.relationType].every((present, index) => (values[index] !== null) === present);
   });
   if (!relationShape) errors.push("relations-close-over-event-objects");
-  if (!relations.some((item) => item.relationType === "wasAssociatedWith" && item.activityId === activity.activityId && item.agentId === agent.agentId)) {
-    errors.push("activity-agent-relation-is-complete");
+
+  const relationFacts = relations.map((relation) => JSON.stringify([
+    relation.relationType,
+    refKeyOrNull(relation.entity),
+    refKeyOrNull(relation.relatedEntity),
+    relation.activityId,
+    relation.agentId,
+    relation.occurredAt,
+  ]));
+  if (new Set(relationIds).size !== relationIds.length || new Set(relationFacts).size !== relationFacts.length) {
+    errors.push("relation-identities-and-facts-are-unique");
   }
+
+  const relationRolesMatch = relations.every((relation) => {
+    const entityKey = refKeyOrNull(relation.entity);
+    const relatedKey = refKeyOrNull(relation.relatedEntity);
+    if (relation.relationType === "used") return entityKey !== null && inputKeys.has(entityKey);
+    if (relation.relationType === "wasGeneratedBy" || relation.relationType === "wasAttributedTo") {
+      return entityKey !== null && outputKeys.has(entityKey);
+    }
+    if (relation.relationType === "wasDerivedFrom") {
+      return entityKey !== null && relatedKey !== null && entityKey !== relatedKey
+        && outputKeys.has(entityKey) && inputKeys.has(relatedKey);
+    }
+    if (relation.relationType === "wasInvalidatedBy") return entityKey !== null && inputKeys.has(entityKey);
+    return relation.relationType === "wasAssociatedWith";
+  });
+  if (!relationRolesMatch) errors.push("relation-roles-match-event-objects");
+
+  const producesFacts = new Set<ProvenanceRelationType>([
+    "wasGeneratedBy", "wasDerivedFrom", "wasInvalidatedBy", "wasAttributedTo",
+  ]);
+  if (
+    activity.status !== "succeeded"
+    && relations.some((relation) => producesFacts.has(relation.relationType)
+      || (activity.status === "denied" && relation.relationType === "used"))
+  ) errors.push("relation-outcome-matches-activity-status");
+
+  const associationCount = relations.filter((relation) => relation.relationType === "wasAssociatedWith").length;
+  if (associationCount !== 1) errors.push("activity-agent-relation-is-complete");
+
   const knownActivity = KNOWN_PROVENANCE_EVENT_ACTIVITIES[event.type as keyof typeof KNOWN_PROVENANCE_EVENT_ACTIVITIES];
-  const invalidation = knownActivity === "invalidation";
-  if (inputs.some((entity) => !relations.some((item) => item.entityId === entity.entityId && item.activityId === activity.activityId && item.relationType === (invalidation ? "wasInvalidatedBy" : "used")))) {
-    errors.push("input-use-relations-are-complete");
-  }
-  if (outputs.some((entity) => !relations.some((item) => item.relationType === "wasGeneratedBy" && item.entityId === entity.entityId && item.activityId === activity.activityId))) {
-    errors.push("output-generation-relations-are-complete");
-  }
-  if (outputs.some((entity) => !relations.some((item) => item.relationType === "wasAttributedTo" && item.entityId === entity.entityId && item.agentId === agent.agentId))) {
-    errors.push("output-attribution-relations-are-complete");
-  }
   if (knownActivity !== undefined && knownActivity !== activity.activityType) errors.push("known-event-type-matches-activity");
   if (knownActivity !== undefined) {
     const validShape = activity.status !== "succeeded"
@@ -327,8 +415,65 @@ function semanticErrors(event: ProvenanceEvent): string[] {
           ? inputs.length > 0 && outputs.length === 0
           : inputs.length > 0 && outputs.length > 0;
     if (!validShape) errors.push("known-event-shape-matches-operation");
+
+    const allowed = activity.status === "succeeded"
+      ? knownActivity === "source-acquisition"
+        ? new Set<ProvenanceRelationType>(["wasAssociatedWith", "wasGeneratedBy", "wasAttributedTo"])
+        : knownActivity === "invalidation"
+          ? new Set<ProvenanceRelationType>(["wasAssociatedWith", "wasInvalidatedBy"])
+          : new Set<ProvenanceRelationType>([
+              "used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasAttributedTo",
+            ])
+      : new Set<ProvenanceRelationType>(
+          activity.status === "denied" || knownActivity === "source-acquisition"
+            ? ["wasAssociatedWith"]
+            : ["used", "wasAssociatedWith"],
+        );
+    if (relations.some((relation) => !allowed.has(relation.relationType))) {
+      errors.push("known-event-relations-match-operation");
+    }
+
+    const expectedSubjects = activity.status === "succeeded"
+      ? knownActivity === "invalidation" ? inputs : outputs
+      : knownActivity === "source-acquisition" ? [] : inputs;
+    const validKnownSubject = expectedSubjects.length === 0
+      ? event.subject === exactActivitySubject
+      : expectedSubjects.some((entity) => entitySubject(event.projectid, entity) === event.subject);
+    if (!validKnownSubject) errors.push("subject-binds-exact-event-object");
+
+    if (activity.status === "succeeded") {
+      const exactRelationCount = (
+        type: ProvenanceRelationType,
+        entity: ProvenanceEntity,
+        related: ProvenanceEntity | null = null,
+      ): number => relations.filter((relation) =>
+        relation.relationType === type
+        && refKeyOrNull(relation.entity) === referenceKey(entityReference(entity))
+        && refKeyOrNull(relation.relatedEntity) === (related === null ? null : referenceKey(entityReference(related)))
+      ).length;
+      if (
+        knownActivity !== "source-acquisition"
+        && knownActivity !== "invalidation"
+        && inputs.some((entity) => exactRelationCount("used", entity) !== 1)
+      ) errors.push("input-use-relations-are-complete");
+      if (
+        knownActivity === "invalidation"
+        && inputs.some((entity) => exactRelationCount("wasInvalidatedBy", entity) !== 1)
+      ) errors.push("input-use-relations-are-complete");
+      if (outputs.some((entity) => exactRelationCount("wasGeneratedBy", entity) !== 1)) {
+        errors.push("output-generation-relations-are-complete");
+      }
+      if (outputs.some((entity) => exactRelationCount("wasAttributedTo", entity) !== 1)) {
+        errors.push("output-attribution-relations-are-complete");
+      }
+      if (
+        knownActivity !== "source-acquisition"
+        && knownActivity !== "invalidation"
+        && outputs.some((output) => !inputs.some((input) => exactRelationCount("wasDerivedFrom", output, input) === 1))
+      ) errors.push("output-generation-relations-are-complete");
+    }
   }
-  return errors;
+  return [...new Set(errors)];
 }
 
 function ownedFrozen(value: unknown): unknown {
