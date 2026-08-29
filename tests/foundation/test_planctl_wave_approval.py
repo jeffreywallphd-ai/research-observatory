@@ -45,6 +45,8 @@ def valid_initiation_assessment() -> tuple[dict[str, Any], str, dict[str, Any], 
             "policy_version": "1.0",
             "assessed_at": "2026-08-29T18:00:00Z",
             "estimation_unit": "relative-work-unit",
+            "implementation_baseline": "The tested boundary works but needs bounded hardening",
+            "vision_architecture_best_practice_fit": "The proposed outcome remains aligned with the Vision",
             "planned_items": [{"work_id": task["id"], "effort": 10}],
             "refactoring_items": [
                 {
@@ -119,6 +121,16 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
         missing_refresh = initiation_assessment_errors(meta, body, capability, "W2")
         self.assertTrue(any("missing initiation assessment refresh for W2" in error for error in missing_refresh))
 
+    def test_initial_assessment_requires_baseline_and_product_fit_narratives(self) -> None:
+        meta, body, capability, _backlog = valid_initiation_assessment()
+        assessment = meta["initiation_assessment"]
+        assessment["implementation_baseline"] = ""
+        assessment["vision_architecture_best_practice_fit"] = ""
+
+        errors = initiation_assessment_errors(meta, body, capability, "W2")
+        self.assertTrue(any("implementation_baseline is required" in error for error in errors))
+        self.assertTrue(any("vision_architecture_best_practice_fit is required" in error for error in errors))
+
     def test_refactoring_over_fifteen_percent_is_rejected_at_capability_and_wave_scope(self) -> None:
         meta, body, capability, _backlog = valid_initiation_assessment()
         assessment = meta["initiation_assessment"]
@@ -138,6 +150,36 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
         errors = initiation_assessment_errors(meta, body, capability, "W2")
         self.assertTrue(any("capability refactoring budget exceeds 15%" in error for error in errors))
         self.assertTrue(any("W2 refactoring budget exceeds 15%" in error for error in errors))
+
+    def test_included_refactoring_cannot_be_shifted_to_an_unrelated_wave_denominator(self) -> None:
+        meta, body, capability, _backlog = valid_initiation_assessment()
+        capability["slices"].append(
+            {
+                "id": "CAP-20.S02",
+                "title": "Later product slice",
+                "wave": "W3",
+                "tasks": [{"id": "CAP-20.S02.T01", "title": "Later product work"}],
+            }
+        )
+        assessment = meta["initiation_assessment"]
+        assessment["planned_items"].append({"work_id": "CAP-20.S02.T01", "effort": 100})
+        assessment["refactoring_items"][0]["effort"] = 10
+        assessment["refactoring_items"][0]["introduced_in_wave"] = "W3"
+        assessment["wave_refreshes"].append(
+            {
+                "wave": "W3",
+                "assessed_at": "2026-08-29T18:00:00Z",
+                "material_changes": "Later slice is now being planned",
+                "plan_adaptations": "No adaptation required",
+                "support_improvements": "None",
+                "major_refactor_disposition": "None identified",
+            }
+        )
+
+        w2_errors = initiation_assessment_errors(meta, body, capability, "W2")
+        w3_errors = initiation_assessment_errors(meta, body, capability, "W3")
+        self.assertTrue(any("must be charged to the Wave containing work_id" in error for error in w2_errors))
+        self.assertTrue(any("must be charged to the Wave containing work_id" in error for error in w3_errors))
 
     def test_major_refactor_requires_disposition_and_cannot_be_included(self) -> None:
         meta, body, capability, _backlog = valid_initiation_assessment()

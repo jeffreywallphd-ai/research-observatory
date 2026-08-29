@@ -132,6 +132,8 @@ def initiation_assessment_errors(
     assessment_label = f"{capability_id}.initiation_assessment"
     _required_text(assessment, "assessed_at", assessment_label, errors)
     _required_text(assessment, "estimation_unit", assessment_label, errors)
+    _required_text(assessment, "implementation_baseline", assessment_label, errors)
+    _required_text(assessment, "vision_architecture_best_practice_fit", assessment_label, errors)
 
     work_waves = {
         str(task.get("id")): str(slice_.get("wave"))
@@ -174,6 +176,13 @@ def initiation_assessment_errors(
             errors.append(f"{label}: effort must be a positive finite number")
         if introduced_wave not in capability_waves:
             errors.append(f"{label}: introduced_in_wave must be a capability Wave")
+        if (
+            disposition == "included"
+            and isinstance(work_id, str)
+            and work_id in work_waves
+            and introduced_wave != work_waves[work_id]
+        ):
+            errors.append(f"{label}: included refactoring must be charged to the Wave containing work_id")
         if item.get("changes_existing_implementation") is not True:
             errors.append(f"{label}: changes_existing_implementation must be true")
         if not isinstance(item.get("major_refactor"), bool):
