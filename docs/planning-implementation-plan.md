@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0527f02f70604e6f0d0756a35fbf2e0c72333e39c8cdb4b39629868bdde9911b
+source_sha256: 28ab77439537e59370bbb4cab49ad16b159c626b84d87df0aea6d50c673198e5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3792,13 +3792,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T01`
 
-**Owner / review:** codex / agent:nash (`approved`)
+**Owner / review:** codex / codex-independent-desktop-intent-reviewer (`changes-requested`)
 
 **Objective:** Desktop workflow with mode-specific defaults, examples, warnings, and explicit change-impact preview.
 
@@ -3825,7 +3825,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T02
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -3889,7 +3889,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S02.T02-R01-F01` `fixed` — At exact candidate a60d3e9704a4d59dd1d0310437bd6d486057500b, WindowsLocalActorIdentityProvider creates or reads one UUIDv7 from the guarded current-profile vault as a DPAPI-protected authenticated record, retains corrupted ciphertext, and never accepts an inbound actor assertion. ResearchIntentService requires that resolved actor and binds it identically into revision createdBy and IntentAuditEvent; the SQLite adapter requires a UUIDv7 human actor and writes the same non-null value into provenance in the revision/idempotency/provenance/outbox transaction. Independent replay of tests.security.test_windows_credentials and tests.service.test_research_intents proved stable restart identity, opaque protected bytes, tamper fail-closed behavior, spoof and missing-authority denial, stable successive-revision identity, exact revision/provenance binding, and rollback. Migration replay proved v1-v5 preservation into v6, including retained legacy actor identifiers and accepted new UUIDv7 authority.
 - `CAP-03.S02.T02-R01-F02` `fixed` — At exact candidate a60d3e9704a4d59dd1d0310437bd6d486057500b, the required public idempotency key is bound to manifest project, stable actor, canonical command SHA-256, domain project, revision digest, provenance event, and outbox event. ResearchIntentService performs authenticated replay before reading and rejecting a stale expected revision, while the repository repeats the replay under BEGIN IMMEDIATE before its compare-and-swap write. Independent service replay proved exact retry before/after service restart returns the original immutable projection; changed command, actor, project, and genuinely stale new-key cases deny with stable conflicts; two simultaneous identical writers produce exactly one revision, binding, provenance event, and outbox row; and injected outbox failure leaves all four surfaces empty.
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `5aae5a7d35a8f80b266c92e95454510cf03a25a45cfb09d341808ba2b2af4126`
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `5aae5a7d35a8f80b266c92e95454510cf03a25a45cfb09d341808ba2b2af4126`
 
 - Candidate / base / branch: `b9868e5211aa012d7223caff5ab2eef2a7386de9` / `a60d3e9704a4d59dd1d0310437bd6d486057500b` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-29T13:13:01+00:00`
@@ -3903,11 +3905,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R02` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `approved` by agent:nash at `2026-08-28T20:40:22+00:00`
+**Disposition / reviewer / time:** `changes-requested` / codex-independent-desktop-intent-reviewer / `2026-08-29T13:19:58+00:00`
 
-**Latest notes:** Focused remediation review replayed both open R01 blockers and expanded only across the affected identity, migration, public-contract, SQLite transaction, audit, outbox, concurrency, and packaging boundary. The exact strict-descendant candidate resolves one opaque UUIDv7 actor from the current Windows user's DPAPI-protected profile vault; missing, malformed, tampered, redirected, or spoofed actor authority fails closed before project persistence, while revision createdBy and append-only provenance retain the same non-null actor. Schema v6 is forward-only and backup-first, preserves v1-v5 data and legacy actor identifiers, and retains exact current profile/schema bindings. Public idempotency now binds project, actor, canonical command digest, committed revision, provenance, and outbox, checks replay before optimistic conflict and again under BEGIN IMMEDIATE, returns the immutable committed projection for an exact retry, and denies changed command/project/actor reuse. Independent replay confirmed competing identical writers converge to one four-surface commit and injected persistence failure rolls back all surfaces. Generated OpenAPI/TypeScript parity and package inclusion remain exact. No blocking finding remains and later persistence/UI/enforcement/provenance duties are not overclaimed.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T02.review-R03.json` / `5a0167909d92cf27483c1ccc9872f0b42f4ecfc9f7b6073f5466868a7ae3511c`
 
-**Currently open findings:** -
+**Review notes:** The exact candidate and frozen R03 evidence lineage are valid, and the bounded implementation otherwise preserves explicit human confirmation, non-empty trimmed rationale, exact project-root/revision/content-hash request fields, unsaved/incomplete denial, generated-client/service contract alignment, disabled downstream launch, approved-reference lineage, and accessible native form controls. Independent replay passed four focused renderer tests, strict desktop TypeScript, nine generated Core client tests, 28 focused intent/Core service tests, the cumulative approved-reference UI gate, reference integrity, 64 accessibility cases, backlog validation, and patch hygiene. Historical findings CAP-03.S02.T02-R01-F01 and CAP-03.S02.T02-R01-F02 remain closed: this renderer-only product delta does not alter stable actor authority, the SQLite transaction, or the service idempotency binding. The packet also truthfully discloses the already-reviewed T03 and GOV-MAINT-0004 ancestry rather than claiming it as new T02 scope. One high-severity acceptance-bound failure remains: the desktop discards the acceptance command's idempotency identity, so an ambiguous post-commit transport/response failure can leave the UI asserting that acceptance failed while the service has already made the revision governing; a retry then uses a different key and cannot replay the committed result. The current renderer tests do not exercise the handler or this boundary and therefore do not support the manifest's accepted-projection and generated-client integration claims.
+
+**Findings opened:**
+
+- `CAP-03.S02.T02-R03-F01` `high` blocking=`True` criterion=`1` — Acceptance loses its retry identity and can misreport a committed governing revision; reproduce: At exact candidate b9868e5211aa012d7223caff5ab2eef2a7386de9, inspect apps/desktop/src/app/IntentWorkspace.tsx: accept() calls client.acceptIntent(intentAcceptanceRequest(...), idempotencyKey()) and retains neither the generated key nor the exact command. Its catch path leaves workspace.current as the draft and announces that the intent was not accepted. If Core commits the accepted revision but the Tauri transport loses the response or the client rejects a malformed/truncated response, that catch path runs even though the accepted revision is now authoritative. Clicking Accept again mints a different key; ResearchIntentService cannot find an idempotent replay for that key, reads the already-accepted current revision, and returns RO-CORE-INTENT-ACCEPTANCE-REVISION-CONFLICT. The UI therefore cannot reconcile the uncertain result and can tell the researcher that the prior draft remains authoritative while T03 policy evaluation uses the accepted revision. The R03 renderer suite has only four tests: it never invokes acceptIntent, a transport, the accept handler, or the accepted-state reducer. Its request-helper fixture also uses revisionContentHash='a'.repeat(64), which lacks the generated client's required sha256: prefix, so the asserted value would be rejected on the real client boundary. The manifest's claims that renderer tests prove generated-client request binding, accepted projection replacement, and service-rejection behavior are consequently not supported.; remediate: Retain one exact acceptance command and canonical idempotency key for the duration of an unresolved attempt. On an ambiguous transport/response failure, retry that same command with the same key or reload the authoritative workspace before making any claim about whether acceptance committed; mint a new key only after a definitive non-commit result or a newly reviewed revision. Keep the displayed draft, confirmation, and rationale bound to that frozen attempt while it is pending. Add a deterministic renderer/coordinator test through the real generated client and fake transport that asserts the exact project root, sha256-prefixed full content hash, revision, trimmed rationale, confirmed=true, and 32-hex key; simulate commit followed by response loss and prove same-key replay converges on one accepted revision and replaces current/history without enabling launch. Add the complementary definitive-rejection test proving the draft remains authoritative. Correct the invalid hash fixture and update the R03 evidence claims to name only checks that actually execute these paths. Preserve the two R01 closures and do not reopen T03 or the approved UI reference unless the remediation materially changes that authority.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by codex-independent-desktop-intent-reviewer at `2026-08-29T13:19:58+00:00`
+
+**Latest notes:** The exact candidate and frozen R03 evidence lineage are valid, and the bounded implementation otherwise preserves explicit human confirmation, non-empty trimmed rationale, exact project-root/revision/content-hash request fields, unsaved/incomplete denial, generated-client/service contract alignment, disabled downstream launch, approved-reference lineage, and accessible native form controls. Independent replay passed four focused renderer tests, strict desktop TypeScript, nine generated Core client tests, 28 focused intent/Core service tests, the cumulative approved-reference UI gate, reference integrity, 64 accessibility cases, backlog validation, and patch hygiene. Historical findings CAP-03.S02.T02-R01-F01 and CAP-03.S02.T02-R01-F02 remain closed: this renderer-only product delta does not alter stable actor authority, the SQLite transaction, or the service idempotency binding. The packet also truthfully discloses the already-reviewed T03 and GOV-MAINT-0004 ancestry rather than claiming it as new T02 scope. One high-severity acceptance-bound failure remains: the desktop discards the acceptance command's idempotency identity, so an ambiguous post-commit transport/response failure can leave the UI asserting that acceptance failed while the service has already made the revision governing; a retry then uses a different key and cannot replay the committed result. The current renderer tests do not exercise the handler or this boundary and therefore do not support the manifest's accepted-projection and generated-client integration claims.
+
+**Currently open findings:** `CAP-03.S02.T02-R03-F01`
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
