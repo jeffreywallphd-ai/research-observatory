@@ -184,7 +184,12 @@ class LineageNode:
     activity_id: str
     activity_type: str
     activity_status: Literal["succeeded", "failed", "cancelled", "denied"]
+    configuration_id: str
+    configuration_version: str
+    configuration_hash: str
     agent_id: str
+    agent_type: Literal["human", "model", "software", "system"]
+    agent_role: str
     occurred_at: str
 
 

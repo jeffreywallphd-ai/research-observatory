@@ -96,3 +96,25 @@ lineage queries, and checkpoint verification. Earlier narrow rows remain
 explicit legacy bridges and are never reinterpreted as complete portable
 events. T03 consumes those APIs for the approved
 Audit and Lineage workspace; the renderer never reads SQLite directly.
+
+## Audit and Lineage desktop boundary
+
+The desktop workspace reaches the ledger only through the authenticated Core
+`POST /projects/provenance/lineage` boundary. One workspace selection followed
+by one exact UUIDv7 submission returns a depth- and page-bounded ancestor or
+descendant trace. Read-only projects remain inspectable; closed projects do not
+issue a lineage request.
+
+Each returned row identifies the exact entity revision, event, transformation,
+configuration ID/version/hash, responsible agent type/role, and occurrence
+time. Same-entity historical revisions and distinct source or alternate inputs
+remain visible rather than being collapsed. Invalidation events are marked
+stale, while missing revisions, legacy bridges, or failed integrity verification
+remain visible as an integrity-review state that is unsuitable for export or
+claim use until repaired.
+
+The response deliberately contains no source text, passage text, prompt text,
+researcher name, secret, or model rationale. A configuration hash and version
+make the governed prompt/model/tool setup traceable without representing hidden
+chain-of-thought as evidence; protected content remains behind its separate
+rights and access boundary.

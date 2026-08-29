@@ -549,6 +549,62 @@ export function decodeCacheClearResult(value: unknown): CacheClearResult | null 
   return { ...candidate, deletionDisclosure: disclosure } as unknown as CacheClearResult;
 }
 
+function decodeProvenanceLineageNode(value: unknown): ProvenanceLineageNode | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "revisionId", "entityId", "entityKind", "depth", "eventId", "eventType",
+    "activityId", "activityType", "activityStatus", "configurationId", "configurationVersion",
+    "configurationHash", "agentId", "agentType", "agentRole", "occurredAt",
+  ])) return null;
+  if (!canonicalUuid7(candidate.revisionId) || !canonicalUuid7(candidate.entityId)
+    || !boundedText(candidate.entityKind, 1, 128)
+    || !/^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/.test(candidate.entityKind)
+    || !integer(candidate.depth, 0, 16) || !canonicalUuid7(candidate.eventId)
+    || !boundedText(candidate.eventType, 1, 160)
+    || !/^org\.research-observatory\..+\.v[1-9][0-9]{0,5}$/.test(candidate.eventType)
+    || !canonicalUuid7(candidate.activityId) || !boundedText(candidate.activityType, 1, 128)
+    || !/^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/.test(candidate.activityType)
+    || !member(candidate.activityStatus, ["succeeded", "failed", "cancelled", "denied"] as const)
+    || !boundedText(candidate.configurationId, 1, 128)
+    || !/^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/.test(candidate.configurationId)
+    || !safeReleaseVersion(candidate.configurationVersion) || !contentHash(candidate.configurationHash)
+    || !canonicalUuid7(candidate.agentId)
+    || !member(candidate.agentType, ["human", "model", "software", "system"] as const)
+    || !boundedText(candidate.agentRole, 1, 128)
+    || !/^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/.test(candidate.agentRole)
+    || !utcInstant(candidate.occurredAt)) return null;
+  return candidate as unknown as ProvenanceLineageNode;
+}
+
+export function decodeProvenanceLineagePage(value: unknown): ProvenanceLineagePage | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "revisionId", "direction", "items", "missingRevisionIds",
+    "nextCursor", "integrityState", "legacyEventCount",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.revisionId)
+    || !member(candidate.direction, ["ancestors", "descendants"] as const)
+    || !Array.isArray(candidate.items) || candidate.items.length > 100
+    || !Array.isArray(candidate.missingRevisionIds) || candidate.missingRevisionIds.length > 256
+    || (candidate.nextCursor !== null && !integer(candidate.nextCursor, 0, 10_000))
+    || !member(candidate.integrityState, ["verified", "integrity-review"] as const)
+    || !integer(candidate.legacyEventCount, 0, Number.MAX_SAFE_INTEGER)) return null;
+  const items = candidate.items.map(decodeProvenanceLineageNode);
+  if (items.some((item) => item === null)
+    || candidate.missingRevisionIds.some((item) => !canonicalUuid7(item))
+    || new Set(candidate.missingRevisionIds).size !== candidate.missingRevisionIds.length) return null;
+  return {
+    schemaVersion: "1.0",
+    revisionId: candidate.revisionId,
+    direction: candidate.direction,
+    items: items as ProvenanceLineageNode[],
+    missingRevisionIds: candidate.missingRevisionIds as string[],
+    nextCursor: candidate.nextCursor as number | null,
+    integrityState: candidate.integrityState,
+    legacyEventCount: candidate.legacyEventCount,
+  };
+}
+
 export function decodeOperationPage(value: unknown): OperationPage | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, ["schemaVersion", "items", "nextCursor"])) return null;
@@ -664,6 +720,21 @@ function privacyUpdateBody(command: PrivacyPolicyUpdateRequest): string {
     remoteModelApproval: command.remoteModelApproval, telemetryMode: command.telemetryMode,
     logRetentionDays: command.logRetentionDays, documentRetention: command.documentRetention,
     cacheRetentionDays: command.cacheRetentionDays, egressConsentToken: command.egressConsentToken,
+  });
+}
+
+function provenanceLineageBody(command: ProvenanceLineageRequest): string {
+  if (!projectRoot(command.root) || !canonicalUuid7(command.revisionId)
+    || !member(command.direction, ["ancestors", "descendants"] as const)
+    || !integer(command.cursor, 0, 10_000) || !integer(command.pageSize, 1, 100)
+    || !integer(command.maxDepth, 1, 16)) throw new Error("RO-CORE-REQUEST-INVALID");
+  return JSON.stringify({
+    root: command.root,
+    revisionId: command.revisionId,
+    direction: command.direction,
+    cursor: command.cursor,
+    pageSize: command.pageSize,
+    maxDepth: command.maxDepth,
   });
 }
 
@@ -846,6 +917,16 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         ifMatch: null, idempotencyKey: null,
       }, decodeCacheClearResult);
     },
+    async lineage(command: ProvenanceLineageRequest): Promise<ProvenanceLineagePage> {
+      const result = await requestJson(transport, {
+        method: "POST", path: "/projects/provenance/lineage", body: provenanceLineageBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeProvenanceLineagePage);
+      if (result.revisionId !== command.revisionId || result.direction !== command.direction) {
+        throw new Error("RO-CORE-RESPONSE-INVALID");
+      }
+      return result;
+    },
     async operations(after: string | null = null, limit = 50): Promise<OperationPage> {
       if (!integer(limit, 1, 100) || (after !== null && !canonicalOperationId(after))) throw new Error("RO-CORE-REQUEST-INVALID");
       const query = new URLSearchParams({ limit: String(limit) });
@@ -935,6 +1016,7 @@ def render_typescript(openapi_bytes: bytes) -> bytes:
         "update_project_privacy_projects_privacy_update_post",
         "preview_project_cache_projects_privacy_cache_preview_post",
         "clear_project_cache_projects_privacy_cache_clear_post",
+        "provenance_lineage_projects_provenance_lineage_post",
     }
     if not required.issubset(operation_ids):
         raise ValueError(

@@ -369,7 +369,12 @@ def create_app(
                     activity_id=item.activity_id,
                     activity_type=item.activity_type,
                     activity_status=item.activity_status,
+                    configuration_id=item.configuration_id,
+                    configuration_version=item.configuration_version,
+                    configuration_hash=item.configuration_hash,
                     agent_id=item.agent_id,
+                    agent_type=item.agent_type,
+                    agent_role=item.agent_role,
                     occurred_at=item.occurred_at,
                 )
                 for item in page.items

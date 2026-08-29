@@ -7,6 +7,7 @@ import type { ProjectProjection } from "@research-observatory/contracts/core-api
 
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
+import { AuditLineageWorkspace } from "./AuditLineageWorkspace";
 import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
 import { ProjectsWorkspace } from "./ProjectsWorkspace";
 import { IntentWorkspace } from "./IntentWorkspace";
@@ -160,7 +161,7 @@ export function ApplicationRuntime(): ReactNode {
   const [query, setQuery] = useState("");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
-  const [workspace, setWorkspace] = useState<"projects" | "home" | "intent" | "settings" | "diagnostics">("home");
+  const [workspace, setWorkspace] = useState<"projects" | "home" | "intent" | "audit" | "settings" | "diagnostics">("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
   const [applicationLock, setApplicationLock] = useState<ApplicationLockSnapshot>(() => hasNativeRuntime()
     ? {
@@ -488,6 +489,15 @@ export function ApplicationRuntime(): ReactNode {
       },
     },
     {
+      id: "open-audit-lineage",
+      label: "Open audit & lineage",
+      description: "Trace exact output revisions through sources, transformations, configurations, actors, and audit events.",
+      run: () => {
+        setWorkspace("audit");
+        announce("Audit and lineage workspace opened.");
+      },
+    },
+    {
       id: "open-diagnostics",
       label: "Open diagnostics & support",
       description: "Review local health and a redacted support bundle before export.",
@@ -548,6 +558,7 @@ export function ApplicationRuntime(): ReactNode {
             <button type="button" aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
             <button type="button" aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
             <button type="button" aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
+            <button type="button" aria-current={workspace === "audit" ? "page" : undefined} onClick={() => setWorkspace("audit")}>Audit &amp; lineage</button>
             <button type="button" aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
             <button type="button" aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
@@ -563,6 +574,8 @@ export function ApplicationRuntime(): ReactNode {
             />
           ) : workspace === "intent" ? (
             <IntentWorkspace project={currentProject} announce={announce} />
+          ) : workspace === "audit" ? (
+            <AuditLineageWorkspace project={currentProject} announce={announce} />
           ) : workspace === "home" ? <><div className="page-header">
             <Typography as="h1" variant="page-title">Desktop foundation</Typography>
             <Typography className="page-subtitle">

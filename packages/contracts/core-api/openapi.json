@@ -2126,6 +2126,39 @@
             "title": "Agentid",
             "type": "string"
           },
+          "agentRole": {
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$",
+            "title": "Agentrole",
+            "type": "string"
+          },
+          "agentType": {
+            "enum": [
+              "human",
+              "model",
+              "software",
+              "system"
+            ],
+            "title": "Agenttype",
+            "type": "string"
+          },
+          "configurationHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Configurationhash",
+            "type": "string"
+          },
+          "configurationId": {
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$",
+            "title": "Configurationid",
+            "type": "string"
+          },
+          "configurationVersion": {
+            "maxLength": 29,
+            "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+            "title": "Configurationversion",
+            "type": "string"
+          },
           "depth": {
             "maximum": 16.0,
             "minimum": 0.0,
@@ -2174,7 +2207,12 @@
           "activityId",
           "activityType",
           "activityStatus",
+          "configurationId",
+          "configurationVersion",
+          "configurationHash",
           "agentId",
+          "agentType",
+          "agentRole",
           "occurredAt"
         ],
         "title": "ProvenanceLineageNode",
