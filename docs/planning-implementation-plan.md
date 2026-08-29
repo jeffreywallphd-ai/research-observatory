@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9e9fd4f6bc599e45628a99d3b001edae01f74d5110385fdc4e1d990a6feff15a
+source_sha256: 2503490101d64f977952eab97efd01006d18b35040a4ab8383d58b97214156aa
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3790,9 +3790,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [x] CAP-03.S02.T02 - Implement guided intent creation and revision UI
+#### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3958,9 +3958,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [x] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
+#### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
