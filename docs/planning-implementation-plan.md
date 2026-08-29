@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5ac90028f57863e0cc679753f505aceaa8dd332343bb4d0359fe8d1f08a0f0a1
+source_sha256: d3b1491e6fb9cf82be095cc1186eab9a532a080222ef810f33dfe73a98f2b116
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3958,9 +3958,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
+#### - [x] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3993,7 +3993,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T03
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -4055,7 +4055,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `b1a01253d97a7337d5604e9cc1abf6bb0badfa953bf8b2a5f9bd54d5b8451a89`
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `b1a01253d97a7337d5604e9cc1abf6bb0badfa953bf8b2a5f9bd54d5b8451a89`
 
 - Candidate / base / branch: `b11440f1723d251df858791178f5a5056c3b2a27` / `04b70b3ed879c853e87c3547db27a2eb0ba11b31` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-29T13:45:30+00:00`
@@ -4069,9 +4071,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R02` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `approved` by codex-independent-epistemic-governance-reviewer at `2026-08-29T12:05:37+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent-epistemic-governance-reviewer / `2026-08-29T13:52:43+00:00`
 
-**Latest notes:** Focused R02 remediation review found no blocking acceptance-bound defect. The exact strict-descendant candidate caches only the newest contract-valid accepted revision from newest-first immutable history, never populates or invalidates the governing snapshot from a draft, and reconstructs it from that history after process restart. Human acceptance and policy evaluation share the ResearchIntentService policy-cache lock while every public project action also remains serialized by the W1 ProjectLifecycleService mutex and protected from another Core process by the exclusive local-project session lock. A successful acceptance commits before replacing the cached snapshot and cannot release either synchronization boundary before replacement, so every later evaluation observes the new authority; a failed acceptance leaves the prior snapshot authoritative. Exact replay of an older acceptance re-reads validated history and restores the newest accepted revision rather than the replayed older result, preventing policy rollback. Policy evaluation retains the lock through its atomic content-free decision/provenance append and returns no decision when that append fails, so audit failure remains fail-closed. Independent replay passed all 50 Core service tests and all 56 local-security tests with one expected Windows privilege skip; the focused intent suite proves cache hits, later-acceptance replacement, old-replay nonrollback, restart reconstruction, six-mode output/gate behavior, autonomy and egress denial, stopping confirmation, and audit failure. Python quality, backlog validation, exact evidence/blob binding, patch hygiene, and the zero-net-UI gate also pass. The base-to-candidate range has no governed UI, dependency, lockfile, schema, migration, or external-service delta. Two R02 Trivy reports truthfully record scanner ERROR with empty findings while the unchanged graph retains the exact R01 passing 601-package scan; the packet explicitly defers a successful live replay to CAP-03.S02 integration or W1 exit. The guided human-acceptance desktop path is likewise explicitly assigned to reopened CAP-03.S02.T02 and is not claimed by T03. No finding remains open.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T03.review-R03.json` / `8ee8e5a28fe80020e9ffd56757b728d3e8c142f9ae0f5f554136471c6d1b04e3`
+
+**Review notes:** Focused epistemic-governance revalidation found no blocking acceptance-bound defect. The frozen R03 evidence is byte-exact at SHA-256 09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f, its Git blob matches submission commit 8437591283bad6feba21f42acd517a706c9b684c, and exact candidate b11440f1723d251df858791178f5a5056c3b2a27 descends from both the approved T03 R02 candidate and the independently approved T02 R04 remediation. Git tree comparison proves that the T03 ResearchIntentService, focused service tests, architecture note, and generated contract boundary are unchanged from approved R02. The incremental T02 renderer path freezes one exact project root, revision ID/number, full sha256 content hash, trimmed human rationale, confirmed command, and 32-hex idempotency key before calling the real generated client; ambiguous response loss retains that immutable attempt and same-key replay returns Core's authoritative accepted projection. The renderer installs that returned projection into current/history without creating a local policy decision, and its only launch control remains unconditionally disabled. Independently replayed generated-client and Core API/service cases preserve the exact accepted revision and content hash across acceptance, restart, replay, and subsequent policy evaluation, so the desktop projection and T03 governing reference compose through the same strict contract rather than through a renderer-local authority. ResearchIntentService still populates its cache only from the newest contract-valid accepted history entry, replaces the snapshot after a successful atomic acceptance and before any later evaluation, leaves prior authority intact on failure, and re-reads newest accepted history after an older idempotent replay so authority cannot roll back. Policy evaluation retains the synchronization boundary through atomic content-free decision/provenance persistence and returns no decision when audit persistence fails. All six required modes retain governing-reference-bound working labels and claim/publication gates; gate bypass, unauthorized autonomy, local-only egress, absent accepted intent, and stopping confirmation remain fail-closed with compact explanations. Independent checks passed all 50 Core service tests, all 56 local-security tests with one expected privilege skip, six focused renderer/coordinator tests, nine generated-client tests, both strict TypeScript checks, the task-local zero-UI-delta gate, backlog validation, exact evidence/blob binding, and patch hygiene. The R02/T02 and GOV-MAINT-0004 records in the range are truthfully disclosed ancestral integration history, not newly claimed T03 implementation. The unchanged approved UI reference is not re-attributed to T03. Controlled visual capture and a successful live supply-chain replay remain mandatory at CAP-03.S02 integration, while performance and the complete cross-capability/platform matrix remain mandatory at W1 exit; none is represented as passing here. The protected W1.A04.B00 witness remains unmodified. No finding remains open.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-epistemic-governance-reviewer at `2026-08-29T13:52:43+00:00`
+
+**Latest notes:** Focused epistemic-governance revalidation found no blocking acceptance-bound defect. The frozen R03 evidence is byte-exact at SHA-256 09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f, its Git blob matches submission commit 8437591283bad6feba21f42acd517a706c9b684c, and exact candidate b11440f1723d251df858791178f5a5056c3b2a27 descends from both the approved T03 R02 candidate and the independently approved T02 R04 remediation. Git tree comparison proves that the T03 ResearchIntentService, focused service tests, architecture note, and generated contract boundary are unchanged from approved R02. The incremental T02 renderer path freezes one exact project root, revision ID/number, full sha256 content hash, trimmed human rationale, confirmed command, and 32-hex idempotency key before calling the real generated client; ambiguous response loss retains that immutable attempt and same-key replay returns Core's authoritative accepted projection. The renderer installs that returned projection into current/history without creating a local policy decision, and its only launch control remains unconditionally disabled. Independently replayed generated-client and Core API/service cases preserve the exact accepted revision and content hash across acceptance, restart, replay, and subsequent policy evaluation, so the desktop projection and T03 governing reference compose through the same strict contract rather than through a renderer-local authority. ResearchIntentService still populates its cache only from the newest contract-valid accepted history entry, replaces the snapshot after a successful atomic acceptance and before any later evaluation, leaves prior authority intact on failure, and re-reads newest accepted history after an older idempotent replay so authority cannot roll back. Policy evaluation retains the synchronization boundary through atomic content-free decision/provenance persistence and returns no decision when audit persistence fails. All six required modes retain governing-reference-bound working labels and claim/publication gates; gate bypass, unauthorized autonomy, local-only egress, absent accepted intent, and stopping confirmation remain fail-closed with compact explanations. Independent checks passed all 50 Core service tests, all 56 local-security tests with one expected privilege skip, six focused renderer/coordinator tests, nine generated-client tests, both strict TypeScript checks, the task-local zero-UI-delta gate, backlog validation, exact evidence/blob binding, and patch hygiene. The R02/T02 and GOV-MAINT-0004 records in the range are truthfully disclosed ancestral integration history, not newly claimed T03 implementation. The unchanged approved UI reference is not re-attributed to T03. Controlled visual capture and a successful live supply-chain replay remain mandatory at CAP-03.S02 integration, while performance and the complete cross-capability/platform matrix remain mandatory at W1 exit; none is represented as passing here. The protected W1.A04.B00 witness remains unmodified. No finding remains open.
 
 **Currently open findings:** -
 
