@@ -1,0 +1,57 @@
+{
+  "task_id": "CAP-03.S03.T02",
+  "attempt_id": "R03",
+  "candidate_commit": "2a15c3436bd76d69d13a854b22c50742f85e8a5f",
+  "submission_record_commit": "cb193dda843b9100b5b63dbe424325b5f6bf0332",
+  "reviewer": "codex-independent-provenance-ledger-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent round-three remediation review found no blocking or nonblocking acceptance-bound defect. The frozen R03 evidence reproduces SHA-256 dc151da5b7f28aa8be8fe776e4bce384aaa4d60db70155bc49832f1de5cbaf9c and Git blob 774881cf19d4c0c63b2c7726678e7fbaac13cd74 in submission record cb193dda843b9100b5b63dbe424325b5f6bf0332. Exact candidate 2a15c3436bd76d69d13a854b22c50742f85e8a5f is a strict descendant of the R02 candidate, the submission record is a strict descendant of the candidate, and all 11 declared changed paths exactly match the base-to-candidate range. The third-round root-cause analysis is adequate: R02 changed hash material without versioning the evidence contract and reasoned inward from the canonical ledger without enumerating every mutable outbox and narrow-audit authority; R03 now retains the exact historical rfc8785.sha256.v1 record-and-sequence formula, writes only a distinct rfc8785.sha256.v2 segment, binds the retry fingerprint and complete immutable outbox-authority digest in v2, and verifies persisted plus incoming replay authority before resolving a projection. Independent replay with two exact-formula v1 rows, restart, one v2 append, another restart boundary, and a subsequent v1 exact retry remained verified with segment sequences v1/1, v1/2, and v2/1. All seven independently mutated current outbox authority fields fail closed and enter integrity-review; narrow actor-type and trace-id contradictions do the same. Exact incoming retries reject changed outbox, event, type, occurrence/scheduling time, trace, actor, payload, and precondition authority. Replay compares the returned detached projection to the canonical output content hash before returning it; an independently corrupted aggregate projection was denied without duplicating aggregate, ledger, or outbox rows. Legitimate delivery-state mutation remains outside immutable authority and preserves verification. The selected 104-test affected union exited successfully, and an independently repeated 35-test repository, service, and complete migration group passed. The exact fresh-v6 empty-history upgrade/repeat/reopen regression and prior event/project/normalized/narrow/idempotency corruption cases remain green, so both R01 closures remain valid. Python quality, architecture, repository structure, generated Core API parity, generated backlog views, the 150-page planning review site, changed-path truth, and patch hygiene passed. Architecture documentation accurately describes the v1/v2 compatibility and outbox/actor/trace boundaries. The public contract, schema version and migration bytes, renderer and governed experience reference, dependency inventory, external effects, and release authority are unchanged. T03 interaction/recovery work, slice integration, and the complete W1 Windows qualification matrix remain truthfully assigned to their later mandatory gates. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S03.T02.R03.json",
+      "sha256": "dc151da5b7f28aa8be8fe776e4bce384aaa4d60db70155bc49832f1de5cbaf9c",
+      "git_blob": "774881cf19d4c0c63b2c7726678e7fbaac13cd74",
+      "commit": "2a15c3436bd76d69d13a854b22c50742f85e8a5f"
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file",
+      "result": "PASS: the exact submitted 104-test affected union exited zero, covering schema, repository, every supported migration origin and rollback boundary, object store, storage maintenance, provenance and Core services, research intents, and the real packaged Windows sidecar boundary."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.data.test_sqlite_repositories tests.service.test_provenance tests.data.test_sqlite_migrations",
+      "result": "PASS: 35/35 focused repository, provenance-service, and complete migration tests passed in 17.222 seconds, including v1/v2 restart compatibility, seven outbox corruptions, actor/trace corruption, exact retry, atomic rollback, bounded lineage, legacy bridge, fresh-v6 history, and every material migration failpoint."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Materialize two ledger rows under the exact R01 v1 formula, restart, append one R03 v2 event, replay an exact v1 command, mutate only permitted outbox delivery state, and query lineage before and after",
+      "result": "PASS: both v1 rows retained their original chains; the v2 segment deterministically started at sequence one; all three revisions were returned in verified lineage; the historical exact retry returned its original projection; and published delivery state remained verified."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Corrupt only the persisted aggregate projection after one accepted event, restore append-only triggers, and retry the exact command",
+      "result": "PASS: replay failed closed at the canonical/output projection binding and aggregate, portable-ledger, and outbox counts remained exactly one."
+    },
+    {
+      "type": "independent-check",
+      "command": "quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py --check; backlog_views.py --check; plan_review_check.py --repo .; exact changed-path comparison; git diff --check",
+      "result": "PASS: Ruff formatting/lint and mypy passed all 166 governed Python files; architecture passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure and generated Core API passed; generated backlog views and all 150 planning review pages were current; all 11 declared paths matched; patch hygiene passed."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S03.T02-R02-F01",
+      "disposition": "fixed",
+      "evidence": "The implementation dispatches chain verification by the persisted segment key. rfc8785.sha256.v1 retains exactly previous-or-genesis, canonical record SHA-256, and sequence; new writes use the distinct rfc8785.sha256.v2 formula over previous-or-genesis, record digest, stored command fingerprint, complete immutable outbox-authority digest, and sequence. Each segment has an independent contiguous sequence and checkpoint chain starting at one. Independent replay converted two ordinary rows to exact v1 bytes and chains, restarted, appended a v2 row, restarted through a historical retry, and observed verified lineage with v1 sequences one/two and v2 sequence one. No historical record or chain was rehashed or reinterpreted. Unknown segment identities still enter integrity-review. This closes the exact R02 v1-history invalidation while retaining append-only checkpoint behavior."
+    },
+    {
+      "finding_id": "CAP-03.S03.T02-R02-F02",
+      "disposition": "fixed",
+      "evidence": "Every new v2 checkpoint now binds the outbox identity, project, output revision, canonical event type, occurrence and availability times, idempotency key, and record digest through one deterministic authority digest, while the same chain separately binds the complete command fingerprint. Integrity verification joins exactly one checkpoint, ledger event, narrow audit, and outbox; compares all persisted authority to the canonical event/output; binds narrow actor identity/type and trace; and requires the complete ledger to verify. Replay additionally compares incoming outbox/event/time/trace/actor/key authority and the stored fingerprint before resolving the exact output revision, then compares the returned projection content hash to the canonical output. The seven committed independent outbox mutations, actor-type mutation, and trace-id mutation all fail closed and enter integrity-review; the original wrong-revision replay can no longer return another aggregate. Independent projection corruption likewise failed closed without duplicate facts. Only delivery state, attempt count, and publication time remain intentionally mutable and do not invalidate the immutable transaction authority."
+    }
+  ]
+}
