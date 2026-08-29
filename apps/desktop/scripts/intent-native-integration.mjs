@@ -95,6 +95,7 @@ let project;
 let accepted;
 let policy;
 let invalidRouteDenial;
+let persistenceInspection;
 
 try {
   const ready = await nextMessage();
@@ -200,6 +201,27 @@ try {
     throw new Error("native supervisor did not fail closed for an unapproved intent route");
   }
   await client.closeProject({ root });
+  persistenceInspection = JSON.parse(execFileSync(
+    basePython,
+    [
+      "-m", "native_integration_sidecar",
+      "--profile-vault-root", vaultRoot,
+      "--inspect-project-root", root,
+      "--project-id", project.projectId,
+    ],
+    {
+      encoding: "utf8",
+      env: { ...process.env, PYTHONPATH: pythonPath },
+    },
+  ));
+  const expectedEventTypes = ["intent.draft.saved", "intent.accepted", "intent.policy.evaluated"];
+  if (persistenceInspection.revisionRecords !== 2
+    || expectedEventTypes.some((eventType) => (
+      persistenceInspection.provenanceEvents?.[eventType]?.count !== 1
+      || persistenceInspection.provenanceEvents[eventType].actorBound !== true
+    ))) {
+    throw new Error("protected SQLite revision/provenance inspection did not match the vertical path");
+  }
   await client.deleteProject({ root, confirmation: `delete:${project.projectId}` });
 } finally {
   harness.stdin.end();
@@ -234,6 +256,7 @@ const report = {
     byteEquivalentRequest: true,
   },
   invalidRouteDenial: invalidRouteDenial.code,
+  persistenceInspection,
   idempotencyKeys: observed
     .filter((request) => request.idempotencyKey !== null)
     .map((request) => ({ path: request.path, canonical: /^[0-9a-f]{32}$/.test(request.idempotencyKey) })),
