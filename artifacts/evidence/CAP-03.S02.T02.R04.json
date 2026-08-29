@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T02",
+  "commit": "e2d469f8008fe78d4db266d169d3578b3750f8f6",
+  "baseCommit": "b9868e5211aa012d7223caff5ab2eef2a7386de9",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S02.T02.R03.json",
+    "sha256": "b4739a9aa342e893dec56eeb9aec740f4163bdcfcc8948d21379f95d17639fce",
+    "commit": "b9868e5211aa012d7223caff5ab2eef2a7386de9",
+    "reason": "Closes CAP-03.S02.T02-R03-F01 by retaining one exact acceptance command and canonical idempotency key across an ambiguous local response, reconciling with Core before any authority claim, and proving the real generated-client boundary."
+  },
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "artifacts/evidence/CAP-03.S02.T02.R03.json",
+    "artifacts/evidence/CAP-03.S02.T02.review-R03.json",
+    "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": "npm run lint; npm test; npm run typecheck; npm run build in apps/desktop",
+      "exitCode": 0,
+      "result": "Desktop lint and strict TypeScript passed; all 12 Vitest files and 56 tests passed; the functional product and approved-reference fixture built successfully."
+    },
+    {
+      "command": "npm test -- src/app/IntentWorkspace.test.tsx in apps/desktop",
+      "exitCode": 0,
+      "result": "All six focused renderer/coordinator tests passed. The new real generated-client/fake-transport cases prove exact sha256-prefixed request and 32-hex key binding, response-loss retention, same-command/key replay, authoritative accepted projection convergence, disabled launch, and definitive-rejection clearing."
+    },
+    {
+      "command": "npm test -- core-api/generated.test.ts; npm run typecheck in packages/contracts",
+      "exitCode": 0,
+      "result": "All nine generated Core API client tests and strict contracts compilation passed, preserving exact request validation, problem decoding, and idempotency transport fields."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_research_intents tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 28 focused research-intent and Core API tests passed, retaining exact acceptance replay, stable actor authority, idempotency conflicts, atomic audit/outbox persistence, restart behavior, and effective-policy enforcement."
+    },
+    {
+      "command": "desktop_app_check.py --built-frame-only; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py",
+      "exitCode": 0,
+      "result": "The built product includes CAP-03.S02.T02; the unchanged RO-UI-ACADEMIC-MINIMAL-1.3 reference, tokens, 32 route/page contracts, fourteen workflows, and 64 responsive accessibility cases passed."
+    },
+    {
+      "command": "quality_check.py; architecture_check.py; repository_structure_check.py; taskctl.py validate; backlog_views.py --check",
+      "exitCode": 0,
+      "result": "Python quality passed across 160 governed files; all 13 architecture areas and repository structure passed; the canonical backlog and generated views validate."
+    },
+    {
+      "command": "ui_change_gate.py --base 198edd87be8147087ac87f282c12d099fe1a943d --head e2d469f8008fe78d4db266d169d3578b3750f8f6; planctl.py wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The cumulative task UI gate passes at the exact R04 candidate against the immutable T02 experience base and unchanged approved reference; the complete immutable W1 packet remains approved and ready."
+    },
+    {
+      "command": "verify.py --profile desktop --profile service --affected-base b9868e5211aa012d7223caff5ab2eef2a7386de9 --affected-head e2d469f8008fe78d4db266d169d3578b3750f8f6 --deferred-gate W1-exit --selection-only; build_manifest.py; git diff --check; protected witness SHA-256",
+      "exitCode": 0,
+      "result": "Exact Git-derived selection passed and defers only desktop performance to W1 exit. The build manifest binds e2d469f and truthfully reports the protected untracked witness as dirty; patch hygiene passed and W1.A04.B00 remains byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S02.T02-R03-F01 is remediated by IntentAcceptanceCoordinator, which freezes the exact project root, persisted revision ID/number, sha256-prefixed full content hash, trimmed human rationale, confirmed=true command, and one canonical 32-hex idempotency key before transport execution.",
+        "A valid Core problem is a definitive non-commit rejection and clears the attempt. Transport loss, malformed/truncated success, and other ambiguous response failures retain that exact frozen attempt; the UI says the outcome is unresolved, prevents save/preview/acceptance-field changes, and offers only same-command/key reconciliation instead of claiming the draft remains authoritative.",
+        "A successful first response or exact replay installs Core's authoritative accepted projection into current/history, clears the frozen attempt and form authority, announces the exact accepted revision, and still leaves the desktop launch action disabled so T03 service policy remains the downstream authority."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The coordinator regression drives the actual generated client through a fake transport that records the request, simulates commit followed by response loss, and then returns the accepted projection. Both transport requests are byte-identical, use the same 32-hex key, and converge on one accepted history entry.",
+        "The complementary generated-client problem response produces a definitive rejection, clears the frozen attempt, and leaves the decision-complete draft workspace unchanged. The original helper fixture now uses the contract-valid sha256: prefix.",
+        "All 56 desktop tests, nine generated-client tests, and 28 focused service/API tests pass, retaining incomplete/unsaved denial and the historical R01 actor/idempotency closures."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The product remediation is bounded to IntentWorkspace, its focused tests, desktop operator documentation, and the existing T02 approved-reference evidence. No public API, schema, migration, dependency, persistence implementation, provider, network, approved reference, or downstream policy authority changed.",
+        "The base-to-candidate range also preserves the append-only R03 submission and adverse review ledger plus their generated planning projections. That governance history is disclosed but not claimed as product implementation.",
+        "CAP-03.S02.T02-R01-F01 and F02 remain independently closed and untouched; R04 replays only the new R03 acceptance-transport boundary plus its incremental renderer/service integration risk."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S02.T02-R03-F01 exposed a split-authority failure between the renderer's per-click command identity and the service's durable idempotent acceptance: Core could commit while the UI discarded the only replay key and falsely represented the draft as authoritative. The incremental risks are exact command/key retention, misclassifying an explicit Core problem versus an ambiguous transport/decoder failure, accepting a different revision/hash/rationale on retry, leaving the renderer locked forever, duplicating accepted history, enabling launch locally, and regressing generated-client or service replay semantics. Verification therefore drives the new coordinator through the real generated client and both response-loss/rejection fake transports; replays full desktop tests/build, focused service/API and generated-client tests, approved-reference/token/route/workflow/accessibility controls, cumulative UI lineage, quality/architecture/repository/planning controls, exact affected selection, provenance, patch hygiene, and witness safety. No dependency, migration, service implementation, or external boundary changed. The visual capture runner remains owned by the CAP-03.S02 slice integration review, and gate-bound performance remains owned by W1 exit.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "contracts:unit",
+      "service:unit"
+    ],
+    "deferred": [
+      "The full controlled visual-capture matrix remains mandatory at CAP-03.S02 slice integration. Exact deterministic renderer/coordinator, approved-reference, token, route, workflow, accessibility, built-frame, and production-build checks pass for R04.",
+      "CAP-03.S02.T03 must be reclaimed and revalidated after this accepted dependency so the renderer's authoritative accepted projection is proven end-to-end as effective service-policy authority.",
+      "Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S02.T02-R03-F01"
+    ],
+    "rootCauseAnalysis": "R03 treated the acceptance idempotency key as transient per-click transport metadata rather than durable command identity and tested only a pure request helper with an invalid unprefixed hash fixture. That bypassed the generated client, transport, response decoder, retry lifecycle, and accepted-state projection, so the evidence could not reveal commit-plus-response-loss divergence. R04 centralizes acceptance identity and failure classification in one coordinator used by the actual handler, freezes the exact request/key until success or definitive rejection, and adds real generated-client fake-transport regressions for ambiguous replay convergence and explicit rejection so this boundary cannot again be supported only by helper assertions.",
+    "note": "Independently review exact strict-descendant candidate e2d469f8008fe78d4db266d169d3578b3750f8f6 and close CAP-03.S02.T02-R03-F01 only if commit-plus-response-loss retains the exact command/key, retry converges through the real generated client, explicit Core rejection clears safely, the UI makes no false authority claim, accepted projection/history and disabled launch are correct, the valid sha256 fixture and evidence claims match executed checks, historical R01 closures remain intact, and the stated slice/W1 deferrals remain truthful."
+  }
+}
