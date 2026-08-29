@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2192da88ed5b13484ac6ca6fed6be03de7572ecde7f56a82e1d292584d396df1
+source_sha256: 8883a7cdd07b6d4121aebf43b4645b7d8d5e971cd2e3a6814ff4883ed420806a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3790,15 +3790,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
+#### - [x] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T01`
 
-**Owner / review:** codex / codex-independent-desktop-intent-reviewer (`changes-requested`)
+**Owner / review:** codex / codex-independent-desktop-intent-reviewer (`approved`)
 
 **Objective:** Desktop workflow with mode-specific defaults, examples, warnings, and explicit change-impact preview.
 
@@ -3826,7 +3826,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T02
 
-**Review mode:** `append-only v1` / 3 completed round(s)
+**Review mode:** `append-only v1` / 4 completed round(s)
 
 ###### Round R01
 
@@ -3920,7 +3920,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R04` / packet SHA-256 `d8b50506bd5e85f9b6851d04adebf292c8e99a26b0920c199bafac52c06f2f3d`
+###### Round R04
+
+**Immutable submission packet:** `R04` / packet SHA-256 `d8b50506bd5e85f9b6851d04adebf292c8e99a26b0920c199bafac52c06f2f3d`
 
 - Candidate / base / branch: `e2d469f8008fe78d4db266d169d3578b3750f8f6` / `b9868e5211aa012d7223caff5ab2eef2a7386de9` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-29T13:30:15+00:00`
@@ -3934,15 +3936,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R03` / `CAP-03.S02.T02-R03-F01`
 - Root-cause escalation: R03 treated the acceptance idempotency key as transient per-click transport metadata rather than durable command identity and tested only a pure request helper with an invalid unprefixed hash fixture. That bypassed the generated client, transport, response decoder, retry lifecycle, and accepted-state projection, so the evidence could not reveal commit-plus-response-loss divergence. R04 centralizes acceptance identity and failure classification in one coordinator used by the actual handler, freezes the exact request/key until success or definitive rejection, and adds real generated-client fake-transport regressions for ambiguous replay convergence and explicit rejection so this boundary cannot again be supported only by helper assertions.
 
-**Current latest-review projection:** `changes-requested` by codex-independent-desktop-intent-reviewer at `2026-08-29T13:19:58+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent-desktop-intent-reviewer / `2026-08-29T13:36:37+00:00`
 
-**Latest notes:** The exact candidate and frozen R03 evidence lineage are valid, and the bounded implementation otherwise preserves explicit human confirmation, non-empty trimmed rationale, exact project-root/revision/content-hash request fields, unsaved/incomplete denial, generated-client/service contract alignment, disabled downstream launch, approved-reference lineage, and accessible native form controls. Independent replay passed four focused renderer tests, strict desktop TypeScript, nine generated Core client tests, 28 focused intent/Core service tests, the cumulative approved-reference UI gate, reference integrity, 64 accessibility cases, backlog validation, and patch hygiene. Historical findings CAP-03.S02.T02-R01-F01 and CAP-03.S02.T02-R01-F02 remain closed: this renderer-only product delta does not alter stable actor authority, the SQLite transaction, or the service idempotency binding. The packet also truthfully discloses the already-reviewed T03 and GOV-MAINT-0004 ancestry rather than claiming it as new T02 scope. One high-severity acceptance-bound failure remains: the desktop discards the acceptance command's idempotency identity, so an ambiguous post-commit transport/response failure can leave the UI asserting that acceptance failed while the service has already made the revision governing; a retry then uses a different key and cannot replay the committed result. The current renderer tests do not exercise the handler or this boundary and therefore do not support the manifest's accepted-projection and generated-client integration claims.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T02.review-R04.json` / `1dac9547f093adbba9be60dea31a69f366736067ae219e4c835803ad76772b2a`
 
-**Currently open findings:** `CAP-03.S02.T02-R03-F01`
+**Review notes:** Focused remediation review replayed CAP-03.S02.T02-R03-F01 against the exact strict-descendant candidate and frozen R04 packet. IntentAcceptanceCoordinator now freezes the persisted revision identity, exact project root, revision number, full sha256-prefixed content hash, trimmed human rationale, confirmed=true command, and one canonical 32-hex idempotency key before transport. The actual generated client was independently driven through a fake transport that simulated commit followed by response loss: the coordinator retained the same immutable attempt, ignored changed retry input, emitted byte-equivalent requests with the same key, and converged on Core's authoritative accepted projection with one accepted history entry. A complementary application/problem+json Core conflict was decoded as a definitive rejection, cleared the attempt, and left the valid decision-complete draft unchanged. The component locks editing, preview, save, and acceptance inputs while the outcome is unresolved; its warning makes no non-commit claim and offers only exact-request reconciliation. Successful acceptance replaces current/history from Core, clears local acceptance authority, and leaves downstream launch disabled. Six focused renderer tests, strict desktop TypeScript, nine generated-client tests, 28 intent/Core service tests, the cumulative approved-reference UI gate, 64 accessibility cases, backlog validation, and exact-range patch hygiene all passed. The R04 evidence SHA-256 and submission/candidate ancestry are exact, the approved RO-UI-ACADEMIC-MINIMAL-1.3 package remains unchanged, and the protected W1.A04.B00 witness remains unmodified. Historical R01 actor-authority and idempotency closures remain intact because this remediation changes no service, persistence, schema, migration, or public contract. The packet truthfully treats prior T03/governance ancestry as history and defers controlled visual capture plus T03 dependency revalidation to slice integration, with performance and the complete cross-capability/platform matrix remaining at W1 exit. No blocking acceptance-bound finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S02.T02-R03-F01` `fixed` — At exact candidate e2d469f8008fe78d4db266d169d3578b3750f8f6, IntentAcceptanceCoordinator owns one frozen IntentAcceptRequest, revisionId, and canonical idempotency key until either Core returns an accepted projection or the generated client decodes a valid Core problem. Independent execution of apps/desktop/src/app/IntentWorkspace.test.tsx drove createCoreApiClient through a recording fake transport: the first exact POST committed but lost its response, the unresolved result retained the original attempt, a prepare call with changed rationale returned that same attempt, and the second execution sent a byte-equivalent body and the same 32-hex key before returning the authoritative accepted revision. acceptedIntentWorkspace then replaced current, deduplicated accepted history to one entry, and the rendered launch action remained disabled. The rejection replay returned a valid 409 application/problem+json through the same generated client, produced CoreApiClientError, cleared the pending attempt, and left the valid sha256-prefixed draft fixture authoritative. Component inspection confirmed unresolved copy and locks for draft mutation, preview, save, rationale, confirmation, and new-command acceptance. Focused desktop, contracts, and service checks passed 6, 9, and 28 tests respectively; desktop typecheck, approved-reference/UI accessibility controls, backlog validation, and patch hygiene also passed. This closes the response-loss split-authority path without reopening CAP-03.S02.T02-R01-F01/F02 or claiming downstream T03 policy authority.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-desktop-intent-reviewer at `2026-08-29T13:36:37+00:00`
+
+**Latest notes:** Focused remediation review replayed CAP-03.S02.T02-R03-F01 against the exact strict-descendant candidate and frozen R04 packet. IntentAcceptanceCoordinator now freezes the persisted revision identity, exact project root, revision number, full sha256-prefixed content hash, trimmed human rationale, confirmed=true command, and one canonical 32-hex idempotency key before transport. The actual generated client was independently driven through a fake transport that simulated commit followed by response loss: the coordinator retained the same immutable attempt, ignored changed retry input, emitted byte-equivalent requests with the same key, and converged on Core's authoritative accepted projection with one accepted history entry. A complementary application/problem+json Core conflict was decoded as a definitive rejection, cleared the attempt, and left the valid decision-complete draft unchanged. The component locks editing, preview, save, and acceptance inputs while the outcome is unresolved; its warning makes no non-commit claim and offers only exact-request reconciliation. Successful acceptance replaces current/history from Core, clears local acceptance authority, and leaves downstream launch disabled. Six focused renderer tests, strict desktop TypeScript, nine generated-client tests, 28 intent/Core service tests, the cumulative approved-reference UI gate, 64 accessibility cases, backlog validation, and exact-range patch hygiene all passed. The R04 evidence SHA-256 and submission/candidate ancestry are exact, the approved RO-UI-ACADEMIC-MINIMAL-1.3 package remains unchanged, and the protected W1.A04.B00 witness remains unmodified. Historical R01 actor-authority and idempotency closures remain intact because this remediation changes no service, persistence, schema, migration, or public contract. The packet truthfully treats prior T03/governance ancestry as history and defers controlled visual capture plus T03 dependency revalidation to slice integration, with performance and the complete cross-capability/platform matrix remaining at W1 exit. No blocking acceptance-bound finding remains.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
