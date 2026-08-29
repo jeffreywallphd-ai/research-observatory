@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aad1edf3b375ba4836d798eb7341db006a71d0f3509d18ad05411dd97e4e6e00
+source_sha256: 345b739a075026cd804998780a47a5f21ddc16a88312b36ec7a35ee6bc0c5132
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4447,7 +4447,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4477,6 +4477,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S03.T03.R01.json` at `08e81290382d208f10c5f460dcd32296b8e6da53`
 - `artifacts/evidence/CAP-03.S03.T03.R02.json` at `9910ca3ae717ced397830125381e555901fd5abe`
+- `artifacts/evidence/CAP-03.S03.T03.R03.json` at `b4da81e23738d722efe12cf44f760531656690f3`
 
 ##### Review history — CAP-03.S03.T03
 
@@ -4547,7 +4548,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S03.T03-R01-F02` `fixed` — The exact R01 fake response with 51 items, depth 9, and nextCursor=0 against pageSize=50/maxDepth=8 is now rejected. Generated-client checks bind item count, depth, root identity, duplicates, and ordinary cursor progression to the accepted command; renderer pagination retains the immutable accepted revision/direction/depth/page-size authority and merges stable fact IDs without duplication. R02-F01 separately records the newly isolated zero-item continuation edge, which was not the exact R01 reproduction and does not erase this closure.
 - `CAP-03.S03.T03-R01-F03` `fixed` — The exact missing-region and reference-only-conformance defect is closed. The React workspace now includes factual Audit events, Rights and egress, Human decisions, and Export/redaction regions with stable implementation-conformance selectors, and the desktop application report/build manifest cover the actual task-owned renderer rather than only approved reference bytes. Focused React tests verify those regions, content-minimized rendering, rights denial, integrity-review denial, keyboard-accessible controls, and the implementation conformance map. R02-F02 separately records newly exposed completeness and monotonic export-authority defects within the added export behavior.
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `92a5ca50962f760e09d82dfc9d0ab2e8aecc1a84c5e718e29d168e3ee7808d83`
+
+- Candidate / base / branch: `b4da81e23738d722efe12cf44f760531656690f3` / `9910ca3ae717ced397830125381e555901fd5abe` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T23:48:24+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T03.R03.json` / `24c7fbf42d3d2600a03a37540683105f7f6b53b491d65b0e03a2e79e84e1ea12` / `b4da81e23738d722efe12cf44f760531656690f3`
+- Acceptance-criteria SHA-256: `c299ad69e411140034547ab16cbabcbffe86e3075a6e1fd43e0cf7718558e384`
+- Verification-selection SHA-256: `b11b5cc1cfb761b559b55557559e1b6eff131a1f9ff9a7ef5430ab30dcc9f2e8`
+- Changed paths: `apps/desktop/src/app/AuditLineageWorkspace.test.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.tsx`, `artifacts/evidence/CAP-03.S03.T03.R02.json`, `artifacts/evidence/CAP-03.S03.T03.review-R02.json`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tools/core_api_contract.py`
+- Selected checks: `apps\desktop\node_modules\.bin\vitest.CMD run apps/desktop/src/app/AuditLineageWorkspace.test.tsx packages/contracts/core-api/generated.test.ts`, `.venv\Scripts\python.exe tools\desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-R03-desktop-application.json`, `PYTHONPATH=services/core-api/src .venv\Scripts\python.exe -m unittest -v tests.service.test_provenance tests.data.test_sqlite_repositories`, `desktop and contracts TypeScript checks; core_api_contract.py --check; architecture_check.py --repo .`, `ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; ui_visual_regression_check.py`, `quality_check.py; repository_structure_check.py; agent_protocol_check.py; backlog_views.py --check; plan_review_check.py --repo .; build_manifest.py; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03 independent slice review will replay the accumulated append-only persistence, retry/restart, migration, lineage, integrity-review, recovery, generated-client, renderer, and adversarial integration union after T03 closes.`, `The two stale object-envelope schema-version assertions and the known historical foundation controller/recovery baseline must be reconciled or formally dispositioned before W1 exit qualification can pass; neither is attributed to this candidate.`, `Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at W1 exit.`
+- Selection rationale: R02 closed the three original end-to-end, pagination, and experience findings but exposed CAP-03.S03.T03-R02-F01 at the cross-process continuation boundary and CAP-03.S03.T03-R02-F02 at the governed export boundary. The root causes were localized, so R03 replays both exact open finding IDs and the complete focused generated-client/renderer suite including every R01 closure, the real service/SQLite vertical, the complete desktop build and Rust verifier, generated-contract and strict-type checks, every affected UI conformance dimension, architecture/quality/repository controls, exact build provenance, planning parity, and witness safety. The previously recorded stale schema-v6 object-envelope assertions and historical foundation controller/recovery baseline are unchanged and remain mandatory W1-exit reconciliation debt rather than being relabeled as T03 results.
+- Prior round / replayed open findings: `R02` / `CAP-03.S03.T03-R02-F01`, `CAP-03.S03.T03-R02-F02`
+- Root-cause escalation: R02 encoded cursor consistency as nextCursor equals requested cursor plus returned item count, but did not separately state the semantic progress invariant that a non-null continuation must consume at least one item and strictly advance. R02 also reused each service page's whole-query export policy as mutable renderer page state: object spread made the newest page authoritative, while completeness and the immutable accepted query were not part of the client-side export precondition. R03 separates consistency from progress, treats terminal empty pages explicitly, joins integrity and rights authority monotonically, and makes complete query-bound pagination a necessary export condition.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-provenance-lineage-reviewer at `2026-08-29T23:32:20+00:00`
 
