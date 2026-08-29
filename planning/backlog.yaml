@@ -8001,11 +8001,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T20:43:04+00:00'
-      updated_at: '2026-08-29T15:15:13+00:00'
+      updated_at: '2026-08-29T15:23:04+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Exact candidate 610a01c submitted for epistemic-governance review; historical full-foundation
@@ -8026,6 +8026,11 @@ capabilities:
         sha256: 09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f
         commit: b11440f1723d251df858791178f5a5056c3b2a27
         recorded_at: '2026-08-29T13:45:30+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S02.T03.R04.json
+        sha256: e6bf1ae720d5bee76c6eb91a7269ee27f786742275c9e387b443af3b88e9f044
+        commit: c482c2e1be8436925850ff7f15946a8a5e60c1b4
+        recorded_at: '2026-08-29T15:23:04+00:00'
       review: &id025
         reviewer: codex-independent-epistemic-governance-reviewer
         result: approved
@@ -8062,7 +8067,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-29T15:15:13+00:00'
         expires_at: '2026-08-29T23:15:13+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -8502,7 +8507,103 @@ capabilities:
               prior_attempt_id: R02
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission: null
+        current_submission:
+          id: R04
+          submitted_by: codex
+          submitted_at: '2026-08-29T15:23:04+00:00'
+          candidate_commit: c482c2e1be8436925850ff7f15946a8a5e60c1b4
+          base_commit: b11440f1723d251df858791178f5a5056c3b2a27
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S02.T03.R04.json
+            sha256: e6bf1ae720d5bee76c6eb91a7269ee27f786742275c9e387b443af3b88e9f044
+            commit: c482c2e1be8436925850ff7f15946a8a5e60c1b4
+            recorded_at: '2026-08-29T15:23:04+00:00'
+          acceptance_criteria_sha256: 7c39d7c4e651d5e56f68bd2b6eef9c3b26174b593a38be30c0d83d1b1cf2213c
+          changed_paths:
+          - apps/desktop/package.json
+          - apps/desktop/scripts/intent-native-integration.mjs
+          - apps/desktop/src-tauri/Cargo.toml
+          - apps/desktop/src-tauri/examples/supervised_core_harness.rs
+          - apps/desktop/src-tauri/examples/supervision_check.rs
+          - apps/desktop/src-tauri/examples/supervisor_fixture.rs
+          - apps/desktop/src-tauri/src/supervisor.rs
+          - artifacts/evidence/CAP-03.S02.T02.R05.json
+          - artifacts/evidence/CAP-03.S02.T02.review-R05.json
+          - artifacts/evidence/CAP-03.S02.T03.R03.json
+          - artifacts/evidence/CAP-03.S02.T03.review-R03.json
+          - artifacts/evidence/CAP-03.S02.integration.json
+          - artifacts/evidence/CAP-03.S02.integration.review.json
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/runtime-handshake.schema.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S02.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/src/research_observatory_core/main.py
+          - tests/desktop/test_core_sidecar_performance_check.py
+          - tests/service/fixtures/native_integration_sidecar.py
+          - tools/core_sidecar_performance_check.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest discover -s tests\service -p test_*.py; .venv\Scripts\python.exe -m unittest
+            discover -s tests\security -p test_*.py
+          - node apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S02.T03-R04-native-c482c2e.json
+          - cargo test --workspace --locked --all-features; package/handshake unittest subset
+          - desktop IntentWorkspace Vitest and typecheck; generated Core API Vitest and contracts typecheck
+          - security_check.py --report artifacts/tmp/CAP-03.S02.T03-R04-security-c482c2e.json
+          - core_api_contract.py --check; quality_check.py; architecture_check.py; repository_structure_check.py; ui_change_gate.py
+            --base b11440f... --head c482c2e...
+          - taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved
+          - verify.py --profile desktop --profile service --profile security-local --affected-base b11440f... --affected-head
+            c482c2e... --deferred-gate W1-exit --selection-only; build_manifest.py; protected witness hash
+          deferred_checks:
+          - The controlled visual-capture matrix remains mandatory at CAP-03.S02 slice integration; R04 changes no governed
+            UI and its zero-UI gate, focused renderer behavior, and exact native composition pass.
+          - One packaging file-symlink case and one broader current-token symlink-equivalence obligation remain for release-authoritative
+            Windows execution at slice/W1 qualification; redirect, package-inventory, credential, protected-database, and
+            real PyInstaller controls pass.
+          - Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart,
+            recovery, security, accessibility, packaging, performance, and Windows matrix remain mandatory at the applicable
+            checkpoint and W1 exit.
+          selection_rationale: T03 R03 was already independently approved, but CAP-03.S02-INTEGRATION-R01-F01 proved that
+            its accepted-intent policy could not be reached through the packaged native principal boundary. The credible revalidation
+            risks are policy evaluation against a renderer-local, draft, stale, or rolled-back revision; response-loss replay
+            creating split authority or duplicate audit; bypass of one of six mode gates; audit failure returning an unaudited
+            decision; native/package capability drift; test-only supervisor authority leaking into production; and stale scanner
+            evidence. The required prior-candidate range also contains immutable T02 R05 and adverse slice evidence plus generated
+            planning projections, so the exact selector conservatively identifies broader evidence-control paths already independently
+            reviewed. R04 therefore replays the incremental service/security/native/package/generated-client/renderer union,
+            the real protected vertical, live supply chain, quality/architecture/contracts, zero-UI delta, planning integrity,
+            build provenance, and witness safety without restarting unrelated historical audits. No T03 policy code, migration,
+            dependency, public payload, experience authority, or external boundary changed. Controlled slice visual evidence,
+            privileged symlink equivalence, exact-clean performance, and the complete cross-capability/platform matrix remain
+            owned by the strict-descendant slice review or W1 exit.
+          selection_sha256: 6244b60374184e42e9945da6759b2dfb41a16982268604d1da12ca032a1c8b6c
+          prior_attempt_id: R03
+          open_finding_ids: []
+          root_cause_analysis: T03 was correctly approved on its service authority, but prior integration evidence composed
+            a fake renderer transport, direct ASGI service tests, and packaged checks without executing the Rust request allowlist
+            between them. After the slice finding caused T02 and dependent T03 to be cascade-reset, T02 R05 added exact native
+            schemas and a feature-gated real vertical rather than weakening the boundary. T03 R04 reuses that vertical to
+            prove its unchanged accepted-revision policy is reachable, restart-safe, actor-bound, audited once after ambiguous
+            replay, and fail-closed for both policy and route denial; it also obtains a fresh passing live supply-chain report.
+          selected_command_ids:
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:build-manifest
+          - foundation:ui-change
+          - foundation:quality
+          - foundation:repository-structure
+          - foundation:backlog
+          - desktop:unit
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          - security-local:unit
+          packet_sha256: b43ec201f02a5858606aba541b825ec14c2af61437e6967c6a4d02b000bdb5a9
       cancellation: null
     platform_targets:
     - windows-x64
