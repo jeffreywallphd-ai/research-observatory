@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T03",
+  "commit": "c482c2e1be8436925850ff7f15946a8a5e60c1b4",
+  "baseCommit": "b11440f1723d251df858791178f5a5056c3b2a27",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S02.T03.R03.json",
+    "sha256": "09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f",
+    "commit": "b11440f1723d251df858791178f5a5056c3b2a27",
+    "reason": "T03 R03 was independently approved, but its T02 dependency was cascade-reopened after slice review proved that the native principal boundary rejected every intent route. R04 revalidates the unchanged epistemic-policy authority through the corrected real native/Core/persistence path and closes the prior live supply-chain scanner deferral without expanding product authority."
+  },
+  "changedFiles": [
+    "apps/desktop/package.json",
+    "apps/desktop/scripts/intent-native-integration.mjs",
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/examples/supervised_core_harness.rs",
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "artifacts/evidence/CAP-03.S02.T02.R05.json",
+    "artifacts/evidence/CAP-03.S02.T02.review-R05.json",
+    "artifacts/evidence/CAP-03.S02.T03.R03.json",
+    "artifacts/evidence/CAP-03.S02.T03.review-R03.json",
+    "artifacts/evidence/CAP-03.S02.integration.json",
+    "artifacts/evidence/CAP-03.S02.integration.review.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/runtime-handshake.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/main.py",
+    "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/service/fixtures/native_integration_sidecar.py",
+    "tools/core_sidecar_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\service -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests\\security -p test_*.py",
+      "exitCode": 0,
+      "result": "All 50 Core service tests and all 56 local-security tests passed at the exact executable candidate, with one expected current-token privilege skip. The suites cover six-mode policy labeling/gates, accepted-intent cache reconstruction and replacement, stale/older replay nonrollback, no-active-intent denial, autonomy/egress/stopping/claim gates, atomic policy/provenance persistence, audit-failure fail-closed behavior, protected database authority, and hostile credential/key paths."
+    },
+    {
+      "command": "node apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S02.T03-R04-native-c482c2e.json",
+      "exitCode": 0,
+      "result": "PASS at exact candidate c482c2e1be8436925850ff7f15946a8a5e60c1b4; report SHA-256 d526bc57c0d7971b0acf3035df55b2d9a3d12922d7a2df0b3110ea93329e9600. The actual generated client crossed Rust RuntimeSupervisor and supervised Core, saved and restored a decision-complete draft, simulated lost acceptance response, restarted, reconciled the same byte-equivalent command and key to accepted revision 2, and evaluated policy against that exact accepted hash. The suggest-mode execute request was denied, one actor-bound policy event was durable, acceptance was not duplicated, and an unapproved route failed closed."
+    },
+    {
+      "command": "cargo test --workspace --locked --all-features; package/handshake unittest subset",
+      "exitCode": 0,
+      "result": "All 26 Rust native-shell tests passed. All 18 handshake, performance-control, frozen-manifest, real PyInstaller, and Pythonless packaged-sidecar tests passed, with one documented current-token file-symlink skip retained for W1 exit. The native and packaged capability inventories require the same complete sorted intent surface."
+    },
+    {
+      "command": "desktop IntentWorkspace Vitest and typecheck; generated Core API Vitest and contracts typecheck",
+      "exitCode": 0,
+      "result": "All six renderer/coordinator tests and nine generated-client tests passed with strict TypeScript in both workspaces. The desktop installs only Core's authoritative accepted projection, retains the exact command/key across ambiguous response loss, leaves launch disabled, and creates no renderer-local policy authority."
+    },
+    {
+      "command": "security_check.py --report artifacts/tmp/CAP-03.S02.T03-R04-security-c482c2e.json",
+      "exitCode": 0,
+      "result": "The exact-candidate live supply-chain scan passed across 601 packages and 152 findings with zero blocking; report SHA-256 1d6f5fe0d56e1c35eafca9dca7c9e2e09e658a1d629bb37c8ff17a4737b07c2b. This closes the live-scanner deferral explicitly retained by T03 R02/R03."
+    },
+    {
+      "command": "core_api_contract.py --check; quality_check.py; architecture_check.py; repository_structure_check.py; ui_change_gate.py --base b11440f... --head c482c2e...",
+      "exitCode": 0,
+      "result": "Core API generation parity passed; quality passed across 161 governed files with report SHA-256 569bbe60ba5ac2bd607945bec3a2f581cbb3071e868dbaeea80c16b22ac9df2a; 13 architecture areas, 12 modules, five stable interfaces, and three profiles passed. The cumulative T03 range has no governed UI file and requires no new experience authority."
+    },
+    {
+      "command": "taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog validates; generated implementation/status and 150-page review-site projections are current; all W1-binding plans remain valid; and the immutable pre-Wave approval remains ready. Mechanical claim/view/review-site projections are disclosed in the changed range."
+    },
+    {
+      "command": "verify.py --profile desktop --profile service --profile security-local --affected-base b11440f... --affected-head c482c2e... --deferred-gate W1-exit --selection-only; build_manifest.py; protected witness hash",
+      "exitCode": 0,
+      "result": "The corrected exact affected selection passed with report SHA-256 f84cf50c0e8cfd6d0fffed98bc56cd6e545688234b81fa0af808c59ee027f30d after adding the desktop profile required by the cumulative native range. Build report SHA-256 ac56d439c9451358c84f04661dcc617f9d03fba49cb33499b0336c5c1f4129c3 binds c482c2e and truthfully says dirty solely because the protected W1 witness remains untracked. The witness is byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "ResearchIntentService continues to derive governing authority only from the newest contract-valid accepted revision, never a draft or renderer assertion, and reconstructs that authority across restart. Same-key replay of an older command cannot roll policy authority backward.",
+        "All six approved research modes retain working labels and required human gates. Claim/publication bypass, unauthorized autonomy, local-only external egress, absent accepted intent, and stopping behavior fail closed with bounded policy explanations; policy decisions are appended atomically with actor-bound provenance or no decision is returned.",
+        "The real generated-client/native/supervised-Core vertical now proves the previously missing composition: an explicitly accepted persisted hash becomes the exact governing policy reference after two restarts and ambiguous-response reconciliation, while an execute request outside suggest autonomy is denied and durably audited exactly once."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The complete 50-test Core service and 56-test local-security suites cover expected, denial, restart, replay, concurrency, persistence-failure, credential, and protected-database boundaries; focused renderer/generated-client and native/package suites add the corrected production-boundary composition.",
+        "The protected vertical exercises project creation, intent load/preview/save/accept, simulated response loss, restart-safe same-key reconciliation, accepted-revision policy denial, actor-bound SQLite/provenance inspection, invalid-route denial, close, and delete without mocked principal-boundary success.",
+        "The live 601-package supply-chain scan passes with zero blocking, replacing the prior truthful scanner-error deferral."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "T03 policy implementation, service tests, public policy payloads, migrations, and approved UI reference are unchanged from independently approved R03. The cumulative delta is the independently approved T02 native transport correction plus test harness/handshake alignment and append-only governance projections.",
+        "No renderer-local policy, new autonomy mode, gate waiver, migration, dependency version, external effect, cloud authority, or governed experience change was introduced. Generated Core API parity and zero-UI-delta checks pass.",
+        "The adverse slice integration ledger remains immutable. T03 task approval does not close CAP-03.S02-INTEGRATION-R01-F01; that finding must be replayed against a strict-descendant slice packet and independently dispositioned at slice level."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T03 R03 was already independently approved, but CAP-03.S02-INTEGRATION-R01-F01 proved that its accepted-intent policy could not be reached through the packaged native principal boundary. The credible revalidation risks are policy evaluation against a renderer-local, draft, stale, or rolled-back revision; response-loss replay creating split authority or duplicate audit; bypass of one of six mode gates; audit failure returning an unaudited decision; native/package capability drift; test-only supervisor authority leaking into production; and stale scanner evidence. The required prior-candidate range also contains immutable T02 R05 and adverse slice evidence plus generated planning projections, so the exact selector conservatively identifies broader evidence-control paths already independently reviewed. R04 therefore replays the incremental service/security/native/package/generated-client/renderer union, the real protected vertical, live supply chain, quality/architecture/contracts, zero-UI delta, planning integrity, build provenance, and witness safety without restarting unrelated historical audits. No T03 policy code, migration, dependency, public payload, experience authority, or external boundary changed. Controlled slice visual evidence, privileged symlink equivalence, exact-clean performance, and the complete cross-capability/platform matrix remain owned by the strict-descendant slice review or W1 exit.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "desktop:unit",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "The controlled visual-capture matrix remains mandatory at CAP-03.S02 slice integration; R04 changes no governed UI and its zero-UI gate, focused renderer behavior, and exact native composition pass.",
+      "One packaging file-symlink case and one broader current-token symlink-equivalence obligation remain for release-authoritative Windows execution at slice/W1 qualification; redirect, package-inventory, credential, protected-database, and real PyInstaller controls pass.",
+      "Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, performance, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "epistemic-governance-review",
+    "openFindingIds": [],
+    "rootCauseAnalysis": "T03 was correctly approved on its service authority, but prior integration evidence composed a fake renderer transport, direct ASGI service tests, and packaged checks without executing the Rust request allowlist between them. After the slice finding caused T02 and dependent T03 to be cascade-reset, T02 R05 added exact native schemas and a feature-gated real vertical rather than weakening the boundary. T03 R04 reuses that vertical to prove its unchanged accepted-revision policy is reachable, restart-safe, actor-bound, audited once after ambiguous replay, and fail-closed for both policy and route denial; it also obtains a fresh passing live supply-chain report.",
+    "note": "Independently review exact candidate c482c2e1be8436925850ff7f15946a8a5e60c1b4 and frozen R04 packet. Verify unchanged T03 service tree/authority from R03; newest accepted revision and replay nonrollback; all six mode/gate/autonomy/egress/stopping behaviors; audit-failure fail-closed; exact generated-client/native/supervised-Core/protected-SQLite policy composition with same-key response-loss reconciliation and no duplicate acceptance; production/test supervisor separation; live scanner truth; zero UI delta; historical-range disclosure; residual deferrals; and protected witness safety. Formal disposition of CAP-03.S02-INTEGRATION-R01-F01 remains for slice review, not this task ledger."
+  }
+}
