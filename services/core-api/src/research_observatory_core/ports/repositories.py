@@ -22,6 +22,7 @@ KnowledgeStatus = Literal[
 ]
 RightsStatus = Literal["allowed", "denied", "unknown", "not-applicable"]
 ActorType = Literal["human", "system", "worker", "model"]
+LineageDirection = Literal["ancestors", "descendants"]
 
 
 class RepositoryProblem(RuntimeError):
@@ -170,6 +171,36 @@ class IntentPolicyAuditEvent:
     record_sha256: str
 
 
+@dataclass(frozen=True, slots=True)
+class LineageNode:
+    """Content-free production context for one exact immutable revision."""
+
+    revision_id: str
+    entity_id: str
+    entity_kind: str
+    depth: int
+    event_id: str
+    event_type: str
+    activity_id: str
+    activity_type: str
+    activity_status: Literal["succeeded", "failed", "cancelled", "denied"]
+    agent_id: str
+    occurred_at: str
+
+
+@dataclass(frozen=True, slots=True)
+class LineagePage:
+    """Bounded, integrity-labelled traversal result returned by persistence."""
+
+    revision_id: str
+    direction: LineageDirection
+    items: tuple[LineageNode, ...]
+    missing_revision_ids: tuple[str, ...]
+    next_cursor: int | None
+    integrity_state: Literal["verified", "integrity-review"]
+    legacy_event_count: int
+
+
 @runtime_checkable
 class AggregateRepository(Protocol):
     def get(self, aggregate_id: str) -> AggregateRevision: ...
@@ -232,6 +263,19 @@ class IntentRevisionRepository(Protocol):
 
 
 @runtime_checkable
+class ProvenanceLedgerRepository(Protocol):
+    def lineage(
+        self,
+        *,
+        revision_id: str,
+        direction: LineageDirection,
+        cursor: int,
+        page_size: int,
+        max_depth: int,
+    ) -> LineagePage: ...
+
+
+@runtime_checkable
 class UnitOfWork(Protocol):
     @property
     def aggregates(self) -> AggregateRepository: ...
@@ -261,10 +305,14 @@ __all__ = [
     "IntentRevisionRecord",
     "IntentRevisionRepository",
     "KnowledgeStatus",
+    "LineageDirection",
+    "LineageNode",
+    "LineagePage",
     "PrivacyAuditEvent",
     "PrivacyPolicyRecord",
     "PrivacyPolicyRepository",
     "PrivacySetting",
+    "ProvenanceLedgerRepository",
     "RepositoryConflict",
     "RepositoryIdempotencyConflict",
     "RepositoryNotFound",

@@ -151,6 +151,39 @@ class ProjectRootRequest(ContractModel):
     root: str = Field(min_length=1, max_length=4096)
 
 
+class ProvenanceLineageRequest(ProjectRootRequest):
+    revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    direction: Literal["ancestors", "descendants"]
+    cursor: int = Field(default=0, ge=0, le=10_000)
+    page_size: int = Field(default=50, ge=1, le=100)
+    max_depth: int = Field(default=8, ge=1, le=16)
+
+
+class ProvenanceLineageNode(ContractModel):
+    revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    entity_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    entity_kind: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$", max_length=128)
+    depth: int = Field(ge=0, le=16)
+    event_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    event_type: str = Field(pattern=r"^org\.research-observatory\..+\.v[1-9][0-9]{0,5}$", max_length=160)
+    activity_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    activity_type: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$", max_length=128)
+    activity_status: Literal["succeeded", "failed", "cancelled", "denied"]
+    agent_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    occurred_at: str
+
+
+class ProvenanceLineagePage(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    direction: Literal["ancestors", "descendants"]
+    items: tuple[ProvenanceLineageNode, ...] = Field(max_length=100)
+    missing_revision_ids: tuple[str, ...] = Field(max_length=256)
+    next_cursor: int | None = Field(default=None, ge=0, le=10_000)
+    integrity_state: Literal["verified", "integrity-review"]
+    legacy_event_count: int = Field(ge=0, le=9_007_199_254_740_991)
+
+
 class ProjectDeleteRequest(ProjectRootRequest):
     confirmation: str = Field(min_length=1, max_length=80)
 

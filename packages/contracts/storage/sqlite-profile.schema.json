@@ -28,9 +28,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-sqlite-profile"},
     "profileId": {"const": "sqlite-wal-v1"},
-    "databaseSchemaVersion": {"const": 6},
+    "databaseSchemaVersion": {"const": 7},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"},
+    "schemaFingerprintSha256": {"const": "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -68,6 +68,11 @@
         "ontologies",
         "decisions",
         "provenance_events",
+        "provenance_ledger_events",
+        "provenance_ledger_entities",
+        "provenance_ledger_relations",
+        "provenance_ledger_checkpoints",
+        "provenance_legacy_bridges",
         "settings"
       ]
     },
@@ -114,6 +119,11 @@
         "ontologies",
         "decisions",
         "provenance_events",
+        "provenance_ledger_events",
+        "provenance_ledger_entities",
+        "provenance_ledger_relations",
+        "provenance_ledger_checkpoints",
+        "provenance_legacy_bridges",
         "settings",
         "outbox_events"
       ]

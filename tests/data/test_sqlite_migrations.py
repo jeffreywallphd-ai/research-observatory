@@ -30,6 +30,7 @@ from research_observatory_core.migrations.versions import (  # noqa: E402
     v0003_object_envelopes,
     v0004_object_envelope_upgrades,
     v0005_object_creation_source,
+    v0007_provenance_ledger,
 )
 
 v0006_actor_identity = runner.v0006_actor_identity
@@ -360,6 +361,70 @@ def create_version_5_fixture(database: Path) -> None:
         connection.close()
 
 
+def create_version_6_fixture(database: Path) -> None:
+    """Materialize the exact committed v6 profile for the ledger bridge test."""
+
+    create_version_5_fixture(database)
+    connection = sqlite3.connect(database, autocommit=True)
+    try:
+        storage._configure_connection(connection, initialize=True)
+        connection.execute("BEGIN IMMEDIATE")
+        connection.execute("DROP TRIGGER provenance_events_no_update")
+        connection.execute("DROP TRIGGER provenance_events_no_delete")
+        connection.execute("DROP INDEX provenance_events_project_time")
+        connection.execute("ALTER TABLE provenance_events RENAME TO provenance_events_v5")
+        connection.execute(storage.PROVENANCE_EVENTS_V6_DDL)
+        connection.execute("INSERT INTO provenance_events SELECT * FROM provenance_events_v5")
+        connection.execute("DROP TABLE provenance_events_v5")
+        for statement in storage._immutable_triggers("provenance_events", "provenance events are append-only"):
+            connection.execute(statement)
+        connection.execute(
+            "CREATE INDEX provenance_events_project_time ON provenance_events (project_id, occurred_at, event_id)"
+        )
+        connection.execute("DROP TRIGGER schema_metadata_no_update")
+        connection.execute("DROP TRIGGER schema_metadata_no_delete")
+        connection.execute("ALTER TABLE schema_metadata RENAME TO schema_metadata_v5")
+        connection.execute(storage.SCHEMA_METADATA_V6_DDL)
+        connection.execute(
+            """
+            INSERT INTO schema_metadata (
+                singleton, schema_version, database_profile, application_id,
+                profile_sha256, schema_sha256, created_at
+            )
+            SELECT singleton, 6, database_profile, application_id, ?, ?, created_at
+              FROM schema_metadata_v5
+            """,
+            (storage.ACTOR_IDENTITY_PROFILE_SHA256, storage.ACTOR_IDENTITY_SCHEMA_SHA256),
+        )
+        connection.execute("DROP TABLE schema_metadata_v5")
+        for statement in v0002_schema_history.SCHEMA_METADATA_TRIGGERS:
+            connection.execute(statement)
+        connection.execute(
+            """
+            INSERT INTO schema_migrations (
+                migration_id, from_schema_version, to_schema_version, applied_at,
+                backup_manifest_sha256, source_schema_sha256, target_schema_sha256,
+                migration_tool
+            ) VALUES ('0006_actor_identity', 5, 6, ?, ?, ?, ?, 'alembic-1.18.5')
+            """,
+            (
+                CREATED_AT,
+                "d" * 64,
+                storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+            ),
+        )
+        connection.execute("PRAGMA user_version=6")
+        if storage._schema_fingerprint(connection) != storage.ACTOR_IDENTITY_SCHEMA_SHA256:
+            raise AssertionError(storage._schema_fingerprint(connection))
+        connection.execute("COMMIT")
+        checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+        if checkpoint != (0, 0, 0):
+            raise AssertionError(checkpoint)
+    finally:
+        connection.close()
+
+
 class SqliteMigrationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.database_profile = storage.development_plaintext_database_fixture()
@@ -397,7 +462,7 @@ class SqliteMigrationTests(unittest.TestCase):
         before = self.database.read_bytes()
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(1, plan.source_schema_version)
-        self.assertEqual(6, plan.target_schema_version)
+        self.assertEqual(7, plan.target_schema_version)
         self.assertTrue(plan.migration_required)
         self.assertEqual(
             (
@@ -406,6 +471,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0004_object_envelope_upgrades",
                 "0005_object_creation_source",
                 "0006_actor_identity",
+                "0007_provenance_ledger",
             ),
             plan.migration_ids,
         )
@@ -419,7 +485,7 @@ class SqliteMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(1, result.source_schema_version)
-        self.assertEqual(6, result.target_schema_version)
+        self.assertEqual(7, result.target_schema_version)
         self.assertEqual(
             (
                 "0002_schema_history",
@@ -427,6 +493,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0004_object_envelope_upgrades",
                 "0005_object_creation_source",
                 "0006_actor_identity",
+                "0007_provenance_ledger",
             ),
             result.migration_ids,
         )
@@ -508,6 +575,15 @@ class SqliteMigrationTests(unittest.TestCase):
                         6,
                         result.recovery_manifest_sha256,
                         storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        "0007_provenance_ledger",
+                        6,
+                        7,
+                        result.recovery_manifest_sha256,
+                        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                         "alembic-1.18.5",
                     ),
@@ -547,13 +623,14 @@ class SqliteMigrationTests(unittest.TestCase):
         create_version_2_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(2, plan.source_schema_version)
-        self.assertEqual(6, plan.target_schema_version)
+        self.assertEqual(7, plan.target_schema_version)
         self.assertEqual(
             (
                 "0003_object_envelopes",
                 "0004_object_envelope_upgrades",
                 "0005_object_creation_source",
                 "0006_actor_identity",
+                "0007_provenance_ledger",
             ),
             plan.migration_ids,
         )
@@ -566,6 +643,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0004_object_envelope_upgrades",
                 "0005_object_creation_source",
                 "0006_actor_identity",
+                "0007_provenance_ledger",
             ),
             result.migration_ids,
         )
@@ -627,6 +705,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         5,
                         6,
                         storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+                    ),
+                    (
+                        "0007_provenance_ledger",
+                        6,
+                        7,
+                        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -643,12 +728,22 @@ class SqliteMigrationTests(unittest.TestCase):
                 plan = plan_database_migration(database, expected_project_id=PROJECT_ID)
                 self.assertEqual(3, plan.source_schema_version)
                 self.assertEqual(
-                    ("0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity"),
+                    (
+                        "0004_object_envelope_upgrades",
+                        "0005_object_creation_source",
+                        "0006_actor_identity",
+                        "0007_provenance_ledger",
+                    ),
                     plan.migration_ids,
                 )
                 result = migrate_database(database, expected_project_id=PROJECT_ID)
                 self.assertEqual(
-                    ("0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity"),
+                    (
+                        "0004_object_envelope_upgrades",
+                        "0005_object_creation_source",
+                        "0006_actor_identity",
+                        "0007_provenance_ledger",
+                    ),
                     result.migration_ids,
                 )
                 current = storage.open_canonical_database(database, expected_project_id=PROJECT_ID)
@@ -670,12 +765,14 @@ class SqliteMigrationTests(unittest.TestCase):
                             "0004_object_envelope_upgrades",
                             "0005_object_creation_source",
                             "0006_actor_identity",
+                            "0007_provenance_ledger",
                         )
                         if legacy_object
                         else (
                             "0004_object_envelope_upgrades",
                             "0005_object_creation_source",
                             "0006_actor_identity",
+                            "0007_provenance_ledger",
                         ),
                         history,
                     )
@@ -686,10 +783,16 @@ class SqliteMigrationTests(unittest.TestCase):
         create_version_4_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(4, plan.source_schema_version)
-        self.assertEqual(("0005_object_creation_source", "0006_actor_identity"), plan.migration_ids)
+        self.assertEqual(
+            ("0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger"),
+            plan.migration_ids,
+        )
 
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual(("0005_object_creation_source", "0006_actor_identity"), result.migration_ids)
+        self.assertEqual(
+            ("0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger"),
+            result.migration_ids,
+        )
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
             self.assertEqual(
@@ -725,6 +828,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         5,
                         6,
                         storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+                    ),
+                    (
+                        "0007_provenance_ledger",
+                        6,
+                        7,
+                        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -750,10 +860,10 @@ class SqliteMigrationTests(unittest.TestCase):
         create_version_5_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(5, plan.source_schema_version)
-        self.assertEqual(("0006_actor_identity",), plan.migration_ids)
+        self.assertEqual(("0006_actor_identity", "0007_provenance_ledger"), plan.migration_ids)
 
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual(("0006_actor_identity",), result.migration_ids)
+        self.assertEqual(("0006_actor_identity", "0007_provenance_ledger"), result.migration_ids)
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
             self.assertEqual(
@@ -783,6 +893,35 @@ class SqliteMigrationTests(unittest.TestCase):
         finally:
             current.close()
 
+    def test_migrates_exact_v6_fixture_and_bridges_prior_narrow_rows_without_reinterpretation(self) -> None:
+        create_version_6_fixture(self.database)
+        plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual(6, plan.source_schema_version)
+        self.assertEqual(("0007_provenance_ledger",), plan.migration_ids)
+
+        result = migrate_database(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual(("0007_provenance_ledger",), result.migration_ids)
+        current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            bridge = current.execute(
+                """
+                SELECT event_id, actor_id, source_record_sha256, bridge_state
+                  FROM provenance_legacy_bridges
+                """
+            ).fetchone()
+            self.assertEqual(
+                (
+                    "01890f6e-6a40-7cc5-98b7-123456789ac1",
+                    "local.actor",
+                    "c" * 64,
+                    "legacy-narrow",
+                ),
+                tuple(bridge),
+            )
+            self.assertEqual(0, current.execute("SELECT count(*) FROM provenance_ledger_events").fetchone()[0])
+        finally:
+            current.close()
+
     def test_every_material_revision_step_rolls_back_to_exact_v1_and_retries(self) -> None:
         failpoints = (
             tuple((v0002_schema_history, step) for step in v0002_schema_history.MATERIAL_MIGRATION_STEPS)
@@ -795,6 +934,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 (v0005_object_creation_source, step) for step in v0005_object_creation_source.MATERIAL_MIGRATION_STEPS
             )
             + tuple((v0006_actor_identity, step) for step in v0006_actor_identity.MATERIAL_MIGRATION_STEPS)
+            + tuple((v0007_provenance_ledger, step) for step in v0007_provenance_ledger.MATERIAL_MIGRATION_STEPS)
         )
         for index, (revision_module, failpoint) in enumerate(failpoints):
             with self.subTest(revision=revision_module.revision, failpoint=failpoint):

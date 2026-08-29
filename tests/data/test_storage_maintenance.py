@@ -74,7 +74,7 @@ def event() -> AtomicRepositoryEvent:
         available_at=CREATED_AT,
         trace_id=TRACE_ID,
         actor_type="human",
-        actor_id="human.storage-maintenance-test",
+        actor_id="01890f6e-6a40-7cc5-98b7-000000000301",
         idempotency_key="storage-maintenance-document",
     )
 

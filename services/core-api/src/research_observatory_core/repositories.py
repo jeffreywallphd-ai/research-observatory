@@ -29,10 +29,14 @@ from .ports.repositories import (
     IntentRevisionRecord,
     IntentRevisionRepository,
     KnowledgeStatus,
+    LineageDirection,
+    LineageNode,
+    LineagePage,
     PrivacyAuditEvent,
     PrivacyPolicyRecord,
     PrivacyPolicyRepository,
     PrivacySetting,
+    ProvenanceLedgerRepository,
     RepositoryConflict,
     RepositoryIdempotencyConflict,
     RepositoryNotFound,
@@ -42,6 +46,8 @@ from .ports.repositories import (
     UnitOfWork,
     UnitOfWorkFactory,
 )
+from .provenance import canonical_aggregate_provenance_event
+from .provenance_contracts import canonical_provenance_json, decode_provenance_event, provenance_record_sha256
 from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
 
 _METADATA = MetaData()
@@ -96,6 +102,30 @@ _OUTBOX = Table(
     Column("published_at", String),
     Column("idempotency_key", String),
     Column("record_sha256", String),
+)
+_LEDGER = Table(
+    "provenance_ledger_events",
+    _METADATA,
+    Column("event_id", String),
+    Column("project_id", String),
+    Column("segment_key", String),
+    Column("sequence", Integer),
+    Column("subject", String),
+    Column("event_type", String),
+    Column("occurred_at", String),
+    Column("correlation_id", String),
+    Column("causation_id", String),
+    Column("activity_id", String),
+    Column("activity_type", String),
+    Column("activity_status", String),
+    Column("agent_id", String),
+    Column("sensitivity", String),
+    Column("retention_class", String),
+    Column("record_json", String),
+    Column("record_sha256", String),
+    Column("idempotency_sha256", String),
+    Column("previous_chain_sha256", String),
+    Column("chain_sha256", String),
 )
 _DOCUMENTS = Table(
     "documents",
@@ -931,6 +961,174 @@ def _command_fingerprint(
     return hashlib.sha256(payload).hexdigest()
 
 
+_PROVENANCE_SEGMENT_KEY = "rfc8785.sha256.v1"
+
+
+def _record_aggregate_provenance(
+    connection: CanonicalConnection,
+    *,
+    project_id: str,
+    revision: AggregateRevision,
+    previous: AggregateRevision | None,
+    event: AtomicRepositoryEvent,
+    idempotency_sha256: str,
+) -> None:
+    record_json = canonical_aggregate_provenance_event(revision=revision, previous=previous, event=event)
+    decoded = decode_provenance_event(json.loads(record_json))
+    if decoded is None or canonical_provenance_json(decoded) != record_json:
+        raise ValueError("aggregate provenance record is invalid")
+    record_sha256 = provenance_record_sha256(decoded)
+    previous_row = connection.execute(
+        """
+        SELECT sequence, chain_sha256
+          FROM provenance_ledger_events
+         WHERE project_id=? AND segment_key=?
+         ORDER BY sequence DESC
+         LIMIT 1
+        """,
+        (project_id, _PROVENANCE_SEGMENT_KEY),
+    ).fetchone()
+    sequence = 1 if previous_row is None else int(previous_row[0]) + 1
+    previous_chain = None if previous_row is None else str(previous_row[1])
+    chain_material = f"{previous_chain or 'genesis'}\n{record_sha256}\n{sequence}".encode("ascii")
+    chain_sha256 = f"sha256:{hashlib.sha256(chain_material).hexdigest()}"
+    data = cast(dict[str, Any], decoded["data"])
+    activity = cast(dict[str, Any], data["activity"])
+    connection.execute(
+        """
+        INSERT INTO provenance_ledger_events (
+            event_id, project_id, segment_key, sequence, subject, event_type,
+            occurred_at, correlation_id, causation_id, activity_id, activity_type,
+            activity_status, agent_id, sensitivity, retention_class, record_json,
+            record_sha256, idempotency_sha256, previous_chain_sha256, chain_sha256
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            decoded["id"],
+            project_id,
+            _PROVENANCE_SEGMENT_KEY,
+            sequence,
+            decoded["subject"],
+            decoded["type"],
+            decoded["time"],
+            decoded["correlationid"],
+            decoded["causationid"],
+            activity["activityId"],
+            activity["activityType"],
+            activity["status"],
+            decoded["actorid"],
+            decoded["sensitivity"],
+            decoded["retentionclass"],
+            record_json,
+            record_sha256,
+            idempotency_sha256,
+            previous_chain,
+            chain_sha256,
+        ),
+    )
+    for direction in ("input", "output"):
+        for entity in cast(tuple[dict[str, Any], ...], data[f"{direction}s"]):
+            connection.execute(
+                """
+                INSERT INTO provenance_ledger_entities (
+                    event_id, project_id, direction, entity_id, revision_id,
+                    entity_kind, content_hash, sensitivity, retention_class
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    decoded["id"],
+                    project_id,
+                    direction,
+                    entity["entityId"],
+                    entity["revisionId"],
+                    entity["entityKind"],
+                    entity["contentHash"],
+                    entity["sensitivity"],
+                    entity["retentionClass"],
+                ),
+            )
+    for relation in cast(tuple[dict[str, Any], ...], data["relations"]):
+        relation_entity = cast(dict[str, Any] | None, relation["entity"])
+        related = cast(dict[str, Any] | None, relation["relatedEntity"])
+        connection.execute(
+            """
+            INSERT INTO provenance_ledger_relations (
+                event_id, project_id, relation_id, relation_type, entity_id,
+                entity_revision_id, related_entity_id, related_revision_id,
+                activity_id, agent_id, occurred_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                decoded["id"],
+                project_id,
+                relation["relationId"],
+                relation["relationType"],
+                None if relation_entity is None else relation_entity["entityId"],
+                None if relation_entity is None else relation_entity["revisionId"],
+                None if related is None else related["entityId"],
+                None if related is None else related["revisionId"],
+                relation["activityId"],
+                relation["agentId"],
+                relation["occurredAt"],
+            ),
+        )
+    connection.execute(
+        """
+        INSERT INTO provenance_ledger_checkpoints (
+            checkpoint_id, event_id, project_id, segment_key, sequence, chain_sha256, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            event.outbox_id,
+            event.event_id,
+            project_id,
+            _PROVENANCE_SEGMENT_KEY,
+            sequence,
+            chain_sha256,
+            event.occurred_at,
+        ),
+    )
+    digest = record_sha256.removeprefix("sha256:")
+    connection.execute(
+        """
+        INSERT INTO provenance_events (
+            event_id, project_id, revision_id, event_type, occurred_at,
+            trace_id, actor_type, actor_id, record_sha256
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            event.event_id,
+            project_id,
+            revision.revision_id,
+            decoded["type"],
+            event.occurred_at,
+            event.trace_id,
+            event.actor_type,
+            event.actor_id,
+            digest,
+        ),
+    )
+    connection.execute(
+        """
+        INSERT INTO outbox_events (
+            outbox_id, project_id, revision_id, event_type, occurred_at,
+            available_at, state, attempt_count, published_at, idempotency_key,
+            record_sha256
+        ) VALUES (?, ?, ?, ?, ?, ?, 'pending', 0, NULL, ?, ?)
+        """,
+        (
+            event.outbox_id,
+            project_id,
+            revision.revision_id,
+            decoded["type"],
+            event.occurred_at,
+            event.available_at,
+            event.idempotency_key,
+            digest,
+        ),
+    )
+
+
 def _projection(row: Any) -> AggregateRevision:
     values: tuple[Any, ...] = tuple(row)
     return AggregateRevision(
@@ -1109,35 +1307,13 @@ class _SqliteAggregateRepository:
                     state.connection,
                     insert(_EXTENSIONS[projection.aggregate_kind]).values(revision_id=projection.revision_id),
                 )
-            _execute(
+            _record_aggregate_provenance(
                 state.connection,
-                insert(_PROVENANCE).values(
-                    event_id=event.event_id,
-                    project_id=state.project_id,
-                    revision_id=projection.revision_id,
-                    event_type=event.event_type,
-                    occurred_at=event.occurred_at,
-                    trace_id=event.trace_id,
-                    actor_type=event.actor_type,
-                    actor_id=event.actor_id,
-                    record_sha256=fingerprint,
-                ),
-            )
-            _execute(
-                state.connection,
-                insert(_OUTBOX).values(
-                    outbox_id=event.outbox_id,
-                    project_id=state.project_id,
-                    revision_id=projection.revision_id,
-                    event_type=event.event_type,
-                    occurred_at=event.occurred_at,
-                    available_at=event.available_at,
-                    state="pending",
-                    attempt_count=0,
-                    published_at=None,
-                    idempotency_key=event.idempotency_key,
-                    record_sha256=fingerprint,
-                ),
+                project_id=state.project_id,
+                revision=projection,
+                previous=current,
+                event=event,
+                idempotency_sha256=fingerprint,
             )
         except KeyError, sqlite3.Error, ValueError:
             self._mark_failed()
@@ -1147,17 +1323,27 @@ class _SqliteAggregateRepository:
 
     def _replay(self, idempotency_key: str, fingerprint: str) -> AggregateRevision | None:
         state = self._state()
-        statement = select(_OUTBOX.c.record_sha256, _OUTBOX.c.revision_id).where(
-            (_OUTBOX.c.project_id == state.project_id) & (_OUTBOX.c.idempotency_key == idempotency_key)
-        )
         try:
-            row = _execute(state.connection, statement).fetchone()
+            row = state.connection.execute(
+                """
+                SELECT outbox.record_sha256, outbox.revision_id, ledger.idempotency_sha256
+                  FROM outbox_events AS outbox
+                  LEFT JOIN provenance_ledger_events AS ledger
+                    ON ledger.project_id=outbox.project_id
+                   AND substr(ledger.record_sha256, 8)=outbox.record_sha256
+                 WHERE outbox.project_id=? AND outbox.idempotency_key=?
+                """,
+                (state.project_id, idempotency_key),
+            ).fetchone()
         except sqlite3.Error:
             self._mark_failed()
         else:
             if row is None:
                 return None
-            if str(row[0]) != fingerprint:
+            if row[2] is None:
+                self._mark_failed()
+                raise RepositoryTransactionFailed("idempotency record has no canonical provenance")
+            if str(row[2]) != fingerprint:
                 self._mark_failed()
                 raise RepositoryConflict("idempotency key was used for a different command")
             replay = self._by_revision_id(str(row[1]))
@@ -1290,4 +1476,279 @@ def create_sqlite_unit_of_work_factory(database: Path, project_id: str) -> UnitO
     return _SqliteUnitOfWorkFactory(database, project_id)
 
 
-__all__ = ["create_sqlite_unit_of_work_factory"]
+def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) -> str:
+    rows = connection.execute(
+        """
+        SELECT event_id, sequence, record_json, record_sha256,
+               previous_chain_sha256, chain_sha256, subject, event_type,
+               occurred_at, correlation_id, causation_id, activity_id,
+               activity_type, activity_status, agent_id, sensitivity,
+               retention_class
+          FROM provenance_ledger_events
+         WHERE project_id=? AND segment_key=?
+         ORDER BY sequence
+        """,
+        (project_id, _PROVENANCE_SEGMENT_KEY),
+    ).fetchall()
+    entities_by_event: dict[str, set[tuple[Any, ...]]] = {}
+    for candidate in connection.execute(
+        """
+        SELECT event_id, direction, entity_id, revision_id, entity_kind,
+               content_hash, sensitivity, retention_class
+          FROM provenance_ledger_entities
+         WHERE project_id=?
+        """,
+        (project_id,),
+    ):
+        entities_by_event.setdefault(str(candidate[0]), set()).add(tuple(candidate[1:]))
+    relations_by_event: dict[str, set[tuple[Any, ...]]] = {}
+    for candidate in connection.execute(
+        """
+        SELECT event_id, relation_id, relation_type, entity_id,
+               entity_revision_id, related_entity_id, related_revision_id,
+               activity_id, agent_id, occurred_at
+          FROM provenance_ledger_relations
+         WHERE project_id=?
+        """,
+        (project_id,),
+    ):
+        relations_by_event.setdefault(str(candidate[0]), set()).add(tuple(candidate[1:]))
+    checkpoints = {
+        (str(candidate[0]), int(candidate[1])): str(candidate[2])
+        for candidate in connection.execute(
+            """
+            SELECT event_id, sequence, chain_sha256
+              FROM provenance_ledger_checkpoints
+             WHERE project_id=? AND segment_key=?
+            """,
+            (project_id, _PROVENANCE_SEGMENT_KEY),
+        )
+    }
+    previous: str | None = None
+    for expected_sequence, row in enumerate(rows, start=1):
+        try:
+            decoded = decode_provenance_event(json.loads(str(row[2])))
+            if decoded is None:
+                return "integrity-review"
+            record_json = canonical_provenance_json(decoded)
+            record_sha256 = provenance_record_sha256(decoded)
+        except TypeError, ValueError, json.JSONDecodeError:
+            return "integrity-review"
+        data = cast(dict[str, Any], decoded["data"])
+        activity = cast(dict[str, Any], data["activity"])
+        if tuple(row[6:]) != (
+            decoded["subject"],
+            decoded["type"],
+            decoded["time"],
+            decoded["correlationid"],
+            decoded["causationid"],
+            activity["activityId"],
+            activity["activityType"],
+            activity["status"],
+            decoded["actorid"],
+            decoded["sensitivity"],
+            decoded["retentionclass"],
+        ):
+            return "integrity-review"
+        expected_entities = {
+            (
+                direction,
+                entity["entityId"],
+                entity["revisionId"],
+                entity["entityKind"],
+                entity["contentHash"],
+                entity["sensitivity"],
+                entity["retentionClass"],
+            )
+            for direction in ("input", "output")
+            for entity in cast(tuple[dict[str, Any], ...], data[f"{direction}s"])
+        }
+        actual_entities = entities_by_event.get(str(row[0]), set())
+        if actual_entities != expected_entities:
+            return "integrity-review"
+        expected_relations: set[tuple[Any, ...]] = set()
+        for relation in cast(tuple[dict[str, Any], ...], data["relations"]):
+            relation_entity = cast(dict[str, Any] | None, relation["entity"])
+            related = cast(dict[str, Any] | None, relation["relatedEntity"])
+            expected_relations.add(
+                (
+                    relation["relationId"],
+                    relation["relationType"],
+                    None if relation_entity is None else relation_entity["entityId"],
+                    None if relation_entity is None else relation_entity["revisionId"],
+                    None if related is None else related["entityId"],
+                    None if related is None else related["revisionId"],
+                    relation["activityId"],
+                    relation["agentId"],
+                    relation["occurredAt"],
+                )
+            )
+        actual_relations = relations_by_event.get(str(row[0]), set())
+        if actual_relations != expected_relations:
+            return "integrity-review"
+        chain_material = f"{previous or 'genesis'}\n{record_sha256}\n{expected_sequence}".encode("ascii")
+        chain_sha256 = f"sha256:{hashlib.sha256(chain_material).hexdigest()}"
+        if (
+            int(row[1]) != expected_sequence
+            or str(row[2]) != record_json
+            or str(row[3]) != record_sha256
+            or (None if row[4] is None else str(row[4])) != previous
+            or str(row[5]) != chain_sha256
+        ):
+            return "integrity-review"
+        if checkpoints.get((str(row[0]), expected_sequence)) != chain_sha256:
+            return "integrity-review"
+        previous = chain_sha256
+    return "verified" if len(checkpoints) == len(rows) else "integrity-review"
+
+
+class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
+    """Read-only bounded lineage adapter over canonical ledger projections."""
+
+    def __init__(self, database: Path, project_id: str) -> None:
+        if not database.is_absolute() or not project_id:
+            raise ValueError("provenance repository authority is invalid")
+        self._database = database
+        self._project_id = project_id
+
+    def lineage(
+        self,
+        *,
+        revision_id: str,
+        direction: LineageDirection,
+        cursor: int,
+        page_size: int,
+        max_depth: int,
+    ) -> LineagePage:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                integrity_state = _ledger_integrity_state(connection, self._project_id)
+                legacy_event_count = int(
+                    connection.execute(
+                        "SELECT count(*) FROM provenance_legacy_bridges WHERE project_id=?",
+                        (self._project_id,),
+                    ).fetchone()[0]
+                )
+                frontier = [(revision_id, 0)]
+                queued = {revision_id}
+                visited: set[str] = set()
+                ordered: list[tuple[str, int]] = []
+                missing: set[str] = set()
+                result_scan_limit = cursor + page_size + 1
+                absolute_scan_limit = 20_000
+                while frontier and len(ordered) < result_scan_limit and len(visited) < absolute_scan_limit:
+                    current_revision, depth = frontier.pop(0)
+                    queued.discard(current_revision)
+                    if current_revision in visited:
+                        continue
+                    visited.add(current_revision)
+                    exists = connection.execute(
+                        "SELECT 1 FROM aggregate_revisions WHERE project_id=? AND revision_id=?",
+                        (self._project_id, current_revision),
+                    ).fetchone()
+                    if exists is None:
+                        missing.add(current_revision)
+                        continue
+                    ordered.append((current_revision, depth))
+                    if depth >= max_depth:
+                        continue
+                    if direction == "ancestors":
+                        rows = connection.execute(
+                            """
+                            SELECT related_revision_id
+                              FROM provenance_ledger_relations
+                             WHERE project_id=? AND relation_type='wasDerivedFrom'
+                               AND entity_revision_id=? AND related_revision_id IS NOT NULL
+                             ORDER BY occurred_at, relation_id
+                            """,
+                            (self._project_id, current_revision),
+                        ).fetchall()
+                    else:
+                        rows = connection.execute(
+                            """
+                            SELECT entity_revision_id
+                              FROM provenance_ledger_relations
+                             WHERE project_id=? AND relation_type='wasDerivedFrom'
+                               AND related_revision_id=? AND entity_revision_id IS NOT NULL
+                             ORDER BY occurred_at, relation_id
+                            """,
+                            (self._project_id, current_revision),
+                        ).fetchall()
+                    for row in rows:
+                        candidate = str(row[0])
+                        if candidate in visited or candidate in queued:
+                            continue
+                        if len(visited) + len(frontier) >= absolute_scan_limit:
+                            break
+                        frontier.append((candidate, depth + 1))
+                        queued.add(candidate)
+
+                nodes: list[LineageNode] = []
+                for current_revision, depth in ordered:
+                    row = connection.execute(
+                        """
+                        SELECT entity.revision_id, entity.entity_id, entity.entity_kind,
+                               event.event_id, event.event_type, event.activity_id,
+                               event.activity_type, event.activity_status, event.agent_id,
+                               event.occurred_at
+                          FROM provenance_ledger_entities AS entity
+                          JOIN provenance_ledger_events AS event
+                            ON event.event_id=entity.event_id AND event.project_id=entity.project_id
+                         WHERE entity.project_id=? AND entity.revision_id=?
+                           AND entity.direction='output'
+                         ORDER BY event.occurred_at, event.event_id
+                         LIMIT 1
+                        """,
+                        (self._project_id, current_revision),
+                    ).fetchone()
+                    if row is None:
+                        missing.add(current_revision)
+                        continue
+                    nodes.append(
+                        LineageNode(
+                            revision_id=str(row[0]),
+                            entity_id=str(row[1]),
+                            entity_kind=str(row[2]),
+                            depth=depth,
+                            event_id=str(row[3]),
+                            event_type=str(row[4]),
+                            activity_id=str(row[5]),
+                            activity_type=str(row[6]),
+                            activity_status=cast(Any, str(row[7])),
+                            agent_id=str(row[8]),
+                            occurred_at=str(row[9]),
+                        )
+                    )
+                if missing:
+                    integrity_state = "integrity-review"
+                page = nodes[cursor : cursor + page_size]
+                has_more = cursor + len(page) < len(nodes) or bool(frontier)
+                next_cursor = cursor + len(page) if has_more and page and cursor + len(page) <= 10_000 else None
+                return LineagePage(
+                    revision_id=revision_id,
+                    direction=direction,
+                    items=tuple(page),
+                    missing_revision_ids=tuple(sorted(missing)),
+                    next_cursor=next_cursor,
+                    integrity_state=cast(Any, integrity_state),
+                    legacy_event_count=legacy_event_count,
+                )
+            finally:
+                connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError:
+            raise _repository_failure("provenance lineage query failed") from None
+
+
+def sqlite_provenance_ledger_repository(path: Path, project_id: str) -> ProvenanceLedgerRepository:
+    """Compose the canonical provenance repository for one authorized project."""
+
+    return _SqliteProvenanceLedgerRepository(path / "state" / "project.sqlite3", project_id)
+
+
+__all__ = [
+    "create_sqlite_unit_of_work_factory",
+    "sqlite_intent_revision_repository",
+    "sqlite_privacy_policy_repository",
+    "sqlite_provenance_ledger_repository",
+]

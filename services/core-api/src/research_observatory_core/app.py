@@ -45,6 +45,9 @@ from .models import (
     ProjectPrivacyRequest,
     ProjectProjection,
     ProjectRootRequest,
+    ProvenanceLineageNode,
+    ProvenanceLineagePage,
+    ProvenanceLineageRequest,
     ReadinessResponse,
     RuntimeState,
     VersionResponse,
@@ -58,6 +61,7 @@ from .operations import (
 )
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
+from .provenance import ProvenanceProblem, ProvenanceService
 from .research_intents import IntentProblem, ResearchIntentService
 from .transport import CoreProblem, TraceCorrelationMiddleware, problem_detail
 
@@ -72,6 +76,7 @@ class RuntimeContext:
     projects: ProjectLifecycleService
     privacy: ProjectPrivacyService
     intents: ResearchIntentService
+    provenance: ProvenanceService
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -83,6 +88,7 @@ def create_app(
     projects: ProjectLifecycleService | None = None,
     privacy: ProjectPrivacyService | None = None,
     intents: ResearchIntentService | None = None,
+    provenance: ProvenanceService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -94,6 +100,7 @@ def create_app(
         resolved_projects = projects if projects is not None else ProjectLifecycleService()
         resolved_privacy = privacy if privacy is not None else ProjectPrivacyService.unavailable(resolved_projects)
         resolved_intents = intents if intents is not None else ResearchIntentService.unavailable(resolved_projects)
+        resolved_provenance = provenance if provenance is not None else ProvenanceService.unavailable(resolved_projects)
         context = RuntimeContext(
             settings=resolved_settings,
             modules=resolved_modules,
@@ -101,6 +108,7 @@ def create_app(
             projects=resolved_projects,
             privacy=resolved_privacy,
             intents=resolved_intents,
+            provenance=resolved_provenance,
         )
         app.state.runtime = context
         context.state = RuntimeState.READY
@@ -276,6 +284,24 @@ def create_app(
         except IntentProblem as error:
             raise intent_problem(request, error) from error
 
+    def run_provenance_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+        except ProvenanceProblem as error:
+            raise CoreProblem(
+                problem_detail(
+                    status=409,
+                    code=error.code,
+                    title="Provenance query is unavailable",
+                    detail="The requested project lineage could not be inspected safely.",
+                    trace_id=request.state.trace_id,
+                    retryable=False,
+                    remediation="Open a compatible local project and retry with a bounded lineage request.",
+                )
+            ) from error
+
     @app.get("/healthz", response_model=HealthResponse, tags=["runtime"])
     def health(request: Request) -> HealthResponse:
         context = runtime(request)
@@ -310,6 +336,49 @@ def create_app(
     @app.get("/runtime/capabilities", response_model=CapabilitiesResponse, tags=["runtime"])
     def capabilities(request: Request) -> CapabilitiesResponse:
         return CapabilitiesResponse(capabilities=runtime(request).modules.capabilities)
+
+    @app.post(
+        "/projects/provenance/lineage",
+        response_model=ProvenanceLineagePage,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+        tags=["provenance"],
+    )
+    def provenance_lineage(request: Request, command: ProvenanceLineageRequest) -> ProvenanceLineagePage:
+        page = run_provenance_action(
+            request,
+            lambda: runtime(request).provenance.lineage(
+                root=command.root,
+                revision_id=command.revision_id,
+                direction=command.direction,
+                cursor=command.cursor,
+                page_size=command.page_size,
+                max_depth=command.max_depth,
+            ),
+        )
+        return ProvenanceLineagePage(
+            revision_id=page.revision_id,
+            direction=page.direction,
+            items=tuple(
+                ProvenanceLineageNode(
+                    revision_id=item.revision_id,
+                    entity_id=item.entity_id,
+                    entity_kind=item.entity_kind,
+                    depth=item.depth,
+                    event_id=item.event_id,
+                    event_type=item.event_type,
+                    activity_id=item.activity_id,
+                    activity_type=item.activity_type,
+                    activity_status=item.activity_status,
+                    agent_id=item.agent_id,
+                    occurred_at=item.occurred_at,
+                )
+                for item in page.items
+            ),
+            missing_revision_ids=page.missing_revision_ids,
+            next_cursor=page.next_cursor,
+            integrity_state=page.integrity_state,
+            legacy_event_count=page.legacy_event_count,
+        )
 
     @app.post(
         "/projects",

@@ -29,7 +29,12 @@ from .ports.database_keys import DatabaseKeyProvider
 from .ports.object_store_keys import ObjectMasterKeyProvider
 from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleService
-from .repositories import sqlite_intent_revision_repository, sqlite_privacy_policy_repository
+from .provenance import ProvenanceService
+from .repositories import (
+    sqlite_intent_revision_repository,
+    sqlite_privacy_policy_repository,
+    sqlite_provenance_ledger_repository,
+)
 from .research_intents import ResearchIntentService
 from .storage import (
     DEVELOPMENT_PLAINTEXT_PROFILE,
@@ -119,6 +124,7 @@ def create_runtime_app(
             repository_factory=sqlite_intent_revision_repository,
             local_actor_id=resolved_actor_id,
         ),
+        provenance=ProvenanceService(projects, sqlite_provenance_ledger_repository),
     )
 
 

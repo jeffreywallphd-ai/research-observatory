@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 6
+DATABASE_SCHEMA_VERSION = 7
+ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION = 6
 OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION = 5
 OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION = 4
 OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION = 3
@@ -76,6 +77,11 @@ EXPECTED_TABLES = (
     "ontologies",
     "decisions",
     "provenance_events",
+    "provenance_ledger_events",
+    "provenance_ledger_entities",
+    "provenance_ledger_relations",
+    "provenance_ledger_checkpoints",
+    "provenance_legacy_bridges",
     "settings",
     "outbox_events",
 )
@@ -92,19 +98,36 @@ IMMUTABLE_ROW_TABLES = (
     "ontologies",
     "decisions",
     "provenance_events",
+    "provenance_ledger_events",
+    "provenance_ledger_entities",
+    "provenance_ledger_relations",
+    "provenance_ledger_checkpoints",
+    "provenance_legacy_bridges",
     "settings",
 )
 MUTABLE_STATE_TABLES = ("object_records", "object_envelope_upgrades", "outbox_events")
 EXPECTED_TRIGGERS = tuple(
     sorted(
         [f"{table}_no_{operation}" for table in IMMUTABLE_ROW_TABLES for operation in ("delete", "update")]
-        + ["object_records_envelope_insert", "object_records_envelope_update"]
+        + [
+            "object_records_envelope_insert",
+            "object_records_envelope_update",
+            "provenance_events_bridge_legacy_after_insert",
+        ]
     )
 )
 EXPECTED_INDEXES = (
     "aggregate_revisions_project_kind",
     "outbox_events_dispatch",
     "provenance_events_project_time",
+    "provenance_ledger_project_time",
+    "provenance_ledger_project_type",
+    "provenance_ledger_project_subject",
+    "provenance_ledger_project_correlation",
+    "provenance_ledger_entity_input",
+    "provenance_ledger_entity_output",
+    "provenance_ledger_relation_entity",
+    "provenance_ledger_relation_related_entity",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -116,7 +139,9 @@ OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256 = "0b957b48a4280c0dd3c3f9ec518ac44b5fff935
 OBJECT_ENVELOPE_UPGRADE_PROFILE_SHA256 = "12cd2d187b6abf8e3cc597288c103277f1079e77b2cd206ad2821730181dbffb"
 OBJECT_CREATION_SOURCE_SCHEMA_SHA256 = "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"
 OBJECT_CREATION_SOURCE_PROFILE_SHA256 = "949f2d60ebe020ad8e8e049ac9d58307213d7aa7008025e5b340e543064ffaa7"
-EXPECTED_SCHEMA_SHA256 = "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
+ACTOR_IDENTITY_SCHEMA_SHA256 = "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
+ACTOR_IDENTITY_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834ecadf204f76aa771f"
+EXPECTED_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -171,7 +196,7 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
 _PROFILE_SHA256 = hashlib.sha256(
     json.dumps(_PROFILE_DOCUMENT, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
 ).hexdigest()
-EXPECTED_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834ecadf204f76aa771f"
+EXPECTED_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -874,6 +899,200 @@ SCHEMA_METADATA_V6_DDL = SCHEMA_METADATA_V5_DDL.replace(
     "schema_version INTEGER NOT NULL CHECK (schema_version = 5)",
     "schema_version INTEGER NOT NULL CHECK (schema_version = 6)",
 )
+SCHEMA_METADATA_V7_DDL = SCHEMA_METADATA_V6_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 6)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 7)",
+)
+
+PROVENANCE_LEDGER_DDL = (
+    f"""
+        CREATE TABLE provenance_ledger_events (
+            event_id TEXT PRIMARY KEY CHECK ({_uuid_check("event_id", "7")}),
+            project_id TEXT NOT NULL,
+            segment_key TEXT NOT NULL CHECK ({_identifier_check("segment_key", 120)}),
+            sequence INTEGER NOT NULL CHECK (sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            subject TEXT NOT NULL CHECK (length(subject) BETWEEN 50 AND 300),
+            event_type TEXT NOT NULL CHECK (length(event_type) BETWEEN 1 AND 160),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            correlation_id TEXT NOT NULL CHECK ({_uuid_check("correlation_id", "7")}),
+            causation_id TEXT CHECK (causation_id IS NULL OR ({_uuid_check("causation_id", "7")})),
+            activity_id TEXT NOT NULL CHECK ({_uuid_check("activity_id", "7")}),
+            activity_type TEXT NOT NULL CHECK ({_identifier_check("activity_type", 128)}),
+            activity_status TEXT NOT NULL CHECK (activity_status IN ('succeeded', 'failed', 'cancelled', 'denied')),
+            agent_id TEXT NOT NULL CHECK ({_uuid_check("agent_id", "7")}),
+            sensitivity TEXT NOT NULL CHECK (
+                sensitivity IN (
+                    'public-metadata', 'licensed-metadata', 'open-full-text',
+                    'licensed-full-text', 'private-research', 'restricted'
+                )
+            ),
+            retention_class TEXT NOT NULL CHECK (
+                retention_class IN ('project-lifetime', 'legal-hold', 'policy-bound', 'time-bounded', 'tombstone-only')
+            ),
+            record_json TEXT NOT NULL CHECK (length(record_json) BETWEEN 2 AND 1048576),
+            record_sha256 TEXT NOT NULL CHECK (
+                length(record_sha256) = 71 AND substr(record_sha256, 1, 7) = 'sha256:'
+                AND substr(record_sha256, 8) = lower(substr(record_sha256, 8))
+                AND substr(record_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            idempotency_sha256 TEXT NOT NULL CHECK ({_sha256_check("idempotency_sha256")}),
+            previous_chain_sha256 TEXT CHECK (
+                previous_chain_sha256 IS NULL OR (
+                    length(previous_chain_sha256) = 71 AND substr(previous_chain_sha256, 1, 7) = 'sha256:'
+                    AND substr(previous_chain_sha256, 8) = lower(substr(previous_chain_sha256, 8))
+                    AND substr(previous_chain_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+                )
+            ),
+            chain_sha256 TEXT NOT NULL CHECK (
+                length(chain_sha256) = 71 AND substr(chain_sha256, 1, 7) = 'sha256:'
+                AND substr(chain_sha256, 8) = lower(substr(chain_sha256, 8))
+                AND substr(chain_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, segment_key, sequence),
+            UNIQUE (project_id, event_id),
+            UNIQUE (project_id, record_sha256)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE provenance_ledger_entities (
+            event_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            direction TEXT NOT NULL CHECK (direction IN ('input', 'output')),
+            entity_id TEXT NOT NULL CHECK ({_uuid_check("entity_id", "7")}),
+            revision_id TEXT NOT NULL CHECK ({_uuid_check("revision_id", "7")}),
+            entity_kind TEXT NOT NULL CHECK ({_identifier_check("entity_kind", 128)}),
+            content_hash TEXT NOT NULL CHECK (
+                length(content_hash) = 71 AND substr(content_hash, 1, 7) = 'sha256:'
+                AND substr(content_hash, 8) = lower(substr(content_hash, 8))
+                AND substr(content_hash, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            sensitivity TEXT NOT NULL CHECK (
+                sensitivity IN (
+                    'public-metadata', 'licensed-metadata', 'open-full-text',
+                    'licensed-full-text', 'private-research', 'restricted'
+                )
+            ),
+            retention_class TEXT NOT NULL CHECK (
+                retention_class IN ('project-lifetime', 'legal-hold', 'policy-bound', 'time-bounded', 'tombstone-only')
+            ),
+            PRIMARY KEY (event_id, direction, revision_id),
+            FOREIGN KEY (event_id, project_id) REFERENCES provenance_ledger_events (event_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE provenance_ledger_relations (
+            event_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            relation_id TEXT NOT NULL CHECK ({_uuid_check("relation_id", "7")}),
+            relation_type TEXT NOT NULL CHECK (
+                relation_type IN (
+                    'used', 'wasGeneratedBy', 'wasAssociatedWith', 'wasDerivedFrom',
+                    'wasInvalidatedBy', 'wasAttributedTo'
+                )
+            ),
+            entity_id TEXT CHECK (entity_id IS NULL OR ({_uuid_check("entity_id", "7")})),
+            entity_revision_id TEXT CHECK (
+                entity_revision_id IS NULL OR ({_uuid_check("entity_revision_id", "7")})
+            ),
+            related_entity_id TEXT CHECK (related_entity_id IS NULL OR ({_uuid_check("related_entity_id", "7")})),
+            related_revision_id TEXT CHECK (
+                related_revision_id IS NULL OR ({_uuid_check("related_revision_id", "7")})
+            ),
+            activity_id TEXT CHECK (activity_id IS NULL OR ({_uuid_check("activity_id", "7")})),
+            agent_id TEXT CHECK (agent_id IS NULL OR ({_uuid_check("agent_id", "7")})),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            PRIMARY KEY (event_id, relation_id),
+            FOREIGN KEY (event_id, project_id) REFERENCES provenance_ledger_events (event_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK ((entity_id IS NULL) = (entity_revision_id IS NULL)),
+            CHECK ((related_entity_id IS NULL) = (related_revision_id IS NULL))
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE provenance_ledger_checkpoints (
+            checkpoint_id TEXT PRIMARY KEY CHECK ({_uuid_check("checkpoint_id", "7")}),
+            event_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            segment_key TEXT NOT NULL CHECK ({_identifier_check("segment_key", 120)}),
+            sequence INTEGER NOT NULL CHECK (sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            chain_sha256 TEXT NOT NULL CHECK (
+                length(chain_sha256) = 71 AND substr(chain_sha256, 1, 7) = 'sha256:'
+                AND substr(chain_sha256, 8) = lower(substr(chain_sha256, 8))
+                AND substr(chain_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (event_id, project_id) REFERENCES provenance_ledger_events (event_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, segment_key, sequence)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE provenance_legacy_bridges (
+            event_id TEXT PRIMARY KEY CHECK ({_uuid_check("event_id", "7")}),
+            project_id TEXT NOT NULL,
+            revision_id TEXT,
+            event_type TEXT NOT NULL CHECK ({_identifier_check("event_type")}),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            trace_id TEXT NOT NULL CHECK (
+                length(trace_id) = 32 AND trace_id = lower(trace_id) AND trace_id NOT GLOB '*[^0-9a-f]*'
+            ),
+            actor_type TEXT NOT NULL CHECK (actor_type IN ('human', 'system', 'worker', 'model')),
+            actor_id TEXT,
+            source_record_sha256 TEXT NOT NULL CHECK ({_sha256_check("source_record_sha256")}),
+            bridge_state TEXT NOT NULL CHECK (bridge_state = 'legacy-narrow'),
+            FOREIGN KEY (event_id) REFERENCES provenance_events (event_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    *(
+        statement
+        for table, message in (
+            ("provenance_ledger_events", "provenance ledger events are append-only"),
+            ("provenance_ledger_entities", "provenance ledger entities are append-only"),
+            ("provenance_ledger_relations", "provenance ledger relations are append-only"),
+            ("provenance_ledger_checkpoints", "provenance ledger checkpoints are append-only"),
+            ("provenance_legacy_bridges", "provenance legacy bridges are append-only"),
+        )
+        for statement in _immutable_triggers(table, message)
+    ),
+    "CREATE INDEX provenance_ledger_project_time ON provenance_ledger_events (project_id, occurred_at, event_id)",
+    "CREATE INDEX provenance_ledger_project_type ON provenance_ledger_events (project_id, event_type, occurred_at)",
+    "CREATE INDEX provenance_ledger_project_subject ON provenance_ledger_events (project_id, subject, occurred_at)",
+    "CREATE INDEX provenance_ledger_project_correlation ON provenance_ledger_events "
+    "(project_id, correlation_id, occurred_at)",
+    "CREATE INDEX provenance_ledger_entity_input ON provenance_ledger_entities "
+    "(project_id, revision_id, direction, event_id)",
+    "CREATE INDEX provenance_ledger_entity_output ON provenance_ledger_entities "
+    "(project_id, entity_id, direction, revision_id)",
+    "CREATE INDEX provenance_ledger_relation_entity ON provenance_ledger_relations "
+    "(project_id, entity_revision_id, relation_type)",
+    "CREATE INDEX provenance_ledger_relation_related_entity ON provenance_ledger_relations "
+    "(project_id, related_revision_id, relation_type)",
+    """
+        CREATE TRIGGER provenance_events_bridge_legacy_after_insert
+        AFTER INSERT ON provenance_events
+        WHEN NOT EXISTS (
+            SELECT 1 FROM provenance_ledger_events
+             WHERE project_id=NEW.project_id AND event_id=NEW.event_id
+        )
+        BEGIN
+            INSERT INTO provenance_legacy_bridges (
+                event_id, project_id, revision_id, event_type, occurred_at,
+                trace_id, actor_type, actor_id, source_record_sha256, bridge_state
+            ) VALUES (
+                NEW.event_id, NEW.project_id, NEW.revision_id, NEW.event_type,
+                NEW.occurred_at, NEW.trace_id, NEW.actor_type, NEW.actor_id,
+                NEW.record_sha256, 'legacy-narrow'
+            );
+        END
+    """,
+)
 
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
@@ -881,7 +1100,7 @@ _V6_BASE_DDL_STATEMENTS = tuple(
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V6_DDL,
+    SCHEMA_METADATA_V7_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -890,6 +1109,7 @@ _DDL_STATEMENTS = (
     *OBJECT_ENVELOPE_TRIGGERS,
     OBJECT_ENVELOPE_UPGRADES_DDL,
     OBJECT_CREATION_SOURCE_COLUMN,
+    *PROVENANCE_LEDGER_DDL,
 )
 
 

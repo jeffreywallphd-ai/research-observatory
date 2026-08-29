@@ -61,9 +61,10 @@ output, including outputs carried by an uncataloged future type.
 
 The generated TypeScript and Python contracts own immutable snapshots and
 produce deterministic RFC 8785-compatible JSON for the schema's restricted
-I-JSON subset. Python also returns the exact `sha256:` record identity. T02 will
-persist the original record, record hash, chain segment/checkpoint identity,
-and atomic outbox fact. A canonicalization or hash change starts a new segment;
+I-JSON subset. Python also returns the exact `sha256:` record identity. The v7
+SQLite adapter persists the original record, record hash, normalized query
+projection, chain segment/checkpoint identity, and atomic outbox fact. A
+canonicalization or hash change starts a new segment;
 it never rewrites historical bytes.
 
 The two runtimes and Draft 2020-12 schema accept only canonical millisecond UTC
@@ -80,7 +81,9 @@ preserving read-only inspection.
 
 T01 owns the schema, generated decoders, fixture, ADR, and package inventory.
 It deliberately does not create a second persistence system or reinterpret the
-existing narrow `provenance_events` rows. T02 owns the governed migration,
-atomic ledger/outbox write, idempotent retry, restart bridge, paged lineage
-queries, and checkpoint verification. T03 consumes those APIs for the approved
+existing narrow `provenance_events` rows. T02 adds the governed migration,
+atomic ledger/outbox write, idempotent retry, restart bridge, bounded paged
+lineage queries, and checkpoint verification. Earlier narrow rows remain
+explicit legacy bridges and are never reinterpreted as complete portable
+events. T03 consumes those APIs for the approved
 Audit and Lineage workspace; the renderer never reads SQLite directly.

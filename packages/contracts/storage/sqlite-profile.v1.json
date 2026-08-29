@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 6,
+  "databaseSchemaVersion": 7,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4",
+  "schemaFingerprintSha256": "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -37,6 +37,11 @@
     "ontologies",
     "decisions",
     "provenance_events",
+    "provenance_ledger_events",
+    "provenance_ledger_entities",
+    "provenance_ledger_relations",
+    "provenance_ledger_checkpoints",
+    "provenance_legacy_bridges",
     "settings"
   ],
   "mutableStateTables": ["object_records", "object_envelope_upgrades", "outbox_events"],
@@ -75,6 +80,11 @@
     "ontologies",
     "decisions",
     "provenance_events",
+    "provenance_ledger_events",
+    "provenance_ledger_entities",
+    "provenance_ledger_relations",
+    "provenance_ledger_checkpoints",
+    "provenance_legacy_bridges",
     "settings",
     "outbox_events"
   ]
