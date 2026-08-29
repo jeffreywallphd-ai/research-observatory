@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T03",
+  "commit": "d6fdf99df6df8e985316c331b70c98fab5b7c083",
+  "baseCommit": "08e81290382d208f10c5f460dcd32296b8e6da53",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S03.T03.R01.json",
+    "sha256": "bd303197367014eacb05a44a4307f82907eb7dbf83d5954586d4bb9d6a288bae",
+    "commit": "08e81290382d208f10c5f460dcd32296b8e6da53",
+    "reason": "Remediates CAP-03.S03.T03-R01-F01, CAP-03.S03.T03-R01-F02, and CAP-03.S03.T03-R01-F03 without expanding the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+    "apps/desktop/src/app/audit-lineage.conformance.json",
+    "artifacts/evidence/CAP-03.S03.T03.R01.json",
+    "artifacts/evidence/CAP-03.S03.T03.review-R01.json",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/provenance.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/data/test_sqlite_repositories.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/service/test_provenance.py",
+    "tools/core_api_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-R02-desktop-application.json; focused AuditLineageWorkspace Vitest and desktop TypeScript typecheck",
+      "exitCode": 0,
+      "result": "The complete desktop application verifier passed UI-component verification, lint, typecheck, the full Vitest suite, production build, cargo fmt, clippy, Rust tests, and Rust build. Its report has SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad. The focused renderer suite passed 7/7 after proving exact generated-client submission, immutable continuation authority, duplicate and cross-page depth denial, genuine human-decision rendering, content-minimized export, integrity denial, and executable conformance selectors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py; discover tests/contracts; discover tests/packaging; tests.data.test_sqlite_repositories",
+      "exitCode": 0,
+      "result": "All 53 service tests, 59 portable provenance-contract tests, six Windows sidecar packaging tests with one existing environment skip, and all 17 directly affected SQLite repository tests passed. The real service path persists a synthesis output with evidence, alternate, and human-decision inputs through the governed unit of work, appends an output-free valid invalidation, queries the canonical SQLite projection through Core in bounded pages, preserves every typed relation identity in exact order, and denies export when any traced target is rights-restricted."
+    },
+    {
+      "command": "generated Core client Vitest; contracts and desktop TypeScript typecheck; core_api_contract.py --check",
+      "exitCode": 0,
+      "result": "The generated client passed all 10 tests and both affected TypeScript builds passed. Request-aware decoding rejects over-page, over-depth, duplicate-fact, non-progress cursor, missing-root, mismatched revision/direction, and malformed relation responses while accepting the exact empty integrity-review response for a genuinely missing root. Required-nullable relatedRevisionId is synchronized across Pydantic, OpenAPI, generated TypeScript, and runtime decoding."
+    },
+    {
+      "command": "ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; ui_visual_regression_check.py",
+      "exitCode": 0,
+      "result": "Approved reference RO-UI-ACADEMIC-MINIMAL-1.3 remained reproducible and byte-valid. Token, 32-route, 14-workflow, accessibility/responsive, and deterministic Windows Chromium visual checks passed, including 64 light/dark captures at both governed responsive viewports. The task-owned conformance mapping binds the React lineage, audit, rights/egress, human-decision, and export regions and their interactions to the approved page contract without changing governed reference bytes."
+    },
+    {
+      "command": "architecture_check.py; repository_structure_check.py; agent_protocol_check.py; quality_check.py; backlog_views.py --check; taskctl.py validate; plan_review_check.py --repo .; build_manifest.py; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "Architecture, repository structure, durable-Wave protocol, Ruff formatting/lint and mypy across 166 governed Python files, generated backlog views, the 20-capability/117-slice/359-task backlog, all 150 planning review pages, and patch hygiene passed. The exact candidate build manifest passed as 0.1.0+gd6fdf99.dirty with SHA-256 7e1f334802be5407a685f62d7d45ff0a4486d3a7ed26f1742ba8756deb6fc7e1; dirty state is solely the protected untracked witness. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S03.T03-R01-F01 is remediated at the real persistence boundary. A governed synthesis record derives from the current evidence revision, an alternate evidence revision, and a human decision; the alternate is then invalidated through the output-free canonical invalidation operation. Core returns the selected output, exact source branches, decision, and valid invalidation as content-minimized typed facts without fabricating an invalidated output.",
+        "Every applicable entity-bound portable relation is returned with its immutable fact ID, entity direction, related revision, event, activity, configuration, actor, knowledge state, rights state, and depth. The three distinct wasDerivedFrom relations from the sampled synthesis output remain visible, and page-by-page replay returns the identical fact sequence with no skip or duplication.",
+        "The React workspace uses the generated client for one exact revision submission after navigation and freezes the accepted root/revision/direction/depth/page-size authority for continuation. It labels selected, source/alternate, prior/later, use, and invalidation facts without exposing research content, raw prompts, secrets, hidden rationale, or chain-of-thought."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "CAP-03.S03.T03-R01-F02 is remediated by request-bound generated-client validation: items cannot exceed requested page size or depth, fact IDs must be unique, depths must be deterministic and nondecreasing, the initial page must contain the requested root unless it is the exact missing-root integrity response, and any next cursor must equal the strictly advancing consumed-fact position.",
+        "The renderer retains one immutable accepted query for subsequent pages. It rejects a changed or nonzero initial authority, response revision/direction mismatch, duplicate identity, cursor mismatch, and depth regression across the page boundary before merging.",
+        "Expected, failure, denial, and boundary coverage passed across the real Core multi-page path, generated fake-transport adversarial cases, renderer merge/export cases, missing-reference integrity review, legacy visibility, closed-project denial, rights-restricted export denial, and all affected build/package boundaries."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S03.T03-R01-F03 is remediated with task-owned React regions for the lineage table, minimized audit events, rights and local-export policy, factual human decisions, and content-minimized manifest export. Integrity-review and rights-restricted traces disable export, and the page explicitly states that a local export decision does not authorize remote egress.",
+        "The deterministic implementation conformance file maps every required task-owned region, interaction, and state to executable selectors. Renderer tests prove those markers exist in the actual output, a genuine human decision renders from a decision entity, and the export omits research content and raw prompts while retaining exact identities and policy states.",
+        "The generated OpenAPI/client, Core service, SQLite projection, architecture contract, desktop capability inventory, built product, and approved-reference checks are synchronized. No migration, dependency, cloud path, governed experience-reference change, release authority, or unrelated product scope was introduced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 identified three acceptance-bound defects across persistence truth, a public generated client/pagination boundary, and a governed desktop experience. R02 therefore selects the real SQLite unit-of-work and Core service path, every portable provenance contract, request-aware generated-client adversarial cases, renderer continuation/export/conformance behavior, the complete desktop application build and Rust workspace, service/contract/packaging suites, exact repository tests, every governed UI conformance dimension, Python quality, architecture, generated contracts/views, task state, and witness safety. An exploratory full 109-test data sweep reported 107 passes and two stale object-envelope assertions that still expect database schema version 6 although the already-approved repository is at version 7; neither test reaches or is modified by the lineage projection, so they are preserved as W1-exit reconciliation debt rather than relabeled or changed inside T03. The previously recorded historical foundation profile remains adverse at 72 failures and 16 errors in stale GCR/GRR/controller and task-recovery expectations; it likewise remains mandatory W1-exit debt rather than a T03 product failure.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:agent-protocol",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S03 independent slice review will replay the accumulated append-only persistence, retry/restart, migration, lineage, integrity-review, recovery, generated-client, renderer, and adversarial integration union after T03 closes.",
+      "The two stale object-envelope schema-version assertions and the known historical foundation controller/recovery baseline must be reconciled or formally dispositioned before W1 exit qualification can pass; neither is attributed to this candidate.",
+      "Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S03.T03-R01-F01",
+      "CAP-03.S03.T03-R01-F02",
+      "CAP-03.S03.T03-R01-F03"
+    ],
+    "rootCauseAnalysis": "R01 treated lineage as one producing-output DTO per revision rather than a projection of independently identified portable relation facts, so valid output-free invalidations and multiple cross-aggregate derivations were not represented by the real product path. It also generated structurally strict but request-unaware decoding and let mutable form state drive continuation pages. Finally, it inferred React conformance from unchanged reference-package checks without mapping or testing the task-owned governed regions. R02 projects every applicable typed entity relation from canonical SQLite authority, carries valid invalidation/decision/rights facts through Core, binds client and renderer continuation to the accepted request, and adds an executable implementation conformance map plus factual region and export-policy tests.",
+    "note": "Independently review exact strict-descendant candidate d6fdf99df6df8e985316c331b70c98fab5b7c083. Replay all three R01 findings against the real persisted synthesis/evidence/alternate/decision/invalidation path, every relation identity, request-aware generated client, immutable renderer continuation, task-owned governed regions, rights/integrity export denial, and human-decision rendering. Authenticate the exact incremental file set, evidence and report hashes, truthful adverse-baseline separation, generated review-site parity, and protected-witness safety."
+  }
+}
