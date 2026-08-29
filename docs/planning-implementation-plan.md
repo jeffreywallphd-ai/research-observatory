@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ac46d275d5057ce4762b8653f9daf6e6cc4f624d297b00aa21b7ee7798e585f7
+source_sha256: 46f2c0eb254f892e6504e61433a105dedfcabb7b0fa1c4f4cddd2128eae59394
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4308,13 +4308,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / codex-independent-provenance-ledger-reviewer (`changes-requested`)
 
 **Objective:** Append-only ledger persistence integrated with domain transactions plus APIs for ancestors, descendants, production activity, and responsible agent.
 
@@ -4339,9 +4339,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S03.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `c20c04cbdc576e3d21b9e67bb0e77dc6f94bc4b44b055f4d77eccda90d2f03c4`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `c20c04cbdc576e3d21b9e67bb0e77dc6f94bc4b44b055f4d77eccda90d2f03c4`
 
 - Candidate / base / branch: `3680ecf86f455b8cbd6a10c27b63ae62c836e359` / `822cf18e55fb30c78958216aa30f24398b8b66b4` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-29T17:56:07+00:00`
@@ -4355,11 +4357,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / codex-independent-provenance-ledger-reviewer / `2026-08-29T18:09:13+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S03.T02.review-R01.json` / `43034dbdd9c9defc1d7e72669784202bdaaefb4924a28f9f4487ddf6124481d0`
 
-**Currently open findings:** -
+**Review notes:** Independent high-risk review verified the frozen criterion manifest at SHA-256 759c30ab7afeda398fdad5e3d9769eb7a33d13959a8aadadd8aaca2ff0bfdce2 and Git blob d2668be61a7781637d90b81a6372ccd0788ec516 in submission record a451ae7c84bbcf8e45d9d19520b3f565894e40d7. Exact candidate 3680ecf86f455b8cbd6a10c27b63ae62c836e359 is a strict descendant of base 822cf18e55fb30c78958216aa30f24398b8b66b4, the submission record descends from the candidate, and the manifest's 29 changed paths exactly match the base-to-candidate range. The submitted happy, rollback, retry, incomplete legacy-outbox, v1/v5/v6 migration, legacy-bridge, append-only, bounded lineage, generated OpenAPI/TypeScript, architecture, and package inventory paths are materially implemented. Independent replay passed all 15 repository/service provenance tests, five risk-selected migration tests including every declared migration failpoint, Core API generation synchronization, the architecture contract, repository structure, and patch hygiene. Approval is nevertheless unavailable because two high-severity acceptance-bound defects remain. A historically valid database initialized fresh at the immediately previous v6 authority migrates once to v7 but then fails every subsequent governed migration/open check because its legitimate history contains only 0007_provenance_ledger; the submitted v6 fixture conceals this state by pre-populating 0006_actor_identity. Separately, lineage integrity can return verified while its returned event identity contradicts both the hash-protected canonical record and the narrow audit row, because the verifier omits exact event/project identity from its denormalization comparison and the chain does not bind those projections. The evidence therefore overstates complete v1-v6 compatibility and complete canonical/denormalized verification. No additional acceptance-bound defect was reproduced in atomic rollback, no-output-without-provenance enforcement through the repository port, exact retry/idempotency conflict, legacy bridge non-reinterpretation, bounded ancestor/descendant traversal, producing activity/responsible agent projection, public OpenAPI/generated TypeScript alignment, packaging inventory, or scope containment. The declared T03 retention/recovery, slice-integration, and W1-exit deferrals remain properly assigned. artifacts/evidence/W1.A04.B00.json remains unstaged, byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c, and Git blob-identical at 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+
+**Findings opened:**
+
+- `CAP-03.S03.T02-R01-F01` `high` blocking=`True` criterion=`3` — A fresh v6 project becomes invalid after its first successful v7 migration; reproduce: At exact candidate 3680ecf86f455b8cbd6a10c27b63ae62c836e359, create the exact supported v6 schema and leave schema_migrations empty, matching a database initialized fresh while v6 was current. The source is explicitly accepted by _valid_migration_history's fresh-initialization rule, and plan_database_migration returns the expected 0007_provenance_ledger plan. migrate_database succeeds and records only (0007_provenance_ledger, 6, 7). Invoke plan_database_migration or migrate_database a second time, as project object-store startup does on a later open: both raise MigrationProblem('migration-source-profile-invalid'). For a current v7 database with any history, _valid_migration_history unconditionally expects a 0006_actor_identity row before 0007, even when the accepted v6 predecessor was a fresh initialization with no prior migration rows. The committed v6 test fixture starts from a constructed v5 database and inserts 0006, so it does not exercise the historically normal fresh-v6 state. As a corroborating inventory mismatch, migration_framework_projection reports targetSchemaVersion 7 but its revisions list stops at 0006_actor_identity.; remediate: Make successor-history validation preserve the accepted fresh-initialization branch: a v7 history containing only the exact 0007 transition from a valid fresh v6 source must remain valid, without fabricating a migration that never ran. Add a fixture built from the exact prior candidate's fresh v6 initialization (empty schema_migrations), migrate it backup-first, then prove a second plan/migrate and a project restart/open return current. Retain the existing complete-history paths and adverse-history denial. Update the migration framework revision inventory to include 0007_provenance_ledger and bind the regression to exact profile/history hashes.
+- `CAP-03.S03.T02-R01-F02` `high` blocking=`True` criterion=`1` — Lineage reports verified when the returned ledger identity contradicts the canonical record; reproduce: At the exact candidate, commit one aggregate revision through the governed unit of work. In the same raw-corruption style used by the submitted checkpoint/missing-reference test, disable foreign keys, drop the four ledger append-only update/delete trigger pairs, change provenance_ledger_events.event_id and the matching entity/relation/checkpoint child keys from 01890f6e-6a40-7cc5-98b7-000000000064 to 01890f6e-6a40-7cc5-98b7-000000000999, and recreate every exact trigger. Query that revision through sqlite_provenance_ledger_repository.lineage. The page returns integrity_state='verified' and exposes ...0999, while the canonical record_json id and the atomic narrow provenance_events row both remain ...0064. _ledger_integrity_state begins its denormalized tuple comparison at subject (row[6:]); it never compares the ledger key to decoded['id'], does not compare the table project authority to decoded['projectid'], and does not cross-bind the narrow audit identity. The record/chain hashes therefore remain valid while the API vouches for a contradictory producing event. This defeats the claimed canonical-byte/denormalized/checkpoint verification and can misidentify the exact provenance event even though the implementation detects adjacent relation and checkpoint corruption.; remediate: Bind every authoritative event projection used by lineage to the canonical record and integrity state, at minimum exact event_id and project_id plus the existing subject/type/time/activity/agent/classification fields. Cross-check the atomic narrow audit binding (event, project, revision, type, occurred-at, actor, and record digest), and ensure any unbound authority field such as idempotency fingerprint cannot be changed while the ledger remains 'verified'—either include it in checkpoint material or validate it against its canonical transaction facts. Add restored-trigger corruption tests for event identity, project authority, narrow-audit divergence, and any other denormalized authority field, each requiring integrity-review while retaining bounded read-only inspection.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by codex-independent-provenance-ledger-reviewer at `2026-08-29T18:09:13+00:00`
+
+**Latest notes:** Independent high-risk review verified the frozen criterion manifest at SHA-256 759c30ab7afeda398fdad5e3d9769eb7a33d13959a8aadadd8aaca2ff0bfdce2 and Git blob d2668be61a7781637d90b81a6372ccd0788ec516 in submission record a451ae7c84bbcf8e45d9d19520b3f565894e40d7. Exact candidate 3680ecf86f455b8cbd6a10c27b63ae62c836e359 is a strict descendant of base 822cf18e55fb30c78958216aa30f24398b8b66b4, the submission record descends from the candidate, and the manifest's 29 changed paths exactly match the base-to-candidate range. The submitted happy, rollback, retry, incomplete legacy-outbox, v1/v5/v6 migration, legacy-bridge, append-only, bounded lineage, generated OpenAPI/TypeScript, architecture, and package inventory paths are materially implemented. Independent replay passed all 15 repository/service provenance tests, five risk-selected migration tests including every declared migration failpoint, Core API generation synchronization, the architecture contract, repository structure, and patch hygiene. Approval is nevertheless unavailable because two high-severity acceptance-bound defects remain. A historically valid database initialized fresh at the immediately previous v6 authority migrates once to v7 but then fails every subsequent governed migration/open check because its legitimate history contains only 0007_provenance_ledger; the submitted v6 fixture conceals this state by pre-populating 0006_actor_identity. Separately, lineage integrity can return verified while its returned event identity contradicts both the hash-protected canonical record and the narrow audit row, because the verifier omits exact event/project identity from its denormalization comparison and the chain does not bind those projections. The evidence therefore overstates complete v1-v6 compatibility and complete canonical/denormalized verification. No additional acceptance-bound defect was reproduced in atomic rollback, no-output-without-provenance enforcement through the repository port, exact retry/idempotency conflict, legacy bridge non-reinterpretation, bounded ancestor/descendant traversal, producing activity/responsible agent projection, public OpenAPI/generated TypeScript alignment, packaging inventory, or scope containment. The declared T03 retention/recovery, slice-integration, and W1-exit deferrals remain properly assigned. artifacts/evidence/W1.A04.B00.json remains unstaged, byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c, and Git blob-identical at 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+
+**Currently open findings:** `CAP-03.S03.T02-R01-F01`, `CAP-03.S03.T02-R01-F02`
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: ac46d275d5057ce4762b8653f9daf6e6cc4f624d297b00aa21b7ee7798e585f7
+source_sha256: 46f2c0eb254f892e6504e61433a105dedfcabb7b0fa1c4f4cddd2128eae59394
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 266 |
 | `READY` | 1 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 52 |
 | `DEFERRED` | 36 |
 
@@ -360,7 +360,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S02.T02` | `append-only v1` | 5 | `-` | approved / codex-independent-native-intent-boundary-reviewer | - |
 | `CAP-03.S02.T03` | `append-only v1` | 4 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
 | `CAP-03.S03.T01` | `append-only v1` | 3 | `-` | approved / codex-independent-provenance-contract-reviewer | - |
-| `CAP-03.S03.T02` | `append-only v1` | 0 | `R01` | - / - | - |
+| `CAP-03.S03.T02` | `append-only v1` | 1 | `-` | changes-requested / codex-independent-provenance-ledger-reviewer | `CAP-03.S03.T02-R01-F01`, `CAP-03.S03.T02-R01-F02` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -428,4 +428,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S03.T02` Implement atomic provenance recording and lineage queries | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S03.T02` Implement atomic provenance recording and lineage queries | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
