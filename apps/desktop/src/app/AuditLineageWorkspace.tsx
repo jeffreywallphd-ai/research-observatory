@@ -137,27 +137,78 @@ export function mergeLineagePage(
   requestedCursor: number,
 ): ProvenanceLineagePage {
   if (current.revisionId !== next.revisionId || current.direction !== next.direction
-    || current.nextCursor !== requestedCursor) throw new Error("RO-CORE-RESPONSE-INVALID");
+    || current.nextCursor !== requestedCursor
+    || (next.nextCursor !== null && (
+      next.items.length === 0
+      || next.nextCursor <= requestedCursor
+      || next.nextCursor !== requestedCursor + next.items.length
+    ))
+    || current.exportAllowed !== (current.exportDenialReason === null)
+    || next.exportAllowed !== (next.exportDenialReason === null)) {
+    throw new Error("RO-CORE-RESPONSE-INVALID");
+  }
   const identities = new Set(current.items.map((item) => item.factId));
   const lastDepth = current.items.at(-1)?.depth ?? 0;
   if (next.items.some((item) => identities.has(item.factId))
     || (next.items[0]?.depth ?? lastDepth) < lastDepth) throw new Error("RO-CORE-RESPONSE-INVALID");
+  const items = [...current.items, ...next.items];
+  const integrityReview = current.integrityState === "integrity-review"
+    || next.integrityState === "integrity-review"
+    || current.exportDenialReason === "integrity-review"
+    || next.exportDenialReason === "integrity-review";
+  const rightsRestricted = current.exportDenialReason === "rights-restricted"
+    || next.exportDenialReason === "rights-restricted"
+    || items.some((item) => item.rightsStatus === "denied" || item.rightsStatus === "unknown");
+  const exportDenialReason = integrityReview
+    ? "integrity-review"
+    : rightsRestricted
+      ? "rights-restricted"
+      : null;
   return {
     ...next,
-    items: [...current.items, ...next.items],
+    items,
     missingRevisionIds: [...new Set([...current.missingRevisionIds, ...next.missingRevisionIds])],
-    integrityState: current.integrityState === "integrity-review" ? "integrity-review" : next.integrityState,
+    integrityState: integrityReview ? "integrity-review" : "verified",
     legacyEventCount: Math.max(current.legacyEventCount, next.legacyEventCount),
+    exportAllowed: exportDenialReason === null,
+    exportDenialReason,
   };
 }
 
-export function exportLineageManifest(trace: ProvenanceLineagePage): string {
-  if (!trace.exportAllowed || trace.exportDenialReason !== null) throw new Error("RO-CORE-EXPORT-DENIED");
+export function lineageManifestReady(
+  trace: ProvenanceLineagePage,
+  acceptedQuery: ProvenanceLineageRequest | null,
+): boolean {
+  return acceptedQuery !== null
+    && acceptedQuery.cursor === 0
+    && acceptedQuery.revisionId === trace.revisionId
+    && acceptedQuery.direction === trace.direction
+    && trace.nextCursor === null
+    && trace.integrityState === "verified"
+    && trace.exportAllowed
+    && trace.exportDenialReason === null
+    && !trace.items.some((item) => item.rightsStatus === "denied" || item.rightsStatus === "unknown");
+}
+
+export function exportLineageManifest(
+  trace: ProvenanceLineagePage,
+  acceptedQuery: ProvenanceLineageRequest | null,
+): string {
+  if (acceptedQuery === null || !lineageManifestReady(trace, acceptedQuery)) {
+    throw new Error("RO-CORE-EXPORT-DENIED");
+  }
   return JSON.stringify({
     schemaVersion: "1.0",
     manifestType: "content-minimized-lineage",
+    completeness: "complete",
     revisionId: trace.revisionId,
     direction: trace.direction,
+    acceptedBounds: {
+      maxDepth: acceptedQuery.maxDepth,
+      pageSize: acceptedQuery.pageSize,
+      startCursor: 0,
+      terminalCursor: trace.items.length,
+    },
     integrityState: trace.integrityState,
     redaction: "research-content-and-raw-prompts-omitted",
     egressDecision: "local-file-only",
@@ -226,10 +277,11 @@ export function AuditLineageWorkspace({
   const humanDecisions = trace?.items.filter(
     (item) => item.entityKind === "decision" && item.agentType === "human",
   ) ?? [];
+  const manifestReady = trace ? lineageManifestReady(trace, traceQuery) : false;
   const downloadManifest = (): void => {
     if (!trace) return;
     try {
-      const payload = exportLineageManifest(trace);
+      const payload = exportLineageManifest(trace, traceQuery);
       const url = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -367,7 +419,7 @@ export function AuditLineageWorkspace({
           <section className="lineage-governed-region" aria-labelledby="lineage-rights-title" data-rights-egress>
             <Typography id="lineage-rights-title" as="h2" variant="section-title">Rights &amp; egress decisions</Typography>
             <ul>{trace.items.map((node) => <li key={`rights:${node.factId}`}><code>{node.revisionId}</code> · rights {node.rightsStatus}</li>)}</ul>
-            <p>Local manifest export: {trace.exportAllowed ? "allowed" : `denied (${trace.exportDenialReason})`}. This trace does not authorize remote egress.</p>
+            <p>Local manifest export: {manifestReady ? "allowed" : trace.exportAllowed && trace.nextCursor !== null ? "pending (load every lineage page)" : `denied (${trace.exportDenialReason})`}. This trace does not authorize remote egress.</p>
           </section>
 
           <section className="lineage-governed-region" aria-labelledby="lineage-decisions-title" data-human-decisions>
@@ -378,8 +430,12 @@ export function AuditLineageWorkspace({
           <section className="lineage-governed-region" aria-labelledby="lineage-export-title" data-export-manifest>
             <Typography id="lineage-export-title" as="h2" variant="section-title">Exportable manifest</Typography>
             <p>Local JSON omits research content, raw prompts, secrets, and hidden rationale. Exact identities and policy states remain.</p>
-            <Button onClick={downloadManifest} disabled={!trace.exportAllowed}>Export content-minimized manifest</Button>
-            {!trace.exportAllowed ? <p role="alert">Export denied: {trace.exportDenialReason === "integrity-review" ? "integrity review is required" : "one or more lineage targets are rights-restricted"}.</p> : null}
+            <Button onClick={downloadManifest} disabled={!manifestReady}>Export content-minimized manifest</Button>
+            {trace.exportAllowed && trace.nextCursor !== null
+              ? <p role="status">Load every lineage page before exporting the complete manifest.</p>
+              : !manifestReady
+                ? <p role="alert">Export denied: {trace.exportDenialReason === "integrity-review" ? "integrity review is required" : "one or more lineage targets are rights-restricted"}.</p>
+                : null}
           </section>
 
           <div className="lineage-transparency-note">

@@ -955,7 +955,11 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         || result.items.some((item, index) => index > 0 && item.depth < (result.items[index - 1]?.depth ?? 0))
         || new Set(factIds).size !== factIds.length
         || (command.cursor === 0 && !rootResolved && !rootUnavailable)
-        || (result.nextCursor !== null && result.nextCursor !== command.cursor + result.items.length)) {
+        || (result.nextCursor !== null && (
+          result.items.length === 0
+          || result.nextCursor <= command.cursor
+          || result.nextCursor !== command.cursor + result.items.length
+        ))) {
         throw new Error("RO-CORE-RESPONSE-INVALID");
       }
       return result;
