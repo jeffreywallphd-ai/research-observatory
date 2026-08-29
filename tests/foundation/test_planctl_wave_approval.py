@@ -6,6 +6,7 @@ import tempfile
 import threading
 import time
 import unittest
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -15,8 +16,71 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+from capability_plan_check import initiation_assessment_errors, wave_initiation_rollup_errors  # noqa: E402
 from plan_review_site import build_site, delivery_status, status_stack  # noqa: E402
-from planctl import approve, approve_wave, frontmatter, scaffold_capability, scaffold_slice, write_plan  # noqa: E402
+from planctl import (  # noqa: E402
+    approve,
+    approve_wave,
+    frontmatter,
+    scaffold_capability,
+    scaffold_slice,
+    validate_wave,
+    write_plan,
+)
+
+
+def valid_initiation_assessment() -> tuple[dict[str, Any], str, dict[str, Any]]:
+    task = {"id": "CAP-20.S01.T01", "title": "Build product work"}
+    capability = {
+        "id": "CAP-20",
+        "title": "New capability",
+        "slices": [{"id": "CAP-20.S01", "title": "First product slice", "wave": "W2", "tasks": [task]}],
+    }
+    meta = {
+        "planning_policy_version": "initiation-assessment-1.0",
+        "initiation_assessment": {
+            "policy_version": "1.0",
+            "assessed_at": "2026-08-29T18:00:00Z",
+            "scope_reference": "a" * 40,
+            "estimation_unit": "relative-work-unit",
+            "planned_items": [{"work_id": task["id"], "effort": 10}],
+            "pre_assessment_planned_effort": 10,
+            "refactoring_items": [
+                {
+                    "id": "CAP-20.S01.T01/refactor-01",
+                    "work_id": task["id"],
+                    "effort": 1,
+                    "changes_existing_implementation": True,
+                    "introduced_in_wave": "W2",
+                    "major_refactor": False,
+                    "disposition": "included",
+                    "description": "Strengthen an existing boundary needed by the new product work",
+                }
+            ],
+            "cumulative_capability_refactoring_effort": 1,
+            "capability_refactoring_share": 0.1,
+            "budget_statement": "R <= 0.15 * P",
+            "major_refactor_disposition": "None identified",
+            "wave_refreshes": [
+                {
+                    "wave": "W2",
+                    "assessed_at": "2026-08-29T18:00:00Z",
+                    "scope_reference": "b" * 40,
+                    "planned_items": [{"work_id": task["id"], "effort": 10}],
+                    "pre_assessment_planned_effort": 10,
+                    "refactoring_item_ids": ["CAP-20.S01.T01/refactor-01"],
+                    "refactoring_effort": 1,
+                    "refactoring_share": 0.1,
+                    "cumulative_capability_refactoring_effort": 1,
+                    "budget_statement": "R <= 0.15 * P",
+                    "reestimate_rationale": "None; estimates match the capability baseline",
+                    "major_refactor_disposition": "None identified",
+                }
+            ],
+        },
+    }
+    body = "# CAP-20\n\n## 0A. Initiation assessment and planning adaptation\n\nAssessment.\n"
+    return meta, body, capability
 
 
 class PlanctlWaveApprovalTests(unittest.TestCase):
@@ -35,12 +99,104 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
             slice_path = scaffold_slice(root, capability, slice_)
             capability_body = capability_path.read_text(encoding="utf-8")
             slice_body = slice_path.read_text(encoding="utf-8")
+            capability_meta, _ = frontmatter(capability_path)
 
             self.assertIn("## 0A. Initiation assessment and planning adaptation", capability_body)
-            self.assertIn("15% technical-debt refactoring limit", capability_body)
+            self.assertIn("explicit R <= 0.15 * P calculation", capability_body)
             self.assertIn("route major refactoring outside initiation planning", capability_body)
             self.assertIn("applicable capability/Wave initiation assessment", slice_body)
             self.assertIn("major refactoring is outside initiation planning", slice_body)
+            self.assertEqual("initiation-assessment-1.0", capability_meta["planning_policy_version"])
+            self.assertIsNone(capability_meta["initiation_assessment"])
+
+    def test_structured_initiation_assessment_recomputes_bounded_cumulative_budget(self) -> None:
+        meta, body, capability = valid_initiation_assessment()
+        self.assertEqual([], initiation_assessment_errors(meta, body, capability, "W2"))
+        self.assertEqual([], wave_initiation_rollup_errors([(capability["id"], meta)], "W2"))
+
+    def test_missing_assessment_or_wave_refresh_is_rejected_prospectively(self) -> None:
+        meta, body, capability = valid_initiation_assessment()
+        missing = initiation_assessment_errors({}, body, capability, "W2")
+        self.assertTrue(any("initiation_assessment must be completed" in error for error in missing))
+
+        meta["initiation_assessment"]["wave_refreshes"] = []
+        missing_refresh = initiation_assessment_errors(meta, body, capability, "W2")
+        self.assertTrue(any("missing initiation assessment refresh for W2" in error for error in missing_refresh))
+
+    def test_refactoring_over_fifteen_percent_is_rejected_at_capability_and_wave_scope(self) -> None:
+        meta, body, capability = valid_initiation_assessment()
+        assessment = meta["initiation_assessment"]
+        assessment["refactoring_items"][0]["effort"] = 2
+        assessment["cumulative_capability_refactoring_effort"] = 2
+        assessment["capability_refactoring_share"] = 0.2
+        refresh = assessment["wave_refreshes"][0]
+        refresh["refactoring_effort"] = 2
+        refresh["refactoring_share"] = 0.2
+        refresh["cumulative_capability_refactoring_effort"] = 2
+
+        errors = initiation_assessment_errors(meta, body, capability, "W2")
+        self.assertTrue(any("capability refactoring budget exceeds 15%" in error for error in errors))
+        self.assertTrue(any("refactoring budget exceeds 15%" in error for error in errors))
+
+    def test_major_refactor_requires_disposition_and_cannot_be_included(self) -> None:
+        meta, body, capability = valid_initiation_assessment()
+        assessment = meta["initiation_assessment"]
+        assessment.pop("major_refactor_disposition")
+        assessment["refactoring_items"][0]["major_refactor"] = True
+
+        errors = initiation_assessment_errors(meta, body, capability, "W2")
+        self.assertTrue(any("major_refactor_disposition is required" in error for error in errors))
+        self.assertTrue(any("major refactor cannot be included" in error for error in errors))
+
+    def test_reestimate_requires_reconciliation_and_rollup_rejects_duplicate_allocation(self) -> None:
+        meta, body, capability = valid_initiation_assessment()
+        refresh = meta["initiation_assessment"]["wave_refreshes"][0]
+        refresh["planned_items"][0]["effort"] = 12
+        refresh["pre_assessment_planned_effort"] = 12
+        refresh["refactoring_share"] = 1 / 12
+        errors = initiation_assessment_errors(meta, body, capability, "W2")
+        self.assertTrue(any("reestimate_rationale must reconcile" in error for error in errors))
+
+        second_meta = deepcopy(meta)
+        second_meta["initiation_assessment"]["wave_refreshes"][0]["planned_items"][0]["work_id"] = "CAP-21.S01.T01"
+        rollup = wave_initiation_rollup_errors([("CAP-20", meta), ("CAP-21", second_meta)], "W2")
+        self.assertTrue(
+            any("refactoring allocation CAP-20.S01.T01/refactor-01 is counted more than once" in e for e in rollup)
+        )
+
+    def test_historical_approved_wave_compatibility_does_not_require_backfill(self) -> None:
+        _meta, _body, capability = valid_initiation_assessment()
+        self.assertEqual([], initiation_assessment_errors({}, "", capability, "W1"))
+        self.assertEqual([], wave_initiation_rollup_errors([], "W1"))
+
+    def test_existing_wave_validation_requires_the_prospective_assessment_rollup(self) -> None:
+        meta, body, capability = valid_initiation_assessment()
+        meta.update(
+            decisions=[{"id": "CAP-20-D01", "binding_waves": ["W2"]}],
+            capability_id="CAP-20",
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "planning").mkdir()
+            backlog = {
+                "waves": [{"id": "W2", "approval": {"status": "PENDING"}}],
+                "capabilities": [capability],
+            }
+            (root / "planning" / "backlog.yaml").write_text(yaml.safe_dump(backlog, sort_keys=False), encoding="utf-8")
+            plan_path = root / "planning" / "capability-plans" / "CAP-20.md"
+            write_plan(plan_path, meta, body)
+
+            successful_check = subprocess.CompletedProcess([], 0, stdout="", stderr="")
+            with (
+                patch("planctl.run_validator", return_value=0),
+                patch("planctl.subprocess.run", return_value=successful_check),
+            ):
+                self.assertEqual(0, validate_wave(root, "W2", False))
+                missing_meta = deepcopy(meta)
+                missing_meta.pop("initiation_assessment")
+                write_plan(plan_path, missing_meta, body)
+                with patch("planctl.sys.stderr"):
+                    self.assertEqual(1, validate_wave(root, "W2", False))
 
     def test_review_site_stacks_plan_decision_and_authoritative_delivery_status(self) -> None:
         self.assertEqual("not-started", delivery_status([{"status": "READY"}, {"status": "NOT_STARTED"}]))

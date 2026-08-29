@@ -26,7 +26,10 @@ Before start:
    architecture, current best practice, and the proposed plan.
 2. Assessment-added technical-debt refactoring is explicitly identified and is
    no more than 15% of pre-assessment planned implementation effort at both Wave
-   and capability scope. Major refactors are routed outside initiation planning.
+   and capability scope. The itemized baseline is commit/hash-bound, the
+   capability numerator is cumulative, the Wave roll-up is deduplicated, and
+   re-estimation is reconciled. Major refactors are routed outside initiation
+   planning.
 3. Every slice in the Wave has a plan generated from `planning/slice-plans/TEMPLATE.md`.
 4. Every contributing capability packet covers cross-slice and material decisions.
 5. Every decision presents at least two credible candidates, a recommendation, and rationale.

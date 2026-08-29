@@ -97,9 +97,12 @@ Feedback is never implicit approval.
 Before approval, reviewers confirm that the contributing capability plans show
 the applicable initiation assessment: current implementation baseline, Vision
 and best-practice fit, necessary support improvements, and a technical-debt
-refactoring share no greater than 15% at capability and Wave scope. This is part
-of reviewing the existing packet, not a separate approval. The requirement is
-prospective and does not invalidate earlier immutable Wave approvals.
+refactoring share no greater than 15% at capability and Wave scope. Review the
+itemized, commit/hash-bound baseline, cumulative capability allocations,
+deduplicated Wave roll-up, and every re-estimation rationale rather than
+accepting only a reported percentage. This is part of reviewing the existing
+packet, not a separate approval. The requirement is prospective and does not
+invalidate earlier immutable Wave approvals.
 
 After all capability feedback has been applied, approve the complete Wave packet:
 

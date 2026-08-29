@@ -67,7 +67,11 @@ capability and Wave levels, its forecast effort must be no more than 15% of the
 pre-assessment forecast effort of the already planned implementation work. Use
 one recorded estimation basis, do not use raw task counts unless tasks are
 deliberately size-normalized, and do not relabel refactoring as new work to evade
-the limit. The remaining plan must be predominantly new or previously planned
+the limit. Bind the itemized pre-assessment work and estimates to a date plus a
+commit or content hash. Keep one cumulative capability numerator across later
+Wave refreshes, deduplicate the Wave roll-up, and reconcile every post-baseline
+estimate change with rationale. Mixed items allocate their refactoring effort
+explicitly. The remaining plan must be predominantly new or previously planned
 product work.
 
 For this rule, a major refactor includes changing an accepted architectural

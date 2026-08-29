@@ -3,6 +3,36 @@ plan_schema_version: "1.1"
 document_type: capability-decision-plan
 baseline: "1.3"
 supplemental_release: "1.3.4"
+planning_policy_version: "initiation-assessment-1.0"
+initiation_assessment:
+  policy_version: "1.0"
+  assessed_at: "YYYY-MM-DDTHH:MM:SSZ"
+  scope_reference: "full Git commit or sha256:<digest> of the pre-assessment scope"
+  estimation_unit: "one consistent effort unit"
+  planned_items:
+    - work_id: "CAP-XX.SYY.TZZ"
+      effort: 10
+  pre_assessment_planned_effort: 10
+  refactoring_items: []
+  cumulative_capability_refactoring_effort: 0
+  capability_refactoring_share: 0
+  budget_statement: "R <= 0.15 * P"
+  major_refactor_disposition: "None identified"
+  wave_refreshes:
+    - wave: "W?"
+      assessed_at: "YYYY-MM-DDTHH:MM:SSZ"
+      scope_reference: "full Git commit or sha256:<digest> of the Wave pre-assessment scope"
+      planned_items:
+        - work_id: "CAP-XX.SYY.TZZ"
+          effort: 10
+      pre_assessment_planned_effort: 10
+      refactoring_item_ids: []
+      refactoring_effort: 0
+      refactoring_share: 0
+      cumulative_capability_refactoring_effort: 0
+      budget_statement: "R <= 0.15 * P"
+      reestimate_rationale: "None; estimates match the capability baseline"
+      major_refactor_disposition: "None identified"
 capability_id: "CAP-XX"
 title: "Replace with capability title"
 status: proposed
@@ -59,11 +89,14 @@ All slices in `CAP-01` through `CAP-19` have individual implementation plans. If
 ## 0A. Initiation assessment and planning adaptation
 
 Record the tested implementation baseline, Vision/architecture/best-practice
-fit, plan adaptations, necessary support improvements, and the estimation basis,
-numerator, denominator, and percentage for the 15% technical-debt refactoring
-limit. Include one capability-initiation baseline and a concise refresh for each
-Wave in which this capability becomes binding. Record major or over-budget work
-as a separate future disposition rather than deciding it here.
+fit, plan adaptations, and necessary support improvements. The front matter
+binds the pre-assessment scope reference, common estimation unit, itemized
+planned-work denominator, itemized refactoring allocations, explicit
+`R <= 0.15 * P` calculation, and major-refactor disposition. Refactoring
+allocations are cumulative across Wave refreshes; a later refresh cannot reset
+the capability numerator. Each Wave refresh identifies exactly the allocations
+introduced there, and the Wave validator deduplicates them across capabilities.
+Any post-baseline estimate change requires reconciliation and rationale.
 
 ## 1. Capability outcome and production-ready exit
 ## 2. Slice map and end-to-end dependency logic

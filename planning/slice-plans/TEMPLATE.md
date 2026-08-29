@@ -35,10 +35,11 @@ All slices in `CAP-01` through `CAP-19` have individual implementation plans. If
 > **Implementation gate.** Before implementation, the capability decision packet must be decision-complete, its decisions must be Wave-classified, this plan and every peer plan in the active Wave must be approved at the same immutable commit, required ADRs/reference changes must be approved, and `python tools/planctl.py wave ready WN --require-approved` must pass. The planning agent must create this plan from the canonical template if it is missing.
 
 > **Planning adaptation.** While proposed, this slice must incorporate the
-> capability/Wave initiation assessment. Any assessment-added work whose primary
-> purpose is changing previously implemented structure or behavior is
-> technical-debt refactoring and counts toward the recorded 15% capability and
-> Wave limits. Major refactoring is outside this initiation plan.
+> capability/Wave initiation assessment. Any assessment-added work that changes
+> previously implemented structure or behavior is technical-debt refactoring and
+> counts toward the recorded 15% capability and Wave limits. A mixed new-work and
+> refactoring item must allocate the refactoring effort explicitly rather than
+> excluding the whole item. Major refactoring is outside this initiation plan.
 
 <div class="visual-flow"><span>Decide capability</span><b>→</b><span>Approve slice plan</span><b>→</b><span>Execute tasks</span><b>→</b><span>Integrate and review</span></div>
 
