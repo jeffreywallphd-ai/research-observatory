@@ -98,6 +98,10 @@ main { min-width: 0; width: min(100%, 80rem); padding: var(--space-7); }
 .lineage-results td { font-size: var(--text-sm); }
 .lineage-results td > span, .lineage-results td > code, .lineage-results td > time { display: block; margin-block-start: var(--space-1); }
 .lineage-results code { max-width: 24rem; overflow-wrap: anywhere; font-size: var(--text-xs); }
+.lineage-governed-region { display: grid; gap: var(--space-3); padding: var(--space-4); background: var(--surface-1); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+.lineage-governed-region > p, .lineage-governed-region > ul, .lineage-governed-region > ol { margin: 0; }
+.lineage-governed-region ul, .lineage-governed-region ol { display: grid; gap: var(--space-2); padding-inline-start: var(--space-5); }
+.lineage-governed-region code { overflow-wrap: anywhere; }
 .diagnostics-workspace { display: grid; gap: var(--space-5); }
 .diagnostics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--space-4); }
 .diagnostics-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }

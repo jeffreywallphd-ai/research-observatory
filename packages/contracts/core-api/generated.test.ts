@@ -53,9 +53,15 @@ describe("generated Core API client", () => {
       direction: "ancestors",
       items: [
         {
+          factId: "01890f47-eae3-7cc0-98c4-dc0c0c073980",
+          relationType: "wasDerivedFrom",
+          entityDirection: "output",
           revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073981",
           entityId: "01890f47-eae3-7cc0-88c4-dc0c0c073982",
           entityKind: "synthesis.sentence",
+          relatedRevisionId: "01890f47-eae3-7cc0-98c4-dc0c0c07398a",
+          knowledgeStatus: "inferred",
+          rightsStatus: "allowed",
           depth: 0,
           eventId: "01890f47-eae3-7cc0-98c4-dc0c0c073983",
           eventType: "org.research-observatory.synthesis.created.v1",
@@ -71,9 +77,15 @@ describe("generated Core API client", () => {
           occurredAt: "2026-08-29T19:00:00Z",
         },
         {
+          factId: "01890f47-eae3-7cc0-98c4-dc0c0c073990",
+          relationType: "wasInvalidatedBy",
+          entityDirection: "input",
           revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073986",
           entityId: "01890f47-eae3-7cc0-88c4-dc0c0c073982",
           entityKind: "synthesis.sentence",
+          relatedRevisionId: null,
+          knowledgeStatus: "stale",
+          rightsStatus: "allowed",
           depth: 1,
           eventId: "01890f47-eae3-7cc0-98c4-dc0c0c073987",
           eventType: "org.research-observatory.synthesis.invalidated.v1",
@@ -89,9 +101,15 @@ describe("generated Core API client", () => {
           occurredAt: "2026-08-29T18:00:00Z",
         },
         {
+          factId: "01890f47-eae3-7cc0-98c4-dc0c0c073991",
+          relationType: "wasGeneratedBy",
+          entityDirection: "output",
           revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c07398a",
           entityId: "01890f47-eae3-7cc0-88c4-dc0c0c07398b",
           entityKind: "evidence.passage",
+          relatedRevisionId: null,
+          knowledgeStatus: "verified",
+          rightsStatus: "allowed",
           depth: 1,
           eventId: "01890f47-eae3-7cc0-98c4-dc0c0c07398c",
           eventType: "org.research-observatory.evidence.recorded.v1",
@@ -111,6 +129,8 @@ describe("generated Core API client", () => {
       nextCursor: null,
       integrityState: "integrity-review",
       legacyEventCount: 1,
+      exportAllowed: false,
+      exportDenialReason: "integrity-review",
     };
 
     expect(decodeProvenanceLineagePage(lineage)).toEqual(lineage);
@@ -172,6 +192,50 @@ describe("generated Core API client", () => {
       pageSize: 50,
       maxDepth: 8,
     })).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+
+    const unavailable = {
+      ...lineage,
+      items: [],
+      missingRevisionIds: [lineage.revisionId],
+      nextCursor: null,
+      integrityState: "integrity-review" as const,
+      exportAllowed: false,
+      exportDenialReason: "integrity-review" as const,
+    };
+    const missingRoot = createCoreApiClient(async () => response(200, unavailable));
+    await expect(missingRoot.lineage({
+      root: "C:/Research/study-one",
+      revisionId: lineage.revisionId,
+      direction: "ancestors",
+      cursor: 0,
+      pageSize: 50,
+      maxDepth: 8,
+    })).resolves.toEqual(unavailable);
+
+    const request = {
+      root: "C:/Research/study-one",
+      revisionId: lineage.revisionId,
+      direction: "ancestors" as const,
+      cursor: 0,
+      pageSize: 50,
+      maxDepth: 8,
+    };
+    for (const invalid of [
+      {
+        ...lineage,
+        items: Array.from({ length: 51 }, (_, index) => ({
+          ...lineage.items[0]!,
+          factId: `01890f47-eae3-7cc0-98c4-${(index + 1000).toString(16).padStart(12, "0")}`,
+        })),
+      },
+      { ...lineage, items: [{ ...lineage.items[0]!, depth: 9 }] },
+      { ...lineage, nextCursor: 0 },
+      { ...lineage, items: [lineage.items[0]!, { ...lineage.items[0]! }] },
+      { ...lineage, items: lineage.items.filter((item) => item.depth !== 0) },
+    ]) {
+      const adversarial = createCoreApiClient(async () => response(200, invalid));
+      await expect(adversarial.lineage(request)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    }
   });
 
   it("decodes and evaluates only the exact compatible version envelope", async () => {

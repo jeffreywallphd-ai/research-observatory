@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+  "referencePage": "audit-lineage.html",
+  "routeId": "audit-lineage",
+  "component": "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+  "regions": {
+    "source-to-output-lineage": "[data-audit-lineage-workspace] .lineage-results",
+    "model-schema-prompt-versions": "[data-audit-lineage-workspace] .lineage-table-scroll",
+    "rights-and-egress-decisions": "[data-rights-egress]",
+    "human-decisions": "[data-human-decisions]",
+    "audit-events": "[data-audit-events]",
+    "exportable-manifest": "[data-export-manifest]"
+  },
+  "interactions": {
+    "trace-exact-revision": "[data-trace-lineage]",
+    "load-next-bounded-page": ".lineage-results button",
+    "export-content-minimized-manifest": "[data-export-manifest] button"
+  },
+  "states": [
+    "closed-project-denial",
+    "read-only-inspection",
+    "verified",
+    "integrity-review",
+    "missing-revision",
+    "legacy-event",
+    "stale-invalidation",
+    "rights-restricted-export-denial"
+  ],
+  "tests": [
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+    "packages/contracts/core-api/generated.test.ts",
+    "tests/service/test_provenance.py"
+  ]
+}

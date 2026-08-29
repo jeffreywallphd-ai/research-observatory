@@ -46,7 +46,7 @@ from .ports.repositories import (
     UnitOfWork,
     UnitOfWorkFactory,
 )
-from .provenance import canonical_aggregate_provenance_event
+from .provenance import canonical_aggregate_provenance_event, canonical_invalidation_provenance_event
 from .provenance_contracts import canonical_provenance_json, decode_provenance_event, provenance_record_sha256
 from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
 
@@ -931,6 +931,7 @@ def _command_fingerprint(
     revision: AggregateRevision,
     event: AtomicRepositoryEvent,
     expected_revision: int | None,
+    provenance_inputs: tuple[AggregateRevision, ...] = (),
 ) -> str:
     document = {
         "actorId": event.actor_id,
@@ -952,6 +953,10 @@ def _command_fingerprint(
         "occurredAt": event.occurred_at,
         "outboxId": event.outbox_id,
         "projectId": project_id,
+        "provenanceInputs": [
+            {"contentHash": _projection_content_sha256(item), "revisionId": item.revision_id}
+            for item in provenance_inputs
+        ],
         "revision": revision.revision,
         "revisionId": revision.revision_id,
         "rightsStatus": revision.rights_status,
@@ -1016,16 +1021,15 @@ def _provenance_chain_sha256(
     return f"sha256:{hashlib.sha256(chr(10).join(fields).encode('ascii')).hexdigest()}"
 
 
-def _record_aggregate_provenance(
+def _record_provenance(
     connection: CanonicalConnection,
     *,
     project_id: str,
-    revision: AggregateRevision,
-    previous: AggregateRevision | None,
+    primary_revision_id: str,
+    record_json: str,
     event: AtomicRepositoryEvent,
     idempotency_sha256: str,
 ) -> None:
-    record_json = canonical_aggregate_provenance_event(revision=revision, previous=previous, event=event)
     decoded = decode_provenance_event(json.loads(record_json))
     if decoded is None or canonical_provenance_json(decoded) != record_json:
         raise ValueError("aggregate provenance record is invalid")
@@ -1046,7 +1050,7 @@ def _record_aggregate_provenance(
     outbox_authority_sha256 = _outbox_authority_sha256(
         outbox_id=event.outbox_id,
         project_id=project_id,
-        revision_id=revision.revision_id,
+        revision_id=primary_revision_id,
         event_type=str(decoded["type"]),
         occurred_at=event.occurred_at,
         available_at=event.available_at,
@@ -1167,7 +1171,7 @@ def _record_aggregate_provenance(
         (
             event.event_id,
             project_id,
-            revision.revision_id,
+            primary_revision_id,
             decoded["type"],
             event.occurred_at,
             event.trace_id,
@@ -1187,13 +1191,38 @@ def _record_aggregate_provenance(
         (
             event.outbox_id,
             project_id,
-            revision.revision_id,
+            primary_revision_id,
             decoded["type"],
             event.occurred_at,
             event.available_at,
             event.idempotency_key,
             digest,
         ),
+    )
+
+
+def _record_aggregate_provenance(
+    connection: CanonicalConnection,
+    *,
+    project_id: str,
+    revision: AggregateRevision,
+    previous: AggregateRevision | None,
+    additional_inputs: tuple[AggregateRevision, ...],
+    event: AtomicRepositoryEvent,
+    idempotency_sha256: str,
+) -> None:
+    _record_provenance(
+        connection,
+        project_id=project_id,
+        primary_revision_id=revision.revision_id,
+        record_json=canonical_aggregate_provenance_event(
+            revision=revision,
+            previous=previous,
+            event=event,
+            additional_inputs=additional_inputs,
+        ),
+        event=event,
+        idempotency_sha256=idempotency_sha256,
     )
 
 
@@ -1304,6 +1333,16 @@ class _SqliteAggregateRepository:
         if draft.aggregate_kind != "document" and draft.object_sha256 is not None:
             self._mark_failed()
             raise RepositoryProblem("object identity is only valid for documents")
+        if len(draft.provenance_inputs) > 64 or len({item.revision_id for item in draft.provenance_inputs}) != len(
+            draft.provenance_inputs
+        ):
+            self._mark_failed()
+            raise RepositoryProblem("provenance inputs are invalid")
+        for source in draft.provenance_inputs:
+            stored = self._by_revision_id(source.revision_id)
+            if stored != source or source.project_id != state.project_id or source.revision_id == draft.revision_id:
+                self._mark_failed()
+                raise RepositoryConflict("provenance input authority changed")
 
         revision_number = 0 if expected_revision is None else expected_revision + 1
         projection = AggregateRevision(
@@ -1321,7 +1360,13 @@ class _SqliteAggregateRepository:
             rights_status=draft.rights_status,
             object_sha256=draft.object_sha256,
         )
-        fingerprint = _command_fingerprint(state.project_id, projection, event, expected_revision)
+        fingerprint = _command_fingerprint(
+            state.project_id,
+            projection,
+            event,
+            expected_revision,
+            draft.provenance_inputs,
+        )
         replay = self._replay(event, fingerprint)
         if replay is not None:
             return replay
@@ -1400,6 +1445,7 @@ class _SqliteAggregateRepository:
                 project_id=state.project_id,
                 revision=projection,
                 previous=current,
+                additional_inputs=draft.provenance_inputs,
                 event=event,
                 idempotency_sha256=fingerprint,
             )
@@ -1407,6 +1453,80 @@ class _SqliteAggregateRepository:
             self._mark_failed()
         else:
             return projection
+        raise _repository_failure()
+
+    def invalidate(self, revision_id: str, event: AtomicRepositoryEvent) -> None:
+        """Append one output-free, idempotent invalidation fact for an existing revision."""
+
+        state = self._state()
+        revision = self._by_revision_id(revision_id)
+        if revision is None:
+            self._mark_failed()
+            raise RepositoryNotFound("aggregate revision was not found")
+        fingerprint = _command_fingerprint(state.project_id, revision, event, revision.revision)
+        record_json = canonical_invalidation_provenance_event(revision=revision, event=event)
+        try:
+            existing = state.connection.execute(
+                """
+                SELECT outbox.outbox_id, outbox.revision_id, outbox.event_type,
+                       outbox.occurred_at, outbox.available_at, outbox.idempotency_key,
+                       checkpoint.event_id, ledger.record_json, ledger.idempotency_sha256
+                  FROM outbox_events AS outbox
+                  LEFT JOIN provenance_ledger_checkpoints AS checkpoint
+                    ON checkpoint.checkpoint_id=outbox.outbox_id AND checkpoint.project_id=outbox.project_id
+                  LEFT JOIN provenance_ledger_events AS ledger
+                    ON ledger.event_id=checkpoint.event_id AND ledger.project_id=checkpoint.project_id
+                   AND ledger.segment_key=checkpoint.segment_key
+                 WHERE outbox.project_id=? AND outbox.idempotency_key=?
+                """,
+                (state.project_id, event.idempotency_key),
+            ).fetchone()
+            if existing is not None:
+                decoded = decode_provenance_event(json.loads(str(existing[7])))
+                data = None if decoded is None else cast(dict[str, Any], decoded["data"])
+                activity = None if data is None else cast(dict[str, Any], data["activity"])
+                inputs = () if data is None else cast(tuple[dict[str, Any], ...], data["inputs"])
+                outputs = () if data is None else cast(tuple[dict[str, Any], ...], data["outputs"])
+                if (
+                    decoded is None
+                    or activity is None
+                    or tuple(existing[:7])
+                    != (
+                        event.outbox_id,
+                        revision_id,
+                        decoded["type"],
+                        event.occurred_at,
+                        event.available_at,
+                        event.idempotency_key,
+                        event.event_id,
+                    )
+                    or str(existing[8]) != fingerprint
+                    or decoded["id"] != event.event_id
+                    or decoded["actorid"] != event.actor_id
+                    or decoded["time"] != event.occurred_at
+                    or str(decoded["traceparent"]).split("-")[1] != event.trace_id
+                    or activity["activityType"] != "invalidation"
+                    or activity["status"] != "succeeded"
+                    or len(inputs) != 1
+                    or inputs[0]["revisionId"] != revision_id
+                    or outputs
+                    or _ledger_integrity_state(state.connection, state.project_id) != "verified"
+                ):
+                    self._mark_failed()
+                    raise RepositoryConflict("invalidation idempotency authority differs")
+                return
+            _record_provenance(
+                state.connection,
+                project_id=state.project_id,
+                primary_revision_id=revision_id,
+                record_json=record_json,
+                event=event,
+                idempotency_sha256=fingerprint,
+            )
+        except sqlite3.Error, TypeError, ValueError, json.JSONDecodeError:
+            self._mark_failed()
+        else:
+            return
         raise _repository_failure()
 
     def _replay(self, event: AtomicRepositoryEvent, fingerprint: str) -> AggregateRevision | None:
@@ -1698,9 +1818,9 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
             """
             SELECT event_id, project_id, revision_id, event_type,
                    occurred_at, trace_id, actor_type, actor_id, record_sha256
-              FROM provenance_events
+             FROM provenance_events
              WHERE revision_id IS NOT NULL
-               AND event_type LIKE 'org.research-observatory.%.revision-recorded.v1'
+               AND event_type LIKE 'org.research-observatory.%.v1'
             """
         )
     }
@@ -1758,13 +1878,21 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
             )
         ):
             return "integrity-review"
+        inputs = cast(tuple[dict[str, Any], ...], data["inputs"])
         outputs = cast(tuple[dict[str, Any], ...], data["outputs"])
-        if len(outputs) != 1 or actor_type is None:
+        primary_entity = (
+            outputs[0]
+            if len(outputs) == 1
+            else inputs[0]
+            if not outputs and activity["activityType"] == "invalidation" and inputs
+            else None
+        )
+        if primary_entity is None or actor_type is None:
             return "integrity-review"
         narrow_audit = narrow_audits.get(str(row[0]))
         if narrow_audit != (
             project_id,
-            outputs[0]["revisionId"],
+            primary_entity["revisionId"],
             decoded["type"],
             decoded["time"],
             trace_id,
@@ -1815,7 +1943,7 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
         outbox = outboxes.get(checkpoint[0])
         if outbox is None or (str(outbox[0]), str(outbox[1]), str(outbox[2]), str(outbox[3]), str(outbox[6])) != (
             project_id,
-            str(outputs[0]["revisionId"]),
+            str(primary_entity["revisionId"]),
             str(decoded["type"]),
             str(decoded["time"]),
             record_sha256.removeprefix("sha256:"),
@@ -1904,9 +2032,8 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                 visited: set[str] = set()
                 ordered: list[tuple[str, int]] = []
                 missing: set[str] = set()
-                result_scan_limit = cursor + page_size + 1
                 absolute_scan_limit = 20_000
-                while frontier and len(ordered) < result_scan_limit and len(visited) < absolute_scan_limit:
+                while frontier and len(visited) < absolute_scan_limit:
                     current_revision, depth = frontier.pop(0)
                     queued.discard(current_revision)
                     if current_revision in visited:
@@ -1955,57 +2082,89 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
 
                 nodes: list[LineageNode] = []
                 for current_revision, depth in ordered:
-                    row = connection.execute(
+                    rows = connection.execute(
                         """
-                        SELECT entity.revision_id, entity.entity_id, entity.entity_kind,
+                        SELECT entity.direction, entity.revision_id, entity.entity_id, entity.entity_kind,
                                event.event_id, event.event_type, event.activity_id,
                                event.activity_type, event.activity_status, event.agent_id,
-                               event.occurred_at, event.record_json
+                               event.occurred_at, event.record_json,
+                               revision.knowledge_status, revision.rights_status
                           FROM provenance_ledger_entities AS entity
                           JOIN provenance_ledger_events AS event
                             ON event.event_id=entity.event_id AND event.project_id=entity.project_id
+                          JOIN aggregate_revisions AS revision
+                            ON revision.revision_id=entity.revision_id AND revision.project_id=entity.project_id
                          WHERE entity.project_id=? AND entity.revision_id=?
-                           AND entity.direction='output'
-                         ORDER BY event.occurred_at, event.event_id
-                         LIMIT 1
+                         ORDER BY event.occurred_at, event.event_id, entity.direction DESC
                         """,
                         (self._project_id, current_revision),
-                    ).fetchone()
-                    if row is None:
+                    ).fetchall()
+                    if not rows:
                         missing.add(current_revision)
                         continue
-                    decoded = decode_provenance_event(json.loads(str(row[10])))
-                    if decoded is None:
-                        raise ValueError("lineage canonical provenance is invalid")
-                    data = cast(dict[str, Any], decoded["data"])
-                    activity = cast(dict[str, Any], data["activity"])
-                    configuration = cast(dict[str, Any], activity["configuration"])
-                    agent = cast(dict[str, Any], data["agent"])
-                    nodes.append(
-                        LineageNode(
-                            revision_id=str(row[0]),
-                            entity_id=str(row[1]),
-                            entity_kind=str(row[2]),
-                            depth=depth,
-                            event_id=str(row[3]),
-                            event_type=str(row[4]),
-                            activity_id=str(row[5]),
-                            activity_type=str(row[6]),
-                            activity_status=cast(Any, str(row[7])),
-                            configuration_id=str(configuration["configurationId"]),
-                            configuration_version=str(configuration["configurationVersion"]),
-                            configuration_hash=str(configuration["configurationHash"]),
-                            agent_id=str(row[8]),
-                            agent_type=cast(Any, str(agent["agentType"])),
-                            agent_role=str(agent["role"]),
-                            occurred_at=str(row[9]),
-                        )
-                    )
+                    for row in rows:
+                        relations = connection.execute(
+                            """
+                            SELECT relation_id, relation_type, related_revision_id
+                              FROM provenance_ledger_relations
+                             WHERE project_id=? AND event_id=? AND entity_revision_id=?
+                               AND relation_type IN (
+                                   'wasInvalidatedBy', 'wasDerivedFrom', 'wasGeneratedBy', 'used', 'wasAttributedTo'
+                               )
+                             ORDER BY CASE relation_type
+                                   WHEN 'wasInvalidatedBy' THEN 0
+                                   WHEN 'wasDerivedFrom' THEN 1
+                                   WHEN 'wasGeneratedBy' THEN 2
+                                   WHEN 'used' THEN 3
+                                   ELSE 4 END,
+                                   relation_id
+                            """,
+                            (self._project_id, str(row[4]), current_revision),
+                        ).fetchall()
+                        if not relations:
+                            integrity_state = "integrity-review"
+                            continue
+                        decoded = decode_provenance_event(json.loads(str(row[11])))
+                        if decoded is None:
+                            raise ValueError("lineage canonical provenance is invalid")
+                        data = cast(dict[str, Any], decoded["data"])
+                        activity = cast(dict[str, Any], data["activity"])
+                        configuration = cast(dict[str, Any], activity["configuration"])
+                        agent = cast(dict[str, Any], data["agent"])
+                        for relation in relations:
+                            nodes.append(
+                                LineageNode(
+                                    fact_id=str(relation[0]),
+                                    relation_type=cast(Any, str(relation[1])),
+                                    entity_direction=cast(Any, str(row[0])),
+                                    revision_id=str(row[1]),
+                                    entity_id=str(row[2]),
+                                    entity_kind=str(row[3]),
+                                    related_revision_id=None if relation[2] is None else str(relation[2]),
+                                    knowledge_status=cast(KnowledgeStatus, str(row[12])),
+                                    rights_status=cast(RightsStatus, str(row[13])),
+                                    depth=depth,
+                                    event_id=str(row[4]),
+                                    event_type=str(row[5]),
+                                    activity_id=str(row[6]),
+                                    activity_type=str(row[7]),
+                                    activity_status=cast(Any, str(row[8])),
+                                    configuration_id=str(configuration["configurationId"]),
+                                    configuration_version=str(configuration["configurationVersion"]),
+                                    configuration_hash=str(configuration["configurationHash"]),
+                                    agent_id=str(row[9]),
+                                    agent_type=cast(Any, str(agent["agentType"])),
+                                    agent_role=str(agent["role"]),
+                                    occurred_at=str(row[10]),
+                                )
+                            )
                 if missing:
                     integrity_state = "integrity-review"
                 page = nodes[cursor : cursor + page_size]
-                has_more = cursor + len(page) < len(nodes) or bool(frontier)
+                has_more = cursor + len(page) < len(nodes)
                 next_cursor = cursor + len(page) if has_more and page and cursor + len(page) <= 10_000 else None
+                rights_restricted = any(item.rights_status in {"denied", "unknown"} for item in nodes)
+                export_allowed = integrity_state == "verified" and not rights_restricted
                 return LineagePage(
                     revision_id=revision_id,
                     direction=direction,
@@ -2014,6 +2173,14 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                     next_cursor=next_cursor,
                     integrity_state=cast(Any, integrity_state),
                     legacy_event_count=legacy_event_count,
+                    export_allowed=export_allowed,
+                    export_denial_reason=(
+                        "integrity-review"
+                        if integrity_state != "verified"
+                        else "rights-restricted"
+                        if rights_restricted
+                        else None
+                    ),
                 )
             finally:
                 connection.close()

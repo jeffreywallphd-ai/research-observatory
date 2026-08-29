@@ -1,12 +1,23 @@
+import { readFileSync } from "node:fs";
+
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import type { ProjectProjection, ProvenanceLineagePage } from "@research-observatory/contracts/core-api";
+import {
+  createCoreApiClient,
+  type CoreApiRequest,
+  type ProjectProjection,
+  type ProvenanceLineagePage,
+} from "@research-observatory/contracts/core-api";
 
 import {
   AuditLineageWorkspace,
+  continuationLineageRequest,
+  exportLineageManifest,
   lineageAvailability,
   lineageNodeRole,
+  loadLineagePage,
+  mergeLineagePage,
   provenanceLineageRequest,
 } from "./AuditLineageWorkspace";
 
@@ -33,9 +44,15 @@ const lineage: ProvenanceLineagePage = {
   direction: "ancestors",
   items: [
     {
+      factId: "01890f47-eae3-7cc0-98c4-dc0c0c073980",
+      relationType: "wasDerivedFrom",
+      entityDirection: "output",
       revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073981",
       entityId: "01890f47-eae3-7cc0-88c4-dc0c0c073982",
       entityKind: "synthesis.sentence",
+      relatedRevisionId: "01890f47-eae3-7cc0-98c4-dc0c0c07398a",
+      knowledgeStatus: "inferred",
+      rightsStatus: "allowed",
       depth: 0,
       eventId: "01890f47-eae3-7cc0-98c4-dc0c0c073983",
       eventType: "org.research-observatory.synthesis.created.v1",
@@ -51,9 +68,15 @@ const lineage: ProvenanceLineagePage = {
       occurredAt: "2026-08-29T19:00:00Z",
     },
     {
+      factId: "01890f47-eae3-7cc0-98c4-dc0c0c073990",
+      relationType: "wasInvalidatedBy",
+      entityDirection: "input",
       revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073986",
       entityId: "01890f47-eae3-7cc0-88c4-dc0c0c073982",
       entityKind: "synthesis.sentence",
+      relatedRevisionId: null,
+      knowledgeStatus: "stale",
+      rightsStatus: "allowed",
       depth: 1,
       eventId: "01890f47-eae3-7cc0-98c4-dc0c0c073987",
       eventType: "org.research-observatory.synthesis.invalidated.v1",
@@ -69,9 +92,15 @@ const lineage: ProvenanceLineagePage = {
       occurredAt: "2026-08-29T18:00:00Z",
     },
     {
+      factId: "01890f47-eae3-7cc0-98c4-dc0c0c073991",
+      relationType: "wasGeneratedBy",
+      entityDirection: "output",
       revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c07398a",
       entityId: "01890f47-eae3-7cc0-88c4-dc0c0c07398b",
       entityKind: "evidence.passage",
+      relatedRevisionId: null,
+      knowledgeStatus: "verified",
+      rightsStatus: "allowed",
       depth: 1,
       eventId: "01890f47-eae3-7cc0-98c4-dc0c0c07398c",
       eventType: "org.research-observatory.evidence.recorded.v1",
@@ -91,6 +120,8 @@ const lineage: ProvenanceLineagePage = {
   nextCursor: 3,
   integrityState: "integrity-review",
   legacyEventCount: 1,
+  exportAllowed: false,
+  exportDenialReason: "integrity-review",
 };
 
 describe("audit and lineage workspace", () => {
@@ -104,7 +135,8 @@ describe("audit and lineage workspace", () => {
   });
 
   it("builds one bounded exact-revision request after workspace navigation", () => {
-    expect(provenanceLineageRequest(project, lineage.revisionId, "ancestors", 0)).toEqual({
+    const accepted = provenanceLineageRequest(project, lineage.revisionId, "ancestors", 0);
+    expect(accepted).toEqual({
       root: project.root,
       revisionId: lineage.revisionId,
       direction: "ancestors",
@@ -115,14 +147,42 @@ describe("audit and lineage workspace", () => {
     expect(() => provenanceLineageRequest(project, "not-a-revision", "ancestors", 0)).toThrow(
       "RO-CORE-REQUEST-INVALID",
     );
+    expect(continuationLineageRequest(accepted, 50)).toEqual({ ...accepted, cursor: 50 });
+    expect(continuationLineageRequest(accepted, 50).revisionId).toBe(lineage.revisionId);
+    expect(() => continuationLineageRequest({ ...accepted, cursor: 1 }, 50)).toThrow("RO-CORE-REQUEST-INVALID");
+  });
+
+  it("uses the generated client for one exact renderer submission and freezes later-page authority", async () => {
+    const requests: CoreApiRequest[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return {
+        status: 200,
+        contentType: "application/json",
+        traceId: "0123456789abcdef0123456789abcdef",
+        etag: null,
+        body: JSON.stringify(lineage),
+      };
+    });
+    const initial = await loadLineagePage(client, project, lineage.revisionId, "ancestors", 0);
+    expect(initial.page).toEqual(lineage);
+    expect(requests[0]).toMatchObject({
+      path: "/projects/provenance/lineage",
+      body: JSON.stringify(initial.request),
+    });
+    const frozen = continuationLineageRequest(initial.request, 3);
+    expect(frozen.revisionId).toBe(lineage.revisionId);
+    expect(frozen.direction).toBe("ancestors");
+    await expect(loadLineagePage(client, project, lineage.revisionId, "descendants", 0, initial.request))
+      .rejects.toThrow("RO-CORE-REQUEST-INVALID");
   });
 
   it("keeps selected, superseded, and alternate source records visible with integrity context", () => {
     const root = lineage.items[0]!;
     expect(lineageNodeRole(root, root, "ancestors")).toBe("Selected output");
-    expect(lineageNodeRole(lineage.items[1]!, root, "ancestors")).toBe("Prior same-entity revision");
+    expect(lineageNodeRole(lineage.items[1]!, root, "ancestors")).toBe("Invalidation or stale fact");
     expect(lineageNodeRole(lineage.items[2]!, root, "ancestors")).toBe("Upstream source or alternate");
-    expect(lineageNodeRole(lineage.items[1]!, root, "descendants")).toBe("Later same-entity revision");
+    expect(lineageNodeRole(lineage.items[1]!, root, "descendants")).toBe("Invalidation or stale fact");
     expect(lineageNodeRole(lineage.items[2]!, root, "descendants")).toBe("Downstream output");
 
     const html = renderToStaticMarkup(
@@ -138,7 +198,7 @@ describe("audit and lineage workspace", () => {
     expect(html).toContain("Exact output revision ID");
     expect(html).toContain("Trace lineage");
     expect(html).toContain("Selected output");
-    expect(html).toContain("Prior same-entity revision");
+    expect(html).toContain("Invalidation or stale fact");
     expect(html).toContain("Upstream source or alternate");
     expect(html).toContain("wasDerivedFrom ancestors traversal");
     expect(html).toContain("Stale or invalidated");
@@ -148,6 +208,10 @@ describe("audit and lineage workspace", () => {
     expect(html).toContain("not hidden model rationale or chain-of-thought");
     expect(html).toContain("model.synthesis-prompt");
     expect(html).toContain("3.2.0");
+    expect(html).toContain("Audit events");
+    expect(html).toContain("Rights &amp; egress decisions");
+    expect(html).toContain("Human decisions");
+    expect(html).toContain("Exportable manifest");
     for (const node of lineage.items) {
       expect(html).toContain(node.revisionId);
       expect(html).toContain(node.eventId);
@@ -155,9 +219,63 @@ describe("audit and lineage workspace", () => {
     }
   });
 
+  it("exports only a policy-approved content-minimized manifest and rejects incoherent page merges", () => {
+    const exportable = { ...lineage, integrityState: "verified" as const, exportAllowed: true, exportDenialReason: null };
+    const manifest = exportLineageManifest(exportable);
+    expect(manifest).toContain('"manifestType": "content-minimized-lineage"');
+    expect(manifest).toContain('"redaction": "research-content-and-raw-prompts-omitted"');
+    expect(() => exportLineageManifest(lineage)).toThrow("RO-CORE-EXPORT-DENIED");
+    expect(() => mergeLineagePage(
+      { ...exportable, nextCursor: 3 },
+      { ...exportable, items: [exportable.items[0]!], nextCursor: null },
+      3,
+    )).toThrow("RO-CORE-RESPONSE-INVALID");
+    expect(() => mergeLineagePage(
+      { ...exportable, items: [{ ...exportable.items[0]!, depth: 2 }], nextCursor: 1 },
+      { ...exportable, items: [{ ...exportable.items[1]!, depth: 1 }], nextCursor: null },
+      1,
+    )).toThrow("RO-CORE-RESPONSE-INVALID");
+  });
+
   it("renders a recovery-oriented empty state without offering a trace against no project", () => {
     const html = renderToStaticMarkup(<AuditLineageWorkspace project={null} announce={() => undefined} />);
     expect(html).toContain("Open a local project to trace lineage.");
     expect(html).not.toContain('data-trace-lineage="true"');
+  });
+
+  it("maps every task-owned approved page region to an executable implementation selector", () => {
+    const contract = JSON.parse(readFileSync(
+      new URL("./audit-lineage.conformance.json", import.meta.url),
+      "utf8",
+    )) as {
+      referenceId: string;
+      regions: Record<string, string>;
+      interactions: Record<string, string>;
+      states: string[];
+    };
+    expect(contract.referenceId).toBe("RO-UI-ACADEMIC-MINIMAL-1.3");
+    expect(Object.keys(contract.regions)).toEqual([
+      "source-to-output-lineage",
+      "model-schema-prompt-versions",
+      "rights-and-egress-decisions",
+      "human-decisions",
+      "audit-events",
+      "exportable-manifest",
+    ]);
+    expect(contract.states).toContain("rights-restricted-export-denial");
+    const html = renderToStaticMarkup(
+      <AuditLineageWorkspace
+        project={project}
+        announce={() => undefined}
+        initialRevisionId={lineage.revisionId}
+        initialTrace={lineage}
+      />,
+    );
+    const selectorMarkers = [...Object.values(contract.regions), ...Object.values(contract.interactions)]
+      .flatMap((selector) => [...selector.matchAll(/\[([^\]]+)\]|\.([a-z0-9-]+)/g)])
+      .map((match) => match[1] ?? match[2]);
+    for (const marker of selectorMarkers) {
+      expect(html, `implementation marker for ${marker}`).toContain(marker);
+    }
   });
 });

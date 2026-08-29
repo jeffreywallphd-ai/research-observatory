@@ -23,7 +23,9 @@ type LineageNodeRole =
   | "Prior same-entity revision"
   | "Upstream source or alternate"
   | "Later same-entity revision"
-  | "Downstream output";
+  | "Downstream output"
+  | "Source use"
+  | "Invalidation or stale fact";
 
 export interface AuditLineageWorkspaceProps {
   readonly project: ProjectProjection | null;
@@ -65,11 +67,40 @@ export function provenanceLineageRequest(
   };
 }
 
+export function continuationLineageRequest(
+  accepted: ProvenanceLineageRequest,
+  cursor: number,
+): ProvenanceLineageRequest {
+  if (accepted.cursor !== 0 || !Number.isInteger(cursor) || cursor <= 0 || cursor > 10_000) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return { ...accepted, cursor };
+}
+
+export async function loadLineagePage(
+  client: ReturnType<typeof createCoreApiClient>,
+  project: ProjectProjection,
+  revisionId: string,
+  direction: LineageDirection,
+  cursor: number,
+  accepted: ProvenanceLineageRequest | null = null,
+): Promise<{ readonly request: ProvenanceLineageRequest; readonly page: ProvenanceLineagePage }> {
+  if ((accepted === null && cursor !== 0) || (accepted !== null && cursor === 0)) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  const request = accepted === null
+    ? provenanceLineageRequest(project, revisionId, direction, cursor)
+    : continuationLineageRequest(accepted, cursor);
+  return { request, page: await client.lineage(request) };
+}
+
 export function lineageNodeRole(
   node: ProvenanceLineageNode,
   selected: ProvenanceLineageNode | undefined,
   direction: LineageDirection,
 ): LineageNodeRole {
+  if (node.relationType === "wasInvalidatedBy") return "Invalidation or stale fact";
+  if (node.relationType === "used") return "Source use";
   if (node.depth === 0 && node.revisionId === selected?.revisionId) return "Selected output";
   if (direction === "ancestors") {
     return selected && node.entityId === selected.entityId
@@ -82,7 +113,7 @@ export function lineageNodeRole(
 }
 
 function lineageNodeState(node: ProvenanceLineageNode): string {
-  if (node.eventType.includes(".invalidated.")) return "Stale or invalidated";
+  if (node.relationType === "wasInvalidatedBy" || node.knowledgeStatus === "stale") return "Stale or invalidated";
   if (node.depth === 0) return "Current selection";
   return "Historical";
 }
@@ -100,8 +131,17 @@ function safeFailure(error: unknown): { readonly title: string; readonly message
   };
 }
 
-function appendPage(current: ProvenanceLineagePage, next: ProvenanceLineagePage): ProvenanceLineagePage {
-  if (current.revisionId !== next.revisionId || current.direction !== next.direction) return next;
+export function mergeLineagePage(
+  current: ProvenanceLineagePage,
+  next: ProvenanceLineagePage,
+  requestedCursor: number,
+): ProvenanceLineagePage {
+  if (current.revisionId !== next.revisionId || current.direction !== next.direction
+    || current.nextCursor !== requestedCursor) throw new Error("RO-CORE-RESPONSE-INVALID");
+  const identities = new Set(current.items.map((item) => item.factId));
+  const lastDepth = current.items.at(-1)?.depth ?? 0;
+  if (next.items.some((item) => identities.has(item.factId))
+    || (next.items[0]?.depth ?? lastDepth) < lastDepth) throw new Error("RO-CORE-RESPONSE-INVALID");
   return {
     ...next,
     items: [...current.items, ...next.items],
@@ -109,6 +149,20 @@ function appendPage(current: ProvenanceLineagePage, next: ProvenanceLineagePage)
     integrityState: current.integrityState === "integrity-review" ? "integrity-review" : next.integrityState,
     legacyEventCount: Math.max(current.legacyEventCount, next.legacyEventCount),
   };
+}
+
+export function exportLineageManifest(trace: ProvenanceLineagePage): string {
+  if (!trace.exportAllowed || trace.exportDenialReason !== null) throw new Error("RO-CORE-EXPORT-DENIED");
+  return JSON.stringify({
+    schemaVersion: "1.0",
+    manifestType: "content-minimized-lineage",
+    revisionId: trace.revisionId,
+    direction: trace.direction,
+    integrityState: trace.integrityState,
+    redaction: "research-content-and-raw-prompts-omitted",
+    egressDecision: "local-file-only",
+    items: trace.items,
+  }, null, 2);
 }
 
 export function AuditLineageWorkspace({
@@ -123,12 +177,16 @@ export function AuditLineageWorkspace({
   const [revisionId, setRevisionId] = useState(initialRevisionId);
   const [direction, setDirection] = useState<LineageDirection>(initialTrace?.direction ?? "ancestors");
   const [trace, setTrace] = useState<ProvenanceLineagePage | null>(initialTrace);
+  const [traceQuery, setTraceQuery] = useState<ProvenanceLineageRequest | null>(
+    initialTrace && project ? provenanceLineageRequest(project, initialTrace.revisionId, initialTrace.direction, 0) : null,
+  );
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
 
   useEffect(() => {
     setRevisionId("");
     setTrace(null);
+    setTraceQuery(null);
     setFailure(null);
   }, [project?.projectId]);
 
@@ -137,8 +195,18 @@ export function AuditLineageWorkspace({
     setBusy(true);
     setFailure(null);
     try {
-      const next = await client.lineage(provenanceLineageRequest(project, revisionId, direction, cursor));
-      setTrace((current) => append && current ? appendPage(current, next) : next);
+      const result = await loadLineagePage(
+        client,
+        project,
+        revisionId,
+        direction,
+        cursor,
+        append ? traceQuery : null,
+      );
+      const request = result.request;
+      const next = result.page;
+      setTrace((current) => append && current ? mergeLineagePage(current, next, cursor) : next);
+      if (!append) setTraceQuery({ ...request, cursor: 0 });
       announce(append ? "More lineage records loaded." : "Exact output lineage traced.");
     } catch (error) {
       const safe = safeFailure(error);
@@ -155,6 +223,24 @@ export function AuditLineageWorkspace({
   };
   const selected = trace?.items.find((item) => item.depth === 0);
   const validRevision = UUID_V7.test(revisionId);
+  const humanDecisions = trace?.items.filter(
+    (item) => item.entityKind === "decision" && item.agentType === "human",
+  ) ?? [];
+  const downloadManifest = (): void => {
+    if (!trace) return;
+    try {
+      const payload = exportLineageManifest(trace);
+      const url = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `lineage-${trace.revisionId}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      announce("Content-minimized lineage manifest exported locally.");
+    } catch {
+      announce("Lineage export remains denied by integrity or rights policy.");
+    }
+  };
 
   return (
     <section className="audit-lineage-workspace" aria-labelledby="audit-lineage-title" data-audit-lineage-workspace>
@@ -249,16 +335,16 @@ export function AuditLineageWorkspace({
             {trace.items.length ? (
               <div className="lineage-table-scroll">
                 <table>
-                  <caption>Exact, content-free wasDerivedFrom {trace.direction} traversal for the selected output revision</caption>
+                  <caption>Exact, content-free provenance facts discovered by the wasDerivedFrom {trace.direction} traversal for the selected output revision</caption>
                   <thead><tr><th scope="col">Relation and state</th><th scope="col">Entity revision</th><th scope="col">Transformation and configuration</th><th scope="col">Responsible actor</th><th scope="col">Audit event</th></tr></thead>
                   <tbody>
                     {trace.items.map((node) => (
-                      <tr key={`${node.eventId}:${node.revisionId}`}>
+                      <tr key={node.factId}>
                         <td><strong>{lineageNodeRole(node, selected, trace.direction)}</strong><span>{lineageNodeState(node)} · depth {node.depth}</span></td>
-                        <td><span>{node.entityKind}</span><code>{node.entityId}</code><code>{node.revisionId}</code></td>
+                        <td><span>{node.entityKind} · {node.entityDirection}</span><code>{node.entityId}</code><code>{node.revisionId}</code>{node.relatedRevisionId ? <code>{node.relatedRevisionId}</code> : null}</td>
                         <td><span>{node.activityType} · {node.activityStatus}</span><code>{node.activityId}</code><span>{node.configurationId} · {node.configurationVersion}</span><code>{node.configurationHash}</code></td>
                         <td><span>{node.agentType} · {node.agentRole}</span><code>{node.agentId}</code></td>
-                        <td><span>{node.eventType}</span><code>{node.eventId}</code><time dateTime={node.occurredAt}>{node.occurredAt}</time></td>
+                        <td><span>{node.relationType} · {node.eventType}</span><code>{node.eventId}</code><time dateTime={node.occurredAt}>{node.occurredAt}</time></td>
                       </tr>
                     ))}
                   </tbody>
@@ -270,6 +356,30 @@ export function AuditLineageWorkspace({
                 {busy ? "Loading…" : "Load more lineage"}
               </Button>
             ) : null}
+          </section>
+
+          <section className="lineage-governed-region" aria-labelledby="lineage-audit-events-title" data-audit-events>
+            <Typography id="lineage-audit-events-title" as="h2" variant="section-title">Audit events</Typography>
+            <p>Content-minimized security, model, scholarly, rights, and invalidation facts returned by Core.</p>
+            <ol>{trace.items.map((node) => <li key={`audit:${node.factId}`}><code>{node.eventId}</code> {node.eventType} · {node.activityStatus} · <time dateTime={node.occurredAt}>{node.occurredAt}</time></li>)}</ol>
+          </section>
+
+          <section className="lineage-governed-region" aria-labelledby="lineage-rights-title" data-rights-egress>
+            <Typography id="lineage-rights-title" as="h2" variant="section-title">Rights &amp; egress decisions</Typography>
+            <ul>{trace.items.map((node) => <li key={`rights:${node.factId}`}><code>{node.revisionId}</code> · rights {node.rightsStatus}</li>)}</ul>
+            <p>Local manifest export: {trace.exportAllowed ? "allowed" : `denied (${trace.exportDenialReason})`}. This trace does not authorize remote egress.</p>
+          </section>
+
+          <section className="lineage-governed-region" aria-labelledby="lineage-decisions-title" data-human-decisions>
+            <Typography id="lineage-decisions-title" as="h2" variant="section-title">Human decisions</Typography>
+            {humanDecisions.length ? <ul>{humanDecisions.map((node) => <li key={`decision:${node.factId}`}>{node.agentRole} · <code>{node.agentId}</code> · {node.eventType}</li>)}</ul> : <p>No human decision is recorded in this trace.</p>}
+          </section>
+
+          <section className="lineage-governed-region" aria-labelledby="lineage-export-title" data-export-manifest>
+            <Typography id="lineage-export-title" as="h2" variant="section-title">Exportable manifest</Typography>
+            <p>Local JSON omits research content, raw prompts, secrets, and hidden rationale. Exact identities and policy states remain.</p>
+            <Button onClick={downloadManifest} disabled={!trace.exportAllowed}>Export content-minimized manifest</Button>
+            {!trace.exportAllowed ? <p role="alert">Export denied: {trace.exportDenialReason === "integrity-review" ? "integrity review is required" : "one or more lineage targets are rights-restricted"}.</p> : null}
           </section>
 
           <div className="lineage-transparency-note">

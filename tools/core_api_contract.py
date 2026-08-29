@@ -552,13 +552,20 @@ export function decodeCacheClearResult(value: unknown): CacheClearResult | null 
 function decodeProvenanceLineageNode(value: unknown): ProvenanceLineageNode | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
-    "revisionId", "entityId", "entityKind", "depth", "eventId", "eventType",
+    "factId", "relationType", "entityDirection", "revisionId", "entityId", "entityKind",
+    "relatedRevisionId", "knowledgeStatus", "rightsStatus", "depth", "eventId", "eventType",
     "activityId", "activityType", "activityStatus", "configurationId", "configurationVersion",
     "configurationHash", "agentId", "agentType", "agentRole", "occurredAt",
   ])) return null;
-  if (!canonicalUuid7(candidate.revisionId) || !canonicalUuid7(candidate.entityId)
+  if (!canonicalUuid7(candidate.factId)
+    || !member(candidate.relationType, ["used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasInvalidatedBy", "wasAttributedTo"] as const)
+    || !member(candidate.entityDirection, ["input", "output"] as const)
+    || !canonicalUuid7(candidate.revisionId) || !canonicalUuid7(candidate.entityId)
     || !boundedText(candidate.entityKind, 1, 128)
     || !/^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/.test(candidate.entityKind)
+    || (candidate.relatedRevisionId !== null && !canonicalUuid7(candidate.relatedRevisionId))
+    || !member(candidate.knowledgeStatus, ["observed", "extracted", "inferred", "verified", "disputed", "adjudicated", "stale", "unknown", "not-reported", "not-applicable", "ambiguous", "unavailable"] as const)
+    || !member(candidate.rightsStatus, ["allowed", "denied", "unknown", "not-applicable"] as const)
     || !integer(candidate.depth, 0, 16) || !canonicalUuid7(candidate.eventId)
     || !boundedText(candidate.eventType, 1, 160)
     || !/^org\.research-observatory\..+\.v[1-9][0-9]{0,5}$/.test(candidate.eventType)
@@ -573,6 +580,11 @@ function decodeProvenanceLineageNode(value: unknown): ProvenanceLineageNode | nu
     || !boundedText(candidate.agentRole, 1, 128)
     || !/^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/.test(candidate.agentRole)
     || !utcInstant(candidate.occurredAt)) return null;
+  const outputRelation = member(candidate.relationType, ["wasGeneratedBy", "wasDerivedFrom", "wasAttributedTo"] as const);
+  const inputRelation = member(candidate.relationType, ["used", "wasInvalidatedBy"] as const);
+  if ((outputRelation && candidate.entityDirection !== "output")
+    || (inputRelation && candidate.entityDirection !== "input")
+    || (candidate.relationType === "wasDerivedFrom") !== (candidate.relatedRevisionId !== null)) return null;
   return candidate as unknown as ProvenanceLineageNode;
 }
 
@@ -580,7 +592,7 @@ export function decodeProvenanceLineagePage(value: unknown): ProvenanceLineagePa
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
     "schemaVersion", "revisionId", "direction", "items", "missingRevisionIds",
-    "nextCursor", "integrityState", "legacyEventCount",
+    "nextCursor", "integrityState", "legacyEventCount", "exportAllowed", "exportDenialReason",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.revisionId)
     || !member(candidate.direction, ["ancestors", "descendants"] as const)
@@ -588,7 +600,11 @@ export function decodeProvenanceLineagePage(value: unknown): ProvenanceLineagePa
     || !Array.isArray(candidate.missingRevisionIds) || candidate.missingRevisionIds.length > 256
     || (candidate.nextCursor !== null && !integer(candidate.nextCursor, 0, 10_000))
     || !member(candidate.integrityState, ["verified", "integrity-review"] as const)
-    || !integer(candidate.legacyEventCount, 0, Number.MAX_SAFE_INTEGER)) return null;
+    || !integer(candidate.legacyEventCount, 0, Number.MAX_SAFE_INTEGER)
+    || typeof candidate.exportAllowed !== "boolean"
+    || (candidate.exportDenialReason !== null
+      && !member(candidate.exportDenialReason, ["integrity-review", "rights-restricted"] as const))
+    || candidate.exportAllowed !== (candidate.exportDenialReason === null)) return null;
   const items = candidate.items.map(decodeProvenanceLineageNode);
   if (items.some((item) => item === null)
     || candidate.missingRevisionIds.some((item) => !canonicalUuid7(item))
@@ -602,6 +618,8 @@ export function decodeProvenanceLineagePage(value: unknown): ProvenanceLineagePa
     nextCursor: candidate.nextCursor as number | null,
     integrityState: candidate.integrityState,
     legacyEventCount: candidate.legacyEventCount,
+    exportAllowed: candidate.exportAllowed,
+    exportDenialReason: candidate.exportDenialReason as "integrity-review" | "rights-restricted" | null,
   };
 }
 
@@ -922,7 +940,22 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         method: "POST", path: "/projects/provenance/lineage", body: provenanceLineageBody(command),
         ifMatch: null, idempotencyKey: null,
       }, decodeProvenanceLineagePage);
-      if (result.revisionId !== command.revisionId || result.direction !== command.direction) {
+      const factIds = result.items.map((item) => item.factId);
+      const rootResolved = result.items.some(
+        (item) => item.revisionId === command.revisionId && item.depth === 0,
+      );
+      const rootUnavailable = result.items.length === 0
+        && result.integrityState === "integrity-review"
+        && result.missingRevisionIds.includes(command.revisionId)
+        && !result.exportAllowed
+        && result.exportDenialReason === "integrity-review";
+      if (result.revisionId !== command.revisionId || result.direction !== command.direction
+        || result.items.length > command.pageSize
+        || result.items.some((item) => item.depth > command.maxDepth)
+        || result.items.some((item, index) => index > 0 && item.depth < (result.items[index - 1]?.depth ?? 0))
+        || new Set(factIds).size !== factIds.length
+        || (command.cursor === 0 && !rootResolved && !rootUnavailable)
+        || (result.nextCursor !== null && result.nextCursor !== command.cursor + result.items.length)) {
         throw new Error("RO-CORE-RESPONSE-INVALID");
       }
       return result;

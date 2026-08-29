@@ -83,6 +83,7 @@ class AggregateRevisionDraft:
     knowledge_status: KnowledgeStatus
     rights_status: RightsStatus
     object_sha256: str | None = None
+    provenance_inputs: tuple[AggregateRevision, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -175,9 +176,17 @@ class IntentPolicyAuditEvent:
 class LineageNode:
     """Content-free production context for one exact immutable revision."""
 
+    fact_id: str
+    relation_type: Literal[
+        "used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasInvalidatedBy", "wasAttributedTo"
+    ]
+    entity_direction: Literal["input", "output"]
     revision_id: str
     entity_id: str
     entity_kind: str
+    related_revision_id: str | None
+    knowledge_status: KnowledgeStatus
+    rights_status: RightsStatus
     depth: int
     event_id: str
     event_type: str
@@ -204,6 +213,8 @@ class LineagePage:
     next_cursor: int | None
     integrity_state: Literal["verified", "integrity-review"]
     legacy_event_count: int
+    export_allowed: bool
+    export_denial_reason: Literal["integrity-review", "rights-restricted"] | None
 
 
 @runtime_checkable
@@ -217,6 +228,8 @@ class AggregateRepository(Protocol):
         *,
         expected_revision: int | None,
     ) -> AggregateRevision: ...
+
+    def invalidate(self, revision_id: str, event: AtomicRepositoryEvent) -> None: ...
 
 
 @runtime_checkable

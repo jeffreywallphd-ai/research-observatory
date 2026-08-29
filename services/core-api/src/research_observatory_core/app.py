@@ -360,9 +360,15 @@ def create_app(
             direction=page.direction,
             items=tuple(
                 ProvenanceLineageNode(
+                    fact_id=item.fact_id,
+                    relation_type=item.relation_type,
+                    entity_direction=item.entity_direction,
                     revision_id=item.revision_id,
                     entity_id=item.entity_id,
                     entity_kind=item.entity_kind,
+                    related_revision_id=item.related_revision_id,
+                    knowledge_status=item.knowledge_status,
+                    rights_status=item.rights_status,
                     depth=item.depth,
                     event_id=item.event_id,
                     event_type=item.event_type,
@@ -383,6 +389,8 @@ def create_app(
             next_cursor=page.next_cursor,
             integrity_state=page.integrity_state,
             legacy_event_count=page.legacy_event_count,
+            export_allowed=page.export_allowed,
+            export_denial_reason=page.export_denial_reason,
         )
 
     @app.post(

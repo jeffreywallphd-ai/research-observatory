@@ -31,7 +31,14 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertEqual([], errors)
         self.assertEqual(1, details["pages"])
         self.assertEqual(
-            ["CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03", "CAP-03.S02.T02"],
+            [
+                "CAP-01",
+                "CAP-02.S01.T03",
+                "CAP-02.S04.T02",
+                "CAP-02.S04.T03",
+                "CAP-03.S02.T02",
+                "CAP-03.S03.T03",
+            ],
             details["implementedCapabilities"],
         )
         self.assertEqual(0, details["referenceOnlyPages"])

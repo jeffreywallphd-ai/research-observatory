@@ -88,6 +88,7 @@ def canonical_aggregate_provenance_event(
     revision: AggregateRevision,
     previous: AggregateRevision | None,
     event: AtomicRepositoryEvent,
+    additional_inputs: tuple[AggregateRevision, ...] = (),
 ) -> str:
     """Construct the minimized v1 event required by one aggregate revision."""
 
@@ -98,7 +99,19 @@ def canonical_aggregate_provenance_event(
     activity_id = new_uuid_v7()
     correlation_id = new_uuid_v7()
     output = _entity(revision)
-    inputs = [] if previous is None else [_entity(previous)]
+    input_candidates = ((previous,) if previous is not None else ()) + additional_inputs
+    seen_inputs: set[str] = set()
+    unique_inputs: list[AggregateRevision] = []
+    for item in input_candidates:
+        if item.revision_id not in seen_inputs:
+            seen_inputs.add(item.revision_id)
+            unique_inputs.append(item)
+    input_revisions = tuple(unique_inputs)
+    if any(
+        item.project_id != revision.project_id or item.revision_id == revision.revision_id for item in input_revisions
+    ):
+        raise ValueError("aggregate provenance inputs must be distinct revisions in the same project")
+    inputs = [_entity(item) for item in input_revisions]
     relations = [
         _relation(
             "wasAssociatedWith",
@@ -109,15 +122,15 @@ def canonical_aggregate_provenance_event(
         _relation("wasGeneratedBy", event.occurred_at, entity=revision, activity_id=activity_id),
         _relation("wasAttributedTo", event.occurred_at, entity=revision, agent_id=event.actor_id),
     ]
-    if previous is not None:
+    for source in input_revisions:
         relations.extend(
             (
-                _relation("used", event.occurred_at, entity=previous, activity_id=activity_id),
+                _relation("used", event.occurred_at, entity=source, activity_id=activity_id),
                 _relation(
                     "wasDerivedFrom",
                     event.occurred_at,
                     entity=revision,
-                    related=previous,
+                    related=source,
                     activity_id=activity_id,
                 ),
             )
@@ -170,6 +183,77 @@ def canonical_aggregate_provenance_event(
     errors = provenance_event_errors(record)
     if errors:
         raise ValueError("aggregate provenance contract failed: " + ", ".join(errors))
+    return canonical_provenance_json(record)
+
+
+def canonical_invalidation_provenance_event(
+    *,
+    revision: AggregateRevision,
+    event: AtomicRepositoryEvent,
+) -> str:
+    """Construct one valid, output-free invalidation fact for an existing revision."""
+
+    if event.actor_id is None or not is_uuid_v7(event.actor_id):
+        raise ValueError("invalidation provenance requires an opaque UUIDv7 actor")
+    if event.actor_type not in _ACTOR_TYPE:
+        raise ValueError("invalidation provenance actor type is invalid")
+    activity_id = new_uuid_v7()
+    span_id = hashlib.sha256(event.outbox_id.encode("ascii")).hexdigest()[:16]
+    record = {
+        "specversion": "1.0",
+        "id": event.event_id,
+        "source": "urn:research-observatory:core",
+        "type": f"org.research-observatory.{revision.aggregate_kind}.invalidated.v1",
+        "subject": (
+            f"project/{revision.project_id}/entity/{revision.aggregate_kind}/"
+            f"{revision.aggregate_id}/revision/{revision.revision_id}"
+        ),
+        "time": event.occurred_at,
+        "dataschema": "urn:research-observatory:schema:provenance-event:1.0.0",
+        "datacontenttype": "application/json",
+        "projectid": revision.project_id,
+        "actorid": event.actor_id,
+        "correlationid": new_uuid_v7(),
+        "causationid": None,
+        "traceparent": f"00-{event.trace_id}-{span_id}-01",
+        "sensitivity": "private-research",
+        "retentionclass": "project-lifetime",
+        "schemaversion": "1.0.0",
+        "data": {
+            "agent": {
+                "agentId": event.actor_id,
+                "agentType": _ACTOR_TYPE[event.actor_type],
+                "role": "canonical.invalidator",
+            },
+            "activity": {
+                "activityId": activity_id,
+                "activityType": "invalidation",
+                "status": "succeeded",
+                "startedAt": event.occurred_at,
+                "endedAt": event.occurred_at,
+                "configuration": {
+                    "configurationId": "core.aggregate-invalidation",
+                    "configurationVersion": "1.0.0",
+                    "configurationHash": _CONFIGURATION_HASH,
+                },
+            },
+            "inputs": [_entity(revision)],
+            "outputs": [],
+            "relations": [
+                _relation(
+                    "wasAssociatedWith",
+                    event.occurred_at,
+                    activity_id=activity_id,
+                    agent_id=event.actor_id,
+                ),
+                _relation("wasInvalidatedBy", event.occurred_at, entity=revision, activity_id=activity_id),
+            ],
+            "payloadReference": {"state": "not-applicable"},
+        },
+    }
+    errors = provenance_event_errors(record)
+    if errors:
+        raise ValueError("invalidation provenance contract failed: " + ", ".join(errors))
     return canonical_provenance_json(record)
 
 
@@ -227,4 +311,9 @@ class ProvenanceService:
         return self._projects.perform_open_project_action(root=root, require_write=False, action=query)
 
 
-__all__ = ["ProvenanceProblem", "ProvenanceService", "canonical_aggregate_provenance_event"]
+__all__ = [
+    "ProvenanceProblem",
+    "ProvenanceService",
+    "canonical_aggregate_provenance_event",
+    "canonical_invalidation_provenance_event",
+]
