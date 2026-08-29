@@ -70,8 +70,12 @@ affected workflows and outputs. Incomplete revisions remain durable drafts;
 the launch action stays disabled. A decision-complete persisted draft can be
 accepted only after the researcher supplies a rationale and explicitly confirms
 its exact revision and content hash; unsaved edits disable that acceptance path.
-The generated Core client performs the service-bound acceptance, and later
-consequential actions must still evaluate the accepted governing reference.
+The generated Core client performs the service-bound acceptance. If the local
+transport loses an acceptance response, the workspace freezes that exact
+command and idempotency key and offers a same-request retry; it does not claim
+whether acceptance committed until Core returns the authoritative projection or
+a definitive rejection. Later consequential actions must still evaluate the
+accepted governing reference.
 
 It also exposes a truthful local-service supervision boundary. In the Tauri
 host, Core starts automatically, reaches readiness over numeric loopback, and is
