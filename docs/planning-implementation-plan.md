@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 13a9057a4c8c988c07e9102f0b834cde956f92035a407b7a2cd8ae3080615915
+source_sha256: 8c48487e07385959e041cb358211509d01e2b3e3d615d939d0810ca8aee718e1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4308,7 +4308,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4337,6 +4337,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S03.T02.R01.json` at `3680ecf86f455b8cbd6a10c27b63ae62c836e359`
 - `artifacts/evidence/CAP-03.S03.T02.R02.json` at `7dad75557cce78a905c6e97a4fd5dc43ee8e393a`
+- `artifacts/evidence/CAP-03.S03.T02.R03.json` at `2a15c3436bd76d69d13a854b22c50742f85e8a5f`
 
 ##### Review history — CAP-03.S03.T02
 
@@ -4405,7 +4406,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S03.T02-R01-F01` `fixed` — The exact fresh-v6 empty-history reproduction now passes. Migration history is validated as an exact contiguous registry suffix; after backup-first 0007 migration the sole truthful 0007 row is accepted by repeat plan/migrate and reopen without fabricating 0001-0006 history. Full v1-origin history, partial suffix histories, current fresh v7, adverse profiles, hashes, and all failpoint rollback cases remain strict. migration_framework_projection now includes 0007_provenance_ledger.
 - `CAP-03.S03.T02-R01-F02` `fixed` — The exact R01 event-ID reproduction now returns integrity-review: R02 compares ledger event and project identity to the canonical record, rejects mismatched normalized child/project sets, cross-checks the narrow audit identity/digest, and includes the stored idempotency fingerprint in its newly written checkpoint material. Submitted and independent tests close event identity, project authority, normalized child, narrow digest, and stored fingerprint mutations while retaining bounded read-only visibility. R02-F01 and R02-F02 separately record newly exposed segment-versioning, outbox replay, actor-type, and trace binding defects; they do not erase this exact closure.
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `7d7e9a3de98eb21991966ed3c9c2ae63b12888ef631c1b5537413a3b90296bae`
+
+- Candidate / base / branch: `2a15c3436bd76d69d13a854b22c50742f85e8a5f` / `7dad75557cce78a905c6e97a4fd5dc43ee8e393a` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T18:45:03+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T02.R03.json` / `dc151da5b7f28aa8be8fe776e4bce384aaa4d60db70155bc49832f1de5cbaf9c` / `2a15c3436bd76d69d13a854b22c50742f85e8a5f`
+- Acceptance-criteria SHA-256: `18a160b518276cf400818cb11f8929cd11c8b4fd1d57519cb8fbcab7dd6ac38d`
+- Verification-selection SHA-256: `305a763fd42399059fcb44c56a0d9ab0a895aeddb3e6070fa2b38975f7e4c394`
+- Changed paths: `artifacts/evidence/CAP-03.S03.T02.R02.json`, `artifacts/evidence/CAP-03.S03.T02.review-R02.json`, `docs/architecture/local-sqlite-storage.md`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/repositories.py`, `tests/data/test_sqlite_repositories.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file`, `.venv\Scripts\python.exe tools\quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py --check; build_manifest.py --output artifacts/tmp/CAP-03.S03.T02-R03-build-manifest.json`, `taskctl.py validate; backlog_views.py --check; plan_review_check.py --repo .; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03.T03 owns the governed audit-and-lineage inspection workspace plus the approved retention, export, redaction-versus-deletion, repair, and integrity-review recovery interactions.`, `CAP-03.S03 slice review will replay the accumulated portable-contract, migration, ledger, lineage, recovery, and adversarial integration union after T03 closes.`, `The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.`
+- Selection rationale: R02 identified two high-severity acceptance-bound evidence-integrity defects. CAP-03.S03.T02-R02-F01 is replayed with an exact R01 v1 ledger formula through restart and a new v2 append. CAP-03.S03.T02-R02-F02 is replayed through independently corrupted outbox ID, revision, type, occurred time, available time, idempotency key, and record digest plus narrow actor type and trace identity. Because replay now evaluates the complete persisted ledger and the correction changes shared provenance integrity semantics, the selected union includes all affected schema, repository, migration, object-store, maintenance, service, research-intent, frozen-sidecar, quality, architecture, contract, build, backlog, and generated-view checks. Full slice integration and cross-capability/platform qualification remain assigned to the slice and W1 exit.
+- Prior round / replayed open findings: `R02` / `CAP-03.S03.T02-R02-F01`, `CAP-03.S03.T02-R02-F02`
+- Root-cause escalation: R02 correctly added the retry fingerprint to newly computed chain material but failed to treat that material change as a versioned evidence contract, so it reused rfc8785.sha256.v1 and reinterpreted valid R01 history. R02 also reasoned from canonical ledger and normalized projections inward but did not enumerate every mutable outbox authority field or the narrow audit's actor-type and trace projections as peers in the same transaction authority graph. R03 makes the chain formula explicit and version-dispatched, writes only a distinct v2 segment, derives one digest over the complete immutable outbox authority, and validates all persisted and incoming replay authorities before resolving a projection. The third-round regression matrix enumerates every identified authority field so a future omission fails deterministically.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-provenance-ledger-reviewer at `2026-08-29T18:29:55+00:00`
 

@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T02",
+  "commit": "2a15c3436bd76d69d13a854b22c50742f85e8a5f",
+  "baseCommit": "7dad75557cce78a905c6e97a4fd5dc43ee8e393a",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S03.T02.R02.json",
+    "sha256": "cae002af5d20f57c5ab0a62615e057df0769a7837a78fac584179c46115acb5b",
+    "commit": "7dad75557cce78a905c6e97a4fd5dc43ee8e393a",
+    "reason": "Remediates CAP-03.S03.T02-R02-F01 and CAP-03.S03.T02-R02-F02 without expanding the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S03.T02.R02.json",
+    "artifacts/evidence/CAP-03.S03.T02.review-R02.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/data/test_sqlite_repositories.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file",
+      "exitCode": 0,
+      "result": "All 104 affected tests passed at exact candidate 2a15c3436bd76d69d13a854b22c50742f85e8a5f in 55.254 seconds. The run directly replays R02-F01 with an exact v1-formula ledger segment followed after restart by a distinct v2 segment, both independently starting at sequence 1 and remaining verified. It directly replays R02-F02 with seven independently mutated outbox authority fields plus narrow actor-type and trace-id corruption, all of which now fail closed without returning a wrong projection and enter integrity-review. Exact-retry coverage also rejects changed outbox, event, time, trace, actor, and command authority. Existing schema, repository atomicity/rollback/retry/restart, migration, object-store, maintenance, service, research-intent, and real Windows x64 PyInstaller sidecar boundaries remain green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py --check; build_manifest.py --output artifacts/tmp/CAP-03.S03.T02-R03-build-manifest.json",
+      "exitCode": 0,
+      "result": "Ruff formatting and lint plus mypy passed across all 166 governed Python files; the 13-area, 12-module, five-interface, three-profile architecture contract passed; repository structure and generated Core API synchronization passed. The deterministic build manifest passed at 0.1.0+g2a15c34.dirty and has SHA-256 9a5da9cad7fe4e6c4e7095cc2ee88d66c723038a2e2996b257c1045625962bad. Its dirty marker identifies only the protected untracked W1 witness."
+    },
+    {
+      "command": "taskctl.py validate; backlog_views.py --check; plan_review_check.py --repo .; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog validates; generated backlog views are current; all 150 planning review pages pass; candidate patch hygiene passed. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S03.T02-R02-F01 is remediated with version-dispatched checkpoint formulas: rfc8785.sha256.v1 retains the exact R01 previous-or-genesis plus record-digest plus sequence formula, while new writes use the distinct rfc8785.sha256.v2 segment and bind the retry fingerprint plus full outbox authority digest. Existing v1 bytes are never rehashed or rewritten.",
+        "CAP-03.S03.T02-R02-F02 is remediated by binding outbox identity, project, revision, canonical event type, occurred and available times, idempotency key, and record digest into every v2 checkpoint. Replay resolves one exact checkpoint/ledger transaction, validates the full outbox, narrow audit, canonical output, trace, actor, and stored fingerprint authority, requires globally verified ledger integrity, and verifies the returned projection content hash before returning it.",
+        "The narrow audit verifier now binds actor_type and trace_id to the canonical agent and traceparent in addition to its prior event, project, revision, type, time, actor identity, and record digest checks. Atomic output, normalized provenance, checkpoint, narrow audit, and outbox persistence and rollback behavior remain unchanged."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact-commit 104-test run covers successful persistence and lineage plus material denial, rollback, retry, restart, migration, corruption, missing-reference, bound, cursor, page, and packaging conditions.",
+        "The exact R01 v1 formula remains verified after restart and deterministic v2 append. Seven independently corrupted outbox authority fields cannot replay or remain verified; restored-trigger actor-type and trace-id contradictions also enter bounded integrity-review. Incoming exact-retry authority is exercised across outbox, event, time, trace, actor, and command fields.",
+        "No valid test was removed or weakened. Quality, generated Core API parity, architecture, repository structure, backlog integrity, generated review-site integrity, patch hygiene, and the real Windows sidecar boundary pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Architecture guidance now declares the immutable v1 formula, distinct v2 formula and segment transition, full outbox authority digest, actor/trace audit binding, and fail-closed replay behavior. The append-only authority chain is explicit and test-backed.",
+        "The already approved R02 migration-suffix correction remains intact and all affected migration tests remain green. No schema version, migration bytes, public service contract, renderer, governed experience reference, dependency version, external effect, release authority, or unrelated product scope changed.",
+        "The remediation is a strict descendant of the R02 candidate and preserves its previously verified migration, normalized lineage, atomicity, and bounded-read behaviors while changing only the incremental evidence-integrity boundary named by the two R02 findings."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 identified two high-severity acceptance-bound evidence-integrity defects. CAP-03.S03.T02-R02-F01 is replayed with an exact R01 v1 ledger formula through restart and a new v2 append. CAP-03.S03.T02-R02-F02 is replayed through independently corrupted outbox ID, revision, type, occurred time, available time, idempotency key, and record digest plus narrow actor type and trace identity. Because replay now evaluates the complete persisted ledger and the correction changes shared provenance integrity semantics, the selected union includes all affected schema, repository, migration, object-store, maintenance, service, research-intent, frozen-sidecar, quality, architecture, contract, build, backlog, and generated-view checks. Full slice integration and cross-capability/platform qualification remain assigned to the slice and W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:quality",
+      "foundation:backlog-views",
+      "foundation:backlog",
+      "packaging:unit",
+      "service:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S03.T03 owns the governed audit-and-lineage inspection workspace plus the approved retention, export, redaction-versus-deletion, repair, and integrity-review recovery interactions.",
+      "CAP-03.S03 slice review will replay the accumulated portable-contract, migration, ledger, lineage, recovery, and adversarial integration union after T03 closes.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "provenance-ledger-review",
+    "openFindingIds": [
+      "CAP-03.S03.T02-R02-F01",
+      "CAP-03.S03.T02-R02-F02"
+    ],
+    "rootCauseAnalysis": "R02 correctly added the retry fingerprint to newly computed chain material but failed to treat that material change as a versioned evidence contract, so it reused rfc8785.sha256.v1 and reinterpreted valid R01 history. R02 also reasoned from canonical ledger and normalized projections inward but did not enumerate every mutable outbox authority field or the narrow audit's actor-type and trace projections as peers in the same transaction authority graph. R03 makes the chain formula explicit and version-dispatched, writes only a distinct v2 segment, derives one digest over the complete immutable outbox authority, and validates all persisted and incoming replay authorities before resolving a projection. The third-round regression matrix enumerates every identified authority field so a future omission fails deterministically.",
+    "note": "Independently review exact strict-descendant candidate 2a15c3436bd76d69d13a854b22c50742f85e8a5f and replay both R02 findings plus their incremental authority boundary. Verify exact R01 v1 formula preservation, deterministic v2 segmentation and restart append, seven independent outbox corruptions, narrow actor/trace binding, exact incoming replay authority, returned projection content binding, changed-file and evidence truth, prior R01 closures, T03/slice/W1 deferrals, and protected-witness safety."
+  }
+}
