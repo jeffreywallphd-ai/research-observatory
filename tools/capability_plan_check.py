@@ -5,8 +5,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import re
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -29,8 +29,7 @@ REQUIRED_HEADINGS = [
     "## 12. Approval record",
 ]
 INITIATION_POLICY = "initiation-assessment-1.0"
-BUDGET_STATEMENT = "R <= 0.15 * P"
-SCOPE_REFERENCE_PATTERN = re.compile(r"^(?:[0-9a-f]{40}|sha256:[0-9a-f]{64})$")
+FIFTEEN_PERCENT = Decimal("0.15")
 
 
 def frontmatter(path: Path) -> tuple[dict[str, Any], str]:
@@ -62,23 +61,16 @@ def wave_requires_initiation_assessment(wave_id: str) -> bool:
     return number is not None and number >= 2
 
 
-def _effort(value: Any) -> float | None:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+def _effort(value: Any) -> Decimal | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float, str)):
         return None
-    number = float(value)
-    return number if math.isfinite(number) and number > 0 else None
-
-
-def _nonnegative(value: Any) -> float | None:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+    try:
+        number = Decimal(str(value))
+    except InvalidOperation:
         return None
-    number = float(value)
-    return number if math.isfinite(number) and number >= 0 else None
-
-
-def _same_number(actual: Any, expected: float) -> bool:
-    value = _nonnegative(actual)
-    return value is not None and math.isclose(value, expected, rel_tol=1e-9, abs_tol=1e-9)
+    if not number.is_finite() or number <= 0:
+        return None
+    return number
 
 
 def _required_text(record: dict[str, Any], field: str, label: str, errors: list[str]) -> str:
@@ -90,12 +82,12 @@ def _required_text(record: dict[str, Any], field: str, label: str, errors: list[
 
 
 def _planned_items(
-    value: Any, *, valid_work_ids: set[str], label: str, errors: list[str]
-) -> tuple[dict[str, float], float]:
+    value: Any, *, work_waves: dict[str, str], label: str, errors: list[str]
+) -> tuple[dict[str, Decimal], Decimal]:
     if not isinstance(value, list) or not value:
         errors.append(f"{label}: planned_items must be a non-empty list")
-        return {}, 0.0
-    items: dict[str, float] = {}
+        return {}, Decimal(0)
+    items: dict[str, Decimal] = {}
     for index, item in enumerate(value):
         item_label = f"{label}.planned_items[{index}]"
         if not isinstance(item, dict):
@@ -103,22 +95,25 @@ def _planned_items(
             continue
         work_id = item.get("work_id")
         effort = _effort(item.get("effort"))
-        if not isinstance(work_id, str) or work_id not in valid_work_ids:
-            errors.append(f"{item_label}: work_id must name a task or slice in this capability")
+        if not isinstance(work_id, str) or work_id not in work_waves:
+            errors.append(f"{item_label}: work_id must name an atomic task in this capability")
             continue
         if work_id in items:
             errors.append(f"{item_label}: duplicate work_id {work_id}")
         if effort is None:
-            errors.append(f"{item_label}: effort must be a finite positive number")
+            errors.append(f"{item_label}: effort must be a positive finite number")
             continue
         items[work_id] = effort
-    return items, sum(items.values())
+    return items, sum(items.values(), Decimal(0))
 
 
 def initiation_assessment_errors(
-    meta: dict[str, Any], body: str, capability: dict[str, Any], wave_id: str
+    meta: dict[str, Any],
+    body: str,
+    capability: dict[str, Any],
+    wave_id: str,
 ) -> list[str]:
-    """Validate the prospective assessment embedded in an existing Wave packet."""
+    """Validate only the objective bounds of the prospective planning assessment."""
 
     if not wave_requires_initiation_assessment(wave_id):
         return []
@@ -134,36 +129,29 @@ def initiation_assessment_errors(
         return errors
     if assessment.get("policy_version") != "1.0":
         errors.append(f"{capability_id}: initiation_assessment.policy_version must be 1.0")
-    _required_text(assessment, "assessed_at", f"{capability_id}.initiation_assessment", errors)
-    scope_reference = _required_text(assessment, "scope_reference", f"{capability_id}.initiation_assessment", errors)
-    if scope_reference and not SCOPE_REFERENCE_PATTERN.fullmatch(scope_reference):
-        errors.append(f"{capability_id}: initiation_assessment.scope_reference must be a full commit or sha256 digest")
-    _required_text(assessment, "estimation_unit", f"{capability_id}.initiation_assessment", errors)
+    assessment_label = f"{capability_id}.initiation_assessment"
+    _required_text(assessment, "assessed_at", assessment_label, errors)
+    _required_text(assessment, "estimation_unit", assessment_label, errors)
 
-    valid_work_ids = {
-        str(work.get("id"))
+    work_waves = {
+        str(task.get("id")): str(slice_.get("wave"))
         for slice_ in capability.get("slices", [])
-        for work in [slice_, *slice_.get("tasks", [])]
-        if work.get("id")
+        for task in slice_.get("tasks", [])
+        if task.get("id")
     }
     baseline_items, baseline_effort = _planned_items(
         assessment.get("planned_items"),
-        valid_work_ids=valid_work_ids,
+        work_waves=work_waves,
         label=f"{capability_id}.initiation_assessment",
         errors=errors,
     )
-    if not _same_number(assessment.get("pre_assessment_planned_effort"), baseline_effort):
-        errors.append(
-            f"{capability_id}: pre_assessment_planned_effort must equal the itemized capability "
-            f"baseline {baseline_effort:g}"
-        )
 
     refactoring_value = assessment.get("refactoring_items")
     if not isinstance(refactoring_value, list):
         errors.append(f"{capability_id}: refactoring_items must be a list")
         refactoring_value = []
     refactoring: dict[str, dict[str, Any]] = {}
-    included_effort = 0.0
+    included_effort = Decimal(0)
     capability_waves = {str(slice_.get("wave")) for slice_ in capability.get("slices", [])}
     for index, item in enumerate(refactoring_value):
         label = f"{capability_id}.initiation_assessment.refactoring_items[{index}]"
@@ -180,10 +168,10 @@ def initiation_assessment_errors(
             continue
         if allocation_id in refactoring:
             errors.append(f"{label}: duplicate allocation id {allocation_id}")
-        if not isinstance(work_id, str) or work_id not in valid_work_ids:
-            errors.append(f"{label}: work_id must name a task or slice in this capability")
+        if not isinstance(work_id, str) or work_id not in work_waves:
+            errors.append(f"{label}: work_id must name an atomic task in this capability")
         if effort is None:
-            errors.append(f"{label}: effort must be a finite positive number")
+            errors.append(f"{label}: effort must be a positive finite number")
         if introduced_wave not in capability_waves:
             errors.append(f"{label}: introduced_in_wave must be a capability Wave")
         if item.get("changes_existing_implementation") is not True:
@@ -199,21 +187,10 @@ def initiation_assessment_errors(
         if disposition == "included" and effort is not None:
             included_effort += effort
 
-    if not _same_number(assessment.get("cumulative_capability_refactoring_effort"), included_effort):
+    if included_effort > FIFTEEN_PERCENT * baseline_effort:
         errors.append(
-            f"{capability_id}: cumulative_capability_refactoring_effort must equal included "
-            f"allocations {included_effort:g}"
+            f"{capability_id}: capability refactoring budget exceeds 15% ({included_effort} > 0.15 * {baseline_effort})"
         )
-    capability_share = included_effort / baseline_effort if baseline_effort else math.inf
-    if not _same_number(assessment.get("capability_refactoring_share"), capability_share):
-        errors.append(f"{capability_id}: capability_refactoring_share must equal {capability_share:g}")
-    if included_effort > 0.15 * baseline_effort + 1e-9:
-        errors.append(
-            f"{capability_id}: capability refactoring budget exceeds 15% "
-            f"({included_effort:g} > 0.15 * {baseline_effort:g})"
-        )
-    if assessment.get("budget_statement") != BUDGET_STATEMENT:
-        errors.append(f"{capability_id}: budget_statement must be {BUDGET_STATEMENT}")
     major_disposition = _required_text(
         assessment, "major_refactor_disposition", f"{capability_id}.initiation_assessment", errors
     )
@@ -243,74 +220,38 @@ def initiation_assessment_errors(
         refresh_by_wave[str(refresh_wave)] = refresh
         refresh_numbers.append(number)
         _required_text(refresh, "assessed_at", label, errors)
-        refresh_scope = _required_text(refresh, "scope_reference", label, errors)
-        if refresh_scope and not SCOPE_REFERENCE_PATTERN.fullmatch(refresh_scope):
-            errors.append(f"{label}: scope_reference must be a full commit or sha256 digest")
-        wave_work_ids = {
-            str(work.get("id"))
-            for slice_ in capability.get("slices", [])
-            if slice_.get("wave") == refresh_wave
-            for work in [slice_, *slice_.get("tasks", [])]
-            if work.get("id")
-        }
-        wave_items, wave_effort = _planned_items(
-            refresh.get("planned_items"), valid_work_ids=wave_work_ids, label=label, errors=errors
-        )
-        if not _same_number(refresh.get("pre_assessment_planned_effort"), wave_effort):
-            errors.append(f"{label}: pre_assessment_planned_effort must equal itemized Wave effort {wave_effort:g}")
-        refactoring_ids = refresh.get("refactoring_item_ids")
-        if not isinstance(refactoring_ids, list) or len(refactoring_ids) != len(set(refactoring_ids)):
-            errors.append(f"{label}: refactoring_item_ids must be a unique list")
-            refactoring_ids = []
-        expected_ids = {
-            allocation_id
-            for allocation_id, item in refactoring.items()
-            if item.get("introduced_in_wave") == refresh_wave and item.get("disposition") == "included"
-        }
-        if set(refactoring_ids) != expected_ids:
-            errors.append(
-                f"{label}: refactoring_item_ids must exactly identify included allocations {sorted(expected_ids)}"
-            )
-        wave_refactoring_effort = sum(
-            _effort(refactoring[allocation_id].get("effort")) or 0.0
-            for allocation_id in set(refactoring_ids)
-            if allocation_id in refactoring and refactoring[allocation_id].get("disposition") == "included"
-        )
-        if not _same_number(refresh.get("refactoring_effort"), wave_refactoring_effort):
-            errors.append(f"{label}: refactoring_effort must equal {wave_refactoring_effort:g}")
-        wave_share = wave_refactoring_effort / wave_effort if wave_effort else math.inf
-        if not _same_number(refresh.get("refactoring_share"), wave_share):
-            errors.append(f"{label}: refactoring_share must equal {wave_share:g}")
-        if wave_refactoring_effort > 0.15 * wave_effort + 1e-9:
-            errors.append(
-                f"{label}: refactoring budget exceeds 15% ({wave_refactoring_effort:g} > 0.15 * {wave_effort:g})"
-            )
-        cumulative = sum(
-            _effort(item.get("effort")) or 0.0
-            for item in refactoring.values()
-            if item.get("disposition") == "included"
-            and (wave_number(str(item.get("introduced_in_wave"))) or 99) <= number
-        )
-        if not _same_number(refresh.get("cumulative_capability_refactoring_effort"), cumulative):
-            errors.append(f"{label}: cumulative_capability_refactoring_effort must equal {cumulative:g}")
-        if refresh.get("budget_statement") != BUDGET_STATEMENT:
-            errors.append(f"{label}: budget_statement must be {BUDGET_STATEMENT}")
-        rationale = _required_text(refresh, "reestimate_rationale", label, errors)
-        reestimated = any(
-            work_id in baseline_items and not math.isclose(effort, baseline_items[work_id])
-            for work_id, effort in wave_items.items()
-        )
-        if reestimated and rationale.lower().startswith(("none", "not applicable", "n/a")):
-            errors.append(f"{label}: reestimate_rationale must reconcile changed estimates")
+        _required_text(refresh, "material_changes", label, errors)
+        _required_text(refresh, "plan_adaptations", label, errors)
+        _required_text(refresh, "support_improvements", label, errors)
         _required_text(refresh, "major_refactor_disposition", label, errors)
     if refresh_numbers != sorted(refresh_numbers):
         errors.append(f"{capability_id}: wave_refreshes must be in Wave order")
     if wave_id not in refresh_by_wave:
         errors.append(f"{capability_id}: missing initiation assessment refresh for {wave_id}")
+
+    wave_effort = sum(
+        (effort for work_id, effort in baseline_items.items() if work_waves.get(work_id) == wave_id),
+        Decimal(0),
+    )
+    wave_refactoring_effort = sum(
+        (
+            _effort(item.get("effort")) or Decimal(0)
+            for item in refactoring.values()
+            if item.get("introduced_in_wave") == wave_id and item.get("disposition") == "included"
+        ),
+        Decimal(0),
+    )
+    if not wave_effort:
+        errors.append(f"{capability_id}: {wave_id} assessment has no itemized pre-assessment planned effort")
+    elif wave_refactoring_effort > FIFTEEN_PERCENT * wave_effort:
+        errors.append(
+            f"{capability_id}: {wave_id} refactoring budget exceeds 15% "
+            f"({wave_refactoring_effort:g} > 0.15 * {wave_effort:g})"
+        )
     return errors
 
 
-def wave_initiation_rollup_errors(entries: list[tuple[str, dict[str, Any]]], wave_id: str) -> list[str]:
+def wave_initiation_rollup_errors(entries: list[tuple[str, dict[str, Any], dict[str, Any]]], wave_id: str) -> list[str]:
     """Recompute the deduplicated cross-capability Wave refactoring budget."""
 
     if not wave_requires_initiation_assessment(wave_id):
@@ -318,47 +259,44 @@ def wave_initiation_rollup_errors(entries: list[tuple[str, dict[str, Any]]], wav
     errors: list[str] = []
     planned_ids: set[str] = set()
     allocation_ids: set[str] = set()
-    planned_effort = 0.0
-    refactoring_effort = 0.0
-    for _capability_id, meta in entries:
+    planned_effort = Decimal(0)
+    refactoring_effort = Decimal(0)
+    for _capability_id, meta, capability in entries:
         assessment = meta.get("initiation_assessment")
         if not isinstance(assessment, dict):
             continue
-        refresh = next(
-            (
-                item
-                for item in assessment.get("wave_refreshes", [])
-                if isinstance(item, dict) and item.get("wave") == wave_id
-            ),
-            None,
-        )
-        if not isinstance(refresh, dict):
-            continue
-        for item in refresh.get("planned_items", []):
+        wave_work_ids = {
+            str(task.get("id"))
+            for slice_ in capability.get("slices", [])
+            if slice_.get("wave") == wave_id
+            for task in slice_.get("tasks", [])
+            if task.get("id")
+        }
+        for item in assessment.get("planned_items", []):
             if not isinstance(item, dict) or not isinstance(item.get("work_id"), str):
                 continue
             work_id = str(item["work_id"])
+            if work_id not in wave_work_ids:
+                continue
             if work_id in planned_ids:
                 errors.append(f"{wave_id}: planned work {work_id} is counted by more than one capability")
                 continue
             planned_ids.add(work_id)
-            planned_effort += _effort(item.get("effort")) or 0.0
-        refactoring = {
-            item.get("id"): item
-            for item in assessment.get("refactoring_items", [])
-            if isinstance(item, dict) and isinstance(item.get("id"), str)
-        }
-        for allocation_id in refresh.get("refactoring_item_ids", []):
-            if not isinstance(allocation_id, str) or allocation_id not in refactoring:
+            planned_effort += _effort(item.get("effort")) or Decimal(0)
+        for item in assessment.get("refactoring_items", []):
+            if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+                continue
+            allocation_id = str(item["id"])
+            if item.get("introduced_in_wave") != wave_id or item.get("disposition") != "included":
                 continue
             if allocation_id in allocation_ids:
                 errors.append(f"{wave_id}: refactoring allocation {allocation_id} is counted more than once")
                 continue
             allocation_ids.add(allocation_id)
-            refactoring_effort += _effort(refactoring[allocation_id].get("effort")) or 0.0
+            refactoring_effort += _effort(item.get("effort")) or Decimal(0)
     if not planned_effort:
         errors.append(f"{wave_id}: initiation assessment Wave roll-up has no planned effort")
-    elif refactoring_effort > 0.15 * planned_effort + 1e-9:
+    elif refactoring_effort > FIFTEEN_PERCENT * planned_effort:
         errors.append(
             f"{wave_id}: deduplicated Wave refactoring budget exceeds 15% "
             f"({refactoring_effort:g} > 0.15 * {planned_effort:g})"

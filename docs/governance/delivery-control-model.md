@@ -77,9 +77,12 @@ assessment-added work affecting previously implemented structure or behavior is
 classified as technical-debt refactoring. Its forecast effort may
 not exceed 15% of the pre-assessment forecast effort of already planned work at
 either the capability or Wave level. The packet records the common estimation
-basis, itemized pre-assessment scope reference, numerator, denominator,
-percentage, cumulative capability total, deduplicated Wave roll-up,
-post-baseline re-estimation rationale, and disposition of excluded work.
+basis, itemized pre-assessment atomic-task denominator, refactoring allocations,
+deduplicated Wave roll-up, and disposition of excluded work. Existing planning
+validation recomputes the objective arithmetic; independent review evaluates
+whether the baseline and adaptations are credible. The immutable approved Wave
+commit preserves the accepted assessment without creating another controller or
+approval gate.
 Changing an accepted architectural decision, replacing a foundational runtime
 or data boundary, or restructuring multiple completed capability outcomes is a
 major refactor for this rule. Work beyond the budget or in one of those classes
