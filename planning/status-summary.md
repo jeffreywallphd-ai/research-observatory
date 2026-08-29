@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 28ab77439537e59370bbb4cab49ad16b159c626b84d87df0aea6d50c673198e5
+source_sha256: 2192da88ed5b13484ac6ca6fed6be03de7572ecde7f56a82e1d292584d396df1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 269 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 49 |
 | `DEFERRED` | 36 |
 
@@ -357,7 +357,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
-| `CAP-03.S02.T02` | `append-only v1` | 3 | `-` | changes-requested / codex-independent-desktop-intent-reviewer | `CAP-03.S02.T02-R03-F01` |
+| `CAP-03.S02.T02` | `append-only v1` | 3 | `R04` | changes-requested / codex-independent-desktop-intent-reviewer | `CAP-03.S02.T02-R03-F01` |
 | `CAP-03.S02.T03` | `append-only v1` | 2 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -426,4 +426,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S02.T02` Implement guided intent creation and revision UI | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S02.T02` Implement guided intent creation and revision UI | `REVIEW` | codex | `codex/w1-windows-local-runtime` |

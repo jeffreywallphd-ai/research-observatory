@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 28ab77439537e59370bbb4cab49ad16b159c626b84d87df0aea6d50c673198e5
+source_sha256: 2192da88ed5b13484ac6ca6fed6be03de7572ecde7f56a82e1d292584d396df1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3792,7 +3792,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3822,6 +3822,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-03.S02.T02.json` at `b93b7e4c8735c278c026f55b5b42c7b3f2d21850`
 - `artifacts/evidence/CAP-03.S02.T02.R02.json` at `a60d3e9704a4d59dd1d0310437bd6d486057500b`
 - `artifacts/evidence/CAP-03.S02.T02.R03.json` at `b9868e5211aa012d7223caff5ab2eef2a7386de9`
+- `artifacts/evidence/CAP-03.S02.T02.R04.json` at `e2d469f8008fe78d4db266d169d3578b3750f8f6`
 
 ##### Review history — CAP-03.S02.T02
 
@@ -3919,7 +3920,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R04` / packet SHA-256 `d8b50506bd5e85f9b6851d04adebf292c8e99a26b0920c199bafac52c06f2f3d`
+
+- Candidate / base / branch: `e2d469f8008fe78d4db266d169d3578b3750f8f6` / `b9868e5211aa012d7223caff5ab2eef2a7386de9` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T13:30:15+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T02.R04.json` / `2cd02dcd8a757867c80945f1de8dbaded65c075132e86d95732e2b6f528197de` / `e2d469f8008fe78d4db266d169d3578b3750f8f6`
+- Acceptance-criteria SHA-256: `a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb`
+- Verification-selection SHA-256: `45aa7f25c2318036084a6acfe1131187d5205d908729c4229e87514dd3f1f7c6`
+- Changed paths: `apps/desktop/README.md`, `apps/desktop/src/app/IntentWorkspace.test.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `artifacts/evidence/CAP-03.S02.T02.R03.json`, `artifacts/evidence/CAP-03.S02.T02.review-R03.json`, `artifacts/evidence/ui-change/CAP-03.S02.T02.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/CAP-03/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`
+- Selected checks: `npm run lint; npm test; npm run typecheck; npm run build in apps/desktop`, `npm test -- src/app/IntentWorkspace.test.tsx in apps/desktop`, `npm test -- core-api/generated.test.ts; npm run typecheck in packages/contracts`, `.venv\Scripts\python.exe -m unittest tests.service.test_research_intents tests.service.test_core_api`, `desktop_app_check.py --built-frame-only; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py`, `quality_check.py; architecture_check.py; repository_structure_check.py; taskctl.py validate; backlog_views.py --check`, `ui_change_gate.py --base 198edd87be8147087ac87f282c12d099fe1a943d --head e2d469f8008fe78d4db266d169d3578b3750f8f6; planctl.py wave ready W1 --require-approved`, `verify.py --profile desktop --profile service --affected-base b9868e5211aa012d7223caff5ab2eef2a7386de9 --affected-head e2d469f8008fe78d4db266d169d3578b3750f8f6 --deferred-gate W1-exit --selection-only; build_manifest.py; git diff --check; protected witness SHA-256`
+- Deferred checks: `The full controlled visual-capture matrix remains mandatory at CAP-03.S02 slice integration. Exact deterministic renderer/coordinator, approved-reference, token, route, workflow, accessibility, built-frame, and production-build checks pass for R04.`, `CAP-03.S02.T03 must be reclaimed and revalidated after this accepted dependency so the renderer's authoritative accepted projection is proven end-to-end as effective service-policy authority.`, `Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: CAP-03.S02.T02-R03-F01 exposed a split-authority failure between the renderer's per-click command identity and the service's durable idempotent acceptance: Core could commit while the UI discarded the only replay key and falsely represented the draft as authoritative. The incremental risks are exact command/key retention, misclassifying an explicit Core problem versus an ambiguous transport/decoder failure, accepting a different revision/hash/rationale on retry, leaving the renderer locked forever, duplicating accepted history, enabling launch locally, and regressing generated-client or service replay semantics. Verification therefore drives the new coordinator through the real generated client and both response-loss/rejection fake transports; replays full desktop tests/build, focused service/API and generated-client tests, approved-reference/token/route/workflow/accessibility controls, cumulative UI lineage, quality/architecture/repository/planning controls, exact affected selection, provenance, patch hygiene, and witness safety. No dependency, migration, service implementation, or external boundary changed. The visual capture runner remains owned by the CAP-03.S02 slice integration review, and gate-bound performance remains owned by W1 exit.
+- Prior round / replayed open findings: `R03` / `CAP-03.S02.T02-R03-F01`
+- Root-cause escalation: R03 treated the acceptance idempotency key as transient per-click transport metadata rather than durable command identity and tested only a pure request helper with an invalid unprefixed hash fixture. That bypassed the generated client, transport, response decoder, retry lifecycle, and accepted-state projection, so the evidence could not reveal commit-plus-response-loss divergence. R04 centralizes acceptance identity and failure classification in one coordinator used by the actual handler, freezes the exact request/key until success or definitive rejection, and adds real generated-client fake-transport regressions for ambiguous replay convergence and explicit rejection so this boundary cannot again be supported only by helper assertions.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-desktop-intent-reviewer at `2026-08-29T13:19:58+00:00`
 
