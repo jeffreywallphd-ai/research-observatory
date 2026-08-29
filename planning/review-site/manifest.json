@@ -3477,7 +3477,7 @@
             {
               "task_id": "CAP-03.S02.T03",
               "title": "Enforce mode and autonomy policy at service boundaries",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "codex-independent-epistemic-governance-reviewer",
