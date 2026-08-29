@@ -9343,6 +9343,47 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit("Task cannot be reopened while dependencies or the activation gate are incomplete")
     if any(gate.get("status") == "APPROVED" and gate.get("after_wave") == task.get("wave") for gate in gates.values()):
         raise SystemExit("Task cannot be reopened after its wave release gate is APPROVED")
+    completed_dependents: list[dict[str, Any]] = []
+    dependency_frontier = {str(task["id"])}
+    while dependency_frontier:
+        next_frontier: set[str] = set()
+        for candidate in tasks.values():
+            candidate_id = str(candidate["id"])
+            if candidate_id == task["id"] or any(item["id"] == candidate_id for item in completed_dependents):
+                continue
+            if dependency_frontier.intersection(str(dependency) for dependency in candidate.get("dependencies", [])):
+                if candidate.get("status") in {"IN_PROGRESS", "REVIEW", "DONE"}:
+                    completed_dependents.append(candidate)
+                next_frontier.add(candidate_id)
+        dependency_frontier = next_frontier
+    if completed_dependents and not getattr(args, "cascade_dependents", False):
+        dependent_ids = ", ".join(sorted(str(item["id"]) for item in completed_dependents))
+        raise SystemExit(
+            f"Task has active or completed dependents ({dependent_ids}); "
+            "use --cascade-dependents to reopen the dependency chain atomically"
+        )
+    if completed_dependents:
+        active_dependents = sorted(
+            str(item["id"]) for item in completed_dependents if item.get("status") in {"IN_PROGRESS", "REVIEW"}
+        )
+        if active_dependents:
+            raise SystemExit(
+                "Cannot cascade reopen while dependent tasks are active or awaiting review: "
+                + ", ".join(active_dependents)
+            )
+        if any(item.get("wave") != task.get("wave") for item in completed_dependents):
+            raise SystemExit("Cascade reopen cannot cross a Wave boundary")
+        approved_slices = sorted(
+            {
+                str(item["slice_id"])
+                for item in completed_dependents
+                if (slices[str(item["slice_id"])].get("completion") or {}).get("status") == "APPROVED"
+            }
+        )
+        if approved_slices:
+            raise SystemExit(
+                "Cascade reopen cannot invalidate independently approved slices: " + ", ".join(approved_slices)
+            )
     lease = task.get("lease")
     if lease_is_active(task) and lease and lease.get("claimed_by") != agent:
         raise SystemExit(f"Task {task['id']} has an active lease owned by {lease.get('claimed_by')}")
@@ -9367,10 +9408,25 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
         review=review_projection,
         lease=new_lease(agent, args.lease_hours),
     )
+    for dependent in completed_dependents:
+        dependent.update(
+            status="NOT_STARTED",
+            owner=None,
+            branch=None,
+            base_sha=None,
+            worktree=None,
+            lease=None,
+            updated_at=utc_now(),
+            completed_at=None,
+            blocker=None,
+            cancellation=None,
+            verification_state=None,
+        )
     if wave_remediation:
         parent_slice = slices[task["slice_id"]]
         parent_slice["status"] = "IN_PROGRESS"
         parent_slice.setdefault("completion", {})["status"] = "CHANGES_REQUESTED"
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
     persist(args, data)
 
 
@@ -9796,6 +9852,11 @@ def build_parser() -> argparse.ArgumentParser:
     reopen.add_argument("--reason", required=True)
     reopen.add_argument("--agent", required=True)
     reopen.add_argument("--lease-hours", type=int, default=8)
+    reopen.add_argument(
+        "--cascade-dependents",
+        action="store_true",
+        help="atomically demote completed dependent tasks for later revalidation",
+    )
     cancel = sub.add_parser("cancel")
     cancel.add_argument("task")
     cancel.add_argument("--reason", required=True)

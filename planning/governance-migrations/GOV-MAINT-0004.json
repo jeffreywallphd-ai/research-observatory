@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0004",
+  "title": "Atomically reopen a completed prerequisite and its completed dependents",
+  "status": "pending-independent-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "predecessor": {
+    "commit": "e5f80b52b4148506362abe989221a00fa5adbb51",
+    "wave": "W1",
+    "waveStatus": "ACTIVE",
+    "completedPrerequisite": "CAP-03.S02.T02",
+    "completedDependent": "CAP-03.S02.T03",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "trigger": {
+    "denial": "taskctl reopen CAP-03.S02.T02 correctly detected that CAP-03.S02.T03 could not remain DONE while its dependency was incomplete, but the command had no legal atomic transition that could demote the dependent.",
+    "atomicity": "The failed save left both tasks DONE, retained every evidence and review record, and made no backlog mutation.",
+    "diagnosis": "The semantic invariant and the reopen transition were individually conservative but mutually incomplete: reopening an approved upstream task necessarily requires bounded revalidation of already completed downstream tasks, while manual ledger editing would bypass taskctl and risk losing append-only evidence history."
+  },
+  "authority": "This maintenance preserves the already approved W1, task, slice, experience-reference, and release-gate authority. It does not reopen any task by itself, approve product work, change acceptance criteria, expand experience scope, authorize a release or external effect, cross a Wave boundary, invalidate an independently approved slice, or rewrite prior evidence, submissions, reviews, findings, closures, or recovery history.",
+  "intendedDelta": {
+    "implementation": "Add an explicit --cascade-dependents option to taskctl reopen. When the requested prerequisite and every active/completed transitive dependent are inside the same unreleased Wave and no dependent is active, frozen in REVIEW, or inside an independently approved slice, taskctl atomically reopens only the requested prerequisite and demotes completed dependents to NOT_STARTED for later dependency-ordered claim and revalidation. Historical evidence, review_control attempts, findings, closures, and the latest review projection remain intact; only the dependent execution projection is cleared.",
+    "failClosed": [
+      "Ordinary reopen without --cascade-dependents rejects any active or completed dependent and leaves the ledger unchanged.",
+      "Cascade rejects IN_PROGRESS or REVIEW dependents rather than stealing a lease or invalidating a frozen candidate.",
+      "Cascade rejects cross-Wave dependents, independently approved slices, and every task after an approved Wave release gate.",
+      "Only DONE dependents are demoted; prior evidence and controlled review attempts remain append-only and available for the required follow-up submission.",
+      "The existing schema, semantic dependency invariant, source compare-and-swap, immutable Wave approval, task-review-history, recovery-history, and atomic persistence checks still run before replacement."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0004.json",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tools/taskctl.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The change touches the shared task lifecycle and append-only controlled-review projection. Selected checks cover explicit opt-in parsing, unchanged-state denial, atomic prerequisite/dependent transition, preservation of evidence and review history, active/frozen-dependent denial, approved release-gate denial, the complete affected taskctl workflow suite, canonical backlog validation, governed Python formatting/lint/type checking, and patch hygiene. Product, UI, service, packaging, storage, and performance checks are deferred because this candidate changes no product/runtime path; the affected T02/T03 checks remain mandatory after the independently reviewed control transition is used.",
+    "results": [
+      {
+        "check": "focused dependency-safe reopen controls",
+        "result": "passed",
+        "detail": "Four focused tests passed, covering explicit cascade opt-in, unchanged-state denial, atomic completed-dependent demotion with evidence/review-history preservation, active/frozen-dependent denial, parser behavior, and the existing approved release-gate denial."
+      },
+      {
+        "check": "governed Python quality",
+        "result": "passed",
+        "detail": "Ruff formatting, Ruff lint, and mypy passed for all 160 governed Python files."
+      },
+      {
+        "check": "canonical backlog validation and patch hygiene",
+        "result": "passed",
+        "detail": "The unmodified canonical backlog validated and git diff --check passed."
+      },
+      {
+        "check": "complete affected taskctl workflow suite",
+        "result": "diagnostic-historical-fixtures",
+        "detail": "63 of 65 tests passed. The two failures are the pre-existing live-history fixture assumptions test_b00_r04_historical_bootstrap_validation_does_not_depend_on_live_branch and test_wave_resume_records_validate_historical_binding_and_fail_closed. Neither exercises reopen or the changed transition, and neither is represented as passing evidence."
+      }
+    ]
+  },
+  "rollback": "Do not use the cascade transition or integrate this candidate if independent review finds a blocking defect. Revert only the strict-descendant maintenance candidate to e5f80b5; CAP-03.S02.T02 and CAP-03.S02.T03 remain DONE, the product tree remains unchanged, and W1 remains ACTIVE at the same unreleased slice boundary.",
+  "review": null
+}
