@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T03",
+  "commit": "b4da81e23738d722efe12cf44f760531656690f3",
+  "baseCommit": "9910ca3ae717ced397830125381e555901fd5abe",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S03.T03.R02.json",
+    "sha256": "59cbdf203c9021738d0166a8c7bdbcd1bbcf0ea5b7637f833da2bd53cb98e654",
+    "commit": "9910ca3ae717ced397830125381e555901fd5abe",
+    "reason": "Remediates CAP-03.S03.T03-R02-F01 and CAP-03.S03.T03-R02-F02 while preserving the explicit R02 closures of all three R01 findings and without expanding the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+    "artifacts/evidence/CAP-03.S03.T03.R02.json",
+    "artifacts/evidence/CAP-03.S03.T03.review-R02.json",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tools/core_api_contract.py"
+  ],
+  "checks": [
+    {
+      "command": "apps\\desktop\\node_modules\\.bin\\vitest.CMD run apps/desktop/src/app/AuditLineageWorkspace.test.tsx packages/contracts/core-api/generated.test.ts",
+      "exitCode": 0,
+      "result": "All 18 focused generated-client and renderer tests passed at the exact candidate. New adversarial cases reject an empty same-cursor continuation and a backward cursor, accept only an empty terminal page, remove the renderer continuation action after terminal merge, reject partial or query-mismatched export, keep integrity-review and rights denial monotonic across later verified pages, and permit only a complete verified query-bound local manifest. The same suite replays the R01 real-fact, immutable-query, governed-region, human-decision, content-minimization, missing-root, duplicate, depth, and ordinary pagination closures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-R03-desktop-application.json",
+      "exitCode": 0,
+      "result": "The complete desktop verifier passed UI components, lint, strict TypeScript, the full Vitest suite, production builds, cargo formatting, clippy with warnings denied, Rust workspace tests, and Rust workspace build. Its deterministic report has SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad and includes the task-owned Audit and Lineage capability."
+    },
+    {
+      "command": "PYTHONPATH=services/core-api/src .venv\\Scripts\\python.exe -m unittest -v tests.service.test_provenance tests.data.test_sqlite_repositories",
+      "exitCode": 0,
+      "result": "All 20 affected service and SQLite tests passed. They replay the real synthesis/evidence/alternate/human-decision/output-free-invalidation vertical, exact multi-page identity and order, rights denial, missing-reference integrity review, append-only atomicity, corruption detection, retry/restart, and repository-port boundaries. An initial direct invocation without the service import path failed before product execution; the repository-configured invocation above is the successful claimed check."
+    },
+    {
+      "command": "desktop and contracts TypeScript checks; core_api_contract.py --check; architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "Both strict TypeScript projects passed, the generated Core client exactly matches its Python generator and OpenAPI authority, and the architecture check passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles. The generator now emits the same strict forward-progress rule exercised by the checked-in client tests."
+    },
+    {
+      "command": "ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; ui_visual_regression_check.py",
+      "exitCode": 0,
+      "result": "Approved reference RO-UI-ACADEMIC-MINIMAL-1.3 remained reproducible and byte-valid. Token, 32-route, 14-workflow, accessibility/responsive, and deterministic Windows Chromium visual checks passed, including all 64 light/dark captures at both governed responsive viewports. The actual renderer shows a pending completeness state and disables manifest export until pagination terminates."
+    },
+    {
+      "command": "quality_check.py; repository_structure_check.py; agent_protocol_check.py; backlog_views.py --check; plan_review_check.py --repo .; build_manifest.py; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "Ruff formatting/lint and mypy passed across 166 governed Python files; repository structure and durable-Wave protocol passed; generated backlog views and all 150 planning review pages were current; patch hygiene passed. The exact build manifest is 0.1.0+gb4da81e.dirty with SHA-256 e3fadf911a84344d5327e4e73238ab805733e03b2329cb5385b379ac54e75bd6; dirty state is solely the protected untracked witness. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R02 independently closed the synthetic-only lineage defect. The exact R03 candidate retains the real SQLite-to-Core-to-generated-client-to-renderer synthesis, evidence, alternate, human-decision, and valid output-free invalidation path with stable typed relation identities and exact bounded pagination.",
+        "A terminal empty continuation now merges into the accumulated trace with nextCursor=null and removes the only Load more action. A non-null cursor must consume at least one fact, strictly exceed the requested cursor, and equal the exact consumed-fact position.",
+        "The complete renderer still exposes selected, alternate, superseded, decision, stale/invalidation, transformation, configuration, agent, and audit identities without exposing research content, raw prompts, secrets, or hidden model rationale."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "CAP-03.S03.T03-R02-F01 is closed by independent generated-client and renderer guards for zero-item same-cursor, backward, duplicate, depth-regressing, and mismatched continuation responses; the honest empty terminal response is accepted and cannot be resubmitted from the rendered workspace.",
+        "CAP-03.S03.T03-R02-F02 is closed by requiring a complete accepted query, terminal pagination, verified integrity, service export permission, no denial reason, and no denied or unknown rights fact before export. The manifest binds revision, direction, max depth, page size, start cursor, terminal cursor, completeness, redaction, and local-file-only egress.",
+        "Expected, failure, denial, and boundary behavior passed in the focused suite, complete desktop verifier, real service/repository vertical, generated contract checks, and accessibility/responsive/visual checks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Page merge now computes integrity and rights authority as a monotonic fail-closed join: integrity-review wins over every later page and any rights denial remains denied. A later verified/allowed page cannot reopen either authority.",
+        "The governed export region distinguishes incomplete pagination from policy denial, disables export until the full bounded trace terminates, and emits a complete content-minimized manifest tied to the accepted query without changing the approved experience reference.",
+        "Only the generated-client generator/output, renderer/tests, provenance boundary documentation, and append-only R02 review/planning projections changed. No migration, dependency, network path, cloud authority, public product scope, approved reference, or release authority changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 closed the three original end-to-end, pagination, and experience findings but exposed CAP-03.S03.T03-R02-F01 at the cross-process continuation boundary and CAP-03.S03.T03-R02-F02 at the governed export boundary. The root causes were localized, so R03 replays both exact open finding IDs and the complete focused generated-client/renderer suite including every R01 closure, the real service/SQLite vertical, the complete desktop build and Rust verifier, generated-contract and strict-type checks, every affected UI conformance dimension, architecture/quality/repository controls, exact build provenance, planning parity, and witness safety. The previously recorded stale schema-v6 object-envelope assertions and historical foundation controller/recovery baseline are unchanged and remain mandatory W1-exit reconciliation debt rather than being relabeled as T03 results.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:agent-protocol",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "service:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S03 independent slice review will replay the accumulated append-only persistence, retry/restart, migration, lineage, integrity-review, recovery, generated-client, renderer, and adversarial integration union after T03 closes.",
+      "The two stale object-envelope schema-version assertions and the known historical foundation controller/recovery baseline must be reconciled or formally dispositioned before W1 exit qualification can pass; neither is attributed to this candidate.",
+      "Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S03.T03-R02-F01",
+      "CAP-03.S03.T03-R02-F02"
+    ],
+    "rootCauseAnalysis": "R02 encoded cursor consistency as nextCursor equals requested cursor plus returned item count, but did not separately state the semantic progress invariant that a non-null continuation must consume at least one item and strictly advance. R02 also reused each service page's whole-query export policy as mutable renderer page state: object spread made the newest page authoritative, while completeness and the immutable accepted query were not part of the client-side export precondition. R03 separates consistency from progress, treats terminal empty pages explicitly, joins integrity and rights authority monotonically, and makes complete query-bound pagination a necessary export condition.",
+    "note": "Independently review exact descendant candidate b4da81e23738d722efe12cf44f760531656690f3. Replay CAP-03.S03.T03-R02-F01 and F02 exactly, authenticate both R02 finding closures and all three preserved R01 closures, verify strict empty/backward cursor denial and terminal empty-page behavior through the generated client plus renderer, verify complete query-bound export and monotonic integrity/rights denial, confirm exact changed-path/evidence/report hashes and witness safety, and do not reopen unchanged surfaces without a reproducible acceptance-bound defect."
+  }
+}
