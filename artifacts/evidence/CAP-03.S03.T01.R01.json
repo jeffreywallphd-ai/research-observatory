@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T01",
+  "commit": "0cdc367a68195a2360d3d8efc23da137bf0e9790",
+  "baseCommit": "dc796d9dd2e8be27150617f3e139209c161b2f1e",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/adr/ADR-0024-adopt-minimized-cloudevents-provenance-with-w3c-prov-relations.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/package.json",
+    "packages/contracts/provenance/fixtures/valid-source-acquired-event.v1.json",
+    "packages/contracts/provenance/generate.mjs",
+    "packages/contracts/provenance/generated.ts",
+    "packages/contracts/provenance/provenance-event.schema.json",
+    "packages/contracts/provenance/provenance-event.template.py.txt",
+    "packages/contracts/provenance/provenance-event.template.ts.txt",
+    "packages/contracts/provenance/provenance-event.test.ts",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/provenance_contracts.py",
+    "tests/contracts/test_provenance_contracts.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": "repository Node 24 domain, lifecycle, compatibility, intent, model-gateway, and provenance generators --check; npm run typecheck --prefix packages/contracts; npm test --prefix packages/contracts -- --run",
+      "exitCode": 0,
+      "result": "All six portable-contract generator boundaries passed at exact candidate 0cdc367a68195a2360d3d8efc23da137bf0e9790, strict TypeScript passed, and all 62 tests across eight contract files passed. The installed pnpm 11 aggregate launcher selected system Node 20 and failed before executing a check because that pairing lacks node:sqlite; invoking the same underlying checks directly with the repository-configured Node 24 runtime closed the toolchain-only failure without waiving coverage."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_provenance_contracts",
+      "exitCode": 0,
+      "result": "All five Python provenance tests passed. Draft 2020-12 schema and generated runtime accept the minimized source-acquisition fixture; schema hash and canonical record hash are restart-stable; immutable snapshots detach from caller mutation; raw research/personal fields, hostile keys, malformed trace/subject identity, actor mismatch, overlapping entities, and incomplete relations fail closed; a failed acquisition records no invented output; and a structurally valid future type is retained without interpretation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six frozen-sidecar packaging tests passed except the documented current-token file-symlink case. A real Windows x64 PyInstaller build imported research_observatory_core.provenance_contracts as a required hidden module, ran without system Python, and failed closed when governed runtime inventory was removed or changed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.service.test_domain_compatibility_service",
+      "exitCode": 0,
+      "result": "All 24 affected persistence and service-compatibility boundary tests passed, covering strict WAL schema/restart, append-only existing provenance behavior, transaction rollback, idempotent replay, immutable projections, dependency-neutral ports, concurrency, and exact cross-process compatibility. T01 intentionally adds no ledger migration or persistence path; those are T02 acceptance scope."
+    },
+    {
+      "command": "quality_check.py; architecture_check.py; repository_structure_check.py; adr_check.py --base dc796d9... --head 0cdc367...; build_manifest.py",
+      "exitCode": 0,
+      "result": "Quality passed across 163 governed files (report SHA-256 4b8f731ccaaa5f477b52f7263ef635f9d82f8ab013a5f28fcc33312c5b77da7d); 13 architecture areas, 12 modules, five stable interfaces, and three deployment profiles passed; ADR-0024 covers all 21 implementation paths; and build/schema inventory includes the exact provenance schema. The build report SHA-256 is 39fc5e7e1d00959f4f7fed448753056adf6916a1aca78d10468a3c674e438650 and binds 0cdc367; its dirty flag identifies only the protected untracked W1 witness."
+    },
+    {
+      "command": "taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog validates, generated planning views are current, and W1 remains ready under its immutable approved packet. Patch hygiene passed. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The CloudEvents 1.0-compatible envelope and generated immutable TypeScript/Python decoders require exact UUID-backed event, project, actor, entity/revision, activity, relation, correlation and causal identities; exact UTC activity/event times; W3C trace context; versioned configuration identity/hash; and closed sensitivity/retention declarations.",
+        "W3C PROV-aligned used, wasGeneratedBy, wasAssociatedWith, wasDerivedFrom, wasInvalidatedBy, and wasAttributedTo relations close over each event's exact inputs, outputs, activity, and opaque agent. Known acquisition, parsing, extraction, verification, decision, synthesis, export, and invalidation types have bounded status/input/output semantics; future structural types remain storable but uninterpreted.",
+        "The strict schema has no inline content escape hatch: raw text, prompts, paths, names, email, credentials, and unknown fields are rejected. Optional sensitive detail is only a protected object/revision/content-hash/media-type reference."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Six TypeScript tests and five Python tests cover the expected minimized acquisition, immutable ownership, schema/runtime hash parity, deterministic canonical ordering, and unknown-future compatibility.",
+        "Material boundaries cover failed acquisition without fabricated output, raw/private field injection, prototype/hostile keys, invalid subject and trace identity, actor mismatch, reversed time, incomplete PROV relations, input/output overlap, and caller mutation after decode.",
+        "The complete 62-test portable-contract package, real Windows frozen-sidecar build, and 24 affected SQLite/service tests pass at the exact candidate."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0024 and the architecture handoff define the portable event, minimization, retention, canonical-record, schema-evolution, rollback, and T02 persistence/checkpoint boundary. The ADR registry, package exports, TypeScript scope, quality inventory, build schema inventory, and frozen-sidecar capability inventory are updated.",
+        "No migration, domain transaction, query API, renderer, governed experience reference, dependency version, or external authority changed. Existing narrow provenance rows remain unchanged; the approved T02 task owns additive migration, atomic ledger/outbox persistence, idempotency, lineage queries, restart bridging, and hash checkpoints.",
+        "The mechanical task claim and generated planning projections are fully disclosed in the exact base-to-candidate range and introduce no product scope."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task creates a new public portable provenance contract, architecture decision, canonical record identity, cross-language generated decoder, build-schema inventory, and frozen-sidecar module boundary. Credible failures are schema/runtime drift, accepting raw or personal content, malformed or cross-project identities, incomplete PROV relations, non-deterministic hashes, unsupported future-event interpretation, inability to audit failed operations, package omission, or accidental coupling to the existing persistence schema. The selected checks therefore cover both runtime languages, schema validation, deterministic generation/canonicalization, adversarial minimization and identity cases, failure/future shapes, the real packaged executable, affected persistence/service compatibility, ADR/architecture/quality/build controls, and W1 planning integrity. T01 changes no persistence implementation or service route, so the complete service/data profiles and migration/lineage/checkpoint fault matrix are deferred to T02/slice review; the complete cross-capability and platform matrix remains once at W1 exit. The pnpm aggregate wrapper was not counted as coverage because its installed launcher paired pnpm 11 with system Node 20 and failed before test execution; every underlying generator, typecheck, and test was instead executed directly and passed with the repository-configured Node 24 runtime.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:backlog-views",
+      "foundation:backlog",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "T02 owns additive migration, atomic ledger/outbox persistence, retry idempotency, prior-row bridging, bounded lineage queries, restart recovery, segment/checkpoint verification, and mismatch integrity-review behavior.",
+      "Slice review will run the accumulated provenance integration/adversarial union after T02 and T03 close; no governed experience changed in T01.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.",
+      "The current Windows token cannot create the packaging file-symlink fixture; redirect and missing/changed inventory paths pass, and privileged equivalence remains a W1-exit obligation."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "portable-provenance-contract-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate 0cdc367a68195a2360d3d8efc23da137bf0e9790 and frozen R01 evidence. Verify CloudEvents/W3C PROV fidelity, exact identity/time/trace/configuration semantics, content minimization and protected references, failure and future-type shapes, relation completeness, deterministic schema/runtime/hash parity across TypeScript and Python, ADR authority and T02 boundary, package inventory, declared toolchain-wrapper context, changed-file truth, deferred coverage, and protected-witness safety."
+  }
+}
