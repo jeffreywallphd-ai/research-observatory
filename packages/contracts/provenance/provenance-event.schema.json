@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/provenance/provenance-event.schema.json",
+  "title": "Research Observatory minimized provenance event",
+  "x-research-observatory-semanticRules": [
+    "actor-and-agent-match",
+    "event-project-and-subject-match",
+    "activity-time-is-ordered",
+    "event-time-matches-activity-end",
+    "input-output-sets-are-disjoint",
+    "entity-references-are-unique",
+    "entity-policy-does-not-weaken-event",
+    "relations-close-over-event-objects",
+    "activity-agent-relation-is-complete",
+    "input-use-relations-are-complete",
+    "output-generation-relations-are-complete",
+    "output-attribution-relations-are-complete",
+    "known-event-type-matches-activity",
+    "known-event-shape-matches-operation",
+    "causation-is-not-self"
+  ],
+  "x-research-observatory-knownEventActivityMap": {
+    "org.research-observatory.source.acquired.v1": "source-acquisition",
+    "org.research-observatory.document.parsed.v1": "parsing",
+    "org.research-observatory.evidence.extracted.v1": "extraction",
+    "org.research-observatory.evidence.verified.v1": "verification",
+    "org.research-observatory.decision.recorded.v1": "decision",
+    "org.research-observatory.synthesis.produced.v1": "synthesis",
+    "org.research-observatory.export.created.v1": "export",
+    "org.research-observatory.entity.invalidated.v1": "invalidation"
+  },
+  "$ref": "#/$defs/ProvenanceEvent",
+  "$defs": {
+    "UuidV7": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+    },
+    "ProjectIdentity": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+    },
+    "UtcInstant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}Z(?![\\s\\S])"
+    },
+    "Semver": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]{0,8})\\.(?:0|[1-9][0-9]{0,8})\\.(?:0|[1-9][0-9]{0,8})(?![\\s\\S])"
+    },
+    "Sha256Id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}(?![\\s\\S])"
+    },
+    "PortableKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}(?![\\s\\S])"
+    },
+    "EventType": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^org\\.research-observatory\\.[a-z][a-z0-9]*(?:\\.[a-z][a-z0-9-]*){1,8}\\.v[1-9][0-9]{0,5}(?![\\s\\S])"
+    },
+    "TraceParent": {
+      "type": "string",
+      "pattern": "^00-(?!0{32})[0-9a-f]{32}-(?!0{16})[0-9a-f]{16}-[0-9a-f]{2}(?![\\s\\S])"
+    },
+    "Sensitivity": {
+      "type": "string",
+      "enum": ["public-metadata", "licensed-metadata", "open-full-text", "licensed-full-text", "private-research", "restricted"]
+    },
+    "RetentionClass": {
+      "type": "string",
+      "enum": ["project-lifetime", "legal-hold", "policy-bound", "time-bounded", "tombstone-only"]
+    },
+    "ProvenanceAgent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agentId", "agentType", "role"],
+      "properties": {
+        "agentId": {"$ref": "#/$defs/UuidV7"},
+        "agentType": {"type": "string", "enum": ["human", "software", "model", "system"]},
+        "role": {"$ref": "#/$defs/PortableKey"}
+      }
+    },
+    "VersionedConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["configurationId", "configurationVersion", "configurationHash"],
+      "properties": {
+        "configurationId": {"$ref": "#/$defs/PortableKey"},
+        "configurationVersion": {"$ref": "#/$defs/Semver"},
+        "configurationHash": {"$ref": "#/$defs/Sha256Id"}
+      }
+    },
+    "ProvenanceActivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["activityId", "activityType", "status", "startedAt", "endedAt", "configuration"],
+      "properties": {
+        "activityId": {"$ref": "#/$defs/UuidV7"},
+        "activityType": {"$ref": "#/$defs/PortableKey"},
+        "status": {"type": "string", "enum": ["succeeded", "failed", "cancelled", "denied"]},
+        "startedAt": {"$ref": "#/$defs/UtcInstant"},
+        "endedAt": {"$ref": "#/$defs/UtcInstant"},
+        "configuration": {"$ref": "#/$defs/VersionedConfiguration"}
+      }
+    },
+    "ProvenanceEntity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entityId", "revisionId", "entityKind", "contentHash", "sensitivity", "retentionClass"],
+      "properties": {
+        "entityId": {"$ref": "#/$defs/UuidV7"},
+        "revisionId": {"$ref": "#/$defs/UuidV7"},
+        "entityKind": {"$ref": "#/$defs/PortableKey"},
+        "contentHash": {"$ref": "#/$defs/Sha256Id"},
+        "sensitivity": {"$ref": "#/$defs/Sensitivity"},
+        "retentionClass": {"$ref": "#/$defs/RetentionClass"}
+      }
+    },
+    "NullableUuidV7": {
+      "oneOf": [{"type": "null"}, {"$ref": "#/$defs/UuidV7"}]
+    },
+    "ProvenanceRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relationId", "relationType", "entityId", "relatedEntityId", "activityId", "agentId", "occurredAt"],
+      "properties": {
+        "relationId": {"$ref": "#/$defs/UuidV7"},
+        "relationType": {"type": "string", "enum": ["used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasInvalidatedBy", "wasAttributedTo"]},
+        "entityId": {"$ref": "#/$defs/NullableUuidV7"},
+        "relatedEntityId": {"$ref": "#/$defs/NullableUuidV7"},
+        "activityId": {"$ref": "#/$defs/NullableUuidV7"},
+        "agentId": {"$ref": "#/$defs/NullableUuidV7"},
+        "occurredAt": {"$ref": "#/$defs/UtcInstant"}
+      }
+    },
+    "NoPayloadReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {"state": {"const": "not-applicable"}}
+    },
+    "ProtectedPayloadReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "objectId", "revisionId", "contentHash", "mediaType"],
+      "properties": {
+        "state": {"const": "referenced"},
+        "objectId": {"$ref": "#/$defs/UuidV7"},
+        "revisionId": {"$ref": "#/$defs/UuidV7"},
+        "contentHash": {"$ref": "#/$defs/Sha256Id"},
+        "mediaType": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 100,
+          "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]{0,49}/[a-z0-9][a-z0-9!#$&^_.+-]{0,49}(?![\\s\\S])"
+        }
+      }
+    },
+    "EventPayloadReference": {
+      "oneOf": [
+        {"$ref": "#/$defs/NoPayloadReference"},
+        {"$ref": "#/$defs/ProtectedPayloadReference"}
+      ]
+    },
+    "ProvenanceData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent", "activity", "inputs", "outputs", "relations", "payloadReference"],
+      "properties": {
+        "agent": {"$ref": "#/$defs/ProvenanceAgent"},
+        "activity": {"$ref": "#/$defs/ProvenanceActivity"},
+        "inputs": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {"$ref": "#/$defs/ProvenanceEntity"}
+        },
+        "outputs": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {"$ref": "#/$defs/ProvenanceEntity"}
+        },
+        "relations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1024,
+          "items": {"$ref": "#/$defs/ProvenanceRelation"}
+        },
+        "payloadReference": {"$ref": "#/$defs/EventPayloadReference"}
+      }
+    },
+    "ProvenanceEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "specversion", "id", "source", "type", "subject", "time", "dataschema", "datacontenttype",
+        "projectid", "actorid", "correlationid", "causationid", "traceparent", "sensitivity",
+        "retentionclass", "schemaversion", "data"
+      ],
+      "properties": {
+        "specversion": {"const": "1.0"},
+        "id": {"$ref": "#/$defs/UuidV7"},
+        "source": {"const": "urn:research-observatory:core"},
+        "type": {"$ref": "#/$defs/EventType"},
+        "subject": {
+          "type": "string",
+          "minLength": 50,
+          "maxLength": 240,
+          "pattern": "^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/[a-z][a-z0-9-]{0,63}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+        },
+        "time": {"$ref": "#/$defs/UtcInstant"},
+        "dataschema": {"const": "urn:research-observatory:schema:provenance-event:1.0.0"},
+        "datacontenttype": {"const": "application/json"},
+        "projectid": {"$ref": "#/$defs/ProjectIdentity"},
+        "actorid": {"$ref": "#/$defs/UuidV7"},
+        "correlationid": {"$ref": "#/$defs/UuidV7"},
+        "causationid": {"$ref": "#/$defs/NullableUuidV7"},
+        "traceparent": {"$ref": "#/$defs/TraceParent"},
+        "sensitivity": {"$ref": "#/$defs/Sensitivity"},
+        "retentionclass": {"$ref": "#/$defs/RetentionClass"},
+        "schemaversion": {"const": "1.0.0"},
+        "data": {"$ref": "#/$defs/ProvenanceData"}
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "specversion": "1.0",
+  "id": "018f47a2-4d6b-7f78-9f2e-7fb76c86daa1",
+  "source": "urn:research-observatory:core",
+  "type": "org.research-observatory.source.acquired.v1",
+  "subject": "project/550e8400-e29b-41d4-a716-446655440000/source-observation/018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
+  "time": "2026-08-29T15:00:01.000Z",
+  "dataschema": "urn:research-observatory:schema:provenance-event:1.0.0",
+  "datacontenttype": "application/json",
+  "projectid": "550e8400-e29b-41d4-a716-446655440000",
+  "actorid": "018f47a2-4d6b-7f78-9f2e-7fb76c86dac1",
+  "correlationid": "018f47a2-4d6b-7f78-9f2e-7fb76c86dad1",
+  "causationid": null,
+  "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
+  "sensitivity": "private-research",
+  "retentionclass": "project-lifetime",
+  "schemaversion": "1.0.0",
+  "data": {
+    "agent": {
+      "agentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dac1",
+      "agentType": "human",
+      "role": "researcher"
+    },
+    "activity": {
+      "activityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dae1",
+      "activityType": "source-acquisition",
+      "status": "succeeded",
+      "startedAt": "2026-08-29T15:00:00.000Z",
+      "endedAt": "2026-08-29T15:00:01.000Z",
+      "configuration": {
+        "configurationId": "source-acquisition-defaults",
+        "configurationVersion": "1.0.0",
+        "configurationHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    },
+    "inputs": [],
+    "outputs": [
+      {
+        "entityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
+        "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab2",
+        "entityKind": "source-observation",
+        "contentHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "sensitivity": "private-research",
+        "retentionClass": "project-lifetime"
+      }
+    ],
+    "relations": [
+      {
+        "relationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86daf1",
+        "relationType": "wasGeneratedBy",
+        "entityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
+        "relatedEntityId": null,
+        "activityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dae1",
+        "agentId": null,
+        "occurredAt": "2026-08-29T15:00:01.000Z"
+      },
+      {
+        "relationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86daf2",
+        "relationType": "wasAssociatedWith",
+        "entityId": null,
+        "relatedEntityId": null,
+        "activityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dae1",
+        "agentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dac1",
+        "occurredAt": "2026-08-29T15:00:01.000Z"
+      },
+      {
+        "relationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86daf3",
+        "relationType": "wasAttributedTo",
+        "entityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dab1",
+        "relatedEntityId": null,
+        "activityId": null,
+        "agentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86dac1",
+        "occurredAt": "2026-08-29T15:00:01.000Z"
+      }
+    ],
+    "payloadReference": {
+      "state": "not-applicable"
+    }
+  }
+}

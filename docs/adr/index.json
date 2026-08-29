@@ -221,6 +221,16 @@
         "CAP-03.S02.T01",
         "CAP-03.S02.T03"
       ]
+    },
+    {
+      "id": "ADR-0024",
+      "path": "docs/adr/ADR-0024-adopt-minimized-cloudevents-provenance-with-w3c-prov-relations.md",
+      "title": "Adopt minimized CloudEvents provenance with W3C PROV relations",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-03.S03.T01",
+        "CAP-03.S03.T02"
+      ]
     }
   ]
 }

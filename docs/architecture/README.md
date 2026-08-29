@@ -140,3 +140,7 @@ mode-sensitive requirements, bounded autonomy/stopping vocabulary, human-only
 acceptance, and compact downstream governing reference are documented in
 [`research-intent-contracts.md`](research-intent-contracts.md) and governed by
 ADR-0022 and ADR-0023.
+The minimized CloudEvents event envelope, W3C PROV entity/activity/agent
+relations, protected payload-reference boundary, deterministic record hash, and
+future-event compatibility behavior are documented in
+[`provenance-contracts.md`](provenance-contracts.md) and governed by ADR-0024.

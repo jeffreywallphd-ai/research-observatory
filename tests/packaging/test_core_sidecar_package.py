@@ -51,6 +51,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "_cffi_backend",
                     "research_observatory_core.domain_compatibility",
                     "research_observatory_core.domain_lifecycles",
+                    "research_observatory_core.provenance_contracts",
                     "research_observatory_core.research_intent_contracts",
                     "research_observatory_core.migrations.runner",
                     "research_observatory_core.object_store",
@@ -68,6 +69,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         self.assertIn("nacl", contract["requiredModules"])
         self.assertIn("research_observatory_core.domain_compatibility", contract["requiredModules"])
         self.assertIn("research_observatory_core.domain_lifecycles", contract["requiredModules"])
+        self.assertIn("research_observatory_core.provenance_contracts", contract["requiredModules"])
         self.assertIn("research_observatory_core.research_intent_contracts", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
         self.assertIn("sqlcipher3", contract["requiredModules"])
