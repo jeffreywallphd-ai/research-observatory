@@ -8,6 +8,7 @@ import threading
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -444,6 +445,75 @@ class ResearchIntentServiceTests(unittest.TestCase):
         self.assertEqual(stored["decision"]["disposition"], "accepted")
         self.assertEqual(stored["decision"]["actorId"], ACTOR_ID)
         self.assertEqual(events, [("intent.accepted", "human", ACTOR_ID)])
+
+    def test_policy_projection_cache_tracks_the_exact_accepted_revision(self) -> None:
+        first_draft = self.service.save_draft(
+            draft_request(self.root),
+            trace_id=TRACE,
+            idempotency_key="ca" * 16,
+        )
+        first_acceptance = IntentAcceptRequest(
+            root=self.root,
+            expected_revision=first_draft.revision,
+            expected_revision_content_hash=first_draft.revision_content_hash,
+            confirmed=True,
+            decision_rationale="Accept the first exact governing revision.",
+        )
+        first_accepted = self.service.accept(
+            first_acceptance,
+            trace_id=TRACE,
+            idempotency_key="cb" * 16,
+        )
+
+        with patch.object(self.service, "_read", wraps=self.service._read) as read_history:
+            for suffix in ("1", "2"):
+                decision = self.service.evaluate_policy(
+                    IntentPolicyRequest(root=self.root, action="propose-query", subject_type="model"),
+                    trace_id=suffix * 32,
+                )
+                assert decision.governing_intent is not None
+                self.assertEqual(decision.governing_intent.revision, first_accepted.revision)
+            self.assertEqual(read_history.call_count, 0)
+
+            second_draft = self.service.save_draft(
+                draft_request(
+                    self.root,
+                    expected_revision=first_accepted.revision,
+                    contributionIntent="A revised contribution governed by a new accepted revision.",
+                ),
+                trace_id=TRACE,
+                idempotency_key="cc" * 16,
+            )
+            second_accepted = self.service.accept(
+                IntentAcceptRequest(
+                    root=self.root,
+                    expected_revision=second_draft.revision,
+                    expected_revision_content_hash=second_draft.revision_content_hash,
+                    confirmed=True,
+                    decision_rationale="Replace the governing projection with this reviewed revision.",
+                ),
+                trace_id=TRACE,
+                idempotency_key="cd" * 16,
+            )
+            replayed_first = self.service.accept(
+                first_acceptance,
+                trace_id="4" * 32,
+                idempotency_key="cb" * 16,
+            )
+            self.assertEqual(replayed_first, first_accepted)
+            read_history.reset_mock()
+            updated = self.service.evaluate_policy(
+                IntentPolicyRequest(root=self.root, action="propose-query", subject_type="model"),
+                trace_id="3" * 32,
+            )
+
+        self.assertEqual(read_history.call_count, 0)
+        assert updated.governing_intent is not None
+        self.assertEqual(updated.governing_intent.revision, second_accepted.revision)
+        self.assertEqual(
+            updated.governing_intent.revision_content_hash,
+            second_accepted.revision_content_hash,
+        )
 
     def test_acceptance_gate_rejects_missing_confirmation_and_stale_revision(self) -> None:
         draft = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="d" * 32)

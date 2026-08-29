@@ -89,6 +89,12 @@ services supply trusted subject context, call this boundary before
 consequential work, and retain the returned governing reference with resulting
 artifacts or operations.
 
+The Core service caches the effective policy snapshot by project and accepted
+revision. Human acceptance and policy evaluation share one synchronization
+boundary, so a committed acceptance replaces the cached governing snapshot
+before any later evaluation can begin. A process restart rebuilds the cache
+from the immutable revision history; drafts never invalidate or populate it.
+
 Policy audit excludes research questions, source content, manuscript text, and
 attempted payloads. It retains only action, subject type, outcome, reason,
 required gates, working-output label, stopping-confirmation state, and the
