@@ -6570,7 +6570,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T03
     - CAP-01.S01.T02
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-03.S02.T01
       capability_id: CAP-03
@@ -8684,15 +8684,16 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: codex-independent-slice-integration-reviewer
-      reviewed_at: '2026-08-29T14:11:22+00:00'
+      reviewed_at: '2026-08-29T15:47:45+00:00'
       evidence:
       - artifacts/evidence/CAP-03.S02.integration-R02.json
-      notes: R02 strict-descendant integration packet at de25216 replays CAP-03.S02-INTEGRATION-R01-F01. Real generated client
-        -> strict Rust RuntimeSupervisor -> supervised authenticated Core -> protected SQLite/provenance passes restart, ambiguous
-        acceptance replay, governing policy denial, exact audit cardinality, and invalid-route fail-closed behavior. Prior
-        adverse review remains immutable; formal finding closure is reserved for independent slice review.
+      notes: APPROVED exact CAP-03.S02 integration R02 submission f605685109fe9846e7c622744595a42b32dacdd6 with evidence SHA-256
+        bcfb92cf3264335a35ee0bec14b02c1658753b0027fe2f65fd94d62d0ac89fd2 at exact state de25216badd8a702a207cc7819d828ee68d4d273.
+        HIGH CAP-03.S02-INTEGRATION-R01-F01 is FIXED by independent real generated-client to strict Rust RuntimeSupervisor
+        to supervised authenticated Core to protected SQLite/provenance replay. No blocking finding remains. Symlink-token,
+        expiring supply-chain, exact-clean performance, protected witness, and full W1-exit obligations remain explicit.
   - id: CAP-03.S03
     title: Append-only provenance and audit ledger
     outcome: The system can reconstruct how every material object and claim was produced and changed.
@@ -8705,7 +8706,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T02
     - CAP-02.S02.T01
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-03.S03.T01
       capability_id: CAP-03
@@ -8736,11 +8737,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-29T15:47:45+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

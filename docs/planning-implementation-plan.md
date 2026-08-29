@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f4ee7c5e44345e10311ff9d845b83707ffd8985a8b4e4d335ee0e788fdb91f23
+source_sha256: 0a2033b0680ed3ba5dcc25c0188ceba9b6aa27d6269c135a1f10602c4c11f8ec
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3681,7 +3681,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Every project declares its scholarly purpose, scope, evidence rules, autonomy, and stopping logic before consequential automation.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4159,7 +4159,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The system can reconstruct how every material object and claim was produced and changed.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4167,7 +4167,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T01 - Define provenance event, activity, entity, and agent model
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
