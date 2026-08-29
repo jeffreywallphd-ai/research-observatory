@@ -115,9 +115,33 @@ const lineage: ProvenanceLineagePage = {
       agentRole: "evidence.extractor",
       occurredAt: "2026-08-29T17:00:00Z",
     },
+    {
+      factId: "01890f47-eae3-7cc0-98c4-dc0c0c073992",
+      relationType: "wasGeneratedBy",
+      entityDirection: "output",
+      revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073993",
+      entityId: "01890f47-eae3-7cc0-88c4-dc0c0c073994",
+      entityKind: "decision",
+      relatedRevisionId: null,
+      knowledgeStatus: "adjudicated",
+      rightsStatus: "allowed",
+      depth: 1,
+      eventId: "01890f47-eae3-7cc0-98c4-dc0c0c073995",
+      eventType: "org.research-observatory.decision.revision-recorded.v1",
+      activityId: "01890f47-eae3-7cc0-98c4-dc0c0c073996",
+      activityType: "decision.write",
+      activityStatus: "succeeded",
+      configurationId: "core.aggregate-write",
+      configurationVersion: "1.0.0",
+      configurationHash: `sha256:${"4".repeat(64)}`,
+      agentId: "01890f47-eae3-7cc0-98c4-dc0c0c073997",
+      agentType: "human",
+      agentRole: "canonical.writer",
+      occurredAt: "2026-08-29T16:00:00Z",
+    },
   ],
   missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c07398f"],
-  nextCursor: 3,
+  nextCursor: 4,
   integrityState: "integrity-review",
   legacyEventCount: 1,
   exportAllowed: false,
@@ -170,7 +194,7 @@ describe("audit and lineage workspace", () => {
       path: "/projects/provenance/lineage",
       body: JSON.stringify(initial.request),
     });
-    const frozen = continuationLineageRequest(initial.request, 3);
+    const frozen = continuationLineageRequest(initial.request, 4);
     expect(frozen.revisionId).toBe(lineage.revisionId);
     expect(frozen.direction).toBe("ancestors");
     await expect(loadLineagePage(client, project, lineage.revisionId, "descendants", 0, initial.request))
@@ -211,6 +235,9 @@ describe("audit and lineage workspace", () => {
     expect(html).toContain("Audit events");
     expect(html).toContain("Rights &amp; egress decisions");
     expect(html).toContain("Human decisions");
+    expect(html).toContain("canonical.writer");
+    expect(html).toContain("org.research-observatory.decision.revision-recorded.v1");
+    expect(html).not.toContain("No human decision is recorded in this trace.");
     expect(html).toContain("Exportable manifest");
     for (const node of lineage.items) {
       expect(html).toContain(node.revisionId);
