@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0004.R01",
+  "maintenanceId": "GOV-MAINT-0004",
+  "reviewedCommit": "59b67d52b8075b9fcae29051184cae1c89080aa6",
+  "predecessorCommit": "e5f80b52b4148506362abe989221a00fa5adbb51",
+  "reviewer": {
+    "identity": "Galileo",
+    "role": "independent-governance-control-maintenance-reviewer",
+    "agentTask": "/root/gov_maint_0004_review"
+  },
+  "reviewedAt": "2026-08-29T08:25:31-04:00",
+  "disposition": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "id": "GOV-MAINT-0004-R01-F01",
+      "severity": "P1",
+      "blocking": true,
+      "title": "The intended T02/T03 cascade cannot pass semantic persistence",
+      "reproduction": "Cascade CAP-03.S02.T02 at candidate 59b67d5, then run semantic validation. CAP-03.S02.T03 is NOT_STARTED with owner null while both immutable submissions remain authored by codex, producing two submission-author/task-owner mismatches and rejecting persistence.",
+      "requiredResolution": "Preserve or otherwise validly represent historical submission ownership and add a real semantic-persistence assertion that exercises the canonical T02/T03 boundary."
+    },
+    {
+      "id": "GOV-MAINT-0004-R01-F02",
+      "severity": "P2",
+      "blocking": true,
+      "title": "Cascade traversal ignores slice-level dependencies",
+      "reproduction": "Create a completed task in a downstream slice whose slice.depends_on names the reopened task while its own task.dependencies does not. The graph walk omits it, so persistence rejects the completed task against an incomplete slice dependency.",
+      "requiredResolution": "Traverse task and slice dependency edges and add a boundary test for the slice-level path."
+    }
+  ],
+  "verification": {
+    "focusedTests": "Four focused reopen tests passed.",
+    "affectedSuite": "63 of 65 workflow tests passed; only the two disclosed historical live-fixture assumptions failed.",
+    "quality": "Ruff format, Ruff lint, mypy, canonical backlog validation, and patch hygiene passed.",
+    "semanticPersistence": "The exact in-memory canonical T02 cascade failed with two submission-author/task-owner mismatches."
+  },
+  "filesEditedByReviewer": false
+}

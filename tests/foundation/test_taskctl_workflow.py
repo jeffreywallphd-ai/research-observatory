@@ -3017,12 +3017,93 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
         self.assertEqual("IN_PROGRESS", prerequisite["status"])
         self.assertEqual("NOT_STARTED", dependent["status"])
-        self.assertIsNone(dependent["owner"])
+        self.assertEqual("alice", dependent["owner"])
         self.assertIsNone(dependent["base_sha"])
         self.assertIsNone(dependent["completed_at"])
         self.assertIsNone(dependent["verification_state"])
         self.assertEqual(preserved_evidence, dependent["evidence"])
         self.assertEqual(preserved_review_control, dependent["review_control"])
+
+    def test_cascade_reopen_follows_slice_level_dependencies(self) -> None:
+        data, capabilities, slices, tasks, gates = self.workflow()
+        prerequisite = tasks["CAP-00.S01.T01"]
+        prerequisite.update(
+            status="DONE",
+            owner="alice",
+            completed_at="2026-01-01T00:00:00+00:00",
+            review={
+                "reviewer": "reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-01-01T00:00:00+00:00",
+                "notes": "approved",
+            },
+        )
+        dependent = copy.deepcopy(prerequisite)
+        dependent.update(id="CAP-00.S02.T01", slice_id="CAP-00.S02", dependencies=[])
+        downstream_slice = copy.deepcopy(slices["CAP-00.S01"])
+        downstream_slice.update(
+            id="CAP-00.S02",
+            title="Downstream slice",
+            status="IN_PROGRESS",
+            _position=1,
+            depends_on=[prerequisite["id"]],
+            tasks=[dependent],
+        )
+        capabilities["CAP-00"]["slices"].append(downstream_slice)
+        slices[downstream_slice["id"]] = downstream_slice
+        tasks[dependent["id"]] = dependent
+
+        with patch("taskctl.persist"):
+            command_reopen(
+                Namespace(
+                    task=prerequisite["id"],
+                    agent="alice",
+                    reason="slice dependency correction",
+                    lease_hours=8,
+                    cascade_dependents=True,
+                    file="unused",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        self.assertEqual("IN_PROGRESS", prerequisite["status"])
+        self.assertEqual("NOT_STARTED", dependent["status"])
+        self.assertEqual("NOT_STARTED", downstream_slice["status"])
+
+    def test_canonical_cascade_passes_real_semantic_persistence(self) -> None:
+        data = taskctl_module.historical_backlog_document(
+            REPO,
+            "e5f80b52b4148506362abe989221a00fa5adbb51",
+        )
+        self.assertIsNotNone(data)
+        assert data is not None
+        context = taskctl_module.index_backlog(data)
+        with (
+            patch("taskctl.lease_is_active", return_value=True),
+            patch("taskctl.governance_control_generation_errors", return_value=[]),
+            patch("taskctl.save_atomic") as save,
+        ):
+            command_reopen(
+                Namespace(
+                    task="CAP-03.S02.T02",
+                    agent="codex",
+                    reason="restore approved human intent acceptance path",
+                    lease_hours=8,
+                    cascade_dependents=True,
+                    file=str(REPO / "planning" / "backlog.yaml"),
+                ),
+                *context,
+            )
+
+        self.assertEqual("IN_PROGRESS", context[3]["CAP-03.S02.T02"]["status"])
+        self.assertEqual("NOT_STARTED", context[3]["CAP-03.S02.T03"]["status"])
+        self.assertEqual("codex", context[3]["CAP-03.S02.T03"]["owner"])
+        self.assertEqual(2, len(context[3]["CAP-03.S02.T03"]["review_control"]["attempts"]))
+        save.assert_called_once()
 
     def test_cascade_reopen_refuses_an_active_or_frozen_dependent(self) -> None:
         data, capabilities, slices, tasks, gates = self.workflow()
