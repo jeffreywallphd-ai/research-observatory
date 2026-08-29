@@ -24,6 +24,11 @@
     "nonce": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
     "capabilities": {
       "const": [
+        "intent.acceptance",
+        "intent.drafts",
+        "intent.impact-preview",
+        "intent.policy-evaluation",
+        "intent.read",
         "operations.cancel",
         "operations.events",
         "operations.read",

@@ -168,6 +168,7 @@
     "tests/service/test_core_api.py",
     "tests/service/test_domain_compatibility_service.py",
     "tests/service/test_domain_lifecycle_service.py",
+    "tests/service/fixtures/native_integration_sidecar.py",
     "tests/service/test_project_lifecycle.py",
     "tests/service/test_research_intents.py"
   ]

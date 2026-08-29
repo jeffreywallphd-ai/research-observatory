@@ -139,6 +139,11 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
             "port": 49152,
             "nonce": "a" * 32,
             "capabilities": [
+                "intent.acceptance",
+                "intent.drafts",
+                "intent.impact-preview",
+                "intent.policy-evaluation",
+                "intent.read",
                 "operations.cancel",
                 "operations.events",
                 "operations.read",

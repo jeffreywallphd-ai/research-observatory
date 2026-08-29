@@ -22,6 +22,7 @@ from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
 from .config import CoreSettings
 from .logging import emit_log_record
 from .migrations.runner import migration_framework_projection
+from .modules import default_module_registry
 from .object_store import upgrade_local_object_envelopes
 from .ports.credential_store import CredentialStoreProblem
 from .ports.database_keys import DatabaseKeyProvider
@@ -143,16 +144,7 @@ def supervision_handshake(*, host: str, port: int) -> dict[str, object]:
         "host": host,
         "port": port,
         "nonce": secrets.token_hex(16),
-        "capabilities": [
-            "operations.cancel",
-            "operations.events",
-            "operations.read",
-            "privacy.cache-cleanup",
-            "privacy.policy",
-            "projects.lifecycle",
-            "runtime.contract",
-            "runtime.status",
-        ],
+        "capabilities": list(default_module_registry().capabilities),
         "databaseCompatibility": {
             "minimum": "0.1.0",
             "maximumExclusive": "0.2.0",
@@ -172,7 +164,7 @@ def _watch_supervisor(server: uvicorn.Server) -> None:
         server.should_exit = True
 
 
-def run_supervised(settings: CoreSettings) -> int:
+def run_supervised(settings: CoreSettings, *, profile_vault_root: Path | None = None) -> int:
     """Bind an OS-assigned loopback socket and serve under desktop ownership."""
 
     record = bytearray(sys.stdin.buffer.readline(STARTUP_RECORD_BYTES + 1))
@@ -201,6 +193,7 @@ def run_supervised(settings: CoreSettings) -> int:
                 settings=settings,
                 capability_digest=capability_digest,
                 expected_authority=authority,
+                profile_vault_root=profile_vault_root,
             ),
             host=assigned_host,
             port=assigned_port,

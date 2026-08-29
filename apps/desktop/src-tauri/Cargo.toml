@@ -6,6 +6,9 @@ rust-version.workspace = true
 license.workspace = true
 publish = false
 
+[features]
+integration-harness = []
+
 [lib]
 name = "research_observatory_desktop_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
@@ -34,3 +37,7 @@ windows-sys = { version = "=0.61.2", features = [
   "Win32_System_ProcessStatus",
   "Win32_System_Threading",
 ] }
+
+[[example]]
+name = "supervised_core_harness"
+required-features = ["integration-harness"]

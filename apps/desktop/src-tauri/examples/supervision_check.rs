@@ -384,6 +384,11 @@ fn main() {
                 && body["alive"] == true
                 && body["capabilities"]
                     == serde_json::json!([
+                        "intent.acceptance",
+                        "intent.drafts",
+                        "intent.impact-preview",
+                        "intent.policy-evaluation",
+                        "intent.read",
                         "operations.cancel",
                         "operations.events",
                         "operations.read",
