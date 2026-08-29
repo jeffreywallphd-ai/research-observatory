@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 74f0f95f035207870b76bb12aae85f0c4a6411b4308549ebee731e6a830f94a7
+source_sha256: 83ed7b3f85d7a83f5cafb55b394b66ff5eef91fccf4f90993a3943caa0890133
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4447,13 +4447,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Desktop view from project output to source passages, transformations, models, prompts, decisions, and stale state.
 
