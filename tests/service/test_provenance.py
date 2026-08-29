@@ -126,7 +126,12 @@ class ProvenanceApiTests(unittest.TestCase):
         )
         self.assertEqual([0, 1], [item["depth"] for item in body["items"]])
         self.assertTrue(all(item["agentId"] == ACTOR_ID for item in body["items"]))
+        self.assertTrue(all(item["agentType"] == "human" for item in body["items"]))
+        self.assertTrue(all(item["agentRole"] == "canonical.writer" for item in body["items"]))
         self.assertTrue(all(item["activityType"] == "evidence.write" for item in body["items"]))
+        self.assertTrue(all(item["configurationId"] == "core.aggregate-write" for item in body["items"]))
+        self.assertTrue(all(item["configurationVersion"] == "1.0.0" for item in body["items"]))
+        self.assertTrue(all(item["configurationHash"].startswith("sha256:") for item in body["items"]))
         self.assertEqual(422, rejected.status_code)
 
 

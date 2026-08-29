@@ -67,6 +67,37 @@ main { min-width: 0; width: min(100%, 80rem); padding: var(--space-7); }
 .intent-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 .intent-history { display: grid; gap: var(--space-2); margin: 0; padding-inline-start: var(--space-5); }
 .intent-history code { overflow-wrap: anywhere; }
+.audit-lineage-workspace { display: grid; gap: var(--space-5); }
+.lineage-trace-form { display: grid; grid-template-columns: minmax(18rem, 2fr) minmax(14rem, 1fr) auto; align-items: end; gap: var(--space-2) var(--space-4); padding: var(--space-5); background: var(--surface-1); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+.lineage-trace-form label { color: var(--text-strong); font-weight: 700; }
+.lineage-trace-form input, .lineage-trace-form select { width: 100%; min-height: 2.75rem; padding: var(--space-2) var(--space-3); color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font: inherit; }
+.lineage-trace-form label:first-child, .lineage-trace-form input, .lineage-trace-form .field-note { grid-column: 1; }
+.lineage-trace-form label[for="lineage-direction"], .lineage-trace-form select { grid-column: 2; }
+.lineage-trace-form label:first-child, .lineage-trace-form label[for="lineage-direction"] { grid-row: 1; }
+.lineage-trace-form input, .lineage-trace-form select, .lineage-trace-form button { grid-row: 2; }
+.lineage-trace-form .field-note { grid-row: 3; }
+.lineage-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); gap: var(--space-4); }
+.lineage-summary-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }
+.lineage-identity { display: grid; gap: var(--space-3); margin: 0; }
+.lineage-identity div { display: grid; gap: var(--space-1); }
+.lineage-identity dt { color: var(--text-muted); font-size: var(--text-xs); }
+.lineage-identity dd { margin: 0; }
+.lineage-identity code, .lineage-notice code { overflow-wrap: anywhere; }
+.lineage-notice, .lineage-transparency-note { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface-2); border: 1px solid var(--warning-border); border-radius: var(--radius-sm); }
+.lineage-notice--danger { border-color: var(--danger-border); }
+.lineage-notice span, .lineage-notice p, .lineage-transparency-note p { margin: 0; }
+.lineage-notice ul { margin: 0; padding-inline-start: var(--space-5); }
+.lineage-results { display: grid; gap: var(--space-3); }
+.lineage-results-heading { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: var(--space-2); }
+.lineage-results-heading span { color: var(--text-muted); }
+.lineage-table-scroll { max-width: 100%; overflow-x: auto; }
+.lineage-results table { width: 100%; border-collapse: collapse; background: var(--surface-1); }
+.lineage-results caption { padding: var(--space-3); color: var(--text-muted); text-align: start; }
+.lineage-results th, .lineage-results td { min-width: 12rem; padding: var(--space-3); border: 1px solid var(--border-subtle); text-align: start; vertical-align: top; }
+.lineage-results th { color: var(--text-strong); background: var(--surface-2); }
+.lineage-results td { font-size: var(--text-sm); }
+.lineage-results td > span, .lineage-results td > code, .lineage-results td > time { display: block; margin-block-start: var(--space-1); }
+.lineage-results code { max-width: 24rem; overflow-wrap: anywhere; font-size: var(--text-xs); }
 .diagnostics-workspace { display: grid; gap: var(--space-5); }
 .diagnostics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--space-4); }
 .diagnostics-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }
@@ -107,6 +138,10 @@ kbd { padding: var(--space-1) var(--space-2); color: var(--text-strong); backgro
   main { padding: var(--space-5); }
   .command-results li { grid-template-columns: 1fr; }
   .settings-field-grid { grid-template-columns: 1fr; }
+  .lineage-trace-form { grid-template-columns: 1fr; }
+  .lineage-trace-form label:first-child, .lineage-trace-form input, .lineage-trace-form .field-note,
+  .lineage-trace-form label[for="lineage-direction"], .lineage-trace-form select,
+  .lineage-trace-form button { grid-column: 1; grid-row: auto; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .skip-link { transition: transform var(--transition-fast); }

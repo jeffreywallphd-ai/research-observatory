@@ -1960,7 +1960,7 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                         SELECT entity.revision_id, entity.entity_id, entity.entity_kind,
                                event.event_id, event.event_type, event.activity_id,
                                event.activity_type, event.activity_status, event.agent_id,
-                               event.occurred_at
+                               event.occurred_at, event.record_json
                           FROM provenance_ledger_entities AS entity
                           JOIN provenance_ledger_events AS event
                             ON event.event_id=entity.event_id AND event.project_id=entity.project_id
@@ -1974,6 +1974,13 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                     if row is None:
                         missing.add(current_revision)
                         continue
+                    decoded = decode_provenance_event(json.loads(str(row[10])))
+                    if decoded is None:
+                        raise ValueError("lineage canonical provenance is invalid")
+                    data = cast(dict[str, Any], decoded["data"])
+                    activity = cast(dict[str, Any], data["activity"])
+                    configuration = cast(dict[str, Any], activity["configuration"])
+                    agent = cast(dict[str, Any], data["agent"])
                     nodes.append(
                         LineageNode(
                             revision_id=str(row[0]),
@@ -1985,7 +1992,12 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                             activity_id=str(row[5]),
                             activity_type=str(row[6]),
                             activity_status=cast(Any, str(row[7])),
+                            configuration_id=str(configuration["configurationId"]),
+                            configuration_version=str(configuration["configurationVersion"]),
+                            configuration_hash=str(configuration["configurationHash"]),
                             agent_id=str(row[8]),
+                            agent_type=cast(Any, str(agent["agentType"])),
+                            agent_role=str(agent["role"]),
                             occurred_at=str(row[9]),
                         )
                     )

@@ -17,10 +17,12 @@ import {
   decodePrivacyPolicyProjection,
   decodeProblemDetail,
   decodeProjectProjection,
+  decodeProvenanceLineagePage,
   decodeVersionResponse,
   evaluateCoreApiCompatibility,
   parseOperationEventStream,
   type CoreApiResponse,
+  type ProvenanceLineagePage,
   type VersionResponse,
 } from "./generated";
 
@@ -42,6 +44,134 @@ describe("generated Core API client", () => {
   it("binds generated source to the exact OpenAPI bytes", () => {
     const path = fileURLToPath(new URL("./openapi.json", import.meta.url));
     expect(createHash("sha256").update(readFileSync(path)).digest("hex")).toBe(CORE_API_OPENAPI_SHA256);
+  });
+
+  it("decodes bounded lineage exactly and posts the governed lineage request", async () => {
+    const lineage: ProvenanceLineagePage = {
+      schemaVersion: "1.0",
+      revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073981",
+      direction: "ancestors",
+      items: [
+        {
+          revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073981",
+          entityId: "01890f47-eae3-7cc0-88c4-dc0c0c073982",
+          entityKind: "synthesis.sentence",
+          depth: 0,
+          eventId: "01890f47-eae3-7cc0-98c4-dc0c0c073983",
+          eventType: "org.research-observatory.synthesis.created.v1",
+          activityId: "01890f47-eae3-7cc0-98c4-dc0c0c073984",
+          activityType: "synthesis.insert",
+          activityStatus: "succeeded",
+          configurationId: "model.synthesis-prompt",
+          configurationVersion: "3.2.0",
+          configurationHash: `sha256:${"1".repeat(64)}`,
+          agentId: "01890f47-eae3-7cc0-98c4-dc0c0c073985",
+          agentType: "model",
+          agentRole: "synthesis.writer",
+          occurredAt: "2026-08-29T19:00:00Z",
+        },
+        {
+          revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073986",
+          entityId: "01890f47-eae3-7cc0-88c4-dc0c0c073982",
+          entityKind: "synthesis.sentence",
+          depth: 1,
+          eventId: "01890f47-eae3-7cc0-98c4-dc0c0c073987",
+          eventType: "org.research-observatory.synthesis.invalidated.v1",
+          activityId: "01890f47-eae3-7cc0-98c4-dc0c0c073988",
+          activityType: "synthesis.revise",
+          activityStatus: "succeeded",
+          configurationId: "decision.revision",
+          configurationVersion: "1.0.0",
+          configurationHash: `sha256:${"2".repeat(64)}`,
+          agentId: "01890f47-eae3-7cc0-98c4-dc0c0c073989",
+          agentType: "human",
+          agentRole: "claim.reviewer",
+          occurredAt: "2026-08-29T18:00:00Z",
+        },
+        {
+          revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c07398a",
+          entityId: "01890f47-eae3-7cc0-88c4-dc0c0c07398b",
+          entityKind: "evidence.passage",
+          depth: 1,
+          eventId: "01890f47-eae3-7cc0-98c4-dc0c0c07398c",
+          eventType: "org.research-observatory.evidence.recorded.v1",
+          activityId: "01890f47-eae3-7cc0-98c4-dc0c0c07398d",
+          activityType: "evidence.extract",
+          activityStatus: "succeeded",
+          configurationId: "extract.evidence-passage",
+          configurationVersion: "2.1.0",
+          configurationHash: `sha256:${"3".repeat(64)}`,
+          agentId: "01890f47-eae3-7cc0-98c4-dc0c0c07398e",
+          agentType: "software",
+          agentRole: "evidence.extractor",
+          occurredAt: "2026-08-29T17:00:00Z",
+        },
+      ],
+      missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c07398f"],
+      nextCursor: null,
+      integrityState: "integrity-review",
+      legacyEventCount: 1,
+    };
+
+    expect(decodeProvenanceLineagePage(lineage)).toEqual(lineage);
+    expect(decodeProvenanceLineagePage({ ...lineage, ungoverned: true })).toBeNull();
+    expect(decodeProvenanceLineagePage({
+      ...lineage,
+      items: [{ ...lineage.items[0], revisionId: "not-a-uuid" }],
+    })).toBeNull();
+    expect(decodeProvenanceLineagePage({
+      ...lineage,
+      items: [{ ...lineage.items[0], configurationHash: "sha256:not-canonical" }],
+    })).toBeNull();
+
+    const requests: unknown[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return response(200, lineage);
+    });
+    await expect(client.lineage({
+      root: "C:/Research/study-one",
+      revisionId: lineage.revisionId,
+      direction: "ancestors",
+      cursor: 0,
+      pageSize: 50,
+      maxDepth: 8,
+    })).resolves.toEqual(lineage);
+    expect(requests).toEqual([{
+      method: "POST",
+      path: "/projects/provenance/lineage",
+      body: JSON.stringify({
+        root: "C:/Research/study-one",
+        revisionId: lineage.revisionId,
+        direction: "ancestors",
+        cursor: 0,
+        pageSize: 50,
+        maxDepth: 8,
+      }),
+      ifMatch: null,
+      idempotencyKey: null,
+    }]);
+    await expect(client.lineage({
+      root: "C:/Research/study-one",
+      revisionId: lineage.revisionId,
+      direction: "ancestors",
+      cursor: 0,
+      pageSize: 101,
+      maxDepth: 8,
+    })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+
+    const mismatched = createCoreApiClient(async () => response(200, {
+      ...lineage,
+      revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c073980",
+    }));
+    await expect(mismatched.lineage({
+      root: "C:/Research/study-one",
+      revisionId: lineage.revisionId,
+      direction: "ancestors",
+      cursor: 0,
+      pageSize: 50,
+      maxDepth: 8,
+    })).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
   });
 
   it("decodes and evaluates only the exact compatible version envelope", async () => {

@@ -169,7 +169,12 @@ class ProvenanceLineageNode(ContractModel):
     activity_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
     activity_type: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$", max_length=128)
     activity_status: Literal["succeeded", "failed", "cancelled", "denied"]
+    configuration_id: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$", max_length=128)
+    configuration_version: str = Field(pattern=r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$", max_length=29)
+    configuration_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     agent_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    agent_type: Literal["human", "model", "software", "system"]
+    agent_role: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$", max_length=128)
     occurred_at: str
 
 
