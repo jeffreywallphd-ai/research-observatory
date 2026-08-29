@@ -67,8 +67,11 @@ Core client. Its fourteen use cases provide mode-specific guidance without
 silently changing researcher-authored prose. Corpus, primary-use-case, and
 novelty changes invalidate prior previews and require explicit review of
 affected workflows and outputs. Incomplete revisions remain durable drafts;
-the launch action stays disabled until a later governed acceptance task owns
-that transition.
+the launch action stays disabled. A decision-complete persisted draft can be
+accepted only after the researcher supplies a rationale and explicitly confirms
+its exact revision and content hash; unsaved edits disable that acceptance path.
+The generated Core client performs the service-bound acceptance, and later
+consequential actions must still evaluate the accepted governing reference.
 
 It also exposes a truthful local-service supervision boundary. In the Tauri
 host, Core starts automatically, reaches readiness over numeric loopback, and is
