@@ -143,13 +143,19 @@ transitions remain a later worker concern.
 Schema v7 adds the portable provenance ledger beside the existing narrow audit
 seam. Each aggregate revision records canonical RFC 8785-compatible event bytes,
 the exact record hash, normalized entity/relation projections, an ordered segment
-hash, a checkpoint, the narrow audit fact, and the outbox fact in the same
+hash that also binds the retry fingerprint, a checkpoint, the narrow audit fact,
+and the outbox fact in the same
 transaction. Exact retry replays the original revision and ledger record. The
 v6-to-v7 migration copies earlier narrow rows into an explicitly
 `legacy-narrow` bridge without inventing portable entities, activities, agents,
-or relations. Bounded lineage reads verify record and checkpoint chains, return
-production activity and responsible-agent identities, and label missing
-references or mismatches `integrity-review` while retaining read-only inspection.
+or relations. Migration history is a contiguous hash-verified suffix of the
+revision registry, so a database initialized fresh at any supported schema does
+not fabricate migrations that never ran and remains current after later upgrades.
+Bounded lineage reads verify canonical event/project identity, normalized
+entities and relations, retry-bound checkpoint chains, and the atomic narrow
+audit binding; they return production activity and responsible-agent identities
+and label missing references or mismatches `integrity-review` while retaining
+read-only inspection.
 
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file
