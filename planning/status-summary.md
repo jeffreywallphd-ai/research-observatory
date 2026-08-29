@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 1c2321b028ad5530318a7249e42ac6b5f5492f96aab3f2a5cfc382b0c88268fb
+source_sha256: b70e5221881575c9248226b49797528a5beda589a0d73c58d398926299b60ca9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -358,6 +358,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-03.S02.T02` | `append-only v1` | 2 | `-` | approved / agent:nash | - |
+| `CAP-03.S02.T03` | `append-only v1` | 1 | `-` | approved / agent:nash | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |

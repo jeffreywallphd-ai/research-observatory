@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1c2321b028ad5530318a7249e42ac6b5f5492f96aab3f2a5cfc382b0c88268fb
+source_sha256: b70e5221881575c9248226b49797528a5beda589a0d73c58d398926299b60ca9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3904,7 +3904,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-03.S02.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:nash (`approved`)
 
 **Objective:** Policy checks that constrain tools, required human gates, output labels, and stopping behavior according to the active contract.
 
@@ -3923,13 +3923,51 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile security-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S02.T03.json` at `610a01c1e0c357e6c02f069d45ec5e09c26cbf45`
+
 ##### Review history — CAP-03.S02.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `c0fbaa1a20d3e87e0f5ba0458b8d1ca8259b9f3d6b982537327d9f7936fd2882`
+
+- Candidate / base / branch: `610a01c1e0c357e6c02f069d45ec5e09c26cbf45` / `3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-28T21:54:33+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T03.json` / `13a8a3810e190e52915ab0947af1ddda68f39816bc2b38db617d66209ba0821f` / `610a01c1e0c357e6c02f069d45ec5e09c26cbf45`
+- Acceptance-criteria SHA-256: `7c39d7c4e651d5e56f68bd2b6eef9c3b26174b593a38be30c0d83d1b1cf2213c`
+- Verification-selection SHA-256: `50e427d791a52eb29c94ac6b687c45dcbc5f3025a29cc2a875d0b7e9de394751`
+- Changed paths: `docs/architecture/research-intent-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/modules.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `tests/service/test_core_api.py`, `tests/service/test_research_intents.py`, `tools/core_api_contract.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest discover -s tests\service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests\contracts -p test_*.py; packages\contracts\node_modules\.bin\vitest.CMD run core-api\generated.test.ts; packages\contracts\node_modules\.bin\tsc.CMD --noEmit -p packages\contracts\tsconfig.json; .venv\Scripts\python.exe tools\core_api_contract.py --repo . --check`, `.venv\Scripts\python.exe -m unittest discover -s tests\security -p test_*.py; .venv\Scripts\python.exe tools\security_check.py --repo . --report artifacts\tmp\CAP-03.S02.T03-security-local-610a01c.json`, `.venv\Scripts\python.exe -m unittest discover -s tests\packaging -p test_*.py; .venv\Scripts\python.exe tools\packaging_smoke_check.py --repo .`, `.venv\Scripts\python.exe tools\quality_check.py --repo .; .venv\Scripts\python.exe tools\architecture_check.py --repo .; .venv\Scripts\python.exe tools\repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e --head 610a01c1e0c357e6c02f069d45ec5e09c26cbf45; .venv\Scripts\python.exe tools\adr_check.py --repo .; .venv\Scripts\python.exe tools\ci_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate; .venv\Scripts\python.exe tools\backlog_views.py --repo . --check; .venv\Scripts\python.exe tools\planctl.py --repo . wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts\tmp\CAP-03.S02.T03-build-manifest-610a01c.json; .venv\Scripts\python.exe tools\verify.py --repo . --profile service --profile security-local --affected-base 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e --affected-head 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 --deferred-gate W1-exit --selection-only --report artifacts\tmp\CAP-03.S02.T03-final-selection-610a01c.json`, `git diff --check 3f410f5f0235b3f90f93d33ff4e9a27dc9c4806e..610a01c1e0c357e6c02f069d45ec5e09c26cbf45; Get-FileHash -Algorithm SHA256 artifacts\evidence\W1.A04.B00.json`
+- Deferred checks: `The conservative affected selector classified the claim/projection paths as safety-sensitive and selected full foundation discovery. That overbroad inventory was attempted, exposed historical workflow/governance/recovery fixture failures after its earlier groups passed, and was stopped after extended silent execution. T03 changes no automation, recovery, or governance implementation. Exact task-relevant repository, architecture, ADR, CI, quality, build, UI-change, planning, service, contract, packaging, and security checks passed; complete historical foundation reconciliation remains mandatory at W1 exit.`, `The first affected-profile execution at parent candidate 816f90f0b5e96602079c136fa412e273d420c846 passed the 395.88-second benchmark and every preceding foundation check, then failed only foundation:ui-change because one renderer state adaptation lacked governed UI evidence. Strict descendant product candidate 45c8d4a68ffdce926b2d0e78d8ced28067807bda removes that net UI change; exact evidence candidate 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 adds only the routine renewed W1 lease. The exact final UI gate, focused contract/service tests, quality, build, and affected selection all pass. The broad benchmark is not misrepresented as exact-final evidence and remains in the W1-exit matrix.`, `Complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows qualification remain mandatory at the CAP-03.S02 slice integration review, applicable checkpoint, and W1 exit.`
+- Selection rationale: CAP-03.S02.T03 is a high-risk epistemic-governance and service-boundary task: it adds exact human acceptance, active-intent policy enforcement, public Core API contracts, atomic audit persistence, generated clients, mode-specific labels/stopping, and gate/autonomy/egress denial. Verification therefore covers the complete service unit inventory; all six required modes and adversarial policy branches; public route composition; strict Python and TypeScript contract parity; local-security and supply-chain checks; Windows sidecar packaging; Python quality; architecture/repository boundaries; no-net-UI confirmation; planning/lease integrity; build provenance; and protected-witness safety. No dependency, database schema migration, UI, provider, network client, or external service changed. The conservative affected selector also requested the entire foundation unit inventory because task claim/projection files are safety-sensitive; an attempted full discovery reached unrelated historical governance/recovery fixture failures and was stopped after extended silence. Because T03 changes no workflow/control implementation, the exact affected foundation tools, planning validation, and task-specific tests are the acceptance-relevant boundary; historical foundation reconciliation remains mandatory at W1 exit and is not represented as passing here.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:nash / `2026-08-28T21:57:31+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T03.review-R01.json` / `819f6914dc1e6a03825e58a60e8ca1123eaf17d7ad038d4899618a940ca0f66f`
+
+**Review notes:** Independent epistemic-governance review found no blocking acceptance-bound defect. Exact human confirmation, current revision and content-hash authority, stable local actor attribution, event-specific idempotency, and atomic revision/provenance/outbox persistence govern acceptance; exact retries survive restart while stale, unconfirmed, changed, or cross-event reuse is denied. Policy evaluation selects the newest valid accepted revision, covers all six required epistemic modes, returns compact hash-bound governing references and mode-specific working-output labels, and cannot self-authorize claim, publication, intent-acceptance, scope-change, external-egress, autonomy, or stopping gates. Resource budget remains secondary and cannot independently establish completion. Every allow, deny, recommendation, and confirmation decision is persisted as bounded content-free metadata with its provenance fact in one transaction; audit failure rolls back and fails the requested action closed. OpenAPI and generated TypeScript decoders remain strict, and idempotency v1.1 adds eventType while preserving v1.0 draft replay without allowing draft/acceptance substitution. The base-to-candidate range has no governed UI path, dependency, migration, or external-service change. Independent replay passed 27 focused intent/Core API tests, 51 Python contract tests, nine generated-client tests, checked-in contract generation, and patch hygiene. The disclosed broad foundation failures concern historical governance/recovery fixtures rather than changed T03 product or control paths; task-relevant planning, architecture, repository, contract, service, packaging, security, and zero-net-UI checks are recorded as passing, so the remaining full reconciliation is safely retained for the mandatory W1-exit matrix rather than represented as task evidence.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:nash at `2026-08-28T21:57:31+00:00`
+
+**Latest notes:** Independent epistemic-governance review found no blocking acceptance-bound defect. Exact human confirmation, current revision and content-hash authority, stable local actor attribution, event-specific idempotency, and atomic revision/provenance/outbox persistence govern acceptance; exact retries survive restart while stale, unconfirmed, changed, or cross-event reuse is denied. Policy evaluation selects the newest valid accepted revision, covers all six required epistemic modes, returns compact hash-bound governing references and mode-specific working-output labels, and cannot self-authorize claim, publication, intent-acceptance, scope-change, external-egress, autonomy, or stopping gates. Resource budget remains secondary and cannot independently establish completion. Every allow, deny, recommendation, and confirmation decision is persisted as bounded content-free metadata with its provenance fact in one transaction; audit failure rolls back and fails the requested action closed. OpenAPI and generated TypeScript decoders remain strict, and idempotency v1.1 adds eventType while preserving v1.0 draft replay without allowing draft/acceptance substitution. The base-to-candidate range has no governed UI path, dependency, migration, or external-service change. Independent replay passed 27 focused intent/Core API tests, 51 Python contract tests, nine generated-client tests, checked-in contract generation, and patch hygiene. The disclosed broad foundation failures concern historical governance/recovery fixtures rather than changed T03 product or control paths; task-relevant planning, architecture, repository, contract, service, packaging, security, and zero-net-UI checks are recorded as passing, so the remaining full reconciliation is safely retained for the mandatory W1-exit matrix rather than represented as task evidence.
+
+**Currently open findings:** -
 
 ### SLICE-append-only-provenance-and-audit-ledger (`CAP-03.S03`) - Append-only provenance and audit ledger
 
