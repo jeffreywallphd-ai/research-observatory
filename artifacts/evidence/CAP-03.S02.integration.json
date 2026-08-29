@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-03.S02",
+  "stateCommit": "f5f1067fa364b957b3b27a9278d60d10f91e8448",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-03/CAP-03.S02-research-intent-contract-and-mode-governance.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "outcome": "The Windows local product now binds each project to a portable immutable research-intent contract, a guided researcher-controlled draft/revision/acceptance workspace, and a fail-closed Core policy boundary. Only Core-accepted revisions govern consequential work; all six required epistemic modes receive governing-revision-bound labels and gate behavior, while intent acceptance, scope change, claim/publication authority, disallowed autonomy, external egress, and stopping remain human-controlled and durably audited without research content.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-03.S02.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S02.T01.review-fix.json",
+          "sha256": "2bf400b2e25838443a097baf044da1a083b1c051e3e17fc8c45333e047d6562d"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S02.T01.review-R02.json",
+          "sha256": "1e1c58cbb0a3e540992ea039733681982e924e3d2b797d0bbeb9acf5459fc013"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S02.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S02.T02.R04.json",
+          "sha256": "2cd02dcd8a757867c80945f1de8dbaded65c075132e86d95732e2b6f528197de"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S02.T02.review-R04.json",
+          "sha256": "1dac9547f093adbba9be60dea31a69f366736067ae219e4c835803ad76772b2a"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S02.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S02.T03.R03.json",
+          "sha256": "09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S02.T03.review-R03.json",
+          "sha256": "8ee8e5a28fe80020e9ffd56757b728d3e8c142f9ae0f5f554136471c6d1b04e3"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "npm test --prefix packages/contracts -- --run; npm run typecheck --prefix packages/contracts; node packages/contracts/intent/generate.mjs --check",
+      "exitCode": 0,
+      "result": "All 56 tests across seven TypeScript contract files passed, strict TypeScript compilation passed, and generated intent contracts were current. The intent union covers immutable revision/reference decoding, ownership, hostile and unknown input, reserved authority, autonomy ceilings, local/approved egress consistency, governing references, and mode-specific stopping semantics."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\service -p test_*.py; .venv\\Scripts\\python.exe -m unittest discover -s tests\\security -p test_*.py",
+      "exitCode": 0,
+      "result": "All 50 Core service tests and all 56 local-security tests passed with one expected Windows privilege skip. The real FastAPI/TestClient, project repository, SQLite state, provenance, and outbox path exercises save, accept, exact retry, idempotency conflict, policy evaluation, audit rollback, restart, concurrency, six-mode output, gate/autonomy/egress/stopping denial, cache replacement, and older-replay nonrollback."
+    },
+    {
+      "command": "npm run lint; npm test; npm run typecheck; npm run build in apps/desktop; npm test -- core-api/generated.test.ts in packages/contracts",
+      "exitCode": 0,
+      "result": "Desktop lint, strict types, production build, all 12 desktop files and 56 tests, and all nine generated-client tests passed. Six focused IntentWorkspace/coordinator cases prove decision-complete drafts, exact sha256-bound acceptance commands, commit-followed-by-response-loss retention and same-key reconciliation, definitive rejection, authoritative accepted projection/history, and a disabled launch action that cannot bypass Core policy."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_reference_check.py --repo .; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; ui_visual_regression_check.py --approved-reference-id RO-UI-ACADEMIC-MINIMAL-1.3 --report artifacts\\tmp\\CAP-03.S02-integration-visual-8437591.json",
+      "exitCode": 0,
+      "result": "The unchanged approved experience package, 109 tokens, 32 routes, fourteen workflows, 390 keyboard cases, 64 responsive accessibility cases, and 64 controlled light/dark Chromium captures passed against RO-UI-ACADEMIC-MINIMAL-1.3 and reference package SHA-256 db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2. Visual report SHA-256: 1ccb35ce81454e4fdb43b75859139a9a67e42c4d8076670497da2d2b4a4b82f2."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts\\tmp\\CAP-03.S02-integration-security-local-8437591-retry.json",
+      "exitCode": 0,
+      "result": "The fresh live Trivy scan passed 601 packages and 152 policy-classified findings with zero blocking and zero policy errors. Seventeen exact reviewed exceptions and six warnings remain governed by the existing supply-chain policy; no package or lockfile changed in this slice. Report SHA-256: 6ee3765f1a8ffabb841207b75b422c0a6de9ffde22fe57869a81ddb4036598e1."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\packaging -p test_*.py; real PyInstaller build; .venv\\Scripts\\python.exe tools\\packaging_smoke_check.py --repo .",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected file-symlink privilege skip. A real PyInstaller build and locked-input smoke path included the generated intent contracts, acceptance service, policy evaluator, persistence/provenance adapters, and strict runtime inventory."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts\\tmp\\CAP-03.S02-integration-quality-f5f1067.json; architecture_check.py; repository_structure_check.py; taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; build_manifest.py --output artifacts\\tmp\\CAP-03.S02-integration-build-f5f1067.json; git diff --check",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed across 160 governed Python files; all 13 architecture areas, 12 required modules, five stable interfaces, three deployment profiles, the 20-capability/117-slice/359-task backlog, generated views, 150-page review site, approved immutable W1 packet, build provenance, and patch hygiene passed at all-task-approved state f5f1067fa364b957b3b27a9278d60d10f91e8448. Quality report SHA-256: 01664149c8eae934c82d8e58fde8361d5c3a66627cfbf617ae04beeb9338d399. Build report SHA-256: 6dfacd23bc8728b49da780ccae363d5bc8e82676ccedeb0514f831436d2519ad; it is truthfully dirty only because of the protected witness."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\CAP-03.S02-integration-desktop-performance-f5f1067.json",
+      "exitCode": 1,
+      "result": "Supplemental performance measurement recorded 12 cold/warm Chromium repetitions and 20 measured 1,000-render component batches on Windows 11 x64. Every metric passed its absolute and 20-percent regression threshold: cold-shell p95 40.000 ms, warm visible-skeleton p95 19.246 ms, warm usable p95 21.626 ms, and 10,000-row paginated render-batch p95 40.587 ms. The report intentionally rejected qualification only because exact-clean evidence is impossible while protected untracked W1.A04.B00 is present; no latency threshold failed. Report SHA-256: a75bd80071a43feec7f3e610abea595d8ce990f41748e8dfca6d791b3461df91. Exact-clean performance remains a W1-exit obligation and is not represented as passing here."
+    }
+  ],
+  "integratedBehavior": [
+    "The generated JSON Schema, TypeScript, and Python contract use immutable accepted/draft/superseded revision identities, stable content hashes, researcher rationale, explicit unknown/not-applicable states, closed autonomy and action vocabularies, local/approved egress invariants, and mode-compatible stopping rules. Intent acceptance, scope change, and external egress are outside machine authority.",
+    "The desktop provides guided required decisions, optional refinements, mode defaults, unresolved-state warnings, revision history, and impact acknowledgement. Incomplete or unsaved work remains a draft and cannot launch. Acceptance freezes one exact root, revision ID/number, full sha256 content hash, human rationale, confirmation, and 32-hex idempotency key before crossing the generated Core client.",
+    "An explicit Core problem is a definitive rejection. Transport loss or malformed/truncated response is treated as unresolved: the desktop retains and locks the exact command/key, makes no authority claim, and permits only exact reconciliation. Success or exact replay installs Core's returned accepted projection into current/history; the renderer never creates its own policy decision and launch remains disabled.",
+    "Core serializes project operations, accepts only the exact current decision-complete draft under stable local actor authority, persists revision, acceptance decision, provenance, outbox, and idempotency atomically, and reconstructs immutable accepted history after restart. Failed acceptance leaves the prior accepted revision authoritative.",
+    "Every policy evaluation resolves and caches only the newest contract-valid accepted revision, atomically replaces it after later acceptance, and prevents an older idempotent replay from rolling authority back. Systematic, theory, technical, hermeneutic, critical, and novelty modes receive governing-reference-bound working labels and required gates. Claim/publication, acceptance/scope, disallowed autonomy, local-only egress, absent accepted intent, and stopping confirmation fail closed with compact explanations.",
+    "Allow, deny, recommend-human, and require-confirmation outcomes append bounded content-free decision metadata and provenance in one transaction. Audit failure returns no usable policy result. The slice introduces no provider, hosted infrastructure, research-content telemetry, credential, dependency, or persistence-schema migration."
+  ],
+  "failureAndRecoveryCoverage": [
+    "unknown, hostile, structurally invalid, semantically contradictory, false-authority, autonomy-escalating, egress-inconsistent, and mode/stopping-incompatible contract input in equivalent TypeScript and Python runtimes",
+    "incomplete and unsaved drafts, stale revision/hash, unconfirmed or changed acceptance, cross-event idempotency reuse, competing writers, audit/outbox failure, and restart reconstruction without draft authority",
+    "Core commit followed by response loss, malformed success, exact same-key reconciliation, definitive rejection, duplicate-history prevention, and renderer lockout of draft changes while outcome is unresolved",
+    "missing accepted intent, gate bypass, unauthorized autonomy, external egress, claim/publication authority, stopping confirmation, six-mode labels, policy audit failure, atomic cache replacement, and old-replay nonrollback",
+    "controlled light/dark and narrow/high-scale responsive visual states, keyboard/accessibility contracts, Windows frozen packaging, supply-chain exceptions, and substituted/missing runtime inventory"
+  ],
+  "profileSelection": {
+    "contracts": "The complete generated TypeScript contract package, generator currency check, strict types, and Python contract coverage ran because the slice owns the language-neutral public intent and governing-reference boundary.",
+    "desktop": "The complete desktop lint/test/type/build path, real generated-client transport tests, approved-reference validators, accessibility matrix, and 64-case visual capture ran because T02 owns a governed researcher decision and acceptance workflow.",
+    "service": "The complete Core service suite and real FastAPI/SQLite/provenance route path ran because exact accepted authority, idempotency, cache invalidation, policy denial, audit, concurrency, and restart are the principal trusted boundary.",
+    "securityLocal": "The complete local-security units and fresh live supply-chain scan ran because intent can contain sensitive research plans and policy decisions control egress and consequential automation.",
+    "packaging": "A real Windows frozen sidecar build and smoke path ran because the generated contract and policy service are production package inputs.",
+    "accessibilityUi": "Reference, tokens, routes, workflows, keyboard semantics, accessibility, responsive light/dark states, and visual regression all pass against the unchanged approved reference.",
+    "performance": "All measured desktop latency and component distributions pass their governed budgets and regression thresholds. The supplemental report's exact-clean precondition fails solely on the protected historical witness, so formal clean-state performance qualification remains assigned to W1 exit and is not misrepresented as a passing slice check.",
+    "e2eLocal": "No active tests/e2e/test_*.py system command exists. Representative local vertical behavior instead composes the actual generated desktop client contract, real Core ASGI routes, project repository, SQLite/provenance/outbox adapters, restart, desktop production build, controlled browser capture, and real frozen Windows sidecar. The absent single-process system runner is disclosed and not represented as passed.",
+    "waveExit": "Desktop exact-clean performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory once at W1 exit."
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-03.S05 and CAP-03.S06",
+      "contract": "immutable accepted intent revision/reference, impact acknowledgement, policy projection, and primary-use-case/mode fields",
+      "ready": true,
+      "notes": "Downstream staleness and adaptive workflow slices can cite the exact governing revision and react to accepted changes without importing renderer, database, cache, or service-private state."
+    },
+    {
+      "consumer": "CAP-04/CAP-05 evidence, corpus, source, and rights workflows",
+      "contract": "scope, evidence, novelty, egress, autonomy, required-gate, and governing-reference semantics",
+      "ready": true,
+      "notes": "Consumers must call Core policy and record the returned governing reference; they may not infer authority from the renderer or reconstruct private persistence state."
+    },
+    {
+      "consumer": "CAP-07 and later model, study, manuscript, reviewer, and export capabilities",
+      "contract": "mode-specific working labels, allow/deny/recommend-human/require-confirmation outcomes, stopping logic, and content-free audit facts",
+      "ready": true,
+      "notes": "Model output and automation remain subordinate to human acceptance, claim/publication, scope, egress, autonomy, and stopping gates."
+    }
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "No active tests/e2e/test_*.py system runner exists. The generated-client, real Core ASGI/repository/SQLite/provenance path, production desktop build/browser capture, and real frozen sidecar establish the affected vertical boundary, while the complete system matrix remains due at W1 exit.",
+      "The supplemental desktop performance report passes every measured budget but rejects exact-clean qualification because the protected untracked W1.A04.B00 recovery witness is present. Formal clean-state performance remains mandatory at W1 exit.",
+      "One local-security privilege case and one packaging file-symlink case skip because the current Windows token cannot create the required link. Redirect/source-boundary and runtime-inventory denial coverage pass; release-authoritative equivalent coverage remains due at W1 exit.",
+      "The live scan's current reviewed development-tool exceptions remain time-bounded by the repository supply-chain policy; no new exception or runtime package authority is introduced here.",
+      "The protected untracked artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. It is outside slice product scope and must not be edited, staged, or deleted."
+    ]
+  }
+}

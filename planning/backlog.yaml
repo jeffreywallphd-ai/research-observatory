@@ -6570,7 +6570,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T03
     - CAP-01.S01.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-03.S02.T01
       capability_id: CAP-03
@@ -8318,11 +8318,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-03.S02.integration.json
+      notes: All three tasks are independently approved. The affected contract, desktop, Core policy, security, packaging,
+        visual, restart/recovery, and live supply-chain union passes; exact-clean desktop performance remains explicitly bound
+        to W1 exit because the protected W1.A04.B00 witness is present.
   - id: CAP-03.S03
     title: Append-only provenance and audit ledger
     outcome: The system can reconstruct how every material object and claim was produced and changed.
