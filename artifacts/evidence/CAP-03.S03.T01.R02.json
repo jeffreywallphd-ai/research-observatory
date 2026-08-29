@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T01",
+  "commit": "f2c9c0aa6539af0067bf76711883b22a796ddbf3",
+  "baseCommit": "0cdc367a68195a2360d3d8efc23da137bf0e9790",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S03.T01.R01.json",
+    "sha256": "51acaa54ea48fb4cccf9ada42644ec7bfd6ef3c271a645768e18d1d5724597fe",
+    "commit": "0cdc367a68195a2360d3d8efc23da137bf0e9790",
+    "reason": "Remediates CAP-03.S03.T01-R01-F01, CAP-03.S03.T01-R01-F02, and CAP-03.S03.T01-R01-F03 without expanding the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S03.T01.R01.json",
+    "artifacts/evidence/CAP-03.S03.T01.review-R01.json",
+    "docs/adr/ADR-0024-adopt-minimized-cloudevents-provenance-with-w3c-prov-relations.md",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/provenance/fixtures/valid-source-acquired-event.v1.json",
+    "packages/contracts/provenance/generate.mjs",
+    "packages/contracts/provenance/generated.ts",
+    "packages/contracts/provenance/provenance-event.schema.json",
+    "packages/contracts/provenance/provenance-event.template.py.txt",
+    "packages/contracts/provenance/provenance-event.template.ts.txt",
+    "packages/contracts/provenance/provenance-event.test.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/provenance_contracts.py",
+    "tests/contracts/test_provenance_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": "repository Node 24 provenance/generate.mjs --check; strict TypeScript; complete packages/contracts Vitest suite",
+      "exitCode": 0,
+      "result": "The provenance generator is current, strict TypeScript compilation passed, and all 71 tests across eight contract files passed at exact candidate f2c9c0aa6539af0067bf76711883b22a796ddbf3. The focused provenance file now contains 15 cases, including status/role matrices, exact-revision endpoint binding, duplicate identity/fact denial, a valid same-entity revision transformation, and shared UTC boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_provenance_contracts tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.service.test_domain_compatibility_service",
+      "exitCode": 0,
+      "result": "All 31 selected Python tests passed: seven provenance contract tests plus 24 affected SQLite/repository/service compatibility tests. Python and TypeScript reject contradictory lifecycle facts, wrong relation roles, ambiguous revisions, duplicate relation identities/facts, unbound subjects, and year zero while accepting the governed minimum and maximum UTC instants. Existing append-only storage, rollback, replay, restart, concurrency, immutable projection, and dependency-neutral port behavior remains green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six packaging cases completed successfully with one truthfully disclosed current-token file-symlink skip. A real Windows x64 PyInstaller build imported research_observatory_core.provenance_contracts, ran without system Python, and retained fail-closed governed-inventory behavior."
+    },
+    {
+      "command": "quality_check.py; architecture_check.py; repository_structure_check.py; adr_check.py --base 0cdc367a... --head f2c9c0aa...; build_manifest.py",
+      "exitCode": 0,
+      "result": "Quality passed across 163 governed files (report SHA-256 01c4ee5250c89cf88317d23406df1587afe9af97865546f29df352a3b2bbb764); the 13-area, 12-module, five-interface, three-profile architecture boundary passed; ADR coverage passed for all 19 R02 paths; and the build manifest binds f2c9c0aa with report SHA-256 1a128f307d1180b6b2e8ff727b4c5bc629d6c18144ec32f5b575f967abc848fe. Its dirty flag names only the protected untracked W1 witness."
+    },
+    {
+      "command": "taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog validates, generated backlog and 150-page review-site projections are current, and W1 remains ready under its immutable approved packet. Patch hygiene passed. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S03.T01-R01-F01 is remediated by one machine-readable, status-aware relation policy implemented identically in the schema annotations and generated TypeScript/Python runtimes. Known events restrict used to exact inputs, wasGeneratedBy and wasAttributedTo to exact outputs, wasDerivedFrom to a distinct output-to-input revision direction, and wasInvalidatedBy to exact inputs of successful invalidations. Failed, denied, and cancelled operations cannot assert completed result facts; denied acquisition cannot assert use; contradictory extra relations are rejected while structurally valid future event types remain storable and uninterpreted.",
+        "CAP-03.S03.T01-R01-F02 is remediated by composite relation endpoints carrying both entityId and revisionId, an exact project/entity-kind/entity/revision subject, unique relation IDs and facts, and global UUID namespace collision checks. Completeness and closure now operate on immutable revision references, including a valid transformation between two revisions sharing one stable entity ID.",
+        "CAP-03.S03.T01-R01-F03 is remediated by the explicitly governed schema-compatible UTC range 0001-01-01T00:00:00.000Z through 9999-12-31T23:59:59.999Z. Schema, TypeScript, and Python reject year zero and agree on both accepted boundaries and canonical record hashes. The minimized envelope continues to reject raw research, personal, credential, path, prompt, and unknown fields."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fifteen focused TypeScript cases and seven Python provenance test groups exercise succeeded, failed, denied, and cancelled shapes; every wrong relation role; denied/failed invalidation contradictions; unbound and kind-mismatched subjects; duplicate relation IDs and facts; exact revision ambiguity; valid revision-to-revision transformation; year-zero denial; and minimum/maximum UTC parity.",
+        "The complete 71-test portable-contract package, strict compiler, deterministic generator, 24 affected persistence/service tests, and real frozen-sidecar packaging boundary pass at exact candidate f2c9c0aa6539af0067bf76711883b22a796ddbf3.",
+        "Canonical schema/runtime generation and cross-language hash stability remain covered; no test was weakened or removed to obtain the passing result."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0024, the architecture handoff, package documentation, wire schema, fixture, generator/templates, generated runtimes, and cross-language tests changed together. The schema exposes the known-event relation policy as machine-readable contract metadata rather than leaving persistence semantics implicit.",
+        "The immutable R01 submission, adverse review ledger, and all three blocking findings remain append-only and ancestral. Generated backlog and review-site projections truthfully expose that history.",
+        "No migration, ledger persistence implementation, service route, renderer, dependency version, governed experience reference, external effect, or release authority changed. T02 retains additive migration, atomic ledger/outbox persistence, idempotency, lineage queries, restart bridging, and checkpoint obligations."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S03.T01-R01-F01 exposed false scholarly lineage through status-insensitive and role-insensitive PROV relations; CAP-03.S03.T01-R01-F02 exposed ambiguous immutable revision identity, duplicate relation identity, and unbound subjects; CAP-03.S03.T01-R01-F03 exposed a schema/TypeScript/Python UTC-range mismatch. Because T02 will persist this public cross-language contract, R02 selected the complete portable-contract package, strict generated-code parity, table-driven adversarial tests in both runtimes, schema validation, the real packaged sidecar, affected SQLite/repository/service compatibility, and the architecture/ADR/quality/build/planning controls. The generated planning projections were refreshed and refrozen before exact-candidate replay. T01 still changes no ledger migration or persistence route, so atomic persistence, retry/restart, lineage traversal, checkpoint fault behavior, and the complete cross-capability/platform matrix remain at T02, slice review, and W1 exit rather than being claimed here.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:backlog-views",
+      "foundation:backlog",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S03.T02 owns additive migration, atomic ledger/outbox persistence, retry idempotency, prior-row bridging, bounded lineage queries, restart recovery, segment/checkpoint verification, and mismatch integrity-review behavior.",
+      "CAP-03.S03 slice review will run the accumulated provenance integration and adversarial union after T02 and T03 close.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.",
+      "The current Windows token cannot create the packaging file-symlink fixture; redirect and missing/changed inventory paths pass, and privileged equivalence remains a W1-exit obligation."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "portable-provenance-contract-review",
+    "openFindingIds": [
+      "CAP-03.S03.T01-R01-F01",
+      "CAP-03.S03.T01-R01-F02",
+      "CAP-03.S03.T01-R01-F03"
+    ],
+    "rootCauseAnalysis": "R01 validated structural closure but modeled relation endpoints at stable-entity granularity and derived known-event completeness from activity type without a single status-and-role policy matrix; its TypeScript date check also relied on JavaScript calendar behavior instead of the schema's supported year range. R02 centralizes those invariants in exact revision references, one explicit relation policy, and one cross-language UTC boundary.",
+    "note": "Independently review exact strict-descendant candidate f2c9c0aa6539af0067bf76711883b22a796ddbf3 and replay all three R01 findings. Verify status-aware known-event relation allowlists, exact revision endpoint and subject binding, unique relation identities/facts and UUID namespace behavior, valid same-entity revision transformation, unknown-future storage, schema/TypeScript/Python UTC parity, canonical hash stability, changed-file and evidence truth, T02 deferrals, and protected-witness safety."
+  }
+}

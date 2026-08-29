@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 886a8560792497507b0b2a8af7ff347b315d154e21dcb547a1705b7062f4df7f
+source_sha256: 184813bf4f96b7b8f577124a02e4b083cffe613fe74413b915bb976c9a60cde8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4167,7 +4167,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T01 - Define provenance event, activity, entity, and agent model
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4195,6 +4195,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S03.T01.R01.json` at `0cdc367a68195a2360d3d8efc23da137bf0e9790`
+- `artifacts/evidence/CAP-03.S03.T01.R02.json` at `f2c9c0aa6539af0067bf76711883b22a796ddbf3`
 
 ##### Review history — CAP-03.S03.T01
 
@@ -4232,7 +4233,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `eee6084fd676a36e161d06e7fb79864d6100d0460be6ebfc3bd42ea2a7fc5ea5`
+
+- Candidate / base / branch: `f2c9c0aa6539af0067bf76711883b22a796ddbf3` / `0cdc367a68195a2360d3d8efc23da137bf0e9790` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T16:44:29+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T01.R02.json` / `2f58f1845a55e799582daea7a34d382abbec204b4c7bef79144867b7f8d1e0ee` / `f2c9c0aa6539af0067bf76711883b22a796ddbf3`
+- Acceptance-criteria SHA-256: `6580c9f7fe989485e41f5769c6bb97bdddb6731879d2e5eb8f3004bf385da382`
+- Verification-selection SHA-256: `a1bb27d40bc5b7056eded2f2d441f4c301e7cb6b0d33214e7b448a5187f0b316`
+- Changed paths: `artifacts/evidence/CAP-03.S03.T01.R01.json`, `artifacts/evidence/CAP-03.S03.T01.review-R01.json`, `docs/adr/ADR-0024-adopt-minimized-cloudevents-provenance-with-w3c-prov-relations.md`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/provenance/fixtures/valid-source-acquired-event.v1.json`, `packages/contracts/provenance/generate.mjs`, `packages/contracts/provenance/generated.ts`, `packages/contracts/provenance/provenance-event.schema.json`, `packages/contracts/provenance/provenance-event.template.py.txt`, `packages/contracts/provenance/provenance-event.template.ts.txt`, `packages/contracts/provenance/provenance-event.test.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/provenance_contracts.py`, `tests/contracts/test_provenance_contracts.py`
+- Selected checks: `repository Node 24 provenance/generate.mjs --check; strict TypeScript; complete packages/contracts Vitest suite`, `.venv\Scripts\python.exe -m unittest -v tests.contracts.test_provenance_contracts tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.service.test_domain_compatibility_service`, `.venv\Scripts\python.exe -m unittest -v tests.packaging.test_core_sidecar_package`, `quality_check.py; architecture_check.py; repository_structure_check.py; adr_check.py --base 0cdc367a... --head f2c9c0aa...; build_manifest.py`, `taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03.T02 owns additive migration, atomic ledger/outbox persistence, retry idempotency, prior-row bridging, bounded lineage queries, restart recovery, segment/checkpoint verification, and mismatch integrity-review behavior.`, `CAP-03.S03 slice review will run the accumulated provenance integration and adversarial union after T02 and T03 close.`, `The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.`, `The current Windows token cannot create the packaging file-symlink fixture; redirect and missing/changed inventory paths pass, and privileged equivalence remains a W1-exit obligation.`
+- Selection rationale: CAP-03.S03.T01-R01-F01 exposed false scholarly lineage through status-insensitive and role-insensitive PROV relations; CAP-03.S03.T01-R01-F02 exposed ambiguous immutable revision identity, duplicate relation identity, and unbound subjects; CAP-03.S03.T01-R01-F03 exposed a schema/TypeScript/Python UTC-range mismatch. Because T02 will persist this public cross-language contract, R02 selected the complete portable-contract package, strict generated-code parity, table-driven adversarial tests in both runtimes, schema validation, the real packaged sidecar, affected SQLite/repository/service compatibility, and the architecture/ADR/quality/build/planning controls. The generated planning projections were refreshed and refrozen before exact-candidate replay. T01 still changes no ledger migration or persistence route, so atomic persistence, retry/restart, lineage traversal, checkpoint fault behavior, and the complete cross-capability/platform matrix remain at T02, slice review, and W1 exit rather than being claimed here.
+- Prior round / replayed open findings: `R01` / `CAP-03.S03.T01-R01-F01`, `CAP-03.S03.T01-R01-F02`, `CAP-03.S03.T01-R01-F03`
+- Root-cause escalation: R01 validated structural closure but modeled relation endpoints at stable-entity granularity and derived known-event completeness from activity type without a single status-and-role policy matrix; its TypeScript date check also relied on JavaScript calendar behavior instead of the schema's supported year range. R02 centralizes those invariants in exact revision references, one explicit relation policy, and one cross-language UTC boundary.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-provenance-contract-reviewer at `2026-08-29T16:23:09+00:00`
 
