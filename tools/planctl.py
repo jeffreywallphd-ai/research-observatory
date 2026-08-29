@@ -206,10 +206,10 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
             sections.append(
                 heading + "\n\nRecord the tested implementation baseline, Vision/architecture/best-practice fit, "
                 "plan adaptations, and necessary support improvements. Complete the structured front-matter "
-                "assessment with its commit/hash-bound itemized baseline, common estimation unit, cumulative "
-                "capability refactoring allocations, deduplicated Wave refresh, explicit R <= 0.15 * P "
-                "calculation, re-estimation rationale, and major-refactor disposition. Route major or "
-                "over-budget refactoring to a separate future disposition."
+                "assessment with its itemized atomic-task baseline, common estimation unit, refactoring "
+                "allocations, Wave refresh narrative, and major-refactor disposition. Existing validation "
+                "recomputes the capability and deduplicated Wave R <= 0.15 * P bounds; reviewers assess the "
+                "planning judgment. Route major or over-budget refactoring to a separate future disposition."
             )
         else:
             sections.append(heading + "\n\nComplete this section before approval.")
@@ -536,7 +536,7 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
         if slice_.get("wave") == wave_id
     ]
     expected_decision_ids: list[str] = []
-    assessment_entries: list[tuple[str, dict[str, Any]]] = []
+    assessment_entries: list[tuple[str, dict[str, Any], dict[str, Any]]] = []
     for capability in contributing:
         capability_id = str(capability["id"])
         if capability_id == "CAP-00" and not capability_plan_path(root, capability_id).exists():
@@ -546,7 +546,7 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
             failures += 1
             continue
         capability_meta, _ = frontmatter(capability_plan_path(root, capability_id))
-        assessment_entries.append((capability_id, capability_meta))
+        assessment_entries.append((capability_id, capability_meta, capability))
         expected_decision_ids.extend(
             str(decision["id"])
             for decision in capability_meta.get("decisions", [])

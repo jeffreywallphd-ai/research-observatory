@@ -89,13 +89,14 @@ refactoring share = assessment-added technical-debt refactoring effort
 The share must be no greater than `0.15`. Record the common estimation unit and
 both values. Raw task count is acceptable only when the plan deliberately uses
 size-normalized tasks. Do not rename or split refactoring to evade the limit.
-Bind the pre-assessment baseline to its itemized work IDs and estimates, an
-assessment timestamp, and a Git commit or content hash. A later Wave refresh may
-add refactoring allocations but cannot reset the capability numerator. Reconcile
-every post-baseline estimate change with explicit rationale. Mixed new/refactor
-items allocate the refactoring effort separately. The Wave calculation
-deduplicates allocation IDs across capability contributions. Keep the core of
-the plan new or previously planned product work.
+Bind the pre-assessment baseline to its itemized atomic task IDs and estimates,
+a recorded assessment date. Never count both a slice and its child tasks. Mixed
+new/refactor items allocate the refactoring effort separately. The existing Wave
+calculation deduplicates task and allocation IDs across capability contributions
+and recomputes the arithmetic; independent reviewers determine whether the
+baseline and estimates are credible. The approved Wave commit, rather than a
+second planning-history controller, freezes the accepted record. Keep the core
+of the plan new or previously planned product work.
 
 For this rule, a major refactor includes changing an accepted architectural
 decision, replacing a foundational runtime or data boundary, or restructuring
@@ -330,9 +331,11 @@ assessment that was not required when that Wave was frozen.
 The prospective executable marker is
 `planning_policy_version: initiation-assessment-1.0`. `planctl wave validate`
 requires its structured assessment and applicable Wave refresh for W2 and later,
-recomputes every numerator, denominator, share, cumulative capability total, and
-deduplicated Wave roll-up, and rejects included major-refactor allocations. This
-extends the existing readiness check; it is not a new controller or approval.
+recomputes the capability and deduplicated Wave 15% bounds, and rejects invalid
+task identities or included major-refactor allocations. The validator does not
+attempt to automate the substantive product, architecture, or best-practice
+judgment. This extends the existing readiness check; it is not a new controller
+or approval.
 
 Backlog validation reports JSON paths for structural/type/status/timestamp errors,
 rejects duplicate capability, slice, task, wave, and gate IDs while indexing,
