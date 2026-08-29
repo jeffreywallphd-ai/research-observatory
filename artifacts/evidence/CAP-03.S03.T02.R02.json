@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T02",
+  "commit": "7dad75557cce78a905c6e97a4fd5dc43ee8e393a",
+  "baseCommit": "3680ecf86f455b8cbd6a10c27b63ae62c836e359",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S03.T02.R01.json",
+    "sha256": "759c30ab7afeda398fdad5e3d9769eb7a33d13959a8aadadd8aaca2ff0bfdce2",
+    "commit": "3680ecf86f455b8cbd6a10c27b63ae62c836e359",
+    "reason": "Remediates CAP-03.S03.T02-R01-F01 and CAP-03.S03.T02-R01-F02 without expanding the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S03.T02.R01.json",
+    "artifacts/evidence/CAP-03.S03.T02.review-R01.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_repositories.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file",
+      "exitCode": 0,
+      "result": "All 102 affected tests passed at exact candidate 7dad75557cce78a905c6e97a4fd5dc43ee8e393a in 56.119 seconds. The run directly replays R01-F01 with a fresh v6 database having empty migration history through backup-first v7 migration, repeat planning/migration, and restart/open. It directly replays R01-F02 with restored-trigger corruption cases for event identity, project authority, narrow-audit digest, and idempotency fingerprint, all of which now enter integrity-review while preserving bounded read-only visibility. Existing schema, repository atomicity/rollback/retry/restart, migration, object-store, maintenance, service, research-intent, and real Windows x64 PyInstaller sidecar boundaries remain green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py --check; build_manifest.py --output artifacts/tmp/CAP-03.S03.T02-R02-build-manifest.json",
+      "exitCode": 0,
+      "result": "Ruff formatting and lint plus mypy passed across all 166 governed Python files; the 13-area, 12-module, five-interface, three-profile architecture contract passed; repository structure and generated Core API synchronization passed. The deterministic build manifest passed at 0.1.0+g7dad755.dirty and has SHA-256 5ca4c5dffc25cf7d8c8855d9c4176ba6f8280a888493e9fa415ee7c95663fcea. Its dirty marker identifies only the protected untracked W1 witness."
+    },
+    {
+      "command": "taskctl.py validate; backlog_views.py --check; plan_review_check.py --repo .; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog validates; generated backlog views are current; all 150 planning review pages pass after a deterministic temporary-site overlay avoided the open-browser Windows file lock; and patch hygiene passed. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S03.T02-R01-F02 is remediated by comparing every authoritative ledger projection used by lineage to the canonical record, including exact event and project identity, normalized entity/relation sets, checkpoint children, and the narrow audit event/project/revision/type/time/actor/record-digest binding.",
+        "The checkpoint chain now includes the ledger idempotency SHA-256 fingerprint, so a retry-authority rewrite cannot remain verified. Restored-trigger corruption cases for event identity, project authority, narrow-audit digest, and idempotency fingerprint each produce integrity-review while keeping the affected item or missing immutable revision visible for bounded inspection.",
+        "Existing unit-of-work behavior still commits canonical output, portable provenance, normalized projections, checkpoint, narrow audit event, and outbox atomically; an injected late outbox failure rolls all of them back, and exact retries return the prior complete transaction without duplicate canonical output."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact-commit 102-test run covers successful persistence and lineage plus material denial, rollback, retry, restart, migration, corruption, missing-reference, bound, cursor, page, and packaging conditions.",
+        "The new regressions reproduce both independently reported defects using the same real SQLite and restored-trigger boundaries: a historically normal fresh v6 project remains current after migration and reopen, and four authority-field corruption variants can no longer receive a verified lineage disposition.",
+        "No valid test was removed or weakened. Quality, generated Core API parity, architecture, repository structure, backlog integrity, generated review-site integrity, patch hygiene, and the real Windows sidecar boundary pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S03.T02-R01-F01 is remediated by validating migration history as a contiguous, hash-verified suffix of the governed registry. A valid current v7 database whose only executed transition is 0007_provenance_ledger remains valid without fabricating 0001-0006 history, while complete-history and adverse-history paths retain strict verification.",
+        "The migration framework projection now includes 0007_provenance_ledger. The exact fresh-v6 fixture proves backup-first migration, exact 0007 history, repeat plan/migrate idempotency, and project restart/open under the governed profile.",
+        "Architecture guidance now states the suffix-history and fully bound integrity semantics. No schema version, public service contract, renderer, governed experience reference, dependency version, external effect, release authority, or unrelated product scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 identified two high-severity acceptance-bound defects. CAP-03.S03.T02-R01-F01 exposed a migration-history validity failure at a real persistence/restart boundary; R02 therefore replays the exact fresh-v6 empty-history case through backup-first migration, repeat planning/migration, and repository reopen, while retaining complete and adverse history coverage. CAP-03.S03.T02-R01-F02 exposed unbound lineage authority; R02 therefore replays event identity, project authority, narrow-audit digest, and retry fingerprint corruption through restored append-only triggers and verifies fail-closed integrity-review behavior. Because the corrections touch shared migration and evidence controls, the selected union also includes all affected schema, repository, migration, object-store, maintenance, service, research-intent, frozen-sidecar, quality, architecture, contract, build, backlog, and generated-view checks. The earlier failed reproductions are the root-cause evidence, not passing checks. Full slice integration and cross-capability/platform qualification remain assigned to the slice and W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:quality",
+      "foundation:backlog-views",
+      "foundation:backlog",
+      "packaging:unit",
+      "service:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S03.T03 owns the governed audit-and-lineage inspection workspace plus the approved retention, export, redaction-versus-deletion, repair, and integrity-review recovery interactions.",
+      "CAP-03.S03 slice review will replay the accumulated portable-contract, migration, ledger, lineage, recovery, and adversarial integration union after T03 closes.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "provenance-ledger-review",
+    "openFindingIds": [
+      "CAP-03.S03.T02-R01-F01",
+      "CAP-03.S03.T02-R01-F02"
+    ],
+    "rootCauseAnalysis": "R01's migration validation represented only a full prefix history or an entirely fresh current schema, but not the legitimate suffix history produced when a database created at v6 first executed migration 0007. Its lineage verifier bound canonical record bytes and selected child projections but began the denormalized comparison after event/project identity, did not bind the narrow audit row, and omitted the retry fingerprint from checkpoint material. R02 models migration execution as an exact contiguous registry suffix and binds every returned authority projection to the canonical event and checkpoint.",
+    "note": "Independently review exact strict-descendant candidate 7dad75557cce78a905c6e97a4fd5dc43ee8e393a and replay both R01 findings plus the incremental migration and evidence-integrity boundary. Verify fresh-v6 empty-history migration/reopen without fabricated history, complete/adverse history preservation, 0007 projection inventory, exact event/project and normalized-child binding, narrow-audit cross-check, idempotency checkpoint binding, bounded read-only integrity-review results, changed-file and evidence truth, T03/slice/W1 deferrals, and protected-witness safety."
+  }
+}

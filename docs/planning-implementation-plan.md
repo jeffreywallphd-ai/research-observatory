@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 46f2c0eb254f892e6504e61433a105dedfcabb7b0fa1c4f4cddd2128eae59394
+source_sha256: c2b6778762a1e8a72dd80087f203916931827266e505d4e9834ceb2e53b08a8c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4308,7 +4308,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4336,6 +4336,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S03.T02.R01.json` at `3680ecf86f455b8cbd6a10c27b63ae62c836e359`
+- `artifacts/evidence/CAP-03.S03.T02.R02.json` at `7dad75557cce78a905c6e97a4fd5dc43ee8e393a`
 
 ##### Review history — CAP-03.S03.T02
 
@@ -4372,7 +4373,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `cf584cf3bb4fcb3c88aaa9b91221dc83ef0cf84342aceb84d7925893c3eee86c`
+
+- Candidate / base / branch: `7dad75557cce78a905c6e97a4fd5dc43ee8e393a` / `3680ecf86f455b8cbd6a10c27b63ae62c836e359` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T18:19:56+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T02.R02.json` / `cae002af5d20f57c5ab0a62615e057df0769a7837a78fac584179c46115acb5b` / `7dad75557cce78a905c6e97a4fd5dc43ee8e393a`
+- Acceptance-criteria SHA-256: `18a160b518276cf400818cb11f8929cd11c8b4fd1d57519cb8fbcab7dd6ac38d`
+- Verification-selection SHA-256: `70995cc9254e94248daaa5a5e3b59dee119d377f5b7b95a916e8e604168a6877`
+- Changed paths: `artifacts/evidence/CAP-03.S03.T02.R01.json`, `artifacts/evidence/CAP-03.S03.T02.review-R01.json`, `docs/architecture/local-sqlite-storage.md`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/repositories.py`, `tests/data/test_sqlite_migrations.py`, `tests/data/test_sqlite_repositories.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file`, `.venv\Scripts\python.exe tools\quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py --check; build_manifest.py --output artifacts/tmp/CAP-03.S03.T02-R02-build-manifest.json`, `taskctl.py validate; backlog_views.py --check; plan_review_check.py --repo .; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03.T03 owns the governed audit-and-lineage inspection workspace plus the approved retention, export, redaction-versus-deletion, repair, and integrity-review recovery interactions.`, `CAP-03.S03 slice review will replay the accumulated portable-contract, migration, ledger, lineage, recovery, and adversarial integration union after T03 closes.`, `The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.`
+- Selection rationale: R01 identified two high-severity acceptance-bound defects. CAP-03.S03.T02-R01-F01 exposed a migration-history validity failure at a real persistence/restart boundary; R02 therefore replays the exact fresh-v6 empty-history case through backup-first migration, repeat planning/migration, and repository reopen, while retaining complete and adverse history coverage. CAP-03.S03.T02-R01-F02 exposed unbound lineage authority; R02 therefore replays event identity, project authority, narrow-audit digest, and retry fingerprint corruption through restored append-only triggers and verifies fail-closed integrity-review behavior. Because the corrections touch shared migration and evidence controls, the selected union also includes all affected schema, repository, migration, object-store, maintenance, service, research-intent, frozen-sidecar, quality, architecture, contract, build, backlog, and generated-view checks. The earlier failed reproductions are the root-cause evidence, not passing checks. Full slice integration and cross-capability/platform qualification remain assigned to the slice and W1 exit.
+- Prior round / replayed open findings: `R01` / `CAP-03.S03.T02-R01-F01`, `CAP-03.S03.T02-R01-F02`
+- Root-cause escalation: R01's migration validation represented only a full prefix history or an entirely fresh current schema, but not the legitimate suffix history produced when a database created at v6 first executed migration 0007. Its lineage verifier bound canonical record bytes and selected child projections but began the denormalized comparison after event/project identity, did not bind the narrow audit row, and omitted the retry fingerprint from checkpoint material. R02 models migration execution as an exact contiguous registry suffix and binds every returned authority projection to the canonical event and checkpoint.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-provenance-ledger-reviewer at `2026-08-29T18:09:13+00:00`
 
