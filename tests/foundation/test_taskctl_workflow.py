@@ -2948,6 +2948,130 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 gates,
             )
 
+    def test_reopen_requires_explicit_atomic_cascade_for_completed_dependents(self) -> None:
+        data, capabilities, slices, tasks, gates = self.workflow()
+        prerequisite = tasks["CAP-00.S01.T01"]
+        prerequisite.update(
+            status="DONE",
+            owner="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            evidence=[{"type": "criterion-manifest", "path": "first.json"}],
+            verification_state="passed",
+            completed_at="2026-01-01T00:00:00+00:00",
+            review={
+                "reviewer": "reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-01-01T00:00:00+00:00",
+                "notes": "approved",
+            },
+        )
+        dependent = copy.deepcopy(prerequisite)
+        dependent.update(
+            id="CAP-00.S01.T02",
+            dependencies=[prerequisite["id"]],
+            evidence=[{"type": "criterion-manifest", "path": "second.json"}],
+            review_control={"version": 1, "attempts": [{"historical": "preserved"}], "current_submission": None},
+        )
+        slices["CAP-00.S01"]["tasks"].append(dependent)
+        tasks[dependent["id"]] = dependent
+
+        with self.assertRaisesRegex(SystemExit, "use --cascade-dependents"), patch("taskctl.persist"):
+            command_reopen(
+                Namespace(
+                    task=prerequisite["id"],
+                    agent="alice",
+                    reason="dependency correction",
+                    lease_hours=8,
+                    cascade_dependents=False,
+                    file="unused",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+        self.assertEqual("DONE", prerequisite["status"])
+        self.assertEqual("DONE", dependent["status"])
+
+        preserved_evidence = copy.deepcopy(dependent["evidence"])
+        preserved_review_control = copy.deepcopy(dependent["review_control"])
+        with patch("taskctl.persist"):
+            command_reopen(
+                Namespace(
+                    task=prerequisite["id"],
+                    agent="alice",
+                    reason="dependency correction",
+                    lease_hours=8,
+                    cascade_dependents=True,
+                    file="unused",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        self.assertEqual("IN_PROGRESS", prerequisite["status"])
+        self.assertEqual("NOT_STARTED", dependent["status"])
+        self.assertIsNone(dependent["owner"])
+        self.assertIsNone(dependent["base_sha"])
+        self.assertIsNone(dependent["completed_at"])
+        self.assertIsNone(dependent["verification_state"])
+        self.assertEqual(preserved_evidence, dependent["evidence"])
+        self.assertEqual(preserved_review_control, dependent["review_control"])
+
+    def test_cascade_reopen_refuses_an_active_or_frozen_dependent(self) -> None:
+        data, capabilities, slices, tasks, gates = self.workflow()
+        prerequisite = tasks["CAP-00.S01.T01"]
+        prerequisite.update(status="DONE", owner="alice", completed_at="2026-01-01T00:00:00+00:00")
+        dependent = copy.deepcopy(prerequisite)
+        dependent.update(
+            id="CAP-00.S01.T02",
+            dependencies=[prerequisite["id"]],
+            status="REVIEW",
+            lease=new_lease("alice", 8),
+        )
+        slices["CAP-00.S01"]["tasks"].append(dependent)
+        tasks[dependent["id"]] = dependent
+
+        with self.assertRaisesRegex(SystemExit, "active or awaiting review"), patch("taskctl.persist"):
+            command_reopen(
+                Namespace(
+                    task=prerequisite["id"],
+                    agent="alice",
+                    reason="dependency correction",
+                    lease_hours=8,
+                    cascade_dependents=True,
+                    file="unused",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+    def test_reopen_parser_requires_opt_in_for_dependent_cascade(self) -> None:
+        parser = build_parser()
+        ordinary = parser.parse_args(["reopen", "CAP-00.S01.T01", "--agent", "alice", "--reason", "fix"])
+        cascade = parser.parse_args(
+            [
+                "reopen",
+                "CAP-00.S01.T01",
+                "--agent",
+                "alice",
+                "--reason",
+                "fix",
+                "--cascade-dependents",
+            ]
+        )
+        self.assertFalse(ordinary.cascade_dependents)
+        self.assertTrue(cascade.cascade_dependents)
+
     def test_atomic_save_preserves_destination_on_replace_failure_and_stale_writer(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             destination = Path(temporary) / "backlog.yaml"
