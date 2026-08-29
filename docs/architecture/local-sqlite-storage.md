@@ -38,7 +38,7 @@ protected connection and create encrypted migration backups.
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=6`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=7`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -89,14 +89,14 @@ these are the only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v5
-profiles to current schema v6. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v6
+profiles to current schema v7. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-6 database is detected
+verified backup remains available. A current version-7 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -139,6 +139,17 @@ over the full command, precondition, scheduling, and event identity. An exact
 idempotency-key/fingerprint retry returns the original projection without
 duplicate facts; any changed payload or precondition is a conflict. Dispatch state
 transitions remain a later worker concern.
+
+Schema v7 adds the portable provenance ledger beside the existing narrow audit
+seam. Each aggregate revision records canonical RFC 8785-compatible event bytes,
+the exact record hash, normalized entity/relation projections, an ordered segment
+hash, a checkpoint, the narrow audit fact, and the outbox fact in the same
+transaction. Exact retry replays the original revision and ledger record. The
+v6-to-v7 migration copies earlier narrow rows into an explicitly
+`legacy-narrow` bridge without inventing portable entities, activities, agents,
+or relations. Bounded lineage reads verify record and checkpoint chains, return
+production activity and responsible-agent identities, and label missing
+references or mismatches `integrity-review` while retaining read-only inspection.
 
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file

@@ -124,6 +124,13 @@ class ResearchIntentServiceTests(unittest.TestCase):
             outbox = connection.execute(
                 "SELECT event_type, state FROM outbox_events WHERE event_type='intent.draft.saved'"
             ).fetchall()
+            legacy_bridges = connection.execute(
+                """
+                SELECT event_type, bridge_state
+                  FROM provenance_legacy_bridges
+                 WHERE event_type='intent.draft.saved'
+                """
+            ).fetchall()
         finally:
             connection.close()
         self.assertEqual([row[0] for row in settings], [1])
@@ -132,6 +139,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         self.assertEqual(stored_revision["createdBy"], {"actorType": "human", "actorId": ACTOR_ID})
         self.assertEqual(provenance, [("intent.draft.saved", "human", ACTOR_ID)])
         self.assertEqual(outbox, [("intent.draft.saved", "pending")])
+        self.assertEqual(legacy_bridges, [("intent.draft.saved", "legacy-narrow")])
 
     def test_scope_change_requires_bound_preview_and_preserves_prior_revision(self) -> None:
         first = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="2" * 32)

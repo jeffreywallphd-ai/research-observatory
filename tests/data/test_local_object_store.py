@@ -111,9 +111,9 @@ def event(index: int) -> AtomicRepositoryEvent:
         event_type="document.revised" if index > 1 else "document.created",
         occurred_at=f"2026-08-18T12:01:{index:02d}.000Z",
         available_at=f"2026-08-18T12:01:{index:02d}.000Z",
-        trace_id=f"{index:032x}",
+        trace_id=f"{index + 1:032x}",
         actor_type="human",
-        actor_id="human.object-store-test",
+        actor_id="01890f6e-6a40-7cc5-98b7-000000000301",
         idempotency_key=f"object-document-{index}",
     )
 

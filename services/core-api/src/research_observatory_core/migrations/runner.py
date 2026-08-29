@@ -27,6 +27,7 @@ from research_observatory_core.migrations.versions import (
     v0003_object_envelopes,
     v0004_object_envelope_upgrades,
     v0005_object_creation_source,
+    v0007_provenance_ledger,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -44,8 +45,8 @@ class _ActorIdentityMigration:
     down_revision = v0005_object_creation_source.revision
     source_schema_version = 5
     target_schema_version = 6
-    TARGET_SCHEMA_SHA256 = storage.EXPECTED_SCHEMA_SHA256
-    TARGET_PROFILE_SHA256 = storage.EXPECTED_PROFILE_SHA256
+    TARGET_SCHEMA_SHA256 = storage.ACTOR_IDENTITY_SCHEMA_SHA256
+    TARGET_PROFILE_SHA256 = storage.ACTOR_IDENTITY_PROFILE_SHA256
     MATERIAL_MIGRATION_STEPS = (
         "provenance-v5-authority-drop",
         "provenance-v5-rename",
@@ -187,6 +188,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION,
             storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION,
             storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION,
+            storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -309,6 +311,10 @@ _SUPPORTED_PROFILES = {
     storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION: (
         storage.OBJECT_CREATION_SOURCE_PROFILE_SHA256,
         storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+    ),
+    storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION: (
+        storage.ACTOR_IDENTITY_PROFILE_SHA256,
+        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -522,13 +528,23 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
         and expected_rows[-1][0] == v0004_object_envelope_upgrades.revision
     ):
         return False
-    if schema_version == storage.DATABASE_SCHEMA_VERSION:
+    if schema_version >= storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION:
         expected_rows.append(
             (
                 v0006_actor_identity.revision,
                 5,
                 6,
                 storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+            )
+        )
+    if schema_version == storage.DATABASE_SCHEMA_VERSION:
+        expected_rows.append(
+            (
+                v0007_provenance_ledger.revision,
+                6,
+                7,
+                storage.ACTOR_IDENTITY_SCHEMA_SHA256,
                 storage.EXPECTED_SCHEMA_SHA256,
             )
         )
@@ -581,9 +597,14 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0005_object_creation_source.TARGET_PROFILE_SHA256 == storage.OBJECT_CREATION_SOURCE_PROFILE_SHA256
         and v0006_actor_identity.down_revision == v0005_object_creation_source.revision
         and v0006_actor_identity.source_schema_version == storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION
-        and v0006_actor_identity.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0006_actor_identity.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0006_actor_identity.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0006_actor_identity.target_schema_version == storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION
+        and v0006_actor_identity.TARGET_SCHEMA_SHA256 == storage.ACTOR_IDENTITY_SCHEMA_SHA256
+        and v0006_actor_identity.TARGET_PROFILE_SHA256 == storage.ACTOR_IDENTITY_PROFILE_SHA256
+        and v0007_provenance_ledger.down_revision == v0006_actor_identity.revision
+        and v0007_provenance_ledger.source_schema_version == storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION
+        and v0007_provenance_ledger.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0007_provenance_ledger.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0007_provenance_ledger.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -594,6 +615,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0004_object_envelope_upgrades.revision,
             v0005_object_creation_source.revision,
             v0006_actor_identity.revision,
+            v0007_provenance_ledger.revision,
         )
     if source_version == v0003_object_envelopes.source_schema_version:
         return (
@@ -601,17 +623,25 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0004_object_envelope_upgrades.revision,
             v0005_object_creation_source.revision,
             v0006_actor_identity.revision,
+            v0007_provenance_ledger.revision,
         )
     if source_version == v0004_object_envelope_upgrades.source_schema_version:
         return (
             v0004_object_envelope_upgrades.revision,
             v0005_object_creation_source.revision,
             v0006_actor_identity.revision,
+            v0007_provenance_ledger.revision,
         )
     if source_version == v0005_object_creation_source.source_schema_version:
-        return (v0005_object_creation_source.revision, v0006_actor_identity.revision)
+        return (
+            v0005_object_creation_source.revision,
+            v0006_actor_identity.revision,
+            v0007_provenance_ledger.revision,
+        )
     if source_version == v0006_actor_identity.source_schema_version:
-        return (v0006_actor_identity.revision,)
+        return (v0006_actor_identity.revision, v0007_provenance_ledger.revision)
+    if source_version == v0007_provenance_ledger.source_schema_version:
+        return (v0007_provenance_ledger.revision,)
     raise MigrationProblem("migration-source-version-unsupported")
 
 
@@ -1329,23 +1359,41 @@ def _run_migrations(
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )
-    v0006_actor_identity.apply(
-        operations,
-        {
-            "migration_id": v0006_actor_identity.revision,
-            "applied_at": applied_at,
-            "backup_manifest_sha256": backup_manifest_sha256,
-            "source_schema_sha256": storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
-            "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
-            "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
-            "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
-            "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
-            "provenanceAuthority": (
-                *storage._immutable_triggers("provenance_events", "provenance events are append-only"),
-                "CREATE INDEX provenance_events_project_time ON provenance_events (project_id, occurred_at, event_id)",
-            ),
-        },
-    )
+    if source_schema_version <= storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION:
+        v0006_actor_identity.apply(
+            operations,
+            {
+                "migration_id": v0006_actor_identity.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+                "target_schema_sha256": storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+                "targetProfileSha256": storage.ACTOR_IDENTITY_PROFILE_SHA256,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+                "provenanceAuthority": (
+                    *storage._immutable_triggers("provenance_events", "provenance events are append-only"),
+                    "CREATE INDEX provenance_events_project_time ON provenance_events "
+                    "(project_id, occurred_at, event_id)",
+                ),
+            },
+        )
+    if source_schema_version <= storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION:
+        v0007_provenance_ledger.apply(
+            operations,
+            {
+                "migration_id": v0007_provenance_ledger.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+                "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V7_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+                "ledgerAuthority": storage.PROVENANCE_LEDGER_DDL,
+            },
+        )
 
 
 def migrate_database(path: Path, *, expected_project_id: str) -> MigrationResult:

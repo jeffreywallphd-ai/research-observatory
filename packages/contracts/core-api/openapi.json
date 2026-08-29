@@ -2097,6 +2097,217 @@
         "title": "ProjectRootRequest",
         "type": "object"
       },
+      "ProvenanceLineageNode": {
+        "additionalProperties": false,
+        "properties": {
+          "activityId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Activityid",
+            "type": "string"
+          },
+          "activityStatus": {
+            "enum": [
+              "succeeded",
+              "failed",
+              "cancelled",
+              "denied"
+            ],
+            "title": "Activitystatus",
+            "type": "string"
+          },
+          "activityType": {
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$",
+            "title": "Activitytype",
+            "type": "string"
+          },
+          "agentId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Agentid",
+            "type": "string"
+          },
+          "depth": {
+            "maximum": 16.0,
+            "minimum": 0.0,
+            "title": "Depth",
+            "type": "integer"
+          },
+          "entityId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Entityid",
+            "type": "string"
+          },
+          "entityKind": {
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$",
+            "title": "Entitykind",
+            "type": "string"
+          },
+          "eventId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Eventid",
+            "type": "string"
+          },
+          "eventType": {
+            "maxLength": 160,
+            "pattern": "^org\\.research-observatory\\..+\\.v[1-9][0-9]{0,5}$",
+            "title": "Eventtype",
+            "type": "string"
+          },
+          "occurredAt": {
+            "title": "Occurredat",
+            "type": "string"
+          },
+          "revisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Revisionid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revisionId",
+          "entityId",
+          "entityKind",
+          "depth",
+          "eventId",
+          "eventType",
+          "activityId",
+          "activityType",
+          "activityStatus",
+          "agentId",
+          "occurredAt"
+        ],
+        "title": "ProvenanceLineageNode",
+        "type": "object"
+      },
+      "ProvenanceLineagePage": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "enum": [
+              "ancestors",
+              "descendants"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "integrityState": {
+            "enum": [
+              "verified",
+              "integrity-review"
+            ],
+            "title": "Integritystate",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProvenanceLineageNode"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "legacyEventCount": {
+            "maximum": 9007199254740991.0,
+            "minimum": 0.0,
+            "title": "Legacyeventcount",
+            "type": "integer"
+          },
+          "missingRevisionIds": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 256,
+            "title": "Missingrevisionids",
+            "type": "array"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextcursor"
+          },
+          "revisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Revisionid",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revisionId",
+          "direction",
+          "items",
+          "missingRevisionIds",
+          "integrityState",
+          "legacyEventCount"
+        ],
+        "title": "ProvenanceLineagePage",
+        "type": "object"
+      },
+      "ProvenanceLineageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "cursor": {
+            "default": 0,
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Cursor",
+            "type": "integer"
+          },
+          "direction": {
+            "enum": [
+              "ancestors",
+              "descendants"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "maxDepth": {
+            "default": 8,
+            "maximum": 16.0,
+            "minimum": 1.0,
+            "title": "Maxdepth",
+            "type": "integer"
+          },
+          "pageSize": {
+            "default": 50,
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Pagesize",
+            "type": "integer"
+          },
+          "revisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Revisionid",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "revisionId",
+          "direction"
+        ],
+        "title": "ProvenanceLineageRequest",
+        "type": "object"
+      },
       "ReadinessResponse": {
         "additionalProperties": false,
         "properties": {
@@ -3146,6 +3357,57 @@
         "summary": "Update Project Privacy",
         "tags": [
           "privacy"
+        ]
+      }
+    },
+    "/projects/provenance/lineage": {
+      "post": {
+        "operationId": "provenance_lineage_projects_provenance_lineage_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProvenanceLineageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProvenanceLineagePage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Provenance Lineage",
+        "tags": [
+          "provenance"
         ]
       }
     },

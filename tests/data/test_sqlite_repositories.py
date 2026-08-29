@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -28,8 +29,12 @@ from research_observatory_core.ports.repositories import (  # noqa: E402
     RepositoryTransactionFailed,
 )
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
-from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
+from research_observatory_core.repositories import (  # noqa: E402
+    create_sqlite_unit_of_work_factory,
+    sqlite_provenance_ledger_repository,
+)
 from research_observatory_core.storage import (  # noqa: E402
+    _immutable_triggers,
     development_plaintext_database_fixture,
     initialize_database,
     open_canonical_database,
@@ -62,7 +67,7 @@ def event(index: int, *, key: str | None = None) -> AtomicRepositoryEvent:
         available_at=f"2026-08-18T01:01:{index:02d}.000Z",
         trace_id=f"{index + 1:032x}",
         actor_type="human",
-        actor_id="human.repository-test",
+        actor_id="01890f6e-6a40-7cc5-98b7-000000000301",
         idempotency_key=key or f"record-write-{index}",
     )
 
@@ -108,6 +113,108 @@ class SqliteRepositoryTests(unittest.TestCase):
                 "SELECT record_sha256 FROM outbox_events ORDER BY occurred_at"
             ).fetchall()
             self.assertEqual([row[0] for row in digests], [row[0] for row in outbox_digests])
+            self.assertEqual(2, connection.execute("SELECT count(*) FROM provenance_ledger_events").fetchone()[0])
+            self.assertEqual(2, connection.execute("SELECT count(*) FROM provenance_ledger_checkpoints").fetchone()[0])
+        finally:
+            connection.close()
+
+        lineage = sqlite_provenance_ledger_repository(self.root, PROJECT_ID)
+        ancestors = lineage.lineage(
+            revision_id=revised.revision_id,
+            direction="ancestors",
+            cursor=0,
+            page_size=10,
+            max_depth=4,
+        )
+        self.assertEqual("verified", ancestors.integrity_state)
+        self.assertEqual(
+            (revised.revision_id, created.revision_id), tuple(item.revision_id for item in ancestors.items)
+        )
+        self.assertEqual((0, 1), tuple(item.depth for item in ancestors.items))
+        self.assertTrue(all(item.agent_id == event(0).actor_id for item in ancestors.items))
+        descendants = lineage.lineage(
+            revision_id=created.revision_id,
+            direction="descendants",
+            cursor=0,
+            page_size=1,
+            max_depth=4,
+        )
+        self.assertEqual((created.revision_id,), tuple(item.revision_id for item in descendants.items))
+        self.assertEqual(1, descendants.next_cursor)
+        continued = lineage.lineage(
+            revision_id=created.revision_id,
+            direction="descendants",
+            cursor=descendants.next_cursor or 0,
+            page_size=1,
+            max_depth=4,
+        )
+        self.assertEqual((revised.revision_id,), tuple(item.revision_id for item in continued.items))
+        self.assertIsNone(continued.next_cursor)
+
+    def test_missing_lineage_reference_and_checkpoint_mismatch_enter_integrity_review(self) -> None:
+        with self.factory() as unit:
+            first = unit.aggregates.append(draft(1), event(0), expected_revision=None)
+            unit.commit()
+        with self.factory() as unit:
+            second = unit.aggregates.append(draft(2), event(1), expected_revision=0)
+            unit.commit()
+
+        raw = sqlite3.connect(self.database, autocommit=True)
+        try:
+            raw.execute("DROP TRIGGER provenance_ledger_relations_no_update")
+            raw.execute("DROP TRIGGER provenance_ledger_relations_no_delete")
+            raw.execute(
+                """
+                UPDATE provenance_ledger_relations
+                   SET related_entity_id='01890f6e-6a40-7cc5-98b7-000000000991',
+                       related_revision_id='01890f6e-6a40-7cc5-98b7-000000000992'
+                 WHERE relation_type='wasDerivedFrom'
+                """
+            )
+            for statement in _immutable_triggers(
+                "provenance_ledger_relations", "provenance ledger relations are append-only"
+            ):
+                raw.execute(statement)
+            raw.execute("DROP TRIGGER provenance_ledger_checkpoints_no_update")
+            raw.execute("DROP TRIGGER provenance_ledger_checkpoints_no_delete")
+            raw.execute(
+                "UPDATE provenance_ledger_checkpoints SET chain_sha256=? WHERE sequence=2",
+                ("sha256:" + "f" * 64,),
+            )
+            for statement in _immutable_triggers(
+                "provenance_ledger_checkpoints", "provenance ledger checkpoints are append-only"
+            ):
+                raw.execute(statement)
+        finally:
+            raw.close()
+
+        lineage = sqlite_provenance_ledger_repository(self.root, PROJECT_ID).lineage(
+            revision_id=second.revision_id,
+            direction="ancestors",
+            cursor=0,
+            page_size=10,
+            max_depth=4,
+        )
+        self.assertEqual("integrity-review", lineage.integrity_state)
+        self.assertEqual((second.revision_id,), tuple(item.revision_id for item in lineage.items))
+        self.assertEqual(("01890f6e-6a40-7cc5-98b7-000000000992",), lineage.missing_revision_ids)
+        self.assertNotIn(first.revision_id, tuple(item.revision_id for item in lineage.items))
+
+    def test_invalid_actor_cannot_commit_canonical_output_without_provenance(self) -> None:
+        invalid = replace(event(0), actor_id="legacy.actor")
+        with self.factory() as unit, self.assertRaises(RepositoryProblem):
+            unit.aggregates.append(draft(1), invalid, expected_revision=None)
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            for table in (
+                "aggregate_identities",
+                "aggregate_revisions",
+                "provenance_events",
+                "provenance_ledger_events",
+                "provenance_ledger_checkpoints",
+                "outbox_events",
+            ):
+                self.assertEqual(0, connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0], table)
         finally:
             connection.close()
 

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0afe4b19cdfbbba5ef11585ba63b8f25dbe262fdfd1389a3c81112dfea4ddc0e
+source_sha256: 0b1953eed5943d58bfb66ca1735997648eda69fccd0a1819da8d69c0f9c12337
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4308,13 +4308,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Append-only ledger persistence integrated with domain transactions plus APIs for ancestors, descendants, production activity, and responsible agent.
 
