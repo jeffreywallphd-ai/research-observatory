@@ -4,6 +4,7 @@ import {
   CoreApiClientError,
   createCoreApiClient,
   type CoreApiTransport,
+  type IntentAcceptRequest,
   type IntentDraftProjection,
   type IntentDraftRequest,
   type IntentImpactPreview,
@@ -69,6 +70,31 @@ export function intentWorkspaceAvailability(project: ProjectProjection | null): 
   if (!project.open || project.accessMode === "closed") return { available: false, state: "offline", message: "The selected project is closed. Open it to load its research intent." };
   if (project.accessMode !== "read-write" || project.compatibilityState !== "compatible") return { available: false, state: "denied", message: "Research intent is read-only for this project. Keep the package unchanged and follow its backup-first recovery path." };
   return { available: true, state: null, message: "Research intent is available for this exclusive local project session." };
+}
+
+export function intentAcceptanceAvailability(current: IntentDraftProjection | null): {
+  readonly available: boolean;
+  readonly state: "empty" | "incomplete" | "ready" | "accepted";
+  readonly message: string;
+} {
+  if (!current) return { available: false, state: "empty", message: "Save a decision-complete draft before requesting acceptance." };
+  if (current.status === "accepted") return { available: false, state: "accepted", message: "This exact revision is accepted and may govern downstream policy checks." };
+  if (!current.decisionComplete || !current.canRequestAcceptance) return { available: false, state: "incomplete", message: "Resolve every required intent decision before requesting human acceptance." };
+  return { available: true, state: "ready", message: "Review and confirm this exact decision-complete draft before it can govern automation." };
+}
+
+export function intentAcceptanceRequest(
+  root: string,
+  current: IntentDraftProjection,
+  decisionRationale: string,
+): IntentAcceptRequest {
+  return {
+    root,
+    expectedRevision: current.revision,
+    expectedRevisionContentHash: current.revisionContentHash,
+    confirmed: true,
+    decisionRationale: decisionRationale.trim(),
+  };
 }
 
 interface IntentWorkspaceProps {
@@ -139,13 +165,19 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   const [form, setForm] = useState<IntentFormState>(() => initialForm(initialWorkspace?.current ?? null));
   const [impact, setImpact] = useState<IntentImpactPreview | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
+  const [acceptanceConfirmed, setAcceptanceConfirmed] = useState(false);
+  const [acceptanceRationale, setAcceptanceRationale] = useState("");
+  const [formDirty, setFormDirty] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const [busy, setBusy] = useState<"load" | "preview" | "save" | null>(null);
+  const [busy, setBusy] = useState<"load" | "preview" | "save" | "accept" | null>(null);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
 
   useEffect(() => {
     setImpact(null);
     setAcknowledged(false);
+    setAcceptanceConfirmed(false);
+    setAcceptanceRationale("");
+    setFormDirty(false);
     setFailure(null);
     if (initialWorkspace) {
       setWorkspace(initialWorkspace);
@@ -173,6 +205,8 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   const clearImpact = (): void => { setImpact(null); setAcknowledged(false); };
   const update = <K extends keyof IntentFormState>(key: K, value: IntentFormState[K], affectsImpact = false): void => {
     setForm((current) => ({ ...current, [key]: value }));
+    setFormDirty(true);
+    setAcceptanceConfirmed(false);
     if (affectsImpact) clearImpact();
   };
   const languageCodes = (): string[] => form.languageCodes.split(",").map((value) => value.trim().toLowerCase()).filter(Boolean);
@@ -236,12 +270,46 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
         ],
       }));
       setForm((currentForm) => ({ ...currentForm, revisionRationale: "" }));
+      setFormDirty(false);
+      setAcceptanceConfirmed(false);
+      setAcceptanceRationale("");
       clearImpact();
       announce(`Research intent draft revision ${current.revision} saved locally. It remains unable to launch analysis.`);
     }).catch((error: unknown) => {
       const safe = safeFailure(error);
       setFailure(safe);
       announce(`Research intent draft was not saved. ${safe.title}`);
+    }).finally(() => setBusy(null));
+  };
+
+  const accept = (): void => {
+    const current = workspace?.current ?? null;
+    const acceptance = intentAcceptanceAvailability(current);
+    if (!project || !current || !acceptance.available || formDirty || !acceptanceConfirmed || !acceptanceRationale.trim()) return;
+    setBusy("accept");
+    setFailure(null);
+    void client.acceptIntent(
+      intentAcceptanceRequest(project.root, current, acceptanceRationale),
+      idempotencyKey(),
+    ).then((accepted) => {
+      setWorkspace((previous) => ({
+        schemaVersion: "1.0",
+        projectId: previous?.projectId ?? project.projectId,
+        current: accepted,
+        history: [
+          { revision: accepted.revision, revisionId: accepted.revisionId, revisionContentHash: accepted.revisionContentHash, createdAt: accepted.createdAt, primaryUseCase: accepted.primaryUseCase, status: accepted.status, unresolvedDecisionCount: accepted.unresolvedDecisions.length },
+          ...(previous?.history.filter((item) => item.revisionId !== accepted.revisionId) ?? []),
+        ],
+      }));
+      setForm(initialForm(accepted));
+      setFormDirty(false);
+      setAcceptanceConfirmed(false);
+      setAcceptanceRationale("");
+      announce(`Research intent revision ${accepted.revision} accepted. Downstream actions must cite and enforce its governing reference.`);
+    }).catch((error: unknown) => {
+      const safe = safeFailure(error);
+      setFailure(safe);
+      announce(`Research intent was not accepted. ${safe.title}`);
     }).finally(() => setBusy(null));
   };
 
@@ -275,6 +343,8 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
             <select id="intent-use-case" value={form.primaryUseCase} onChange={(event) => {
               const next = selectedIntentGuidance(event.currentTarget.value as PrimaryUseCase);
               setForm((current) => ({ ...current, primaryUseCase: next.id, evidenceTypes: next.defaultEvidenceTypes, noveltyStandard: next.defaultNoveltyStandard, stoppingConditions: next.defaultStoppingConditions }));
+              setFormDirty(true);
+              setAcceptanceConfirmed(false);
               clearImpact();
             }}>
               {(["Evidence synthesis", "Inquiry", "Study and article development"] as const).map((group) => <optgroup key={group} label={group}>{INTENT_MODE_GUIDANCE.filter((item) => item.group === group).map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</optgroup>)}
@@ -302,11 +372,18 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
             {impact ? <div className="intent-impact" aria-live="polite"><p><strong>Affected workflows:</strong> {impact.affectedWorkflows.join(", ") || "None"}</p><p><strong>Affected outputs:</strong> {impact.affectedOutputs.join(", ") || "None"}</p>{impact.warnings.map((warning) => <p key={warning}>{warning}</p>)}{impact.acknowledgementRequired ? <label className="consent-boundary"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.currentTarget.checked)} /><span>I reviewed the exact affected workflows and outputs and authorize this draft revision.</span></label> : null}</div> : null}
           </Panel>
 
-          <Panel title="Save draft revision">
+          <Panel title="Save or accept intent revision">
             <label htmlFor="intent-rationale">Revision rationale</label><textarea id="intent-rationale" value={form.revisionRationale} onChange={(event) => update("revisionRationale", event.currentTarget.value)} rows={2} required />
-            {workspace.current ? <p><StatusBadge tone={workspace.current.decisionComplete ? "success" : "warning"}>Revision {workspace.current.revision} · {workspace.current.decisionComplete ? "decision complete" : `${workspace.current.unresolvedDecisions.length} unresolved`}</StatusBadge></p> : <p>No intent revision has been saved.</p>}
+            {workspace.current ? <p><StatusBadge tone={workspace.current.status === "accepted" || workspace.current.decisionComplete ? "success" : "warning"}>Revision {workspace.current.revision} · {workspace.current.status === "accepted" ? "accepted" : workspace.current.decisionComplete ? "decision complete draft" : `${workspace.current.unresolvedDecisions.length} unresolved`}</StatusBadge></p> : <p>No intent revision has been saved.</p>}
             <div className="intent-actions"><Button tone="primary" type="submit" disabled={busy !== null || (impact?.acknowledgementRequired === true && !acknowledged)}>{busy === "save" ? "Saving locally…" : "Save draft revision"}</Button><Button type="button" aria-expanded={showHistory} onClick={() => setShowHistory((value) => !value)}>Compare versions</Button><Button type="button" disabled>Launch gated analysis</Button></div>
-            <p className="field-note">Launch remains disabled for every draft. Human acceptance is a separate governed task.</p>
+            <div className="intent-acceptance">
+              <label htmlFor="intent-acceptance-rationale">Human acceptance rationale</label>
+              <textarea id="intent-acceptance-rationale" value={acceptanceRationale} onChange={(event) => { setAcceptanceRationale(event.currentTarget.value); setAcceptanceConfirmed(false); }} rows={2} disabled={!intentAcceptanceAvailability(workspace.current).available || formDirty} />
+              <label className="consent-boundary"><input type="checkbox" checked={acceptanceConfirmed} onChange={(event) => setAcceptanceConfirmed(event.currentTarget.checked)} disabled={!intentAcceptanceAvailability(workspace.current).available || formDirty || !acceptanceRationale.trim()} /><span>I reviewed and confirm persisted revision {workspace.current?.revision ?? 0} and content hash <code>{workspace.current?.revisionContentHash.slice(0, 20) ?? "unavailable"}…</code>.</span></label>
+              <Button type="button" disabled={busy !== null || formDirty || !intentAcceptanceAvailability(workspace.current).available || !acceptanceConfirmed || !acceptanceRationale.trim()} onClick={accept}>{busy === "accept" ? "Accepting exact revision…" : "Accept intent revision"}</Button>
+              <p className="field-note">{formDirty ? "Save or discard the unsaved edits before accepting the persisted revision." : intentAcceptanceAvailability(workspace.current).message}</p>
+            </div>
+            <p className="field-note">Launch remains disabled for drafts. Later workflow actions must evaluate the accepted governing intent at the service boundary.</p>
             {showHistory ? <ol className="intent-history">{workspace.history.map((item) => <li key={item.revisionId}>Revision {item.revision} · {item.primaryUseCase} · {item.unresolvedDecisionCount} unresolved · <code>{item.revisionContentHash.slice(0, 20)}…</code></li>)}</ol> : null}
           </Panel>
         </form>
