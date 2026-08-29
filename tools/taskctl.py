@@ -975,6 +975,33 @@ def task_dependencies_done(task: dict[str, Any], tasks: dict[str, dict[str, Any]
     )
 
 
+def transitive_task_dependents(
+    task_id: str,
+    tasks: dict[str, dict[str, Any]],
+    slices: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    dependents: list[dict[str, Any]] = []
+    seen = {task_id}
+    frontier = {task_id}
+    while frontier:
+        next_frontier: set[str] = set()
+        for candidate_id in sorted(tasks):
+            if candidate_id in seen:
+                continue
+            candidate = tasks[candidate_id]
+            parent_slice = slices.get(str(candidate.get("slice_id"))) or {}
+            dependency_ids = {
+                *(str(dependency) for dependency in candidate.get("dependencies", [])),
+                *(str(dependency) for dependency in parent_slice.get("depends_on", [])),
+            }
+            if frontier.intersection(dependency_ids):
+                seen.add(candidate_id)
+                next_frontier.add(candidate_id)
+                dependents.append(candidate)
+        frontier = next_frontier
+    return dependents
+
+
 def slice_dependencies_done(slice_: dict[str, Any], tasks: dict[str, dict[str, Any]]) -> bool:
     return all(tasks.get(dep, {}).get("status") == "DONE" for dep in slice_.get("depends_on", []))
 
@@ -9343,19 +9370,11 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit("Task cannot be reopened while dependencies or the activation gate are incomplete")
     if any(gate.get("status") == "APPROVED" and gate.get("after_wave") == task.get("wave") for gate in gates.values()):
         raise SystemExit("Task cannot be reopened after its wave release gate is APPROVED")
-    completed_dependents: list[dict[str, Any]] = []
-    dependency_frontier = {str(task["id"])}
-    while dependency_frontier:
-        next_frontier: set[str] = set()
-        for candidate in tasks.values():
-            candidate_id = str(candidate["id"])
-            if candidate_id == task["id"] or any(item["id"] == candidate_id for item in completed_dependents):
-                continue
-            if dependency_frontier.intersection(str(dependency) for dependency in candidate.get("dependencies", [])):
-                if candidate.get("status") in {"IN_PROGRESS", "REVIEW", "DONE"}:
-                    completed_dependents.append(candidate)
-                next_frontier.add(candidate_id)
-        dependency_frontier = next_frontier
+    completed_dependents = [
+        dependent
+        for dependent in transitive_task_dependents(str(task["id"]), tasks, slices)
+        if dependent.get("status") in {"IN_PROGRESS", "REVIEW", "DONE"}
+    ]
     if completed_dependents and not getattr(args, "cascade_dependents", False):
         dependent_ids = ", ".join(sorted(str(item["id"]) for item in completed_dependents))
         raise SystemExit(
@@ -9373,16 +9392,16 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
             )
         if any(item.get("wave") != task.get("wave") for item in completed_dependents):
             raise SystemExit("Cascade reopen cannot cross a Wave boundary")
-        approved_slices = sorted(
+        frozen_slices = sorted(
             {
                 str(item["slice_id"])
                 for item in completed_dependents
-                if (slices[str(item["slice_id"])].get("completion") or {}).get("status") == "APPROVED"
+                if (slices[str(item["slice_id"])].get("completion") or {}).get("status") in {"REVIEW", "APPROVED"}
             }
         )
-        if approved_slices:
+        if frozen_slices:
             raise SystemExit(
-                "Cascade reopen cannot invalidate independently approved slices: " + ", ".join(approved_slices)
+                "Cascade reopen cannot invalidate frozen or independently approved slices: " + ", ".join(frozen_slices)
             )
     lease = task.get("lease")
     if lease_is_active(task) and lease and lease.get("claimed_by") != agent:
@@ -9411,7 +9430,6 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     for dependent in completed_dependents:
         dependent.update(
             status="NOT_STARTED",
-            owner=None,
             branch=None,
             base_sha=None,
             worktree=None,
