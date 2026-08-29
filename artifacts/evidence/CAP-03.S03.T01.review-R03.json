@@ -1,0 +1,46 @@
+{
+  "task_id": "CAP-03.S03.T01",
+  "attempt_id": "R03",
+  "candidate_commit": "5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0",
+  "submission_record_commit": "c1e6877402d510a4f7cb047fba26a7f672cf35be",
+  "reviewer": "codex-independent-provenance-contract-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent round-three replay found no blocking or nonblocking acceptance-bound defect. The frozen R03 evidence reproduces SHA-256 5a5357313519ef3ac5e39e4f2777e703e372d78aef8706f4b06ece0a1556df8e and Git blob c6276d30335f68af5970f29ca51213070e261c09 in submission record c1e6877402d510a4f7cb047fba26a7f672cf35be. Exact candidate 5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0 is a strict descendant of the R02 candidate, and all 18 declared changed paths exactly match the base-to-candidate range. The third-round root-cause analysis is adequate: it identifies that R02 had confused unknown catalog meaning with optional structural completeness and had not reconciled exact revision work with stable aggregate-kind, project-namespace, and subject-grammar authority; the implementation now separates universal lifecycle/output invariants from known-type policy and derives the identity checks from one event-local model. Direct TypeScript and Python replay rejects every non-succeeded output, orphan succeeded output, missing generation, missing attribution, wrong exact revision, same-ID/different-kind revision, project/event UUID collision, prior unbound subject, duplicate identity/fact, denied invalidation, wrong relation role, and year-zero timestamp. Complete unknown acquisition-like and transformation-like events remain storable and explicitly uninterpreted; exact input references remain visible, while any claimed use, derivation, or invalidation relation remains role-, outcome-, object-, and revision-checked. Same-ID/same-kind revision transformation and distinct-ID/cross-kind derivation are valid, and every PortableKey separator accepted for entityKind is accepted identically by the schema and both runtimes in an exact subject. Machine-readable schema policy metadata exactly states the universal non-success output prohibition and successful-output generation/attribution duties, and the generator asserts those bytes. The valid fixture independently canonicalizes to the identical TypeScript/Python record identity sha256:be907a3b716fc0d4e49a2f69cb938cf65a231499dc23f7a6a5c0265b26a056ad. Repository Node 24 passed generation, strict TypeScript, and all 76 tests across the complete contract package. Eight Python provenance groups plus six package cases passed with one truthfully disclosed current-token file-symlink skip; a real Windows x64 PyInstaller build imported the exact changed provenance runtime and retained governed-inventory fail-closed behavior. All three R01 closures remain valid because their status/role, exact-revision/subject/uniqueness, and UTC code paths remain enforced and their regression tests still pass. ADR-0024, architecture, package documentation, schema metadata, templates, generated runtimes, and tests align. R01/R02 adverse history remains immutable and ancestral. The evidence correctly defers cross-event stable-kind enforcement, additive migration, atomic ledger/outbox persistence, retry/restart, prior-row bridging, lineage queries, and checkpoint behavior to T02, with slice integration and the complete Windows/W1 matrix at their later mandatory gates. No product persistence, migration, service route, renderer, dependency, governed UI reference, external effect, or release authority changed. The protected artifacts/evidence/W1.A04.B00.json witness remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S03.T01.R03.json",
+      "sha256": "5a5357313519ef3ac5e39e4f2777e703e372d78aef8706f4b06ece0a1556df8e",
+      "commit": "5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0"
+    },
+    {
+      "type": "independent-check",
+      "command": "repository Node 24 provenance generator --check; strict package TypeScript; complete packages/contracts Vitest suite",
+      "result": "PASS: generator current, strict TypeScript passed, and 76/76 tests across eight contract files passed."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_provenance_contracts tests.packaging.test_core_sidecar_package",
+      "result": "PASS: 14 tests completed with one current-token file-symlink skip; the real packaged sidecar loaded the changed provenance runtime and passed governed inventory checks."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Direct generated TypeScript and Python replay of R01/R02 cases, future lifecycle/output completeness, event-local identity, subject grammar, and canonical hash",
+      "result": "PASS: both open R02 findings close; all three R01 closures remain valid; fixture canonical identity matches at sha256:be907a3b716fc0d4e49a2f69cb938cf65a231499dc23f7a6a5c0265b26a056ad."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S03.T01-R02-F01",
+      "disposition": "fixed",
+      "evidence": "Universal validation now runs before known-event policy: every non-succeeded activity is output-free, and every output of every succeeded known or future activity has exactly one wasGeneratedBy and one wasAttributedTo relation bound to its exact revision and responsible agent. Direct replay rejects the original orphan succeeded output and failed output in both runtimes, plus missing attribution and wrong revision; complete future acquisition-like and transformation-like records remain accepted without catalog interpretation. The schema's machine relation policy exposes the same universal duties and generation asserts exact metadata parity."
+    },
+    {
+      "finding_id": "CAP-03.S03.T01-R02-F02",
+      "disposition": "fixed",
+      "evidence": "Both runtimes now require one entityKind for every event-local occurrence of a stable entityId, include projectid in the UUID collision set, and use the exact PortableKey grammar in entity subjects. Independent and committed tests accept same-ID/same-kind revisions, accept distinct-ID cross-kind derivation with exact output-to-input references, reject same-ID/different-kind mutation, reject projectid equal to event id, and accept source-observation, source.observation, source_observation, and source:observation identically through Draft 2020-12 schema, TypeScript, and Python validation. Cross-event stable-kind enforcement remains correctly assigned to T02 persistence."
+    }
+  ]
+}
