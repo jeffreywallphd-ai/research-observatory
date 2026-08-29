@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0004.R02",
+  "maintenanceId": "GOV-MAINT-0004",
+  "reviewedCommit": "b4a83f849820223541a20495e89b1477acdb968e",
+  "priorReviewedCommit": "59b67d52b8075b9fcae29051184cae1c89080aa6",
+  "predecessorCommit": "e5f80b52b4148506362abe989221a00fa5adbb51",
+  "reviewer": {
+    "identity": "Galileo",
+    "role": "independent-governance-control-maintenance-reviewer",
+    "agentTask": "/root/gov_maint_0004_review"
+  },
+  "reviewedAt": "2026-08-29T08:36:16-04:00",
+  "disposition": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "id": "GOV-MAINT-0004-R01-F01",
+      "severity": "P1",
+      "blocking": true,
+      "status": "OPEN",
+      "title": "Repository-bound evidence identity still prevents semantic persistence",
+      "reproduction": "Run the b4a83f8 cascade with repo_root, all source snapshots, full semantic validation, and a temporary backlog write. T03's preserved evidence manifests retain branch codex/w1-windows-local-runtime while the demoted task branch is null, so both evidence attachments fail branch-to-task identity validation.",
+      "requiredResolution": "Preserve the historical branch projection or add an equally strict historical identity model, and make the regression test use repo_root plus a real temporary persistence boundary."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GOV-MAINT-0004-R01-F02",
+      "status": "CLOSED",
+      "resolution": "The traversal now follows both task dependencies and every candidate task's slice.depends_on edges; the focused slice-level test passed independently."
+    }
+  ],
+  "verification": {
+    "focusedTests": "Six focused reopen/remediation tests passed under the submitted harness.",
+    "integratedPersistence": "The main-equivalent temporary persistence replay failed on two branch/evidence mismatches.",
+    "quality": "Ruff format, Ruff lint, mypy, canonical backlog validation, and patch hygiene passed.",
+    "r01Integrity": "The R01 record remains exact at SHA-256 442de0230546dd13be91d7e9b873e1b86571df74cbff4950cfef89a5c95a5267."
+  },
+  "filesEditedByReviewer": false
+}

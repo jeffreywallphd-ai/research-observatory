@@ -4579,7 +4579,7 @@ def committed_manifest_errors(
         )
         if resolved.returncode != 0 or resolved.stdout.strip() != commit:
             errors.append("commit does not resolve to the named immutable Git commit")
-        base_sha = task.get("base_sha")
+        base_sha = expected_base_commit or task.get("base_sha")
         if base_sha:
             ancestry = subprocess.run(
                 ["git", "merge-base", "--is-ancestor", base_sha, commit],
@@ -4705,6 +4705,10 @@ def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> l
             if reference_index == 0:
                 if supersedes is not None:
                     errors.append(f"{task_id}: {raw_path}: initial evidence cannot supersede another attachment")
+                attempts = (task.get("review_control") or {}).get("attempts") or []
+                first_submission = (attempts[0].get("submission") or {}) if attempts else {}
+                if first_submission:
+                    expected_base_commit = first_submission.get("base_commit")
             elif isinstance(supersedes, dict):
                 superseded_path = supersedes.get("path")
                 prior_reference = seen_references.get(superseded_path) if isinstance(superseded_path, str) else None
@@ -9430,9 +9434,6 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     for dependent in completed_dependents:
         dependent.update(
             status="NOT_STARTED",
-            branch=None,
-            base_sha=None,
-            worktree=None,
             lease=None,
             updated_at=utc_now(),
             completed_at=None,
