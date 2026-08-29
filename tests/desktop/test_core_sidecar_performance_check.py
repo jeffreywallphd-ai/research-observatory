@@ -150,6 +150,7 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
                 "privacy.cache-cleanup",
                 "privacy.policy",
                 "projects.lifecycle",
+                "provenance.lineage.read",
                 "runtime.contract",
                 "runtime.status",
             ],
