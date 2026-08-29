@@ -7000,11 +7000,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T19:12:19+00:00'
-      updated_at: '2026-08-29T14:13:44+00:00'
+      updated_at: '2026-08-29T15:04:02+00:00'
       completed_at: null
       blocker: null
       implementation_notes: R02 remediates both blocking R01 findings with stable current-user actor authority and restart-safe
@@ -7030,6 +7030,11 @@ capabilities:
         sha256: 2cd02dcd8a757867c80945f1de8dbaded65c075132e86d95732e2b6f528197de
         commit: e2d469f8008fe78d4db266d169d3578b3750f8f6
         recorded_at: '2026-08-29T13:30:15+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S02.T02.R05.json
+        sha256: 32f73b5246834e7c9dd3abf11f94c09436c2540e72b0816ae69b56599a7ffdcc
+        commit: 2ac17711948d8ce6e75e8106194c4e298b60ff29
+        recorded_at: '2026-08-29T15:04:02+00:00'
       review: &id024
         reviewer: codex-independent-desktop-intent-reviewer
         result: approved
@@ -7058,7 +7063,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-29T14:13:44+00:00'
         expires_at: '2026-08-29T22:13:44+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -7788,7 +7793,107 @@ capabilities:
               - CAP-03.S02.T02-R03-F01
               closed_finding_ids:
               - CAP-03.S02.T02-R03-F01
-        current_submission: null
+        current_submission:
+          id: R05
+          submitted_by: codex
+          submitted_at: '2026-08-29T15:04:02+00:00'
+          candidate_commit: 2ac17711948d8ce6e75e8106194c4e298b60ff29
+          base_commit: e2d469f8008fe78d4db266d169d3578b3750f8f6
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S02.T02.R05.json
+            sha256: 32f73b5246834e7c9dd3abf11f94c09436c2540e72b0816ae69b56599a7ffdcc
+            commit: 2ac17711948d8ce6e75e8106194c4e298b60ff29
+            recorded_at: '2026-08-29T15:04:02+00:00'
+          acceptance_criteria_sha256: a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb
+          changed_paths:
+          - apps/desktop/package.json
+          - apps/desktop/scripts/intent-native-integration.mjs
+          - apps/desktop/src-tauri/Cargo.toml
+          - apps/desktop/src-tauri/examples/supervised_core_harness.rs
+          - apps/desktop/src-tauri/examples/supervision_check.rs
+          - apps/desktop/src-tauri/examples/supervisor_fixture.rs
+          - apps/desktop/src-tauri/src/supervisor.rs
+          - artifacts/evidence/CAP-03.S02.T02.R04.json
+          - artifacts/evidence/CAP-03.S02.T02.review-R04.json
+          - artifacts/evidence/CAP-03.S02.T03.R03.json
+          - artifacts/evidence/CAP-03.S02.T03.review-R03.json
+          - artifacts/evidence/CAP-03.S02.integration.json
+          - artifacts/evidence/CAP-03.S02.integration.review.json
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/runtime-handshake.schema.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S02.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/src/research_observatory_core/main.py
+          - tests/desktop/test_core_sidecar_performance_check.py
+          - tests/service/fixtures/native_integration_sidecar.py
+          - tools/core_sidecar_performance_check.py
+          selected_checks:
+          - node apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S02.T02-native-integration-2ac1771.json
+          - cargo test --workspace --locked --all-features
+          - .venv\Scripts\python.exe -m unittest -v tests.service.test_core_api tests.service.test_research_intents
+          - .venv\Scripts\python.exe -m unittest -v tests.desktop.test_core_sidecar_performance_check tests.packaging.test_core_sidecar_package
+          - contracts Vitest; desktop npm run lint; npm run typecheck; npm test -- --run; npm run build
+          - core_api_contract.py --check; quality_check.py; architecture_check.py; repository_structure_check.py; desktop_app_check.py
+            --built-frame-only
+          - taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved (serial execution)
+          - verify.py --profile desktop --profile service --affected-base e2d469f8008fe78d4db266d169d3578b3750f8f6 --affected-head
+            2ac17711948d8ce6e75e8106194c4e298b60ff29 --deferred-gate W1-exit --selection-only; build_manifest.py; git diff;
+            protected witness SHA-256
+          deferred_checks:
+          - CAP-03.S02.T03 was cascade-reset when T02 reopened and must be reclaimed through taskctl after R05 approval, then
+            revalidated against the corrected native path before slice integration can be resubmitted.
+          - The slice's prior controlled visual, live security, and performance evidence remains historical; the strict-descendant
+            slice packet must replay CAP-03.S02-INTEGRATION-R01-F01 and the affected vertical. The current-token symlink equivalence
+            and exact-clean performance condition remain explicit residuals.
+          - The complete affected/full happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility,
+            packaging, performance, and Windows qualification matrix remains mandatory once at W1 exit.
+          selection_rationale: CAP-03.S02-INTEGRATION-R01-F01 demonstrated that renderer and direct-ASGI success could coexist
+            with a completely unusable packaged principal boundary because the Rust allowlist had no intent routes. The credible
+            incremental risks are broad native pass-through, schema drift between generated TypeScript and Rust, hostile root/revision/hash/vocabulary
+            input reaching Core, misplaced idempotency authority, startup capability-handshake drift, response-loss split
+            authority, duplicate acceptance/audit persistence, restart loss, policy evaluation against a non-governing revision,
+            a test seam weakening production startup, and evidence that again composes mocked layers rather than executing
+            them. The required task base is prior candidate e2d469f, so the exact Git range also contains immutable R04/T03/slice
+            evidence, its adverse review, and generated planning projections created before T02 was cascade-reopened; those
+            historical records were already independently reviewed and are disclosed as ancestry, not reimplemented R05 scope.
+            Verification therefore selects exact native positive/negative tests, the actual generated-client/native-supervisor/supervised-Core/protected-SQLite/provenance
+            vertical with response-loss replay and invalid-route denial, complete focused Core intent/API tests, generated
+            contracts, desktop tests/type/lint/build, package/handshake contracts with a real PyInstaller smoke, quality/architecture/repository/product-frame
+            controls, exact affected selection, planning integrity, provenance, patch hygiene, and witness safety. No dependency,
+            migration, governed experience reference, public API payload, or external effect changed. Privileged symlink equivalence,
+            controlled visual capture already held by slice review, clean-checkout performance, and the complete cross-capability/platform
+            matrix remain owned by CAP-03.S02 integration or W1 exit as stated.
+          selection_sha256: b688570448e212f48a83759c53540de8ff1753c5a5ca4fdbfc2780f8d8ccde44
+          prior_attempt_id: R04
+          open_finding_ids: []
+          root_cause_analysis: 'The original T02 implementation and reviews validated the generated client against fake renderer
+            transports and the Core service through direct ASGI calls, but neither crossed the native RuntimeSupervisor allowlist
+            that owns the production principal boundary. The allowlist and runtime handshake capability inventory remained
+            frozen at the pre-intent surface, while the integration packet inferred composition from independently green layers.
+            R05 makes the boundary generic and explicit: strict native validators mirror every generated intent request, the
+            canonical handshake advertises the same module-registry capabilities, and one deterministic feature-gated harness
+            executes the actual generated client through native supervision, real protected persistence, restart, ambiguous
+            replay, provenance inspection, policy denial, and fail-closed routing. This addresses the missing test topology
+            rather than weakening the controller or adding an identity-specific bypass.'
+          selected_command_ids:
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:build-manifest
+          - foundation:quality
+          - foundation:repository-structure
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          packet_sha256: e423573d9bf23b2134696bed80fcf9f65cd00197b0d2a5d1a5ae9e099e46d5e0
       cancellation: null
     - id: CAP-03.S02.T03
       capability_id: CAP-03
