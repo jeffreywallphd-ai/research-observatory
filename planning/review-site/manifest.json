@@ -2843,13 +2843,13 @@
             {
               "task_id": "CAP-03.S02.T02",
               "title": "Implement guided intent creation and revision UI",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": "agent:nash",
-                "result": "approved",
-                "reviewed_at": "2026-08-28T20:40:22+00:00",
-                "notes": "Focused remediation review replayed both open R01 blockers and expanded only across the affected identity, migration, public-contract, SQLite transaction, audit, outbox, concurrency, and packaging boundary. The exact strict-descendant candidate resolves one opaque UUIDv7 actor from the current Windows user's DPAPI-protected profile vault; missing, malformed, tampered, redirected, or spoofed actor authority fails closed before project persistence, while revision createdBy and append-only provenance retain the same non-null actor. Schema v6 is forward-only and backup-first, preserves v1-v5 data and legacy actor identifiers, and retains exact current profile/schema bindings. Public idempotency now binds project, actor, canonical command digest, committed revision, provenance, and outbox, checks replay before optimistic conflict and again under BEGIN IMMEDIATE, returns the immutable committed projection for an exact retry, and denies changed command/project/actor reuse. Independent replay confirmed competing identical writers converge to one four-surface commit and injected persistence failure rolls back all surfaces. Generated OpenAPI/TypeScript parity and package inclusion remain exact. No blocking finding remains and later persistence/UI/enforcement/provenance duties are not overclaimed."
+                "reviewer": "codex-independent-desktop-intent-reviewer",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-29T13:19:58+00:00",
+                "notes": "The exact candidate and frozen R03 evidence lineage are valid, and the bounded implementation otherwise preserves explicit human confirmation, non-empty trimmed rationale, exact project-root/revision/content-hash request fields, unsaved/incomplete denial, generated-client/service contract alignment, disabled downstream launch, approved-reference lineage, and accessible native form controls. Independent replay passed four focused renderer tests, strict desktop TypeScript, nine generated Core client tests, 28 focused intent/Core service tests, the cumulative approved-reference UI gate, reference integrity, 64 accessibility cases, backlog validation, and patch hygiene. Historical findings CAP-03.S02.T02-R01-F01 and CAP-03.S02.T02-R01-F02 remain closed: this renderer-only product delta does not alter stable actor authority, the SQLite transaction, or the service idempotency binding. The packet also truthfully discloses the already-reviewed T03 and GOV-MAINT-0004 ancestry rather than claiming it as new T02 scope. One high-severity acceptance-bound failure remains: the desktop discards the acceptance command's idempotency identity, so an ambiguous post-commit transport/response failure can leave the UI asserting that acceptance failed while the service has already made the revision governing; a retry then uses a different key and cannot replay the committed result. The current renderer tests do not exercise the handler or this boundary and therefore do not support the manifest's accepted-projection and generated-client integration claims."
               },
               "review_control": {
                 "version": 1,
@@ -3172,102 +3172,168 @@
                         ]
                       }
                     }
+                  },
+                  {
+                    "submission": {
+                      "id": "R03",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-08-29T13:13:01+00:00",
+                      "candidate_commit": "b9868e5211aa012d7223caff5ab2eef2a7386de9",
+                      "base_commit": "a60d3e9704a4d59dd1d0310437bd6d486057500b",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S02.T02.R03.json",
+                        "sha256": "b4739a9aa342e893dec56eeb9aec740f4163bdcfcc8948d21379f95d17639fce",
+                        "commit": "b9868e5211aa012d7223caff5ab2eef2a7386de9",
+                        "recorded_at": "2026-08-29T13:13:01+00:00"
+                      },
+                      "acceptance_criteria_sha256": "a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb",
+                      "changed_paths": [
+                        "apps/desktop/README.md",
+                        "apps/desktop/src/app/IntentWorkspace.test.tsx",
+                        "apps/desktop/src/app/IntentWorkspace.tsx",
+                        "artifacts/evidence/CAP-03.S02.T02.R02.json",
+                        "artifacts/evidence/CAP-03.S02.T02.review-R02.json",
+                        "artifacts/evidence/CAP-03.S02.T03.R02.json",
+                        "artifacts/evidence/CAP-03.S02.T03.json",
+                        "artifacts/evidence/CAP-03.S02.T03.review-R01.json",
+                        "artifacts/evidence/CAP-03.S02.T03.review-R02.json",
+                        "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
+                        "docs/architecture/research-intent-contracts.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "packages/contracts/core-api/openapi.json",
+                        "planning/backlog.yaml",
+                        "planning/governance-migrations/GOV-MAINT-0004.json",
+                        "planning/governance-migrations/GOV-MAINT-0004.review-R01.json",
+                        "planning/governance-migrations/GOV-MAINT-0004.review-R02.json",
+                        "planning/governance-migrations/GOV-MAINT-0004.review-R03.json",
+                        "planning/review-site/CAP-03/CAP-03.S02.html",
+                        "planning/review-site/CAP-03/index.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W1.html",
+                        "planning/status-summary.md",
+                        "services/core-api/src/research_observatory_core/app.py",
+                        "services/core-api/src/research_observatory_core/models.py",
+                        "services/core-api/src/research_observatory_core/modules.py",
+                        "services/core-api/src/research_observatory_core/ports/repositories.py",
+                        "services/core-api/src/research_observatory_core/repositories.py",
+                        "services/core-api/src/research_observatory_core/research_intents.py",
+                        "tests/foundation/test_taskctl_workflow.py",
+                        "tests/service/test_core_api.py",
+                        "tests/service/test_research_intents.py",
+                        "tools/core_api_contract.py",
+                        "tools/taskctl.py"
+                      ],
+                      "selected_checks": [
+                        "npm run lint; npm test; npm run typecheck; npm run build in apps/desktop",
+                        ".venv\\Scripts\\python.exe -m unittest tests.service.test_research_intents tests.service.test_core_api",
+                        ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py",
+                        ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 198edd87be8147087ac87f282c12d099fe1a943d --head b9868e5211aa012d7223caff5ab2eef2a7386de9",
+                        ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; architecture_check.py; repository_structure_check.py",
+                        ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; backlog_views.py --check; planctl.py --repo . wave ready W1 --require-approved",
+                        ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile service --affected-base a60d3e9704a4d59dd1d0310437bd6d486057500b --affected-head b9868e5211aa012d7223caff5ab2eef2a7386de9 --deferred-gate W1-exit --selection-only; build_manifest.py",
+                        "git diff --check a60d3e9704a4d59dd1d0310437bd6d486057500b..b9868e5211aa012d7223caff5ab2eef2a7386de9; protected W1.A04.B00 witness SHA-256"
+                      ],
+                      "deferred_checks": [
+                        "The controlled visual-regression capture runner did not complete during the exact-candidate attempt and is not claimed as passing. The deterministic approved-reference, token, route, workflow, accessibility, build, and interaction tests passed; full visual capture is mandatory at CAP-03.S02 slice integration.",
+                        "CAP-03.S02.T03 must be revalidated after this reopened dependency so the accepted revision is proven end-to-end as the effective service-policy authority before slice approval.",
+                        "Desktop performance and the complete repository/deployment happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit."
+                      ],
+                      "selection_rationale": "This medium-risk correction restores an approved governed desktop interaction over an existing authenticated public service contract. Credible failures are accepting an incomplete or locally modified revision, omitting explicit human confirmation or rationale, accepting a different revision/hash than displayed, silently enabling launch, losing downstream service-policy authority, breaking generated-client integration, or drifting from the approved experience reference. Verification therefore selects focused renderer and service/API tests, strict lint/type/build, built-frame capability inventory, reference/token/route/workflow/accessibility contracts, the cumulative UI change gate, quality/architecture/repository boundaries, planning authority, affected-selection truth, build provenance, patch hygiene, and protected-witness safety. No dependency, migration, persistence implementation, network provider, or public contract changed. The controlled visual-capture runner was attempted but did not complete and is not represented as passing; it remains mandatory at slice integration together with the T03 effective-policy path. Gate-bound performance and the complete cross-capability matrix remain at W1 exit.",
+                      "selection_sha256": "fd1ddff6f9d02d1aa26da2cd84a494779aeb37a88d83cb56bd35e43d624f6dbe",
+                      "prior_attempt_id": "R02",
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:quality",
+                        "foundation:repository-structure",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "contracts:unit",
+                        "service:unit"
+                      ],
+                      "packet_sha256": "5aae5a7d35a8f80b266c92e95454510cf03a25a45cfb09d341808ba2b2af4126"
+                    },
+                    "review": {
+                      "reviewer": "codex-independent-desktop-intent-reviewer",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-08-29T13:19:58+00:00",
+                      "notes": "The exact candidate and frozen R03 evidence lineage are valid, and the bounded implementation otherwise preserves explicit human confirmation, non-empty trimmed rationale, exact project-root/revision/content-hash request fields, unsaved/incomplete denial, generated-client/service contract alignment, disabled downstream launch, approved-reference lineage, and accessible native form controls. Independent replay passed four focused renderer tests, strict desktop TypeScript, nine generated Core client tests, 28 focused intent/Core service tests, the cumulative approved-reference UI gate, reference integrity, 64 accessibility cases, backlog validation, and patch hygiene. Historical findings CAP-03.S02.T02-R01-F01 and CAP-03.S02.T02-R01-F02 remain closed: this renderer-only product delta does not alter stable actor authority, the SQLite transaction, or the service idempotency binding. The packet also truthfully discloses the already-reviewed T03 and GOV-MAINT-0004 ancestry rather than claiming it as new T02 scope. One high-severity acceptance-bound failure remains: the desktop discards the acceptance command's idempotency identity, so an ambiguous post-commit transport/response failure can leave the UI asserting that acceptance failed while the service has already made the revision governing; a retry then uses a different key and cannot replay the committed result. The current renderer tests do not exercise the handler or this boundary and therefore do not support the manifest's accepted-projection and generated-client integration claims."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S02.T02.review-R03.json",
+                      "sha256": "5a0167909d92cf27483c1ccc9872f0b42f4ecfc9f7b6073f5466868a7ae3511c"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S02.T02-R03-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Acceptance loses its retry identity and can misreport a committed governing revision",
+                        "reproduction": "At exact candidate b9868e5211aa012d7223caff5ab2eef2a7386de9, inspect apps/desktop/src/app/IntentWorkspace.tsx: accept() calls client.acceptIntent(intentAcceptanceRequest(...), idempotencyKey()) and retains neither the generated key nor the exact command. Its catch path leaves workspace.current as the draft and announces that the intent was not accepted. If Core commits the accepted revision but the Tauri transport loses the response or the client rejects a malformed/truncated response, that catch path runs even though the accepted revision is now authoritative. Clicking Accept again mints a different key; ResearchIntentService cannot find an idempotent replay for that key, reads the already-accepted current revision, and returns RO-CORE-INTENT-ACCEPTANCE-REVISION-CONFLICT. The UI therefore cannot reconcile the uncertain result and can tell the researcher that the prior draft remains authoritative while T03 policy evaluation uses the accepted revision. The R03 renderer suite has only four tests: it never invokes acceptIntent, a transport, the accept handler, or the accepted-state reducer. Its request-helper fixture also uses revisionContentHash='a'.repeat(64), which lacks the generated client's required sha256: prefix, so the asserted value would be rejected on the real client boundary. The manifest's claims that renderer tests prove generated-client request binding, accepted projection replacement, and service-rejection behavior are consequently not supported.",
+                        "required_remediation": "Retain one exact acceptance command and canonical idempotency key for the duration of an unresolved attempt. On an ambiguous transport/response failure, retry that same command with the same key or reload the authoritative workspace before making any claim about whether acceptance committed; mint a new key only after a definitive non-commit result or a newly reviewed revision. Keep the displayed draft, confirmation, and rationale bound to that frozen attempt while it is pending. Add a deterministic renderer/coordinator test through the real generated client and fake transport that asserts the exact project root, sha256-prefixed full content hash, revision, trimmed rationale, confirmed=true, and 32-hex key; simulate commit followed by response loss and prove same-key replay converges on one accepted revision and replaces current/history without enabling launch. Add the complementary definitive-rejection test proving the draft remains authoritative. Correct the invalid hash fixture and update the R03 evidence claims to name only checks that actually execute these paths. Preserve the two R01 closures and do not reopen T03 or the approved UI reference unless the remediation materially changes that authority."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-03.S02.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R03",
+                      "submitted_at": "2026-08-29T13:13:01+00:00",
+                      "reviewed_at": "2026-08-29T13:19:58+00:00",
+                      "duration_seconds": 417,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 1,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:quality",
+                        "foundation:repository-structure",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "contracts:unit",
+                        "service:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R02",
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
                   }
                 ],
-                "current_submission": {
-                  "id": "R03",
-                  "submitted_by": "codex",
-                  "submitted_at": "2026-08-29T13:13:01+00:00",
-                  "candidate_commit": "b9868e5211aa012d7223caff5ab2eef2a7386de9",
-                  "base_commit": "a60d3e9704a4d59dd1d0310437bd6d486057500b",
-                  "branch": "codex/w1-windows-local-runtime",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-03.S02.T02.R03.json",
-                    "sha256": "b4739a9aa342e893dec56eeb9aec740f4163bdcfcc8948d21379f95d17639fce",
-                    "commit": "b9868e5211aa012d7223caff5ab2eef2a7386de9",
-                    "recorded_at": "2026-08-29T13:13:01+00:00"
-                  },
-                  "acceptance_criteria_sha256": "a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb",
-                  "changed_paths": [
-                    "apps/desktop/README.md",
-                    "apps/desktop/src/app/IntentWorkspace.test.tsx",
-                    "apps/desktop/src/app/IntentWorkspace.tsx",
-                    "artifacts/evidence/CAP-03.S02.T02.R02.json",
-                    "artifacts/evidence/CAP-03.S02.T02.review-R02.json",
-                    "artifacts/evidence/CAP-03.S02.T03.R02.json",
-                    "artifacts/evidence/CAP-03.S02.T03.json",
-                    "artifacts/evidence/CAP-03.S02.T03.review-R01.json",
-                    "artifacts/evidence/CAP-03.S02.T03.review-R02.json",
-                    "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
-                    "docs/architecture/research-intent-contracts.md",
-                    "docs/planning-implementation-plan.md",
-                    "packages/contracts/core-api/generated.test.ts",
-                    "packages/contracts/core-api/generated.ts",
-                    "packages/contracts/core-api/openapi.json",
-                    "planning/backlog.yaml",
-                    "planning/governance-migrations/GOV-MAINT-0004.json",
-                    "planning/governance-migrations/GOV-MAINT-0004.review-R01.json",
-                    "planning/governance-migrations/GOV-MAINT-0004.review-R02.json",
-                    "planning/governance-migrations/GOV-MAINT-0004.review-R03.json",
-                    "planning/review-site/CAP-03/CAP-03.S02.html",
-                    "planning/review-site/CAP-03/index.html",
-                    "planning/review-site/manifest.json",
-                    "planning/review-site/waves/W1.html",
-                    "planning/status-summary.md",
-                    "services/core-api/src/research_observatory_core/app.py",
-                    "services/core-api/src/research_observatory_core/models.py",
-                    "services/core-api/src/research_observatory_core/modules.py",
-                    "services/core-api/src/research_observatory_core/ports/repositories.py",
-                    "services/core-api/src/research_observatory_core/repositories.py",
-                    "services/core-api/src/research_observatory_core/research_intents.py",
-                    "tests/foundation/test_taskctl_workflow.py",
-                    "tests/service/test_core_api.py",
-                    "tests/service/test_research_intents.py",
-                    "tools/core_api_contract.py",
-                    "tools/taskctl.py"
-                  ],
-                  "selected_checks": [
-                    "npm run lint; npm test; npm run typecheck; npm run build in apps/desktop",
-                    ".venv\\Scripts\\python.exe -m unittest tests.service.test_research_intents tests.service.test_core_api",
-                    ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py",
-                    ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 198edd87be8147087ac87f282c12d099fe1a943d --head b9868e5211aa012d7223caff5ab2eef2a7386de9",
-                    ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; architecture_check.py; repository_structure_check.py",
-                    ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; backlog_views.py --check; planctl.py --repo . wave ready W1 --require-approved",
-                    ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile service --affected-base a60d3e9704a4d59dd1d0310437bd6d486057500b --affected-head b9868e5211aa012d7223caff5ab2eef2a7386de9 --deferred-gate W1-exit --selection-only; build_manifest.py",
-                    "git diff --check a60d3e9704a4d59dd1d0310437bd6d486057500b..b9868e5211aa012d7223caff5ab2eef2a7386de9; protected W1.A04.B00 witness SHA-256"
-                  ],
-                  "deferred_checks": [
-                    "The controlled visual-regression capture runner did not complete during the exact-candidate attempt and is not claimed as passing. The deterministic approved-reference, token, route, workflow, accessibility, build, and interaction tests passed; full visual capture is mandatory at CAP-03.S02 slice integration.",
-                    "CAP-03.S02.T03 must be revalidated after this reopened dependency so the accepted revision is proven end-to-end as the effective service-policy authority before slice approval.",
-                    "Desktop performance and the complete repository/deployment happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit."
-                  ],
-                  "selection_rationale": "This medium-risk correction restores an approved governed desktop interaction over an existing authenticated public service contract. Credible failures are accepting an incomplete or locally modified revision, omitting explicit human confirmation or rationale, accepting a different revision/hash than displayed, silently enabling launch, losing downstream service-policy authority, breaking generated-client integration, or drifting from the approved experience reference. Verification therefore selects focused renderer and service/API tests, strict lint/type/build, built-frame capability inventory, reference/token/route/workflow/accessibility contracts, the cumulative UI change gate, quality/architecture/repository boundaries, planning authority, affected-selection truth, build provenance, patch hygiene, and protected-witness safety. No dependency, migration, persistence implementation, network provider, or public contract changed. The controlled visual-capture runner was attempted but did not complete and is not represented as passing; it remains mandatory at slice integration together with the T03 effective-policy path. Gate-bound performance and the complete cross-capability matrix remain at W1 exit.",
-                  "selection_sha256": "fd1ddff6f9d02d1aa26da2cd84a494779aeb37a88d83cb56bd35e43d624f6dbe",
-                  "prior_attempt_id": "R02",
-                  "open_finding_ids": [],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "foundation:architecture",
-                    "foundation:backlog-views",
-                    "foundation:build-manifest",
-                    "foundation:ui-reference",
-                    "foundation:ui-change",
-                    "foundation:quality",
-                    "foundation:repository-structure",
-                    "foundation:backlog",
-                    "desktop:application",
-                    "desktop:unit",
-                    "desktop:ui-reference-integrity",
-                    "desktop:ui-token",
-                    "desktop:ui-route-page",
-                    "desktop:ui-workflow",
-                    "desktop:ui-accessibility",
-                    "contracts:unit",
-                    "service:unit"
-                  ],
-                  "packet_sha256": "5aae5a7d35a8f80b266c92e95454510cf03a25a45cfb09d341808ba2b2af4126"
-                }
+                "current_submission": null
               }
             },
             {
