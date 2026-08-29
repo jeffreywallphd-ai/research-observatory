@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7d214ebabd51b0ededf80eef0d5e304471f058fd523a6e85fd095f0cac9f945c
+source_sha256: 0b14a521ef99a60a9c97ec66e8826e386e789e4b9027b6fcc1a37c7bc34b39ee
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3896,15 +3896,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
+#### - [x] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T02`
 
-**Owner / review:** codex / agent:nash (`approved`)
+**Owner / review:** codex / codex-independent-epistemic-governance-reviewer (`approved`)
 
 **Objective:** Policy checks that constrain tools, required human gates, output labels, and stopping behavior according to the active contract.
 
@@ -3930,7 +3930,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S02.T03
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -3962,7 +3962,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `047bb443530248b4c6f1875ebda69ee14bb1e6a6e7d5b42143d724c57d70125a`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `047bb443530248b4c6f1875ebda69ee14bb1e6a6e7d5b42143d724c57d70125a`
 
 - Candidate / base / branch: `04b70b3ed879c853e87c3547db27a2eb0ba11b31` / `610a01c1e0c357e6c02f069d45ec5e09c26cbf45` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-29T12:00:42+00:00`
@@ -3976,9 +3978,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `approved` by agent:nash at `2026-08-28T21:57:31+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent-epistemic-governance-reviewer / `2026-08-29T12:05:37+00:00`
 
-**Latest notes:** Independent epistemic-governance review found no blocking acceptance-bound defect. Exact human confirmation, current revision and content-hash authority, stable local actor attribution, event-specific idempotency, and atomic revision/provenance/outbox persistence govern acceptance; exact retries survive restart while stale, unconfirmed, changed, or cross-event reuse is denied. Policy evaluation selects the newest valid accepted revision, covers all six required epistemic modes, returns compact hash-bound governing references and mode-specific working-output labels, and cannot self-authorize claim, publication, intent-acceptance, scope-change, external-egress, autonomy, or stopping gates. Resource budget remains secondary and cannot independently establish completion. Every allow, deny, recommendation, and confirmation decision is persisted as bounded content-free metadata with its provenance fact in one transaction; audit failure rolls back and fails the requested action closed. OpenAPI and generated TypeScript decoders remain strict, and idempotency v1.1 adds eventType while preserving v1.0 draft replay without allowing draft/acceptance substitution. The base-to-candidate range has no governed UI path, dependency, migration, or external-service change. Independent replay passed 27 focused intent/Core API tests, 51 Python contract tests, nine generated-client tests, checked-in contract generation, and patch hygiene. The disclosed broad foundation failures concern historical governance/recovery fixtures rather than changed T03 product or control paths; task-relevant planning, architecture, repository, contract, service, packaging, security, and zero-net-UI checks are recorded as passing, so the remaining full reconciliation is safely retained for the mandatory W1-exit matrix rather than represented as task evidence.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S02.T03.review-R02.json` / `ddbb59e4321f6e14243a797d532bab7dc614be92e5de8672f384e7a8b775816b`
+
+**Review notes:** Focused R02 remediation review found no blocking acceptance-bound defect. The exact strict-descendant candidate caches only the newest contract-valid accepted revision from newest-first immutable history, never populates or invalidates the governing snapshot from a draft, and reconstructs it from that history after process restart. Human acceptance and policy evaluation share the ResearchIntentService policy-cache lock while every public project action also remains serialized by the W1 ProjectLifecycleService mutex and protected from another Core process by the exclusive local-project session lock. A successful acceptance commits before replacing the cached snapshot and cannot release either synchronization boundary before replacement, so every later evaluation observes the new authority; a failed acceptance leaves the prior snapshot authoritative. Exact replay of an older acceptance re-reads validated history and restores the newest accepted revision rather than the replayed older result, preventing policy rollback. Policy evaluation retains the lock through its atomic content-free decision/provenance append and returns no decision when that append fails, so audit failure remains fail-closed. Independent replay passed all 50 Core service tests and all 56 local-security tests with one expected Windows privilege skip; the focused intent suite proves cache hits, later-acceptance replacement, old-replay nonrollback, restart reconstruction, six-mode output/gate behavior, autonomy and egress denial, stopping confirmation, and audit failure. Python quality, backlog validation, exact evidence/blob binding, patch hygiene, and the zero-net-UI gate also pass. The base-to-candidate range has no governed UI, dependency, lockfile, schema, migration, or external-service delta. Two R02 Trivy reports truthfully record scanner ERROR with empty findings while the unchanged graph retains the exact R01 passing 601-package scan; the packet explicitly defers a successful live replay to CAP-03.S02 integration or W1 exit. The guided human-acceptance desktop path is likewise explicitly assigned to reopened CAP-03.S02.T02 and is not claimed by T03. No finding remains open.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-epistemic-governance-reviewer at `2026-08-29T12:05:37+00:00`
+
+**Latest notes:** Focused R02 remediation review found no blocking acceptance-bound defect. The exact strict-descendant candidate caches only the newest contract-valid accepted revision from newest-first immutable history, never populates or invalidates the governing snapshot from a draft, and reconstructs it from that history after process restart. Human acceptance and policy evaluation share the ResearchIntentService policy-cache lock while every public project action also remains serialized by the W1 ProjectLifecycleService mutex and protected from another Core process by the exclusive local-project session lock. A successful acceptance commits before replacing the cached snapshot and cannot release either synchronization boundary before replacement, so every later evaluation observes the new authority; a failed acceptance leaves the prior snapshot authoritative. Exact replay of an older acceptance re-reads validated history and restores the newest accepted revision rather than the replayed older result, preventing policy rollback. Policy evaluation retains the lock through its atomic content-free decision/provenance append and returns no decision when that append fails, so audit failure remains fail-closed. Independent replay passed all 50 Core service tests and all 56 local-security tests with one expected Windows privilege skip; the focused intent suite proves cache hits, later-acceptance replacement, old-replay nonrollback, restart reconstruction, six-mode output/gate behavior, autonomy and egress denial, stopping confirmation, and audit failure. Python quality, backlog validation, exact evidence/blob binding, patch hygiene, and the zero-net-UI gate also pass. The base-to-candidate range has no governed UI, dependency, lockfile, schema, migration, or external-service delta. Two R02 Trivy reports truthfully record scanner ERROR with empty findings while the unchanged graph retains the exact R01 passing 601-package scan; the packet explicitly defers a successful live replay to CAP-03.S02 integration or W1 exit. The guided human-acceptance desktop path is likewise explicitly assigned to reopened CAP-03.S02.T02 and is not claimed by T03. No finding remains open.
 
 **Currently open findings:** -
 
