@@ -25,9 +25,11 @@ const assert = (condition, message) => {
 const semanticRules = [
   "actor-and-agent-match", "event-project-and-subject-match", "subject-binds-exact-event-object",
   "activity-time-is-ordered", "event-time-matches-activity-end", "input-output-revisions-are-disjoint",
-  "entity-references-are-unique", "identity-namespace-is-consistent", "entity-policy-does-not-weaken-event",
+  "entity-references-are-unique", "stable-entity-kind-is-consistent", "identity-namespace-is-consistent",
+  "entity-policy-does-not-weaken-event",
   "relations-close-over-event-objects", "relation-identities-and-facts-are-unique",
   "relation-roles-match-event-objects", "relation-outcome-matches-activity-status",
+  "activity-output-shape-matches-status",
   "activity-agent-relation-is-complete", "input-use-relations-are-complete",
   "output-generation-relations-are-complete", "output-attribution-relations-are-complete",
   "known-event-type-matches-activity", "known-event-relations-match-operation",
@@ -44,6 +46,10 @@ const knownMap = {
   "org.research-observatory.entity.invalidated.v1": "invalidation",
 };
 const relationPolicy = {
+  universal: {
+    nonSucceededOutputs: "forbidden",
+    succeededOutputRelations: ["wasGeneratedBy", "wasAttributedTo"],
+  },
   roles: {
     used: "input",
     wasGeneratedBy: "output",

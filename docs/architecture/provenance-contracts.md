@@ -25,6 +25,9 @@ decision, synthesis, export, and invalidation. Their activity kind and
 input/output shape are checked semantically. Unknown future types remain
 storable only when the complete structural, minimization, identity, relation,
 classification, and time boundary passes; readers must not infer their meaning.
+That universal boundary forbids outputs for every non-succeeded activity and
+requires exactly one generation and attribution relation for every succeeded
+output, including outputs carried by an uncataloged future type.
 
 ## PROV mapping and minimization
 
@@ -40,6 +43,11 @@ classification, and time boundary passes; readers must not infer their meaning.
   `wasDerivedFrom`, `wasInvalidatedBy`, and `wasAttributedTo`, and all endpoints
   carry both stable entity and exact revision identity and close over the
   event's own objects. Relation IDs and facts are unique.
+- One stable entity identity retains one entity kind across revisions. A
+  cross-kind transformation mints a distinct stable identity and derives its
+  exact output revision from the exact input revision. Project identity is in
+  the event-local collision set, and entity subjects use the same portable-key
+  kind grammar as entity records.
 - Relation roles and outcomes fail closed: use targets inputs; generation and
   attribution target outputs; derivation runs from an output revision to a
   distinct input revision; and invalidation is asserted only for a succeeded

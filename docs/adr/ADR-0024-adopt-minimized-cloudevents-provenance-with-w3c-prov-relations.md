@@ -83,8 +83,11 @@ kind, stable identity, and exact revision; the only entity-less subject is the
 exact activity identity for a failed, cancelled, or denied source-acquisition
 attempt. Relation IDs and facts are unique within an event. A legitimate
 revision-to-revision transformation may reuse one stable entity ID, but its
-input and output revision IDs remain distinct and every `wasDerivedFrom` edge
-runs from the output revision to an input revision.
+entity kind is immutable, its input and output revision IDs remain distinct,
+and every `wasDerivedFrom` edge runs from the output revision to an input
+revision. A cross-kind transformation mints a distinct stable entity identity.
+Project identity participates in the event-local UUID collision check, and the
+subject's entity-kind segment uses the same portable-key grammar as the entity.
 
 Relation semantics are outcome-aware. `used` targets inputs;
 `wasGeneratedBy` and `wasAttributedTo` target outputs;
@@ -95,6 +98,12 @@ may record exact inputs they actually used, but never invented outputs or
 completed derivation/invalidation facts. Canonical UTC instants are the shared
 RFC 3339 millisecond-`Z` range from year 0001 through 9999; year zero is rejected
 by the schema and both generated runtimes.
+
+These structural lifecycle invariants also apply to uncataloged future types:
+any non-succeeded activity has no outputs, and every output of a succeeded
+activity has exactly one generation and one attribution relation. Future
+catalog meaning remains uninterpreted, but an unknown type cannot weaken the
+event's own identity, outcome, role, or completeness guarantees.
 
 The envelope contains references and bounded classifications, never raw
 research or personal content. Optional large or sensitive event data is an
@@ -138,8 +147,9 @@ hashes, identities, sensitivity/retention declarations, and unknown types.
 - Draft 2020-12 schema and valid fixture validation;
 - deterministic generator and exact schema-SHA binding;
 - equivalent TypeScript and Python success, hostile-input, actor/time/project,
-  exact-revision subject/endpoint, status/role relation-matrix, identity/fact
-  uniqueness, unknown-future-type, UTC-boundary, immutable-snapshot, and
+  exact-revision subject/endpoint, stable-kind/UUID-namespace, status/role
+  relation-matrix, identity/fact uniqueness, unknown-future completeness,
+  UTC-boundary, immutable-snapshot, and
   canonical restart/hash tests;
 - package/type checks and frozen-sidecar module inventory;
 - architecture/ADR, build schema inventory, quality, service, and data checks;

@@ -39,7 +39,8 @@ _EVENT_TYPE = re.compile(r"^org\.research-observatory\.[a-z][a-z0-9]*(?:\.[a-z][
 _TRACEPARENT = re.compile(r"^00-(?!0{32})[0-9a-f]{32}-(?!0{16})[0-9a-f]{16}-[0-9a-f]{2}$")
 _ENTITY_SUBJECT = re.compile(
     r"^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/entity/"
-    r"[a-z][a-z0-9-]{0,63}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/revision/"
+    r"[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}/"
+    r"[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/revision/"
     r"[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
 )
 _ACTIVITY_SUBJECT = re.compile(
@@ -358,6 +359,13 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
         errors.append("input-output-revisions-are-disjoint")
     if len(all_keys) != len(entity_keys):
         errors.append("entity-references-are-unique")
+    stable_entity_kinds: dict[str, str] = {}
+    for entity in all_entities:
+        entity_id = cast(str, entity["entityId"])
+        entity_kind = cast(str, entity["entityKind"])
+        prior_kind = stable_entity_kinds.setdefault(entity_id, entity_kind)
+        if prior_kind != entity_kind:
+            errors.append("stable-entity-kind-is-consistent")
     if any(
         item["sensitivity"] != event["sensitivity"] or item["retentionClass"] != event["retentionclass"]
         for item in all_entities
@@ -367,6 +375,7 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
     relation_ids = [cast(str, relation["relationId"]) for relation in relations]
     revision_ids = [cast(str, entity["revisionId"]) for entity in all_entities]
     global_ids = [
+        cast(str, event["projectid"]),
         cast(str, event["id"]),
         cast(str, activity["activityId"]),
         cast(str, agent["agentId"]),
@@ -476,6 +485,27 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
     if association_count != 1:
         errors.append("activity-agent-relation-is-complete")
 
+    if activity["status"] != "succeeded" and outputs:
+        errors.append("activity-output-shape-matches-status")
+
+    def exact_relation_count(
+        relation_type: str,
+        entity: Mapping[str, Any],
+        related: Mapping[str, Any] | None = None,
+    ) -> int:
+        return sum(
+            relation["relationType"] == relation_type
+            and _reference_or_none(relation["entity"]) == _reference_key(entity)
+            and _reference_or_none(relation["relatedEntity"]) == (None if related is None else _reference_key(related))
+            for relation in relations
+        )
+
+    if activity["status"] == "succeeded":
+        if any(exact_relation_count("wasGeneratedBy", entity) != 1 for entity in outputs):
+            errors.append("output-generation-relations-are-complete")
+        if any(exact_relation_count("wasAttributedTo", entity) != 1 for entity in outputs):
+            errors.append("output-attribution-relations-are-complete")
+
     known_activity = KNOWN_PROVENANCE_EVENT_ACTIVITIES.get(cast(str, event["type"]))
     if known_activity is not None and known_activity != activity["activityType"]:
         errors.append("known-event-type-matches-activity")
@@ -521,20 +551,6 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
             errors.append("subject-binds-exact-event-object")
 
         if activity["status"] == "succeeded":
-
-            def exact_relation_count(
-                relation_type: str,
-                entity: Mapping[str, Any],
-                related: Mapping[str, Any] | None = None,
-            ) -> int:
-                return sum(
-                    relation["relationType"] == relation_type
-                    and _reference_or_none(relation["entity"]) == _reference_key(entity)
-                    and _reference_or_none(relation["relatedEntity"])
-                    == (None if related is None else _reference_key(related))
-                    for relation in relations
-                )
-
             if known_activity not in {"source-acquisition", "invalidation"} and any(
                 exact_relation_count("used", entity) != 1 for entity in inputs
             ):
@@ -543,10 +559,6 @@ def _semantic_errors(event: Mapping[str, Any]) -> list[str]:
                 exact_relation_count("wasInvalidatedBy", entity) != 1 for entity in inputs
             ):
                 errors.append("input-use-relations-are-complete")
-            if any(exact_relation_count("wasGeneratedBy", entity) != 1 for entity in outputs):
-                errors.append("output-generation-relations-are-complete")
-            if any(exact_relation_count("wasAttributedTo", entity) != 1 for entity in outputs):
-                errors.append("output-attribution-relations-are-complete")
             if known_activity not in {"source-acquisition", "invalidation"} and any(
                 not any(exact_relation_count("wasDerivedFrom", output, input_) == 1 for input_ in inputs)
                 for output in outputs
