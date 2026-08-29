@@ -60,6 +60,35 @@ The canonical ID remains visible beside the alias.
 
 ## Planning and approval
 
+### Initiation assessment and plan mutability
+
+At the beginning of each Wave and when a capability is first planned, planning
+compares the tested current implementation with the product Vision, accepted
+architecture, current best practices for the core planned work, and the proposed
+outcome. A later Wave contribution refreshes a capability assessment only where
+material facts changed. Current implementation is evidence of the starting
+point, not a reason to bend product direction around weak code. Within accepted
+architectural authority, Vision and best practice outrank implementation
+convenience.
+
+The assessment may add bounded enabling improvements required for safe new work,
+but it may not make a major refactoring decision about completed work. All
+assessment-added work affecting previously implemented structure or behavior is
+classified as technical-debt refactoring. Its forecast effort may
+not exceed 15% of the pre-assessment forecast effort of already planned work at
+either the capability or Wave level. The packet records the common estimation
+basis, numerator, denominator, percentage, and disposition of excluded work.
+Changing an accepted architectural decision, replacing a foundational runtime
+or data boundary, or restructuring multiple completed capability outcomes is a
+major refactor for this rule. Work beyond the budget or in one of those classes
+becomes separate future work or an explicit roadmap/architecture decision; if it
+is indispensable, readiness is denied.
+
+Wave and capability plans remain deliberately changeable while proposed. The
+initiation assessment is incorporated into the existing complete Wave packet
+and creates no additional approval gate. Approval freezes the adapted packet at
+one immutable commit; subsequent changes use the append-only authority below.
+
 The complete pre-Wave packet is approved once at one immutable commit. It
 contains every contributing capability decision classified as binding in that
 Wave, every Wave slice plan, the cross-capability dependency/interface map,

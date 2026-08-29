@@ -176,6 +176,7 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
     }
     headings = [
         "## 0. Control and authority",
+        "## 0A. Initiation assessment and planning adaptation",
         "## 1. Capability outcome and production-ready exit",
         "## 2. Slice map and end-to-end dependency logic",
         "## 3. Decision-making protocol",
@@ -198,11 +199,19 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
                 + f"| `{decision_id}` | Replace with researched candidates | Replace with explicit recommendation | Pending | Recommended |\n\n"
                 + "Replace this placeholder with the complete decision inventory before approval."
             )
+        elif heading == "## 0A. Initiation assessment and planning adaptation":
+            sections.append(
+                heading + "\n\nRecord the tested implementation baseline, Vision/architecture/best-practice fit, "
+                "plan adaptations, necessary support improvements, and the estimation basis, numerator, "
+                "denominator, and percentage for the 15% technical-debt refactoring limit. Include the "
+                "capability-initiation baseline and each applicable Wave refresh. Route major or over-budget "
+                "refactoring to a separate future disposition."
+            )
         else:
             sections.append(heading + "\n\nComplete this section before approval.")
     body = (
         f"# {cap['id']} - Capability decision and execution plan\n\n"
-        "> **Generated proposed packet.** Resolve the capability-wide decision register and classify every decision by its binding Wave. Each pre-Wave approval then binds only that Wave's exact decision inventory together with every slice plan assigned to it at one immutable commit; inherited and future decisions remain nonbinding context.\n\n"
+        "> **Generated proposed packet.** First assess the tested implementation against the Vision, accepted architecture, current best practice, and the proposed outcome. Keep assessment-added technical-debt refactoring within 15% of pre-assessment planned implementation effort at both capability and Wave scope, and route major refactoring outside initiation planning. Then resolve the capability-wide decision register and classify every decision by its binding Wave. Each pre-Wave approval binds only that Wave's exact decision inventory together with every slice plan assigned to it at one immutable commit; inherited and future decisions remain nonbinding context.\n\n"
         "> **Review surface.** Run `python tools/planctl.py --repo . review "
         + cap["id"]
         + "` and use the generated static pages to review all options and slice plans.\n\n"
@@ -272,7 +281,7 @@ def scaffold_slice(root: Path, cap: dict[str, Any], slice_: dict[str, Any]) -> P
         )
     body = (
         f"# {slice_['id']} - {slice_['title']}\n\n"
-        "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, and current primary research. It authorizes only its ordered slice after its binding capability decisions and this slice's complete Wave packet are approved.\n\n"
+        "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, current primary research, and the applicable capability/Wave initiation assessment. Classify assessment-added changes to existing implementation as technical-debt refactoring under the recorded 15% limits; major refactoring is outside initiation planning. It authorizes only its ordered slice after its binding capability decisions and this slice's complete Wave packet are approved.\n\n"
         f"> **Review surface.** Run `python tools/planctl.py --repo . wave review {slice_.get('wave', 'W?')}` and use the generated complete Wave packet.\n\n"
         + "\n\n".join(sections)
         + "\n"

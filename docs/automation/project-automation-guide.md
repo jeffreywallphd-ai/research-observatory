@@ -21,16 +21,26 @@ descriptive slice label.
 
 Before start:
 
-1. Every slice in the Wave has a plan generated from `planning/slice-plans/TEMPLATE.md`.
-2. Every contributing capability packet covers cross-slice and material decisions.
-3. Every decision presents at least two credible candidates, a recommendation, and rationale.
-4. The recommendation is recorded as the completed selected decision unless a reviewer overrides it.
-5. Required ADR and experience-reference changes are approved.
-6. Every contributing capability decision is classified by binding Wave. The
+1. The Wave and each newly initiated or materially changed contributing
+   capability have assessed the tested implementation against Vision, accepted
+   architecture, current best practice, and the proposed plan.
+2. Assessment-added technical-debt refactoring is explicitly identified and is
+   no more than 15% of pre-assessment planned implementation effort at both Wave
+   and capability scope. Major refactors are routed outside initiation planning.
+3. Every slice in the Wave has a plan generated from `planning/slice-plans/TEMPLATE.md`.
+4. Every contributing capability packet covers cross-slice and material decisions.
+5. Every decision presents at least two credible candidates, a recommendation, and rationale.
+6. The recommendation is recorded as the completed selected decision unless a reviewer overrides it.
+7. Required ADR and experience-reference changes are approved.
+8. Every contributing capability decision is classified by binding Wave. The
    complete active Wave packet—every decision binding in that Wave and every
    Wave slice plan—is approved together at one immutable commit. Inherited and
    future decisions are nonbinding context.
-7. `planctl wave ready WN --require-approved` passes.
+9. `planctl wave ready WN --require-approved` passes.
+
+These checks adapt proposed planning; they do not reopen approved work or add a
+second approval gate. Once approved, execute the exact packet and use the
+append-only amendment lane for consequential changes.
 
 After start, execute tasks and ordered Wave slices continuously. Do not
 request approval for ordinary debugging, code organization within approved

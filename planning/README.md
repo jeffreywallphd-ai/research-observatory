@@ -44,28 +44,91 @@ output paths that resolve outside the canonical repository. Check mode detects
 corrupt bytes without decoding them; generation replaces them atomically or
 returns an actionable I/O failure. Edit `backlog.yaml`, never a generated view.
 
+## Initiation assessment and controlled planning adaptation
+
+Plans are working hypotheses during initiation. Before a new Wave packet is
+frozen, assess the tested current implementation against the Vision, accepted
+architecture, current primary best-practice sources for the core planned work,
+and the proposed Wave outcome. When a capability is first planned, record the
+same assessment at capability scope. A capability contributing to a later Wave
+needs only a concise refresh of facts that materially changed.
+
+Record the assessment in the capability plan under **Initiation assessment and
+planning adaptation**. Include a capability baseline and a Wave-specific refresh
+for each Wave in which its decisions or slices become binding. The generated
+Wave packet makes those contributing assessments reviewable through its linked
+capability plans; no separate controller or approval is created.
+
+Each assessment must state:
+
+- the implemented baseline relevant to the planned work, including sound
+  boundaries to reuse and weaknesses or debt that would impair the outcome;
+- whether the existing Wave/capability plan is still the best fit for the
+  product Vision, accepted architecture, and current best practice;
+- plan adaptations made for product fit rather than implementation convenience;
+- support improvements added because the current implementation is too weak for
+  the planned work; and
+- the refactoring budget calculation and disposition of anything outside it.
+
+Tested code remains authoritative evidence of current behavior, but current
+behavior does not set the desired direction. Within accepted architectural
+authority, Vision and best practice take precedence over adapting the plan to a
+weak implementation. A conflict with an accepted ADR or higher-authority source
+uses the repository mismatch/ADR process; it is not silently decided here.
+
+Initiation planning must not decide a major refactor of completed work. An item
+added by the assessment that alters previously implemented structure or behavior
+is technical-debt refactoring. Calculate, at both
+capability and Wave scope:
+
+```text
+refactoring share = assessment-added technical-debt refactoring effort
+                    / pre-assessment forecast effort of already planned implementation work
+```
+
+The share must be no greater than `0.15`. Record the common estimation unit and
+both values. Raw task count is acceptable only when the plan deliberately uses
+size-normalized tasks. Do not rename or split refactoring to evade the limit.
+Avoid double-counting at Wave roll-up, and keep the core of the plan new or
+previously planned product work.
+
+For this rule, a major refactor includes changing an accepted architectural
+decision, replacing a foundational runtime or data boundary, or restructuring
+multiple completed capability outcomes. If necessary support exceeds the limit
+or entails such a refactor, record it as future enabler/capability work or raise
+an explicit roadmap/architecture decision. Do not conceal it in initiation
+planning. A Wave or capability that cannot safely deliver its outcome within
+the allowed support boundary is not ready for approval.
+
+Proposed plans may be freely improved during this assessment. Once the complete
+Wave packet is approved at its immutable commit, the assessment and resulting
+scope are frozen with it and the normal append-only amendment rules apply.
+
 ## Default planning and execution lifecycle
 
 1. Determine the earliest unfinished global Wave and its exit gate.
 2. Run `planctl wave prepare WN`; create every missing contributing capability
    and slice plan.
-3. Resolve every material capability and cross-capability decision, interface,
+3. Inspect the tested implementation and complete the Wave initiation
+   assessment plus the initial or refreshed assessment for every contributing
+   capability. Adapt the still-proposed plans and record the 15% calculations.
+4. Resolve every material capability and cross-capability decision, interface,
    risk, rollback/recovery duty, and verification obligation for the Wave.
-4. Generate the static review site and review the complete Wave packet from its
+5. Generate the static review site and review the complete Wave packet from its
    Wave page, using capability/slice pages for full rationale or overrides.
-5. Classify every contributing capability decision by binding Wave, then
+6. Classify every contributing capability decision by binding Wave, then
    approve every decision binding in the active Wave and every Wave slice plan
    together at one immutable commit. Inherited and future decisions remain
    nonbinding context. A partial packet cannot start execution.
-6. Start `WN` as one durable Wave campaign.
-7. Claim only the next dependency-eligible READY task across the Wave. Use
+7. Start `WN` as one durable Wave campaign.
+8. Claim only the next dependency-eligible READY task across the Wave. Use
    risk-selected task checks and commit-bound evidence.
-8. Integrate and independently review each slice. Record accumulated
+9. Integrate and independently review each slice. Record accumulated
    affected-profile checkpoints when a shared interface, migration, security
    boundary, or coherent risk cluster closes.
-9. After all Wave slices are approved, run the complete affected/full suite and
+10. After all Wave slices are approved, run the complete affected/full suite and
    cross-capability end-to-end qualification once.
-10. Submit the Wave for independent review. Only an APPROVED Wave completion may
+11. Submit the Wave for independent review. Only an APPROVED Wave completion may
     proceed to the Wave exit / successor activation gate.
 
 One pre-Wave approval binds the complete Wave packet. The campaign remains the
@@ -252,6 +315,12 @@ A missing classification for any contributing capability decision, binding
 decision packet, or Wave slice plan must be scaffolded, fully researched,
 validated, reviewed, and included in the one pre-Wave approval before the
 campaign starts.
+
+For a newly initiated capability, or a proposed capability plan being refreshed
+for a new binding Wave, the initiation-assessment section and its applicable
+15% calculation are part of that researched packet. This rule is prospective:
+it does not reopen or rewrite an already approved Wave merely to backfill an
+assessment that was not required when that Wave was frozen.
 
 Backlog validation reports JSON paths for structural/type/status/timestamp errors,
 rejects duplicate capability, slice, task, wave, and gate IDs while indexing,
