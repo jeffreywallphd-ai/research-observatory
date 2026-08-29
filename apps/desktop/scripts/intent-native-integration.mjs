@@ -74,16 +74,27 @@ async function exchange(value) {
 }
 
 const observed = [];
+let dropNextAcceptanceResponse = false;
 const transport = async (request) => {
-  observed.push({ method: request.method, path: request.path, idempotencyKey: request.idempotencyKey });
+  observed.push({
+    method: request.method,
+    path: request.path,
+    body: request.body,
+    idempotencyKey: request.idempotencyKey,
+  });
   const result = await exchange(request);
   if (result.kind !== "response") throw new Error(result.code ?? "native supervisor rejected request");
+  if (dropNextAcceptanceResponse && request.path === "/projects/intent/acceptances") {
+    dropNextAcceptanceResponse = false;
+    throw new Error("SIMULATED_ACCEPTANCE_RESPONSE_LOSS");
+  }
   return result.response;
 };
 const client = createCoreApiClient(transport);
 let project;
 let accepted;
 let policy;
+let invalidRouteDenial;
 
 try {
   const ready = await nextMessage();
@@ -137,15 +148,35 @@ try {
     throw new Error("supervised Core did not restore the exact SQLite-backed draft");
   }
 
-  accepted = await client.acceptIntent({
+  const acceptanceCommand = {
     root,
     expectedRevision: draft.revision,
     expectedRevisionContentHash: draft.revisionContentHash,
     confirmed: true,
     decisionRationale: "This decision-complete intent governs the bounded integration check.",
-  }, "abcdef0123456789abcdef0123456789");
+  };
+  const acceptanceKey = "abcdef0123456789abcdef0123456789";
+  dropNextAcceptanceResponse = true;
+  let ambiguousAcceptance = false;
+  try {
+    await client.acceptIntent(acceptanceCommand, acceptanceKey);
+  } catch (error) {
+    if (error instanceof Error && error.message === "SIMULATED_ACCEPTANCE_RESPONSE_LOSS") {
+      ambiguousAcceptance = true;
+    } else {
+      throw error;
+    }
+  }
+  if (!ambiguousAcceptance) throw new Error("acceptance response loss was not observed");
+
+  const acceptanceRestart = await exchange({ control: "restart" });
+  if (acceptanceRestart.kind !== "restarted") {
+    throw new Error("native supervisor did not restart after ambiguous acceptance");
+  }
+  await client.openProject({ root });
+  accepted = await client.acceptIntent(acceptanceCommand, acceptanceKey);
   if (accepted.status !== "accepted" || accepted.revision !== 2) {
-    throw new Error("accepted governing revision was not persisted");
+    throw new Error("same-key acceptance reconciliation did not return the persisted revision");
   }
   policy = await client.evaluateIntentPolicy({
     root,
@@ -155,6 +186,18 @@ try {
   });
   if (policy.governingIntent?.revisionContentHash !== accepted.revisionContentHash) {
     throw new Error("policy decision is not bound to the accepted revision");
+  }
+  const invalidRouteRequest = {
+    method: "POST",
+    path: "/projects/intent/unapproved",
+    body: JSON.stringify({ root }),
+    ifMatch: null,
+    idempotencyKey: null,
+  };
+  observed.push(invalidRouteRequest);
+  invalidRouteDenial = await exchange(invalidRouteRequest);
+  if (invalidRouteDenial.kind !== "error" || invalidRouteDenial.code !== "RO-CORE-API-REQUEST-INVALID") {
+    throw new Error("native supervisor did not fail closed for an unapproved intent route");
   }
   await client.closeProject({ root });
   await client.deleteProject({ root, confirmation: `delete:${project.projectId}` });
@@ -166,6 +209,17 @@ try {
   if (exitCode !== 0) throw new Error(`native supervisor harness failed (${exitCode}): ${stderr}`);
 }
 
+const acceptanceRequests = observed.filter(
+  (request) => request.path === "/projects/intent/acceptances",
+);
+if (acceptanceRequests.length !== 2
+  || !acceptanceRequests.every(
+    (request) => request.idempotencyKey === "abcdef0123456789abcdef0123456789",
+  )
+  || new Set(acceptanceRequests.map((request) => request.body)).size !== 1) {
+  throw new Error("ambiguous acceptance did not replay one byte-equivalent request with the same key");
+}
+
 const report = {
   schemaVersion: "1.0",
   documentType: "intent-native-integration-report",
@@ -173,6 +227,13 @@ const report = {
   projectRevision: accepted.revision,
   policyOutcome: policy.outcome,
   routes: observed.map((request) => request.path),
+  acceptanceReconciliation: {
+    simulatedResponseLoss: true,
+    attempts: acceptanceRequests.length,
+    sameKey: true,
+    byteEquivalentRequest: true,
+  },
+  invalidRouteDenial: invalidRouteDenial.code,
   idempotencyKeys: observed
     .filter((request) => request.idempotencyKey !== null)
     .map((request) => ({ path: request.path, canonical: /^[0-9a-f]{32}$/.test(request.idempotencyKey) })),
