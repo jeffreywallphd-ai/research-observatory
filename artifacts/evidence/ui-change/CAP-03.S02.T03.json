@@ -3,7 +3,7 @@
   "documentType": "ui-change-evidence",
   "taskId": "CAP-03.S02.T03",
   "changeKind": "approved-reference-implementation",
-  "contractPath": "artifacts/evidence/ui-change/CAP-03.S02.T03.R02.json",
+  "contractPath": "artifacts/evidence/ui-change/CAP-03.S02.T03.json",
   "implementationAgent": "agent:codex",
   "changedFiles": [
     "apps/desktop/src/app/IntentWorkspace.tsx"
