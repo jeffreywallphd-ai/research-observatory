@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 881ff007437b1a1311ae976b6d89bad86b606c94e9c45cc7e7448b911fa7b62f
+source_sha256: 7de25e87c515e4f3f3ec7458630fc8a60abc149c244d8044c4f53f94d59dc165
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4167,7 +4167,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T01 - Define provenance event, activity, entity, and agent model
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4196,6 +4196,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S03.T01.R01.json` at `0cdc367a68195a2360d3d8efc23da137bf0e9790`
 - `artifacts/evidence/CAP-03.S03.T01.R02.json` at `f2c9c0aa6539af0067bf76711883b22a796ddbf3`
+- `artifacts/evidence/CAP-03.S03.T01.R03.json` at `5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0`
 
 ##### Review history — CAP-03.S03.T01
 
@@ -4266,7 +4267,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S03.T01-R01-F02` `fixed` — The prior unbound subject, subject-kind mismatch, duplicate relation ID/fact, and one-relation-for-two-revisions reproductions now fail. Relations carry composite entityId/revisionId endpoints, closure and completeness use those exact references, relation IDs/facts are unique, and a same-stable-ID/different-revision event can be represented. R02-F02 separately records the newly exposed immutable-kind, project-namespace, and subject-grammar inconsistencies rather than reopening the exact R01 ambiguity.
 - `CAP-03.S03.T01-R01-F03` `fixed` — Schema, TypeScript, and Python all reject year zero and accept the explicit millisecond-Z UTC range from year 0001 through 9999. Independent minimum and maximum replay produced byte-identical cross-language canonical hashes sha256:4bbfe90126752f9b034e5f7ca831c773a2d7b19d8206d6157298d8a478df0bf9 and sha256:45a9a4c5a7eb101c3cf7df463bd93da8f3d78dd4eb4609f202503c6acbab04a7.
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `d36f3e0825570cd0a0ee85dcfd7dd3ff3b9efaf6e48327d6c1dcb4498b5de2c9`
+
+- Candidate / base / branch: `5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0` / `f2c9c0aa6539af0067bf76711883b22a796ddbf3` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T17:05:00+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T01.R03.json` / `5a5357313519ef3ac5e39e4f2777e703e372d78aef8706f4b06ece0a1556df8e` / `5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0`
+- Acceptance-criteria SHA-256: `6580c9f7fe989485e41f5769c6bb97bdddb6731879d2e5eb8f3004bf385da382`
+- Verification-selection SHA-256: `a427a436a20033e0a535959d66e47df82563dc45ea179eece594913d23ded1b6`
+- Changed paths: `artifacts/evidence/CAP-03.S03.T01.R02.json`, `artifacts/evidence/CAP-03.S03.T01.review-R02.json`, `docs/adr/ADR-0024-adopt-minimized-cloudevents-provenance-with-w3c-prov-relations.md`, `docs/architecture/provenance-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/provenance/generate.mjs`, `packages/contracts/provenance/generated.ts`, `packages/contracts/provenance/provenance-event.schema.json`, `packages/contracts/provenance/provenance-event.template.py.txt`, `packages/contracts/provenance/provenance-event.template.ts.txt`, `packages/contracts/provenance/provenance-event.test.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/provenance_contracts.py`, `tests/contracts/test_provenance_contracts.py`
+- Selected checks: `repository Node 24 provenance generator --check; strict TypeScript; complete packages/contracts Vitest suite`, `.venv\Scripts\python.exe -m unittest -v tests.contracts.test_provenance_contracts tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.service.test_domain_compatibility_service`, `.venv\Scripts\python.exe -m unittest -v tests.packaging.test_core_sidecar_package`, `quality_check.py; architecture_check.py; repository_structure_check.py; adr_check.py --base f2c9c0aa... --head 5f99c3c4...; build_manifest.py`, `taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03.T02 owns additive migration, atomic ledger/outbox persistence, retry idempotency, prior-row bridging, cross-event stable-kind enforcement, bounded lineage queries, restart recovery, segment/checkpoint verification, and mismatch integrity-review behavior.`, `CAP-03.S03 slice review will run the accumulated provenance integration and adversarial union after T02 and T03 close.`, `The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.`, `The current Windows token cannot create the packaging file-symlink fixture; redirect and missing/changed inventory paths pass, and privileged equivalence remains a W1-exit obligation.`
+- Selection rationale: CAP-03.S03.T01-R02-F01 showed that moving completeness into the known-event branch let uncataloged future types persist orphan successful outputs or outputs for a failed activity. CAP-03.S03.T01-R02-F02 showed three linked identity mismatches: entity kind could change under one stable ID, projectid was missing from the claimed event-local collision set, and subject kind syntax was narrower than PortableKey. This third-round remediation therefore expands the R02 boundary with table-driven known/unknown and success/failure tests in both runtimes; Draft 2020-12 subject and policy-metadata assertions; same-kind and cross-kind revision cases; project/event collision; exact-revision replay; complete portable-contract, affected persistence/service, and real package checks; and renewed quality/architecture/ADR/build/planning controls. The risk selection explicitly replays both current finding IDs while retaining all three R01 closures. T01 still changes no persistence route or migration, so cross-event stable-kind enforcement, atomic ledger/outbox behavior, lineage traversal, restart/checkpoint fault behavior, slice integration, and the full W1 matrix remain at their approved downstream gates.
+- Prior round / replayed open findings: `R02` / `CAP-03.S03.T01-R02-F01`, `CAP-03.S03.T01-R02-F02`
+- Root-cause escalation: R02 correctly made known-event policies status- and role-aware but scoped output completeness to the known-type branch, conflating unknown catalog meaning with optional structural provenance. It also proved exact revision identity without reconciling stable aggregate-kind authority and reused the existing narrow subject regex while describing a broader PortableKey/global-namespace contract. R03 separates universal lifecycle invariants from catalog-specific policy and derives stable-kind, project-collision, and subject grammar checks from the same identity model.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-provenance-contract-reviewer at `2026-08-29T16:53:43+00:00`
 

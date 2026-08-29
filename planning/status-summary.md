@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 881ff007437b1a1311ae976b6d89bad86b606c94e9c45cc7e7448b911fa7b62f
+source_sha256: 7de25e87c515e4f3f3ec7458630fc8a60abc149c244d8044c4f53f94d59dc165
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 267 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 51 |
 | `DEFERRED` | 36 |
 
@@ -359,7 +359,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-03.S02.T02` | `append-only v1` | 5 | `-` | approved / codex-independent-native-intent-boundary-reviewer | - |
 | `CAP-03.S02.T03` | `append-only v1` | 4 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
-| `CAP-03.S03.T01` | `append-only v1` | 2 | `-` | changes-requested / codex-independent-provenance-contract-reviewer | `CAP-03.S03.T01-R02-F01`, `CAP-03.S03.T01-R02-F02` |
+| `CAP-03.S03.T01` | `append-only v1` | 2 | `R03` | changes-requested / codex-independent-provenance-contract-reviewer | `CAP-03.S03.T01-R02-F01`, `CAP-03.S03.T01-R02-F02` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -427,4 +427,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S03.T01` Define provenance event, activity, entity, and agent model | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S03.T01` Define provenance event, activity, entity, and agent model | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
