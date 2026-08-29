@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 36a1807b49d07ecaab6d59adcde1c5d39311dc84b58e19bd8172bca8bba5499d
+source_sha256: 886a8560792497507b0b2a8af7ff347b315d154e21dcb547a1705b7062f4df7f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -359,6 +359,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-03.S02.T02` | `append-only v1` | 5 | `-` | approved / codex-independent-native-intent-boundary-reviewer | - |
 | `CAP-03.S02.T03` | `append-only v1` | 4 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
+| `CAP-03.S03.T01` | `append-only v1` | 1 | `-` | changes-requested / codex-independent-provenance-contract-reviewer | `CAP-03.S03.T01-R01-F01`, `CAP-03.S03.T01-R01-F02`, `CAP-03.S03.T01-R01-F03` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
