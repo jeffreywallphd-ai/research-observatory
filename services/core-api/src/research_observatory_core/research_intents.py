@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from itertools import pairwise
 from pathlib import Path
+from threading import RLock
 from typing import Any, cast
 
 from .domain_contracts import is_uuid_v7, new_uuid_v7
@@ -790,6 +791,8 @@ class ResearchIntentService:
         self._projects = projects
         self._repository_factory = repository_factory
         self._local_actor_id = local_actor_id
+        self._policy_cache: dict[str, Mapping[str, object] | None] = {}
+        self._policy_cache_lock = RLock()
 
     @classmethod
     def unavailable(cls, projects: ProjectLifecycleService) -> ResearchIntentService:
@@ -873,6 +876,7 @@ class ResearchIntentService:
             require_write=True,
             action=lambda path, project_id: self._evaluate_policy(
                 self._repository_factory(path, project_id),
+                project_id,
                 command,
                 trace_id=trace_id,
                 actor_id=actor_id,
@@ -953,6 +957,26 @@ class ResearchIntentService:
                 detail="The intent-acceptance gate cannot be bypassed by an unconfirmed request.",
                 remediation="Review the exact decision-complete revision and explicitly confirm its acceptance.",
             )
+        with self._policy_cache_lock:
+            return self._accept_locked(
+                repository,
+                manifest_project_id,
+                command,
+                trace_id=trace_id,
+                idempotency_key=idempotency_key,
+                actor_id=actor_id,
+            )
+
+    def _accept_locked(
+        self,
+        repository: IntentRevisionRepository,
+        manifest_project_id: str,
+        command: IntentAcceptRequest,
+        *,
+        trace_id: str,
+        idempotency_key: str,
+        actor_id: str,
+    ) -> IntentDraftProjection:
         command_sha256 = _accept_command_sha256(
             command,
             manifest_project_id=manifest_project_id,
@@ -984,7 +1008,13 @@ class ResearchIntentService:
                 retryable=True,
             ) from error
         if replay is not None:
-            return _projection(_decoded_records((replay,))[0])
+            replayed = _decoded_records((replay,))[0]
+            revisions = self._read(repository)
+            self._policy_cache[manifest_project_id] = next(
+                (revision for revision in revisions if revision["status"] == "accepted"),
+                None,
+            )
+            return _projection(replayed)
 
         revisions = self._read(repository)
         if not revisions:
@@ -1052,23 +1082,49 @@ class ResearchIntentService:
                 remediation="The prior revision remains authoritative. Run project health checks before retrying.",
                 retryable=True,
             ) from error
+        accepted = _decoded_records((committed,))[0]
+        self._policy_cache[manifest_project_id] = accepted
         emit_log_record(
             "intent.accepted",
             level="INFO",
             fields={"reasonCode": "intent-human-accepted", "traceId": trace_id},
         )
-        return _projection(_decoded_records((committed,))[0])
+        return _projection(accepted)
 
     def _evaluate_policy(
         self,
         repository: IntentRevisionRepository,
+        manifest_project_id: str,
         command: IntentPolicyRequest,
         *,
         trace_id: str,
         actor_id: str,
     ) -> IntentPolicyDecision:
-        revisions = self._read(repository)
-        accepted = next((revision for revision in revisions if revision["status"] == "accepted"), None)
+        with self._policy_cache_lock:
+            return self._evaluate_policy_locked(
+                repository,
+                manifest_project_id,
+                command,
+                trace_id=trace_id,
+                actor_id=actor_id,
+            )
+
+    def _evaluate_policy_locked(
+        self,
+        repository: IntentRevisionRepository,
+        manifest_project_id: str,
+        command: IntentPolicyRequest,
+        *,
+        trace_id: str,
+        actor_id: str,
+    ) -> IntentPolicyDecision:
+        if manifest_project_id not in self._policy_cache:
+            revisions = self._read(repository)
+            self._policy_cache[manifest_project_id] = next(
+                (revision for revision in revisions if revision["status"] == "accepted"),
+                None,
+            )
+        accepted = self._policy_cache[manifest_project_id]
         decision = _policy_decision(command, accepted=accepted)
         audit_value = {
             "actorId": actor_id,
