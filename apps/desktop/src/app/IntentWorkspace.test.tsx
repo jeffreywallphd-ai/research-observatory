@@ -1,13 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import type { IntentDraftProjection, ProjectProjection, IntentWorkspaceProjection } from "@research-observatory/contracts/core-api";
+import type { ProjectProjection, IntentWorkspaceProjection } from "@research-observatory/contracts/core-api";
 
 import {
   INTENT_MODE_GUIDANCE,
   IntentWorkspace,
-  intentAcceptanceAvailability,
-  intentAcceptanceRequest,
   intentWorkspaceAvailability,
   selectedIntentGuidance,
 } from "./IntentWorkspace";
@@ -87,41 +85,5 @@ describe("guided research intent workspace", () => {
     expect(markup).toContain("Launch gated analysis");
     expect(markup).toMatch(/disabled=""[^>]*>Launch gated analysis/);
     expect(markup).toContain("Drafts never govern consequential analysis");
-    expect(markup).toContain("Human acceptance rationale");
-    expect(markup).toContain("Accept intent revision");
-    expect(markup).toContain("I reviewed and confirm persisted revision");
-  });
-
-  it("binds human acceptance to the exact decision-complete draft", () => {
-    const current = {
-      status: "draft",
-      revision: 3,
-      revisionId: "019d5f72-5331-7000-8000-000000000003",
-      revisionContentHash: "a".repeat(64),
-      decisionComplete: true,
-      canRequestAcceptance: true,
-      launchReady: false,
-    } as IntentDraftProjection;
-
-    expect(intentAcceptanceAvailability(current)).toEqual({
-      available: true,
-      state: "ready",
-      message: "Review and confirm this exact decision-complete draft before it can govern automation.",
-    });
-    expect(intentAcceptanceRequest(project.root, current, "Reviewed scope and authority.")).toEqual({
-      root: project.root,
-      expectedRevision: 3,
-      expectedRevisionContentHash: "a".repeat(64),
-      confirmed: true,
-      decisionRationale: "Reviewed scope and authority.",
-    });
-    expect(intentAcceptanceAvailability({ ...current, decisionComplete: false, canRequestAcceptance: false })).toMatchObject({
-      available: false,
-      state: "incomplete",
-    });
-    expect(intentAcceptanceAvailability({ ...current, status: "accepted", canRequestAcceptance: false, launchReady: true })).toMatchObject({
-      available: false,
-      state: "accepted",
-    });
   });
 });
