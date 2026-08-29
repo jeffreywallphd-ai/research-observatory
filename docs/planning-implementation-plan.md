@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 008cddb19202506bbf7b219679e124779c8a8a4a2029f7e0c91fdd2808d3d262
+source_sha256: 7d214ebabd51b0ededf80eef0d5e304471f058fd523a6e85fd095f0cac9f945c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3898,7 +3898,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3926,6 +3926,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S02.T03.json` at `610a01c1e0c357e6c02f069d45ec5e09c26cbf45`
+- `artifacts/evidence/CAP-03.S02.T03.R02.json` at `04b70b3ed879c853e87c3547db27a2eb0ba11b31`
 
 ##### Review history — CAP-03.S02.T03
 
@@ -3961,7 +3962,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `047bb443530248b4c6f1875ebda69ee14bb1e6a6e7d5b42143d724c57d70125a`
+
+- Candidate / base / branch: `04b70b3ed879c853e87c3547db27a2eb0ba11b31` / `610a01c1e0c357e6c02f069d45ec5e09c26cbf45` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T12:00:42+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T03.R02.json` / `3c15a65c64702a0133334aa1cbc196ce88286ff3f4fb1dced190d07d4b47e1c3` / `04b70b3ed879c853e87c3547db27a2eb0ba11b31`
+- Acceptance-criteria SHA-256: `7c39d7c4e651d5e56f68bd2b6eef9c3b26174b593a38be30c0d83d1b1cf2213c`
+- Verification-selection SHA-256: `3a7ac2160e23efbd67472f5708f924998f35ee2ed7735c1fb64acfd6f4938047`
+- Changed paths: `artifacts/evidence/CAP-03.S02.T03.json`, `artifacts/evidence/CAP-03.S02.T03.review-R01.json`, `docs/architecture/research-intent-contracts.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/research_intents.py`, `tests/service/test_research_intents.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest discover -s tests\service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests\security -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests\packaging -p test_*.py; .venv\Scripts\python.exe tools\packaging_smoke_check.py --repo .`, `.venv\Scripts\python.exe tools\quality_check.py --repo .; architecture_check.py; repository_structure_check.py`, `.venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 --head 04b70b3ed879c853e87c3547db27a2eb0ba11b31; taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts\tmp\CAP-03.S02.T03-R02-build-manifest-04b70b3.json; verify.py --profile service --profile security-local --affected-base 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 --affected-head 04b70b3ed879c853e87c3547db27a2eb0ba11b31 --deferred-gate W1-exit --selection-only`, `git diff --check 610a01c1e0c357e6c02f069d45ec5e09c26cbf45..04b70b3ed879c853e87c3547db27a2eb0ba11b31; protected W1.A04.B00 witness SHA-256`
+- Deferred checks: `No dependency, lockfile, scanner policy, or scanner input changed. The exact R01 live supply-chain scan remains applicable; the environmental Trivy ERROR encountered during R02 replay is retained as unresolved qualification debt and must be rerun successfully at CAP-03.S02 integration or W1 exit before release qualification.`, `The complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows matrix remains mandatory at the applicable slice checkpoint and W1 exit.`, `The guided human-acceptance desktop path belongs to reopened CAP-03.S02.T02 and is not claimed complete by this service-policy task.`
+- Selection rationale: This proactive R02 integration remediation is bounded to the approved slice plan's explicit performance invariant: effective policy projection must be cached by accepted revision and invalidated atomically. The credible risks are stale policy after a later acceptance, rollback to an older accepted snapshot through idempotent replay, audit failure under synchronization, deadlock or packaging failure from the lock boundary, and accidental UI/task-scope expansion. Verification therefore selects the complete service and local-security units, a real Windows sidecar package build, focused cache/replay behavior, Python quality, architecture/repository boundaries, zero-net-UI validation, planning/lease integrity, build provenance, and protected-witness safety. No dependency or lockfile changed. The prior exact R01 live supply-chain scan passed 601 packages with 152 findings and zero blocking; two attempted R02 scanner replays exited with a scanner ERROR and no findings report, so they are not represented as passing and are deferred to the slice/W1 qualification matrix.
+- Prior round / replayed open findings: `R01` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `approved` by agent:nash at `2026-08-28T21:57:31+00:00`
 

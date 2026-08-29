@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T03",
+  "commit": "04b70b3ed879c853e87c3547db27a2eb0ba11b31",
+  "baseCommit": "610a01c1e0c357e6c02f069d45ec5e09c26cbf45",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S02.T03.json",
+    "sha256": "13a8a3810e190e52915ab0947af1ddda68f39816bc2b38db617d66209ba0821f",
+    "commit": "610a01c1e0c357e6c02f069d45ec5e09c26cbf45",
+    "reason": "Closes the approved slice plan's accepted-revision policy-cache and atomic invalidation obligation without changing the approved T03 acceptance surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S02.T03.json",
+    "artifacts/evidence/CAP-03.S02.T03.review-R01.json",
+    "docs/architecture/research-intent-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/service/test_research_intents.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 50 Core API service tests passed. The new regression proves repeated policy decisions reuse the exact accepted-revision snapshot, a later human acceptance replaces it before a later evaluation, and replay of an older acceptance cannot roll policy authority back. Existing six-mode, human-gate, autonomy, egress, stopping, audit-failure, restart, idempotency, and concurrency cases remain green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\security -p test_*.py",
+      "exitCode": 0,
+      "result": "All 56 local-security tests passed with one expected Windows privilege skip. Authentication, protected storage, privacy, session authority, failure rollback, and content-free audit controls remain green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\packaging -p test_*.py; .venv\\Scripts\\python.exe tools\\packaging_smoke_check.py --repo .",
+      "exitCode": 0,
+      "result": "All six Windows sidecar packaging tests passed with one expected symlink-privilege skip; the real PyInstaller build and locked-input packaging smoke include the synchronized ResearchIntentService implementation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; architecture_check.py; repository_structure_check.py",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed across 160 governed Python files; the 13-area architecture contract and 12-module repository structure passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 --head 04b70b3ed879c853e87c3547db27a2eb0ba11b31; taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The exact R02 range contains no governed UI delta. The 20-capability, 117-slice, 359-task backlog, generated views, approved W1 packet, dependency state, active campaign, task lease, and 150-page review site validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-03.S02.T03-R02-build-manifest-04b70b3.json; verify.py --profile service --profile security-local --affected-base 610a01c1e0c357e6c02f069d45ec5e09c26cbf45 --affected-head 04b70b3ed879c853e87c3547db27a2eb0ba11b31 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "The build manifest binds exact commit 04b70b3 and reports only the protected historical witness as intentionally dirty. The affected selector conservatively inventories service, security, packaging, contract, and foundation boundaries for the slice/W1 gates."
+    },
+    {
+      "command": "git diff --check 610a01c1e0c357e6c02f069d45ec5e09c26cbf45..04b70b3ed879c853e87c3547db27a2eb0ba11b31; protected W1.A04.B00 witness SHA-256",
+      "exitCode": 0,
+      "result": "Patch hygiene passed. The sole dirty path is the intentionally untracked, unstaged historical witness artifacts/evidence/W1.A04.B00.json, preserved byte-identically at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R01's independently approved service boundary continues to deny attempts to bypass intent acceptance, scope change, external egress, claim approval, publication, unauthorized autonomy, and stopping confirmation, with compact explanations and durable content-free audit records across all six required epistemic modes.",
+        "The R02 cache is keyed by manifest project identity and populated only from a valid accepted revision. Acceptance and policy evaluation share one synchronization boundary, so successful human acceptance updates the snapshot before any later policy evaluation begins.",
+        "An idempotent replay re-resolves the newest accepted revision instead of replacing policy authority with the older replayed result; process restart reconstructs the snapshot from immutable history."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The new cache regression exercises the expected repeated-evaluation path, later-acceptance invalidation, and the material boundary where an older exact idempotent replay follows a newer acceptance.",
+        "The complete 50-test service suite retains missing-accepted-intent denial, audit-persistence failure, stale and unconfirmed acceptance denial, restart replay, competing writers, scope-impact acknowledgement, and six-mode policy coverage."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ResearchIntentService, its focused service test, and the authoritative research-intent architecture note changed together at exact candidate 04b70b3ed879c853e87c3547db27a2eb0ba11b31.",
+        "The immutable R01 evidence and independent approval remain append-only and ancestral; R02 adds no public contract, schema migration, dependency, renderer, approved-reference, provider, network, or external-service change.",
+        "Human acceptance UI remains a separately owned CAP-03.S02.T02 integration correction and is not claimed by this T03 packet."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This proactive R02 integration remediation is bounded to the approved slice plan's explicit performance invariant: effective policy projection must be cached by accepted revision and invalidated atomically. The credible risks are stale policy after a later acceptance, rollback to an older accepted snapshot through idempotent replay, audit failure under synchronization, deadlock or packaging failure from the lock boundary, and accidental UI/task-scope expansion. Verification therefore selects the complete service and local-security units, a real Windows sidecar package build, focused cache/replay behavior, Python quality, architecture/repository boundaries, zero-net-UI validation, planning/lease integrity, build provenance, and protected-witness safety. No dependency or lockfile changed. The prior exact R01 live supply-chain scan passed 601 packages with 152 findings and zero blocking; two attempted R02 scanner replays exited with a scanner ERROR and no findings report, so they are not represented as passing and are deferred to the slice/W1 qualification matrix.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:packaging-smoke",
+      "packaging:unit",
+      "service:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "No dependency, lockfile, scanner policy, or scanner input changed. The exact R01 live supply-chain scan remains applicable; the environmental Trivy ERROR encountered during R02 replay is retained as unresolved qualification debt and must be rerun successfully at CAP-03.S02 integration or W1 exit before release qualification.",
+      "The complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows matrix remains mandatory at the applicable slice checkpoint and W1 exit.",
+      "The guided human-acceptance desktop path belongs to reopened CAP-03.S02.T02 and is not claimed complete by this service-policy task."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "epistemic-governance-review",
+    "openFindingIds": [],
+    "note": "Independently review exact strict-descendant candidate 04b70b3ed879c853e87c3547db27a2eb0ba11b31. Confirm that cache population uses only the newest valid accepted revision, successful acceptance replaces the snapshot before later evaluation, old idempotent replay cannot roll policy back, audit failure remains fail-closed, the global lock is safe under the W1 exclusive-project service model, the R01 policy matrix remains intact, and the failed live scanner replay plus T02-owned acceptance UI are truthfully deferred rather than claimed."
+  }
+}
