@@ -102,6 +102,9 @@ identity, sensitivity and retention declarations, and content-reference-only
 payloads. Matching generated TypeScript/Python decoders own immutable snapshots,
 retain structurally valid future types without interpreting them, and produce
 deterministic RFC 8785-compatible canonical records for hash/checkpoint use.
-Subjects and relations bind exact entity revisions, and the shared semantic
-matrix rejects duplicate or wrong-role relations and completed PROV facts for
-failed, cancelled, or denied outcomes.
+Subjects and relations bind exact entity revisions; stable identity retains one
+entity kind; and project, event, activity, agent, correlation, causation,
+relation, revision, and entity identities cannot collide within an event. The
+shared semantic matrix rejects duplicate or wrong-role relations, completed
+PROV facts or outputs for failed/cancelled/denied outcomes, and missing
+generation or attribution for any succeeded output, including future types.

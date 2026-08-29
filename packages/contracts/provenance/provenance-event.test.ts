@@ -47,7 +47,6 @@ function transformEvent(status: "succeeded" | "failed" | "cancelled" | "denied" 
   const source = structuredClone((data.outputs as JsonRecord[])[0]!);
   const document = structuredClone(source);
   document.revisionId = uuid("dab3");
-  document.entityKind = "document";
   document.contentHash = `sha256:${"3".repeat(64)}`;
   data.inputs = [source];
   data.outputs = status === "succeeded" ? [document] : [];
@@ -221,13 +220,86 @@ describe("portable provenance event contract", () => {
     expect(provenanceEventErrors(wrongRevision)).toContain("relations-close-over-event-objects");
   });
 
-  it("stores a structurally valid future event type without interpreting its catalog meaning", () => {
-    const unknown = fixture();
-    unknown.type = "org.research-observatory.future.observed.v2";
-    activityOf(unknown).activityType = "future-observation";
-    const decoded = decodeProvenanceEvent(unknown);
+  it("keeps stable entity kind and the project-wide UUID namespace unambiguous", () => {
+    expect(provenanceEventErrors(transformEvent())).toEqual([]);
+
+    const retyped = transformEvent();
+    const retypedOutput = (dataOf(retyped).outputs as JsonRecord[])[0]!;
+    retypedOutput.entityKind = "document";
+    retyped.subject = entitySubject(retyped, retypedOutput);
+    expect(provenanceEventErrors(retyped)).toContain("stable-entity-kind-is-consistent");
+
+    const crossKind = transformEvent();
+    const crossKindOutput = (dataOf(crossKind).outputs as JsonRecord[])[0]!;
+    crossKindOutput.entityId = uuid("dab4");
+    crossKindOutput.entityKind = "document";
+    crossKind.subject = entitySubject(crossKind, crossKindOutput);
+    for (const item of relationsOf(crossKind)) {
+      if (["wasGeneratedBy", "wasDerivedFrom", "wasAttributedTo"].includes(item.relationType as string)) {
+        item.entity = reference(crossKindOutput);
+      }
+    }
+    expect(provenanceEventErrors(crossKind)).toEqual([]);
+
+    const projectCollision = fixture();
+    const priorProjectId = projectCollision.projectid as string;
+    projectCollision.projectid = projectCollision.id;
+    projectCollision.subject = (projectCollision.subject as string).replace(
+      `project/${priorProjectId}/`,
+      `project/${projectCollision.id as string}/`,
+    );
+    expect(provenanceEventErrors(projectCollision)).toContain("identity-namespace-is-consistent");
+  });
+
+  it.each(["source-observation", "source.observation", "source_observation", "source:observation"])(
+    "binds the accepted portable entity kind %s in an exact subject",
+    (kind) => {
+      const event = fixture();
+      const output = (dataOf(event).outputs as JsonRecord[])[0]!;
+      output.entityKind = kind;
+      event.subject = entitySubject(event, output);
+      expect(provenanceEventErrors(event)).toEqual([]);
+    },
+  );
+
+  it("keeps future event meaning uninterpreted while enforcing universal lifecycle completeness", () => {
+    const acquisition = fixture();
+    acquisition.type = "org.research-observatory.future.observed.v2";
+    activityOf(acquisition).activityType = "future-observation";
+    const decoded = decodeProvenanceEvent(acquisition);
     expect(decoded).not.toBeNull();
     expect(isKnownProvenanceEvent(decoded!)).toBe(false);
+
+    const transformation = transformEvent();
+    transformation.type = "org.research-observatory.future.transformed.v2";
+    activityOf(transformation).activityType = "future-transformation";
+    expect(provenanceEventErrors(transformation)).toEqual([]);
+
+    const orphan = structuredClone(acquisition);
+    dataOf(orphan).relations = relationsOf(orphan).filter((item) => item.relationType !== "wasGeneratedBy");
+    expect(provenanceEventErrors(orphan)).toContain("output-generation-relations-are-complete");
+
+    const unattributed = structuredClone(acquisition);
+    dataOf(unattributed).relations = relationsOf(unattributed).filter((item) => item.relationType !== "wasAttributedTo");
+    expect(provenanceEventErrors(unattributed)).toContain("output-attribution-relations-are-complete");
+
+    const wrongRevision = structuredClone(acquisition);
+    (relationsOf(wrongRevision).find((item) => item.relationType === "wasGeneratedBy")!.entity as JsonRecord).revisionId = uuid("da99");
+    expect(provenanceEventErrors(wrongRevision)).toContain("relations-close-over-event-objects");
+
+    const failedOutput = structuredClone(acquisition);
+    activityOf(failedOutput).status = "failed";
+    dataOf(failedOutput).relations = relationsOf(failedOutput).filter((item) => item.relationType === "wasAssociatedWith");
+    expect(provenanceEventErrors(failedOutput)).toContain("activity-output-shape-matches-status");
+
+    const schema = JSON.parse(
+      readFileSync(fileURLToPath(new URL("./provenance-event.schema.json", import.meta.url)), "utf8"),
+    ) as JsonRecord;
+    const universal = (schema["x-research-observatory-relationPolicy"] as JsonRecord).universal;
+    expect(universal).toEqual({
+      nonSucceededOutputs: "forbidden",
+      succeededOutputRelations: ["wasGeneratedBy", "wasAttributedTo"],
+    });
   });
 
   it("uses the same schema-compatible UTC range and canonical ordering", () => {

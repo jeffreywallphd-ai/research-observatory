@@ -100,7 +100,7 @@ export interface ProvenanceEvent {
   readonly data: ProvenanceData;
 }
 
-export const PROVENANCE_SCHEMA_SHA256 = "905ed187737757c7fd9f610fe1edc7af34fd0af40c25ad39ebac9580ee9bd1e9";
+export const PROVENANCE_SCHEMA_SHA256 = "97d3618d6ba995613ed346ae956282122dfb499d6d15708f1b81a5040d62385c";
 export const KNOWN_PROVENANCE_EVENT_ACTIVITIES = Object.freeze({
   "org.research-observatory.source.acquired.v1": "source-acquisition",
   "org.research-observatory.document.parsed.v1": "parsing",
@@ -122,7 +122,7 @@ const SHA256 = /^sha256:[0-9a-f]{64}$/u;
 const PORTABLE_KEY = /^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$/u;
 const EVENT_TYPE = /^org\.research-observatory\.[a-z][a-z0-9]*(?:\.[a-z][a-z0-9-]*){1,8}\.v[1-9][0-9]{0,5}$/u;
 const TRACEPARENT = /^00-(?!0{32})[0-9a-f]{32}-(?!0{16})[0-9a-f]{16}-[0-9a-f]{2}$/u;
-const ENTITY_SUBJECT = /^project\/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/entity\/[a-z][a-z0-9-]{0,63}\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/revision\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
+const ENTITY_SUBJECT = /^project\/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/entity\/[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/revision\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 const ACTIVITY_SUBJECT = /^project\/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/activity\/[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 const MEDIA_TYPE = /^[a-z0-9][a-z0-9!#$&^_.+-]{0,49}\/[a-z0-9][a-z0-9!#$&^_.+-]{0,49}$/u;
 const SENSITIVITY = new Set<ProvenanceSensitivity>([
@@ -313,6 +313,12 @@ function semanticErrors(event: ProvenanceEvent): string[] {
   if (event.causationid === event.id) errors.push("causation-is-not-self");
   if ([...inputKeys].some((key) => outputKeys.has(key))) errors.push("input-output-revisions-are-disjoint");
   if (allKeys.size !== allEntityKeys.length) errors.push("entity-references-are-unique");
+  const stableEntityKinds = new Map<string, string>();
+  for (const entity of allEntities) {
+    const priorKind = stableEntityKinds.get(entity.entityId);
+    if (priorKind === undefined) stableEntityKinds.set(entity.entityId, entity.entityKind);
+    else if (priorKind !== entity.entityKind) errors.push("stable-entity-kind-is-consistent");
+  }
   if (allEntities.some((item) => item.sensitivity !== event.sensitivity || item.retentionClass !== event.retentionclass)) {
     errors.push("entity-policy-does-not-weaken-event");
   }
@@ -320,6 +326,7 @@ function semanticErrors(event: ProvenanceEvent): string[] {
   const relationIds = relations.map((relation) => relation.relationId);
   const revisionIds = allEntities.map((entity) => entity.revisionId);
   const globalIds = [
+    event.projectid,
     event.id,
     activity.activityId,
     agent.agentId,
@@ -404,6 +411,27 @@ function semanticErrors(event: ProvenanceEvent): string[] {
   const associationCount = relations.filter((relation) => relation.relationType === "wasAssociatedWith").length;
   if (associationCount !== 1) errors.push("activity-agent-relation-is-complete");
 
+  if (activity.status !== "succeeded" && outputs.length > 0) {
+    errors.push("activity-output-shape-matches-status");
+  }
+  const exactRelationCount = (
+    type: ProvenanceRelationType,
+    entity: ProvenanceEntity,
+    related: ProvenanceEntity | null = null,
+  ): number => relations.filter((relation) =>
+    relation.relationType === type
+    && refKeyOrNull(relation.entity) === referenceKey(entityReference(entity))
+    && refKeyOrNull(relation.relatedEntity) === (related === null ? null : referenceKey(entityReference(related)))
+  ).length;
+  if (activity.status === "succeeded") {
+    if (outputs.some((entity) => exactRelationCount("wasGeneratedBy", entity) !== 1)) {
+      errors.push("output-generation-relations-are-complete");
+    }
+    if (outputs.some((entity) => exactRelationCount("wasAttributedTo", entity) !== 1)) {
+      errors.push("output-attribution-relations-are-complete");
+    }
+  }
+
   const knownActivity = KNOWN_PROVENANCE_EVENT_ACTIVITIES[event.type as keyof typeof KNOWN_PROVENANCE_EVENT_ACTIVITIES];
   if (knownActivity !== undefined && knownActivity !== activity.activityType) errors.push("known-event-type-matches-activity");
   if (knownActivity !== undefined) {
@@ -442,15 +470,6 @@ function semanticErrors(event: ProvenanceEvent): string[] {
     if (!validKnownSubject) errors.push("subject-binds-exact-event-object");
 
     if (activity.status === "succeeded") {
-      const exactRelationCount = (
-        type: ProvenanceRelationType,
-        entity: ProvenanceEntity,
-        related: ProvenanceEntity | null = null,
-      ): number => relations.filter((relation) =>
-        relation.relationType === type
-        && refKeyOrNull(relation.entity) === referenceKey(entityReference(entity))
-        && refKeyOrNull(relation.relatedEntity) === (related === null ? null : referenceKey(entityReference(related)))
-      ).length;
       if (
         knownActivity !== "source-acquisition"
         && knownActivity !== "invalidation"
@@ -460,12 +479,6 @@ function semanticErrors(event: ProvenanceEvent): string[] {
         knownActivity === "invalidation"
         && inputs.some((entity) => exactRelationCount("wasInvalidatedBy", entity) !== 1)
       ) errors.push("input-use-relations-are-complete");
-      if (outputs.some((entity) => exactRelationCount("wasGeneratedBy", entity) !== 1)) {
-        errors.push("output-generation-relations-are-complete");
-      }
-      if (outputs.some((entity) => exactRelationCount("wasAttributedTo", entity) !== 1)) {
-        errors.push("output-attribution-relations-are-complete");
-      }
       if (
         knownActivity !== "source-acquisition"
         && knownActivity !== "invalidation"

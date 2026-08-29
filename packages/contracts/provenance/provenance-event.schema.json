@@ -10,12 +10,14 @@
     "event-time-matches-activity-end",
     "input-output-revisions-are-disjoint",
     "entity-references-are-unique",
+    "stable-entity-kind-is-consistent",
     "identity-namespace-is-consistent",
     "entity-policy-does-not-weaken-event",
     "relations-close-over-event-objects",
     "relation-identities-and-facts-are-unique",
     "relation-roles-match-event-objects",
     "relation-outcome-matches-activity-status",
+    "activity-output-shape-matches-status",
     "activity-agent-relation-is-complete",
     "input-use-relations-are-complete",
     "output-generation-relations-are-complete",
@@ -36,6 +38,10 @@
     "org.research-observatory.entity.invalidated.v1": "invalidation"
   },
   "x-research-observatory-relationPolicy": {
+    "universal": {
+      "nonSucceededOutputs": "forbidden",
+      "succeededOutputRelations": ["wasGeneratedBy", "wasAttributedTo"]
+    },
     "roles": {
       "used": "input",
       "wasGeneratedBy": "output",
@@ -258,7 +264,7 @@
           "maxLength": 300,
           "oneOf": [
             {
-              "pattern": "^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/entity/[a-z][a-z0-9-]{0,63}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/revision/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
+              "pattern": "^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/entity/[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/revision/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
             },
             {
               "pattern": "^project/[0-9a-f]{8}-[0-9a-f]{4}-(?:4[0-9a-f]{3}|7[0-9a-f]{3})-[89ab][0-9a-f]{3}-[0-9a-f]{12}/activity/[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"

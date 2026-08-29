@@ -96,7 +96,6 @@ class ProvenanceContractTests(unittest.TestCase):
         source = copy.deepcopy(cast(list[JsonRecord], data["outputs"])[0])
         document = copy.deepcopy(source)
         document["revisionId"] = self.uuid("dab3")
-        document["entityKind"] = "document"
         document["contentHash"] = f"sha256:{'3' * 64}"
         data["inputs"] = [source]
         data["outputs"] = [document] if status == "succeeded" else []
@@ -297,6 +296,44 @@ class ProvenanceContractTests(unittest.TestCase):
         cast(JsonRecord, used["entity"])["revisionId"] = self.uuid("da99")
         self.assertIn("relations-close-over-event-objects", provenance_event_errors(wrong_revision))
 
+    def test_stable_entity_kind_namespace_and_subject_grammar_are_consistent(self) -> None:
+        self.assertEqual((), provenance_event_errors(self.transform_event()))
+
+        retyped = self.transform_event()
+        retyped_output = cast(list[JsonRecord], self.data_of(retyped)["outputs"])[0]
+        retyped_output["entityKind"] = "document"
+        retyped["subject"] = self.entity_subject(retyped, retyped_output)
+        self.assertIn("stable-entity-kind-is-consistent", provenance_event_errors(retyped))
+
+        cross_kind = self.transform_event()
+        cross_kind_output = cast(list[JsonRecord], self.data_of(cross_kind)["outputs"])[0]
+        cross_kind_output["entityId"] = self.uuid("dab4")
+        cross_kind_output["entityKind"] = "document"
+        cross_kind["subject"] = self.entity_subject(cross_kind, cross_kind_output)
+        for relation in self.relations_of(cross_kind):
+            if relation["relationType"] in {"wasGeneratedBy", "wasDerivedFrom", "wasAttributedTo"}:
+                relation["entity"] = self.reference(cross_kind_output)
+        self.assertEqual((), provenance_event_errors(cross_kind))
+
+        project_collision = self.fixture()
+        prior_project_id = cast(str, project_collision["projectid"])
+        project_collision["projectid"] = project_collision["id"]
+        project_collision["subject"] = cast(str, project_collision["subject"]).replace(
+            f"project/{prior_project_id}/", f"project/{project_collision['id']}/"
+        )
+        self.assertIn("identity-namespace-is-consistent", provenance_event_errors(project_collision))
+
+        schema = json.loads(self.schema_path.read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema, format_checker=FormatChecker())
+        for entity_kind in ("source-observation", "source.observation", "source_observation", "source:observation"):
+            with self.subTest(entity_kind=entity_kind):
+                event = self.fixture()
+                output = cast(list[JsonRecord], self.data_of(event)["outputs"])[0]
+                output["entityKind"] = entity_kind
+                event["subject"] = self.entity_subject(event, output)
+                self.assertEqual([], list(validator.iter_errors(event)))
+                self.assertEqual((), provenance_event_errors(event))
+
     def test_future_type_and_schema_compatible_utc_boundaries_match(self) -> None:
         future = self.fixture()
         future["type"] = "org.research-observatory.future.observed.v2"
@@ -306,7 +343,46 @@ class ProvenanceContractTests(unittest.TestCase):
         assert decoded is not None
         self.assertFalse(is_known_provenance_event(decoded))
 
+        transformation = self.transform_event()
+        transformation["type"] = "org.research-observatory.future.transformed.v2"
+        self.activity_of(transformation)["activityType"] = "future-transformation"
+        self.assertEqual((), provenance_event_errors(transformation))
+
+        orphan = copy.deepcopy(future)
+        self.data_of(orphan)["relations"] = [
+            relation for relation in self.relations_of(orphan) if relation["relationType"] != "wasGeneratedBy"
+        ]
+        self.assertIn("output-generation-relations-are-complete", provenance_event_errors(orphan))
+
+        unattributed = copy.deepcopy(future)
+        self.data_of(unattributed)["relations"] = [
+            relation for relation in self.relations_of(unattributed) if relation["relationType"] != "wasAttributedTo"
+        ]
+        self.assertIn("output-attribution-relations-are-complete", provenance_event_errors(unattributed))
+
+        wrong_revision = copy.deepcopy(future)
+        generated = next(
+            relation for relation in self.relations_of(wrong_revision) if relation["relationType"] == "wasGeneratedBy"
+        )
+        cast(JsonRecord, generated["entity"])["revisionId"] = self.uuid("da99")
+        self.assertIn("relations-close-over-event-objects", provenance_event_errors(wrong_revision))
+
+        failed_output = copy.deepcopy(future)
+        self.activity_of(failed_output)["status"] = "failed"
+        self.data_of(failed_output)["relations"] = [
+            relation for relation in self.relations_of(failed_output) if relation["relationType"] == "wasAssociatedWith"
+        ]
+        self.assertIn("activity-output-shape-matches-status", provenance_event_errors(failed_output))
+
         schema = json.loads(self.schema_path.read_text(encoding="utf-8"))
+        relation_policy = cast(JsonRecord, schema["x-research-observatory-relationPolicy"])
+        self.assertEqual(
+            {
+                "nonSucceededOutputs": "forbidden",
+                "succeededOutputRelations": ["wasGeneratedBy", "wasAttributedTo"],
+            },
+            relation_policy["universal"],
+        )
         validator = Draft202012Validator(schema, format_checker=FormatChecker())
         year_zero = self.fixture()
         self.set_times(year_zero, "0000-01-01T00:00:00.000Z", "0000-01-01T00:00:01.000Z")
