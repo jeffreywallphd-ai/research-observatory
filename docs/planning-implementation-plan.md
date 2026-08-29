@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8c48487e07385959e041cb358211509d01e2b3e3d615d939d0810ca8aee718e1
+source_sha256: 74f0f95f035207870b76bb12aae85f0c4a6411b4308549ebee731e6a830f94a7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4306,15 +4306,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
+#### - [x] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T01`
 
-**Owner / review:** codex / codex-independent-provenance-ledger-reviewer (`changes-requested`)
+**Owner / review:** codex / codex-independent-provenance-ledger-reviewer (`approved`)
 
 **Objective:** Append-only ledger persistence integrated with domain transactions plus APIs for ancestors, descendants, production activity, and responsible agent.
 
@@ -4341,7 +4341,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S03.T02
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -4406,7 +4406,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S03.T02-R01-F01` `fixed` — The exact fresh-v6 empty-history reproduction now passes. Migration history is validated as an exact contiguous registry suffix; after backup-first 0007 migration the sole truthful 0007 row is accepted by repeat plan/migrate and reopen without fabricating 0001-0006 history. Full v1-origin history, partial suffix histories, current fresh v7, adverse profiles, hashes, and all failpoint rollback cases remain strict. migration_framework_projection now includes 0007_provenance_ledger.
 - `CAP-03.S03.T02-R01-F02` `fixed` — The exact R01 event-ID reproduction now returns integrity-review: R02 compares ledger event and project identity to the canonical record, rejects mismatched normalized child/project sets, cross-checks the narrow audit identity/digest, and includes the stored idempotency fingerprint in its newly written checkpoint material. Submitted and independent tests close event identity, project authority, normalized child, narrow digest, and stored fingerprint mutations while retaining bounded read-only visibility. R02-F01 and R02-F02 separately record newly exposed segment-versioning, outbox replay, actor-type, and trace binding defects; they do not erase this exact closure.
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `7d7e9a3de98eb21991966ed3c9c2ae63b12888ef631c1b5537413a3b90296bae`
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `7d7e9a3de98eb21991966ed3c9c2ae63b12888ef631c1b5537413a3b90296bae`
 
 - Candidate / base / branch: `2a15c3436bd76d69d13a854b22c50742f85e8a5f` / `7dad75557cce78a905c6e97a4fd5dc43ee8e393a` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-29T18:45:03+00:00`
@@ -4420,15 +4422,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R02` / `CAP-03.S03.T02-R02-F01`, `CAP-03.S03.T02-R02-F02`
 - Root-cause escalation: R02 correctly added the retry fingerprint to newly computed chain material but failed to treat that material change as a versioned evidence contract, so it reused rfc8785.sha256.v1 and reinterpreted valid R01 history. R02 also reasoned from canonical ledger and normalized projections inward but did not enumerate every mutable outbox authority field or the narrow audit's actor-type and trace projections as peers in the same transaction authority graph. R03 makes the chain formula explicit and version-dispatched, writes only a distinct v2 segment, derives one digest over the complete immutable outbox authority, and validates all persisted and incoming replay authorities before resolving a projection. The third-round regression matrix enumerates every identified authority field so a future omission fails deterministically.
 
-**Current latest-review projection:** `changes-requested` by codex-independent-provenance-ledger-reviewer at `2026-08-29T18:29:55+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent-provenance-ledger-reviewer / `2026-08-29T18:55:30+00:00`
 
-**Latest notes:** Independent focused R02 review authenticated the frozen evidence at SHA-256 cae002af5d20f57c5ab0a62615e057df0769a7837a78fac584179c46115acb5b and Git blob ab495642307f27f9b1783fab0eb79058ebd8a695 in submission record 4f9bc157b77a1ae78eeac14d39d7a99469b35794. Exact candidate 7dad75557cce78a905c6e97a4fd5dc43ee8e393a is a strict descendant of R01 candidate 3680ecf86f455b8cbd6a10c27b63ae62c836e359, and all 13 declared incremental paths exactly match that candidate range. Independent replay closes both exact R01 reproductions: a fresh v6 database with empty history migrates backup-first, retains the truthful sole 0007 suffix, survives repeat planning/migration and reopen, while complete v1-v6 and adverse profile paths remain strict; the migration projection now ends at 0007. The original event/project identity rewrite, normalized-child mismatch, narrow-audit digest rewrite, and stored idempotency-fingerprint rewrite now enter bounded read-only integrity-review. Complete repository/service and migration test modules passed (16/16 and 17/17), as did generated Core API synchronization, architecture, repository structure, changed-path truth, and patch hygiene. Approval remains unavailable because two new high-severity incremental defects remain. The retry-bound chain changes the hash material of the existing rfc8785.sha256.v1 segment without changing the segment identity or retaining a v1 verifier, so an exact R01 ledger row becomes integrity-review solely after the R02 application opens it. The transaction binding also remains incomplete: outbox revision authority is mutable and neither verified nor checked during replay, allowing an exact retry to return another aggregate while lineage reports verified; narrow-audit actor type and trace identity likewise remain unbound to the canonical agent/traceparent. These defects make the R02 evidence claims of append-only chain compatibility, complete narrow-audit binding, and exact retry authority materially overstated. The fresh-v6/history remediation, public API/client contract, normalized lineage traversal, atomic rollback, legacy bridge, package inventory, scope containment, and declared T03/slice/W1 deferrals otherwise remain sound. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S03.T02.review-R03.json` / `4fd104c61abfbab9fdc711ca3759b49d90a63db8b1c42f899168de1f2767c0cf`
 
-**Currently open findings:** `CAP-03.S03.T02-R02-F01`, `CAP-03.S03.T02-R02-F02`
+**Review notes:** Independent round-three remediation review found no blocking or nonblocking acceptance-bound defect. The frozen R03 evidence reproduces SHA-256 dc151da5b7f28aa8be8fe776e4bce384aaa4d60db70155bc49832f1de5cbaf9c and Git blob 774881cf19d4c0c63b2c7726678e7fbaac13cd74 in submission record cb193dda843b9100b5b63dbe424325b5f6bf0332. Exact candidate 2a15c3436bd76d69d13a854b22c50742f85e8a5f is a strict descendant of the R02 candidate, the submission record is a strict descendant of the candidate, and all 11 declared changed paths exactly match the base-to-candidate range. The third-round root-cause analysis is adequate: R02 changed hash material without versioning the evidence contract and reasoned inward from the canonical ledger without enumerating every mutable outbox and narrow-audit authority; R03 now retains the exact historical rfc8785.sha256.v1 record-and-sequence formula, writes only a distinct rfc8785.sha256.v2 segment, binds the retry fingerprint and complete immutable outbox-authority digest in v2, and verifies persisted plus incoming replay authority before resolving a projection. Independent replay with two exact-formula v1 rows, restart, one v2 append, another restart boundary, and a subsequent v1 exact retry remained verified with segment sequences v1/1, v1/2, and v2/1. All seven independently mutated current outbox authority fields fail closed and enter integrity-review; narrow actor-type and trace-id contradictions do the same. Exact incoming retries reject changed outbox, event, type, occurrence/scheduling time, trace, actor, payload, and precondition authority. Replay compares the returned detached projection to the canonical output content hash before returning it; an independently corrupted aggregate projection was denied without duplicating aggregate, ledger, or outbox rows. Legitimate delivery-state mutation remains outside immutable authority and preserves verification. The selected 104-test affected union exited successfully, and an independently repeated 35-test repository, service, and complete migration group passed. The exact fresh-v6 empty-history upgrade/repeat/reopen regression and prior event/project/normalized/narrow/idempotency corruption cases remain green, so both R01 closures remain valid. Python quality, architecture, repository structure, generated Core API parity, generated backlog views, the 150-page planning review site, changed-path truth, and patch hygiene passed. Architecture documentation accurately describes the v1/v2 compatibility and outbox/actor/trace boundaries. The public contract, schema version and migration bytes, renderer and governed experience reference, dependency inventory, external effects, and release authority are unchanged. T03 interaction/recovery work, slice integration, and the complete W1 Windows qualification matrix remain truthfully assigned to their later mandatory gates. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S03.T02-R02-F01` `fixed` — The implementation dispatches chain verification by the persisted segment key. rfc8785.sha256.v1 retains exactly previous-or-genesis, canonical record SHA-256, and sequence; new writes use the distinct rfc8785.sha256.v2 formula over previous-or-genesis, record digest, stored command fingerprint, complete immutable outbox-authority digest, and sequence. Each segment has an independent contiguous sequence and checkpoint chain starting at one. Independent replay converted two ordinary rows to exact v1 bytes and chains, restarted, appended a v2 row, restarted through a historical retry, and observed verified lineage with v1 sequences one/two and v2 sequence one. No historical record or chain was rehashed or reinterpreted. Unknown segment identities still enter integrity-review. This closes the exact R02 v1-history invalidation while retaining append-only checkpoint behavior.
+- `CAP-03.S03.T02-R02-F02` `fixed` — Every new v2 checkpoint now binds the outbox identity, project, output revision, canonical event type, occurrence and availability times, idempotency key, and record digest through one deterministic authority digest, while the same chain separately binds the complete command fingerprint. Integrity verification joins exactly one checkpoint, ledger event, narrow audit, and outbox; compares all persisted authority to the canonical event/output; binds narrow actor identity/type and trace; and requires the complete ledger to verify. Replay additionally compares incoming outbox/event/time/trace/actor/key authority and the stored fingerprint before resolving the exact output revision, then compares the returned projection content hash to the canonical output. The seven committed independent outbox mutations, actor-type mutation, and trace-id mutation all fail closed and enter integrity-review; the original wrong-revision replay can no longer return another aggregate. Independent projection corruption likewise failed closed without duplicate facts. Only delivery state, attempt count, and publication time remain intentionally mutable and do not invalidate the immutable transaction authority.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-provenance-ledger-reviewer at `2026-08-29T18:55:30+00:00`
+
+**Latest notes:** Independent round-three remediation review found no blocking or nonblocking acceptance-bound defect. The frozen R03 evidence reproduces SHA-256 dc151da5b7f28aa8be8fe776e4bce384aaa4d60db70155bc49832f1de5cbaf9c and Git blob 774881cf19d4c0c63b2c7726678e7fbaac13cd74 in submission record cb193dda843b9100b5b63dbe424325b5f6bf0332. Exact candidate 2a15c3436bd76d69d13a854b22c50742f85e8a5f is a strict descendant of the R02 candidate, the submission record is a strict descendant of the candidate, and all 11 declared changed paths exactly match the base-to-candidate range. The third-round root-cause analysis is adequate: R02 changed hash material without versioning the evidence contract and reasoned inward from the canonical ledger without enumerating every mutable outbox and narrow-audit authority; R03 now retains the exact historical rfc8785.sha256.v1 record-and-sequence formula, writes only a distinct rfc8785.sha256.v2 segment, binds the retry fingerprint and complete immutable outbox-authority digest in v2, and verifies persisted plus incoming replay authority before resolving a projection. Independent replay with two exact-formula v1 rows, restart, one v2 append, another restart boundary, and a subsequent v1 exact retry remained verified with segment sequences v1/1, v1/2, and v2/1. All seven independently mutated current outbox authority fields fail closed and enter integrity-review; narrow actor-type and trace-id contradictions do the same. Exact incoming retries reject changed outbox, event, type, occurrence/scheduling time, trace, actor, payload, and precondition authority. Replay compares the returned detached projection to the canonical output content hash before returning it; an independently corrupted aggregate projection was denied without duplicating aggregate, ledger, or outbox rows. Legitimate delivery-state mutation remains outside immutable authority and preserves verification. The selected 104-test affected union exited successfully, and an independently repeated 35-test repository, service, and complete migration group passed. The exact fresh-v6 empty-history upgrade/repeat/reopen regression and prior event/project/normalized/narrow/idempotency corruption cases remain green, so both R01 closures remain valid. Python quality, architecture, repository structure, generated Core API parity, generated backlog views, the 150-page planning review site, changed-path truth, and patch hygiene passed. Architecture documentation accurately describes the v1/v2 compatibility and outbox/actor/trace boundaries. The public contract, schema version and migration bytes, renderer and governed experience reference, dependency inventory, external effects, and release authority are unchanged. T03 interaction/recovery work, slice integration, and the complete W1 Windows qualification matrix remain truthfully assigned to their later mandatory gates. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
