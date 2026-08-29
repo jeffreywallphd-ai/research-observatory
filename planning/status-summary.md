@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3611cb205f2fee2ca66b79febd7f99ac332cce42fcdb1eec186dd9d51405ace5
+source_sha256: 0527f02f70604e6f0d0756a35fbf2e0c72333e39c8cdb4b39629868bdde9911b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 269 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 49 |
 | `DEFERRED` | 36 |
 
@@ -357,7 +357,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T02` | `append-only v1` | 2 | `-` | approved / nash-independent-domain-lifecycle-reviewer | - |
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
-| `CAP-03.S02.T02` | `append-only v1` | 2 | `-` | approved / agent:nash | - |
+| `CAP-03.S02.T02` | `append-only v1` | 2 | `R03` | approved / agent:nash | - |
 | `CAP-03.S02.T03` | `append-only v1` | 2 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -426,4 +426,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S02.T02` Implement guided intent creation and revision UI | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S02.T02` Implement guided intent creation and revision UI | `REVIEW` | codex | `codex/w1-windows-local-runtime` |

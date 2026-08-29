@@ -7000,11 +7000,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-28T19:12:19+00:00'
-      updated_at: '2026-08-29T12:57:01+00:00'
+      updated_at: '2026-08-29T13:13:01+00:00'
       completed_at: null
       blocker: null
       implementation_notes: R02 remediates both blocking R01 findings with stable current-user actor authority and restart-safe
@@ -7020,6 +7020,11 @@ capabilities:
         sha256: 4ba4303d7281f9a0a10d2464cc9beb535508a94edeea550dd554c83ab91cb08c
         commit: a60d3e9704a4d59dd1d0310437bd6d486057500b
         recorded_at: '2026-08-28T20:34:32+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S02.T02.R03.json
+        sha256: b4739a9aa342e893dec56eeb9aec740f4163bdcfcc8948d21379f95d17639fce
+        commit: b9868e5211aa012d7223caff5ab2eef2a7386de9
+        recorded_at: '2026-08-29T13:13:01+00:00'
       review: &id024
         reviewer: agent:nash
         result: approved
@@ -7041,7 +7046,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-29T12:57:01+00:00'
         expires_at: '2026-08-29T20:57:01+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -7402,7 +7407,114 @@ capabilities:
               closed_finding_ids:
               - CAP-03.S02.T02-R01-F01
               - CAP-03.S02.T02-R01-F02
-        current_submission: null
+        current_submission:
+          id: R03
+          submitted_by: codex
+          submitted_at: '2026-08-29T13:13:01+00:00'
+          candidate_commit: b9868e5211aa012d7223caff5ab2eef2a7386de9
+          base_commit: a60d3e9704a4d59dd1d0310437bd6d486057500b
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S02.T02.R03.json
+            sha256: b4739a9aa342e893dec56eeb9aec740f4163bdcfcc8948d21379f95d17639fce
+            commit: b9868e5211aa012d7223caff5ab2eef2a7386de9
+            recorded_at: '2026-08-29T13:13:01+00:00'
+          acceptance_criteria_sha256: a19eda230cc0e58d95a8e73c8e7b002cb60fa99c9366a4da12feded9d38457eb
+          changed_paths:
+          - apps/desktop/README.md
+          - apps/desktop/src/app/IntentWorkspace.test.tsx
+          - apps/desktop/src/app/IntentWorkspace.tsx
+          - artifacts/evidence/CAP-03.S02.T02.R02.json
+          - artifacts/evidence/CAP-03.S02.T02.review-R02.json
+          - artifacts/evidence/CAP-03.S02.T03.R02.json
+          - artifacts/evidence/CAP-03.S02.T03.json
+          - artifacts/evidence/CAP-03.S02.T03.review-R01.json
+          - artifacts/evidence/CAP-03.S02.T03.review-R02.json
+          - artifacts/evidence/ui-change/CAP-03.S02.T02.json
+          - docs/architecture/research-intent-contracts.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/generated.test.ts
+          - packages/contracts/core-api/generated.ts
+          - packages/contracts/core-api/openapi.json
+          - planning/backlog.yaml
+          - planning/governance-migrations/GOV-MAINT-0004.json
+          - planning/governance-migrations/GOV-MAINT-0004.review-R01.json
+          - planning/governance-migrations/GOV-MAINT-0004.review-R02.json
+          - planning/governance-migrations/GOV-MAINT-0004.review-R03.json
+          - planning/review-site/CAP-03/CAP-03.S02.html
+          - planning/review-site/CAP-03/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - services/core-api/src/research_observatory_core/app.py
+          - services/core-api/src/research_observatory_core/models.py
+          - services/core-api/src/research_observatory_core/modules.py
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/research_intents.py
+          - tests/foundation/test_taskctl_workflow.py
+          - tests/service/test_core_api.py
+          - tests/service/test_research_intents.py
+          - tools/core_api_contract.py
+          - tools/taskctl.py
+          selected_checks:
+          - npm run lint; npm test; npm run typecheck; npm run build in apps/desktop
+          - .venv\Scripts\python.exe -m unittest tests.service.test_research_intents tests.service.test_core_api
+          - .venv\Scripts\python.exe tools\desktop_app_check.py --repo . --built-frame-only; ui_reference_check.py; ui_token_check.py;
+            ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py
+          - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base 198edd87be8147087ac87f282c12d099fe1a943d --head
+            b9868e5211aa012d7223caff5ab2eef2a7386de9
+          - .venv\Scripts\python.exe tools\quality_check.py --repo .; architecture_check.py; repository_structure_check.py
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning/backlog.yaml validate; backlog_views.py --check; planctl.py
+            --repo . wave ready W1 --require-approved
+          - .venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile service --affected-base a60d3e9704a4d59dd1d0310437bd6d486057500b
+            --affected-head b9868e5211aa012d7223caff5ab2eef2a7386de9 --deferred-gate W1-exit --selection-only; build_manifest.py
+          - git diff --check a60d3e9704a4d59dd1d0310437bd6d486057500b..b9868e5211aa012d7223caff5ab2eef2a7386de9; protected
+            W1.A04.B00 witness SHA-256
+          deferred_checks:
+          - The controlled visual-regression capture runner did not complete during the exact-candidate attempt and is not
+            claimed as passing. The deterministic approved-reference, token, route, workflow, accessibility, build, and interaction
+            tests passed; full visual capture is mandatory at CAP-03.S02 slice integration.
+          - CAP-03.S02.T03 must be revalidated after this reopened dependency so the accepted revision is proven end-to-end
+            as the effective service-policy authority before slice approval.
+          - Desktop performance and the complete repository/deployment happy, failure, denial, cancellation, migration, restart,
+            recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint
+            and W1 exit.
+          selection_rationale: This medium-risk correction restores an approved governed desktop interaction over an existing
+            authenticated public service contract. Credible failures are accepting an incomplete or locally modified revision,
+            omitting explicit human confirmation or rationale, accepting a different revision/hash than displayed, silently
+            enabling launch, losing downstream service-policy authority, breaking generated-client integration, or drifting
+            from the approved experience reference. Verification therefore selects focused renderer and service/API tests,
+            strict lint/type/build, built-frame capability inventory, reference/token/route/workflow/accessibility contracts,
+            the cumulative UI change gate, quality/architecture/repository boundaries, planning authority, affected-selection
+            truth, build provenance, patch hygiene, and protected-witness safety. No dependency, migration, persistence implementation,
+            network provider, or public contract changed. The controlled visual-capture runner was attempted but did not complete
+            and is not represented as passing; it remains mandatory at slice integration together with the T03 effective-policy
+            path. Gate-bound performance and the complete cross-capability matrix remain at W1 exit.
+          selection_sha256: fd1ddff6f9d02d1aa26da2cd84a494779aeb37a88d83cb56bd35e43d624f6dbe
+          prior_attempt_id: R02
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:quality
+          - foundation:repository-structure
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - contracts:unit
+          - service:unit
+          packet_sha256: 5aae5a7d35a8f80b266c92e95454510cf03a25a45cfb09d341808ba2b2af4126
       cancellation: null
     - id: CAP-03.S02.T03
       capability_id: CAP-03
