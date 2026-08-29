@@ -160,9 +160,32 @@ class ProvenanceLineageRequest(ProjectRootRequest):
 
 
 class ProvenanceLineageNode(ContractModel):
+    fact_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    relation_type: Literal[
+        "used", "wasGeneratedBy", "wasAssociatedWith", "wasDerivedFrom", "wasInvalidatedBy", "wasAttributedTo"
+    ]
+    entity_direction: Literal["input", "output"]
     revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
     entity_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
     entity_kind: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$", max_length=128)
+    related_revision_id: str | None = Field(
+        pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    )
+    knowledge_status: Literal[
+        "observed",
+        "extracted",
+        "inferred",
+        "verified",
+        "disputed",
+        "adjudicated",
+        "stale",
+        "unknown",
+        "not-reported",
+        "not-applicable",
+        "ambiguous",
+        "unavailable",
+    ]
+    rights_status: Literal["allowed", "denied", "unknown", "not-applicable"]
     depth: int = Field(ge=0, le=16)
     event_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
     event_type: str = Field(pattern=r"^org\.research-observatory\..+\.v[1-9][0-9]{0,5}$", max_length=160)
@@ -187,6 +210,8 @@ class ProvenanceLineagePage(ContractModel):
     next_cursor: int | None = Field(default=None, ge=0, le=10_000)
     integrity_state: Literal["verified", "integrity-review"]
     legacy_event_count: int = Field(ge=0, le=9_007_199_254_740_991)
+    export_allowed: bool
+    export_denial_reason: Literal["integrity-review", "rights-restricted"] | None
 
 
 class ProjectDeleteRequest(ProjectRootRequest):

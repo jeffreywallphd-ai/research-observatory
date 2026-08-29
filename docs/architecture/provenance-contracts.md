@@ -70,9 +70,10 @@ retains its exact record-and-sequence formula. New writes use the distinct
 and a digest of every immutable outbox-authority field; each segment starts at
 sequence one and is verified under only its declared formula. Lineage integrity
 compares event and project authority plus every normalized entity/relation field
-back to the canonical record, and cross-checks event, project, output revision,
-type, time, actor identity/type, trace identity, and record digest against the
-narrow audit row. Canonicalization, hash material, or algorithm changes always
+back to the canonical record, and cross-checks event, project, primary output
+revision or output-free invalidation input revision, type, time, actor
+identity/type, trace identity, and record digest against the narrow audit row.
+Canonicalization, hash material, or algorithm changes always
 start a declared new segment; they never rewrite or reinterpret historical
 bytes.
 
@@ -105,13 +106,27 @@ by one exact UUIDv7 submission returns a depth- and page-bounded ancestor or
 descendant trace. Read-only projects remain inspectable; closed projects do not
 issue a lineage request.
 
-Each returned row identifies the exact entity revision, event, transformation,
-configuration ID/version/hash, responsible agent type/role, and occurrence
-time. Same-entity historical revisions and distinct source or alternate inputs
-remain visible rather than being collapsed. Invalidation events are marked
-stale, while missing revisions, legacy bridges, or failed integrity verification
-remain visible as an integrity-review state that is unsuitable for export or
-claim use until repaired.
+Each returned fact identifies a unique portable relation, input/output role,
+exact entity revision, optional related revision, knowledge and rights state,
+event, transformation, configuration ID/version/hash, responsible agent
+type/role, and occurrence time. Same-entity historical revisions, distinct
+source or alternate inputs, decisions, and valid output-free
+`wasInvalidatedBy` facts remain visible rather than being collapsed or modeled
+as invented outputs. Missing revisions, legacy bridges, or failed integrity
+verification remain visible as an integrity-review state that is unsuitable for
+export or claim use until repaired.
+
+The generated client binds every page to the exact requested revision,
+direction, cursor, page size, and maximum depth. It rejects over-page or
+over-depth responses, duplicate fact identities, a missing first-page root,
+non-monotonic depth, and non-progress cursors. The renderer freezes the accepted
+query for continuation pages and rejects duplicate cross-page facts.
+
+Audit events, human decisions, rights states, and local-export policy are
+separate governed regions in the desktop page. Core marks a content-minimized
+manifest export available only for a verified trace whose targets are not
+rights-restricted. The local manifest records its redaction and local-file-only
+egress decision; it never authorizes remote egress.
 
 The response deliberately contains no source text, passage text, prompt text,
 researcher name, secret, or model rationale. A configuration hash and version

@@ -128,29 +128,44 @@ class SqliteRepositoryTests(unittest.TestCase):
             max_depth=4,
         )
         self.assertEqual("verified", ancestors.integrity_state)
+        self.assertEqual(revised.revision_id, ancestors.items[0].revision_id)
         self.assertEqual(
-            (revised.revision_id, created.revision_id), tuple(item.revision_id for item in ancestors.items)
+            {revised.revision_id, created.revision_id},
+            {item.revision_id for item in ancestors.items},
         )
-        self.assertEqual((0, 1), tuple(item.depth for item in ancestors.items))
+        self.assertEqual(
+            tuple(sorted(item.depth for item in ancestors.items)),
+            tuple(item.depth for item in ancestors.items),
+        )
+        self.assertEqual(len(ancestors.items), len({item.fact_id for item in ancestors.items}))
+        self.assertEqual(
+            {"wasDerivedFrom", "wasGeneratedBy", "wasAttributedTo"},
+            {item.relation_type for item in ancestors.items if item.revision_id == revised.revision_id},
+        )
         self.assertTrue(all(item.agent_id == event(0).actor_id for item in ancestors.items))
-        descendants = lineage.lineage(
+        complete_descendants = lineage.lineage(
             revision_id=created.revision_id,
             direction="descendants",
             cursor=0,
-            page_size=1,
+            page_size=10,
             max_depth=4,
         )
-        self.assertEqual((created.revision_id,), tuple(item.revision_id for item in descendants.items))
-        self.assertEqual(1, descendants.next_cursor)
-        continued = lineage.lineage(
-            revision_id=created.revision_id,
-            direction="descendants",
-            cursor=descendants.next_cursor or 0,
-            page_size=1,
-            max_depth=4,
-        )
-        self.assertEqual((revised.revision_id,), tuple(item.revision_id for item in continued.items))
-        self.assertIsNone(continued.next_cursor)
+        cursor = 0
+        paged_fact_ids: list[str] = []
+        while True:
+            page = lineage.lineage(
+                revision_id=created.revision_id,
+                direction="descendants",
+                cursor=cursor,
+                page_size=1,
+                max_depth=4,
+            )
+            paged_fact_ids.extend(item.fact_id for item in page.items)
+            if page.next_cursor is None:
+                break
+            self.assertGreater(page.next_cursor, cursor)
+            cursor = page.next_cursor
+        self.assertEqual([item.fact_id for item in complete_descendants.items], paged_fact_ids)
 
     def test_missing_lineage_reference_and_checkpoint_mismatch_enter_integrity_review(self) -> None:
         with self.factory() as unit:
@@ -197,7 +212,12 @@ class SqliteRepositoryTests(unittest.TestCase):
             max_depth=4,
         )
         self.assertEqual("integrity-review", lineage.integrity_state)
-        self.assertEqual((second.revision_id,), tuple(item.revision_id for item in lineage.items))
+        self.assertTrue(lineage.items)
+        self.assertEqual({second.revision_id}, {item.revision_id for item in lineage.items})
+        self.assertEqual(
+            {"wasDerivedFrom", "wasGeneratedBy", "wasAttributedTo"},
+            {item.relation_type for item in lineage.items},
+        )
         self.assertEqual(("01890f6e-6a40-7cc5-98b7-000000000992",), lineage.missing_revision_ids)
         self.assertNotIn(first.revision_id, tuple(item.revision_id for item in lineage.items))
 
@@ -358,7 +378,12 @@ class SqliteRepositoryTests(unittest.TestCase):
             max_depth=4,
         )
         self.assertEqual("verified", lineage.integrity_state)
-        self.assertEqual((second.revision_id, first.revision_id), tuple(item.revision_id for item in lineage.items))
+        self.assertEqual({second.revision_id, first.revision_id}, {item.revision_id for item in lineage.items})
+        self.assertEqual(
+            tuple(sorted(item.depth for item in lineage.items)),
+            tuple(item.depth for item in lineage.items),
+        )
+        self.assertEqual(len(lineage.items), len({item.fact_id for item in lineage.items}))
         connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
             self.assertEqual(

@@ -2165,6 +2165,14 @@
             "title": "Depth",
             "type": "integer"
           },
+          "entityDirection": {
+            "enum": [
+              "input",
+              "output"
+            ],
+            "title": "Entitydirection",
+            "type": "string"
+          },
           "entityId": {
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "title": "Entityid",
@@ -2187,20 +2195,83 @@
             "title": "Eventtype",
             "type": "string"
           },
+          "factId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Factid",
+            "type": "string"
+          },
+          "knowledgeStatus": {
+            "enum": [
+              "observed",
+              "extracted",
+              "inferred",
+              "verified",
+              "disputed",
+              "adjudicated",
+              "stale",
+              "unknown",
+              "not-reported",
+              "not-applicable",
+              "ambiguous",
+              "unavailable"
+            ],
+            "title": "Knowledgestatus",
+            "type": "string"
+          },
           "occurredAt": {
             "title": "Occurredat",
+            "type": "string"
+          },
+          "relatedRevisionId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relatedrevisionid"
+          },
+          "relationType": {
+            "enum": [
+              "used",
+              "wasGeneratedBy",
+              "wasAssociatedWith",
+              "wasDerivedFrom",
+              "wasInvalidatedBy",
+              "wasAttributedTo"
+            ],
+            "title": "Relationtype",
             "type": "string"
           },
           "revisionId": {
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "title": "Revisionid",
             "type": "string"
+          },
+          "rightsStatus": {
+            "enum": [
+              "allowed",
+              "denied",
+              "unknown",
+              "not-applicable"
+            ],
+            "title": "Rightsstatus",
+            "type": "string"
           }
         },
         "required": [
+          "factId",
+          "relationType",
+          "entityDirection",
           "revisionId",
           "entityId",
           "entityKind",
+          "relatedRevisionId",
+          "knowledgeStatus",
+          "rightsStatus",
           "depth",
           "eventId",
           "eventType",
@@ -2228,6 +2299,25 @@
             ],
             "title": "Direction",
             "type": "string"
+          },
+          "exportAllowed": {
+            "title": "Exportallowed",
+            "type": "boolean"
+          },
+          "exportDenialReason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "integrity-review",
+                  "rights-restricted"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exportdenialreason"
           },
           "integrityState": {
             "enum": [
@@ -2289,7 +2379,9 @@
           "items",
           "missingRevisionIds",
           "integrityState",
-          "legacyEventCount"
+          "legacyEventCount",
+          "exportAllowed",
+          "exportDenialReason"
         ],
         "title": "ProvenanceLineagePage",
         "type": "object"
