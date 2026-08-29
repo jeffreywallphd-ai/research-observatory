@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T03",
+  "commit": "b11440f1723d251df858791178f5a5056c3b2a27",
+  "baseCommit": "04b70b3ed879c853e87c3547db27a2eb0ba11b31",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S02.T03.R02.json",
+    "sha256": "3c15a65c64702a0133334aa1cbc196ce88286ff3f4fb1dced190d07d4b47e1c3",
+    "commit": "04b70b3ed879c853e87c3547db27a2eb0ba11b31",
+    "reason": "Revalidates the independently approved policy boundary after CAP-03.S02.T02 corrected the human-acceptance renderer path, proving that the accepted projection consumed by the desktop remains the exact authority enforced by the T03 service policy without expanding T03 scope."
+  },
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "artifacts/evidence/CAP-03.S02.T02.R03.json",
+    "artifacts/evidence/CAP-03.S02.T02.R04.json",
+    "artifacts/evidence/CAP-03.S02.T02.review-R03.json",
+    "artifacts/evidence/CAP-03.S02.T02.review-R04.json",
+    "artifacts/evidence/CAP-03.S02.T03.R02.json",
+    "artifacts/evidence/CAP-03.S02.T03.review-R02.json",
+    "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0004.json",
+    "planning/governance-migrations/GOV-MAINT-0004.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0004.review-R02.json",
+    "planning/governance-migrations/GOV-MAINT-0004.review-R03.json",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 50 Core API service tests passed. The suite proves acceptance-to-policy authority, all six required epistemic modes, human-gate and autonomy/egress/stopping denial, content-free decision logging, accepted-revision caching, atomic replacement, replay nonrollback, audit failure, concurrency, and restart reconstruction."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\security -p test_*.py",
+      "exitCode": 0,
+      "result": "All 56 local-security tests passed with one expected Windows privilege skip. Authentication, protected storage, privacy, local-session authority, rollback, and audit controls remain green."
+    },
+    {
+      "command": "npm run lint; npm test; npm run typecheck in apps/desktop; npm test -- core-api/generated.test.ts; npm run typecheck in packages/contracts",
+      "exitCode": 0,
+      "result": "Desktop lint and strict TypeScript passed; all 12 desktop files and 56 tests passed; all nine generated Core API client tests and strict contract compilation passed. The six focused IntentWorkspace cases drive the real generated client across normal acceptance, commit-followed-by-response-loss replay, authoritative projection convergence, and definitive rejection while launch stays disabled for T03 policy authority."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\packaging -p test_*.py; real PyInstaller build; .venv\\Scripts\\python.exe tools\\packaging_smoke_check.py --repo .",
+      "exitCode": 0,
+      "result": "All six packaging tests passed with one expected Windows symlink-privilege skip; the real PyInstaller build and locked-input packaging smoke passed with the accepted-intent and policy implementation included."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; architecture_check.py; repository_structure_check.py; taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed across 160 governed Python files; all 13 architecture areas and repository structure passed; the 20-capability, 117-slice, 359-task backlog, generated views, 150-page review site, approved immutable W1 packet, dependency state, campaign, and T03 lease validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 1b53724882a8e41c8dc16c85c01b8ea3ed2e5b4d --head b11440f1723d251df858791178f5a5056c3b2a27",
+      "exitCode": 0,
+      "result": "The exact T03 claim/revalidation attempt contains no governed UI delta. The broader R02-to-R03 ancestry contains T02-owned UI work whose cumulative gate and independent R04 review passed at exact candidate e2d469f8008fe78d4db266d169d3578b3750f8f6; this T03 packet does not duplicate or misattribute that evidence."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-03.S02.T03-R03-build-manifest-b11440f.json; verify.py --profile desktop --profile service --profile security-local --affected-base 04b70b3ed879c853e87c3547db27a2eb0ba11b31 --affected-head b11440f1723d251df858791178f5a5056c3b2a27 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "The exact build manifest binds b11440f and reports only the protected historical witness as intentionally dirty. The corrected Git-derived selector includes the desktop owner profile for the dependency change and inventories the complete affected desktop, service, security-local, contract, packaging, and foundation boundary; only desktop performance is gate-bound to W1 exit."
+    },
+    {
+      "command": "git diff --check 04b70b3ed879c853e87c3547db27a2eb0ba11b31..b11440f1723d251df858791178f5a5056c3b2a27; protected W1.A04.B00 witness SHA-256",
+      "exitCode": 0,
+      "result": "Patch hygiene passed. The sole dirty path is the intentionally untracked, unstaged historical witness artifacts/evidence/W1.A04.B00.json, preserved byte-identically at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The independently approved T03 R02 service boundary still selects only the newest contract-valid accepted revision and denies required-gate bypass, unauthorized autonomy, external egress, claim/publication authority, scope change, and unconfirmed stopping across systematic, theory, technical, hermeneutic, critical, and novelty modes with compact explanations and content-free durable decision records.",
+        "The accepted T02 renderer now freezes and replays the exact acceptance command/key across an ambiguous response, then installs only Core's authoritative accepted projection and leaves launch disabled. The generated-client and service suites together prove that this exact accepted revision is the downstream T03 governing authority rather than a renderer-local claim.",
+        "Later human acceptance atomically replaces the cached policy snapshot; exact replay of an older acceptance cannot roll authority back; restart reconstructs the newest accepted authority from immutable history."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The expected path covers save, human confirmation, Core acceptance, authoritative desktop convergence, and subsequent policy evaluation under the accepted revision.",
+        "Material boundaries cover incomplete or stale acceptance, idempotency conflict, commit plus response loss and same-key reconciliation, older-replay nonrollback, audit-persistence failure, competing writers, restart, unauthorized gates/autonomy/egress, stopping confirmation, and all six epistemic modes.",
+        "The complete service, local-security, desktop, generated-client, contract, and Windows packaging checks pass at the exact revalidation candidate."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "T03 service code, architecture note, contracts, fixtures, and audit behavior are unchanged from the independently approved R02 candidate; this round revalidates the corrected T02 dependency against that exact policy implementation rather than introducing a second policy path.",
+        "The base-to-candidate range truthfully includes the append-only T02 R03/R04 evidence and review history, the bounded GOV-MAINT-0004 workflow maintenance history, generated planning projections, and the T03 claim transition. Those records are disclosed as ancestral integration context and are not claimed as new T03 product implementation.",
+        "No new API, schema, migration, dependency, provider, network, approved experience reference, or policy authority is introduced by T03 R03."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T03 was already independently approved, but its T02 dependency was later corrected at the renderer-to-generated-client acceptance boundary. The credible integration risks are a renderer-local false acceptance claim, loss of the only idempotency key after Core commits, policy evaluation against a draft or stale revision, rollback through replay of an older acceptance, bypass of any of the six epistemic-mode gates, failure to persist decision/provenance atomically, and Windows packaging divergence. Verification therefore replays the complete desktop and service suites, focused real-client acceptance transport cases, generated-contract tests and strict types, local-security units, real Windows sidecar packaging and smoke, quality/architecture/repository/planning controls, task-local zero-UI-delta validation, exact affected-scope selection, build provenance, patch hygiene, and protected-witness safety. T03 service behavior is unchanged from R02, so a successful live supply-chain replay and controlled visual capture are retained for the imminent CAP-03.S02 integration review; desktop performance remains gate-bound to W1 exit.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:packaging-smoke",
+      "desktop:application",
+      "desktop:unit",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "The controlled visual-capture matrix is mandatory at CAP-03.S02 integration. Exact renderer/coordinator behavior, generated-client transport, strict types, desktop build, and the accepted T02 cumulative UI gate already pass.",
+      "The successful live supply-chain scanner replay explicitly deferred by T03 R02 remains mandatory at CAP-03.S02 integration or W1 exit and is not represented as passing in this packet.",
+      "Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "epistemic-governance-review",
+    "openFindingIds": [],
+    "note": "Independently review exact descendant candidate b11440f1723d251df858791178f5a5056c3b2a27. Confirm that accepted T02 renderer authority converges through the real generated client on the same accepted revision consumed by T03 policy, ambiguous acceptance retains exact command/key until reconciliation, launch remains disabled locally, all six modes and denial/audit/cache/replay/restart boundaries remain intact, T03 introduces no duplicate authority, ancestral workflow/T02 records are truthfully scoped, and visual/supply-chain/performance deferrals remain assigned to their mandatory integration or W1 gates."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 617aec6e06a887063ce02dadcf36760a547e32ffec9a5781ff27b453aa310093
+source_sha256: 5ac90028f57863e0cc679753f505aceaa8dd332343bb4d0359fe8d1f08a0f0a1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3960,7 +3960,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3989,6 +3989,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S02.T03.json` at `610a01c1e0c357e6c02f069d45ec5e09c26cbf45`
 - `artifacts/evidence/CAP-03.S02.T03.R02.json` at `04b70b3ed879c853e87c3547db27a2eb0ba11b31`
+- `artifacts/evidence/CAP-03.S02.T03.R03.json` at `b11440f1723d251df858791178f5a5056c3b2a27`
 
 ##### Review history — CAP-03.S02.T03
 
@@ -4054,7 +4055,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `b1a01253d97a7337d5604e9cc1abf6bb0badfa953bf8b2a5f9bd54d5b8451a89`
+
+- Candidate / base / branch: `b11440f1723d251df858791178f5a5056c3b2a27` / `04b70b3ed879c853e87c3547db27a2eb0ba11b31` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-29T13:45:30+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S02.T03.R03.json` / `09f28b81dc0f3ccb28ea32015588bcaf07d6f98ca0a8bc0841d227fba620bd6f` / `b11440f1723d251df858791178f5a5056c3b2a27`
+- Acceptance-criteria SHA-256: `7c39d7c4e651d5e56f68bd2b6eef9c3b26174b593a38be30c0d83d1b1cf2213c`
+- Verification-selection SHA-256: `5d33afea4ae24b15d9cc9ffb4e337e8a5b858028ba560c59c075804626b88954`
+- Changed paths: `apps/desktop/README.md`, `apps/desktop/src/app/IntentWorkspace.test.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `artifacts/evidence/CAP-03.S02.T02.R03.json`, `artifacts/evidence/CAP-03.S02.T02.R04.json`, `artifacts/evidence/CAP-03.S02.T02.review-R03.json`, `artifacts/evidence/CAP-03.S02.T02.review-R04.json`, `artifacts/evidence/CAP-03.S02.T03.R02.json`, `artifacts/evidence/CAP-03.S02.T03.review-R02.json`, `artifacts/evidence/ui-change/CAP-03.S02.T02.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/governance-migrations/GOV-MAINT-0004.json`, `planning/governance-migrations/GOV-MAINT-0004.review-R01.json`, `planning/governance-migrations/GOV-MAINT-0004.review-R02.json`, `planning/governance-migrations/GOV-MAINT-0004.review-R03.json`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_taskctl_workflow.py`, `tools/taskctl.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest discover -s tests\service -p test_*.py`, `.venv\Scripts\python.exe -m unittest discover -s tests\security -p test_*.py`, `npm run lint; npm test; npm run typecheck in apps/desktop; npm test -- core-api/generated.test.ts; npm run typecheck in packages/contracts`, `.venv\Scripts\python.exe -m unittest discover -s tests\packaging -p test_*.py; real PyInstaller build; .venv\Scripts\python.exe tools\packaging_smoke_check.py --repo .`, `.venv\Scripts\python.exe tools\quality_check.py --repo .; architecture_check.py; repository_structure_check.py; taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base 1b53724882a8e41c8dc16c85c01b8ea3ed2e5b4d --head b11440f1723d251df858791178f5a5056c3b2a27`, `.venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts\tmp\CAP-03.S02.T03-R03-build-manifest-b11440f.json; verify.py --profile desktop --profile service --profile security-local --affected-base 04b70b3ed879c853e87c3547db27a2eb0ba11b31 --affected-head b11440f1723d251df858791178f5a5056c3b2a27 --deferred-gate W1-exit --selection-only`, `git diff --check 04b70b3ed879c853e87c3547db27a2eb0ba11b31..b11440f1723d251df858791178f5a5056c3b2a27; protected W1.A04.B00 witness SHA-256`
+- Deferred checks: `The controlled visual-capture matrix is mandatory at CAP-03.S02 integration. Exact renderer/coordinator behavior, generated-client transport, strict types, desktop build, and the accepted T02 cumulative UI gate already pass.`, `The successful live supply-chain scanner replay explicitly deferred by T03 R02 remains mandatory at CAP-03.S02 integration or W1 exit and is not represented as passing in this packet.`, `Desktop performance and the complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit.`
+- Selection rationale: T03 was already independently approved, but its T02 dependency was later corrected at the renderer-to-generated-client acceptance boundary. The credible integration risks are a renderer-local false acceptance claim, loss of the only idempotency key after Core commits, policy evaluation against a draft or stale revision, rollback through replay of an older acceptance, bypass of any of the six epistemic-mode gates, failure to persist decision/provenance atomically, and Windows packaging divergence. Verification therefore replays the complete desktop and service suites, focused real-client acceptance transport cases, generated-contract tests and strict types, local-security units, real Windows sidecar packaging and smoke, quality/architecture/repository/planning controls, task-local zero-UI-delta validation, exact affected-scope selection, build provenance, patch hygiene, and protected-witness safety. T03 service behavior is unchanged from R02, so a successful live supply-chain replay and controlled visual capture are retained for the imminent CAP-03.S02 integration review; desktop performance remains gate-bound to W1 exit.
+- Prior round / replayed open findings: `R02` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `approved` by codex-independent-epistemic-governance-reviewer at `2026-08-29T12:05:37+00:00`
 
