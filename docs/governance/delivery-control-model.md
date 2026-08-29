@@ -77,7 +77,9 @@ assessment-added work affecting previously implemented structure or behavior is
 classified as technical-debt refactoring. Its forecast effort may
 not exceed 15% of the pre-assessment forecast effort of already planned work at
 either the capability or Wave level. The packet records the common estimation
-basis, numerator, denominator, percentage, and disposition of excluded work.
+basis, itemized pre-assessment scope reference, numerator, denominator,
+percentage, cumulative capability total, deduplicated Wave roll-up,
+post-baseline re-estimation rationale, and disposition of excluded work.
 Changing an accepted architectural decision, replacing a foundational runtime
 or data boundary, or restructuring multiple completed capability outcomes is a
 major refactor for this rule. Work beyond the budget or in one of those classes

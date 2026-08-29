@@ -17,6 +17,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
+from capability_plan_check import wave_initiation_rollup_errors
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import SchemaError
 
@@ -153,6 +154,8 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
         "document_type": "capability-decision-plan",
         "baseline": "1.3",
         "supplemental_release": "generated",
+        "planning_policy_version": "initiation-assessment-1.0",
+        "initiation_assessment": None,
         "capability_id": cap["id"],
         "title": cap["title"],
         "status": "proposed",
@@ -202,10 +205,11 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
         elif heading == "## 0A. Initiation assessment and planning adaptation":
             sections.append(
                 heading + "\n\nRecord the tested implementation baseline, Vision/architecture/best-practice fit, "
-                "plan adaptations, necessary support improvements, and the estimation basis, numerator, "
-                "denominator, and percentage for the 15% technical-debt refactoring limit. Include the "
-                "capability-initiation baseline and each applicable Wave refresh. Route major or over-budget "
-                "refactoring to a separate future disposition."
+                "plan adaptations, and necessary support improvements. Complete the structured front-matter "
+                "assessment with its commit/hash-bound itemized baseline, common estimation unit, cumulative "
+                "capability refactoring allocations, deduplicated Wave refresh, explicit R <= 0.15 * P "
+                "calculation, re-estimation rationale, and major-refactor disposition. Route major or "
+                "over-budget refactoring to a separate future disposition."
             )
         else:
             sections.append(heading + "\n\nComplete this section before approval.")
@@ -532,6 +536,7 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
         if slice_.get("wave") == wave_id
     ]
     expected_decision_ids: list[str] = []
+    assessment_entries: list[tuple[str, dict[str, Any]]] = []
     for capability in contributing:
         capability_id = str(capability["id"])
         if capability_id == "CAP-00" and not capability_plan_path(root, capability_id).exists():
@@ -541,6 +546,7 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
             failures += 1
             continue
         capability_meta, _ = frontmatter(capability_plan_path(root, capability_id))
+        assessment_entries.append((capability_id, capability_meta))
         expected_decision_ids.extend(
             str(decision["id"])
             for decision in capability_meta.get("decisions", [])
@@ -548,6 +554,9 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
         )
         failures += int(bool(run_validator(root, "capability_plan_check.py", capability_id, approved, wave_id)))
         failures += int(bool(run_validator(root, "slice_plan_check.py", capability_id, approved, wave_id)))
+    for error in wave_initiation_rollup_errors(assessment_entries, wave_id):
+        print(f"ERROR: {error}", file=sys.stderr)
+        failures += 1
     if approved:
         wave_approval = wave.get("approval") or {}
         if wave_approval.get("status") != "APPROVED":
