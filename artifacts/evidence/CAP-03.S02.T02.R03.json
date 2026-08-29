@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S02.T02",
+  "commit": "b9868e5211aa012d7223caff5ab2eef2a7386de9",
+  "baseCommit": "a60d3e9704a4d59dd1d0310437bd6d486057500b",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S02.T02.R02.json",
+    "sha256": "4ba4303d7281f9a0a10d2464cc9beb535508a94edeea550dd554c83ab91cb08c",
+    "commit": "a60d3e9704a4d59dd1d0310437bd6d486057500b",
+    "reason": "Restores the already approved exact human-acceptance interaction omitted from the prior integrated desktop path, without expanding the approved T02 acceptance surface or reopening the independently closed R01 identity and idempotency findings."
+  },
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "artifacts/evidence/CAP-03.S02.T02.R02.json",
+    "artifacts/evidence/CAP-03.S02.T02.review-R02.json",
+    "artifacts/evidence/CAP-03.S02.T03.R02.json",
+    "artifacts/evidence/CAP-03.S02.T03.json",
+    "artifacts/evidence/CAP-03.S02.T03.review-R01.json",
+    "artifacts/evidence/CAP-03.S02.T03.review-R02.json",
+    "artifacts/evidence/ui-change/CAP-03.S02.T02.json",
+    "docs/architecture/research-intent-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0004.json",
+    "planning/governance-migrations/GOV-MAINT-0004.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0004.review-R02.json",
+    "planning/governance-migrations/GOV-MAINT-0004.review-R03.json",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/service/test_core_api.py",
+    "tests/service/test_research_intents.py",
+    "tools/core_api_contract.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": "npm run lint; npm test; npm run typecheck; npm run build in apps/desktop",
+      "exitCode": 0,
+      "result": "Desktop lint, strict TypeScript compilation, and the production build passed; all 12 Vitest files and 54 tests passed. Focused renderer tests prove exact acceptance request binding, explicit human confirmation and rationale, accepted-revision replacement, unsaved-edit denial, and incomplete-draft launch denial."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_research_intents tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 28 focused Core API and research-intent service tests passed, retaining authenticated actor, exact revision, idempotency, restart, concurrency, audit, scope-impact, acceptance, and policy boundary behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only; ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py",
+      "exitCode": 0,
+      "result": "The built desktop capability inventory contains CAP-03.S02.T02, the approved RO-UI-ACADEMIC-MINIMAL-1.3 reference remains unchanged, and token, route, workflow, and accessibility contracts passed, including 64 responsive accessibility cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 198edd87be8147087ac87f282c12d099fe1a943d --head b9868e5211aa012d7223caff5ab2eef2a7386de9",
+      "exitCode": 0,
+      "result": "The cumulative task UI gate passed against the task's immutable experience base. Its three governed UI paths remain bound to the approved RO-UI-ACADEMIC-MINIMAL-1.3 reference and the updated T02 UI-change contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; architecture_check.py; repository_structure_check.py",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed across 160 governed Python files; all 13 architecture areas and the repository structure contract passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; backlog_views.py --check; planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The canonical backlog, generated views, approved immutable W1 packet, dependency state, active campaign, and review site validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile service --affected-base a60d3e9704a4d59dd1d0310437bd6d486057500b --affected-head b9868e5211aa012d7223caff5ab2eef2a7386de9 --deferred-gate W1-exit --selection-only; build_manifest.py",
+      "exitCode": 0,
+      "result": "Git-derived selection conservatively inventories the desktop, service, contract, packaging, and foundation risk surface while deferring gate-bound performance to W1 exit. The build manifest binds exact candidate b9868e5 and truthfully reports only the protected historical witness as intentionally dirty."
+    },
+    {
+      "command": "git diff --check a60d3e9704a4d59dd1d0310437bd6d486057500b..b9868e5211aa012d7223caff5ab2eef2a7386de9; protected W1.A04.B00 witness SHA-256",
+      "exitCode": 0,
+      "result": "Patch hygiene passed. The protected historical witness artifacts/evidence/W1.A04.B00.json remains untracked and unstaged at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "IntentWorkspace now exposes an explicit human-acceptance route only for a complete saved revision: the user must enter a non-empty rationale and confirm the governing scope before the desktop sends the exact project root, revision number, content hash, confirmed=true, trimmed rationale, and an idempotency key through the generated acceptIntent client.",
+        "Unsaved edits make the displayed revision stale and disable acceptance; incomplete drafts can still be saved but cannot be accepted or launched. Successful acceptance replaces the current/history projection with the exact accepted revision and announces that downstream policy now uses that governing reference.",
+        "Corpus or novelty-scope edits retain the approved change-impact preview and affected workflow/output disclosures. Runtime launch remains denied rather than being inferred locally, so downstream effective-policy authority stays at the service boundary owned by T03."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Renderer tests cover the expected complete saved-revision acceptance path, exact generated-client request binding, accepted projection update, and user-visible governing-reference confirmation.",
+        "Boundary tests cover missing rationale, absent confirmation, unsaved changes, incomplete drafts, and service rejection without silently changing accepted authority; the 28 focused service/API cases retain stale, unconfirmed, scope-impact, actor, audit, restart, and idempotency denial behavior."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The product correction is bounded to IntentWorkspace, its focused renderer tests, desktop operator documentation, and the existing T02 UI-change evidence at exact candidate b9868e5211aa012d7223caff5ab2eef2a7386de9; no API, schema, migration, dependency, governed reference, provider, network, or external-service authority changed.",
+        "The strict-descendant range from R02 also contains already independently approved CAP-03.S02.T03 implementation/review history and independently approved GOV-MAINT-0004 workflow maintenance needed to reopen the completed dependency safely. Those append-only records are disclosed in changedFiles but are not newly claimed as T02 product scope.",
+        "The independently closed R01 actor-identity and idempotency findings remain unchanged and ancestral. This R03 review is focused on the previously omitted human acceptance interaction and its integration with those existing service contracts."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This medium-risk correction restores an approved governed desktop interaction over an existing authenticated public service contract. Credible failures are accepting an incomplete or locally modified revision, omitting explicit human confirmation or rationale, accepting a different revision/hash than displayed, silently enabling launch, losing downstream service-policy authority, breaking generated-client integration, or drifting from the approved experience reference. Verification therefore selects focused renderer and service/API tests, strict lint/type/build, built-frame capability inventory, reference/token/route/workflow/accessibility contracts, the cumulative UI change gate, quality/architecture/repository boundaries, planning authority, affected-selection truth, build provenance, patch hygiene, and protected-witness safety. No dependency, migration, persistence implementation, network provider, or public contract changed. The controlled visual-capture runner was attempted but did not complete and is not represented as passing; it remains mandatory at slice integration together with the T03 effective-policy path. Gate-bound performance and the complete cross-capability matrix remain at W1 exit.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "contracts:unit",
+      "service:unit"
+    ],
+    "deferred": [
+      "The controlled visual-regression capture runner did not complete during the exact-candidate attempt and is not claimed as passing. The deterministic approved-reference, token, route, workflow, accessibility, build, and interaction tests passed; full visual capture is mandatory at CAP-03.S02 slice integration.",
+      "CAP-03.S02.T03 must be revalidated after this reopened dependency so the accepted revision is proven end-to-end as the effective service-policy authority before slice approval.",
+      "Desktop performance and the complete repository/deployment happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows matrix remain mandatory at the applicable checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Independently review exact strict-descendant candidate b9868e5211aa012d7223caff5ab2eef2a7386de9. Confirm exact displayed-revision/hash/rationale/confirmation binding, unsaved and incomplete denial, accepted-projection replacement, downstream launch nonclaim, generated client/service alignment, cumulative approved-reference lineage, continued closure of both historical R01 findings, truthful disclosure of already-reviewed T03/GOV-MAINT-0004 ancestry, and the stated slice/W1 deferrals."
+  }
+}
