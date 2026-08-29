@@ -63,13 +63,18 @@ The generated TypeScript and Python contracts own immutable snapshots and
 produce deterministic RFC 8785-compatible JSON for the schema's restricted
 I-JSON subset. Python also returns the exact `sha256:` record identity. The v7
 SQLite adapter persists the original record, record hash, normalized query
-projection, retry-bound chain segment/checkpoint identity, atomic narrow audit
-binding, and atomic outbox fact. Lineage integrity compares event and project
-authority plus every normalized entity/relation field back to the canonical
-record, and cross-checks event, project, output revision, type, time, actor, and
-record digest against the narrow audit row. A
-canonicalization or hash change starts a new segment;
-it never rewrites historical bytes.
+projection, versioned chain segment/checkpoint identity, atomic narrow audit
+binding, and atomic outbox fact. The historical `rfc8785.sha256.v1` segment
+retains its exact record-and-sequence formula. New writes use the distinct
+`rfc8785.sha256.v2` segment, whose chain additionally binds the retry fingerprint
+and a digest of every immutable outbox-authority field; each segment starts at
+sequence one and is verified under only its declared formula. Lineage integrity
+compares event and project authority plus every normalized entity/relation field
+back to the canonical record, and cross-checks event, project, output revision,
+type, time, actor identity/type, trace identity, and record digest against the
+narrow audit row. Canonicalization, hash material, or algorithm changes always
+start a declared new segment; they never rewrite or reinterpret historical
+bytes.
 
 The two runtimes and Draft 2020-12 schema accept only canonical millisecond UTC
 instants from `0001-01-01T00:00:00.000Z` through

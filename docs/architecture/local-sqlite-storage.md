@@ -83,8 +83,12 @@ Every row in `schema_metadata`, `projects`, `aggregate_identities`,
 `settings`, and `schema_migrations` deny UPDATE and DELETE in fingerprinted DDL. New revisions and
 setting values are inserts. `object_records` may advance availability and
 verification state, `object_envelope_upgrades` may advance the durable verified
-copy-on-write recovery phases, and `outbox_events` may advance delivery state;
-these are the only intentionally mutable current-profile tables.
+copy-on-write recovery phases, and `outbox_events` may advance delivery state.
+The outbox's identity, project, revision, type, occurrence/scheduling time,
+idempotency key, and record digest remain immutable transaction authority even
+though the row carries mutable dispatch state; aggregate replay and lineage
+verification fail closed if any of those authority fields diverge. These are the
+only intentionally mutable current-profile tables.
 
 ## Evolution and recovery boundary
 
@@ -142,20 +146,25 @@ transitions remain a later worker concern.
 
 Schema v7 adds the portable provenance ledger beside the existing narrow audit
 seam. Each aggregate revision records canonical RFC 8785-compatible event bytes,
-the exact record hash, normalized entity/relation projections, an ordered segment
-hash that also binds the retry fingerprint, a checkpoint, the narrow audit fact,
-and the outbox fact in the same
-transaction. Exact retry replays the original revision and ledger record. The
+the exact record hash, normalized entity/relation projections, a versioned
+ordered segment hash, a checkpoint, the narrow audit fact, and the outbox fact
+in the same transaction. Historical `rfc8785.sha256.v1` rows retain their exact
+record-and-sequence chain. The distinct v2 segment binds the retry fingerprint
+and an immutable-outbox-authority digest without invalidating v1 history. Exact
+retry verifies the canonical ledger, checkpoint, narrow actor/trace audit, full
+outbox authority, and output revision before returning the original projection.
+The
 v6-to-v7 migration copies earlier narrow rows into an explicitly
 `legacy-narrow` bridge without inventing portable entities, activities, agents,
 or relations. Migration history is a contiguous hash-verified suffix of the
 revision registry, so a database initialized fresh at any supported schema does
 not fabricate migrations that never ran and remains current after later upgrades.
 Bounded lineage reads verify canonical event/project identity, normalized
-entities and relations, retry-bound checkpoint chains, and the atomic narrow
-audit binding; they return production activity and responsible-agent identities
-and label missing references or mismatches `integrity-review` while retaining
-read-only inspection.
+entities and relations, version-dispatched checkpoint chains, the immutable
+outbox authority, and the atomic narrow actor/trace binding; they return
+production activity and responsible-agent identities and label missing
+references or mismatches `integrity-review` while retaining read-only
+inspection.
 
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file

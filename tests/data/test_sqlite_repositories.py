@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sqlite3
@@ -201,7 +202,14 @@ class SqliteRepositoryTests(unittest.TestCase):
         self.assertNotIn(first.revision_id, tuple(item.revision_id for item in lineage.items))
 
     def test_authority_projection_corruption_enters_integrity_review(self) -> None:
-        cases = ("event-identity", "project-authority", "narrow-audit", "idempotency")
+        cases = (
+            "event-identity",
+            "project-authority",
+            "narrow-audit",
+            "actor-type",
+            "trace-id",
+            "idempotency",
+        )
         for case in cases:
             with self.subTest(case=case):
                 case_root = self.root / case
@@ -251,13 +259,24 @@ class SqliteRepositoryTests(unittest.TestCase):
                         ):
                             for statement in _immutable_triggers(table, table.replace("_", " ") + " are append-only"):
                                 raw.execute(statement)
-                    elif case == "narrow-audit":
+                    elif case in {"narrow-audit", "actor-type", "trace-id"}:
                         raw.execute("DROP TRIGGER provenance_events_no_update")
                         raw.execute("DROP TRIGGER provenance_events_no_delete")
-                        raw.execute(
-                            "UPDATE provenance_events SET record_sha256=? WHERE revision_id=?",
-                            ("f" * 64, revision.revision_id),
-                        )
+                        if case == "narrow-audit":
+                            raw.execute(
+                                "UPDATE provenance_events SET record_sha256=? WHERE revision_id=?",
+                                ("f" * 64, revision.revision_id),
+                            )
+                        elif case == "actor-type":
+                            raw.execute(
+                                "UPDATE provenance_events SET actor_type='model' WHERE revision_id=?",
+                                (revision.revision_id,),
+                            )
+                        else:
+                            raw.execute(
+                                "UPDATE provenance_events SET trace_id=? WHERE revision_id=?",
+                                ("f" * 32, revision.revision_id),
+                            )
                         for statement in _immutable_triggers("provenance_events", "provenance events are append-only"):
                             raw.execute(statement)
                     else:
@@ -286,6 +305,123 @@ class SqliteRepositoryTests(unittest.TestCase):
                         *lineage.missing_revision_ids,
                     },
                 )
+
+    def test_v1_chain_remains_verified_when_v2_segment_is_appended_after_restart(self) -> None:
+        with self.factory() as unit:
+            first = unit.aggregates.append(draft(1), event(0), expected_revision=None)
+            unit.commit()
+
+        raw = sqlite3.connect(self.database, autocommit=True)
+        try:
+            record_sha256, sequence = raw.execute(
+                "SELECT record_sha256, sequence FROM provenance_ledger_events WHERE event_id=?",
+                (event(0).event_id,),
+            ).fetchone()
+            v1_chain = "sha256:" + hashlib.sha256(f"genesis\n{record_sha256}\n{sequence}".encode("ascii")).hexdigest()
+            for table in ("provenance_ledger_events", "provenance_ledger_checkpoints"):
+                raw.execute(f"DROP TRIGGER {table}_no_update")
+                raw.execute(f"DROP TRIGGER {table}_no_delete")
+            raw.execute(
+                """
+                UPDATE provenance_ledger_events
+                   SET segment_key='rfc8785.sha256.v1',
+                       previous_chain_sha256=NULL,
+                       chain_sha256=?
+                 WHERE event_id=?
+                """,
+                (v1_chain, event(0).event_id),
+            )
+            raw.execute(
+                """
+                UPDATE provenance_ledger_checkpoints
+                   SET segment_key='rfc8785.sha256.v1', chain_sha256=?
+                 WHERE event_id=?
+                """,
+                (v1_chain, event(0).event_id),
+            )
+            for table in ("provenance_ledger_events", "provenance_ledger_checkpoints"):
+                for statement in _immutable_triggers(table, table.replace("_", " ") + " are append-only"):
+                    raw.execute(statement)
+        finally:
+            raw.close()
+
+        restarted = create_sqlite_unit_of_work_factory(self.database, PROJECT_ID)
+        with restarted() as unit:
+            second = unit.aggregates.append(draft(2), event(1), expected_revision=0)
+            unit.commit()
+
+        lineage = sqlite_provenance_ledger_repository(self.root, PROJECT_ID).lineage(
+            revision_id=second.revision_id,
+            direction="ancestors",
+            cursor=0,
+            page_size=10,
+            max_depth=4,
+        )
+        self.assertEqual("verified", lineage.integrity_state)
+        self.assertEqual((second.revision_id, first.revision_id), tuple(item.revision_id for item in lineage.items))
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            self.assertEqual(
+                [("rfc8785.sha256.v1", 1), ("rfc8785.sha256.v2", 1)],
+                [
+                    tuple(row)
+                    for row in connection.execute(
+                        "SELECT segment_key, sequence FROM provenance_ledger_events ORDER BY occurred_at"
+                    ).fetchall()
+                ],
+            )
+        finally:
+            connection.close()
+
+    def test_outbox_authority_corruption_cannot_replay_or_remain_verified(self) -> None:
+        cases = {
+            "outbox-id": ("outbox_id", "01890f6e-6a40-7cc5-98b7-000000000999"),
+            "revision-id": ("revision_id", "second-revision"),
+            "event-type": ("event_type", "org.research-observatory.record.corrupted.v1"),
+            "occurred-at": ("occurred_at", "2026-08-18T01:00:59.000Z"),
+            "available-at": ("available_at", "2026-08-18T01:02:00.000Z"),
+            "idempotency-key": ("idempotency_key", "changed-command-key"),
+            "record-sha256": ("record_sha256", "f" * 64),
+        }
+        for case, (column, replacement) in cases.items():
+            with self.subTest(case=case):
+                case_root = self.root / f"outbox-{case}"
+                case_database = case_root / "state" / "project.sqlite3"
+                case_database.parent.mkdir(parents=True)
+                initialize_database(case_database, project_id=PROJECT_ID, project_created_at=CREATED_AT)
+                case_factory = create_sqlite_unit_of_work_factory(case_database, PROJECT_ID)
+                first_event = event(0, key="first-command-key")
+                with case_factory() as unit:
+                    first = unit.aggregates.append(draft(1), first_event, expected_revision=None)
+                    unit.commit()
+                with case_factory() as unit:
+                    second = unit.aggregates.append(
+                        draft(2, aggregate_id="01890f6e-6a40-7cc5-98b7-000000000202"),
+                        event(1, key="second-command-key"),
+                        expected_revision=None,
+                    )
+                    unit.commit()
+
+                raw = sqlite3.connect(case_database, autocommit=True)
+                try:
+                    value = second.revision_id if replacement == "second-revision" else replacement
+                    raw.execute(
+                        f"UPDATE outbox_events SET {column}=? WHERE idempotency_key='first-command-key'",
+                        (value,),
+                    )
+                finally:
+                    raw.close()
+
+                with case_factory() as unit, self.assertRaises(RepositoryProblem):
+                    unit.aggregates.append(draft(1), first_event, expected_revision=None)
+                lineage = sqlite_provenance_ledger_repository(case_root, PROJECT_ID).lineage(
+                    revision_id=first.revision_id,
+                    direction="ancestors",
+                    cursor=0,
+                    page_size=10,
+                    max_depth=4,
+                )
+                self.assertEqual("integrity-review", lineage.integrity_state)
 
     def test_invalid_actor_cannot_commit_canonical_output_without_provenance(self) -> None:
         invalid = replace(event(0), actor_id="legacy.actor")
@@ -467,6 +603,12 @@ class SqliteRepositoryTests(unittest.TestCase):
         changed_events = (
             replace(command_event, available_at="2026-08-09T12:00:03.000Z"),
             replace(command_event, outbox_id="01890f6e-6a40-7cc5-98b7-000000000299"),
+            replace(command_event, event_id="01890f6e-6a40-7cc5-98b7-000000000399"),
+            replace(command_event, event_type="record.corrupted"),
+            replace(command_event, occurred_at="2026-08-09T12:00:04.000Z"),
+            replace(command_event, trace_id="f" * 32),
+            replace(command_event, actor_type="model"),
+            replace(command_event, actor_id="01890f6e-6a40-7cc5-98b7-000000000499"),
         )
         for changed_event in changed_events:
             with (

@@ -961,7 +961,59 @@ def _command_fingerprint(
     return hashlib.sha256(payload).hexdigest()
 
 
-_PROVENANCE_SEGMENT_KEY = "rfc8785.sha256.v1"
+_PROVENANCE_SEGMENT_V1 = "rfc8785.sha256.v1"
+_PROVENANCE_SEGMENT_V2 = "rfc8785.sha256.v2"
+_PROVENANCE_WRITE_SEGMENT = _PROVENANCE_SEGMENT_V2
+
+
+def _outbox_authority_sha256(
+    *,
+    outbox_id: str,
+    project_id: str,
+    revision_id: str,
+    event_type: str,
+    occurred_at: str,
+    available_at: str,
+    idempotency_key: str,
+    record_sha256: str,
+) -> str:
+    document = {
+        "availableAt": available_at,
+        "eventType": event_type,
+        "idempotencyKey": idempotency_key,
+        "occurredAt": occurred_at,
+        "outboxId": outbox_id,
+        "projectId": project_id,
+        "recordSha256": record_sha256,
+        "revisionId": revision_id,
+    }
+    payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("ascii")
+    return f"sha256:{hashlib.sha256(payload).hexdigest()}"
+
+
+def _provenance_chain_sha256(
+    *,
+    segment_key: str,
+    previous_chain_sha256: str | None,
+    record_sha256: str,
+    idempotency_sha256: str,
+    outbox_authority_sha256: str,
+    sequence: int,
+) -> str:
+    fields: tuple[str, ...]
+    if segment_key == _PROVENANCE_SEGMENT_V1:
+        fields = (previous_chain_sha256 or "genesis", record_sha256, str(sequence))
+    elif segment_key == _PROVENANCE_SEGMENT_V2:
+        fields = (
+            previous_chain_sha256 or "genesis",
+            record_sha256,
+            idempotency_sha256,
+            outbox_authority_sha256,
+            str(sequence),
+        )
+    else:
+        raise ValueError("provenance segment is unsupported")
+    return f"sha256:{hashlib.sha256(chr(10).join(fields).encode('ascii')).hexdigest()}"
 
 
 def _record_aggregate_provenance(
@@ -986,14 +1038,29 @@ def _record_aggregate_provenance(
          ORDER BY sequence DESC
          LIMIT 1
         """,
-        (project_id, _PROVENANCE_SEGMENT_KEY),
+        (project_id, _PROVENANCE_WRITE_SEGMENT),
     ).fetchone()
     sequence = 1 if previous_row is None else int(previous_row[0]) + 1
     previous_chain = None if previous_row is None else str(previous_row[1])
-    chain_material = (f"{previous_chain or 'genesis'}\n{record_sha256}\n{idempotency_sha256}\n{sequence}").encode(
-        "ascii"
+    digest = record_sha256.removeprefix("sha256:")
+    outbox_authority_sha256 = _outbox_authority_sha256(
+        outbox_id=event.outbox_id,
+        project_id=project_id,
+        revision_id=revision.revision_id,
+        event_type=str(decoded["type"]),
+        occurred_at=event.occurred_at,
+        available_at=event.available_at,
+        idempotency_key=event.idempotency_key,
+        record_sha256=digest,
     )
-    chain_sha256 = f"sha256:{hashlib.sha256(chain_material).hexdigest()}"
+    chain_sha256 = _provenance_chain_sha256(
+        segment_key=_PROVENANCE_WRITE_SEGMENT,
+        previous_chain_sha256=previous_chain,
+        record_sha256=record_sha256,
+        idempotency_sha256=idempotency_sha256,
+        outbox_authority_sha256=outbox_authority_sha256,
+        sequence=sequence,
+    )
     data = cast(dict[str, Any], decoded["data"])
     activity = cast(dict[str, Any], data["activity"])
     connection.execute(
@@ -1008,7 +1075,7 @@ def _record_aggregate_provenance(
         (
             decoded["id"],
             project_id,
-            _PROVENANCE_SEGMENT_KEY,
+            _PROVENANCE_WRITE_SEGMENT,
             sequence,
             decoded["subject"],
             decoded["type"],
@@ -1084,13 +1151,12 @@ def _record_aggregate_provenance(
             event.outbox_id,
             event.event_id,
             project_id,
-            _PROVENANCE_SEGMENT_KEY,
+            _PROVENANCE_WRITE_SEGMENT,
             sequence,
             chain_sha256,
             event.occurred_at,
         ),
     )
-    digest = record_sha256.removeprefix("sha256:")
     connection.execute(
         """
         INSERT INTO provenance_events (
@@ -1148,6 +1214,26 @@ def _projection(row: Any) -> AggregateRevision:
         rights_status=cast(RightsStatus, values[11]),
         object_sha256=None if values[12] is None else str(values[12]),
     )
+
+
+def _projection_content_sha256(revision: AggregateRevision) -> str:
+    document = {
+        "aggregateId": revision.aggregate_id,
+        "aggregateKind": revision.aggregate_kind,
+        "contractVersion": revision.contract_version,
+        "createdAt": revision.created_at,
+        "displayLabelNormalized": revision.display_label_normalized,
+        "displayLabelObserved": revision.display_label_observed,
+        "knowledgeStatus": revision.knowledge_status,
+        "modifiedAt": revision.modified_at,
+        "objectSha256": revision.object_sha256,
+        "projectId": revision.project_id,
+        "revision": revision.revision,
+        "revisionId": revision.revision_id,
+        "rightsStatus": revision.rights_status,
+    }
+    payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return f"sha256:{hashlib.sha256(payload).hexdigest()}"
 
 
 class _SqliteAggregateRepository:
@@ -1236,7 +1322,7 @@ class _SqliteAggregateRepository:
             object_sha256=draft.object_sha256,
         )
         fingerprint = _command_fingerprint(state.project_id, projection, event, expected_revision)
-        replay = self._replay(event.idempotency_key, fingerprint)
+        replay = self._replay(event, fingerprint)
         if replay is not None:
             return replay
 
@@ -1323,33 +1409,109 @@ class _SqliteAggregateRepository:
             return projection
         raise _repository_failure()
 
-    def _replay(self, idempotency_key: str, fingerprint: str) -> AggregateRevision | None:
+    def _replay(self, event: AtomicRepositoryEvent, fingerprint: str) -> AggregateRevision | None:
         state = self._state()
         try:
             row = state.connection.execute(
                 """
-                SELECT outbox.record_sha256, outbox.revision_id, ledger.idempotency_sha256
+                SELECT outbox.outbox_id, outbox.project_id, outbox.revision_id,
+                       outbox.event_type, outbox.occurred_at, outbox.available_at,
+                       outbox.idempotency_key, outbox.record_sha256,
+                       checkpoint.event_id, checkpoint.segment_key,
+                       ledger.record_json, ledger.record_sha256, ledger.idempotency_sha256
                   FROM outbox_events AS outbox
+                  LEFT JOIN provenance_ledger_checkpoints AS checkpoint
+                    ON checkpoint.checkpoint_id=outbox.outbox_id
+                   AND checkpoint.project_id=outbox.project_id
                   LEFT JOIN provenance_ledger_events AS ledger
-                    ON ledger.project_id=outbox.project_id
-                   AND substr(ledger.record_sha256, 8)=outbox.record_sha256
+                    ON ledger.event_id=checkpoint.event_id
+                   AND ledger.project_id=checkpoint.project_id
+                   AND ledger.segment_key=checkpoint.segment_key
                  WHERE outbox.project_id=? AND outbox.idempotency_key=?
                 """,
-                (state.project_id, idempotency_key),
+                (state.project_id, event.idempotency_key),
             ).fetchone()
         except sqlite3.Error:
             self._mark_failed()
         else:
             if row is None:
                 return None
-            if row[2] is None:
+            if any(row[index] is None for index in (2, 8, 9, 10, 11, 12)):
                 self._mark_failed()
                 raise RepositoryTransactionFailed("idempotency record has no canonical provenance")
-            if str(row[2]) != fingerprint:
+            try:
+                decoded = decode_provenance_event(json.loads(str(row[10])))
+                if decoded is None:
+                    raise ValueError("canonical provenance is invalid")
+                record_json = canonical_provenance_json(decoded)
+                record_sha256 = provenance_record_sha256(decoded)
+                data = cast(dict[str, Any], decoded["data"])
+                outputs = cast(tuple[dict[str, Any], ...], data["outputs"])
+                agent = cast(dict[str, Any], data["agent"])
+                trace_id = str(decoded["traceparent"]).split("-")[1]
+            except TypeError, ValueError, json.JSONDecodeError, IndexError:
+                self._mark_failed()
+                raise RepositoryTransactionFailed("idempotency canonical provenance is invalid") from None
+            if len(outputs) != 1:
+                self._mark_failed()
+                raise RepositoryTransactionFailed("idempotency output authority is ambiguous")
+            actor_type = {"human": "human", "system": "system", "software": "worker", "model": "model"}.get(
+                str(agent["agentType"])
+            )
+            digest = record_sha256.removeprefix("sha256:")
+            narrow = state.connection.execute(
+                """
+                SELECT project_id, revision_id, event_type, occurred_at,
+                       trace_id, actor_type, actor_id, record_sha256
+                  FROM provenance_events
+                 WHERE event_id=?
+                """,
+                (str(decoded["id"]),),
+            ).fetchone()
+            if (
+                actor_type is None
+                or str(row[1]) != state.project_id
+                or str(row[2]) != str(outputs[0]["revisionId"])
+                or str(row[3]) != str(decoded["type"])
+                or str(row[4]) != str(decoded["time"])
+                or str(row[7]) != digest
+                or str(row[8]) != str(decoded["id"])
+                or str(row[9]) not in {_PROVENANCE_SEGMENT_V1, _PROVENANCE_SEGMENT_V2}
+                or str(row[10]) != record_json
+                or str(row[11]) != record_sha256
+                or narrow is None
+                or tuple(narrow)
+                != (
+                    state.project_id,
+                    outputs[0]["revisionId"],
+                    decoded["type"],
+                    decoded["time"],
+                    trace_id,
+                    actor_type,
+                    decoded["actorid"],
+                    digest,
+                )
+                or _ledger_integrity_state(state.connection, state.project_id) != "verified"
+            ):
+                self._mark_failed()
+                raise RepositoryTransactionFailed("idempotency transaction binding differs")
+            if str(row[12]) != fingerprint:
                 self._mark_failed()
                 raise RepositoryConflict("idempotency key was used for a different command")
-            replay = self._by_revision_id(str(row[1]))
-            if replay is None:
+            if (
+                str(row[0]) != event.outbox_id
+                or str(row[4]) != event.occurred_at
+                or str(row[5]) != event.available_at
+                or str(row[6]) != event.idempotency_key
+                or str(decoded["id"]) != event.event_id
+                or str(decoded["actorid"]) != event.actor_id
+                or actor_type != event.actor_type
+                or trace_id != event.trace_id
+            ):
+                self._mark_failed()
+                raise RepositoryConflict("idempotency command authority differs")
+            replay = self._by_revision_id(str(row[2]))
+            if replay is None or _projection_content_sha256(replay) != str(outputs[0]["contentHash"]):
                 self._mark_failed()
                 raise RepositoryTransactionFailed("idempotency record is incomplete")
             return replay
@@ -1481,16 +1643,14 @@ def create_sqlite_unit_of_work_factory(database: Path, project_id: str) -> UnitO
 def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) -> str:
     rows = connection.execute(
         """
-        SELECT event_id, project_id, sequence, record_json, record_sha256,
+        SELECT event_id, project_id, segment_key, sequence, record_json, record_sha256,
                idempotency_sha256, previous_chain_sha256, chain_sha256, subject, event_type,
                occurred_at, correlation_id, causation_id, activity_id,
                activity_type, activity_status, agent_id, sensitivity,
                retention_class
           FROM provenance_ledger_events
-         WHERE segment_key=?
-         ORDER BY sequence
+         ORDER BY segment_key, sequence
         """,
-        (_PROVENANCE_SEGMENT_KEY,),
     ).fetchall()
     entities_by_event: dict[str, set[tuple[Any, ...]]] = {}
     for candidate in connection.execute(
@@ -1515,47 +1675,74 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
         if str(candidate[1]) != project_id:
             return "integrity-review"
         relations_by_event.setdefault(str(candidate[0]), set()).add(tuple(candidate[2:]))
-    checkpoints: dict[tuple[str, int], str] = {}
+    checkpoints: dict[str, tuple[str, str, str, int, str]] = {}
     for candidate in connection.execute(
         """
-        SELECT event_id, project_id, sequence, chain_sha256
+        SELECT checkpoint_id, event_id, project_id, segment_key, sequence, chain_sha256
           FROM provenance_ledger_checkpoints
-         WHERE segment_key=?
-        """,
-        (_PROVENANCE_SEGMENT_KEY,),
+        """
     ):
-        if str(candidate[1]) != project_id:
+        event_id = str(candidate[1])
+        if str(candidate[2]) != project_id or event_id in checkpoints:
             return "integrity-review"
-        checkpoints[(str(candidate[0]), int(candidate[2]))] = str(candidate[3])
+        checkpoints[event_id] = (
+            str(candidate[0]),
+            str(candidate[2]),
+            str(candidate[3]),
+            int(candidate[4]),
+            str(candidate[5]),
+        )
     narrow_audits = {
         str(candidate[0]): tuple(candidate[1:])
         for candidate in connection.execute(
             """
             SELECT event_id, project_id, revision_id, event_type,
-                   occurred_at, actor_id, record_sha256
+                   occurred_at, trace_id, actor_type, actor_id, record_sha256
               FROM provenance_events
              WHERE revision_id IS NOT NULL
                AND event_type LIKE 'org.research-observatory.%.revision-recorded.v1'
             """
         )
     }
-    previous: str | None = None
-    for expected_sequence, row in enumerate(rows, start=1):
+    outboxes = {
+        str(candidate[0]): tuple(candidate[1:])
+        for candidate in connection.execute(
+            """
+            SELECT outbox_id, project_id, revision_id, event_type, occurred_at,
+                   available_at, idempotency_key, record_sha256
+              FROM outbox_events
+             WHERE revision_id IS NOT NULL
+            """
+        )
+    }
+    previous_by_segment: dict[str, str] = {}
+    sequence_by_segment: dict[str, int] = {}
+    for row in rows:
         try:
-            decoded = decode_provenance_event(json.loads(str(row[3])))
+            decoded = decode_provenance_event(json.loads(str(row[4])))
             if decoded is None:
                 return "integrity-review"
             record_json = canonical_provenance_json(decoded)
             record_sha256 = provenance_record_sha256(decoded)
-        except TypeError, ValueError, json.JSONDecodeError:
+            trace_id = str(decoded["traceparent"]).split("-")[1]
+        except TypeError, ValueError, json.JSONDecodeError, IndexError:
             return "integrity-review"
+        segment_key = str(row[2])
+        if segment_key not in {_PROVENANCE_SEGMENT_V1, _PROVENANCE_SEGMENT_V2}:
+            return "integrity-review"
+        expected_sequence = sequence_by_segment.get(segment_key, 0) + 1
+        previous = previous_by_segment.get(segment_key)
         data = cast(dict[str, Any], decoded["data"])
         activity = cast(dict[str, Any], data["activity"])
+        agent = cast(dict[str, Any], data["agent"])
+        actor_type = {"human": "human", "system": "system", "software": "worker", "model": "model"}.get(
+            str(agent["agentType"])
+        )
         if (
             str(row[0]) != decoded["id"]
             or str(row[1]) != project_id
             or str(row[1]) != decoded["projectid"]
-            or tuple(row[8:])
+            or tuple(row[9:])
             != (
                 decoded["subject"],
                 decoded["type"],
@@ -1572,7 +1759,7 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
         ):
             return "integrity-review"
         outputs = cast(tuple[dict[str, Any], ...], data["outputs"])
-        if len(outputs) != 1:
+        if len(outputs) != 1 or actor_type is None:
             return "integrity-review"
         narrow_audit = narrow_audits.get(str(row[0]))
         if narrow_audit != (
@@ -1580,6 +1767,8 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
             outputs[0]["revisionId"],
             decoded["type"],
             decoded["time"],
+            trace_id,
+            actor_type,
             decoded["actorid"],
             record_sha256.removeprefix("sha256:"),
         ):
@@ -1620,28 +1809,60 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
         actual_relations = relations_by_event.get(str(row[0]), set())
         if actual_relations != expected_relations:
             return "integrity-review"
-        idempotency_sha256 = str(row[5])
-        chain_material = (
-            f"{previous or 'genesis'}\n{record_sha256}\n{idempotency_sha256}\n{expected_sequence}"
-        ).encode("ascii")
-        chain_sha256 = f"sha256:{hashlib.sha256(chain_material).hexdigest()}"
-        if (
-            int(row[2]) != expected_sequence
-            or str(row[3]) != record_json
-            or str(row[4]) != record_sha256
-            or (None if row[6] is None else str(row[6])) != previous
-            or str(row[7]) != chain_sha256
+        checkpoint = checkpoints.get(str(row[0]))
+        if checkpoint is None:
+            return "integrity-review"
+        outbox = outboxes.get(checkpoint[0])
+        if outbox is None or (str(outbox[0]), str(outbox[1]), str(outbox[2]), str(outbox[3]), str(outbox[6])) != (
+            project_id,
+            str(outputs[0]["revisionId"]),
+            str(decoded["type"]),
+            str(decoded["time"]),
+            record_sha256.removeprefix("sha256:"),
         ):
             return "integrity-review"
-        if checkpoints.get((str(row[0]), expected_sequence)) != chain_sha256:
+        outbox_authority_sha256 = _outbox_authority_sha256(
+            outbox_id=checkpoint[0],
+            project_id=str(outbox[0]),
+            revision_id=str(outbox[1]),
+            event_type=str(outbox[2]),
+            occurred_at=str(outbox[3]),
+            available_at=str(outbox[4]),
+            idempotency_key=str(outbox[5]),
+            record_sha256=str(outbox[6]),
+        )
+        idempotency_sha256 = str(row[6])
+        try:
+            chain_sha256 = _provenance_chain_sha256(
+                segment_key=segment_key,
+                previous_chain_sha256=previous,
+                record_sha256=record_sha256,
+                idempotency_sha256=idempotency_sha256,
+                outbox_authority_sha256=outbox_authority_sha256,
+                sequence=expected_sequence,
+            )
+        except ValueError:
             return "integrity-review"
-        previous = chain_sha256
+        if (
+            int(row[3]) != expected_sequence
+            or str(row[4]) != record_json
+            or str(row[5]) != record_sha256
+            or (None if row[7] is None else str(row[7])) != previous
+            or str(row[8]) != chain_sha256
+        ):
+            return "integrity-review"
+        if checkpoint != (checkpoint[0], project_id, segment_key, expected_sequence, chain_sha256):
+            return "integrity-review"
+        previous_by_segment[segment_key] = chain_sha256
+        sequence_by_segment[segment_key] = expected_sequence
     event_ids = {str(row[0]) for row in rows}
+    checkpoint_ids = {checkpoint[0] for checkpoint in checkpoints.values()}
     return (
         "verified"
         if (
             len(checkpoints) == len(rows)
-            and set(checkpoints) == {(str(row[0]), int(row[2])) for row in rows}
+            and set(checkpoints) == event_ids
+            and set(outboxes) == checkpoint_ids
             and set(entities_by_event) == event_ids
             and set(relations_by_event) == event_ids
             and set(narrow_audits) == event_ids
