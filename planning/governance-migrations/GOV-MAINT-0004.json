@@ -22,7 +22,7 @@
   },
   "authority": "This maintenance preserves the already approved W1, task, slice, experience-reference, and release-gate authority. It does not reopen any task by itself, approve product work, change acceptance criteria, expand experience scope, authorize a release or external effect, cross a Wave boundary, invalidate an independently approved slice, or rewrite prior evidence, submissions, reviews, findings, closures, or recovery history.",
   "intendedDelta": {
-    "implementation": "Add an explicit --cascade-dependents option to taskctl reopen. Traverse both task dependencies and slice-level task dependencies. When the requested prerequisite and every active/completed transitive dependent are inside the same unreleased Wave and no dependent is active, frozen in REVIEW, or inside an independently approved slice, taskctl atomically reopens only the requested prerequisite and demotes completed dependents to NOT_STARTED for later dependency-ordered claim and revalidation. Historical ownership, evidence, review_control attempts, findings, closures, and the latest review projection remain intact; the dependent lease, candidate Git identity, completion, blocker, cancellation, and verification projection are cleared.",
+    "implementation": "Add an explicit --cascade-dependents option to taskctl reopen. Traverse both task dependencies and slice-level task dependencies. When the requested prerequisite and every active/completed transitive dependent are inside the same unreleased Wave and no dependent is active, frozen in REVIEW, or inside an independently approved slice, taskctl atomically reopens only the requested prerequisite and demotes completed dependents to NOT_STARTED for later dependency-ordered claim and revalidation. Historical ownership, branch/base/worktree identity, evidence, review_control attempts, findings, closures, and the latest review projection remain intact; only the dependent lease, completion, blocker, cancellation, and verification projection are cleared. Initial evidence remains validated against the immutable first controlled submission's base commit so a later lawful claim can record a new live base without weakening historical evidence validation.",
     "failClosed": [
       "Ordinary reopen without --cascade-dependents rejects any active or completed dependent and leaves the ledger unchanged.",
       "Cascade rejects IN_PROGRESS or REVIEW dependents rather than stealing a lease or invalidating a frozen candidate.",
@@ -33,6 +33,7 @@
     "changedPaths": [
       "planning/governance-migrations/GOV-MAINT-0004.json",
       "planning/governance-migrations/GOV-MAINT-0004.review-R01.json",
+      "planning/governance-migrations/GOV-MAINT-0004.review-R02.json",
       "tests/foundation/test_taskctl_workflow.py",
       "tools/taskctl.py"
     ]
@@ -63,12 +64,12 @@
     ]
   },
   "remediation": {
-    "priorReviewId": "GOV-MAINT-0004.R01",
+    "priorReviewId": "GOV-MAINT-0004.R02",
     "resolvedFindingIds": [
       "GOV-MAINT-0004-R01-F01",
       "GOV-MAINT-0004-R01-F02"
     ],
-    "resolution": "Preserve the dependent task owner required by immutable controlled-review authorship; clear only its live lease/candidate/completion projections. Traverse both task dependencies and each candidate task's slice-level dependencies. The immutable e5f80b5 T02/T03 boundary now passes the real save_validated semantic persistence path with both T03 review attempts intact, and a separate slice-edge fixture proves the expanded graph walk."
+    "resolution": "Preserve the dependent task owner and branch/base/worktree identity required by immutable controlled-review evidence. Validate the first evidence attachment against its frozen first submission base rather than a later live claim base. Traverse both task dependencies and each candidate task's slice-level dependencies. The immutable e5f80b5 T02/T03 boundary is exercised through repository-bound validation and an actual temporary backlog replacement with both T03 review attempts intact, then revalidated after a simulated later claim base."
   },
   "rollback": "Do not use the cascade transition or integrate this candidate if independent review finds a blocking defect. Revert only the strict-descendant maintenance candidate to e5f80b5; CAP-03.S02.T02 and CAP-03.S02.T03 remain DONE, the product tree remains unchanged, and W1 remains ACTIVE at the same unreleased slice boundary.",
   "reviewAttempts": [
@@ -77,6 +78,12 @@
       "reviewedCommit": "59b67d52b8075b9fcae29051184cae1c89080aa6",
       "disposition": "CHANGES_REQUESTED",
       "path": "planning/governance-migrations/GOV-MAINT-0004.review-R01.json"
+    },
+    {
+      "reviewId": "GOV-MAINT-0004.R02",
+      "reviewedCommit": "b4a83f849820223541a20495e89b1477acdb968e",
+      "disposition": "CHANGES_REQUESTED",
+      "path": "planning/governance-migrations/GOV-MAINT-0004.review-R02.json"
     }
   ],
   "review": null

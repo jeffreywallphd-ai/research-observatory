@@ -3018,7 +3018,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("IN_PROGRESS", prerequisite["status"])
         self.assertEqual("NOT_STARTED", dependent["status"])
         self.assertEqual("alice", dependent["owner"])
-        self.assertIsNone(dependent["base_sha"])
+        self.assertEqual("a" * 40, dependent["base_sha"])
         self.assertIsNone(dependent["completed_at"])
         self.assertIsNone(dependent["verification_state"])
         self.assertEqual(preserved_evidence, dependent["evidence"])
@@ -3075,35 +3075,64 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("NOT_STARTED", downstream_slice["status"])
 
     def test_canonical_cascade_passes_real_semantic_persistence(self) -> None:
-        data = taskctl_module.historical_backlog_document(
-            REPO,
-            "e5f80b52b4148506362abe989221a00fa5adbb51",
-        )
-        self.assertIsNotNone(data)
-        assert data is not None
-        context = taskctl_module.index_backlog(data)
-        with (
-            patch("taskctl.lease_is_active", return_value=True),
-            patch("taskctl.governance_control_generation_errors", return_value=[]),
-            patch("taskctl.save_atomic") as save,
-        ):
-            command_reopen(
-                Namespace(
-                    task="CAP-03.S02.T02",
-                    agent="codex",
-                    reason="restore approved human intent acceptance path",
-                    lease_hours=8,
-                    cascade_dependents=True,
-                    file=str(REPO / "planning" / "backlog.yaml"),
-                ),
-                *context,
+        predecessor = "e5f80b52b4148506362abe989221a00fa5adbb51"
+        payload = taskctl_module.git_blob(REPO, predecessor, "planning/backlog.yaml")
+        self.assertIsNotNone(payload)
+        assert payload is not None
+        with tempfile.NamedTemporaryFile(dir=REPO / "planning", suffix=".yaml", delete=False) as temporary:
+            temporary.write(payload)
+            backlog_path = Path(temporary.name)
+        try:
+            context = load(str(backlog_path))
+            data = context[0]
+            args = Namespace(
+                task="CAP-03.S02.T02",
+                agent="codex",
+                reason="restore approved human intent acceptance path",
+                lease_hours=8,
+                cascade_dependents=True,
+                file=str(backlog_path),
+                repo_root=REPO,
+                source_sha256=hashlib.sha256(payload).hexdigest(),
+                source_identity=identity_snapshot(data),
+                source_amendment_identity=amendment_identity_snapshot(data),
+                source_approved_waves=approved_wave_snapshot(data),
+                source_amendment_history=amendment_history_snapshot(data),
+                source_task_review_history=taskctl_module.task_review_history_snapshot(data),
+                source_wave_checkpoint_history=taskctl_module.wave_checkpoint_history_snapshot(data),
+                source_wave_resume_history=wave_resume_history_snapshot(data),
+                source_recovery_history=taskctl_module.recovery_history_snapshot(data),
+                source_released_recovery_holds=taskctl_module.released_recovery_hold_snapshot(data),
+                source_task_recovery_history=taskctl_module.task_recovery_history_snapshot(data),
             )
+            with patch("taskctl.lease_is_active", return_value=True):
+                command_reopen(args, *context)
 
-        self.assertEqual("IN_PROGRESS", context[3]["CAP-03.S02.T02"]["status"])
-        self.assertEqual("NOT_STARTED", context[3]["CAP-03.S02.T03"]["status"])
-        self.assertEqual("codex", context[3]["CAP-03.S02.T03"]["owner"])
-        self.assertEqual(2, len(context[3]["CAP-03.S02.T03"]["review_control"]["attempts"]))
-        save.assert_called_once()
+            persisted = load(str(backlog_path))
+            self.assertEqual("IN_PROGRESS", persisted[3]["CAP-03.S02.T02"]["status"])
+            dependent = persisted[3]["CAP-03.S02.T03"]
+            self.assertEqual("NOT_STARTED", dependent["status"])
+            self.assertEqual("codex", dependent["owner"])
+            self.assertEqual("codex/w1-windows-local-runtime", dependent["branch"])
+            self.assertEqual(2, len(dependent["review_control"]["attempts"]))
+
+            dependent["base_sha"] = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=REPO,
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            taskctl_module.save_validated(
+                str(backlog_path),
+                persisted[0],
+                expected_sha256=hashlib.sha256(backlog_path.read_bytes()).hexdigest(),
+                expected_identity=identity_snapshot(persisted[0]),
+                expected_task_review_history=taskctl_module.task_review_history_snapshot(persisted[0]),
+                repo=REPO,
+            )
+        finally:
+            backlog_path.unlink(missing_ok=True)
 
     def test_cascade_reopen_refuses_an_active_or_frozen_dependent(self) -> None:
         data, capabilities, slices, tasks, gates = self.workflow()
