@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-03.S02",
+  "submissionCommit": "de4a3ded5a37385c0a000c454120e8812a6bba4d",
+  "integrationEvidence": {
+    "path": "artifacts/evidence/CAP-03.S02.integration.json",
+    "sha256": "84cfa171a39922067ebb0bee48c06915fc7b0d521764d7e6e1692c8ee107a6b9",
+    "stateCommit": "f5f1067fa364b957b3b27a9278d60d10f91e8448"
+  },
+  "reviewer": "codex-independent-slice-integration-reviewer",
+  "reviewedAt": "2026-08-29T10:09:04.2406669-04:00",
+  "disposition": "changes-requested",
+  "notes": "The exact frozen submission, approved plan, task evidence, task-review lineage, report hashes, portable contracts, Core research-intent service, SQLite/provenance/outbox behavior, renderer acceptance reconciliation, approved experience evidence, packaging evidence, and live supply-chain report were independently inspected and selectively replayed. The isolated contract, renderer, Core, policy, persistence, restart, denial, audit, accessibility, visual, packaging, performance-threshold, and supply-chain results are credible. The slice is not production-ready, however, because the packaged desktop's only production transport rejects every generated research-intent request before it reaches the authenticated Core sidecar. The desktop tests use a fake generated-client transport and the service tests invoke ASGI directly, so neither exercises this native principal boundary. The integration evidence's claimed vertical composition and end-to-end readiness are therefore false at the reviewed commit, and one high-severity blocking finding remains open.",
+  "checks": [
+    {
+      "check": "exact submission, state, plan, evidence, and task-history binding",
+      "result": "passed",
+      "details": "de4a3ded5a37385c0a000c454120e8812a6bba4d is the direct child of all-task-approved state f5f1067fa364b957b3b27a9278d60d10f91e8448. Integration evidence SHA-256 reproduces as 84cfa171a39922067ebb0bee48c06915fc7b0d521764d7e6e1692c8ee107a6b9. The approved CAP-03.S02 plan and all latest T01/T02/T03 evidence and ledger hashes match the manifest. Earlier T01 R01 and T02 R01/R03 adverse findings remain append-only with explicit strict-descendant closures in T01 R02 and T02 R02/R04; T03 R03 truthfully revalidates the corrected T02 dependency. All three tasks are approved at the stated integration state with no concealed open task finding."
+    },
+    {
+      "check": "portable intent contract and generated-client replay",
+      "result": "passed",
+      "details": "Independent replay passed all 56 contract tests across seven files, strict TypeScript compilation, and the research-intent generator currency check. This covers immutable revision/reference decoding, hostile and unknown input, reserved authority, autonomy ceilings, egress consistency, governing references, six epistemic-mode semantics, exact generated request paths and bodies, response decoding, and the 32-hex idempotency-key contract."
+    },
+    {
+      "check": "Core accepted-revision authority, atomic persistence, policy denial, restart, and replay",
+      "result": "passed",
+      "details": "Independent focused replay passed all 12 research-intent service tests and the complete 56-test local-security suite with one expected Windows directory-symlink privilege skip. Real FastAPI/TestClient, project repository, SQLite, provenance, and outbox paths establish atomic draft/accept/audit behavior, exact idempotent replay and conflict, concurrent convergence, audit-failure rollback, restart-safe accepted authority, exact cache replacement without older-replay rollback, six-mode output, and gate/autonomy/egress/stopping denial."
+    },
+    {
+      "check": "guided renderer and ambiguous-acceptance reconciliation",
+      "result": "passed in isolation",
+      "details": "Independent replay passed all six IntentWorkspace/coordinator tests. They drive the generated client over a recording fake transport and prove decision-complete drafting, exact sha256-bound acceptance, one frozen command/key across commit-followed-by-response-loss, definitive Core-problem rejection, accepted current/history replacement, unresolved-input locking, and a disabled downstream launch action. The approved UI evidence also reproduces its declared 1ccb35ce81454e4fdb43b75859139a9a67e42c4d8076670497da2d2b4a4b82f2 report hash and records 109 tokens, 32 routes, 14 workflows, 390 keyboard cases, 64 responsive accessibility cases, and 64 controlled light/dark captures against RO-UI-ACADEMIC-MINIMAL-1.3."
+    },
+    {
+      "check": "packaged generated-client to native supervisor to real Core composition",
+      "result": "failed",
+      "details": "IntentWorkspace defaults to createCoreApiClient(packagedProjectTransport); packagedProjectTransport invokes Tauri core_api_request; dispatch_core_api_request calls RuntimeSupervisor::api_request; and api_request calls validate_api_request before authenticated_api_request_with_cancellation. The generated client emits POST /projects/intent, /projects/intent/preview, /projects/intent/drafts, /projects/intent/acceptances, and /projects/intent/policy/evaluations. At the exact submission, validate_project_api_request recognizes project lifecycle and privacy requests only, while validate_api_request admits only those validated no-idempotency project requests, runtime GET/cancel requests, and rejects everything else with RO-CORE-API-REQUEST-INVALID. There is no intent route or body validation in the native supervisor. The focused Rust native allowlist test passed 1/1 but itself enumerates no intent route, confirming the coverage gap rather than the generated surface."
+    },
+    {
+      "check": "report integrity, packaging, live supply chain, and performance residual classification",
+      "result": "passed with bounded residuals",
+      "details": "The visual, live security, quality, build, and desktop performance reports reproduce hashes 1ccb35ce81454e4fdb43b75859139a9a67e42c4d8076670497da2d2b4a4b82f2, 6ee3765f1a8ffabb841207b75b422c0a6de9ffde22fe57869a81ddb4036598e1, 01664149c8eae934c82d8e58fde8361d5c3a66627cfbf617ae04beeb9338d399, 6dfacd23bc8728b49da780ccae363d5bc8e82676ccedeb0514f831436d2519ad, and a75bd80071a43feec7f3e610abea595d8ce990f41748e8dfca6d791b3461df91. The live Trivy report is PASS over 601 packages and 152 findings with 0 blocking, 17 governed exceptions, 6 warnings, and 0 policy errors. The performance report's four measured p95 metrics pass their absolute and regression thresholds; ok=false is solely the exact-clean prerequisite caused by protected untracked W1.A04.B00.json. The expected current-token directory/file-symlink skips, expiring scanner exceptions, and clean-checkout performance rerun remain real W1-exit obligations but do not cause the present product-boundary failure."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S02-INTEGRATION-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "criteria": [
+        "slice outcome: every project declares intent before consequential automation",
+        "Section 10 integration: real local adapters with no mocked principal-boundary success",
+        "Section 10 end to end: representative researcher path through the slice outcome",
+        "Section 17: all task implementations operate together from a clean project/install state"
+      ],
+      "title": "The packaged native transport rejects every research-intent request before Core dispatch",
+      "reproduction": "At exact submission de4a3ded5a37385c0a000c454120e8812a6bba4d, inspect apps/desktop/src/app/IntentWorkspace.tsx:240-241 and apps/desktop/src/app/ProjectsWorkspace.tsx:25-27 to trace the default generated client through Tauri command core_api_request. Then inspect apps/desktop/src-tauri/src/lib.rs:58-64 and 196-201 and apps/desktop/src-tauri/src/supervisor.rs:444-465 and 752-974. RuntimeSupervisor::api_request always runs validate_api_request before authenticated Core dispatch. packages/contracts/core-api/generated.ts:1067-1097 emits POST /projects/intent, /projects/intent/preview, /projects/intent/drafts, /projects/intent/acceptances, and /projects/intent/policy/evaluations. None is recognized by validate_project_api_request, and validate_api_request admits an ordinary project POST only when that helper succeeds and both if_match and idempotency_key are absent. Consequently load/preview/policy fail the route/body allowlist and save/accept additionally fail the no-idempotency condition; all return RO-CORE-API-REQUEST-INVALID without reaching authenticated_api_request_with_cancellation or the real Core ASGI/repository/SQLite/provenance authority. The existing Rust allowlist test at supervisor.rs:1740-1880 enumerates runtime, lifecycle, and privacy routes but no intent route. The six renderer tests inject a fake CoreApiTransport, while the 12 service tests call ASGI directly, so both suites pass while the packaged researcher workflow is unusable. The missing tests/e2e/test_*.py runner is therefore material here: the integration manifest composes independent layers narratively but does not execute the production principal boundary.",
+      "required_remediation": "Extend the native request allowlist with strict bounded validators for all five generated research-intent request shapes, preserving its fail-closed route, body, header, path, cancellation, authentication, trace, and response controls. Permit a canonical 32-hex idempotency key only for draft save and acceptance, forbid it for load/preview/policy, and validate each generated body exactly rather than introducing a broad pass-through. Add deterministic negative native-transport tests for unknown fields, hostile roots, invalid revision/hash, invalid intent vocabulary, oversized content, wrong/missing idempotency keys, and unapproved routes. Most importantly, add an affected vertical integration test that drives the real generated client through the packaged/native dispatch and supervised real Core ASGI/project repository/SQLite/provenance path for load, preview, save, exact acceptance and same-key replay/reconciliation, accepted-revision policy evaluation, denial, restart, and invalid-route fail-closed behavior. Submit a strict-descendant integration packet, retain this adverse review append-only, replay this finding, and do not represent the slice as end to end until that production path passes."
+    }
+  ],
+  "residuals": [
+    {
+      "id": "CAP-03.S02-RESIDUAL-E2E-RUNNER",
+      "disposition": "subsumed-by-open-finding",
+      "details": "No active tests/e2e/test_*.py system runner exists. Absence alone is not treated as an automatic failure, but at this boundary it allowed an actual packaged transport defect to escape and cannot remain a deferred narrative composition claim. CAP-03.S02-INTEGRATION-R01-F01 requires a real affected vertical replay before slice approval; the broader cross-capability matrix still remains mandatory at W1 exit."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-SYMLINK",
+      "disposition": "deferred-to-w1-exit",
+      "details": "One local-security directory-symlink case and one packaging file-symlink case skip because the current Windows token cannot create symlinks. Other redirect, identity, source-boundary, package-inventory, real PyInstaller, and Pythonless smoke controls passed. Release-authoritative Windows qualification must retain or execute equivalent privileged coverage at W1 exit."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-SUPPLY-CHAIN",
+      "disposition": "time-bounded",
+      "details": "The fresh live scan has zero unexcepted blockers or policy errors and no dependency input changed in this slice. Seventeen exact existing exceptions remain in force, with the earliest vulnerability exceptions expiring 2026-08-31 and the remaining reviewed dates through 2026-09-07. Re-scan, upgrade/remediate, or obtain a new independent time-bounded decision before qualification after an expiry; no exception authorizes a shipped-runtime vulnerability outside its exact scope."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-PERFORMANCE-CLEANLINESS",
+      "disposition": "deferred-to-w1-exit",
+      "details": "All measured desktop p95 latency and render distributions pass their absolute and 20-percent regression thresholds. The performance report exits nonzero solely because exact-clean evidence is impossible while protected untracked W1.A04.B00.json exists. A clean exact-commit rerun remains mandatory at W1 exit and is not represented as passed here."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-WITNESS",
+      "disposition": "protected-control-artifact",
+      "details": "artifacts/evidence/W1.A04.B00.json remains the sole protected untracked and unstaged witness with SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. It is outside slice product scope and was not modified."
+    }
+  ],
+  "taskctlSliceReviewNote": "CHANGES_REQUESTED exact CAP-03.S02 integration submission de4a3ded5a37385c0a000c454120e8812a6bba4d. HIGH blocking CAP-03.S02-INTEGRATION-R01-F01: the packaged generated-client path is not integrated. Tauri RuntimeSupervisor::validate_api_request contains no research-intent routes, so every UI load/preview/save/accept/policy request fails RO-CORE-API-REQUEST-INVALID before authenticated Core dispatch; fake renderer transport plus direct ASGI tests do not prove the principal boundary. Add strict native validators and real generated-client -> native supervisor -> supervised Core/SQLite/provenance vertical tests, preserve this adverse ledger append-only, and resubmit a strict descendant. Symlink-token, expiring-scanner, exact-clean performance, and protected-witness obligations remain explicit but are not the current blocker."
+}

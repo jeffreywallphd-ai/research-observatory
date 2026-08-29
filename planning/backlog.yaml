@@ -6570,7 +6570,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T03
     - CAP-01.S01.T02
-    status: REVIEW
+    status: IN_PROGRESS
     tasks:
     - id: CAP-03.S02.T01
       capability_id: CAP-03
@@ -8318,14 +8318,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: CHANGES_REQUESTED
+      reviewer: codex-independent-slice-integration-reviewer
+      reviewed_at: '2026-08-29T14:11:22+00:00'
       evidence:
       - artifacts/evidence/CAP-03.S02.integration.json
-      notes: All three tasks are independently approved. The affected contract, desktop, Core policy, security, packaging,
-        visual, restart/recovery, and live supply-chain union passes; exact-clean desktop performance remains explicitly bound
-        to W1 exit because the protected W1.A04.B00 witness is present.
+      notes: 'CHANGES_REQUESTED at de4a3ded5a37385c0a000c454120e8812a6bba4d. HIGH blocking CAP-03.S02-INTEGRATION-R01-F01:
+        packaged Tauri RuntimeSupervisor rejects every generated research-intent route before authenticated Core dispatch.
+        Add strict per-route/body/idempotency validators and a real generated-client-to-native-supervisor-to-Core/SQLite/provenance
+        vertical replay; retain the adverse ledger append-only.'
   - id: CAP-03.S03
     title: Append-only provenance and audit ledger
     outcome: The system can reconstruct how every material object and claim was produced and changed.
