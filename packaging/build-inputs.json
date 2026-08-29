@@ -24,6 +24,7 @@
     "packages/contracts/domain/domain-lifecycle.schema.json",
     "packages/contracts/intent/research-intent.schema.json",
     "packages/contracts/model-gateway/model-task.schema.json",
+    "packages/contracts/provenance/provenance-event.schema.json",
     "packages/contracts/project/project-layout.schema.json",
     "packages/contracts/project/project-lifecycle-event.schema.json",
     "packages/contracts/project/project-lock.schema.json",

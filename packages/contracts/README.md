@@ -94,3 +94,11 @@ revision can yield a governing reference. Its Draft 2020-12 schema generates
 matching TypeScript and Python immutable decoders. The contract uses a closed,
 level-bounded autonomy-action vocabulary, mode-closed stopping sets, and
 destination-plus-human-gate consistency for any approved egress declaration.
+
+`provenance/` defines the minimized CloudEvents-compatible scholarly event
+envelope and W3C PROV-aligned Entity, Activity, Agent, and relation boundary.
+Events require exact project/actor/input/output/configuration/time/trace
+identity, sensitivity and retention declarations, and content-reference-only
+payloads. Matching generated TypeScript/Python decoders own immutable snapshots,
+retain structurally valid future types without interpreting them, and produce
+deterministic RFC 8785-compatible canonical records for hash/checkpoint use.
