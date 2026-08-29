@@ -4127,7 +4127,7 @@
             {
               "task_id": "CAP-03.S03.T01",
               "title": "Define provenance event, activity, entity, and agent model",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,

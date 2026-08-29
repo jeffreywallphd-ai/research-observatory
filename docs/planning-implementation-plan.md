@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0a2033b0680ed3ba5dcc25c0188ceba9b6aa27d6269c135a1f10602c4c11f8ec
+source_sha256: 36a1807b49d07ecaab6d59adcde1c5d39311dc84b58e19bd8172bca8bba5499d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4167,13 +4167,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T01 - Define provenance event, activity, entity, and agent model
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S01.T02`, `CAP-02.S02.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Event schema aligned with practical provenance concepts for source acquisition, parsing, extraction, verification, decisions, synthesis, export, and invalidation.
 
