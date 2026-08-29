@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0a524a4ba8e73e4c7de3d7ac1dcaba72f8e59cc6e2e0bb4834f54e30a0b79683
+source_sha256: 9e9fd4f6bc599e45628a99d3b001edae01f74d5110385fdc4e1d990a6feff15a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3681,7 +3681,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Every project declares its scholarly purpose, scope, evidence rules, autonomy, and stopping logic before consequential automation.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
