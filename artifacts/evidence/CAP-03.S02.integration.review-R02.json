@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-03.S02",
+  "attemptId": "R02",
+  "submissionCommit": "f605685109fe9846e7c622744595a42b32dacdd6",
+  "integrationEvidence": {
+    "path": "artifacts/evidence/CAP-03.S02.integration-R02.json",
+    "sha256": "bcfb92cf3264335a35ee0bec14b02c1658753b0027fe2f65fd94d62d0ac89fd2",
+    "stateCommit": "de25216badd8a702a207cc7819d828ee68d4d273"
+  },
+  "priorAdverseReview": {
+    "path": "artifacts/evidence/CAP-03.S02.integration.review.json",
+    "sha256": "e13a1beb2f98f4cb3e1291da6682d9b2ff5fea2a923dd99f95ca6bc42976ec40",
+    "submissionCommit": "de4a3ded5a37385c0a000c454120e8812a6bba4d",
+    "findingIds": [
+      "CAP-03.S02-INTEGRATION-R01-F01"
+    ]
+  },
+  "reviewer": "codex-independent-slice-integration-reviewer",
+  "reviewedAt": "2026-08-29T11:46:00.7649383-04:00",
+  "disposition": "approved",
+  "notes": "The exact R02 submission is approved. It is a strict descendant of both the original frozen submission and its append-only adverse review, and directly binds the all-task-approved state. Independent risk-selected replay now crosses the production principal boundary that was missing in R01: the real generated TypeScript client drives the strict Rust RuntimeSupervisor, which starts and authenticates the real supervised Core ASGI service and persists through the protected project repository, encrypted SQLite provider, provenance, and audit paths. The replay proves all five generated intent routes, strict negative native validation, restart-safe draft recovery, simulated post-commit response loss followed by the same idempotency key and byte-equivalent acceptance body, accepted-revision policy binding and denial, exact revision/audit cardinality, and invalid-route fail-closed behavior. CAP-03.S02-INTEGRATION-R01-F01 is fixed. No new blocking finding was identified. The current-token symlink skips, time-bounded supply-chain exceptions, exact-clean performance rerun, protected witness, and complete W1-exit matrix remain truthful higher-level obligations and are not represented as discharged by this slice approval.",
+  "checks": [
+    {
+      "check": "exact submission, state, evidence, lineage, and append-only history binding",
+      "result": "passed",
+      "details": "Resolved submission f605685109fe9846e7c622744595a42b32dacdd6 is the direct child of exact state de25216badd8a702a207cc7819d828ee68d4d273 and a strict descendant of original submission de4a3ded5a37385c0a000c454120e8812a6bba4d and adverse-review commit f8e46ef. The R02 evidence SHA-256 reproduces as bcfb92cf3264335a35ee0bec14b02c1658753b0027fe2f65fd94d62d0ac89fd2. The prior adverse ledger reproduces as e13a1beb2f98f4cb3e1291da6682d9b2ff5fea2a923dd99f95ca6bc42976ec40 and is unchanged. The state-to-submission diff contains only the new R02 evidence and taskctl-generated REVIEW projections; git diff --check passes."
+    },
+    {
+      "check": "approved task lineage and exact remediation evidence",
+      "result": "passed",
+      "details": "The latest task packets and ledgers are exact and approved: T01 R02 review SHA-256 1e1c58e4ef3363968193adbc91359781b3e66818c2ab3d927889c4add796f894; T02 R05 evidence 32f73b5246834e7c9dd3abf11f94c09436c2540e72b0816ae69b56599a7ffdcc and review 013de9aa40328537e413e3f78d4018f9932200ab538cf60cc8b588e6970f6ea5; T03 R04 evidence e6bf1ae8c05034635736713c6256c87db42de21b5033e2c8e0ede0bb9a5f01e3 and review 32d055dc45dca1e7eb045bbd2e41339695847fad1143abe52f80c054bfb7c9a9. Earlier adverse task and slice records remain append-only, and no task finding is concealed or open."
+    },
+    {
+      "check": "real generated-client to strict native supervisor to authenticated Core persistence vertical",
+      "result": "passed",
+      "command": "workspace Node 24 apps/desktop/scripts/intent-native-integration.mjs",
+      "details": "The current exact submission replay passed. createCoreApiClient emitted project lifecycle plus all five intent request paths into the Rust integration-harness build of RuntimeSupervisor. The supervisor started the real research_observatory_core.main.run_supervised entrypoint, completed its capability handshake, applied native route/body/header/idempotency validation, attached the supervisor-issued authentication and trace boundary, and reached the real project repository and protected SQLite/provenance implementation. The result reported project revision 2, policy outcome deny, invalid route RO-CORE-API-REQUEST-INVALID, and canonical 32-hex keys only on draft and acceptance requests. The frozen native report SHA-256 reproduces as d526bc57c0d7971b0acf3035df55b2d9a3d12922d7a2df0b3110ea93329e9600."
+    },
+    {
+      "check": "ambiguous acceptance reconciliation, restart, authority binding, and exact persistence cardinality",
+      "result": "passed",
+      "details": "The vertical saved revision 1, restarted the supervised Core, and recovered the identical SQLite-backed content hash. It then committed acceptance, deliberately discarded the response, restarted Core again, and replayed exactly one byte-equivalent request with the same key; the response converged on accepted revision 2 without duplicate acceptance. Policy evaluation referenced the exact accepted revision content hash and denied execute-approved-query under the bounded intent. Direct protected-database inspection found exactly two revision records and exactly one actor-bound provenance event each for intent.draft.saved, intent.accepted, and intent.policy.evaluated."
+    },
+    {
+      "check": "strict native request and negative-boundary validation",
+      "result": "passed",
+      "command": "cargo test --workspace --locked --all-features native_api_transport",
+      "details": "All 5 focused Rust tests passed. They cover the five generated route/body/header/idempotency shapes; exact acceptance alignment; malformed, oversized, hostile-root, out-of-range revision, invalid hash/vocabulary/language/stopping condition, missing or misplaced idempotency, unknown field, header, method, and unapproved-route denial; response parsing; and cancellation. The independent live vertical separately confirmed an unapproved intent route fails closed before Core dispatch."
+    },
+    {
+      "check": "Core accepted-revision authority, six modes, audit atomicity, restart, and denial",
+      "result": "passed",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.service.test_core_api tests.service.test_research_intents",
+      "details": "All 28 focused tests passed at the exact submission. Coverage includes supervised handshake/authentication, strict request dispatch, immutable draft and acceptance revisions, idempotency and conflict, atomic audit rollback, restart-safe authority, exact accepted-cache replacement, all six epistemic modes, and gate, autonomy, egress, and stopping-condition denials."
+    },
+    {
+      "check": "package, generated contract, and capability-handshake alignment",
+      "result": "passed",
+      "details": "The exact product paths are unchanged from independently approved T02 R05 and T03 R04. That bounded review passed the generated contract/generator/type boundary, all 26 Rust tests, and 18 focused packaging/handshake/performance-control tests, including a real PyInstaller sidecar and Pythonless smoke. The R02 vertical additionally completes the live capability handshake and exercises the generated client against the same RuntimeSupervisor validation and authenticated request wire contract. No dependency or package input changed between that approved product state and this integration submission."
+    },
+    {
+      "check": "controlled experience and visual conformance",
+      "result": "passed",
+      "details": "Independent deterministic replay passed the approved UI-reference integrity check for RO-UI-ACADEMIC-MINIMAL-1.3, 109-token integrity, 32-route integrity, 14-workflow and 390-keyboard coverage, and accessibility coverage for 32 pages and 64 responsive cases. The exact controlled visual report SHA-256 1ccb35ce81454e4fdb43b75859139a9a67e42c4d8076670497da2d2b4a4b82f2 records 64 Chromium captures across light/dark themes and two viewports with no errors. No UI/product path changed after its source commit."
+    },
+    {
+      "check": "live supply chain, build/quality reports, and protected witness",
+      "result": "passed with bounded residuals",
+      "details": "The exact frozen security report SHA-256 1d6f5fe0d56e1c35eafca9dca7c9e2e09e658a1d629bb37c8ff17a4737b07c2b is PASS over 601 packages and 152 findings with 0 blocking, 17 exact governed exceptions, 6 warnings, and 0 policy errors. Quality and build hashes reproduce as 569bbe60ba5ac2bd607945bec3a2f581cbb3071e868dbaeea80c16b22ac9df2a and ac56d439c9451358c84f04661dcc617f9d03fba49cb33499b0336c5c1f4129c3. The sole worktree difference outside this new ledger is the protected untracked witness artifacts/evidence/W1.A04.B00.json, whose SHA-256 remains 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "CAP-03.S02-INTEGRATION-R01-F01",
+      "severity": "high",
+      "priorDisposition": "open-blocking",
+      "disposition": "fixed",
+      "details": "The missing packaged principal boundary is now implemented and independently replayed. Native validation recognizes all five generated intent request shapes without a broad pass-through, enforces route-specific body/header/idempotency constraints, and retains unapproved-route denial. The real generated client now reaches authenticated supervised Core and protected repository/SQLite/provenance through RuntimeSupervisor. Restart and simulated response loss prove exact same-key/body acceptance convergence without a duplicate revision or audit event; policy remains bound to the accepted revision and fails closed under the governed denial. The original adverse ledger remains immutable and this closure is recorded only in R02."
+    }
+  ],
+  "residuals": [
+    {
+      "id": "CAP-03.S02-RESIDUAL-E2E-RUNNER",
+      "disposition": "satisfied-for-slice-by-deterministic-native-vertical",
+      "details": "The repository still has no generic tests/e2e/test_*.py runner, but the acceptance-bound gap identified in R01 is no longer a narrative composition claim: apps/desktop/scripts/intent-native-integration.mjs deterministically exercises the actual generated-client, strict native supervisor, authenticated Core, project repository, protected SQLite, and provenance vertical, including restart and response-loss replay. Broader cross-capability end-to-end qualification remains mandatory at W1 exit."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-SYMLINK",
+      "disposition": "deferred-to-w1-exit",
+      "details": "One local-security directory-symlink case and one packaging file-symlink case remain expected skips because the current Windows token cannot create symlinks. Existing redirect, identity, source-boundary, package-inventory, real PyInstaller, and Pythonless controls passed. Release-authoritative Windows qualification must execute equivalent privileged coverage at W1 exit."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-SUPPLY-CHAIN",
+      "disposition": "time-bounded",
+      "details": "The fresh live scan has zero unexcepted blockers and zero policy errors. Seventeen exact existing exceptions remain time-bounded, with the earliest expiring 2026-08-31 and the remaining reviewed dates through 2026-09-07. Qualification after expiry requires re-scan and remediation or a new independently governed exception; slice approval does not extend them."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-PERFORMANCE-CLEANLINESS",
+      "disposition": "deferred-to-w1-exit",
+      "details": "The previously measured desktop p95 latency and render distributions passed their absolute and regression thresholds. Exact-clean evidence remains unavailable solely because the protected untracked witness must not be staged, deleted, or altered. A clean exact-commit performance rerun remains mandatory at W1 exit and is not represented as passing here."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-WITNESS",
+      "disposition": "protected-control-artifact",
+      "details": "artifacts/evidence/W1.A04.B00.json remains the sole protected untracked witness and retains SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. It is outside slice scope and was not touched, staged, or deleted."
+    },
+    {
+      "id": "CAP-03.S02-RESIDUAL-W1-EXIT",
+      "disposition": "mandatory-wave-obligation",
+      "details": "CAP-03.S02 slice approval does not discharge the complete affected/full repository and deployment-profile matrix, cross-capability happy/failure/denial/cancellation/migration/restart/recovery/security/accessibility/performance/packaging checks, or the independent W1 review and G1 release decision."
+    }
+  ],
+  "taskctlSliceReviewNote": "APPROVED exact CAP-03.S02 integration R02 submission f605685109fe9846e7c622744595a42b32dacdd6 with evidence SHA-256 bcfb92cf3264335a35ee0bec14b02c1658753b0027fe2f65fd94d62d0ac89fd2 at exact state de25216badd8a702a207cc7819d828ee68d4d273. HIGH CAP-03.S02-INTEGRATION-R01-F01 is FIXED: independent replay passes real generated client -> strict Rust RuntimeSupervisor -> supervised authenticated Core -> protected repository/SQLite/provenance, all five intent routes, negative native validation, restart and simulated response-loss same-key/byte-identical acceptance convergence, accepted-revision policy denial, exact 2-revision/one-event-each audit cardinality, invalid-route fail-closed, package/handshake, and controlled visual evidence. No blocking finding remains. Current-token symlink skips, expiring supply-chain exceptions, exact-clean performance, protected witness, and complete W1-exit qualification remain explicit obligations."
+}
