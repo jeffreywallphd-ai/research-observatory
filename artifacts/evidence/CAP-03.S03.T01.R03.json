@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T01",
+  "commit": "5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0",
+  "baseCommit": "f2c9c0aa6539af0067bf76711883b22a796ddbf3",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S03.T01.R02.json",
+    "sha256": "2f58f1845a55e799582daea7a34d382abbec204b4c7bef79144867b7f8d1e0ee",
+    "commit": "f2c9c0aa6539af0067bf76711883b22a796ddbf3",
+    "reason": "Remediates CAP-03.S03.T01-R02-F01 and CAP-03.S03.T01-R02-F02 while preserving all three R01 closures and the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S03.T01.R02.json",
+    "artifacts/evidence/CAP-03.S03.T01.review-R02.json",
+    "docs/adr/ADR-0024-adopt-minimized-cloudevents-provenance-with-w3c-prov-relations.md",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/provenance/generate.mjs",
+    "packages/contracts/provenance/generated.ts",
+    "packages/contracts/provenance/provenance-event.schema.json",
+    "packages/contracts/provenance/provenance-event.template.py.txt",
+    "packages/contracts/provenance/provenance-event.template.ts.txt",
+    "packages/contracts/provenance/provenance-event.test.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/provenance_contracts.py",
+    "tests/contracts/test_provenance_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": "repository Node 24 provenance generator --check; strict TypeScript; complete packages/contracts Vitest suite",
+      "exitCode": 0,
+      "result": "The generated TypeScript/Python contract outputs are current, strict TypeScript passed, and all 76 tests across eight portable-contract files passed at exact candidate 5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0. The focused provenance file contains 20 cases, including both R02 reproductions and their complete positive/negative matrices."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_provenance_contracts tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.service.test_domain_compatibility_service",
+      "exitCode": 0,
+      "result": "All 32 selected Python tests passed: eight provenance contract groups plus 24 affected SQLite/repository/service compatibility cases. The Draft 2020-12 schema and Python runtime accept complete unknown acquisition-like and transformation-like records, reject orphan/missing-attribution/failed outputs and wrong exact revisions, enforce stable kind and event-local UUID collisions, accept all four portable-key separators in exact subjects, and retain the prior status/role/UTC closures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six packaging cases completed successfully with one truthfully disclosed current-token file-symlink skip. A real Windows x64 PyInstaller build imported the exact changed provenance runtime, ran without system Python, and retained governed-inventory fail-closed behavior."
+    },
+    {
+      "command": "quality_check.py; architecture_check.py; repository_structure_check.py; adr_check.py --base f2c9c0aa... --head 5f99c3c4...; build_manifest.py",
+      "exitCode": 0,
+      "result": "Quality passed across 163 governed files (report SHA-256 c8135cfafc439809efb16d24c2bd9d146038441d7f34abbf1786c378576485b6); the 13-area, 12-module, five-interface, three-profile architecture boundary passed; ADR coverage passed for all 18 R03 paths; and the build manifest binds 5f99c3c4 with report SHA-256 8f341a1e848f787e8042aa6ad2bd698c74f0f7194acb2510b98c46545af67089. Its dirty flag names only the protected W1 witness."
+    },
+    {
+      "command": "taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog validates, generated backlog and 150-page review-site projections are current, and W1 remains ready under its immutable approved packet. Patch hygiene passed. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S03.T01-R02-F01 is remediated before the known-event policy branch. Every non-succeeded activity universally has no outputs, and every output of every succeeded activity universally has exactly one wasGeneratedBy and one wasAttributedTo relation to its exact revision. Relation closure, roles, outcome rules, identity/fact uniqueness, and exact revisions remain universal, while catalog-specific acquisition/transformation/invalidation meaning remains limited to known types.",
+        "CAP-03.S03.T01-R02-F02 is remediated by enforcing one entityKind for every occurrence of a stable entityId within an event, including projectid in the event-local UUID collision set, and using the exact PortableKey grammar for the entity-kind subject segment. Same-ID/same-kind revisions remain valid; a cross-kind transformation is valid only with a distinct stable entity ID and an exact output-to-input derivation.",
+        "The machine-readable schema metadata declares the universal non-success-output prohibition and required successful-output relations. All R01 exact revision, status/role, uniqueness, UTC, minimization, trace, configuration, sensitivity, and retention invariants remain enforced in both generated runtimes."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Twenty focused TypeScript cases and eight Python provenance test groups cover valid unknown acquisition-like and transformation-like events, orphan successful outputs, missing attribution, failed outputs, wrong exact revisions, machine policy metadata, same-ID/same-kind revisions, same-ID/different-kind denial, distinct-ID cross-kind derivation, project/event collision, and every portable-key separator accepted in an exact subject.",
+        "The complete 76-test portable-contract package, strict compiler, deterministic generator, 24 affected persistence/service tests, and real frozen-sidecar packaging boundary pass at the exact R03 candidate.",
+        "All concrete R01 and R02 reviewer reproductions are now committed as cross-language regression tests; no valid test was weakened or deleted."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0024, the architecture handoff, package documentation, schema semantic rules and policy metadata, generator/templates, generated runtimes, and TypeScript/Python tests changed together at exact candidate 5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0.",
+        "R01 and R02 evidence and adverse review ledgers remain immutable, append-only, and ancestral. The R02 ledger's three R01 closures and two new blocking findings are truthfully represented in the base-to-candidate range and generated projections.",
+        "No migration, ledger persistence implementation, service route, renderer, dependency, governed experience reference, external effect, or release authority changed. T02 still owns additive migration, atomic ledger/outbox persistence, cross-event stable-kind enforcement, idempotency, lineage queries, restart bridging, and checkpoints."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S03.T01-R02-F01 showed that moving completeness into the known-event branch let uncataloged future types persist orphan successful outputs or outputs for a failed activity. CAP-03.S03.T01-R02-F02 showed three linked identity mismatches: entity kind could change under one stable ID, projectid was missing from the claimed event-local collision set, and subject kind syntax was narrower than PortableKey. This third-round remediation therefore expands the R02 boundary with table-driven known/unknown and success/failure tests in both runtimes; Draft 2020-12 subject and policy-metadata assertions; same-kind and cross-kind revision cases; project/event collision; exact-revision replay; complete portable-contract, affected persistence/service, and real package checks; and renewed quality/architecture/ADR/build/planning controls. The risk selection explicitly replays both current finding IDs while retaining all three R01 closures. T01 still changes no persistence route or migration, so cross-event stable-kind enforcement, atomic ledger/outbox behavior, lineage traversal, restart/checkpoint fault behavior, slice integration, and the full W1 matrix remain at their approved downstream gates.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:backlog-views",
+      "foundation:backlog",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S03.T02 owns additive migration, atomic ledger/outbox persistence, retry idempotency, prior-row bridging, cross-event stable-kind enforcement, bounded lineage queries, restart recovery, segment/checkpoint verification, and mismatch integrity-review behavior.",
+      "CAP-03.S03 slice review will run the accumulated provenance integration and adversarial union after T02 and T03 close.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit.",
+      "The current Windows token cannot create the packaging file-symlink fixture; redirect and missing/changed inventory paths pass, and privileged equivalence remains a W1-exit obligation."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "portable-provenance-contract-review",
+    "openFindingIds": [
+      "CAP-03.S03.T01-R02-F01",
+      "CAP-03.S03.T01-R02-F02"
+    ],
+    "rootCauseAnalysis": "R02 correctly made known-event policies status- and role-aware but scoped output completeness to the known-type branch, conflating unknown catalog meaning with optional structural provenance. It also proved exact revision identity without reconciling stable aggregate-kind authority and reused the existing narrow subject regex while describing a broader PortableKey/global-namespace contract. R03 separates universal lifecycle invariants from catalog-specific policy and derives stable-kind, project-collision, and subject grammar checks from the same identity model.",
+    "note": "Independently review exact strict-descendant candidate 5f99c3c4ef9ca15a140c390a74ef44556c9ea8b0 and replay CAP-03.S03.T01-R02-F01 and CAP-03.S03.T01-R02-F02 plus all prior closures. Verify universal future-type output/lifecycle completeness, exact revision closure, stable-kind enforcement, valid same-kind and cross-kind transformations, project/event collision, PortableKey subject parity, schema metadata, generated cross-language parity, changed-file/evidence truth, downstream persistence deferrals, and protected-witness safety."
+  }
+}
