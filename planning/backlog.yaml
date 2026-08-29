@@ -9421,15 +9421,20 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-29T17:15:36+00:00'
-      updated_at: '2026-08-29T17:15:36+00:00'
+      updated_at: '2026-08-29T17:56:07+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S03.T02.R01.json
+        sha256: 759c30ab7afeda398fdad5e3d9769eb7a33d13959a8aadadd8aaca2ff0bfdce2
+        commit: 3680ecf86f455b8cbd6a10c27b63ae62c836e359
+        recorded_at: '2026-08-29T17:56:07+00:00'
       review:
         reviewer: null
         result: null
@@ -9440,10 +9445,96 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-29T17:15:36+00:00'
         expires_at: '2026-08-30T01:15:36+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-08-29T17:56:07+00:00'
+          candidate_commit: 3680ecf86f455b8cbd6a10c27b63ae62c836e359
+          base_commit: 822cf18e55fb30c78958216aa30f24398b8b66b4
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S03.T02.R01.json
+            sha256: 759c30ab7afeda398fdad5e3d9769eb7a33d13959a8aadadd8aaca2ff0bfdce2
+            commit: 3680ecf86f455b8cbd6a10c27b63ae62c836e359
+            recorded_at: '2026-08-29T17:56:07+00:00'
+          acceptance_criteria_sha256: 18a160b518276cf400818cb11f8929cd11c8b4fd1d57519cb8fbcab7dd6ac38d
+          changed_paths:
+          - docs/architecture/local-sqlite-storage.md
+          - docs/architecture/provenance-contracts.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/generated.ts
+          - packages/contracts/core-api/openapi.json
+          - packages/contracts/storage/sqlite-migration-recovery.schema.json
+          - packages/contracts/storage/sqlite-profile.schema.json
+          - packages/contracts/storage/sqlite-profile.v1.json
+          - planning/backlog.yaml
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/app.py
+          - services/core-api/src/research_observatory_core/main.py
+          - services/core-api/src/research_observatory_core/migrations/runner.py
+          - services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py
+          - services/core-api/src/research_observatory_core/models.py
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/provenance.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/storage.py
+          - tests/data/test_local_object_store.py
+          - tests/data/test_sqlite_migrations.py
+          - tests/data/test_sqlite_repositories.py
+          - tests/data/test_storage_maintenance.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tests/service/test_provenance.py
+          - tests/service/test_research_intents.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations
+            tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api
+            tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file
+          - .venv\Scripts\python.exe tools\quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py
+            --check; build_manifest.py --output artifacts/tmp/CAP-03.S03.T02-build-manifest.json
+          - taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check;
+            protected witness hash
+          deferred_checks:
+          - CAP-03.S03.T03 owns retention, export, redaction-versus-deletion, repair, and integrity-review recovery policy
+            enforcement.
+          - CAP-03.S03 slice review will replay the accumulated portable-contract, migration, ledger, lineage, recovery, and
+            adversarial integration union after T03 closes.
+          - The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance,
+            packaging, and Windows x64 matrix remains mandatory once at W1 exit.
+          selection_rationale: T02 changes a public cross-process contract, the canonical SQLite schema and backup-first migration
+            chain, transaction atomicity, append-only evidence controls, package inventory, restart recovery, and integrity-review
+            behavior. It therefore selected all affected contract, schema, repository, migration, object-store, storage-maintenance,
+            service, research-intent, and real frozen-sidecar checks, plus quality, architecture, generated-contract, build,
+            backlog, and approved-W1 controls. The data profile was run once and its only failure was the then-missing quality-scope
+            entries; the exact candidate remediates and directly replays that boundary. Repeating its already-passing 576-second
+            benchmark registry after a quality-inventory-only correction would add no credible defect detection. Full service/deployment
+            and cross-capability qualification remains at the provenance slice checkpoint and W1 exit, as required by the
+            revised risk-selected workflow.
+          selection_sha256: e4ad5e6c065e52a404387065d922e7cddd9df9f89b80dbe9c1f42f0431649430
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:build-manifest
+          - foundation:quality
+          - foundation:backlog-views
+          - foundation:backlog
+          - packaging:unit
+          - service:unit
+          - data:unit
+          packet_sha256: c20c04cbdc576e3d21b9e67bb0e77dc6f94bc4b44b055f4d77eccda90d2f03c4
     - id: CAP-03.S03.T03
       capability_id: CAP-03
       slice_id: CAP-03.S03

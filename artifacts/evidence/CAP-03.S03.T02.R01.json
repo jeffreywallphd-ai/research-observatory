@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S03.T02",
+  "commit": "3680ecf86f455b8cbd6a10c27b63ae62c836e359",
+  "baseCommit": "822cf18e55fb30c78958216aa30f24398b8b66b4",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/architecture/provenance-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/provenance.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/test_local_object_store.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_repositories.py",
+    "tests/data/test_storage_maintenance.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_provenance.py",
+    "tests/service/test_research_intents.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file",
+      "exitCode": 0,
+      "result": "All 100 affected tests passed at exact candidate 3680ecf86f455b8cbd6a10c27b63ae62c836e359 in 55.587 seconds. Coverage includes schema v7 creation, v1-v6 backup-first migration and legacy bridging, transactional revision/ledger/audit/outbox persistence, rollback after a late outbox failure, idempotent retry, restart, bounded lineage traversal, missing references, checkpoint/canonical-byte/projection mismatch, service API behavior, research-intent compatibility, and a real Windows x64 PyInstaller sidecar build that runs without system Python and fails closed when an inventory file is missing."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py; architecture_check.py; repository_structure_check.py; core_api_contract.py --check; build_manifest.py --output artifacts/tmp/CAP-03.S03.T02-build-manifest.json",
+      "exitCode": 0,
+      "result": "Ruff formatting and lint plus mypy passed across all 166 governed Python files; the 13-area, 12-module, five-interface, three-profile architecture contract passed; repository structure and generated Core API synchronization passed. The deterministic build manifest passed and has SHA-256 73a6e187cee752c083c86db198367e346f9ad68994d4f629941953e9d35f29d1. Its dirty marker reflects the protected untracked W1 witness and generated-page stat state; git diff for the generated pages is byte-empty."
+    },
+    {
+      "command": "taskctl.py validate; backlog_views.py --check; planctl.py wave ready W1 --require-approved; git diff --check; protected witness hash",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task backlog validates; generated backlog views are current; and W1 remains ready under its immutable approved packet. The 150-page planning review site regenerated successfully. Patch hygiene passed. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Schema v7 adds append-only ledger events, normalized entities and relations, checkpoints, and explicit legacy bridges with project/time/type/subject/correlation/entity/relation indexes and mutation-denial triggers. Aggregate revision creation writes its portable T01 provenance record, normalized projections, chain checkpoint, narrow audit event, and outbox notification in one SQLite transaction; an injected late outbox failure rolls all of them back.",
+        "Retry joins on the governed ledger idempotency fingerprint and returns the exact prior revision only when the stored transaction is complete. It fails closed for an incomplete legacy outbox instead of synthesizing lineage or duplicating canonical output.",
+        "Bounded ancestor and descendant traversal verifies canonical record bytes, event denormalization, normalized entities and relations, hash-chain links, and checkpoints; missing immutable revision references or mismatches place the repository in integrity-review while retaining bounded read-only results. Queries expose producing activity and responsible agent without returning raw research content."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact-commit 100-test run covers successful persistence and lineage plus material failure, denial, rollback, replay, restart, migration, corruption, missing-reference, depth/cursor/page limit, and packaging boundaries.",
+        "Migration tests exercise fresh v7 creation and backup-first upgrade from historical schemas, including a real v6 fixture. Repository tests prove no canonical revision survives without its ledger, no ledger survives without its canonical revision, repeated requests are idempotent, and later integrity faults cannot be mistaken for valid lineage.",
+        "No test was removed or weakened; quality, public API generation, architecture, repository structure, backlog integrity, approved-W1 readiness, and the real Windows sidecar boundary pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Core API OpenAPI and generated TypeScript now include POST /projects/provenance/lineage with bounded ancestor/descendant, activity, and agent results. Repository ports, models, composition, packaging inventory, storage/recovery schemas, architecture guidance, and implementation planning changed together.",
+        "The additive v7 migration creates a pre-migration backup before mutation, verifies the resulting schema, and bridges historical narrow audit rows through explicit compatibility records without reinterpreting them as complete portable provenance. Post-v7 narrow events are bridged only when no portable ledger event already represents the transaction.",
+        "The governed SQLite schema hash is 49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475 and the updated profile hash is aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0. No renderer, governed experience reference, dependency version, external effect, release authority, or unrelated product scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T02 changes a public cross-process contract, the canonical SQLite schema and backup-first migration chain, transaction atomicity, append-only evidence controls, package inventory, restart recovery, and integrity-review behavior. It therefore selected all affected contract, schema, repository, migration, object-store, storage-maintenance, service, research-intent, and real frozen-sidecar checks, plus quality, architecture, generated-contract, build, backlog, and approved-W1 controls. The data profile was run once and its only failure was the then-missing quality-scope entries; the exact candidate remediates and directly replays that boundary. Repeating its already-passing 576-second benchmark registry after a quality-inventory-only correction would add no credible defect detection. Full service/deployment and cross-capability qualification remains at the provenance slice checkpoint and W1 exit, as required by the revised risk-selected workflow.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:quality",
+      "foundation:backlog-views",
+      "foundation:backlog",
+      "packaging:unit",
+      "service:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S03.T03 owns retention, export, redaction-versus-deletion, repair, and integrity-review recovery policy enforcement.",
+      "CAP-03.S03 slice review will replay the accumulated portable-contract, migration, ledger, lineage, recovery, and adversarial integration union after T03 closes.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "provenance-ledger-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate 3680ecf86f455b8cbd6a10c27b63ae62c836e359 against all three acceptance criteria. Treat schema/migration transactionality, no-output-without-provenance, retry idempotency, legacy bridging, append-only enforcement, checkpoint/canonical/projection verification, bounded lineage and missing-reference behavior, public contract/package parity, evidence truth, scope containment, and protected-witness safety as blocking review surfaces."
+  }
+}
