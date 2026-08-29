@@ -16,10 +16,32 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 from plan_review_site import build_site, delivery_status, status_stack  # noqa: E402
-from planctl import approve, approve_wave, frontmatter, write_plan  # noqa: E402
+from planctl import approve, approve_wave, frontmatter, scaffold_capability, scaffold_slice, write_plan  # noqa: E402
 
 
 class PlanctlWaveApprovalTests(unittest.TestCase):
+    def test_new_plans_include_prospective_initiation_assessment_rules(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            slice_ = {
+                "id": "CAP-20.S01",
+                "title": "First product slice",
+                "wave": "W2",
+                "tasks": [{"id": "CAP-20.S01.T01", "title": "Build product work"}],
+            }
+            capability = {"id": "CAP-20", "title": "New capability", "slices": [slice_]}
+
+            capability_path = scaffold_capability(root, capability)
+            slice_path = scaffold_slice(root, capability, slice_)
+            capability_body = capability_path.read_text(encoding="utf-8")
+            slice_body = slice_path.read_text(encoding="utf-8")
+
+            self.assertIn("## 0A. Initiation assessment and planning adaptation", capability_body)
+            self.assertIn("15% technical-debt refactoring limit", capability_body)
+            self.assertIn("route major refactoring outside initiation planning", capability_body)
+            self.assertIn("applicable capability/Wave initiation assessment", slice_body)
+            self.assertIn("major refactoring is outside initiation planning", slice_body)
+
     def test_review_site_stacks_plan_decision_and_authoritative_delivery_status(self) -> None:
         self.assertEqual("not-started", delivery_status([{"status": "READY"}, {"status": "NOT_STARTED"}]))
         self.assertEqual("in-progress", delivery_status([{"status": "DONE"}, {"status": "IN_PROGRESS"}]))

@@ -44,9 +44,27 @@ All slices in `CAP-01` through `CAP-19` have individual implementation plans. If
 
 > **Wave-scoped planning gate.** Inspect the complete capability and resolve capability-wide material decisions once. Classify each decision by the Wave where it becomes binding. Create every missing slice plan, but approve only the decisions and ordered slices in the Wave being activated. Inherited and future decisions remain visible as nonbinding context until their own Wave approval.
 
+> **Initiation assessment.** While this plan is proposed, compare the tested
+> current implementation with the Vision, accepted architecture, current
+> best-practice sources, and the proposed outcome. Record a capability baseline
+> and each applicable Wave refresh in Section 0A. Identify assessment-added
+> technical-debt refactoring and prove that it is no more than 15% of the
+> pre-assessment planned implementation effort at both capability and Wave scope.
+> Route major refactoring outside initiation planning. Approval freezes the
+> adapted plan; this requirement does not reopen an earlier approved Wave.
+
 <div class="visual-flow"><span>Inventory every slice</span><b>→</b><span>Compare and classify decisions</span><b>→</b><span>Confirm Wave-binding decisions</span><b>→</b><span>Approve the complete Wave</span><b>→</b><span>Execute the Wave continuously</span></div>
 
 ## 0. Control and authority
+## 0A. Initiation assessment and planning adaptation
+
+Record the tested implementation baseline, Vision/architecture/best-practice
+fit, plan adaptations, necessary support improvements, and the estimation basis,
+numerator, denominator, and percentage for the 15% technical-debt refactoring
+limit. Include one capability-initiation baseline and a concise refresh for each
+Wave in which this capability becomes binding. Record major or over-budget work
+as a separate future disposition rather than deciding it here.
+
 ## 1. Capability outcome and production-ready exit
 ## 2. Slice map and end-to-end dependency logic
 ## 3. Decision-making protocol

@@ -17,6 +17,12 @@ Define which repository artifact controls each decision, how inconsistencies are
 
 Current behavior does not silently redefine intended architecture. If code and authority differ, record the mismatch and either restore the implementation or approve the authoritative change.
 
+During proposed Wave and capability planning, tested code supplies the current
+implementation baseline but does not receive a preference merely because it
+already exists. Within accepted architecture, product Vision and current
+best-practice evidence guide plan adaptation. Major changes to accepted
+architecture still require the normal mismatch and ADR route.
+
 ## Repository entry points
 
 - `AGENTS.md` - concise AI operating rules.
@@ -32,6 +38,7 @@ These files are mandatory and may not be replaced by external setup guides.
 | Product purpose/workflow/non-goal | Vision | Architecture/plans/UI reference as affected |
 | Architecture decision | ADR or Systems Design | Plans, tests, operational docs |
 | Work decomposition or sequencing | Backlog | Capability/slice plans and generated views |
+| Proposed Wave/capability initiation adaptation | Capability and slice plans | Wave review packet before approval |
 | Material implementation decision | Capability/slice plan and required ADR | Review site, approval, implementation |
 | Intentional UI/UX change | Governed UI reference | Plans, implementation, conformance evidence |
 | Current behavior correction | Code/tests | Evidence and affected documentation |
