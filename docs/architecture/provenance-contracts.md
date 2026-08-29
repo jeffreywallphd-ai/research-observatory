@@ -63,7 +63,11 @@ The generated TypeScript and Python contracts own immutable snapshots and
 produce deterministic RFC 8785-compatible JSON for the schema's restricted
 I-JSON subset. Python also returns the exact `sha256:` record identity. The v7
 SQLite adapter persists the original record, record hash, normalized query
-projection, chain segment/checkpoint identity, and atomic outbox fact. A
+projection, retry-bound chain segment/checkpoint identity, atomic narrow audit
+binding, and atomic outbox fact. Lineage integrity compares event and project
+authority plus every normalized entity/relation field back to the canonical
+record, and cross-checks event, project, output revision, type, time, actor, and
+record digest against the narrow audit row. A
 canonicalization or hash change starts a new segment;
 it never rewrites historical bytes.
 

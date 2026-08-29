@@ -200,6 +200,93 @@ class SqliteRepositoryTests(unittest.TestCase):
         self.assertEqual(("01890f6e-6a40-7cc5-98b7-000000000992",), lineage.missing_revision_ids)
         self.assertNotIn(first.revision_id, tuple(item.revision_id for item in lineage.items))
 
+    def test_authority_projection_corruption_enters_integrity_review(self) -> None:
+        cases = ("event-identity", "project-authority", "narrow-audit", "idempotency")
+        for case in cases:
+            with self.subTest(case=case):
+                case_root = self.root / case
+                case_database = case_root / "state" / "project.sqlite3"
+                case_database.parent.mkdir(parents=True)
+                initialize_database(case_database, project_id=PROJECT_ID, project_created_at=CREATED_AT)
+                case_factory = create_sqlite_unit_of_work_factory(case_database, PROJECT_ID)
+                with case_factory() as unit:
+                    revision = unit.aggregates.append(draft(1), event(0), expected_revision=None)
+                    unit.commit()
+
+                raw = sqlite3.connect(case_database, autocommit=True)
+                try:
+                    raw.execute("PRAGMA foreign_keys=OFF")
+                    if case in {"event-identity", "project-authority"}:
+                        for table in (
+                            "provenance_ledger_events",
+                            "provenance_ledger_entities",
+                            "provenance_ledger_relations",
+                            "provenance_ledger_checkpoints",
+                        ):
+                            raw.execute(f"DROP TRIGGER {table}_no_update")
+                            raw.execute(f"DROP TRIGGER {table}_no_delete")
+                        if case == "event-identity":
+                            replacement = "01890f6e-6a40-7cc5-98b7-000000000999"
+                            for table in (
+                                "provenance_ledger_entities",
+                                "provenance_ledger_relations",
+                                "provenance_ledger_checkpoints",
+                                "provenance_ledger_events",
+                            ):
+                                raw.execute(f"UPDATE {table} SET event_id=?", (replacement,))
+                        else:
+                            replacement = "123e4567-e89b-42d3-a456-426614174999"
+                            for table in (
+                                "provenance_ledger_entities",
+                                "provenance_ledger_relations",
+                                "provenance_ledger_checkpoints",
+                                "provenance_ledger_events",
+                            ):
+                                raw.execute(f"UPDATE {table} SET project_id=?", (replacement,))
+                        for table in (
+                            "provenance_ledger_events",
+                            "provenance_ledger_entities",
+                            "provenance_ledger_relations",
+                            "provenance_ledger_checkpoints",
+                        ):
+                            for statement in _immutable_triggers(table, table.replace("_", " ") + " are append-only"):
+                                raw.execute(statement)
+                    elif case == "narrow-audit":
+                        raw.execute("DROP TRIGGER provenance_events_no_update")
+                        raw.execute("DROP TRIGGER provenance_events_no_delete")
+                        raw.execute(
+                            "UPDATE provenance_events SET record_sha256=? WHERE revision_id=?",
+                            ("f" * 64, revision.revision_id),
+                        )
+                        for statement in _immutable_triggers("provenance_events", "provenance events are append-only"):
+                            raw.execute(statement)
+                    else:
+                        raw.execute("DROP TRIGGER provenance_ledger_events_no_update")
+                        raw.execute("DROP TRIGGER provenance_ledger_events_no_delete")
+                        raw.execute("UPDATE provenance_ledger_events SET idempotency_sha256=?", ("f" * 64,))
+                        for statement in _immutable_triggers(
+                            "provenance_ledger_events", "provenance ledger events are append-only"
+                        ):
+                            raw.execute(statement)
+                finally:
+                    raw.close()
+
+                lineage = sqlite_provenance_ledger_repository(case_root, PROJECT_ID).lineage(
+                    revision_id=revision.revision_id,
+                    direction="ancestors",
+                    cursor=0,
+                    page_size=10,
+                    max_depth=4,
+                )
+                self.assertEqual("integrity-review", lineage.integrity_state)
+                self.assertIn(
+                    revision.revision_id,
+                    {
+                        *(item.revision_id for item in lineage.items),
+                        *lineage.missing_revision_ids,
+                    },
+                )
+
     def test_invalid_actor_cannot_commit_canonical_output_without_provenance(self) -> None:
         invalid = replace(event(0), actor_id="legacy.actor")
         with self.factory() as unit, self.assertRaises(RepositoryProblem):

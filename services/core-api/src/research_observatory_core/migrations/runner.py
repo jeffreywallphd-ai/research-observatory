@@ -196,6 +196,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0004_object_envelope_upgrades.revision,
             v0005_object_creation_source.revision,
             v0006_actor_identity.revision,
+            v0007_provenance_ledger.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -452,102 +453,50 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
         return not rows
     if not rows:
         return True  # Fresh initialization at a supported schema has no applied migration.
-    expected_rows: list[tuple[object, ...]] = []
-    cursor = 0
-    if schema_version >= 2 and rows[cursor][0] == v0002_schema_history.revision:
-        expected_rows.append(
-            (
-                v0002_schema_history.revision,
-                1,
-                2,
-                storage.V1_SCHEMA_SHA256,
-                storage.PREVIOUS_SCHEMA_SHA256,
-            )
-        )
-        cursor += 1
-    if (
-        schema_version >= storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION
-        and cursor < len(rows)
-        and rows[cursor][0] == v0003_object_envelopes.revision
-    ):
-        expected_rows.append(
-            (
-                v0003_object_envelopes.revision,
-                2,
-                3,
-                storage.PREVIOUS_SCHEMA_SHA256,
-                storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
-            )
-        )
-        cursor += 1
-    if (
-        schema_version >= storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION
-        and expected_rows
-        and expected_rows[-1][0] == v0002_schema_history.revision
-    ):
+    registry: tuple[tuple[str, int, int, str, str], ...] = (
+        (v0002_schema_history.revision, 1, 2, storage.V1_SCHEMA_SHA256, storage.PREVIOUS_SCHEMA_SHA256),
+        (
+            v0003_object_envelopes.revision,
+            2,
+            3,
+            storage.PREVIOUS_SCHEMA_SHA256,
+            storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+        ),
+        (
+            v0004_object_envelope_upgrades.revision,
+            3,
+            4,
+            storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+            storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+        ),
+        (
+            v0005_object_creation_source.revision,
+            4,
+            5,
+            storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+            storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+        ),
+        (
+            v0006_actor_identity.revision,
+            5,
+            6,
+            storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
+            storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+        ),
+        (
+            v0007_provenance_ledger.revision,
+            6,
+            7,
+            storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+            storage.EXPECTED_SCHEMA_SHA256,
+        ),
+    )
+    applicable = tuple(item for item in registry if int(item[2]) <= schema_version)
+    try:
+        start = next(index for index, item in enumerate(applicable) if item[0] == rows[0][0])
+    except StopIteration:
         return False
-    if (
-        schema_version >= storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION
-        and cursor < len(rows)
-        and rows[cursor][0] == v0004_object_envelope_upgrades.revision
-    ):
-        expected_rows.append(
-            (
-                v0004_object_envelope_upgrades.revision,
-                3,
-                4,
-                storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
-                storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
-            )
-        )
-        cursor += 1
-    if (
-        schema_version >= storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION
-        and expected_rows
-        and expected_rows[-1][0] == v0003_object_envelopes.revision
-    ):
-        return False
-    if (
-        schema_version >= storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION
-        and cursor < len(rows)
-        and rows[cursor][0] == v0005_object_creation_source.revision
-    ):
-        expected_rows.append(
-            (
-                v0005_object_creation_source.revision,
-                4,
-                5,
-                storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
-                storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
-            )
-        )
-        cursor += 1
-    if (
-        schema_version >= storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION
-        and expected_rows
-        and expected_rows[-1][0] == v0004_object_envelope_upgrades.revision
-    ):
-        return False
-    if schema_version >= storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION:
-        expected_rows.append(
-            (
-                v0006_actor_identity.revision,
-                5,
-                6,
-                storage.OBJECT_CREATION_SOURCE_SCHEMA_SHA256,
-                storage.ACTOR_IDENTITY_SCHEMA_SHA256,
-            )
-        )
-    if schema_version == storage.DATABASE_SCHEMA_VERSION:
-        expected_rows.append(
-            (
-                v0007_provenance_ledger.revision,
-                6,
-                7,
-                storage.ACTOR_IDENTITY_SCHEMA_SHA256,
-                storage.EXPECTED_SCHEMA_SHA256,
-            )
-        )
+    expected_rows = applicable[start:]
     if len(rows) != len(expected_rows):
         return False
     for row, expected in zip(rows, expected_rows, strict=True):

@@ -990,7 +990,9 @@ def _record_aggregate_provenance(
     ).fetchone()
     sequence = 1 if previous_row is None else int(previous_row[0]) + 1
     previous_chain = None if previous_row is None else str(previous_row[1])
-    chain_material = f"{previous_chain or 'genesis'}\n{record_sha256}\n{sequence}".encode("ascii")
+    chain_material = (f"{previous_chain or 'genesis'}\n{record_sha256}\n{idempotency_sha256}\n{sequence}").encode(
+        "ascii"
+    )
     chain_sha256 = f"sha256:{hashlib.sha256(chain_material).hexdigest()}"
     data = cast(dict[str, Any], decoded["data"])
     activity = cast(dict[str, Any], data["activity"])
@@ -1479,55 +1481,68 @@ def create_sqlite_unit_of_work_factory(database: Path, project_id: str) -> UnitO
 def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) -> str:
     rows = connection.execute(
         """
-        SELECT event_id, sequence, record_json, record_sha256,
-               previous_chain_sha256, chain_sha256, subject, event_type,
+        SELECT event_id, project_id, sequence, record_json, record_sha256,
+               idempotency_sha256, previous_chain_sha256, chain_sha256, subject, event_type,
                occurred_at, correlation_id, causation_id, activity_id,
                activity_type, activity_status, agent_id, sensitivity,
                retention_class
           FROM provenance_ledger_events
-         WHERE project_id=? AND segment_key=?
+         WHERE segment_key=?
          ORDER BY sequence
         """,
-        (project_id, _PROVENANCE_SEGMENT_KEY),
+        (_PROVENANCE_SEGMENT_KEY,),
     ).fetchall()
     entities_by_event: dict[str, set[tuple[Any, ...]]] = {}
     for candidate in connection.execute(
         """
-        SELECT event_id, direction, entity_id, revision_id, entity_kind,
+        SELECT event_id, project_id, direction, entity_id, revision_id, entity_kind,
                content_hash, sensitivity, retention_class
           FROM provenance_ledger_entities
-         WHERE project_id=?
         """,
-        (project_id,),
     ):
-        entities_by_event.setdefault(str(candidate[0]), set()).add(tuple(candidate[1:]))
+        if str(candidate[1]) != project_id:
+            return "integrity-review"
+        entities_by_event.setdefault(str(candidate[0]), set()).add(tuple(candidate[2:]))
     relations_by_event: dict[str, set[tuple[Any, ...]]] = {}
     for candidate in connection.execute(
         """
-        SELECT event_id, relation_id, relation_type, entity_id,
+        SELECT event_id, project_id, relation_id, relation_type, entity_id,
                entity_revision_id, related_entity_id, related_revision_id,
                activity_id, agent_id, occurred_at
           FROM provenance_ledger_relations
-         WHERE project_id=?
         """,
-        (project_id,),
     ):
-        relations_by_event.setdefault(str(candidate[0]), set()).add(tuple(candidate[1:]))
-    checkpoints = {
-        (str(candidate[0]), int(candidate[1])): str(candidate[2])
+        if str(candidate[1]) != project_id:
+            return "integrity-review"
+        relations_by_event.setdefault(str(candidate[0]), set()).add(tuple(candidate[2:]))
+    checkpoints: dict[tuple[str, int], str] = {}
+    for candidate in connection.execute(
+        """
+        SELECT event_id, project_id, sequence, chain_sha256
+          FROM provenance_ledger_checkpoints
+         WHERE segment_key=?
+        """,
+        (_PROVENANCE_SEGMENT_KEY,),
+    ):
+        if str(candidate[1]) != project_id:
+            return "integrity-review"
+        checkpoints[(str(candidate[0]), int(candidate[2]))] = str(candidate[3])
+    narrow_audits = {
+        str(candidate[0]): tuple(candidate[1:])
         for candidate in connection.execute(
             """
-            SELECT event_id, sequence, chain_sha256
-              FROM provenance_ledger_checkpoints
-             WHERE project_id=? AND segment_key=?
-            """,
-            (project_id, _PROVENANCE_SEGMENT_KEY),
+            SELECT event_id, project_id, revision_id, event_type,
+                   occurred_at, actor_id, record_sha256
+              FROM provenance_events
+             WHERE revision_id IS NOT NULL
+               AND event_type LIKE 'org.research-observatory.%.revision-recorded.v1'
+            """
         )
     }
     previous: str | None = None
     for expected_sequence, row in enumerate(rows, start=1):
         try:
-            decoded = decode_provenance_event(json.loads(str(row[2])))
+            decoded = decode_provenance_event(json.loads(str(row[3])))
             if decoded is None:
                 return "integrity-review"
             record_json = canonical_provenance_json(decoded)
@@ -1536,18 +1551,37 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
             return "integrity-review"
         data = cast(dict[str, Any], decoded["data"])
         activity = cast(dict[str, Any], data["activity"])
-        if tuple(row[6:]) != (
-            decoded["subject"],
+        if (
+            str(row[0]) != decoded["id"]
+            or str(row[1]) != project_id
+            or str(row[1]) != decoded["projectid"]
+            or tuple(row[8:])
+            != (
+                decoded["subject"],
+                decoded["type"],
+                decoded["time"],
+                decoded["correlationid"],
+                decoded["causationid"],
+                activity["activityId"],
+                activity["activityType"],
+                activity["status"],
+                decoded["actorid"],
+                decoded["sensitivity"],
+                decoded["retentionclass"],
+            )
+        ):
+            return "integrity-review"
+        outputs = cast(tuple[dict[str, Any], ...], data["outputs"])
+        if len(outputs) != 1:
+            return "integrity-review"
+        narrow_audit = narrow_audits.get(str(row[0]))
+        if narrow_audit != (
+            project_id,
+            outputs[0]["revisionId"],
             decoded["type"],
             decoded["time"],
-            decoded["correlationid"],
-            decoded["causationid"],
-            activity["activityId"],
-            activity["activityType"],
-            activity["status"],
             decoded["actorid"],
-            decoded["sensitivity"],
-            decoded["retentionclass"],
+            record_sha256.removeprefix("sha256:"),
         ):
             return "integrity-review"
         expected_entities = {
@@ -1586,20 +1620,34 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
         actual_relations = relations_by_event.get(str(row[0]), set())
         if actual_relations != expected_relations:
             return "integrity-review"
-        chain_material = f"{previous or 'genesis'}\n{record_sha256}\n{expected_sequence}".encode("ascii")
+        idempotency_sha256 = str(row[5])
+        chain_material = (
+            f"{previous or 'genesis'}\n{record_sha256}\n{idempotency_sha256}\n{expected_sequence}"
+        ).encode("ascii")
         chain_sha256 = f"sha256:{hashlib.sha256(chain_material).hexdigest()}"
         if (
-            int(row[1]) != expected_sequence
-            or str(row[2]) != record_json
-            or str(row[3]) != record_sha256
-            or (None if row[4] is None else str(row[4])) != previous
-            or str(row[5]) != chain_sha256
+            int(row[2]) != expected_sequence
+            or str(row[3]) != record_json
+            or str(row[4]) != record_sha256
+            or (None if row[6] is None else str(row[6])) != previous
+            or str(row[7]) != chain_sha256
         ):
             return "integrity-review"
         if checkpoints.get((str(row[0]), expected_sequence)) != chain_sha256:
             return "integrity-review"
         previous = chain_sha256
-    return "verified" if len(checkpoints) == len(rows) else "integrity-review"
+    event_ids = {str(row[0]) for row in rows}
+    return (
+        "verified"
+        if (
+            len(checkpoints) == len(rows)
+            and set(checkpoints) == {(str(row[0]), int(row[2])) for row in rows}
+            and set(entities_by_event) == event_ids
+            and set(relations_by_event) == event_ids
+            and set(narrow_audits) == event_ids
+        )
+        else "integrity-review"
+    )
 
 
 class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):

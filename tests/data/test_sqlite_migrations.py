@@ -425,6 +425,29 @@ def create_version_6_fixture(database: Path) -> None:
         connection.close()
 
 
+def create_fresh_version_6_fixture(database: Path) -> None:
+    """Materialize a database initialized at v6 with no predecessor history."""
+
+    create_version_6_fixture(database)
+    connection = sqlite3.connect(database, autocommit=True)
+    try:
+        storage._configure_connection(connection, initialize=True)
+        connection.execute("BEGIN IMMEDIATE")
+        connection.execute("DROP TRIGGER schema_migrations_no_update")
+        connection.execute("DROP TRIGGER schema_migrations_no_delete")
+        connection.execute("DELETE FROM schema_migrations")
+        for statement in v0002_schema_history.SCHEMA_MIGRATIONS_TRIGGERS:
+            connection.execute(statement)
+        if storage._schema_fingerprint(connection) != storage.ACTOR_IDENTITY_SCHEMA_SHA256:
+            raise AssertionError(storage._schema_fingerprint(connection))
+        connection.execute("COMMIT")
+        checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+        if checkpoint != (0, 0, 0):
+            raise AssertionError(checkpoint)
+    finally:
+        connection.close()
+
+
 class SqliteMigrationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.database_profile = storage.development_plaintext_database_fixture()
@@ -921,6 +944,53 @@ class SqliteMigrationTests(unittest.TestCase):
             self.assertEqual(0, current.execute("SELECT count(*) FROM provenance_ledger_events").fetchone()[0])
         finally:
             current.close()
+
+    def test_fresh_v6_history_remains_current_after_v7_upgrade_and_restart(self) -> None:
+        create_fresh_version_6_fixture(self.database)
+        projection = runner.migration_framework_projection()
+        self.assertEqual(7, projection["targetSchemaVersion"])
+        self.assertEqual(v0007_provenance_ledger.revision, projection["revisions"][-1])
+
+        plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual(6, plan.source_schema_version)
+        self.assertEqual((v0007_provenance_ledger.revision,), plan.migration_ids)
+        migrated = migrate_database(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual("migrated", migrated.status)
+        self.assertIsNotNone(migrated.backup_relative_path)
+
+        current_plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
+        self.assertFalse(current_plan.migration_required)
+        self.assertEqual((), current_plan.migration_ids)
+        self.assertEqual("current", migrate_database(self.database, expected_project_id=PROJECT_ID).status)
+        reopened = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, storage._schema_fingerprint(reopened))
+            history = tuple(
+                tuple(row)
+                for row in reopened.execute(
+                    """
+                    SELECT migration_id, from_schema_version, to_schema_version,
+                           source_schema_sha256, target_schema_sha256
+                      FROM schema_migrations
+                     ORDER BY rowid
+                    """
+                )
+            )
+            self.assertEqual(
+                (
+                    (
+                        v0007_provenance_ledger.revision,
+                        6,
+                        7,
+                        storage.ACTOR_IDENTITY_SCHEMA_SHA256,
+                        storage.EXPECTED_SCHEMA_SHA256,
+                    ),
+                ),
+                history,
+            )
+        finally:
+            reopened.close()
+        self.assertEqual("current", migrate_database(self.database, expected_project_id=PROJECT_ID).status)
 
     def test_every_material_revision_step_rolls_back_to_exact_v1_and_retries(self) -> None:
         failpoints = (
