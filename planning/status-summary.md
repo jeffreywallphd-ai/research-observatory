@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 617aec6e06a887063ce02dadcf36760a547e32ffec9a5781ff27b453aa310093
+source_sha256: 5ac90028f57863e0cc679753f505aceaa8dd332343bb4d0359fe8d1f08a0f0a1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 268 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 50 |
 | `DEFERRED` | 36 |
 
@@ -358,7 +358,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T03` | `append-only v1` | 3 | `-` | approved / nash-independent-domain-compatibility-reviewer | - |
 | `CAP-03.S02.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-03.S02.T02` | `append-only v1` | 4 | `-` | approved / codex-independent-desktop-intent-reviewer | - |
-| `CAP-03.S02.T03` | `append-only v1` | 2 | `-` | approved / codex-independent-epistemic-governance-reviewer | - |
+| `CAP-03.S02.T03` | `append-only v1` | 2 | `R03` | approved / codex-independent-epistemic-governance-reviewer | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -426,4 +426,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S02.T03` Enforce mode and autonomy policy at service boundaries | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S02.T03` Enforce mode and autonomy policy at service boundaries | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
