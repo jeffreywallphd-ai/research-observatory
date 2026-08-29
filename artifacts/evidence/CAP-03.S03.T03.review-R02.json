@@ -1,0 +1,98 @@
+{
+  "task_id": "CAP-03.S03.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "9910ca3ae717ced397830125381e555901fd5abe",
+  "submission_record_commit": "cd61535731c884d57ccd91da84e0bd33ca965f08",
+  "reviewer": "codex-independent-provenance-lineage-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent high-risk R02 remediation review authenticated artifacts/evidence/CAP-03.S03.T03.R02.json at SHA-256 59cbdf203c9021738d0166a8c7bdbcd1bbcf0ea5b7637f833da2bd53cb98e654 and Git blob 40eae7aa001ddd1c1e11ea8f75b8e5fa47780ea8 in exact submission record cd61535731c884d57ccd91da84e0bd33ca965f08. The requester confirmed that an earlier informal short label cd61535d transposed its final nibble; the repository-resolved and review-bound identity is cd61535731c884d57ccd91da84e0bd33ca965f08 and no packet identity changed. Candidate 9910ca3ae717ced397830125381e555901fd5abe is a strict descendant of R01 candidate 08e81290382d208f10c5f460dcd32296b8e6da53, the submission record is a strict descendant of the candidate, and all 26 declared incremental paths exactly match that candidate range. Independent replay closes the exact reproductions and missing-surface defects recorded as R01-F01, R01-F02, and R01-F03: the real SQLite/Core path now persists and returns valid typed synthesis/evidence/alternate/decision/invalidation facts with output-free invalidation and stable paginated identities; the generated client binds ordinary response bounds to the accepted request while the renderer retains immutable accepted-query authority and deduplicates facts; and the React workspace now renders the governed audit, rights/egress, human-decision, export/redaction, accessibility, and conformance regions. Focused generated-client/renderer checks passed 17/17, focused service/repository checks passed 20/20, generated contract and architecture checks passed, exact changed-path truth and patch hygiene passed, and the submitted desktop/build reports authenticate the exact candidate. Approval remains unavailable because two new high-severity incremental edge defects remain. First, request-aware pagination admits an empty continuation page whose nextCursor equals the requested cursor, so the renderer can preserve a nonterminating Load more command without progress. Second, export is permitted for a partial trace and mergeLineagePage can combine a retained integrity-review state with a later page's exportAllowed=true and cleared denial, after which exportLineageManifest exports the integrity-review result. These defects violate the approved strict bounded pagination and service-level integrity/rights export boundaries. The exploratory complete data suite truthfully produced 107 passes and two stale schema-v6 assertion failures; both expect schema version 6 after the already-integrated v7 migration, are outside this candidate's changed paths, and remain separate W1-exit reconciliation debt rather than acceptance-blocking T03 regressions. The exact task-owned vertical, runtime capability alignment, content minimization, closed-project denial, read-only integrity-review access, missing/legacy behavior, package/build inventory, full changed-path truth, and stated slice/W1 deferrals otherwise remain sound. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S03.T03.R02.json",
+      "sha256": "59cbdf203c9021738d0166a8c7bdbcd1bbcf0ea5b7637f833da2bd53cb98e654",
+      "git_blob": "40eae7aa001ddd1c1e11ea8f75b8e5fa47780ea8",
+      "commit": "9910ca3ae717ced397830125381e555901fd5abe"
+    },
+    {
+      "type": "desktop-application-report",
+      "path": "artifacts/tmp/CAP-03.S03.T03-R02-desktop-application.json",
+      "sha256": "f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad",
+      "result": "PASS: report authenticates the actual task-owned Audit & Lineage renderer regions and interactions for the exact candidate."
+    },
+    {
+      "type": "build-manifest",
+      "path": "artifacts/tmp/CAP-03.S03.T03-R02-build-manifest.json",
+      "sha256": "335a18ef4e57f3b7ce7e23ca68188ac513f6b7a33857a736ff9f73267a252a02",
+      "result": "PASS: manifest binds exact candidate 9910ca3ae717ced397830125381e555901fd5abe and records only the protected witness as the pre-existing dirty path."
+    },
+    {
+      "type": "independent-check",
+      "command": "apps/desktop/node_modules/.bin/vitest.CMD run apps/desktop/src/app/AuditLineageWorkspace.test.tsx packages/contracts/core-api/generated.test.ts",
+      "result": "PASS: 17/17 focused generated-client and renderer tests passed, including request-bound over-page/over-depth/nonempty non-progress, duplicate, missing-root, immutable-query, governed-region, integrity-denial, and export behavior claimed by the submission."
+    },
+    {
+      "type": "independent-check",
+      "command": "PYTHONPATH=services/core-api/src .venv/Scripts/python.exe -m unittest -v tests.service.test_provenance tests.data.test_sqlite_repositories",
+      "result": "PASS: 20/20 focused real service/repository checks passed. The service test drives actual SQLite through Core with synthesis, evidence, alternate evidence, a human decision, a model-authored three-input synthesis record, and a valid output-free invalidation; it verifies typed relation facts, full-versus-paginated fact identity/order, rights, export, and integrity behavior."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/data -p 'test_*.py'",
+      "result": "NON-ATTRIBUTABLE BASELINE DEBT: 109 tests ran; 107 passed and two stale historical assertions failed because they still expect schema version 6 after the integrated schema-v7 provenance migration. Neither failing test exercises a T03 changed path or trace/export command; preserve for W1-exit reconciliation."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv/Scripts/python.exe tools/core_api_contract.py --check; .venv/Scripts/python.exe tools/architecture_check.py --repo .; exact incremental changed-path comparison; git diff --check",
+      "result": "PASS: generated Core OpenAPI/TypeScript bytes were current; architecture passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles; all 26 declared candidate paths matched; patch hygiene passed."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Drive createCoreApiClient.lineage through a fake generated-client transport with an accepted continuation command cursor=50, pageSize=50, maxDepth=8 and a matching response containing items=[] and nextCursor=50",
+      "result": "FAIL: the client accepted the empty non-progress page and returned items.length=0, nextCursor=50. Its guard rejects nextCursor only when it differs from command.cursor + items.length, so an empty continuation may return the same cursor; the renderer then leaves the same Load more command available indefinitely."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Use the actual renderer module to export a verified/allowed first page with nextCursor non-null, then merge an integrity-review current trace with a later verified page carrying exportAllowed=true and exportDenialReason=null and call exportLineageManifest",
+      "result": "FAIL: the first export completed without loading the continuation, and the manifest has no completeness or accepted-query-bound assertion. mergeLineagePage retained integrityState='integrity-review' but replaced export authority with true/null from the later page; exportLineageManifest then exported the integrity-review trace."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S03.T03-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "An empty continuation response can preserve the same cursor and create a nonterminating pagination command",
+      "reproduction": "At exact candidate 9910ca3ae717ced397830125381e555901fd5abe, call createCoreApiClient.lineage with the accepted continuation command revisionId=<valid revision>, direction=ancestors, cursor=50, pageSize=50, and maxDepth=8. Have a fake transport return the exact matching revision/direction, integrityState='verified', exportAllowed=true, items=[], and nextCursor=50. The generated client accepts the response. Its request-aware progress guard is `nextCursor !== null && nextCursor !== command.cursor + items.length`; with zero items, the only accepted non-null cursor is therefore the unchanged requested cursor. AuditLineageWorkspace.loadMoreLineage submits trace.nextCursor and mergeLineagePage retains the accepted empty page's nextCursor, so the same Load more action remains enabled and can repeat forever without adding a fact. This contradicts the slice's strict bounded pagination/termination authority and the architecture documentation's claim that non-progress cursors are rejected. The honest Core currently returns null after an empty page, but the generated client is the required cross-process trust boundary and must reject malformed or future-regressed responses.",
+      "required_remediation": "Require every non-null continuation cursor to make strict forward progress beyond the request cursor and to satisfy an unambiguous contract for the returned page; an empty page must terminate with nextCursor=null. Preserve the existing request-bound item/depth/root/identity guards. Add a fake-transport case for empty same-cursor and backward cursors plus a renderer interaction proving an empty terminal page removes Load more and cannot resubmit the same command."
+    },
+    {
+      "id": "CAP-03.S03.T03-R02-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "The renderer can export an incomplete trace and can regain export authority while integrity-review remains active",
+      "reproduction": "At exact candidate 9910ca3ae717ced397830125381e555901fd5abe, pass exportLineageManifest a verified response with exportAllowed=true, exportDenialReason=null, and nextCursor non-null. The function exports immediately; it checks only exportAllowed/denial and serializes the currently loaded items without requiring nextCursor=null or recording that the result is a bounded partial manifest tied to the accepted query. The committed renderer test itself creates an exportable value by shallow-overriding lineage while lineage still has nextCursor=4 and expects export success. Independently, start mergeLineagePage with current.integrityState='integrity-review', exportAllowed=false, and an integrity denial, then merge a valid later page with integrityState='verified', exportAllowed=true, and exportDenialReason=null. The merge preserves the stricter integrity-review state but spreads the later page's export fields, producing integrity-review plus exportAllowed=true/null. exportLineageManifest then exports that inconsistent trace. This violates the approved content-minimized export/redaction workflow and service-level rights/integrity denial: pagination may silently omit governed facts, and integrity-review must remain fail-closed regardless of later page authority.",
+      "required_remediation": "Make export authority an invariant of the complete accepted trace, not the most recent page. Fail closed whenever integrityState is not verified, any page denies export, page authority is inconsistent, or completeness is not established. Either require the governed export to load and validate every bounded page through termination or explicitly implement a separately authorized partial-export contract that binds the accepted query, cursor range, completeness state, integrity state, and omission notice; the approved current workflow does not authorize silent partial export. Merge export authority monotonically (denial/integrity-review wins) and add actual renderer tests for partial pages, mixed page rights, an integrity-review current trace followed by a verified/allowed page, and successful complete export."
+    }
+  ],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S03.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "The exact synthetic-only/output-free-invalidation defect is closed. The R02 real Core test writes governed synthesis/evidence/alternate/decision records through SQLite, creates a valid successful output-free invalidation, and reads them through the public lineage service. The response exposes typed relation facts with stable fact IDs, relation type, entity direction, related revision, rights, and knowledge metadata; full and paginated reads return identical ordered fact identities. The renderer consumes those generated-client facts instead of inventing an invalidated output node."
+    },
+    {
+      "finding_id": "CAP-03.S03.T03-R01-F02",
+      "disposition": "fixed",
+      "evidence": "The exact R01 fake response with 51 items, depth 9, and nextCursor=0 against pageSize=50/maxDepth=8 is now rejected. Generated-client checks bind item count, depth, root identity, duplicates, and ordinary cursor progression to the accepted command; renderer pagination retains the immutable accepted revision/direction/depth/page-size authority and merges stable fact IDs without duplication. R02-F01 separately records the newly isolated zero-item continuation edge, which was not the exact R01 reproduction and does not erase this closure."
+    },
+    {
+      "finding_id": "CAP-03.S03.T03-R01-F03",
+      "disposition": "fixed",
+      "evidence": "The exact missing-region and reference-only-conformance defect is closed. The React workspace now includes factual Audit events, Rights and egress, Human decisions, and Export/redaction regions with stable implementation-conformance selectors, and the desktop application report/build manifest cover the actual task-owned renderer rather than only approved reference bytes. Focused React tests verify those regions, content-minimized rendering, rights denial, integrity-review denial, keyboard-accessible controls, and the implementation conformance map. R02-F02 separately records newly exposed completeness and monotonic export-authority defects within the added export behavior."
+    }
+  ]
+}
