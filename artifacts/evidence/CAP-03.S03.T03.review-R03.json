@@ -1,0 +1,90 @@
+{
+  "task_id": "CAP-03.S03.T03",
+  "attempt_id": "R03",
+  "candidate_commit": "b4da81e23738d722efe12cf44f760531656690f3",
+  "submission_record_commit": "8a7be1ca131a08e01db4a53944ff836eba3c708e",
+  "reviewer": "codex-independent-provenance-lineage-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent focused R03 remediation review authenticated artifacts/evidence/CAP-03.S03.T03.R03.json at SHA-256 24c7fbf42d3d2600a03a37540683105f7f6b53b491d65b0e03a2e79e84e1ea12 and Git blob 19ff1c5d5359523c345d0480e91d655b390c912c in exact submission record 8a7be1ca131a08e01db4a53944ff836eba3c708e. Candidate b4da81e23738d722efe12cf44f760531656690f3 is a strict descendant of R02 candidate 9910ca3ae717ced397830125381e555901fd5abe, the submission record is a strict descendant of the candidate, and all 13 declared incremental paths exactly match that candidate range. The exact R02-F01 reproduction is closed: generated-client fake-transport replay rejects an empty same-cursor continuation and a backward cursor, accepts an empty terminal continuation only with nextCursor=null, and the renderer merge removes the continuation action. The exact R02-F02 reproductions are also closed: partial pagination cannot export, the accepted immutable revision/direction/depth/page-size query is required, and integrity-review or rights denial remains monotonic across later verified/allowed pages. All three immutable R01 closures remain supported by the 18/18 focused generated-client/renderer tests, the 20/20 real SQLite/Core service/repository tests, the actual renderer report, and inspection of the preserved cross-process/type/UI paths. Approval remains unavailable because one new high-severity contradiction is reproducible inside the same export/integrity trust boundary: the generated client accepts a resolved trace with nonempty missingRevisionIds (and analogously a nonzero legacyEventCount) while the response claims verified/export-allowed; lineageManifestReady then returns true and exportLineageManifest emits a manifest labeled complete. The accepted architecture explicitly makes missing revisions and legacy bridges integrity-review states unsuitable for export. Thus R03's progress, terminal completeness, query binding, and monotonic merge corrections are sound, but complete export still trusts a semantically inconsistent initial page. The submitted desktop report at SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad records nine successful commands and no errors, while the exact build manifest at SHA-256 e3fadf911a84344d5327e4e73238ab805733e03b2329cb5385b379ac54e75bd6 binds candidate b4da81e23738d722efe12cf44f760531656690f3 and only the protected witness as dirty. Generated Core client/generator parity, architecture, changed-path truth, patch hygiene, runtime capability alignment, content minimization, closed/read-only authority, and the real typed provenance vertical otherwise remain sound. The previously recorded two stale schema-v6 assertions and historical foundation-controller baseline remain separate W1-exit reconciliation debt rather than T03 regressions. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S03.T03.R03.json",
+      "sha256": "24c7fbf42d3d2600a03a37540683105f7f6b53b491d65b0e03a2e79e84e1ea12",
+      "git_blob": "19ff1c5d5359523c345d0480e91d655b390c912c",
+      "commit": "b4da81e23738d722efe12cf44f760531656690f3"
+    },
+    {
+      "type": "prior-review-ledger",
+      "path": "artifacts/evidence/CAP-03.S03.T03.review-R02.json",
+      "sha256": "43587cf2324720a15086d036cc145a8fcbbb72fbf69189029d3d6134d34f6a49",
+      "result": "Authenticated immutable R02 ledger with two exact open findings and preserved closures of all three R01 findings."
+    },
+    {
+      "type": "desktop-application-report",
+      "path": "artifacts/tmp/CAP-03.S03.T03-R03-desktop-application.json",
+      "sha256": "f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad",
+      "result": "PASS: nine UI-component, lint, strict-TypeScript, full-Vitest, production-build, Rust-format, clippy, Rust-test, and Rust-build commands exited zero with no report errors and the task-owned Audit and Lineage capability present."
+    },
+    {
+      "type": "build-manifest",
+      "path": "artifacts/tmp/CAP-03.S03.T03-R03-build-manifest.json",
+      "sha256": "e3fadf911a84344d5327e4e73238ab805733e03b2329cb5385b379ac54e75bd6",
+      "result": "PASS: build identity 0.1.0+gb4da81e.dirty binds the exact candidate; its sole dirty path is the protected untracked witness."
+    },
+    {
+      "type": "independent-check",
+      "command": "apps\\desktop\\node_modules\\.bin\\vitest.CMD run apps/desktop/src/app/AuditLineageWorkspace.test.tsx packages/contracts/core-api/generated.test.ts",
+      "result": "PASS: 18/18 focused generated-client and renderer tests passed. The suite closes empty same-cursor/backward progress, accepts only a terminal empty page, removes Load more after terminal merge, denies partial/query-mismatched export, preserves integrity and rights denial monotonically, and replays the R01 fact, query, and governed-region closures."
+    },
+    {
+      "type": "independent-check",
+      "command": "PYTHONPATH=services/core-api/src .venv\\Scripts\\python.exe -m unittest -v tests.service.test_provenance tests.data.test_sqlite_repositories",
+      "result": "PASS: 20/20 real service and SQLite repository tests passed, including synthesis/evidence/alternate/human-decision/output-free-invalidation facts, exact pagination identity/order, rights denial, missing-reference integrity review, append-only atomicity, corruption detection, retry/restart, and repository-port boundaries."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe tools\\core_api_contract.py --check; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; exact incremental changed-path comparison; git diff --check",
+      "result": "PASS: generated OpenAPI/TypeScript exactly matches the Python generator; architecture passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles; all 13 declared paths matched; patch hygiene passed."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Drive the exact generated client through a Vite SSR-loaded fake transport for cursor=50 with (a) items=[]/nextCursor=50, (b) one item/nextCursor=49, and (c) items=[]/nextCursor=null; then merge the accepted terminal page into the actual renderer trace",
+      "result": "PASS: cases (a) and (b) both rejected with RO-CORE-RESPONSE-INVALID; case (c) returned zero items with a null cursor, merge retained accumulated facts and a null cursor, and the continuation action was no longer available."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Drive the actual renderer helpers with a verified/export-allowed partial page, an integrity-review trace followed by a verified/allowed terminal page, and the same accepted immutable query",
+      "result": "PASS: lineageManifestReady returned false and exportLineageManifest denied the partial page; the merge retained integrity-review, exportAllowed=false, and denial=integrity-review, so later authority could not reopen export. Submitted tests separately passed the symmetric rights-restricted replay and complete query-bound success case."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Drive createCoreApiClient.lineage for the accepted first-page query through a fake transport returning a valid resolved depth-zero fact, nextCursor=null, missingRevisionIds=[<valid distinct UUIDv7>], integrityState='verified', legacyEventCount=0, exportAllowed=true, and exportDenialReason=null; pass the accepted result and query to lineageManifestReady/exportLineageManifest",
+      "result": "FAIL: the generated client accepted the contradictory page, lineageManifestReady returned true, and exportLineageManifest emitted completeness='complete'. Inspection confirms the same semantic gap for legacyEventCount>0. This contradicts the architecture and real Core behavior, both of which require missing revisions or legacy bridges to remain integrity-review and unsuitable for export."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S03.T03-R03-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Missing or legacy lineage facts can be accepted as verified and exported as a complete manifest",
+      "reproduction": "At exact candidate b4da81e23738d722efe12cf44f760531656690f3, construct an otherwise valid first-page ProvenanceLineagePage with the requested revision as one resolved depth-zero fact, nextCursor=null, a distinct valid UUIDv7 in missingRevisionIds, integrityState='verified', legacyEventCount=0, exportAllowed=true, and exportDenialReason=null. Return it from a fake transport to createCoreApiClient.lineage for the exact accepted cursor-zero query. The generated client accepts it because decodeProvenanceLineagePage checks exportAllowed only against denial null, while lineage() treats a resolved root as sufficient and never binds nonempty missingRevisionIds to integrity-review. Pass the result and accepted query to lineageManifestReady: it returns true because it checks terminal cursor, revision, direction, integrity, export flags, and item rights but not missingRevisionIds. exportLineageManifest then emits completeness='complete' and the UI enables export. Replacing the missing list with legacyEventCount=1 reaches the same result because neither the client nor readiness predicate binds legacy visibility to integrity-review. docs/architecture/provenance-contracts.md explicitly states that missing revisions and legacy bridges remain visible as an integrity-review state unsuitable for export or claim use. The honest Core currently emits that denial, but the generated client/renderer are the cross-process fail-closed boundary already hardened against other contradictory response authority in this task.",
+      "required_remediation": "Enforce the page-level semantic invariant at the generated-client boundary: any nonempty missingRevisionIds or nonzero legacyEventCount must carry integrityState='integrity-review', exportAllowed=false, and exportDenialReason='integrity-review'; conversely a verified/exportable page must have neither condition. Preserve this invariant monotonically across renderer merges by deriving integrity review from the accumulated missing list and maximum legacy count, not only from service flags. Make lineageManifestReady independently require missingRevisionIds.length===0 and legacyEventCount===0 before complete export. Add fake-transport first-page and continuation contradictions for missing and legacy states, actual renderer merge/export denials for each, and retain the honest real-Core missing-reference test plus the complete verified export success case."
+    }
+  ],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S03.T03-R02-F01",
+      "disposition": "fixed",
+      "evidence": "The exact empty same-cursor reproduction and a backward-cursor variant now fail at the generated-client boundary. A non-null cursor requires at least one returned fact, strict forward progress, and equality to requested cursor plus fact count. An empty terminal continuation with nextCursor=null passes through the generated client, mergeLineagePage retains accumulated facts and terminal null, and the renderer no longer exposes Load more. The generator emits exactly the checked-in guard and generated parity passed."
+    },
+    {
+      "finding_id": "CAP-03.S03.T03-R02-F02",
+      "disposition": "fixed",
+      "evidence": "The exact R02 partial-export and integrity-reopening reproductions now fail closed. Export requires the immutable accepted cursor-zero query, matching revision/direction, terminal pagination, verified integrity, service export permission with no denial, and no denied/unknown item rights; the manifest binds the accepted depth/page bounds and terminal count. mergeLineagePage applies a monotonic join in which integrity-review and rights-restricted denial survive every later verified/allowed page. The newly isolated R03-F01 concerns contradictory missing/legacy authority that neither the client nor readiness predicate currently maps into that otherwise-correct monotonic join; it does not erase closure of the exact R02 reproductions."
+    }
+  ]
+}
