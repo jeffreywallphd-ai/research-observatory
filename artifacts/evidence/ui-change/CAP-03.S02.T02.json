@@ -22,7 +22,7 @@
     {
       "command": "workspace Node 24 desktop lint, strict TypeScript compilation, application tests, and product Vite build",
       "result": "passed",
-      "scope": "Desktop lint, strict compilation, renderer tests, and production rendering cover the fourteen-use-case catalog, mode defaults, safe project boundary states, approved intent regions, impact acknowledgement, immutable version comparison, exact persisted-revision acceptance, stale-edit denial, and the disabled draft launch action."
+      "scope": "Desktop lint, strict compilation, renderer tests, and production rendering cover the fourteen-use-case catalog, mode defaults, safe project boundary states, approved intent regions, impact acknowledgement, immutable version comparison, exact persisted-revision acceptance, stale-edit denial, ambiguous-response same-key reconciliation, definitive rejection, accepted projection replacement, and the disabled launch action."
     },
     {
       "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py, ui_token_check.py, ui_route_check.py, ui_workflow_check.py, ui_accessibility_check.py, and ui_visual_regression_check.py",
@@ -35,5 +35,5 @@
       "scope": "The compiled product exposed Research intent in the implemented-workspace navigation, preserved the application landmarks and trust footer, and rendered a truthful no-project denial without fabricated research data or network access."
     }
   ],
-  "implementationScope": "Implement the already approved Research Intent Contract as a functional project-scoped desktop workflow. Reuse Academic Minimal components and tokens; expose fourteen guided use cases, scope/evidence policy, AI authority, novelty, stopping logic, impact preview, version history, and explicit human acceptance bound to the exact persisted revision and content hash; keep incomplete or unsaved drafts non-governing and unable to launch. Do not change the approved reference, add future tools, or copy illustrative reference records into the product."
+  "implementationScope": "Implement the already approved Research Intent Contract as a functional project-scoped desktop workflow. Reuse Academic Minimal components and tokens; expose fourteen guided use cases, scope/evidence policy, AI authority, novelty, stopping logic, impact preview, version history, and explicit human acceptance bound to the exact persisted revision and content hash. Preserve one frozen acceptance command and idempotency key across an ambiguous local response and reconcile it with Core before making an authority claim; keep incomplete or unsaved drafts non-governing and keep launch disabled. Do not change the approved reference, add future tools, or copy illustrative reference records into the product."
 }
