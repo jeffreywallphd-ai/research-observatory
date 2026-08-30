@@ -1275,12 +1275,22 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         && result.missingRevisionIds.includes(command.revisionId)
         && !result.exportAllowed
         && result.exportDenialReason === "integrity-review";
+      const visibleIntegrityDebt = result.missingRevisionIds.length > 0 || result.legacyEventCount > 0;
       if (result.revisionId !== command.revisionId || result.direction !== command.direction
         || result.items.length > command.pageSize
         || result.items.some((item) => item.depth > command.maxDepth)
         || result.items.some((item, index) => index > 0 && item.depth < (result.items[index - 1]?.depth ?? 0))
         || new Set(factIds).size !== factIds.length
         || (command.cursor === 0 && !rootResolved && !rootUnavailable)
+        || (visibleIntegrityDebt && (
+          result.integrityState !== "integrity-review"
+          || result.exportAllowed
+          || result.exportDenialReason !== "integrity-review"
+        ))
+        || (result.integrityState === "integrity-review" && (
+          result.exportAllowed || result.exportDenialReason !== "integrity-review"
+        ))
+        || (result.integrityState === "verified" && result.exportDenialReason === "integrity-review")
         || (result.nextCursor !== null && (
           result.items.length === 0
           || result.nextCursor <= command.cursor

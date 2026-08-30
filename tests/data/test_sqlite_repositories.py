@@ -221,6 +221,46 @@ class SqliteRepositoryTests(unittest.TestCase):
         self.assertEqual(("01890f6e-6a40-7cc5-98b7-000000000992",), lineage.missing_revision_ids)
         self.assertNotIn(first.revision_id, tuple(item.revision_id for item in lineage.items))
 
+    def test_legacy_bridge_keeps_resolved_lineage_in_integrity_review(self) -> None:
+        with self.factory() as unit:
+            revision = unit.aggregates.append(draft(1), event(0), expected_revision=None)
+            unit.commit()
+
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            connection.execute(
+                """
+                INSERT INTO provenance_events (
+                    event_id, project_id, revision_id, event_type, occurred_at,
+                    trace_id, actor_type, actor_id, record_sha256
+                ) VALUES (?, ?, ?, 'legacy.narrow.recorded', ?, ?, 'human', ?, ?)
+                """,
+                (
+                    "01890f6e-6a40-7cc5-98b7-000000000993",
+                    PROJECT_ID,
+                    revision.revision_id,
+                    CREATED_AT,
+                    "e" * 32,
+                    event(0).actor_id,
+                    "f" * 64,
+                ),
+            )
+        finally:
+            connection.close()
+
+        lineage = sqlite_provenance_ledger_repository(self.root, PROJECT_ID).lineage(
+            revision_id=revision.revision_id,
+            direction="ancestors",
+            cursor=0,
+            page_size=10,
+            max_depth=4,
+        )
+        self.assertTrue(lineage.items)
+        self.assertEqual(1, lineage.legacy_event_count)
+        self.assertEqual("integrity-review", lineage.integrity_state)
+        self.assertFalse(lineage.export_allowed)
+        self.assertEqual("integrity-review", lineage.export_denial_reason)
+
     def test_authority_projection_corruption_enters_integrity_review(self) -> None:
         cases = (
             "event-identity",

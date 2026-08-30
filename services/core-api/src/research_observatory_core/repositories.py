@@ -2027,6 +2027,8 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                         (self._project_id,),
                     ).fetchone()[0]
                 )
+                if legacy_event_count:
+                    integrity_state = "integrity-review"
                 frontier = [(revision_id, 0)]
                 queued = {revision_id}
                 visited: set[str] = set()
