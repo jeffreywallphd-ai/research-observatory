@@ -4021,7 +4021,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
         )
 
         self.assertEqual(before, data["wave_amendments"][:3])
-        self.assertEqual(["W1.A01", "W1.A02", "W1.A03", "W1.A04", "W1.A05"], [item["id"] for item in data["wave_amendments"]])
+        self.assertEqual(
+            ["W1.A01", "W1.A02", "W1.A03", "W1.A04", "W1.A05"], [item["id"] for item in data["wave_amendments"]]
+        )
         self.assertEqual("SUPERSEDED", data["wave_amendments"][3]["lifecycle"]["status"])
         self.assertIsNone(data["wave_amendments"][3]["bootstrap"])
         self.assertEqual("APPROVED", data["wave_amendments"][4]["lifecycle"]["status"])
@@ -4034,9 +4036,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_post_migration_v4_append_denies_an_active_recovery_hold(self) -> None:
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
-        next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")[
-            "status"
-        ] = "ACTIVE"
+        next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")["status"] = (
+            "ACTIVE"
+        )
         approval_path = REPO / "planning/wave-amendment-approvals/W1.A05.json"
         approval_payload = approval_path.read_bytes()
         approval = json.loads(approval_payload)

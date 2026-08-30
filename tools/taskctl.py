@@ -105,9 +105,7 @@ HISTORICAL_W1_A04_WITNESS = {
     "task_id": "W1.A04.B00",
     "commit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
 }
-BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH = (
-    "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json"
-)
+BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH = "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json"
 TASK_RECOVERY_CONTRACT_FIELDS = (
     "id",
     "capability_id",
@@ -3748,10 +3746,9 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
                 except SystemExit as exc:
                     errors.append(f"control revision 12 maintenance authority is invalid: {exc}")
                 else:
-                    if (
-                        packet.get("schemaVersion") != "4.0-proposal"
-                        or packet.get("migrationAuthority") != increment.get("migration_reference")
-                    ):
+                    if packet.get("schemaVersion") != "4.0-proposal" or packet.get(
+                        "migrationAuthority"
+                    ) != increment.get("migration_reference"):
                         errors.append("control revision 12 maintenance increment differs from its v4 authority")
     live_state: dict[str, Any] = {}
     if repo is not None:
@@ -5999,8 +5996,7 @@ def wave_resume_allowed_untracked(data: dict[str, Any], wave_id: str, repo: Path
         (
             amendment
             for amendment in data.get("wave_amendments", [])
-            if amendment.get("id") == "W1.A04"
-            and (amendment.get("lifecycle") or {}).get("status") == "SUPERSEDED"
+            if amendment.get("id") == "W1.A04" and (amendment.get("lifecycle") or {}).get("status") == "SUPERSEDED"
         ),
         None,
     )
@@ -6056,9 +6052,7 @@ def task_evidence_allowed_untracked(
     return wave_resume_allowed_untracked(data, wave_id, repo)
 
 
-def amendment_transition_allowed_untracked(
-    data: dict[str, Any], amendment_id: str, repo: Path
-) -> set[str]:
+def amendment_transition_allowed_untracked(data: dict[str, Any], amendment_id: str, repo: Path) -> set[str]:
     amendment = wave_amendment_map(data).get(amendment_id) or {}
     wave_id = str(amendment.get("target_wave") or "")
     return wave_resume_allowed_untracked(data, wave_id, repo) if wave_id else set()
@@ -7202,7 +7196,9 @@ def command_amendment_v4_bootstrap_submit(
     reserved = chain.get("reservedAmendments") or []
     if [item.get("id") for item in existing] != [item.get("id") for item in ordered]:
         raise SystemExit("Post-migration amendment predecessor authority differs from the canonical backlog")
-    expected_reserved = [f"{wave_id}.A{index:02d}" for index in range(len(existing) + 1, len(existing) + len(reserved) + 1)]
+    expected_reserved = [
+        f"{wave_id}.A{index:02d}" for index in range(len(existing) + 1, len(existing) + len(reserved) + 1)
+    ]
     if [item.get("id") for item in reserved] != expected_reserved:
         raise SystemExit("Post-migration reserved amendments are not the exact next consecutive identities")
     expected_id = f"{wave_id}.A{len(existing) + len(reserved) + 1:02d}"
@@ -7366,7 +7362,10 @@ def command_amendment_v4_bootstrap_submit(
     )
     after_snapshot = amendment_identity_snapshot(data)
     expected_suffix = tuple((item, ()) for item in [*expected_reserved, args.amendment])
-    if after_snapshot[: len(before_snapshot)] != before_snapshot or after_snapshot[len(before_snapshot) :] != expected_suffix:
+    if (
+        after_snapshot[: len(before_snapshot)] != before_snapshot
+        or after_snapshot[len(before_snapshot) :] != expected_suffix
+    ):
         raise SystemExit("Post-migration append would replace, reorder, or fork predecessor amendment authority")
     maintenance = control.setdefault("maintenance_increments", [])
     if maintenance:
