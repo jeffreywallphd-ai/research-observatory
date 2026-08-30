@@ -32033,14 +32033,17 @@ wave_amendments:
       matrix.
     - Obtain independent commit-bound task and slice review with all blocking findings closed.
     packet_task_sha256: ff45d72ed01731d320263cb288fe2d82fcede4b71b14be98634a82bf03a65e54
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-08-30T18:29:24+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: bd8d752a0fcec1f40b1a8abe59b793c783946e4e
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-30T18:32:14+00:00'
+      expires_at: '2026-08-31T02:32:14+00:00'
+    started_at: '2026-08-30T18:32:14+00:00'
+    updated_at: '2026-08-30T18:32:14+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
