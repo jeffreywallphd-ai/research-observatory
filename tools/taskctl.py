@@ -694,13 +694,11 @@ def is_unexecuted_superseded_reservation(amendment: dict[str, Any]) -> bool:
     lifecycle = amendment.get("lifecycle") or {}
     history = lifecycle.get("history") or []
     completion = amendment.get("completion") or {}
+    migration_actor = str(history[-1].get("actor") or "") if history else ""
     return (
         lifecycle.get("status") == "SUPERSEDED"
-        and len(history) >= 2
-        and history[0].get("status") == "APPROVED"
-        and history[-1].get("status") == "SUPERSEDED"
-        and all(event.get("status") in {"APPROVED", "SUPERSEDED"} for event in history)
-        and str(history[-1].get("actor") or "").startswith("governance-migration:")
+        and [event.get("status") for event in history] == ["APPROVED", "SUPERSEDED"]
+        and re.fullmatch(r"governance-migration:GOV-MIG-[0-9]{4}", migration_actor) is not None
         and amendment.get("bootstrap") is None
         and amendment.get("campaign") is None
         and amendment.get("tasks") == []
@@ -708,6 +706,7 @@ def is_unexecuted_superseded_reservation(amendment: dict[str, Any]) -> bool:
         and completion.get("reviewer") is None
         and completion.get("reviewed_at") is None
         and completion.get("evidence") == []
+        and completion.get("exit_review_control") is None
     )
 
 
