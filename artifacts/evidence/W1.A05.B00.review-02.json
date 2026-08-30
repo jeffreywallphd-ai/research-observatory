@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-control-review",
+  "reviewId": "W1.A05.B00.R02",
+  "taskId": "W1.A05.B00",
+  "reviewer": "w1-a05-b00-independent-reviewer",
+  "implementationCommit": "cf8a2568a29766c27a0f73cfb9036d86f91b62ac",
+  "submittedStateCommit": "676475dbb878243d5106ead39b0ed0df0882b6a9",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "W1-A05-B00-R02-F01",
+      "severity": "HIGH",
+      "title": "An implementer-selected remediation base can hide unauthorized intervening paths from both scope checks",
+      "reproduction": "In `bootstrap_attempt_errors`, a remediation manifest may name any `baseCommit` that is a descendant of the prior candidate (`lineage_base`) and an ancestor of the new candidate. The changedFiles check compares only that selected base to the candidate, and candidate cf8a2568a29766c27a0f73cfb9036d86f91b62ac changes the approved-path scan from `lineage_base..candidate` to the same `evidence_base..candidate` range. Create an unauthorized commit U after the prior candidate P, choose U as the remediation manifest base, then create candidate C containing only an authorized remediation change. Both ancestry checks pass; both diffs inspect only U..C; the unauthorized P..U path is present in C but is omitted from changedFiles and never checked against authorized paths. The added test `test_bootstrap_remediation_scope_starts_at_its_frozen_evidence_base` confirms only that U..C is used and has no adversarial P..U case.",
+      "requiredRemediation": "Keep manifest changedFiles bound to the exact evidence-base-to-candidate remediation delta, but preserve an authority scan over the complete prior-candidate-to-new-candidate lineage, or equivalently authenticate an exact pre-existing reviewed-state base and separately reject every unauthorized path in the excluded prefix. Add an isolated Git-bound test where an unauthorized path is committed between the prior candidate and claimed remediation base and prove validation rejects it; also retain the current exact remediation chain pass case."
+    }
+  ],
+  "closedFindings": [
+    "W1-A05-B00-R01-F01"
+  ],
+  "verification": {
+    "priorFindingReplay": "W1-A05-B00-R01-F01 is closed. The legacy fixture no longer opens the protected repository witness; pre-supersession missing, malformed, hash-mismatched, and identity-mismatched evidence is synthetic and fail-closed; exact terminal W1.A04 supersession admits only the inert named path without reading it when the path is present, altered, or absent.",
+    "ancestryAndEvidence": "Candidate cf8a2568a29766c27a0f73cfb9036d86f91b62ac strictly descends from frozen remediation base 13a37a5dba45e9f853121638e0c67f0e6557093b and is the sole parent of submitted state 676475dbb878243d5106ead39b0ed0df0882b6a9. The incremental diff contains exactly tests/foundation/test_taskctl_workflow.py and tools/taskctl.py and passes diff hygiene. Remediation evidence SHA-256 is 59f59c03433b6bef3ddaeda5151a50fe0de83404c2592ed38a643297708613d6; prior R01 ledger remains byte-identical at SHA-256 ec71791a7bebea388f8b75af15622201cd4e959c709605f18a472dafeda1cb83.",
+    "focusedTests": "Taskctl schema/workflow passed 99/99 in 318.871 seconds. UI-reference and planctl amendment suites passed 15/15 in 159.210 seconds. These green tests close the prior compatibility defect but do not exercise W1-A05-B00-R02-F01.",
+    "authorityAndViews": "ECR-0004 remains approved and history-bound; Python quality passed for 168 governed files; RO-UI-ACADEMIC-MINIMAL-1.4 remains approved, hash-bound, and reproducible; the 488-page planning site and generated backlog views pass.",
+    "stateBoundary": "The exact submission retains revision 12 and MI-0001/GOV-MIG-0001 authority, terminal W1.A04 supersession, W1.A05 bootstrap REVIEW with append-only R01 history, no amendment tasks or campaign, no active amendment, and W1 PAUSED at Wave scope with no lease. No product/runtime path or ordinary task/campaign state changed.",
+    "scopeAssessment": "The exact current two-path remediation is benign and its declared changedFiles are truthful. Approval is withheld because the generic controller change weakens fail-closed authorized-path coverage for future remediation histories, directly within the incremental control-risk boundary."
+  },
+  "disposition": "CHANGES_REQUESTED. Preserve R01 and this R02 ledger append-only. Remediate only W1-A05-B00-R02-F01 in a strict descendant and submit a new commit-bound review round; no bootstrap approval, materialization, activation, amendment task claim, product work, Wave resume, or gate action is authorized."
+}
