@@ -18821,7 +18821,7 @@
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "CHANGES_REQUESTED",
+      "bootstrap_status": "REVIEW",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -18892,6 +18892,7 @@
           "id": "R04",
           "implementer": "codex",
           "implementation_commit": "4469adedd4b3fae0e64044ab1f8004d2553f0091",
+          "submission_branch": "codex/w1-windows-local-runtime",
           "evidence": [
             {
               "type": "criterion-manifest",
@@ -18907,7 +18908,28 @@
             "reviewed_at": "2026-08-30T14:07:00+00:00",
             "notes": "R04 ledger artifacts/evidence/W1.A05.B00.review-04.json (sha256 f1f28bc431574531c6d61ee5c61c267ce4278c6f101c2b0121fddb341ed50d01): R01-R03 are closed; W1-A05-B00-R04-F01 requires the frozen-state compatibility assertion to classify archived attempts by authenticated cutover ancestry."
           },
-          "current_status": "CHANGES_REQUESTED"
+          "scope_base_commit": "e886dd196e767b52ec253ce5286a0064d5a59c2f"
+        },
+        {
+          "id": "R05",
+          "implementer": "codex",
+          "implementation_commit": "658ef77fad6e657921c7cfe0bdce3fe096c7f9f7",
+          "evidence": [
+            {
+              "type": "criterion-manifest",
+              "path": "artifacts/evidence/W1.A05.B00.remediation-04.json",
+              "sha256": "6d8e185b82b984423ad44909983458664b9806506b01da2f6f6bbb87ee41a28d",
+              "commit": "658ef77fad6e657921c7cfe0bdce3fe096c7f9f7",
+              "recorded_at": "2026-08-30T14:16:55+00:00"
+            }
+          ],
+          "review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "current_status": "REVIEW"
         }
       ],
       "slice_contributions": [
