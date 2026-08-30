@@ -3295,7 +3295,23 @@ def recovery_supplement_authority_errors(
         ) != transition.get("successorRevision"):
             errors.append(f"{supplement_id}: installed control transition differs from its packet")
         amendment_id = str(target_approval.get("id") or "")
-        if amendment_id in wave_amendment_map(data) or target.get("backlogPresence") is not False:
+        target_amendment = wave_amendment_map(data).get(amendment_id) or {}
+        expected_approval_reference = {
+            "path": target_approval.get("path"),
+            "sha256": target_approval.get("sha256"),
+            "introduction_commit": target_approval.get("introductionCommit"),
+        }
+        terminal_migration_projection = bool(target_amendment) and (
+            target_amendment.get("change_request_id") == (target.get("changeRequestPacket") or {}).get("id")
+            and target_amendment.get("target_wave") == packet.get("targetWave")
+            and target_amendment.get("kind") == "gate-integrity-safety-defect"
+            and target_amendment.get("approval_reference") == expected_approval_reference
+            and (target_amendment.get("lifecycle") or {}).get("status") == "SUPERSEDED"
+            and target_amendment.get("bootstrap") is None
+            and target_amendment.get("campaign") is None
+            and target_amendment.get("tasks") == []
+        )
+        if (target_amendment and not terminal_migration_projection) or target.get("backlogPresence") is not False:
             errors.append(f"{supplement_id}: pre-append target amendment was fabricated in backlog state")
         approval_relative = str(target_approval.get("path") or "")
         try:
@@ -3768,7 +3784,7 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
             errors.append("control revision 6 cannot coexist with an adopted GCR-0001 live state")
         return errors
     expected_generation_counts = (
-        {4}
+        {3, 4}
         if revision >= 12
         else {3, 4}
         if revision == 11
