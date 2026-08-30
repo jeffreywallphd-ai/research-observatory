@@ -62,7 +62,12 @@ describe("application settings model", () => {
       projectProtection: "Unchanged",
     });
     expect(lockBehaviorPreview({ mode: "windows-password", profileName: "", inactivityTimeoutMinutes: 0 }))
-      .toMatchObject({ manual: "Lock and require Windows password", inactivity: "Disabled; manual lock remains available" });
+      .toMatchObject({
+        startup: "Open without an app prompt; manual lock remains available",
+        manual: "Lock and require Windows password",
+        inactivity: "Disabled; manual lock remains available",
+        restart: "Open without an app prompt; manual lock remains available",
+      });
     expect(lockBehaviorPreview({ mode: "windows-hello", profileName: "", inactivityTimeoutMinutes: 30 }))
       .toMatchObject({ startup: "Require Windows Hello", inactivity: "Lock after 30 minutes", recovery: "Explicit same-user Windows password recovery only" });
   });
@@ -162,6 +167,31 @@ describe("native application settings controller", () => {
     await expect(first).resolves.toMatchObject({ kind: "confirmation-required" });
   });
 
+  it("cancels a handle that arrives after the settings session is disposed", async () => {
+    let resolvePrepare: ((value: unknown) => void) | undefined;
+    const pending = new Promise<unknown>((resolve) => { resolvePrepare = resolve; });
+    const transport = new QueueTransport([
+      () => pending,
+      transition({
+        outcome: "cancelled",
+        reasonCode: "RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED",
+        handle: null,
+      }),
+    ]);
+    const controller = new ApplicationSettingsController(transport);
+    const preparation = controller.prepare({ mode: "none", profileName: "", inactivityTimeoutMinutes: 0 });
+    await controller.dispose();
+    resolvePrepare?.(transition({}));
+
+    await expect(preparation).resolves.toMatchObject({ kind: "cancelled" });
+    expect(controller.busy).toBe(false);
+    expect(transport.calls.map(({ command }) => command)).toEqual([
+      "application_sign_in_transition_prepare",
+      "application_sign_in_transition_commit",
+    ]);
+    expect(transport.calls[1]?.arguments_).toMatchObject({ confirmed: false });
+  });
+
   it("reconciles native status before claiming success after commit-response loss", async () => {
     const committedSnapshot = { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, policyRevision: 3, auditSequence: 3 };
     const transport = new QueueTransport([
@@ -211,6 +241,54 @@ describe("native application settings controller", () => {
       "application_sign_in_password_recovery_prepare",
       "application_sign_in_transition_commit",
     ]);
+  });
+
+  it("clears typed native commit failure authority before allowing a fresh retry", async () => {
+    const transport = new QueueTransport([
+      transition({}),
+      transition({
+        outcome: "failed",
+        reasonCode: "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
+        handle: null,
+      }),
+      transition({
+        outcome: "cancelled",
+        reasonCode: "RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED",
+        handle: null,
+      }),
+    ]);
+    const controller = new ApplicationSettingsController(transport);
+    await controller.prepare({ mode: "none", profileName: "", inactivityTimeoutMinutes: 0 });
+
+    await expect(controller.confirm(true)).resolves.toMatchObject({
+      kind: "rejected",
+      message: expect.stringContaining("retry is safe"),
+    });
+    expect(controller.busy).toBe(false);
+    expect(transport.calls[2]?.arguments_).toMatchObject({ confirmed: false });
+  });
+
+  it("retains an uncertain handle until later cancellation is confirmed", async () => {
+    const transport = new QueueTransport([
+      transition({}),
+      new Error("commit response lost"),
+      new Error("status unavailable"),
+      transition({
+        outcome: "cancelled",
+        reasonCode: "RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED",
+        handle: null,
+      }),
+    ]);
+    const controller = new ApplicationSettingsController(transport);
+    await controller.prepare({ mode: "none", profileName: "", inactivityTimeoutMinutes: 0 });
+
+    await expect(controller.confirm(true)).resolves.toMatchObject({
+      kind: "rejected",
+      message: expect.stringContaining("Retry cancellation"),
+    });
+    expect(controller.busy).toBe(true);
+    await expect(controller.confirm(false)).resolves.toMatchObject({ kind: "cancelled" });
+    expect(controller.busy).toBe(false);
   });
 
   it("rejects malformed native payloads without creating renderer policy authority", async () => {

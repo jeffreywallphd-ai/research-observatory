@@ -159,6 +159,20 @@ describe("application-lock contract", () => {
     expect(explicitUnlock.failClosed).toBe(false);
   });
 
+  it("does not reapply a semantically unchanged native polling snapshot", () => {
+    const current = {
+      ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+      signInMode: "windows-password",
+      inactivityTimeoutMinutes: 15,
+      auditSequence: 4,
+    } as const;
+    const result = reconcileApplicationLockSnapshot(current, current, { ...current }, false, "status");
+
+    expect(result.applied).toBe(false);
+    expect(result.displaySnapshot).toBe(current);
+    expect(result.nativeSnapshot).toEqual(current);
+  });
+
   it("keeps every non-success verification outcome locked and rejects forged state combinations", () => {
     for (const [outcome, reasonCode] of [
       ["cancelled", "RO-LOCK-AUTH-CANCELLED"],
@@ -305,6 +319,26 @@ describe("application-lock contract", () => {
       outcome: "committed",
       handle: null,
       snapshot: { signInMode: "none", policyRevision: 3 },
+    });
+  });
+
+  it("preserves the last verified provider for an explicit unlock after a transport failure", () => {
+    const verified = {
+      ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+      signInMode: "windows-password",
+      profileName: "Sensitive profile",
+      inactivityTimeoutMinutes: 15,
+      auditSequence: 7,
+    } as const;
+    const failed = failClosedApplicationLockSnapshot(verified, verified);
+
+    expect(failed).toMatchObject({
+      state: "locked",
+      signInMode: "windows-password",
+      profileName: null,
+      configurationState: "valid",
+      reason: "manual",
+      auditSequence: 7,
     });
   });
 

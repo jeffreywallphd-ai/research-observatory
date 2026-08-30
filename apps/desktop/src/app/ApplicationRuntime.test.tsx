@@ -102,6 +102,31 @@ describe("functional desktop application", () => {
     expect(html).not.toContain("Local researcher");
   });
 
+  it("offers deliberate password recovery when configured Windows Hello is unavailable", () => {
+    const html = renderToStaticMarkup(
+      <ApplicationLockedView
+        snapshot={{
+          ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+          state: "locked",
+          signInMode: "windows-hello",
+          policyRevision: 2,
+          profileName: null,
+          reason: "application-restart",
+        }}
+        busy={false}
+        error={null}
+        helloAvailability="not-configured"
+        onUnlock={() => undefined}
+        onRecovery={() => undefined}
+      />,
+    );
+
+    expect(html).toContain("Unlock with Windows Hello");
+    expect(html).toContain("Use Windows password recovery");
+    expect(html).toContain("Set up Windows Hello in Windows before selecting it here");
+    expect(html).not.toContain("Local projects");
+  });
+
   it("publishes a unique bounded shortcut registry and deterministic theme behavior", () => {
     expect(SHORTCUTS.map(({ id }) => id)).toEqual(["command", "help", "home"]);
     expect(new Set(SHORTCUTS.map(({ keys }) => keys)).size).toBe(SHORTCUTS.length);

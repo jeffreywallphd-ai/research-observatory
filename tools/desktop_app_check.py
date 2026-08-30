@@ -104,9 +104,9 @@ EXPECTED_TOKEN_CONTRACT = {
     "schemaVersion": "1.0",
     "documentType": "design-token-contract",
     "contractVersion": "1.0.0",
-    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
-    "referenceVersion": "1.3",
-    "referencePackageSha256": "db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+    "referenceVersion": "1.4",
+    "referencePackageSha256": "034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e",
     "sourcePath": "design/ui-reference/assets/tokens.css",
     "sourceCanonicalSha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
     "transport": "css-custom-properties",
@@ -869,6 +869,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "privacySettingsWorkflow": False,
         "applicationLock": False,
         "applicationLockReconciliation": False,
+        "applicationSettingsDraftReconciliation": False,
+        "applicationHelloRecovery": False,
         "responsiveCases": 0,
         "criticalViolations": [],
         "requests": [],
@@ -1448,7 +1450,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             details["applicationLock"] = (
                 locked.locator("h1").count() == 1
                 and locked.locator("h1").inner_text().strip() == "Research Observatory is locked"
-                and locked.get_by_role("button", name="Unlock with Windows", exact=True).count() == 1
+                and locked.get_by_role("button", name="Unlock with Windows password", exact=True).count() == 1
                 and "not Windows-account isolation" in locked_text
                 and "No Research Observatory or cloud account is required" in locked_text
                 and locked.locator(
@@ -1520,7 +1522,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                         failStatus = false;
                         snapshot = {...snapshot, state: 'unlocked', profileName: 'Private profile',
                           reason: null, auditSequence: snapshot.auditSequence + 1};
-                        return {...snapshot};
+                        return {schemaVersion: '1.0', outcome: 'succeeded',
+                          reasonCode: 'RO-LOCK-UNLOCKED', snapshot: {...snapshot}};
                       }
                       if (command === 'core_runtime_start' || command === 'core_runtime_status') {
                         return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
@@ -1547,7 +1550,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             lock_reconciliation.get_by_role("button", name="Project home", exact=True).click()
             lock_reconciliation.locator("#shell-command").fill("private query")
             lock_reconciliation.get_by_role("button", name="Private profile", exact=True).click()
-            lock_reconciliation.locator("#local-profile-name").fill("Private profile draft")
+            lock_reconciliation.locator("#application-profile-name").fill("Private profile draft")
+            lock_reconciliation.wait_for_timeout(1_200)
+            details["applicationSettingsDraftReconciliation"] = (
+                lock_reconciliation.locator("#application-profile-name").input_value()
+                == "Private profile draft"
+            )
             lock_reconciliation.evaluate("window.__LOCK_EMIT__({malformed: true})")
             lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=5_000)
             malformed_text = lock_reconciliation.locator("body").inner_text()
@@ -1557,16 +1565,16 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and "private query" not in malformed_text
                 and "Private profile draft" not in malformed_text
                 and lock_reconciliation.locator(
-                    "#shell-command, [data-current-project], #local-profile-name, nav, footer"
+                    "#shell-command, [data-current-project], #application-profile-name, nav, footer"
                 ).count()
                 == 0
             )
-            lock_reconciliation.get_by_role("button", name="Unlock with Windows", exact=True).click()
+            lock_reconciliation.get_by_role("button", name="Unlock with Windows password", exact=True).click()
             lock_reconciliation.locator(".application-shell[data-application-ready]").wait_for(timeout=5_000)
             normal_unlock = (
                 "No project open" in lock_reconciliation.locator("body").inner_text()
                 and lock_reconciliation.locator("#shell-command").input_value() == ""
-                and lock_reconciliation.locator("[data-current-project], #local-profile-name").count() == 0
+                and lock_reconciliation.locator("[data-current-project], #application-profile-name").count() == 0
             )
             lock_reconciliation.evaluate(
                 """window.__LOCK_SET_STATUS__({
@@ -1579,7 +1587,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=4_000)
             missed_event_locked = lock_reconciliation.locator("#shell-command, nav, footer").count() == 0
-            lock_reconciliation.get_by_role("button", name="Unlock with Windows", exact=True).click()
+            lock_reconciliation.get_by_role("button", name="Unlock with Windows password", exact=True).click()
             lock_reconciliation.locator(".application-shell[data-application-ready]").wait_for(timeout=5_000)
             lock_reconciliation.evaluate("window.__LOCK_FAIL_STATUS__()")
             lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=4_000)
@@ -1587,6 +1595,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 "Application-lock status is unavailable" in lock_reconciliation.locator("body").inner_text()
                 and lock_reconciliation.locator("#shell-command, nav, footer").count() == 0
             )
+            details["applicationLockReconciliationCases"] = {
+                "malformedEvent": malformed_locked,
+                "normalUnlock": normal_unlock,
+                "missedEvent": missed_event_locked,
+                "monitorFailure": monitor_failure_locked,
+            }
             details["applicationLockReconciliation"] = (
                 malformed_locked and normal_unlock and missed_event_locked and monitor_failure_locked
             )
@@ -1649,6 +1663,182 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"desktop lock race runtime error: {'; '.join(race_errors)}")
             lock_race.close()
 
+            hello_recovery = browser_context.new_page()
+            hello_recovery_errors: list[str] = []
+            hello_recovery.on("pageerror", page_error_collector(hello_recovery_errors))
+            hello_recovery.add_init_script(
+                r"""(() => {
+                  const callbacks = new Map();
+                  let nextCallback = 1;
+                  let listener = null;
+                  let resolveCommit;
+                  let snapshot = {
+                    schemaVersion: '1.0', state: 'locked', signInMode: 'windows-hello',
+                    policyRevision: 1, profileName: null, inactivityTimeoutMinutes: 15,
+                    configurationState: 'valid', reason: 'application-restart',
+                    threatDisclosure: 'Application-session protection only; '
+                      + 'this is not Windows-account isolation.',
+                    retryAfterSeconds: 0, auditSequence: 4
+                  };
+                  const prepared = () => ({
+                    schemaVersion: '1.0', outcome: 'prepared',
+                    reasonCode: 'RO-SIGN-IN-RECOVERY-PREPARED', handle: 'ab'.repeat(32),
+                    sourceMode: 'windows-hello', targetMode: 'none', warningRequired: true,
+                    snapshot: {...snapshot}
+                  });
+                  const transition = (outcome, reasonCode, nextSnapshot) => ({
+                    schemaVersion: '1.0', outcome, reasonCode, handle: null,
+                    sourceMode: 'windows-hello', targetMode: 'none', warningRequired: true,
+                    snapshot: {...nextSnapshot}
+                  });
+                  window.__HELLO_COMMIT_CALLS__ = [];
+                  window.__HELLO_RESOLVE_COMMIT__ = () => {
+                    snapshot = {...snapshot, state: 'unlocked', signInMode: 'none',
+                      policyRevision: 2, profileName: null, inactivityTimeoutMinutes: 0,
+                      configurationState: 'valid', reason: null, auditSequence: 6};
+                    resolveCommit?.(transition(
+                      'committed', 'RO-SIGN-IN-RECOVERY-COMMITTED', snapshot
+                    ));
+                  };
+                  window.__TAURI_INTERNALS__ = {
+                    transformCallback: (callback, once = false) => {
+                      const id = nextCallback++;
+                      callbacks.set(id, (value) => {
+                        if (once) callbacks.delete(id);
+                        return callback(value);
+                      });
+                      return id;
+                    },
+                    unregisterCallback: (id) => callbacks.delete(id),
+                    invoke: async (command, args) => {
+                      if (command === 'plugin:event|listen') {
+                        listener = args.handler;
+                        return args.handler;
+                      }
+                      if (command === 'plugin:event|unlisten') {
+                        callbacks.delete(args.id);
+                        return undefined;
+                      }
+                      if (command === 'application_lock_status') return {...snapshot};
+                      if (command === 'application_lock_hello_availability') {
+                        return {schemaVersion: '1.0', provider: 'windows-hello',
+                          availability: 'not-configured'};
+                      }
+                      if (command === 'application_sign_in_password_recovery_prepare') {
+                        return prepared();
+                      }
+                      if (command === 'application_sign_in_transition_commit') {
+                        window.__HELLO_COMMIT_CALLS__.push(args.confirmed);
+                        if (!args.confirmed) {
+                          return transition(
+                            'cancelled', 'RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED', snapshot
+                          );
+                        }
+                        return await new Promise((resolve) => { resolveCommit = resolve; });
+                      }
+                      if (command === 'application_lock_activity') return undefined;
+                      if (command === 'core_runtime_start' || command === 'core_runtime_status') {
+                        return {state: 'ready', attempt: 1, retryAvailable: false,
+                          diagnosticReference: null};
+                      }
+                      if (command === 'core_runtime_stop') return undefined;
+                      throw new Error(`unsupported Hello recovery command: ${command}`);
+                    }
+                  };
+                })()"""
+            )
+            hello_recovery.goto("http://tauri.localhost/index.html", wait_until="load")
+            hello_recovery.locator("[data-application-locked]").wait_for(timeout=5_000)
+            hello_recovery.get_by_text(
+                "Set up Windows Hello in Windows before selecting it here", exact=False
+            ).wait_for(timeout=5_000)
+            retry_visible = hello_recovery.get_by_role(
+                "button", name="Unlock with Windows Hello", exact=True
+            ).count() == 1
+            recovery = hello_recovery.get_by_role(
+                "button", name="Use Windows password recovery", exact=True
+            )
+            recovery.click()
+            dialog = hello_recovery.get_by_role("alertdialog")
+            dialog.wait_for(timeout=5_000)
+            hello_recovery.get_by_role(
+                "button", name="Keep application locked", exact=True
+            ).wait_for(state="visible", timeout=5_000)
+            hello_recovery.wait_for_function(
+                "!Array.from(document.querySelectorAll('button')).find((button) => "
+                "button.textContent?.trim() === 'Keep application locked')?.disabled",
+                timeout=5_000,
+            )
+            hello_recovery.wait_for_function(
+                "document.activeElement?.textContent?.trim() === 'Keep application locked'",
+                timeout=5_000,
+            )
+            modal_focus = hello_recovery.evaluate(
+                "document.activeElement?.textContent?.trim() === 'Keep application locked'"
+            )
+            hello_recovery.keyboard.press("Escape")
+            hello_recovery.wait_for_timeout(250)
+            escaped = dialog.count() == 0
+            if not escaped:
+                details["applicationHelloRecoveryEscapeDiagnostics"] = hello_recovery.evaluate(
+                    "() => ({body: document.body.innerText, active: document.activeElement?.textContent?.trim(), "
+                    "calls: window.__HELLO_COMMIT_CALLS__})"
+                )
+                hello_recovery.get_by_role(
+                    "button", name="Keep application locked", exact=True
+                ).click()
+                dialog.wait_for(state="detached", timeout=5_000)
+            cancellation_call_safe = hello_recovery.evaluate(
+                "JSON.stringify(window.__HELLO_COMMIT_CALLS__) === '[false]'"
+            )
+            cancellation_focus_safe = hello_recovery.evaluate(
+                "document.activeElement?.textContent?.trim() === 'Use Windows password recovery'"
+            )
+            cancellation_safe = escaped and cancellation_call_safe and cancellation_focus_safe
+            recovery.click()
+            dialog.wait_for(timeout=5_000)
+            hello_recovery.get_by_role("button", name="Confirm recovery", exact=True).click()
+            hello_recovery.wait_for_function(
+                "window.__HELLO_COMMIT_CALLS__.length === 2", timeout=5_000
+            )
+            busy_safe = (
+                hello_recovery.get_by_role("button", name="Keep application locked", exact=True).is_disabled()
+                and hello_recovery.get_by_role("button", name="Confirm recovery", exact=True).is_disabled()
+                and hello_recovery.get_by_role("button", name="Checking Windows Hello…", exact=True).is_disabled()
+                and recovery.is_disabled()
+            )
+            dialog.press("Escape")
+            hello_recovery.wait_for_timeout(50)
+            single_commit = hello_recovery.evaluate(
+                "JSON.stringify(window.__HELLO_COMMIT_CALLS__) === '[false,true]'"
+            )
+            hello_recovery.evaluate("window.__HELLO_RESOLVE_COMMIT__()")
+            try:
+                hello_recovery.locator(".application-shell[data-application-ready]").wait_for(timeout=5_000)
+            except PlaywrightError:
+                details["applicationHelloRecoveryDiagnostics"] = hello_recovery.evaluate(
+                    "() => ({body: document.body.innerText, calls: window.__HELLO_COMMIT_CALLS__})"
+                )
+            unlocked_after_core_ready = hello_recovery.locator("[data-application-locked]").count() == 0
+            details["applicationHelloRecoveryCases"] = {
+                "retryVisible": retry_visible,
+                "modalFocus": modal_focus,
+                "cancellationSafe": cancellation_safe,
+                "escapeClosed": escaped,
+                "cancellationCallSafe": cancellation_call_safe,
+                "cancellationFocusSafe": cancellation_focus_safe,
+                "busySafe": busy_safe,
+                "singleCommit": single_commit,
+                "unlockedAfterCoreReady": unlocked_after_core_ready,
+            }
+            details["applicationHelloRecovery"] = (
+                retry_visible and modal_focus and cancellation_safe and busy_safe and single_commit
+                and unlocked_after_core_ready
+            )
+            if hello_recovery_errors:
+                errors.append(f"desktop Hello recovery runtime error: {'; '.join(hello_recovery_errors)}")
+            hello_recovery.close()
+
             for width, height in ((1280, 720), (720, 450)):
                 responsive = browser_context.new_page()
                 responsive.set_viewport_size({"width": width, "height": height})
@@ -1693,6 +1883,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "privacySettingsWorkflow",
         "applicationLock",
         "applicationLockReconciliation",
+        "applicationSettingsDraftReconciliation",
+        "applicationHelloRecovery",
     ):
         if details[field] is not True:
             errors.append(f"desktop product did not verify {field}")

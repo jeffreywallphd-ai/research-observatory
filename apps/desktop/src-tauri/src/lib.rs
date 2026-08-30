@@ -12,8 +12,8 @@ use application_lock_verification::{
     VerificationAvailabilitySnapshot, VerificationOutcome, windows_hello_availability_snapshot,
 };
 use supervisor::{
-    CoreApiRequest, CoreApiResponse, RuntimeDiagnostic, RuntimeSnapshot, RuntimeSupervisor,
-    SupervisorConfig,
+    CoreApiRequest, CoreApiResponse, RuntimeDiagnostic, RuntimeSnapshot, RuntimeState,
+    RuntimeSupervisor, SupervisorConfig,
 };
 use support_bundle::{SupportBundleExport, SupportBundleManager, SupportBundlePreview};
 use tauri::{App, AppHandle, Emitter, Manager, Runtime, State};
@@ -218,13 +218,23 @@ async fn application_sign_in_password_recovery_prepare(
 #[tauri::command]
 async fn application_sign_in_transition_commit(
     app: AppHandle,
+    supervisor: State<'_, RuntimeSupervisor>,
     lock: State<'_, ApplicationLockManager>,
     handle: String,
     confirmed: bool,
 ) -> Result<PolicyTransitionResult, &'static str> {
     let manager = lock.inner().clone();
+    let start_supervisor = supervisor.inner().clone();
+    let stop_supervisor = supervisor.inner().clone();
     let result = tauri::async_runtime::spawn_blocking(move || {
-        manager.commit_policy_transition(&handle, confirmed)
+        manager.commit_policy_transition_with_core(
+            &handle,
+            confirmed,
+            || start_supervisor.start().state == RuntimeState::Ready,
+            || {
+                stop_supervisor.stop_for_application_lock();
+            },
+        )
     })
     .await
     .map_err(|_| "RO-SIGN-IN-TRANSITION-FAILED")?;
