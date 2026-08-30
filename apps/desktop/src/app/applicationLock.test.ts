@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  applicationUnlockFailureMessage,
+  decodeApplicationUnlockAttempt,
   decodeApplicationLockSnapshot,
   DEFAULT_APPLICATION_LOCK_SNAPSHOT,
   failClosedApplicationLockSnapshot,
@@ -9,6 +11,13 @@ import {
 } from "./applicationLock";
 
 describe("application-lock contract", () => {
+  const lockedSnapshot = {
+    ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+    state: "locked",
+    reason: "manual",
+    auditSequence: 1,
+  } as const;
+
   it("decodes the strict native snapshot", () => {
     expect(decodeApplicationLockSnapshot(DEFAULT_APPLICATION_LOCK_SNAPSHOT)).toEqual(
       DEFAULT_APPLICATION_LOCK_SNAPSHOT,
@@ -100,14 +109,69 @@ describe("application-lock contract", () => {
     expect(ignoredStatus.displaySnapshot.state).toBe("locked");
     expect(ignoredStatus.failClosed).toBe(true);
 
+    const nativeAttempt = decodeApplicationUnlockAttempt({
+      schemaVersion: "1.0",
+      outcome: "succeeded",
+      reasonCode: "RO-LOCK-UNLOCKED",
+      snapshot: { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, auditSequence: 2 },
+    });
     const explicitUnlock = reconcileApplicationLockSnapshot(
       ignoredStatus.displaySnapshot,
       ignoredStatus.nativeSnapshot,
-      { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, auditSequence: 2 },
+      nativeAttempt.snapshot,
       true,
       "explicit-unlock",
     );
     expect(explicitUnlock.displaySnapshot.state).toBe("unlocked");
     expect(explicitUnlock.failClosed).toBe(false);
+  });
+
+  it("keeps every non-success verification outcome locked and rejects forged state combinations", () => {
+    for (const [outcome, reasonCode] of [
+      ["cancelled", "RO-LOCK-AUTH-CANCELLED"],
+      ["denied", "RO-LOCK-AUTH-DENIED"],
+      ["unavailable", "RO-LOCK-AUTH-UNAVAILABLE"],
+      ["busy", "RO-LOCK-AUTH-BUSY"],
+      ["failed", "RO-LOCK-AUTH-FAILED"],
+    ] as const) {
+      expect(decodeApplicationUnlockAttempt({
+        schemaVersion: "1.0",
+        outcome,
+        reasonCode,
+        snapshot: lockedSnapshot,
+      })).toMatchObject({ outcome, snapshot: { state: "locked" } });
+    }
+
+    expect(() => decodeApplicationUnlockAttempt({
+      schemaVersion: "1.0",
+      outcome: "denied",
+      reasonCode: "RO-LOCK-AUTH-DENIED",
+      snapshot: DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+    })).toThrow("Invalid application-unlock response");
+    expect(() => decodeApplicationUnlockAttempt({
+      schemaVersion: "1.0",
+      outcome: "succeeded",
+      reasonCode: "RO-LOCK-UNLOCKED",
+      snapshot: lockedSnapshot,
+    })).toThrow("Invalid application-unlock response");
+    expect(() => decodeApplicationUnlockAttempt({
+      schemaVersion: "1.0",
+      outcome: "toString",
+      reasonCode: "RO-LOCK-UNLOCKED",
+      snapshot: lockedSnapshot,
+    })).toThrow("Invalid application-unlock response");
+  });
+
+  it("preserves redacted password-provider failure messages", () => {
+    expect(applicationUnlockFailureMessage("cancelled", "RO-LOCK-AUTH-CANCELLED"))
+      .toBe("Unlock cancelled. The application remains locked.");
+    expect(applicationUnlockFailureMessage("busy", "RO-LOCK-AUTH-BUSY"))
+      .toBe("Unlock is temporarily limited after a denied attempt.");
+    expect(applicationUnlockFailureMessage("failed", "RO-LOCK-CORE-UNAVAILABLE"))
+      .toBe("Credentials were accepted, but the local service could not start. The application remains locked.");
+    for (const outcome of ["denied", "unavailable", "failed"] as const) {
+      expect(applicationUnlockFailureMessage(outcome, "RO-LOCK-AUTH-FAILED"))
+        .toBe("Windows could not verify the current user. The application remains locked.");
+    }
   });
 });
