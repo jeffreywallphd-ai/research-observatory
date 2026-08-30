@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0005.R02",
+  "maintenanceId": "GOV-MAINT-0005",
+  "reviewedCommit": "7a47e1acb4902e70dcbf52c328a7516a49b60f02",
+  "submissionRecordCommit": "2e577ae6021c6ba67dedce5ef93b60a961ffd533",
+  "priorReviewedCommit": "882d23c430d515a3c3629de2dfc3ce1d83d9c51c",
+  "predecessorCommit": "492e9e6bba52e9c6087f84c1066661fd530bfdf3",
+  "reviewer": {
+    "identity": "codex-independent-governance-control-maintenance-reviewer",
+    "role": "independent-governance-control-maintenance-reviewer",
+    "agentTask": "/root/t03_r02_review"
+  },
+  "reviewedAt": "2026-08-30T11:32:00-04:00",
+  "disposition": "APPROVED",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GOV-MAINT-0005-R01-F01",
+      "status": "CLOSED",
+      "resolution": "At exact remediation commit 7a47e1acb4902e70dcbf52c328a7516a49b60f02, is_unexecuted_superseded_reservation requires the complete ordered lifecycle vector to equal [APPROVED, SUPERSEDED], requires the final actor to match governance-migration:GOV-MIG-NNNN by full regular-expression match, and continues to require null bootstrap/campaign, empty tasks, PENDING completion, no reviewer/time/evidence, and no exit-review control. The focused full-validate regression admits both an ordinary ADOPTED predecessor and the exact canonical reservation, while rejecting extra APPROVED, extra SUPERSEDED, empty/invalid/non-migration actors, bootstrap, campaign, task inventory, completion evidence/reviewer/time/exit-review control, WITHDRAWN, DEFERRED, and a competing executable predecessor. A separate predicate table additionally rejected non-PENDING completion, lowercase or whitespace-suffixed migration identities, and MATERIALIZED history."
+    }
+  ],
+  "verification": {
+    "recordAuthentication": "The immutable R02 maintenance record at submission commit 2e577ae6021c6ba67dedce5ef93b60a961ffd533 is SHA-256 cc600419a2cdf8ec7676573a975871d887b1a5c4f0d7424f32c1770ded62a0f9 and Git blob 933f83c6fd54d24e8dda1ddec9d305c1ea20b29b. The immutable R01 ledger is SHA-256 11ca253bf3fad3a776ab0e0ad0d90727cb13cee6560921d6b6780816ac455be3 and Git blob 331d6d3349e643df143ad9a43ba96a2fdc9cab2a.",
+    "ancestryAndHistory": "R01 implementation 882d23c430d515a3c3629de2dfc3ce1d83d9c51c precedes R01 submission 70140e44b2bf928aa6721a3602ee77ba53f07fdf; commit a0fa29c0e11177fa8f8d2cfd531bca1194df72eb appends the R01 adverse ledger without changing it thereafter; R02 remediation 7a47e1acb4902e70dcbf52c328a7516a49b60f02 is its direct child; and R02 submission 2e577ae6021c6ba67dedce5ef93b60a961ffd533 is the remediation's direct child. The R02 record retains the exact R01 review ID, candidate, submission, CHANGES_REQUESTED disposition, path, and ledger hash rather than replacing adverse history.",
+    "scopeAndPatchTruth": "The complete original-predecessor-to-R02-submission path inventory is exactly planning/governance-migrations/GOV-MAINT-0005.json, planning/governance-migrations/GOV-MAINT-0005.review-R01.json, tests/foundation/test_taskctl_workflow.py, and tools/taskctl.py, matching changedPaths. Relative to the committed R01 adverse review, remediation changes only the test and generic helper; the submission changes only the maintenance record. Both incremental git diff --check invocations passed. No product, backlog, Wave packet, governed-experience, gate, runtime, service, renderer, package, or external-effect path changed.",
+    "fullValidatorReplay": "PASS in an exact-commit isolated clone: test_consecutive_amendment_hold_allows_adopted_or_unexecuted_superseded_predecessors and test_atomic_save_preserves_destination_on_replace_failure_and_stale_writer ran 2/2 green. The focused maintenance test constructs the sole later MATERIALIZED owner under amendment-hold and sends every accepted/adverse predecessor through validate(), rather than testing the helper alone.",
+    "affectedMatrix": "The complete tests.foundation.test_taskctl_schema plus tests.foundation.test_taskctl_workflow matrix ran 102 tests in 299.828 seconds at the exact frozen submission and produced 99 passes, one failure, and two errors. The same isolation-only outcomes reported in R01 recurred: the clone intentionally lacks the retained external GRR-0002.S02 bootstrap evidence, while canonical active Wave/task worktree identities point to the shared checkout. The changed maintenance test, shared schema/semantic cases, sole-owner behavior, and atomic-save boundary passed. Therefore the submitter's reported 102/102 live-environment result is not represented as independently reproduced, but no adverse result is attributable to GOV-MAINT-0005.",
+    "failClosedStateTable": "A separate exact-commit predicate replay admitted only the exact canonical reservation and rejected extra APPROVED/SUPERSEDED history, empty/invalid/lowercase/whitespace/non-migration actors, bootstrap, campaign, tasks, non-PENDING completion, completion evidence/reviewer/time/exit-review control, WITHDRAWN, DEFERRED, and MATERIALIZED variants. The full validator separately proves these malformed predecessors cannot suppress the amendment-hold predecessor error, and a competing executable predecessor still triggers the sole-owner error.",
+    "quality": "Ruff format and Ruff lint passed for tools/taskctl.py and tests/foundation/test_taskctl_workflow.py. Mypy 2.3.0 passed both files with --no-incremental; an earlier reviewer-only attempt using the Windows NUL device as cache storage produced a mypy internal error before analysis and was replaced by this successful deterministic invocation.",
+    "atomicityAndAuthority": "planning/backlog.yaml is byte-identical from predecessor 492e9e6bba52e9c6087f84c1066661fd530bfdf3 through frozen R02 submission. At that immutable state W1 is PAUSED at ordinary Wave scope with no lease; W1.A04 remains the exact two-event migration-superseded, unbootstrapped, campaign-free, task-free, unreviewed reservation; W1.A05 remains APPROVED with its approved bootstrap but has no campaign or materialized tasks; and G1 remains PENDING. The rejected materialization left no partial canonical mutation, and this maintenance neither materializes nor activates W1.A05, claims product work, broadens owner eligibility, approves a gate, nor grants product or experience authority.",
+    "protectedWitness": "The protected untracked historical witness was not opened, read, hashed, enumerated through worktree status, staged, edited, deleted, copied, or otherwise used. Every broader replay ran in a commit-only temporary clone, and its temporary clone and bundle were removed after execution."
+  },
+  "filesEditedByReviewer": false
+}
