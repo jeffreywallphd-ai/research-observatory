@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-control-review",
+  "reviewId": "W1.A05.B00.R01",
+  "taskId": "W1.A05.B00",
+  "reviewer": "w1-a05-b00-independent-reviewer",
+  "implementationCommit": "b47c5e81860df04cce886ede9e614d68c22c7119",
+  "submittedStateCommit": "079f1e9d0ccaadf571992b2229c4ebcd74f2131c",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "W1-A05-B00-R01-F01",
+      "severity": "HIGH",
+      "title": "The post-bootstrap compatibility fixture contradicts terminal W1.A04 witness handling and leaves the focused suite red",
+      "reproduction": "Run `.venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow` at submitted state 079f1e9d0ccaadf571992b2229c4ebcd74f2131c. The run executes 98 tests and fails `test_wave_resume_allows_only_the_exact_required_historical_witness` because it expects tampered terminal-witness bytes to raise after the canonical backlog now records W1.A04 as SUPERSEDED. That expectation conflicts with the generic post-migration rule in `wave_resume_allowed_untracked`, which admits only the inert historical path without opening it once exact supersession authority is present. The stale test also seeds its temporary fixture by calling `read_bytes()` on the protected live repository witness, while the adjacent new test asserts that terminal admission must not open that witness.",
+      "requiredRemediation": "Preserve the no-read terminal-supersession implementation. Refactor the legacy test to exercise pre-supersession hash and identity rejection with fully synthetic fixture bytes, never the protected repository witness; separately prove that exact terminal W1.A04 supersession admits only the named inert path without reading it, including missing or altered bytes. Then rerun the exact focused schema/workflow/UI-reference and post-bootstrap planctl suites at the new frozen submission state."
+    }
+  ],
+  "verification": {
+    "authorityAndScope": "The approved ECR-0004/W1.A05 authority, approval introduction 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b, scope addendum 01, exact candidate ancestry, 61-path base-to-candidate scope, and criterion coverage were independently compared. Candidate scope contains governance, planning, and governed-reference files only; no product/runtime implementation or ordinary task execution is present.",
+    "hashes": "W1.A05.B00 evidence SHA-256 97a037be730ed1f3d7d78472a73331b8514ae931d02ae6f16618380c75f91632, addendum SHA-256 64cfafd59f6d4be0317ff88d538375a64b92be0b42f78bcd0ec5fe9e0c85326e, and approval SHA-256 a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267 were independently recomputed.",
+    "stateBoundary": "The submitted backlog is revision 12 with MI-0001 bound to GOV-MIG-0001, exact terminal W1.A04 APPROVED-to-SUPERSEDED history, W1.A05 in bootstrap REVIEW, no amendment tasks or campaign, no active amendment, and W1 PAUSED at Wave scope with no lease.",
+    "postSubmitMaintenance": "Manual diff review found the planctl pre/post-bootstrap authority reader and taskctl migrationId projection repair generic, narrowly bounded, and authority preserving. The compatibility-fixture portion is incomplete because of W1-A05-B00-R01-F01.",
+    "focusedTests": "UI-reference and planctl amendment suites passed 15/15 in 160.131 seconds. Taskctl schema/workflow suites passed 97/98 in 315.318 seconds and failed only W1-A05-B00-R01-F01.",
+    "quality": "Python quality passed for 168 governed files; ECR-0004 approved/history-bound validation passed; RO-UI-ACADEMIC-MINIMAL-1.4 passed with 55 governed files, 33 product pages, 35 HTML documents, 14 workflows, and 20 capability records; the 488-page planning review site and generated backlog views passed; both reviewed Git ranges passed diff hygiene.",
+    "evidenceTruth": "Manifest identity, hash, ancestry, changed-file inventory, criterion mapping, and deferred product/runtime checks are exact. Approval is withheld because the complete focused test claim is not reproducible at the exact submitted state containing the post-bootstrap maintenance delta."
+  },
+  "disposition": "CHANGES_REQUESTED. Preserve this R01 ledger append-only. Remediate only W1-A05-B00-R01-F01 in a strict descendant and submit a new commit-bound review round; no materialization, activation, amendment task claim, product work, Wave resume, or gate action is authorized."
+}
