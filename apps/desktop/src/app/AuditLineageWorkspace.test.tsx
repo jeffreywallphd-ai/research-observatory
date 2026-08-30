@@ -449,7 +449,7 @@ describe("audit and lineage workspace", () => {
       interactions: Record<string, string>;
       states: string[];
     };
-    expect(contract.referenceId).toBe("RO-UI-ACADEMIC-MINIMAL-1.3");
+    expect(contract.referenceId).toBe("RO-UI-ACADEMIC-MINIMAL-1.4");
     expect(Object.keys(contract.regions)).toEqual([
       "source-to-output-lineage",
       "model-schema-prompt-versions",
