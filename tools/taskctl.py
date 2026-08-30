@@ -2274,7 +2274,7 @@ def bootstrap_attempt_errors(
         if current_branch.returncode != 0 or current_branch.stdout.strip() != submission_branch:
             errors.append(f"{bootstrap_id}: bootstrap submission branch does not match the current codex branch")
     scope = subprocess.run(
-        ["git", "diff", "--name-only", lineage_base, candidate, "--"],
+        ["git", "diff", "--name-only", evidence_base, candidate, "--"],
         cwd=repo,
         capture_output=True,
         text=True,
