@@ -769,6 +769,36 @@ class UiChangeGateTests(unittest.TestCase):
         self.assertFalse(result["ok"])
         self.assertTrue(any("control-only" in error and path in error for error in result["errors"]), result)
 
+    def test_postimplementation_maintenance_rejects_unrelated_maintenance_record_substitution(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            path = "planning/governance-migrations/GOV-MAINT-9999.json"
+            self.write_json(
+                root / path,
+                {
+                    "schemaVersion": "1.0",
+                    "documentType": "governance-control-maintenance",
+                    "maintenanceId": "GOV-MAINT-9999",
+                    "status": "adopted",
+                },
+            )
+            self.commit(root, "record unrelated adopted maintenance")
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'approved UI';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            implemented = self.commit(root, "implement approved UI")
+            self.install_reviewed_maintenance(root, implemented, mixed_product_path=path)
+            head = self.git(root, "rev-parse", "HEAD")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("control-only" in error and path in error for error in result["errors"]), result)
+
     def test_remediated_preimplementation_maintenance_preserves_adverse_review_history(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, package = self.prepare(temporary)
