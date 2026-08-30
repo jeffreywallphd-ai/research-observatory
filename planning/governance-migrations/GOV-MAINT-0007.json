@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0007",
+  "title": "Activate the approved v1.4 experience through reviewed generic maintenance",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "fe50e7c785d4173c520967a0f81c5425beaddb36",
+    "backlogSha256": "935e0dbd4e7377a6b2513ff68b8bbc0fd292ad8bd608b6b658512998ea603f43",
+    "activeTask": "W1.A05.T04",
+    "taskStatus": "IN_PROGRESS",
+    "taskBaseSha": "bd8d752a0fcec1f40b1a8abe59b793c783946e4e",
+    "productCandidateCommit": "fe50e7c785d4173c520967a0f81c5425beaddb36"
+  },
+  "trigger": {
+    "denial": "The approved v1.4 reference and T04 product implementation are complete, but the UI gate admits a late control correction only after fabricating a task CHANGES_REQUESTED transition. The visual-history validator also compares every historical baseline with today's route inventory, so a legitimately superseded v1.3 baseline is rejected for not containing the later v1.4 Application Settings route.",
+    "atomicity": "W1.A05.T04 remains IN_PROGRESS. The corrected product candidate is committed at the frozen predecessor, the v1.4 reference package and human approval are immutable ancestors, and the activation, baseline, and control repair are uncommitted. The unrelated W1.A04.B00 witness remains untracked and untouched.",
+    "diagnosis": "Both failures confuse historical state with current state. A generic independently reviewed maintenance record is already sufficient before UI implementation, but the same record cannot authenticate a bounded repair after implementation. Visual history similarly validates old baseline bytes against a route inventory that did not exist when those bytes were authoritative. Requiring a false adverse task review or retroactive route membership adds ceremony without strengthening the approved-reference boundary."
+  },
+  "authority": "This maintenance preserves the exact approved W1.A05 task, acceptance criteria, T03 security authority, T04 claim base, product candidate, RO-UI-ACADEMIC-MINIMAL-1.4 package and human approval, prior RO-UI-ACADEMIC-MINIMAL-1.3 evidence, Wave state, and release gate. It does not approve T04, change the reference package, add a sign-in mode, expand product or security authority, complete a task or slice, approve G1, authorize an external effect, or rewrite any prior approval, submission, review, finding, closure, baseline, or evidence record.",
+  "intendedDelta": {
+    "implementation": "Use the existing exact, append-only GOV-MAINT attestation for a protected correction on either side of UI implementation. A post-implementation maintenance candidate remains the direct child of its frozen predecessor, enumerates its exact changed paths, receives an immutable independent review in the direct child commit, rejects self-review and post-review substitution, and leaves the legacy task-review hardening route available. Validate each historical visual baseline against the route inventory at that baseline's cited reference-approval commit rather than against the current package. Replace exact route-count assertions with the approved SITE_MANIFEST inventory. Activate only the already approved v1.4 ID and package hash in application assembly, token, audit, and verification metadata, and publish the 66-capture v1.4 Windows baseline.",
+    "failClosed": [
+      "An unreviewed, self-reviewed, non-direct-child, path-substituted, finding-bearing, or post-review-mutated maintenance candidate remains denied.",
+      "The established CHANGES_REQUESTED remediation path remains accepted; generic maintenance does not convert a product defect into control maintenance.",
+      "Historical baselines remain schema-validated, immutable per reference identity, bound to exact approval ancestry and package bytes, and checked against the route inventory actually approved for that baseline.",
+      "The current v1.4 baseline must exactly match all 33 approved product routes, both themes, controlled Windows/Chromium settings, and observed captures after the candidate is committed.",
+      "The T04 task identity, owner, status, original base, experience-change contract, reference ID, package hash, and approval commit remain unchanged."
+    ],
+    "referenceTransition": {
+      "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+      "previousPackageSha256": "db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2",
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+      "referenceVersion": "1.4",
+      "packageSha256": "034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e",
+      "approvalCommit": "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b"
+    },
+    "changedPaths": [
+      "apps/desktop/scripts/assemble-application.mjs",
+      "apps/desktop/scripts/assemble-reference.mjs",
+      "apps/desktop/src/app/audit-lineage.conformance.json",
+      "packages/ui-tokens/src/index.ts",
+      "packages/ui-tokens/token-contract.json",
+      "planning/governance-migrations/GOV-MAINT-0007.json",
+      "tests/desktop/test_ui_conformance.py",
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py",
+      "tools/ui_conformance.py",
+      "verification/baselines/desktop-ui.json",
+      "verification/extensions/desktop-ui.json"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "This changes evidence-control acceptance and governed visual lineage but not product authority. Selected checks prove exact Git ancestry and immutable independent review, denial of self-review and substitution, historical route/baseline pairing, unchanged package approval, dynamic route inventory, exact v1.4 token/route/workflow/accessibility contracts, deterministic baseline generation, product build binding, and the already remediated recovery interactions. The authoritative visual-history replay must run after this baseline is committed and before independent review.",
+    "results": [
+      {
+        "check": "generic UI maintenance provenance",
+        "result": "passed",
+        "detail": "All 27 focused UI-gate tests passed, including post-implementation reviewed maintenance admission, self-review denial, direct ancestry, immutable review projection, post-review substitution denial, and every existing task-review and pre-implementation path."
+      },
+      {
+        "check": "approved v1.4 reference integrity",
+        "result": "passed",
+        "detail": "The exact human-approved package remained reproducible across 55 governed files and 33 product pages at SHA-256 034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e."
+      },
+      {
+        "check": "v1.4 semantic and accessibility conformance",
+        "result": "passed",
+        "detail": "The activation passed 109 token mappings, 33 unique routes with 540 required-region contracts, 14 workflow profiles, and 66 accessibility/reflow cases."
+      },
+      {
+        "check": "v1.4 visual baseline generation",
+        "result": "passed",
+        "detail": "The controlled Windows x64 Chromium writer produced 66 light/dark captures for the 33 approved routes. Commit-bound visual history and exact-capture replay remain required before review."
+      },
+      {
+        "check": "corrected desktop product boundary",
+        "result": "passed",
+        "detail": "The product build, 35 focused renderer tests, 25 applicable native lock tests, desktop lint/type checks, and all seven built-product tests passed at the frozen product predecessor, including polling, Hello recovery, cancellation, focus, busy, and Core-ready behavior."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocking defect, do not adopt the maintenance or submit T04. Revert only the strict-descendant maintenance candidate to predecessor fe50e7c; the corrected product candidate remains committed, T04 remains IN_PROGRESS at its original claim base, v1.3 remains the active verification reference, v1.4 remains approved but inactive, and no task or release authority changes.",
+  "reviewAttempts": [],
+  "review": null
+}
