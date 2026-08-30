@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0007",
+  "reviewId": "GOV-MAINT-0007.R04",
+  "reviewedCommit": "ef7c613123ab02b0a5f8748064969b18e93a16d4",
+  "reviewer": "agent:gov-maint-0007-reviewer",
+  "reviewedAt": "2026-08-30T22:17:14.6081777Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0007.json",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0007-R04-F01",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "The fail-closed allowlist permits substitution of unrelated maintenance history",
+      "reproduction": "MAINTENANCE_RECORD_PATH classifies every canonical GOV-MAINT record or review path as an allowed control path. In the existing real-Git fixture, first commit a distinct adopted planning/governance-migrations/GOV-MAINT-9999.json record, perform the approved UI implementation, and then call install_reviewed_maintenance for GOV-MAINT-0001 with mixed_product_path=\"planning/governance-migrations/GOV-MAINT-9999.json\". The helper overwrites the unrelated adopted record with executable text, yet validate(root, base, head) returns ok=true with errors=[].",
+      "requiredResolution": "Bind allowed maintenance evidence paths to the selected maintenance record rather than the global GOV-MAINT filename grammar. Permit only that maintenanceId's canonical record and the exact review paths referenced by its authenticated reviewAttempts; deny any net semantic change to another maintenance record or review ledger. Add a real-Git regression that prepopulates a distinct adopted maintenance record, attempts to overwrite it through the reviewed route, and requires denial while retaining the legitimate same-maintenance control-only fixture."
+    }
+  ]
+}
