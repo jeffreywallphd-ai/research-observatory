@@ -1,9 +1,13 @@
 # Windows local application lock
 
 ADR-0018 makes the Tauri native supervisor the W1 application-lock authority.
-The portable policy and configuration shape are
+The current portable policy and configuration shape are
+[`application-sign-in-policy.v1.json`](../../packages/contracts/security/application-sign-in-policy.v1.json)
+and its strict schema. The earlier
 [`application-lock-profile.v1.json`](../../packages/contracts/security/application-lock-profile.v1.json)
-and its strict schema. The document is stored under the desktop application's
+is a read-only migration predecessor. Every valid predecessor resolves to
+`windows-password` with its exact profile name and zero/nonzero timeout
+preserved. The current document is stored under the desktop application's
 LocalAppData authority, never in a project, export, renderer store, or Core
 database.
 
@@ -49,10 +53,36 @@ only an availability or verification enum; Research Observatory receives no PIN
 or biometric material. Not-present, not-configured, policy-disabled, busy,
 cancelled, retry-exhausted/denied, unsupported, and failed paths never call the
 password provider and never unlock. A separate argument-free native password
-recovery command retains the same-SID proof and must be invoked deliberately; it
-is not a Hello fallback. T02 supplies this adapter and recovery boundary. T03
-owns persisted provider selection and transition authorization, and T04 owns the
-approved user-facing selection and recovery experience.
+recovery preparation retains the same-SID proof and must be invoked
+deliberately; it is not a Hello fallback. T04 owns the approved user-facing
+selection and recovery experience.
+
+## Policy and transition authority
+
+The persisted modes are exactly `none`, `windows-password`, and
+`windows-hello`; a new or previously absent configuration is materialized as an
+explicit revision-one `none` policy. `none` starts Core without an application
+prompt and makes manual, idle, and restart application-lock triggers no-ops. A
+protected zero-minute policy remains manual-lock-only, while a protected
+nonzero policy locks on restart and inactivity.
+
+The native manager selects and orders every provider proof. Enabling a
+protected mode verifies the destination provider. Switching protected modes
+verifies the current provider before the destination. Disabling protection
+verifies the configured provider, or uses a separately invoked same-SID Windows
+password recovery proof. Corrupt or unknown policy bytes stay locked and permit
+only that explicit recovery path.
+
+Successful proof creates a 256-bit opaque transition handle. Native memory
+stores only its SHA-256 digest together with the exact source file identities
+and hashes, source and target modes, target policy digest, lock generation,
+proof class, and expiry. Warning and user confirmation occur after proof; a
+confirmation without the matching handle has no authority. Commit holds the
+cross-process named mutex, rechecks those bindings, stages unique durable bytes,
+and compare-and-swap publishes atomically. The same handle returns the prior
+committed receipt after response loss, while cancellation, denial,
+unavailability, expiry, a stale writer, or write failure leaves the committed
+policy byte-stable.
 
 ## Unlock sequence
 
@@ -76,7 +106,8 @@ already copied outside the application remain outside the control. Windows
 sign-in protection, full-disk encryption, endpoint controls, and physical
 security remain necessary.
 
-The optional profile name is hidden while locked. A corrupt profile fails locked
-and may be replaced only after successful same-user reauthentication. With idle
-lock disabled, manual lock remains available but application restart does not
-start locked; enabling an idle interval makes restart lock mandatory.
+The optional profile name is hidden while locked. A corrupt policy fails locked
+and may be replaced only after explicit same-SID Windows-password recovery proof
+and confirmation. With idle lock disabled, manual lock remains available only
+for protected modes and application restart does not start locked; enabling an
+idle interval in a protected mode makes restart lock mandatory.

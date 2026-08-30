@@ -4,16 +4,18 @@ export type ApplicationLockReason =
   | "inactivity"
   | "application-restart"
   | "configuration-invalid";
-export type LockConfigurationState = "default" | "valid" | "invalid";
+export type SignInMode = "none" | "windows-password" | "windows-hello";
+export type LockConfigurationState = "valid" | "migrated" | "invalid";
 
 export interface ApplicationLockSnapshot {
   readonly schemaVersion: "1.0";
   readonly state: ApplicationLockState;
+  readonly signInMode: SignInMode;
+  readonly policyRevision: number;
   readonly profileName: string | null;
   readonly inactivityTimeoutMinutes: 0 | 5 | 15 | 30 | 60;
   readonly configurationState: LockConfigurationState;
   readonly reason: ApplicationLockReason | null;
-  readonly reauthentication: "windows-current-user-credentials-same-sid";
   readonly threatDisclosure: "Application-session protection only; this is not Windows-account isolation.";
   readonly retryAfterSeconds: number;
   readonly auditSequence: number;
@@ -50,16 +52,39 @@ export interface ApplicationUnlockAttempt {
   readonly snapshot: ApplicationLockSnapshot;
 }
 
+export type PolicyTransitionOutcome =
+  | "prepared"
+  | "committed"
+  | "cancelled"
+  | "denied"
+  | "unavailable"
+  | "busy"
+  | "failed"
+  | "conflict"
+  | "expired";
+
+export interface PolicyTransitionResult {
+  readonly schemaVersion: "1.0";
+  readonly outcome: PolicyTransitionOutcome;
+  readonly reasonCode: string;
+  readonly handle: string | null;
+  readonly sourceMode: SignInMode | null;
+  readonly targetMode: SignInMode;
+  readonly warningRequired: boolean;
+  readonly snapshot: ApplicationLockSnapshot;
+}
+
 export const APPLICATION_LOCK_TIMEOUTS = [0, 5, 15, 30, 60] as const;
 
 export const DEFAULT_APPLICATION_LOCK_SNAPSHOT: ApplicationLockSnapshot = Object.freeze({
   schemaVersion: "1.0",
   state: "unlocked",
+  signInMode: "none",
+  policyRevision: 1,
   profileName: null,
   inactivityTimeoutMinutes: 0,
-  configurationState: "default",
+  configurationState: "valid",
   reason: null,
-  reauthentication: "windows-current-user-credentials-same-sid",
   threatDisclosure: "Application-session protection only; this is not Windows-account isolation.",
   retryAfterSeconds: 0,
   auditSequence: 0,
@@ -78,17 +103,54 @@ const SNAPSHOT_KEYS = [
   "auditSequence",
   "configurationState",
   "inactivityTimeoutMinutes",
+  "policyRevision",
   "profileName",
-  "reauthentication",
   "reason",
   "retryAfterSeconds",
   "schemaVersion",
+  "signInMode",
   "state",
   "threatDisclosure",
 ] as const;
 
 const UNLOCK_ATTEMPT_KEYS = ["outcome", "reasonCode", "schemaVersion", "snapshot"] as const;
 const VERIFICATION_AVAILABILITY_KEYS = ["availability", "provider", "schemaVersion"] as const;
+const POLICY_TRANSITION_KEYS = [
+  "handle",
+  "outcome",
+  "reasonCode",
+  "schemaVersion",
+  "snapshot",
+  "sourceMode",
+  "targetMode",
+  "warningRequired",
+] as const;
+const POLICY_TRANSITION_REASON_CODES: Readonly<
+  Record<PolicyTransitionOutcome, readonly string[]>
+> = Object.freeze({
+  prepared: ["RO-SIGN-IN-TRANSITION-PREPARED", "RO-SIGN-IN-RECOVERY-PREPARED"],
+  committed: ["RO-SIGN-IN-TRANSITION-COMMITTED", "RO-SIGN-IN-RECOVERY-COMMITTED"],
+  cancelled: [
+    "RO-SIGN-IN-TRANSITION-AUTH-CANCELLED",
+    "RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED",
+  ],
+  denied: [
+    "RO-SIGN-IN-TRANSITION-RECOVERY-REQUIRED",
+    "RO-SIGN-IN-TRANSITION-APPLICATION-LOCKED",
+    "RO-SIGN-IN-TRANSITION-AUTH-DENIED",
+    "RO-SIGN-IN-RECOVERY-NOT-REQUIRED",
+    "RO-SIGN-IN-TRANSITION-HANDLE-INVALID",
+  ],
+  unavailable: ["RO-SIGN-IN-TRANSITION-AUTH-UNAVAILABLE"],
+  busy: ["RO-SIGN-IN-TRANSITION-BUSY", "RO-SIGN-IN-TRANSITION-AUTH-BUSY"],
+  failed: [
+    "RO-SIGN-IN-TRANSITION-AUTH-FAILED",
+    "RO-SIGN-IN-TRANSITION-LOCK-FAILED",
+    "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
+  ],
+  conflict: ["RO-SIGN-IN-TRANSITION-STALE", "RO-SIGN-IN-TRANSITION-CONFLICT"],
+  expired: ["RO-SIGN-IN-TRANSITION-EXPIRED"],
+});
 const UNLOCK_REASON_CODES: Readonly<Record<VerificationOutcome, readonly string[]>> = Object.freeze({
   succeeded: ["RO-LOCK-UNLOCKED"],
   cancelled: ["RO-LOCK-AUTH-CANCELLED"],
@@ -161,11 +223,12 @@ function sameNativeRevision(
 ): boolean {
   return left.schemaVersion === right.schemaVersion
     && left.state === right.state
+    && left.signInMode === right.signInMode
+    && left.policyRevision === right.policyRevision
     && left.profileName === right.profileName
     && left.inactivityTimeoutMinutes === right.inactivityTimeoutMinutes
     && left.configurationState === right.configurationState
     && left.reason === right.reason
-    && left.reauthentication === right.reauthentication
     && left.threatDisclosure === right.threatDisclosure
     && left.auditSequence === right.auditSequence;
 }
@@ -220,35 +283,105 @@ export function decodeApplicationLockSnapshot(value: unknown): ApplicationLockSn
   }
   const timeout = data.inactivityTimeoutMinutes;
   const state = data.state;
+  const signInMode = data.signInMode;
   const profileName = data.profileName;
   const configurationState = data.configurationState;
   const reason = data.reason;
   if (
     data.schemaVersion !== "1.0"
     || (state !== "locked" && state !== "unlocked")
+    || (signInMode !== "none" && signInMode !== "windows-password" && signInMode !== "windows-hello")
+    || !isNonNegativeInteger(data.policyRevision)
+    || data.policyRevision === 0
     || (profileName !== null && typeof profileName !== "string")
     || !APPLICATION_LOCK_TIMEOUTS.some((candidate) => candidate === timeout)
-    || (configurationState !== "default" && configurationState !== "valid" && configurationState !== "invalid")
+    || (configurationState !== "valid" && configurationState !== "migrated" && configurationState !== "invalid")
     || (reason !== null && reason !== "manual" && reason !== "inactivity" && reason !== "application-restart" && reason !== "configuration-invalid")
-    || data.reauthentication !== "windows-current-user-credentials-same-sid"
     || data.threatDisclosure !== "Application-session protection only; this is not Windows-account isolation."
     || !isNonNegativeInteger(data.retryAfterSeconds)
     || !isNonNegativeInteger(data.auditSequence)
     || (state === "locked" && profileName !== null)
+    || (signInMode === "none"
+      && configurationState !== "invalid"
+      && (state !== "unlocked" || timeout !== 0))
+    || (configurationState === "invalid" && (state !== "locked" || reason !== "configuration-invalid"))
   ) {
     throw new Error("Invalid application-lock response.");
   }
   return {
     schemaVersion: "1.0",
     state,
+    signInMode,
+    policyRevision: data.policyRevision,
     profileName,
     inactivityTimeoutMinutes: timeout as ApplicationLockSnapshot["inactivityTimeoutMinutes"],
     configurationState,
     reason,
-    reauthentication: "windows-current-user-credentials-same-sid",
     threatDisclosure: "Application-session protection only; this is not Windows-account isolation.",
     retryAfterSeconds: data.retryAfterSeconds,
     auditSequence: data.auditSequence,
+  };
+}
+
+export function decodePolicyTransitionResult(value: unknown): PolicyTransitionResult {
+  const data = readExactDataRecord(value, POLICY_TRANSITION_KEYS);
+  if (
+    !data
+    || data.schemaVersion !== "1.0"
+    || typeof data.outcome !== "string"
+    || ![
+      "prepared",
+      "committed",
+      "cancelled",
+      "denied",
+      "unavailable",
+      "busy",
+      "failed",
+      "conflict",
+      "expired",
+    ].includes(data.outcome)
+    || typeof data.reasonCode !== "string"
+    || (data.handle !== null && (typeof data.handle !== "string" || !/^[0-9a-f]{64}$/.test(data.handle)))
+    || (data.sourceMode !== null
+      && data.sourceMode !== "none"
+      && data.sourceMode !== "windows-password"
+      && data.sourceMode !== "windows-hello")
+    || (data.targetMode !== "none"
+      && data.targetMode !== "windows-password"
+      && data.targetMode !== "windows-hello")
+    || typeof data.warningRequired !== "boolean"
+  ) {
+    throw new Error("Invalid application sign-in transition response.");
+  }
+  const outcome = data.outcome as PolicyTransitionOutcome;
+  if (
+    !POLICY_TRANSITION_REASON_CODES[outcome].includes(data.reasonCode)
+    || (outcome === "prepared") !== (data.handle !== null)
+  ) {
+    throw new Error("Invalid application sign-in transition response.");
+  }
+  const targetMode = data.targetMode;
+  const snapshot = decodeApplicationLockSnapshot(data.snapshot);
+  if (
+    (outcome === "committed" && (
+      snapshot.signInMode !== targetMode
+      || snapshot.configurationState !== "valid"
+    ))
+    || (outcome === "prepared"
+      && data.sourceMode !== null
+      && snapshot.signInMode !== data.sourceMode)
+  ) {
+    throw new Error("Invalid application sign-in transition response.");
+  }
+  return {
+    schemaVersion: "1.0",
+    outcome,
+    reasonCode: data.reasonCode,
+    handle: data.handle,
+    sourceMode: data.sourceMode,
+    targetMode,
+    warningRequired: data.warningRequired,
+    snapshot,
   };
 }
 

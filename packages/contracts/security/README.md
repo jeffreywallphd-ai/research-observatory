@@ -21,8 +21,21 @@ from SQLite, project packages and exports, support bundles, and process
 arguments. Windows remains an adapter; later platforms must implement the same
 portable port with their native user credential service.
 
-`application-lock-profile.v1.json` fixes the W1 application-lock boundary at
-the desktop native supervisor. A manual, idle, or restart lock invalidates the
+`application-lock-profile.v1.json` is the immutable W1 predecessor contract.
+Every valid instance migrates to `windows-password` without rewriting the
+predecessor bytes and preserves its profile name and zero/nonzero idle timeout.
+
+`application-sign-in-policy.v1.json` is the current application-wide policy.
+It permits exactly `none`, `windows-password`, or `windows-hello`, and records
+`none` explicitly for a new or previously absent configuration. Protected
+transitions are authorized by native provider proof, explicit confirmation,
+and compare-and-swap publication; an invalid policy stays fail-locked and can
+only be reset after a same-SID native Windows-password recovery proof. The
+renderer receives an opaque, one-time transition handle and never provider
+credentials, an HWND, or a caller-selected verification outcome.
+
+The shared application-lock boundary remains at the desktop native supervisor.
+A manual, idle, or restart lock invalidates the
 protected-action generation, stops Core, clears its per-launch capability,
 discards renderer research state, and requires a same-SID current Windows user
 credential check before a fresh Core session starts. The optional display name

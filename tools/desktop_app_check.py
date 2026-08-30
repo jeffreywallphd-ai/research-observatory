@@ -1095,9 +1095,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     invoke: async (command, args) => {
                       if (command === 'application_lock_status') {
                         return {
-                          schemaVersion: '1.0', state: 'unlocked', profileName: null,
-                          inactivityTimeoutMinutes: 0, configurationState: 'default', reason: null,
-                          reauthentication: 'windows-current-user-credentials-same-sid',
+                          schemaVersion: '1.0', state: 'unlocked', signInMode: 'none', policyRevision: 1,
+                          profileName: null, inactivityTimeoutMinutes: 0,
+                          configurationState: 'valid', reason: null,
                           threatDisclosure: 'Application-session protection only; '
                             + 'this is not Windows-account isolation.',
                           retryAfterSeconds: 0, auditSequence: 0
@@ -1215,9 +1215,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     invoke: async (command, args) => {
                       if (command === 'application_lock_status') {
                         return {
-                          schemaVersion: '1.0', state: 'unlocked', profileName: null,
-                          inactivityTimeoutMinutes: 0, configurationState: 'default', reason: null,
-                          reauthentication: 'windows-current-user-credentials-same-sid',
+                          schemaVersion: '1.0', state: 'unlocked', signInMode: 'none', policyRevision: 1,
+                          profileName: null, inactivityTimeoutMinutes: 0,
+                          configurationState: 'valid', reason: null,
                           threatDisclosure: 'Application-session protection only; '
                             + 'this is not Windows-account isolation.',
                           retryAfterSeconds: 0, auditSequence: 0
@@ -1427,9 +1427,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     invoke: async (command) => {
                       if (command === 'application_lock_status') {
                         return {
-                          schemaVersion: '1.0', state: 'locked', profileName: null,
-                          inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: 'application-restart',
-                          reauthentication: 'windows-current-user-credentials-same-sid',
+                          schemaVersion: '1.0', state: 'locked', signInMode: 'windows-password',
+                          policyRevision: 1, profileName: null, inactivityTimeoutMinutes: 15,
+                          configurationState: 'valid', reason: 'application-restart',
                           threatDisclosure: 'Application-session protection only; '
                             + 'this is not Windows-account isolation.',
                           retryAfterSeconds: 0, auditSequence: 4
@@ -1470,9 +1470,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   let lockListener = null;
                   let failStatus = false;
                   let snapshot = {
-                    schemaVersion: '1.0', state: 'unlocked', profileName: 'Private profile',
-                    inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: null,
-                    reauthentication: 'windows-current-user-credentials-same-sid',
+                    schemaVersion: '1.0', state: 'unlocked', signInMode: 'windows-password',
+                    policyRevision: 1, profileName: 'Private profile', inactivityTimeoutMinutes: 15,
+                    configurationState: 'valid', reason: null,
                     threatDisclosure: 'Application-session protection only; '
                       + 'this is not Windows-account isolation.',
                     retryAfterSeconds: 0, auditSequence: 1
@@ -1570,9 +1570,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             lock_reconciliation.evaluate(
                 """window.__LOCK_SET_STATUS__({
-                  schemaVersion: '1.0', state: 'locked', profileName: null,
-                  inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: 'inactivity',
-                  reauthentication: 'windows-current-user-credentials-same-sid',
+                  schemaVersion: '1.0', state: 'locked', signInMode: 'windows-password',
+                  policyRevision: 1, profileName: null, inactivityTimeoutMinutes: 15,
+                  configurationState: 'valid', reason: 'inactivity',
                   threatDisclosure: 'Application-session protection only; this is not Windows-account isolation.',
                   retryAfterSeconds: 0, auditSequence: 3
                 })"""
@@ -1605,9 +1605,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   let resolveStatus;
                   const staleStatus = new Promise((resolve) => { resolveStatus = resolve; });
                   const unlocked = {
-                    schemaVersion: '1.0', state: 'unlocked', profileName: null,
-                    inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: null,
-                    reauthentication: 'windows-current-user-credentials-same-sid',
+                    schemaVersion: '1.0', state: 'unlocked', signInMode: 'windows-password',
+                    policyRevision: 1, profileName: null, inactivityTimeoutMinutes: 15,
+                    configurationState: 'valid', reason: null,
                     threatDisclosure: 'Application-session protection only; '
                       + 'this is not Windows-account isolation.',
                     retryAfterSeconds: 0, auditSequence: 3

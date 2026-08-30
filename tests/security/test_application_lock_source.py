@@ -45,14 +45,20 @@ class ApplicationLockSourceBoundaryTests(unittest.TestCase):
         self.assertNotIn("outcome:", status_signature)
         self.assertIn("windows_hello_availability", status_bridge)
         primary_start = bridge_source.index("fn application_lock_unlock(")
-        recovery_marker = "fn application_lock_password_recovery("
+        recovery_marker = "fn application_sign_in_password_recovery_prepare("
         recovery_start = bridge_source.index(recovery_marker, primary_start)
         primary_bridge = bridge_source[primary_start:recovery_start]
-        self.assertNotIn("application_lock_password_recovery", primary_bridge)
-        recovery_end = bridge_source.index("async fn perform_application_lock_password_unlock", recovery_start)
+        self.assertNotIn("WindowsHelloVerificationProvider", primary_bridge)
+        recovery_end = bridge_source.index("fn application_sign_in_transition_commit", recovery_start)
         recovery_bridge = bridge_source[recovery_start:recovery_end]
-        self.assertIn("perform_application_lock_password_unlock", recovery_bridge)
+        self.assertIn("prepare_password_recovery_reset", recovery_bridge)
         self.assertNotIn("WindowsHelloVerificationProvider", recovery_bridge)
+        transition_start = bridge_source.index("fn application_sign_in_transition_prepare(")
+        transition_end = bridge_source.index("#[tauri::command]", transition_start + 1)
+        transition_signature = bridge_source[transition_start:transition_end]
+        self.assertNotIn("provider:", transition_signature)
+        self.assertNotIn("outcome:", transition_signature)
+        self.assertNotIn("window_handle:", transition_signature)
 
     def test_native_lock_uses_non_persisting_same_sid_windows_reauthentication(self) -> None:
         source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_lock_verification.rs").read_text(
@@ -110,9 +116,14 @@ class ApplicationLockSourceBoundaryTests(unittest.TestCase):
         lock_source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_lock.rs").read_text(
             encoding="utf-8"
         )
-        self.assertIn("stage_profile(&self.profile_path, &profile)", lock_source)
-        self.assertIn("inner.generation != generation", lock_source)
+        self.assertIn("self.policy_store.stage(&pending.target)", lock_source)
+        self.assertIn("self.policy_store.publish(staged, &pending.source)", lock_source)
+        self.assertIn("inner.generation != pending.generation", lock_source)
+        self.assertIn("inner.policy_source != pending.source", lock_source)
         self.assertIn("reauthentication_in_progress", lock_source)
+        self.assertIn("TransitionProofClass::SameSidPasswordRecovery", lock_source)
+        self.assertIn("sha256_hex(handle.as_bytes())", lock_source)
+        self.assertIn('Err("RO-SIGN-IN-TRANSITION-REQUIRED")', source)
         self.assertIn("stop_for_application_lock", source)
         self.assertIn("support.clear_pending()", source)
         self.assertIn("lock.lock_if_idle()", source)

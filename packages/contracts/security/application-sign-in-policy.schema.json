@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/security/application-sign-in-policy.schema.json",
+  "title": "Research Observatory application sign-in policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "revision",
+    "mode",
+    "profileName",
+    "inactivityTimeoutMinutes",
+    "restartPolicy",
+    "lockAuthority",
+    "transitionAuthority",
+    "protectedActionPolicy",
+    "durableOperationPolicy",
+    "threatBoundary"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-application-sign-in-policy"},
+    "revision": {"type": "integer", "minimum": 1},
+    "mode": {"enum": ["none", "windows-password", "windows-hello"]},
+    "profileName": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "inactivityTimeoutMinutes": {"enum": [0, 5, 15, 30, 60]},
+    "restartPolicy": {"const": "lock-when-inactivity-enabled"},
+    "lockAuthority": {"const": "desktop-native-supervisor"},
+    "transitionAuthority": {"const": "native-provider-proof-confirmation-cas"},
+    "protectedActionPolicy": {"const": "invalidate-generation-stop-core-discard-renderer-state"},
+    "durableOperationPolicy": {"const": "w1-stop-all-future-continuation-requires-explicit-allowlist"},
+    "threatBoundary": {"const": "application-session-protection-not-windows-account-isolation"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"mode": {"const": "none"}}, "required": ["mode"]},
+      "then": {"properties": {"inactivityTimeoutMinutes": {"const": 0}}}
+    }
+  ]
+}
