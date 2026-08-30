@@ -128,7 +128,7 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -137,13 +137,11 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-29T23:17:19+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-29T23:17:19+00:00'
-      expires_at: '2026-08-30T23:17:19+00:00'
+    updated_at: '2026-08-30T03:20:59+00:00'
+    pause_reason: 'Quiescent pause for W1.A05: CAP-02 authentication-provider refactor, Windows Hello support, and governed
+      configurable local sign-in settings require append-only product authority and experience approval.'
+    pause_category: approved-design-gate
+    lease: null
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -195,7 +193,7 @@ waves:
     notes: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001
       release and explicit ordinary Wave resume.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -11008,13 +11006,19 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-30T02:18:21+00:00'
-      updated_at: '2026-08-30T02:18:21+00:00'
+      updated_at: '2026-08-30T03:19:51+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Pause at a quiescent boundary for the repository-owner requested W1 CAP-02 authentication and governed settings
+          amendment; no CAP-03.S04.T01 product implementation has begun.
+        next_action: After W1.A05 is independently reviewed, human-approved, executed, and adopted, explicitly resume W1 and
+          reopen CAP-03.S04.T01 on the current codex branch.
+        recorded_at: '2026-08-30T03:19:51+00:00'
+        owner: codex
       implementation_notes: ''
       evidence: []
       review:
@@ -11023,10 +11027,7 @@ capabilities:
         reviewed_at: null
         notes: null
       base_sha: c9260e1e981fea84a651dd59104aad12e1fb8d8e
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-30T02:18:21+00:00'
-        expires_at: '2026-08-30T10:18:21+00:00'
+      lease: null
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
