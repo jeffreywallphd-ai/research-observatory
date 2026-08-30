@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0006",
   "title": "Admit approved Wave-amendment tasks to the governed UI lineage contract",
-  "status": "changes-requested",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -110,7 +110,26 @@
       ],
       "path": "planning/governance-migrations/GOV-MAINT-0006.review-R02.json",
       "sha256": "4a8d068d83147ae78962c5396a58b38998eacee819bb2953a6bbf84e19cdbf28"
+    },
+    {
+      "reviewId": "GOV-MAINT-0006.R03",
+      "reviewedCommit": "b05bd28c7bbdfce667fb399ae200f9ff5b394a53",
+      "reviewer": "agent:gov-maint-0006-reviewer",
+      "reviewedAt": "2026-08-30T19:24:48.5856130Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0006.review-R03.json",
+      "sha256": "d75759a557e386aad9b50b88730a7cb4379451f7268c06a5e98e7d755979c4f0"
     }
   ],
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0006.R03",
+    "reviewedCommit": "b05bd28c7bbdfce667fb399ae200f9ff5b394a53",
+    "reviewer": "agent:gov-maint-0006-reviewer",
+    "reviewedAt": "2026-08-30T19:24:48.5856130Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0006.review-R03.json",
+    "sha256": "d75759a557e386aad9b50b88730a7cb4379451f7268c06a5e98e7d755979c4f0"
+  }
 }
