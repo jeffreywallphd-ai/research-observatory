@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e949f52cab809bed3691422ab61e52dde783d9b75e034a1e0e6b3910270e4033
+source_sha256: 8b8d5a1fac74cf9ea1f3e63e95028c4a495da82381a5e74682038d83ca3f14cf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1304,7 +1304,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
-**Status / owner / review:** `IN_PROGRESS` / codex / agent:t04-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / agent:t04-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T03`
 
@@ -1329,6 +1329,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A05.T04.json` at `50ea2c5200e67b8416ba00a36c140ae6a5cda00c`
+- `artifacts/evidence/W1.A05.T04.remediation-01.json` at `b079bdd68e648d8059b64b984eaa841059312fe0`
 
 #### Review history — W1.A05.T04
 
@@ -1366,7 +1367,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `efe2415144c1b55167774132213f5ce2f7fbfd3884f8392772e5df9c64355e03`
+
+- Candidate / base / branch: `b079bdd68e648d8059b64b984eaa841059312fe0` / `50ea2c5200e67b8416ba00a36c140ae6a5cda00c` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T23:50:15+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T04.remediation-01.json` / `3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962` / `b079bdd68e648d8059b64b984eaa841059312fe0`
+- Acceptance-criteria SHA-256: `9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896`
+- Verification-selection SHA-256: `907595703c2525620b2b5455f291ccb89ec1ab5ac7d7564268e5819cf59c23ea`
+- Changed paths: `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/applicationSettings.native.integration.test.ts`, `apps/desktop/src/app/applicationSettings.test.ts`, `apps/desktop/src/app/applicationSettings.ts`, `artifacts/evidence/W1.A05.T04.json`, `artifacts/evidence/W1.A05.T04.review-R01.json`, `artifacts/evidence/ui-change/W1.A05.T04.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tools/desktop_app_check.py`
+- Selected checks: `npm test --prefix apps/desktop; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop; .venv\Scripts\python.exe tools/desktop_app_check.py --repo . --built-frame-only`, `node apps/desktop/scripts/application-lock-renderer-integration.mjs; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head b079bdd68e648d8059b64b984eaa841059312fe0`, `.venv\Scripts\python.exe tools/ui_conformance.py --repo . --check tokens\|routes\|workflows\|accessibility\|visual`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_ui_change_gate tests.foundation.test_taskctl_schema; .venv\Scripts\ruff.exe check tools/desktop_app_check.py; .venv\Scripts\ruff.exe format --check tools/desktop_app_check.py; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 50ea2c5200e67b8416ba00a36c140ae6a5cda00c..b079bdd68e648d8059b64b984eaa841059312fe0`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 50ea2c5200e67b8416ba00a36c140ae6a5cda00c --affected-head b079bdd68e648d8059b64b984eaa841059312fe0 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-R02-affected-selection.json`
+- Deferred checks: `A real configured Windows Hello success prompt remains hardware-conditional; this release-authoritative host reports not-present, while native provider mapping and all renderer availability states remain covered without fabricated hardware evidence.`, `W1.A05.S02 owns the independent security/experience slice integration review and amendment-exit affected build, smoke, security, and accessibility union after T04 task approval.`, `The complete W1 Windows-x64 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit.`
+- Selection rationale: R02 is bounded to the three acceptance-bound R01 findings. Their shared failure pattern was insufficient preservation of the complete initiating state across asynchronous or modal detours: policy reconciliation retained only mode/revision, the workspace detour retained only a workspace enum, and interaction handling retained only a fixed fallback control while allowing global shortcuts behind a modal boundary. The remediation binds the complete normalized transition target, preserves the live guided-workspace instance, captures the actual initiating element, and makes recovery confirmation a complete modal boundary. Credible incremental failures are wrong-profile or wrong-timeout success after response loss, idempotent receipt incompatibility, lost unsaved workflow fields, stale/disconnected focus origins, background activation, deferred shortcut dialogs, or governed UI drift. Focused unit/native/browser tests plus the complete approved-reference conformance replay directly cover those risks.
+- Prior round / replayed open findings: `R01` / `W1.A05.T04-R01-F01`, `W1.A05.T04-R01-F02`, `W1.A05.T04-R01-F03`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by agent:t04-independent-reviewer at `2026-08-30T23:18:23+00:00`
 

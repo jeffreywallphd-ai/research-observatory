@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T04",
+  "commit": "b079bdd68e648d8059b64b984eaa841059312fe0",
+  "baseCommit": "50ea2c5200e67b8416ba00a36c140ae6a5cda00c",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A05.T04.json",
+    "sha256": "f4486b7f9fee3f91f1d8de672536fb0e5f4618de2f85a3ab74b0792be65f354d",
+    "commit": "50ea2c5200e67b8416ba00a36c140ae6a5cda00c",
+    "reason": "Bounded R02 remediation for W1.A05.T04-R01-F01, W1.A05.T04-R01-F02, and W1.A05.T04-R01-F03."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/applicationSettings.native.integration.test.ts",
+    "apps/desktop/src/app/applicationSettings.test.ts",
+    "apps/desktop/src/app/applicationSettings.ts",
+    "artifacts/evidence/W1.A05.T04.json",
+    "artifacts/evidence/W1.A05.T04.review-R01.json",
+    "artifacts/evidence/ui-change/W1.A05.T04.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "npm test --prefix apps/desktop; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "exitCode": 0,
+      "result": "All 15 executed desktop test files and 91 tests passed with three native-fixture tests deliberately skipped outside their harness; strict TypeScript and desktop lint passed; the product/reference build completed; and the built-product browser check passed every application-settings, lock/reconciliation, draft-retention, initiating-focus, inert-modal, shortcut-suppression, responsive, and critical-violation assertion."
+    },
+    {
+      "command": "node apps/desktop/scripts/application-lock-renderer-integration.mjs; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests",
+      "exitCode": 0,
+      "result": "The real Rust witness and all three production TypeScript decoder/controller integration tests passed, including same-handle idempotent receipt replay after simulated response loss. The focused native run passed 25 application-lock tests with its renderer witness separately invoked."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head b079bdd68e648d8059b64b984eaa841059312fe0",
+      "exitCode": 0,
+      "result": "The complete exact task range passed as one approved-reference implementation for RO-UI-ACADEMIC-MINIMAL-1.4. The contract resolves to the exact eight governed UI implementation paths, approved package hash, task/base/owner identity, and immutable approved lineage."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check tokens|routes|workflows|accessibility|visual",
+      "exitCode": 0,
+      "result": "All five separately invoked conformance checks passed under pinned Playwright 1.58.0 and Chromium 145.0.7632.6: 109 tokens, 33 routes and 540 required-region contracts, 14 workflow profiles with 139 browser and 390 keyboard cases, 66 responsive/accessibility cases, and all 66 controlled light/dark visual captures matching the approved baseline."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate tests.foundation.test_taskctl_schema; .venv\\Scripts\\ruff.exe check tools/desktop_app_check.py; .venv\\Scripts\\ruff.exe format --check tools/desktop_app_check.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 50ea2c5200e67b8416ba00a36c140ae6a5cda00c..b079bdd68e648d8059b64b984eaa841059312fe0",
+      "exitCode": 0,
+      "result": "All 61 UI-gate and taskctl-schema foundation tests passed; the changed Python harness passed Ruff check and formatting; the canonical backlog validated at 20 capabilities, 117 slices, 363 tasks, and 12 release gates; and the exact remediation range passed whitespace hygiene."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 50ea2c5200e67b8416ba00a36c140ae6a5cda00c --affected-head b079bdd68e648d8059b64b984eaa841059312fe0 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-R02-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed affected selector accepted the exact remediation range and its desktop, security-local, and service coverage inventory, with complete packaging, performance, and cross-capability qualification still deferred to W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "W1.A05.T04-R01-F02 is remediated by keeping the previous guided workspace mounted but hidden, aria-hidden, and inert while Application Settings is active. Its project-keyed component state therefore survives the application-level detour without becoming interactive behind the active destination.",
+        "The built-product browser begins in an open Research Intent workspace, changes the primary use case and objective without saving, opens Application Settings, returns, and proves the exact project context, workspace, field values, and intended focus remain intact."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The current native snapshot remains distinct from the editable draft, and the original all-mode, provider-state, timeout, invalid-policy, and explicit-recovery tests remain green. The remediation does not broaden provider or renderer authority."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "W1.A05.T04-R01-F01 is remediated by binding each pending transition to the complete normalized requested mode, profile name, timeout, valid configuration, and exact successor revision. A direct or recovered native receipt that does not match that complete target is rejected rather than announced as saved.",
+        "Response-loss recovery first replays the same opaque handle and confirmation to obtain the native idempotent receipt. Status fallback accepts only the exact target and revision. New same-mode wrong-profile and requested-nonzero-versus-observed-zero timeout fixtures prove neither substitution can produce reconciled success."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The remediation leaves locked-state disclosure, no-fallback provider behavior, and explicit same-user recovery authority unchanged. Existing locked secrecy, cancellation, denial, unavailable-provider, and recovery tests remain green."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "W1.A05.T04-R01-F03 is remediated by making all locked content outside the recovery alertdialog inert and aria-hidden and by suppressing Ctrl+K, Ctrl+/, and Alt+H while recovery confirmation owns interaction. Built-browser tests prove focus stays inside the dialog and no deferred shortcut dialog appears after unlock.",
+        "Application Settings now captures the actual top-bar, sidebar, or command-result initiator and restores that connected element on Return, with the stable top-bar trigger only as fallback. The built-product browser proves all three entry paths, and the complete token, route, workflow, accessibility, responsive, and 66-capture visual matrix still matches approved reference RO-UI-ACADEMIC-MINIMAL-1.4."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 is bounded to the three acceptance-bound R01 findings. Their shared failure pattern was insufficient preservation of the complete initiating state across asynchronous or modal detours: policy reconciliation retained only mode/revision, the workspace detour retained only a workspace enum, and interaction handling retained only a fixed fallback control while allowing global shortcuts behind a modal boundary. The remediation binds the complete normalized transition target, preserves the live guided-workspace instance, captures the actual initiating element, and makes recovery confirmation a complete modal boundary. Credible incremental failures are wrong-profile or wrong-timeout success after response loss, idempotent receipt incompatibility, lost unsaved workflow fields, stale/disconnected focus origins, background activation, deferred shortcut dialogs, or governed UI drift. Focused unit/native/browser tests plus the complete approved-reference conformance replay directly cover those risks.",
+    "selectedCommandIds": [
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "A real configured Windows Hello success prompt remains hardware-conditional; this release-authoritative host reports not-present, while native provider mapping and all renderer availability states remain covered without fabricated hardware evidence.",
+      "W1.A05.S02 owns the independent security/experience slice integration review and amendment-exit affected build, smoke, security, and accessibility union after T04 task approval.",
+      "The complete W1 Windows-x64 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-security-experience-task-review",
+    "openFindingIds": [
+      "W1.A05.T04-R01-F01",
+      "W1.A05.T04-R01-F02",
+      "W1.A05.T04-R01-F03"
+    ],
+    "note": "Replay all three R01 findings against 50ea2c5200e67b8416ba00a36c140ae6a5cda00c..b079bdd68e648d8059b64b984eaa841059312fe0. Confirm complete-target native receipt/status reconciliation and both same-mode substitution denials; preservation of the open project and unsaved guided-workflow fields; exact initiating focus restoration from top bar, sidebar, and command result; inert recovery background; suppression of Ctrl+K, Ctrl+/, and Alt+H; absence of deferred shortcut dialogs; and continued exact v1.4 conformance without expanded authority."
+  }
+}
