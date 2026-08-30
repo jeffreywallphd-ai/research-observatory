@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T03",
+  "commit": "c94ab3ef76529f7eee0d2f002423c21aec3e1161",
+  "baseCommit": "deec1063e6bcd9a17d2a10c574103c10ebdd7785",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A05.T03.json",
+    "sha256": "ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b",
+    "commit": "deec1063e6bcd9a17d2a10c574103c10ebdd7785",
+    "reason": "Bounded R02 remediation for W1.A05.T03-R01-F01."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/application_sign_in_policy.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "artifacts/evidence/W1.A05.T03.json",
+    "artifacts/evidence/W1.A05.T03.review-R01.json",
+    "docs/architecture/application-lock.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/security/test_application_lock_source.py"
+  ],
+  "checks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "exitCode": 0,
+      "result": "All 56 native library tests passed at the exact R02 candidate. Three real Windows child-process tests now prove protected-policy publication before duplicate-instance denial, release after abrupt process termination, restart locked from the exact protected bytes, stale cross-process publication conflict, abandoned named-mutex recovery, and byte-exact valid restart. Every prior parsing, migration, provider-order, recovery, typed-failure, handle, redaction, no-follow, zero/nonzero, and Core-generation test remains green."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked -- -D warnings",
+      "exitCode": 0,
+      "result": "Rust formatting and warnings-denied Clippy passed with the lifetime-held Windows instance lease and process harness."
+    },
+    {
+      "command": "npm --prefix apps/desktop test -- --run; npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint",
+      "exitCode": 0,
+      "result": "All 13 desktop test files and 71 tests passed; the functional product/runtime/reference fixtures built; and desktop lint passed. The remediation changes no renderer contract or governed experience."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract",
+      "exitCode": 0,
+      "result": "All nine focused security/source and portable-contract tests passed. Production setup must acquire the single-instance authority before Core startup, and no production ApplicationLockManager::new bypass remains."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-R02-build-manifest.json; git diff --check deec1063e6bcd9a17d2a10c574103c10ebdd7785..c94ab3ef76529f7eee0d2f002423c21aec3e1161",
+      "exitCode": 0,
+      "result": "Affected Python passed Ruff; architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; build inventory passed; and the exact remediation range passed whitespace hygiene."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base deec1063e6bcd9a17d2a10c574103c10ebdd7785 --affected-head c94ab3ef76529f7eee0d2f002423c21aec3e1161 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-R02-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed safety-sensitive affected selector passed for the exact remediation range; only the existing gate-bound desktop performance command remains deferred to W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "W1.A05.T03-R01-F01 is remediated at the production boundary: setup acquires one Windows kernel object derived from the stable canonical application-data root before it constructs the policy manager or starts Core. A second process for that root receives RO-DESKTOP-ALREADY-RUNNING and exits, so no simultaneously running manager can retain stale none authority.",
+        "The real child process first commits windows-password with a nonzero timeout, then the parent proves a second manager cannot acquire authority. After abrupt child termination, a fresh production manager acquires the released lease, reads windows-password, starts locked for application restart, and denies protected actions."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Provider verification and transition publication code is unchanged by R02. The retained full native suite proves destination verification for enable, current-then-destination verification for protected switches, and exact compare-and-swap publication."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Configured-provider protected disablement, proof-before-warning/confirmation, and explicit same-SID Windows-password recovery remain unchanged and pass the full native/security replay. The instance lease receives no credential, provider result, transition handle, or recovery authority."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The child-process harness proves a real stale cross-process writer receives RO-SIGN-IN-POLICY-CONFLICT and cannot replace the committed password policy. It then terminates a process while that process owns the publication mutex; WAIT_ABANDONED recovery succeeds and the exact committed bytes reopen valid and unchanged.",
+        "The instance lease is object-lifetime-based rather than thread-owned: CreateMutexW creates the unique global name without taking mutex ownership, the process holds its handle for the manager lifetime, and any final Tauri Arc holder can close it safely. Windows closes the handle automatically after abrupt process termination."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The protected child policy uses a 15-minute timeout and the restarted production manager is locked for application restart; begin_protected_action is denied. Existing explicit-none, zero-minute manual-only, nonzero restart/idle, corruption, unavailable-provider, and adverse-recovery tests remain green.",
+        "R02 changes only native process authority, its process-boundary tests, the source invariant, and architecture documentation. It does not change the approved T03 mode/migration/recovery contract or move T04 experience and W1-exit duties."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 is bounded to W1.A05.T03-R01-F01. Root cause: R01 implemented cross-process write serialization and CAS but treated the policy as if only one manager process could exist, without enforcing that invariant or reloading stale managers. The remediation makes that implicit assumption executable at the release-authoritative Windows startup boundary: one stable-root-derived kernel object exists for the lifetime of the only process permitted to construct the production manager and start Core. Credible incremental failures are path aliases creating different leases, a second process entering before lease acquisition, thread-affine release, abrupt process exit leaving a permanent lease, stale child publication bypassing CAS, abandoned write mutex deadlock, or restart reading partial/incorrect bytes. Stable path derivation, acquisition before manager/Core construction, existence-only handle lifetime, and real child-process duplicate/publication/termination/abandonment/restart tests directly cover those risks. The full prior native/security/renderer matrix was replayed to preserve every T03 boundary.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:runtime",
+      "foundation:architecture",
+      "foundation:agent-protocol",
+      "foundation:backlog-views",
+      "foundation:fixture-corpus",
+      "foundation:benchmark-registry",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:ci",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "foundation:unit",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "security-local:supply-chain",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "W1.A05.T04 still owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility, and approved-reference experience, including the disclosed activation-reference mismatch.",
+      "desktop:performance remains explicitly gate-bound by the governed selector to W1 exit.",
+      "The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix remains due at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-security-migration-task-review",
+    "openFindingIds": [
+      "W1.A05.T03-R01-F01"
+    ],
+    "note": "Replay W1.A05.T03-R01-F01 against deec1063e6bcd9a17d2a10c574103c10ebdd7785..c94ab3ef76529f7eee0d2f002423c21aec3e1161. Confirm one release-authoritative manager/Core process per stable canonical root, protected publication before duplicate denial, automatic lease release after abrupt process termination, locked restart from the exact protected bytes, real cross-process stale-writer conflict, abandoned publication-mutex recovery, no thread-affine lease release, and preservation of every passing T03 security/migration/provider/renderer boundary and T04/W1 deferral."
+  }
+}
