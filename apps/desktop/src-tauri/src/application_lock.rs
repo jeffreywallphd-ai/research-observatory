@@ -2010,6 +2010,117 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "invoked by the renderer contract integration harness"]
+    fn renderer_contract_witness() {
+        let output = PathBuf::from(
+            std::env::var("RO_LOCK_CONTRACT_FIXTURE")
+                .expect("RO_LOCK_CONTRACT_FIXTURE is required for this ignored witness"),
+        );
+
+        let enable_root = root("renderer-enable");
+        let enable_manager = ApplicationLockManager::new(&enable_root);
+        let enable_prepared = enable_manager
+            .prepare_policy_transition_with(
+                SignInMode::WindowsPassword,
+                Some("Native fixture".to_owned()),
+                5,
+                |_| VerificationOutcome::Succeeded,
+            )
+            .expect("prepare password enable");
+        let enable_committed = enable_manager.commit_policy_transition(
+            enable_prepared.handle.as_deref().expect("enable handle"),
+            true,
+        );
+        let enable_status = enable_manager.status();
+
+        let cancel_root = root("renderer-cancel");
+        let cancel_manager = manager_at(&cancel_root, SignInMode::WindowsPassword, 0);
+        let cancel_prepared = cancel_manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("prepare protected reduction");
+        assert_eq!(
+            cancel_prepared.outcome,
+            PolicyTransitionOutcome::Prepared,
+            "renderer cancellation fixture must prepare"
+        );
+        let cancel_receipt = cancel_manager.commit_policy_transition(
+            cancel_prepared.handle.as_deref().expect("cancel handle"),
+            false,
+        );
+
+        let unavailable_root = root("renderer-unavailable");
+        let unavailable_manager = manager_at(&unavailable_root, SignInMode::WindowsHello, 0);
+        let unavailable = unavailable_manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Unavailable
+            })
+            .expect("unavailable Hello result");
+
+        let recovery_root = root("renderer-recovery");
+        let recovery_store = PolicyStore::new(&recovery_root);
+        fs::create_dir_all(
+            recovery_store
+                .canonical_path()
+                .parent()
+                .expect("security directory"),
+        )
+        .expect("create recovery security directory");
+        fs::write(
+            recovery_store.canonical_path(),
+            b"{\"schemaVersion\":\"future\"}\n",
+        )
+        .expect("write invalid policy fixture");
+        let recovery_manager = ApplicationLockManager::new(&recovery_root);
+        let ordinary_denied = recovery_manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("ordinary invalid-policy transition");
+        let recovery_prepared = recovery_manager
+            .prepare_password_recovery_reset_with(|| VerificationOutcome::Succeeded)
+            .expect("prepare explicit recovery");
+        let recovery_committed = recovery_manager.commit_policy_transition(
+            recovery_prepared
+                .handle
+                .as_deref()
+                .expect("recovery handle"),
+            true,
+        );
+
+        let witness = serde_json::json!({
+            "schemaVersion": "1.0",
+            "documentType": "application-lock-renderer-contract-witness",
+            "enablePassword": {
+                "prepared": enable_prepared,
+                "committed": enable_committed,
+                "statusAfterCommit": enable_status
+            },
+            "protectedCancellation": {
+                "prepared": cancel_prepared,
+                "cancelled": cancel_receipt,
+                "statusAfterCancel": cancel_manager.status()
+            },
+            "helloUnavailable": unavailable,
+            "invalidPolicyRecovery": {
+                "ordinaryDenied": ordinary_denied,
+                "prepared": recovery_prepared,
+                "committed": recovery_committed
+            }
+        });
+        fs::write(
+            &output,
+            serde_json::to_vec_pretty(&witness).expect("serialize renderer witness"),
+        )
+        .expect("write renderer witness");
+
+        for path in [enable_root, cancel_root, unavailable_root, recovery_root] {
+            let _ = fs::remove_dir_all(path);
+        }
+    }
+
+    #[test]
     fn unavailable_configured_provider_never_downgrades_without_explicit_recovery() {
         let root = root("unavailable-recovery");
         let manager = manager_at(&root, SignInMode::WindowsHello, 0);
