@@ -18821,7 +18821,7 @@
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -18902,12 +18902,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "w1-a05-b00-independent-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-30T14:07:00+00:00",
+            "notes": "R04 ledger artifacts/evidence/W1.A05.B00.review-04.json (sha256 f1f28bc431574531c6d61ee5c61c267ce4278c6f101c2b0121fddb341ed50d01): R01-R03 are closed; W1-A05-B00-R04-F01 requires the frozen-state compatibility assertion to classify archived attempts by authenticated cutover ancestry."
           },
-          "current_status": "REVIEW"
+          "current_status": "CHANGES_REQUESTED"
         }
       ],
       "slice_contributions": [
