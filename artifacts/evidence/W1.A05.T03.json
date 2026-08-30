@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T03",
+  "commit": "deec1063e6bcd9a17d2a10c574103c10ebdd7785",
+  "baseCommit": "10bb2cfd96e89582fdaa5be1fb4c7b9a836decde",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/application_sign_in_policy.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/support_bundle.rs",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "artifacts/evidence/W1.A05.T03.task-start.md",
+    "docs/architecture/application-lock.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/security/README.md",
+    "packages/contracts/security/application-sign-in-policy.schema.json",
+    "packages/contracts/security/application-sign-in-policy.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/contracts/test_credential_store_contract.py",
+    "tests/security/test_application_lock_source.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "exitCode": 0,
+      "result": "All 53 native library tests passed on Windows x64. They cover strict canonical and predecessor parsing, explicit-none creation, exact legacy migration, invalid and unknown state, provider ordering, same-user recovery, atomic publication, stale writers, process-wide arbitration, expiry, cancellation, crash-recovery staging, write failure, idempotent receipt recovery, and no-login/manual/restart/idle behavior."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
+      "exitCode": 0,
+      "result": "Rust formatting and warnings-denied Clippy passed at the exact candidate."
+    },
+    {
+      "command": "npm --prefix apps/desktop test -- --run",
+      "exitCode": 0,
+      "result": "All 13 desktop test files and 71 tests passed. The strict renderer bridge rejects malformed snapshots and transition envelopes while preserving typed outcomes and opaque handles."
+    },
+    {
+      "command": "npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint",
+      "exitCode": 0,
+      "result": "The functional desktop product, runtime, and reference-conformance fixture built successfully, and governed desktop lint passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract",
+      "exitCode": 0,
+      "result": "All nine focused source-boundary and portable-contract tests passed. They require one native transition authority, exact modes and explicit-none default, strict schemas, same-SID password recovery, HWND-bound Hello, and no secret capture or fallback."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py",
+      "exitCode": 0,
+      "result": "Both affected Python contract/source files passed Ruff lint and format checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-build-manifest.json; git diff --check 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde..a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec",
+      "exitCode": 0,
+      "result": "Architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; the exact build-input inventory passed; and the complete candidate range passed whitespace hygiene."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde --affected-head a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed selector passed and selected the full safety-sensitive desktop, security-local, service, contracts, packaging, and foundation inventory; only the gate-bound desktop performance command is deferred to W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "application-sign-in-policy.v1 closes the configuration to none, windows-password, and windows-hello, requires schemaVersion 1.0 and policyRevision, and permits zero inactivity minutes only with protected modes.",
+        "An absent canonical and predecessor state is atomically materialized as explicit none. Every accepted application-lock-profile.v1.json migrates to windows-password while preserving the exact profile name and every supported zero/nonzero timeout; invalid canonical state never falls back to legacy or none."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Preparation verifies the destination before none-to-protected changes and verifies the configured current provider followed by the destination before protected-provider switches.",
+        "The prepared transition binds the exact source authority and identities, source and target modes, target digest, proof class, warning duty, lock generation, and expiry. Commit rechecks those bindings under the cross-process arbiter before compare-and-swap publication."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Protected-to-none requires the configured provider before the warning/confirmation stage. Corrupt or unavailable-provider recovery is a separate explicit password-recovery path and accepts only the existing native LogonUserW plus EqualSid same-process-user proof.",
+        "Renderer possession, confirmation, audit data, or a transition handle cannot create proof. The opaque handle is represented natively only by a SHA-256 digest and is useful only with its exact native bindings and confirmation."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Cancelled, denied, unavailable, busy, failed, conflict, and expired outcomes are distinct and strictly decoded. Every verification failure and stale/concurrent attempt preserves the committed policy bytes.",
+        "Publication uses a cryptographically unique same-directory staging file, flush, atomic Windows replace/create with write-through, stable path and file identities, a named cross-process mutex, and compare-and-swap. A failed publication preserves retry authority and prior bytes; a response-lost retry returns the same committed receipt."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Explicit none is unlocked and manual, restart, and idle locking are no-ops. A protected zero-minute profile is manual-only; a protected nonzero profile locks on restart and inactivity.",
+        "Malformed, unreadable, corrupt, unknown-version, or authority-changed state is invalid/recovery-only and remains locked. Unavailable, denied, cancelled, stale, or mismatched recovery cannot mutate the policy."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "W1.A05.T03 changes an authentication and recovery authority boundary, predecessor migration, durable local security configuration, atomic cross-process persistence, native-to-renderer public contracts, and default lock behavior. Credible failures include silent downgrade from corrupt state, wrong-provider or wrong-order verification, session-only protected disablement, cross-process stale publication, path-alias split authority, symlink/reparse redirection, response-loss double commit, reuse or forgery of transition authority, secret leakage, unavailable-Hello fallback, and weakened manual/restart/idle behavior. Native state-machine and persistence tests, portable schema/source assertions, strict renderer tests, Rust/Python/TypeScript quality checks, production build, architecture/build inventory, and governed affected selection directly cover those risks. T04 deliberately owns user-facing settings and recovery conformance, while the complete accumulated matrix and performance threshold remain W1-exit duties.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:runtime",
+      "foundation:architecture",
+      "foundation:agent-protocol",
+      "foundation:backlog-views",
+      "foundation:fixture-corpus",
+      "foundation:benchmark-registry",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:ci",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "foundation:unit",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "security-local:supply-chain",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "W1.A05.T04 owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility, and approved-reference experience. Its checks must resolve the currently disclosed activation-reference mismatch.",
+      "desktop:performance is explicitly gate-bound by the governed selector to W1 exit.",
+      "The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix remains due at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "independent-security-migration-task-review",
+    "openFindingIds": [],
+    "note": "Authenticate base 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde, candidate a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec, exact changed paths, evidence truth, and the T04/W1 deferrals. Adversarially review strict predecessor/canonical parsing, fail-locked behavior, provider ordering, same-SID recovery, proof-before-warning, handle/binding/expiry semantics, idempotent receipt recovery, stable path/file authority, no-follow Windows persistence, cross-process CAS, typed failures, native/renderer contract parity, audit redaction, and none/manual/restart/idle behavior."
+  }
+}
