@@ -1158,6 +1158,162 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
     return errors
 
 
+def commit_is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
+    completed = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if completed.returncode not in {0, 1}:
+        raise ValueError(completed.stderr.decode("utf-8", errors="replace").strip() or "git merge-base failed")
+    return completed.returncode == 0
+
+
+def authority_bound_approval_errors(
+    repo: Path,
+    approval: dict[str, Any],
+    approval_commit: str,
+    approval_path: str,
+) -> list[str]:
+    authority = approval.get("authority")
+    if approval.get("approval_kind") != "human" or not isinstance(authority, dict):
+        return []
+    label = f"{approval_commit}:{approval_path}"
+    errors: list[str] = []
+    authority_path = str(authority.get("approval_record", ""))
+    introduction = str(authority.get("approval_record_introduction_commit", ""))
+    amendment_id = str(authority.get("amendment_id", ""))
+    change_request_id = str(authority.get("change_request_id", ""))
+    try:
+        resolved_introduction = git(repo, "rev-parse", "--verify", f"{introduction}^{{commit}}")
+    except ValueError:
+        return [f"{label}: authority approval-record introduction commit cannot be resolved"]
+    if resolved_introduction != introduction:
+        return [f"{label}: authority approval-record introduction must use an exact full commit SHA"]
+    if introduction == approval_commit or not commit_is_ancestor(repo, introduction, approval_commit):
+        errors.append(f"{label}: authority approval record must strictly precede the reference approval")
+
+    changed = git(
+        repo,
+        "diff-tree",
+        "--root",
+        "--no-commit-id",
+        "--name-only",
+        "-r",
+        introduction,
+    ).splitlines()
+    if authority_path not in changed:
+        return [*errors, f"{label}: authority introduction commit did not change the cited approval record"]
+    authority_payload, authority_error = git_blob_at(repo, introduction, authority_path)
+    if authority_error or authority_payload is None:
+        return [*errors, authority_error or f"{label}: authority approval record is absent"]
+    parent_payload, parent_error = git_blob_at(repo, f"{introduction}^", authority_path)
+    if parent_error is None and parent_payload is not None:
+        errors.append(f"{label}: cited authority commit is not the approval record introduction")
+    if hashlib.sha256(authority_payload).hexdigest() != authority.get("approval_record_sha256"):
+        errors.append(f"{label}: authority approval-record hash differs from its introduction bytes")
+    approval_authority_payload, approval_authority_error = git_blob_at(repo, approval_commit, authority_path)
+    if approval_authority_error or approval_authority_payload != authority_payload:
+        errors.append(f"{label}: authority approval record changed or disappeared before reference approval")
+
+    try:
+        authority_record = json.loads(authority_payload.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return [*errors, f"{label}: authority approval record is not valid UTF-8 JSON"]
+    if not isinstance(authority_record, dict):
+        return [*errors, f"{label}: authority approval record must be an object"]
+    expected_human = f"human:{authority_record.get('approvedBy', '')}"
+    authorized_tasks = authority_record.get("authorizedTaskIds")
+    if (
+        authority_record.get("schemaVersion") != "1.0"
+        or authority_record.get("documentType") != "wave-amendment-approval"
+        or authority_record.get("amendmentId") != amendment_id
+        or authority_record.get("changeRequestId") != change_request_id
+        or authority_record.get("targetWave") != amendment_id.split(".", 1)[0]
+        or authority_record.get("status") != "APPROVED"
+        or not isinstance(authority_record.get("approvedBy"), str)
+        or not authority_record["approvedBy"].strip()
+        or approval.get("approved_by") != expected_human
+        or approval.get("approved_at") != authority_record.get("approvedAt")
+        or not isinstance(authorized_tasks, list)
+        or not authorized_tasks
+        or any(not isinstance(item, str) or not item.startswith(f"{amendment_id}.T") for item in authorized_tasks)
+    ):
+        errors.append(f"{label}: authority approval status, identity, approver, time, or authorized tasks are invalid")
+
+    packet = authority_record.get("packet")
+    packet_commit = str(packet.get("commit", "")) if isinstance(packet, dict) else ""
+    packet_path = str(packet.get("path", "")) if isinstance(packet, dict) else ""
+    packet_sha256 = str(packet.get("sha256", "")) if isinstance(packet, dict) else ""
+    expected_packet_path = f"planning/enabler-change-requests/{change_request_id}.packet.json"
+    try:
+        resolved_packet = git(repo, "rev-parse", "--verify", f"{packet_commit}^{{commit}}")
+    except ValueError:
+        resolved_packet = ""
+    if (
+        not re.fullmatch(r"[0-9a-f]{40}", packet_commit)
+        or resolved_packet != packet_commit
+        or packet_path != expected_packet_path
+        or not commit_is_ancestor(repo, packet_commit, introduction)
+    ):
+        errors.append(f"{label}: authority packet identity or ancestry is invalid")
+    else:
+        packet_payload, packet_error = git_blob_at(repo, packet_commit, packet_path)
+        if (
+            packet_error
+            or packet_payload is None
+            or hashlib.sha256(packet_payload).hexdigest() != packet_sha256
+        ):
+            errors.append(f"{label}: authority packet bytes do not match the approved record")
+        else:
+            try:
+                packet_record = json.loads(packet_payload.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                packet_record = None
+            if not isinstance(packet_record, dict) or (
+                packet_record.get("documentType") != "enabler-change-request-packet"
+                or packet_record.get("changeRequestId") != change_request_id
+                or packet_record.get("proposedAmendmentId") != amendment_id
+                or packet_record.get("targetWave") != amendment_id.split(".", 1)[0]
+                or packet_record.get("status") != "pending-approval"
+                or packet_record.get("executionState") != "non-executable"
+            ):
+                errors.append(f"{label}: authority packet does not bind the cited amendment and change request")
+
+    prior_approval_commits = git(
+        repo,
+        "log",
+        "--full-history",
+        "--format=%H",
+        f"{approval_commit}^",
+        "--",
+        approval_path,
+    ).splitlines()
+    if prior_approval_commits and (
+        prior_approval_commits[0] == introduction
+        or not commit_is_ancestor(repo, prior_approval_commits[0], introduction)
+    ):
+        errors.append(f"{label}: authority must be introduced after the prior reference approval")
+    for prior_commit in prior_approval_commits:
+        prior_payload, prior_error = git_blob_at(repo, prior_commit, approval_path)
+        if prior_error or prior_payload is None:
+            continue
+        try:
+            prior_approval = yaml.safe_load(prior_payload.decode("utf-8"))
+        except (UnicodeDecodeError, yaml.YAMLError):
+            continue
+        prior_authority = prior_approval.get("authority") if isinstance(prior_approval, dict) else None
+        if isinstance(prior_authority, dict) and (
+            prior_authority.get("approval_record") == authority_path
+            or prior_authority.get("approval_record_introduction_commit") == introduction
+        ):
+            errors.append(f"{label}: authority was already consumed by a prior reference approval")
+            break
+    return errors
+
+
 def reference_package_at(
     repo: Path,
     revision: str,
@@ -1177,6 +1333,12 @@ def reference_package_at(
     except UnicodeDecodeError, yaml.YAMLError:
         return approval_bytes, None, [*errors, f"{revision}: approved reference governance records are unreadable"]
     errors.extend(approval_record_errors(approval, f"{revision}:{approval_path}", reference_id))
+    if isinstance(approval, dict) and approval.get("approval_kind") == "human":
+        approval_commit = git(repo, "log", "-1", "--format=%H", revision, "--", approval_path)
+        if not approval_commit:
+            errors.append(f"{revision}:{approval_path}: approval introduction commit cannot be found")
+        else:
+            errors.extend(authority_bound_approval_errors(repo, approval, approval_commit, approval_path))
     if not isinstance(manifest, dict) or set(manifest) != REFERENCE_MANIFEST_KEYS:
         errors.append(f"{revision}:{manifest_path}: manifest fields must be exact")
         return approval_bytes, None, errors

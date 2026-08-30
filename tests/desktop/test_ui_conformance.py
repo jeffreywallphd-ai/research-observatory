@@ -76,10 +76,10 @@ class UiConformanceTests(unittest.TestCase):
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
 
     def test_canonical_token_and_route_contracts_pass_with_normative_mapping(self) -> None:
-        context = load_context(REPO)
-
-        token_result = check_tokens(context)
-        route_result = check_routes(context)
+        with tempfile.TemporaryDirectory() as temporary:
+            context = self.context_copy(temporary)
+            token_result = check_tokens(context)
+            route_result = check_routes(context)
 
         self.assertTrue(token_result["ok"], token_result["errors"])
         self.assertTrue(route_result["ok"], route_result["errors"])
@@ -365,19 +365,20 @@ class UiConformanceTests(unittest.TestCase):
         self.assertTrue(any("document language must be en" in error for error in result["errors"]))
 
     def test_controlled_font_check_rejects_a_missing_face(self) -> None:
-        context = load_context(REPO)
-        playwright, browser = open_browser(context)
-        try:
-            page = new_page(browser, context)
+        with tempfile.TemporaryDirectory() as temporary:
+            context = self.context_copy(temporary)
+            playwright, browser = open_browser(context)
             try:
-                set_page(page, context, "index.html")
-                self.assertTrue(font_face_available(page, "Segoe UI"))
-                self.assertFalse(font_face_available(page, "DefinitelyMissingFont-9B6F"))
+                page = new_page(browser, context)
+                try:
+                    set_page(page, context, "index.html")
+                    self.assertTrue(font_face_available(page, "Segoe UI"))
+                    self.assertFalse(font_face_available(page, "DefinitelyMissingFont-9B6F"))
+                finally:
+                    page.context.close()
             finally:
-                page.context.close()
-        finally:
-            browser.close()
-            playwright.stop()
+                browser.close()
+                playwright.stop()
 
     def test_strict_baseline_and_approval_records_reject_malformed_history_shapes(self) -> None:
         schema = json.loads((REPO / "verification" / "desktop-ui-baseline.schema.json").read_text(encoding="utf-8"))
@@ -412,6 +413,168 @@ class UiConformanceTests(unittest.TestCase):
             "RO-UI-ACADEMIC-MINIMAL-1.4",
         )
         self.assertTrue(any("approval fields must be exact" in error for error in malformed_errors), malformed_errors)
+
+    def test_actual_authority_bound_v14_approval_resolves_to_immutable_approved_record(self) -> None:
+        baseline = {
+            "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+            "referencePackageSha256": "034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e",
+            "referenceApprovalCommit": "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b",
+        }
+
+        errors = approval_lineage_errors(REPO, baseline, self.git(REPO, "rev-parse", "HEAD"))
+
+        self.assertEqual([], errors)
+
+    def test_reachable_repository_baseline_history_is_valid(self) -> None:
+        config = json.loads((REPO / "verification" / "extensions" / "desktop-ui.json").read_text(encoding="utf-8"))
+        site = json.loads((REFERENCE / "SITE_MANIFEST.json").read_text(encoding="utf-8"))
+        workflows = json.loads((REFERENCE / "WORKFLOW_CATALOG.json").read_text(encoding="utf-8"))["workflows"]
+        page_contracts = json.loads((REFERENCE / "CAPABILITY_COVERAGE.json").read_text(encoding="utf-8"))[
+            "page_contracts"
+        ]
+        pages = [str(item["file"]) for item in site["pages"]]
+        context = Context(REPO, config, REFERENCE, REFERENCE, site, workflows, page_contracts, pages)
+        baseline = json.loads((REPO / "verification" / "baselines" / "desktop-ui.json").read_text(encoding="utf-8"))
+
+        errors = baseline_history_errors(context, baseline)
+
+        self.assertEqual([], errors)
+
+    def test_authority_bound_reference_cannot_reuse_a_prior_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            root.mkdir()
+            self.git(root, "init", "-b", "main")
+            self.git(root, "config", "user.name", "UI Authority Test")
+            self.git(root, "config", "user.email", "ui-authority@example.invalid")
+            reference = root / "design" / "ui-reference"
+            (reference / "assets").mkdir(parents=True)
+            css = reference / "assets" / "app.css"
+            css.write_text("body { color: black; }\n", encoding="utf-8", newline="\n")
+
+            def approval(reference_id: str, *, authority: dict[str, str] | None = None) -> dict[str, Any]:
+                value: dict[str, Any] = {
+                    "reference_id": reference_id,
+                    "version": reference_id.rsplit("-", 1)[-1],
+                    "status": "approved",
+                    "approved_by": "human:repository-owner" if authority else "repository-owner",
+                    "approved_at": "2026-08-30T06:03:51+00:00",
+                    "approval_basis": "Exact immutable authority fixture.",
+                    "supersedes": "REF-1.3" if authority else None,
+                    "scope": {"normative": ["fixture"], "illustrative": ["fixture values"]},
+                    "implementation_rule": "Approval precedes implementation.",
+                    "deferred_surfaces": [],
+                }
+                if authority is not None:
+                    value.update(approval_kind="human", authority=authority)
+                return value
+
+            def write_reference(value: dict[str, Any]) -> str:
+                approval_path = reference / "APPROVAL.yaml"
+                approval_path.write_text(yaml.safe_dump(value, sort_keys=False), encoding="utf-8", newline="\n")
+                governed = ["APPROVAL.yaml", "assets/app.css"]
+                file_hashes = {
+                    relative: hashlib.sha256((reference / relative).read_bytes()).hexdigest()
+                    for relative in governed
+                }
+                manifest = {
+                    "reference_id": value["reference_id"],
+                    "version": value["version"],
+                    "status": "approved",
+                    "approval_file": "APPROVAL.yaml",
+                    "canonical_token_file": "assets/app.css",
+                    "style_guides": ["assets/app.css"],
+                    "workflow_catalog": "assets/app.css",
+                    "page_contracts": "assets/app.css",
+                    "page_inventory": "assets/app.css",
+                    "site_manifest": "assets/app.css",
+                    "generator": "assets/app.css",
+                    "validator": "assets/app.css",
+                    "governed_files": governed,
+                    "file_hashes": file_hashes,
+                }
+                (reference / "REFERENCE_MANIFEST.yaml").write_text(
+                    yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8", newline="\n"
+                )
+                return hashlib.sha256(
+                    json.dumps(file_hashes, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                ).hexdigest()
+
+            write_reference(approval("REF-1.3"))
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "approve prior reference")
+
+            packet_path = root / "planning" / "enabler-change-requests" / "ECR-0004.packet.json"
+            packet = {
+                "documentType": "enabler-change-request-packet",
+                "changeRequestId": "ECR-0004",
+                "proposedAmendmentId": "W1.A05",
+                "targetWave": "W1",
+                "status": "pending-approval",
+                "executionState": "non-executable",
+            }
+            self.write_json(packet_path, packet)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "record exact amendment packet")
+            packet_commit = self.git(root, "rev-parse", "HEAD")
+            packet_sha = hashlib.sha256(packet_path.read_bytes()).hexdigest()
+
+            record_path = root / "planning" / "wave-amendment-approvals" / "W1.A05.json"
+            record = {
+                "schemaVersion": "1.0",
+                "documentType": "wave-amendment-approval",
+                "amendmentId": "W1.A05",
+                "changeRequestId": "ECR-0004",
+                "targetWave": "W1",
+                "status": "APPROVED",
+                "approvedBy": "repository-owner",
+                "approvedAt": "2026-08-30T06:03:51+00:00",
+                "decision": "Approve the exact fixture packet.",
+                "packet": {
+                    "commit": packet_commit,
+                    "path": "planning/enabler-change-requests/ECR-0004.packet.json",
+                    "sha256": packet_sha,
+                },
+                "effectiveBase": {},
+                "authorizedTaskIds": ["W1.A05.T04"],
+                "bootstrapUnit": "W1.A05.B00",
+                "independentPacketReview": {},
+            }
+            self.write_json(record_path, record)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "record human amendment approval")
+            authority_commit = self.git(root, "rev-parse", "HEAD")
+            authority = {
+                "amendment_id": "W1.A05",
+                "change_request_id": "ECR-0004",
+                "approval_record": "planning/wave-amendment-approvals/W1.A05.json",
+                "approval_record_sha256": hashlib.sha256(record_path.read_bytes()).hexdigest(),
+                "approval_record_introduction_commit": authority_commit,
+            }
+            package = write_reference(approval("REF-1.4", authority=authority))
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "approve authority-bound reference")
+
+            css.write_text("body { color: red; }\n", encoding="utf-8", newline="\n")
+            fabricated = approval("REF-1.4", authority=authority)
+            fabricated["approved_at"] = "2026-08-30T07:03:51+00:00"
+            package = write_reference(fabricated)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "fabricate reapproval with reused authority")
+            fabricated_approval = self.git(root, "rev-parse", "HEAD")
+            (root / "baseline-marker.txt").write_text("baseline\n", encoding="utf-8", newline="\n")
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "record fabricated baseline")
+            baseline_commit = self.git(root, "rev-parse", "HEAD")
+            baseline = {
+                "referenceId": "REF-1.4",
+                "referencePackageSha256": package,
+                "referenceApprovalCommit": fabricated_approval,
+            }
+
+            errors = approval_lineage_errors(root, baseline, baseline_commit)
+
+        self.assertTrue(any("authority" in error and "prior reference approval" in error for error in errors), errors)
 
     def test_same_reference_baseline_rewrite_requires_new_approval(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

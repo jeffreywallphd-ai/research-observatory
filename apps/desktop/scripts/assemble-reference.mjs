@@ -68,8 +68,8 @@ for (const artifact of await filesBelow(distRoot)) {
 const manifest = {
   schemaVersion: "1.0",
   documentType: "desktop-application-build-manifest",
-  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.4",
-  referencePackageSha256: "034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e",
+  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.3",
+  referencePackageSha256: "db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2",
   sourceFiles,
   artifacts,
 };
