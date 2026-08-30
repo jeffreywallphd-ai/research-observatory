@@ -9,6 +9,7 @@ import html
 import json
 import re
 import sys
+import tempfile
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
@@ -16,7 +17,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import yaml
-from plan_review_site import extract_task_section
+from plan_review_site import build_site, extract_task_section
 
 
 def sha256(path: Path) -> str:
@@ -47,6 +48,34 @@ def markdown_body(path: Path) -> str:
 
 def text_sha256(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def generated_site_byte_errors(repo: Path, site: Path) -> list[str]:
+    """Prove that reviewer-visible files are the exact deterministic projection."""
+    manifest_path = site / "manifest.json"
+    if not manifest_path.is_file():
+        return ["Cannot regenerate the review site without its manifest"]
+    with tempfile.TemporaryDirectory() as temporary:
+        expected = Path(temporary) / "review-site"
+        expected.mkdir(parents=True)
+        # build_site deliberately retains an existing generated_at value. Seed only
+        # that governed manifest so the comparison is content-exact and timestamp-stable.
+        (expected / "manifest.json").write_bytes(manifest_path.read_bytes())
+        build_site(repo, expected)
+        actual_files = {path.relative_to(site).as_posix(): path for path in site.rglob("*") if path.is_file()}
+        expected_files = {path.relative_to(expected).as_posix(): path for path in expected.rglob("*") if path.is_file()}
+        errors: list[str] = []
+        if set(actual_files) != set(expected_files):
+            missing = sorted(set(expected_files) - set(actual_files))
+            extra = sorted(set(actual_files) - set(expected_files))
+            errors.append(
+                "Generated review-site file inventory differs from deterministic regeneration: "
+                f"missing={missing[:1]} extra={extra[:1]}"
+            )
+        for relative in sorted(set(actual_files) & set(expected_files)):
+            if actual_files[relative].read_bytes() != expected_files[relative].read_bytes():
+                errors.append(f"{relative}: visible content differs from deterministic regeneration")
+        return errors
 
 
 class PageParser(HTMLParser):
@@ -477,6 +506,8 @@ def main() -> int:
         manifest: dict[str, Any] = {"capabilities": []}
     else:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+    errors.extend(generated_site_byte_errors(repo, site))
 
     cap_plans = {path.stem: path for path in (repo / "planning/capability-plans").glob("CAP-*.md")}
     slice_plans: dict[str, Path] = {}
