@@ -30909,7 +30909,7 @@ wave_amendments:
         until amendment adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A05.B00
-    status: REVIEW
+    status: CHANGES_REQUESTED
     implementer: codex
     implementation_commit: cf8a2568a29766c27a0f73cfb9036d86f91b62ac
     submission_branch: codex/w1-windows-local-runtime
@@ -30924,10 +30924,12 @@ wave_amendments:
       commit: cf8a2568a29766c27a0f73cfb9036d86f91b62ac
       recorded_at: '2026-08-30T12:45:59+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: w1-a05-b00-independent-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-30T12:58:25+00:00'
+      notes: 'R02 ledger artifacts/evidence/W1.A05.B00.review-02.json (sha256 41d228df518fb21f6609dabce85962e36f9add46ff08199444d8dd3cbf3434f8):
+        W1-A05-B00-R02-F01 requires fail-closed coverage of unauthorized intervening commits before an implementer-selected
+        remediation base.'
     attempts:
     - id: R01
       implementer: codex
