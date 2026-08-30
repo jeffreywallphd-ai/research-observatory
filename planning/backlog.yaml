@@ -31583,17 +31583,17 @@ wave_amendments:
       to T04, S02 review, and Wave qualification.
     - Obtain independent commit-bound security/migration task review.
     packet_task_sha256: 32cf27efeb770f022e3991167518e0e9cfe44b8897168942fc72ec644035060a
-    status: REVIEW
+    status: IN_PROGRESS
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde
     worktree: C:/workspace/research-observatory
     lease:
       claimed_by: codex
-      claimed_at: '2026-08-30T17:14:11+00:00'
-      expires_at: '2026-08-31T01:14:11+00:00'
+      claimed_at: '2026-08-30T18:15:49+00:00'
+      expires_at: '2026-08-31T02:15:49+00:00'
     started_at: '2026-08-30T17:14:11+00:00'
-    updated_at: '2026-08-30T18:03:17+00:00'
+    updated_at: '2026-08-30T18:15:49+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
@@ -31603,115 +31603,217 @@ wave_amendments:
       sha256: ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b
       commit: deec1063e6bcd9a17d2a10c574103c10ebdd7785
       recorded_at: '2026-08-30T18:03:17+00:00'
-    verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+    verification_state: null
+    review: &id108
+      reviewer: codex-independent-sign-in-policy-security-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-30T18:15:49+00:00'
+      notes: 'Independent commit-bound security/migration review authenticated the exact base, candidate, submission record,
+        evidence SHA-256 ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b, Git blob b2cc319428ba5f38f04063144e8ee8dc819f3a11,
+        and all 21 declared candidate paths. Base is an ancestor of candidate and candidate is an ancestor of submission;
+        candidate product/test bytes remain unchanged at submission and both ranges pass patch hygiene. Independent replay
+        passed all 53 native library tests, all 13 focused renderer transition tests, all 71 desktop tests, all nine focused
+        Python security/contract tests, Ruff, Rust format and warnings-denied Clippy, the production desktop build, desktop
+        lint, architecture, build-input inventory, and the governed affected selector. Strict parsing/migration, explicit-none
+        materialization, provider ordering, configured-provider and same-SID recovery proof, proof-before-confirmation structure,
+        opaque digest-only handles, expiry/replay behavior, typed native/renderer failures, no-follow file inspection, named-mutex/CAS
+        publication, response-loss receipt replay within the live process, audit redaction, and zero/nonzero lock behavior
+        otherwise match the approved T03 contract. One blocking cross-process authority defect remains: publication updates
+        only the committing manager''s in-memory state, while another already-running manager/process never reloads or fails
+        closed and no single-instance control exists. That stale process can remain none/unlocked and continue protected actions
+        after the durable application-wide policy has become protected. The submitted tests exercise two managers only as
+        stale writers and do not run the task-start-required child-process/abrupt-exit harness, so the claimed process-wide/crash
+        coverage does not detect this behavior. T04 legitimately owns the governed settings/recovery UI and activation-reference
+        correction, and W1 exit legitimately owns accumulated performance/full qualification, but neither later gate owns
+        this native application-wide authority defect.'
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex
-        submitted_at: '2026-08-30T18:03:17+00:00'
-        candidate_commit: deec1063e6bcd9a17d2a10c574103c10ebdd7785
-        base_commit: 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A05.T03.json
-          sha256: ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b
-          commit: deec1063e6bcd9a17d2a10c574103c10ebdd7785
-          recorded_at: '2026-08-30T18:03:17+00:00'
-        acceptance_criteria_sha256: 4250e5765a66a110aff54ee25e0d34853cb42fe443c8684f126079931f8bdc96
-        changed_paths:
-        - apps/desktop/src-tauri/src/application_lock.rs
-        - apps/desktop/src-tauri/src/application_sign_in_policy.rs
-        - apps/desktop/src-tauri/src/lib.rs
-        - apps/desktop/src-tauri/src/support_bundle.rs
-        - apps/desktop/src/app/applicationLock.test.ts
-        - apps/desktop/src/app/applicationLock.ts
-        - artifacts/evidence/W1.A05.T03.task-start.md
-        - docs/architecture/application-lock.md
-        - docs/planning-implementation-plan.md
-        - packages/contracts/README.md
-        - packages/contracts/security/README.md
-        - packages/contracts/security/application-sign-in-policy.schema.json
-        - packages/contracts/security/application-sign-in-policy.v1.json
-        - packaging/build-inputs.json
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0004.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        - tests/contracts/test_credential_store_contract.py
-        - tests/security/test_application_lock_source.py
-        - tools/desktop_app_check.py
-        selected_checks:
-        - cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib
-        - cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml
-          --lib -- -D warnings
-        - npm --prefix apps/desktop test -- --run
-        - npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint
-        - .venv\Scripts\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract
-        - .venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py;
-          .venv\Scripts\ruff.exe format --check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py
-        - .venv\Scripts\python.exe tools\architecture_check.py --repo .; .venv\Scripts\python.exe tools\build_manifest.py
-          --repo . --output artifacts/tmp/W1.A05.T03-build-manifest.json; git diff --check 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde..a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec
-        - .venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base
-          10bb2cfd96e89582fdaa5be1fb4c7b9a836decde --affected-head a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec --deferred-gate
-          W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-affected-selection.json
-        deferred_checks:
-        - W1.A05.T04 owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility, and
-          approved-reference experience. Its checks must resolve the currently disclosed activation-reference mismatch.
-        - desktop:performance is explicitly gate-bound by the governed selector to W1 exit.
-        - The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix remains
-          due at W1 exit.
-        selection_rationale: W1.A05.T03 changes an authentication and recovery authority boundary, predecessor migration,
-          durable local security configuration, atomic cross-process persistence, native-to-renderer public contracts, and
-          default lock behavior. Credible failures include silent downgrade from corrupt state, wrong-provider or wrong-order
-          verification, session-only protected disablement, cross-process stale publication, path-alias split authority, symlink/reparse
-          redirection, response-loss double commit, reuse or forgery of transition authority, secret leakage, unavailable-Hello
-          fallback, and weakened manual/restart/idle behavior. Native state-machine and persistence tests, portable schema/source
-          assertions, strict renderer tests, Rust/Python/TypeScript quality checks, production build, architecture/build inventory,
-          and governed affected selection directly cover those risks. T04 deliberately owns user-facing settings and recovery
-          conformance, while the complete accumulated matrix and performance threshold remain W1-exit duties.
-        selection_sha256: 7c7d0158f4a1b5778d73469431680b6402f539b45d9fbc7dfe2580ba2b0e418a
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - foundation:repository-structure
-        - foundation:runtime
-        - foundation:architecture
-        - foundation:agent-protocol
-        - foundation:backlog-views
-        - foundation:fixture-corpus
-        - foundation:benchmark-registry
-        - foundation:build-manifest
-        - foundation:ui-reference
-        - foundation:ui-change
-        - foundation:adr
-        - foundation:ci
-        - foundation:quality
-        - foundation:packaging-smoke
-        - foundation:unit
-        - foundation:backlog
-        - desktop:application
-        - desktop:unit
-        - desktop:ui-reference-integrity
-        - desktop:ui-token
-        - desktop:ui-route-page
-        - desktop:ui-workflow
-        - desktop:ui-accessibility
-        - desktop:ui-visual-regression
-        - packaging:unit
-        - service:unit
-        - contracts:unit
-        - security-local:supply-chain
-        - security-local:unit
-        packet_sha256: c2ac12df526e4b4471ae25f472f85efc50cde246fa4781ce5d56ebbe9811d48b
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-08-30T18:03:17+00:00'
+          candidate_commit: deec1063e6bcd9a17d2a10c574103c10ebdd7785
+          base_commit: 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A05.T03.json
+            sha256: ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b
+            commit: deec1063e6bcd9a17d2a10c574103c10ebdd7785
+            recorded_at: '2026-08-30T18:03:17+00:00'
+          acceptance_criteria_sha256: 4250e5765a66a110aff54ee25e0d34853cb42fe443c8684f126079931f8bdc96
+          changed_paths:
+          - apps/desktop/src-tauri/src/application_lock.rs
+          - apps/desktop/src-tauri/src/application_sign_in_policy.rs
+          - apps/desktop/src-tauri/src/lib.rs
+          - apps/desktop/src-tauri/src/support_bundle.rs
+          - apps/desktop/src/app/applicationLock.test.ts
+          - apps/desktop/src/app/applicationLock.ts
+          - artifacts/evidence/W1.A05.T03.task-start.md
+          - docs/architecture/application-lock.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/README.md
+          - packages/contracts/security/README.md
+          - packages/contracts/security/application-sign-in-policy.schema.json
+          - packages/contracts/security/application-sign-in-policy.v1.json
+          - packaging/build-inputs.json
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0004.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/contracts/test_credential_store_contract.py
+          - tests/security/test_application_lock_source.py
+          - tools/desktop_app_check.py
+          selected_checks:
+          - cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib
+          - cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml
+            --lib -- -D warnings
+          - npm --prefix apps/desktop test -- --run
+          - npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint
+          - .venv\Scripts\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract
+          - .venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py;
+            .venv\Scripts\ruff.exe format --check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py
+          - .venv\Scripts\python.exe tools\architecture_check.py --repo .; .venv\Scripts\python.exe tools\build_manifest.py
+            --repo . --output artifacts/tmp/W1.A05.T03-build-manifest.json; git diff --check 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde..a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec
+          - .venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --profile service
+            --affected-base 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde --affected-head a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec
+            --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-affected-selection.json
+          deferred_checks:
+          - W1.A05.T04 owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility,
+            and approved-reference experience. Its checks must resolve the currently disclosed activation-reference mismatch.
+          - desktop:performance is explicitly gate-bound by the governed selector to W1 exit.
+          - The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix
+            remains due at W1 exit.
+          selection_rationale: W1.A05.T03 changes an authentication and recovery authority boundary, predecessor migration,
+            durable local security configuration, atomic cross-process persistence, native-to-renderer public contracts, and
+            default lock behavior. Credible failures include silent downgrade from corrupt state, wrong-provider or wrong-order
+            verification, session-only protected disablement, cross-process stale publication, path-alias split authority,
+            symlink/reparse redirection, response-loss double commit, reuse or forgery of transition authority, secret leakage,
+            unavailable-Hello fallback, and weakened manual/restart/idle behavior. Native state-machine and persistence tests,
+            portable schema/source assertions, strict renderer tests, Rust/Python/TypeScript quality checks, production build,
+            architecture/build inventory, and governed affected selection directly cover those risks. T04 deliberately owns
+            user-facing settings and recovery conformance, while the complete accumulated matrix and performance threshold
+            remain W1-exit duties.
+          selection_sha256: 7c7d0158f4a1b5778d73469431680b6402f539b45d9fbc7dfe2580ba2b0e418a
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:runtime
+          - foundation:architecture
+          - foundation:agent-protocol
+          - foundation:backlog-views
+          - foundation:fixture-corpus
+          - foundation:benchmark-registry
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:ci
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:unit
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - desktop:ui-visual-regression
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          - security-local:supply-chain
+          - security-local:unit
+          packet_sha256: c2ac12df526e4b4471ae25f472f85efc50cde246fa4781ce5d56ebbe9811d48b
+        review: *id108
+        ledger:
+          path: artifacts/evidence/W1.A05.T03.review-R01.json
+          sha256: a879320921246d7417b195dd2258e2b5962e7608c78e377adfac0255247f79a4
+        findings:
+        - id: W1.A05.T03-R01-F01
+          severity: high
+          blocking: true
+          criterion_index: 1
+          title: A stale desktop process remains unprotected after another process enables the application-wide policy
+          reproduction: 'At exact candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785, construct two ApplicationLockManager
+            instances A and B for the same absent-state application-data directory before either changes policy. Both load
+            explicit none and remain unlocked. Have A prepare and commit windows-password successfully. The canonical bytes
+            become the protected revision and A updates its own inner policy, but B has no reload, notification, generation
+            invalidation, or source-authority check: B.status() still reports none/unlocked, B.is_unlocked() remains true,
+            and B.begin_protected_action() succeeds because those methods read only B.shared. The desktop has no single-instance
+            enforcement, so the same state is reachable with two ordinary launches. The Windows named mutex and CAS prevent
+            B from overwriting A with a stale transition, but do not revoke B''s already-running unprotected Core/session
+            authority. Thus a successfully enabled application-wide mode can silently leave another application process in
+            no-login mode, contrary to criterion 1''s application-wide policy and the concurrent/protected-state safety required
+            by criteria 4 and 5. Existing tests create two managers only to assert a stale writer conflict and contain no
+            child-process/abrupt-exit harness, so the frozen evidence''s process-wide arbitration and crash-recovery claims
+            do not close this defect.'
+          required_remediation: In a strict-descendant candidate, make the policy authority effective across every desktop
+            process that can use the same application-data root. Either enforce one release-authoritative desktop instance
+            before Core or policy-manager startup, or add a native cross-process adoption/invalidation mechanism that revalidates
+            the durable source before protected actions and promptly invalidates generation, locks/stops Core, and adopts
+            a newly protected or invalid policy in every stale process. Do not let a stale none/unlocked manager continue
+            after protected publication. Add a real Windows child-process test that starts from the same canonical root, proves
+            one process enabling protection causes every other process to deny protected actions or exit, proves competing
+            publication remains CAS-safe, and exercises named-mutex abandonment/abrupt termination plus restart with only
+            exact predecessor or valid successor bytes. Retain the passing migration, provider-order, recovery, typed-failure,
+            handle, redaction, no-follow, zero/nonzero, renderer-contract, and T04/W1 deferral boundaries.
+        closures: []
+        telemetry:
+          task_id: W1.A05.T03
+          amendment_id: W1.A05
+          attempt_id: R01
+          submitted_at: '2026-08-30T18:03:17+00:00'
+          reviewed_at: '2026-08-30T18:15:49+00:00'
+          duration_seconds: 752
+          outcome: changes-requested
+          finding_counts:
+            critical: 0
+            high: 1
+            medium: 0
+            low: 0
+            blocking: 1
+            total: 1
+          command_ids:
+          - foundation:repository-structure
+          - foundation:runtime
+          - foundation:architecture
+          - foundation:agent-protocol
+          - foundation:backlog-views
+          - foundation:fixture-corpus
+          - foundation:benchmark-registry
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:ci
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:unit
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - desktop:ui-visual-regression
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          - security-local:supply-chain
+          - security-local:unit
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   - id: W1.A05.T04
     amendment_id: W1.A05
     title: Implement Application Settings Security & sign-in
