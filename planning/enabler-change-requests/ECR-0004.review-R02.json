@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0004",
+  "proposedAmendmentId": "W1.A05",
+  "attemptId": "R02",
+  "candidateCommit": "25584d82ce5d6bd55e476cd746100eef0790a33d",
+  "packetSha256": "6d42142be1d8d5a76e09722ea2ba7f337cdfdc42b8c9e7fed6126851e4224e6d",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr4-security-architecture-experience-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "ECR-0004-R01-F01",
+      "disposition": "closed",
+      "notes": "The strict-descendant packet now requires successful verification by the configured provider or an explicit native Windows-password token whose SID matches the desktop process user before every protected-to-none transition and every corrupt/unavailable-provider reset. Warning, confirmation, audit, and possession of the signed-in session are explicitly insufficient. Unavailable, denied, or cancelled proof leaves the app and stored policy locked/unchanged and directs the user to Windows/provider recovery. The migration contract now maps absent state to none; maps every valid persisted application-lock-profile.v1.json to windows-password while preserving profile name, zero/nonzero inactivity timeout, restart, and manual-lock semantics; and keeps malformed, unreadable, corrupt, or unknown protected state locked until approved same-user proof succeeds. Exact fixtures and adversarial denial duties are bound in T03, S02, amendment exit, rollback, non-goals, and the governed experience surfaces."
+    }
+  ],
+  "verified": [
+    "The exact R02 candidate 25584d82ce5d6bd55e476cd746100eef0790a33d is checked out on codex/w1-windows-local-runtime. It strictly descends from reviewed R01 candidate 69d0acf2ac58c60254e955376c99f58f4deb373d through the one-file R01 ledger commit eb5afb1520966213918978f24226ef173c81a7a1; the remediation commit's sole parent is that ledger commit.",
+    "The immutable R01 ledger remains byte-identical with SHA-256 d700f9397137fd4a78be12115a234df53c9a81b8813c22b8b127bda1bea41a1e and a unique Git introduction at eb5afb1520966213918978f24226ef173c81a7a1. Its changes-requested disposition, ECR-0004-R01-F01 identity, reproduction, remediation, verified record, empty closures, and approvalAvailable=false projection were not rewritten.",
+    "The R01-ledger-to-R02 delta is limited to the canonical proposal, machine packet, experience proposal, HTML reference, static/generated ECR-0004 review surfaces, generated manifest, and one focused dynamic-render assertion. No backlog, v4 schema/controller, product source, accepted ADR, canonical approved reference, approval record, predecessor authority, evidence witness, release gate, or Git history changed.",
+    "ECR-0004-R01-F01 replays and closes. The exact current principal is mandatory before protection reduction: configured-provider success is primary, native Windows-password recovery must return the same SID as the desktop process, and session presence/confirmation/audit alone cannot authorize a reset. When proof is unavailable, denied, or cancelled, the application remains locked and policy bytes remain unchanged.",
+    "Legacy migration is now decision-complete: no saved profile becomes explicit none; every valid persisted v1 profile becomes windows-password with profile name and inactivity timeout preserved; zero minutes retains password/manual lock with inactivity locking disabled; nonzero timeout retains restart and inactivity locking; malformed, unreadable, corrupt, and unknown protected state fails locked until same-user recovery succeeds.",
+    "The corrected principal and migration rules are consistent across ECR-0004.md, ECR-0004.packet.json S02/T03 criteria and verification, ECR-0004-experience-proposal.md, ECR-0004-application-settings-reference.html, ECR-0004-review.html, the generated ECR-0004 page, amendment acceptance/verification, rollback, and non-goals. The generated page exposes the R01 finding and corrected rules without flattening the adverse history.",
+    "The exact R02 packet SHA-256 is 6d42142be1d8d5a76e09722ea2ba7f337cdfdc42b8c9e7fed6126851e4224e6d. The canonical proposal, unchanged v4 schema, static review, experience proposal, and HTML reference hashes all match packet declarations and current candidate bytes. Git whitespace validation passes.",
+    "`planctl ecr validate ECR-0004` passes Draft 2020-12 structure and historical validation. The immutable W1 base, adopted W1.A01-W1.A03 chain, uniquely introduced W1.A04 approved-but-unmaterialized reservation, exact adopted GOV-MIG-0001 file/review commit, task/slice partition, 5-of-194 point T01 refactor allocation, packet-scoped owner exception, and governed-experience bindings remain exact and unchanged.",
+    "W1 remains PAUSED at Wave scope with no lease, no W1 task in IN_PROGRESS or REVIEW, no active recovery hold, and no active amendment campaign. CAP-02.S04.T02 remains DONE. ECR-0004 remains pending and non-executable; this review grants no approval record, bootstrap/materialization, product task, amendment adoption, Wave resume, release gate, merge, push, external effect, or destructive authority.",
+    "The focused amendment suite passes 8 tests in 105.009 seconds. The focused dynamic review-site suite passes 15 tests in 18.737 seconds, including ECR-0004 remediation markers, governed-experience hash tamper denial, append-only review rendering, and 488-page validation. Canonical review-site validation separately passes for 19 capabilities, 111 slices, 337 tasks, and 488 HTML pages.",
+    "Canonical backlog validation passes for 20 capabilities, 117 slices, 359 tasks, and 12 release gates. Python formatting, lint, and type quality pass for 168 governed files. The protected untracked W1.A04 witness was not read, hashed, staged, edited, deleted, or otherwise touched during R02."
+  ],
+  "approvalAvailable": true
+}
