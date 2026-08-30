@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-slice-integration-evidence",
+  "sliceId": "W1.A05.S01",
+  "attemptId": "R01",
+  "stateCommit": "568742a1b4deecb6a630a3d218f5d624d95b7278",
+  "productCandidateCommit": "3f91f7721e293b72d8367e1036c5875dc1f14ff2",
+  "branch": "codex/w1-windows-local-runtime",
+  "approvedAuthority": {
+    "packet": "planning/enabler-change-requests/ECR-0004.packet.json",
+    "packetCommit": "25584d82ce5d6bd55e476cd746100eef0790a33d",
+    "approval": "planning/wave-amendment-approvals/W1.A05.json",
+    "sliceTitle": "Provider-neutral application lock and Windows Hello"
+  },
+  "outcome": "The native supervisor remains the sole application-unlock authority behind a provider-neutral verification contract. The existing non-persisting Windows-password path retains current-process SID equality, while the Windows Hello adapter uses the OS-owned desktop HWND consent API, reports truthful typed availability and adverse outcomes, and has no application access to PIN or biometric material. Only a current-generation native success may restart Core and unlock; cancellation, denial, unavailability, busy, failure, panic, stale generation, or Core-start failure remains locked without fallback.",
+  "taskEvidence": [
+    {
+      "taskId": "W1.A05.T01",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "6111293f8d534e79aa8a509dfa8d37e43b218037",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/W1.A05.T01.remediation-01.json",
+          "sha256": "64a164628e4cee2956f5b9288c5e58fbfe8f41dfa27d662366f2c6322e016973"
+        },
+        {
+          "path": "artifacts/evidence/W1.A05.T01.review-R02.json",
+          "sha256": "0dd2a40eeb4a4b30d26f302c96165ca544d72f4c0b9badea1e7fcb31c2407428"
+        }
+      ]
+    },
+    {
+      "taskId": "W1.A05.T02",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "3f91f7721e293b72d8367e1036c5875dc1f14ff2",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/W1.A05.T02.json",
+          "sha256": "ee06f5c37e5d9261404a178da905a3e0a2e8c0e299e0255553d8d9989ed86f60"
+        },
+        {
+          "path": "artifacts/evidence/W1.A05.T02.review-R01.json",
+          "sha256": "7653b00135129ac61a055355fbaae31fe80b0083b39a26ca714111045f1d869b"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "exitCode": 0,
+      "result": "All 35 native library tests passed. The union covers password-provider parity and SID authority, every Windows Hello availability and verification result, absence of prompting when unavailable or windowless, success-only Core start/unlock, one-attempt reservation and backoff, stale-generation replay denial, Core-stop recovery, provider panic cleanup, startup/manual/inactivity/restart behavior, audit redaction, and native protection of supervisor/support boundaries."
+    },
+    {
+      "command": "apps/desktop/node_modules/.bin/vitest.CMD run src/app/applicationLock.test.ts src/app/ApplicationRuntime.test.tsx",
+      "exitCode": 0,
+      "result": "All 15 focused renderer/runtime tests passed. Strict snapshot and Hello-availability decoding rejects accessors, coercion, unknown values, and malformed envelopes, while native-success-only reconciliation and fail-closed lock state remain intact."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests tests.security.test_windows_credentials",
+      "exitCode": 0,
+      "result": "All 15 selected security, profile-contract, and Windows credential tests passed, with one expected redirected-vault symlink case skipped because directory symlinks are unavailable to the current Windows token. The checks cover the HWND-bound Hello/no-secret/no-fallback source boundary, native protected-action authority, exact v1 profile, same-SID password recovery, secret zeroing, fail-closed corruption, and redacted bounded audit."
+    },
+    {
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline",
+      "exitCode": 0,
+      "result": "The real Windows x64 OS boundary returned exactly {schemaVersion:'1.0', provider:'windows-hello', availability:'not-present'}. This host cannot establish configured interactive Hello success, so no success is inferred or fabricated."
+    },
+    {
+      "command": "cargo fmt --check; cargo clippy --lib --locked --offline -- -D warnings; desktop TypeScript --noEmit; desktop lint; architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "Rust formatting and warnings-denied Clippy, strict desktop TypeScript, desktop lint, and architecture validation passed. Architecture reports 13 areas, 12 modules, five stable interfaces, and three deployment profiles."
+    }
+  ],
+  "adversarialBoundary": {
+    "successAuthority": "Only VerificationOutcome::Succeeded from the reserved current native generation may start Core; the generation is checked again after Core start before unlock publication.",
+    "failureAuthority": "Cancellation, denial, unavailable, busy, failed, provider panic, lock race, Core-start failure, and unknown Windows results retain or restore locked state and cannot invoke another provider.",
+    "secretBoundary": "The Hello adapter receives only an application-owned HWND and a fixed content-free prompt. It receives no PIN, biometric, username, password, token, renderer-supplied provider, or renderer-supplied outcome.",
+    "recoveryBoundary": "Windows-password recovery is a distinct argument-free command that reuses the unchanged non-persisting current-process EqualSid verifier. It is not invoked by Hello or the primary Hello path and remains subject to deliberate selection in W1.A05.T04.",
+    "crossProcessBoundary": "Native availability and unlock snapshots are versioned and strictly reconstructed by the renderer; accessors, symbols, extra/missing fields, coercible objects, and unknown future success-like values are rejected fail-closed."
+  },
+  "profileSelection": {
+    "selected": "This slice closes an authentication/security boundary and a native/renderer contract. The selected union therefore covers native lifecycle and provider mapping, strict cross-process decoding, same-SID recovery, real Windows availability, credential non-capture, concurrency/replay/Core-stop paths, compilation/lint/type checks, and architecture.",
+    "deferredToWaveExit": "The complete cross-capability W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory at Wave exit. A configured interactive Windows Hello success prompt is conditional on release-authoritative hardware where the real availability probe reports available."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Configured interactive Windows Hello success is unavailable on this host because the real OS probe reports not-present; injected native success and all adverse mappings are deterministic and pass, while real configured success remains a conditional W1 platform obligation.",
+      "Persisted provider selection and safe policy transitions are W1.A05.T03; the approved settings, deliberate recovery, focus, and accessibility experience is W1.A05.T04.",
+      "The complete cross-capability W1 qualification matrix remains due at Wave exit.",
+      "The unrelated untracked historical W1.A04.B00 witness remains protected and untouched."
+    ]
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "W1.A05.T03",
+      "contract": "provider-neutral native verification, typed Windows Hello availability/outcomes, current-generation success authority, unchanged same-SID Windows-password recovery, and fail-closed adverse behavior",
+      "readyPendingSliceApproval": true
+    },
+    {
+      "consumer": "W1.A05.T04",
+      "contract": "strict versioned renderer/native availability and unlock contracts with no renderer-supplied authority, no silent fallback, and separate deliberate password recovery",
+      "readyPendingSliceApproval": true
+    }
+  ]
+}
