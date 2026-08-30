@@ -1,0 +1,75 @@
+{
+  "task_id": "W1.A05.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "6111293f8d534e79aa8a509dfa8d37e43b218037",
+  "submission_record_commit": "4e91caebbd5bdffba8e1cbec29e6ea9ac9a56f11",
+  "reviewer": "codex-independent-application-lock-security-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent bounded R02 security/contract review found no remaining blocking or nonblocking acceptance-bound defect. Exact candidate 6111293f8d534e79aa8a509dfa8d37e43b218037 is a strict descendant of adverse candidate 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a, and frozen submission record 4e91caebbd5bdffba8e1cbec29e6ea9ac9a56f11 is a strict descendant of the remediation candidate. The remediation manifest reproduces SHA-256 64a164628e4cee2956f5b9288c5e58fbfe8f41dfa27d662366f2c6322e016973 and Git blob a4b1f459ae9db453516b50e5032e533fbf9b20f7. Its 11 changed paths exactly match the prior-to-remediation range: four bounded product/test paths, append-only R01 evidence/review history, and mechanically updated planning projections. W1.A05.T01-R01-F01 is closed. The renderer now obtains exact own property descriptors, rejects symbol/extra/missing/accessor fields without invoking accessors, requires primitive exact values, and reconstructs a fresh trusted snapshot. Direct replay rejected the prior coercible-object payload, an accessor payload with zero getter calls, and the removed NOT-LOCKED attempt; it accepted the exact succeeded/unlocked and five adverse/locked provider tuples. The native manager now treats an invocation while already unlocked as a command-state Err before provider invocation or Core start, so it cannot become a provider outcome or explicit-unlock authority. Only succeeded/RO-LOCK-UNLOCKED/unlocked can clear fail-closed reconciliation. All 30 native library tests, 14 focused renderer/runtime tests, four focused security/profile tests, and 10 broad Windows-credential tests passed, with one expected Windows-token symlink skip. Rust format/Clippy, desktop TypeScript/lint, architecture, exact path truth, and patch hygiene passed. Inspection confirms the WindowsPasswordVerificationProvider, CredUI/LogonUser/current-process EqualSid authority, secret and handle cleanup, one-attempt reservation/backoff, pre/post-Core generation checks, raced/failed Core stop, provider-panic cleanup, startup/manual/inactivity/restart behavior, fixed redacted messages, and argument-free native bridge are unchanged. No Hello, provider configuration, settings UI, profile migration, dependency, governed experience, project-security, privacy/encryption/identity, or broader supervision authority entered. T02-T04, both slice reviews, and complete W1 qualification remain mandatory later work.",
+  "evidence": [
+    {
+      "type": "frozen-remediation-evidence",
+      "path": "artifacts/evidence/W1.A05.T01.remediation-01.json",
+      "sha256": "64a164628e4cee2956f5b9288c5e58fbfe8f41dfa27d662366f2c6322e016973",
+      "git_blob": "a4b1f459ae9db453516b50e5032e533fbf9b20f7",
+      "commit": "6111293f8d534e79aa8a509dfa8d37e43b218037"
+    },
+    {
+      "type": "prior-task-evidence",
+      "path": "artifacts/evidence/W1.A05.T01.json",
+      "sha256": "63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063",
+      "commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a"
+    },
+    {
+      "type": "prior-review-ledger",
+      "path": "artifacts/evidence/W1.A05.T01.review-R01.json",
+      "sha256": "867f5660eacc32e63e155ec969cf12ad3b605033fc8dae35fed33bfbcdf320ca",
+      "git_blob": "30606bce5ebadd641d0dd44d6c728afaa118b651",
+      "result": "Authenticated append-only adverse R01 history containing sole open finding W1.A05.T01-R01-F01."
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve prior candidate, remediation candidate, and submission; check ordered ancestry; compare exact changed paths; verify manifest and implementation bytes; git diff --check",
+      "result": "PASS: both ancestry checks passed; all 11 manifest paths exactly matched the candidate range; the four directly tested implementation/test files were byte-identical to candidate 6111293f8d534e79aa8a509dfa8d37e43b218037; the manifest was byte-identical to submission 4e91caebbd5bdffba8e1cbec29e6ea9ac9a56f11; patch hygiene passed."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Call the exact TypeScript decoders with the R01 coercible configurationState object, an own accessor reason property, a failed/RO-LOCK-AUTH-NOT-LOCKED/unlocked attempt, a plain valid snapshot, and the complete six-outcome native matrix",
+      "result": "PASS: all three invalid payloads were rejected; the accessor getter was never invoked; the valid snapshot was reconstructed into a distinct object; and succeeded/unlocked plus cancelled, denied, unavailable, busy, and failed locked attempts were all accepted with their exact reason codes."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "result": "PASS: 30/30 native library tests passed. Already-unlocked invocation returned RO-LOCK-AUTH-NOT-LOCKED as a command error with zero provider calls and zero Core starts; the full outcome, reservation/backoff, generation/Core-stop, panic, Windows-password/SID-source, restart/manual/idle, profile, supervisor, and support boundaries remained green."
+    },
+    {
+      "type": "independent-check",
+      "command": "bundled Node vitest run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "result": "PASS: 14/14 focused decoder/reconciliation/runtime tests passed, including the R02 coercion, accessor, trusted reconstruction, NOT-LOCKED denial, exact outcome/state pairing, native-success-only fail-closed recovery, redacted failure messages, and application integration cases."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests",
+      "result": "PASS: 4/4 focused security/source and portable profile tests passed, retaining the argument-free native bridge, native provider/SID authority, non-persisting prompt and cleanup markers, generation guards, and unchanged profile contract."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_windows_credentials",
+      "result": "PASS: 10 broad Windows credential tests passed; one redirected-vault case was skipped because directory symlinks are unavailable to the current Windows token."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings; desktop TypeScript --noEmit; desktop lint; architecture_check.py --repo .",
+      "result": "PASS: Rust formatting and warnings-denied Clippy passed; TypeScript and desktop lint passed from apps/desktop; architecture passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W1.A05.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "The snapshot and unlock decoders now inspect exact own data-property descriptors, reject symbol/extra/missing/accessor properties, compare primitive enum values without coercion, and return newly constructed typed objects. Independent replay rejected the original object-toString coercion while preserving the object's type and invoked no accessor; the submitted tests cover state, configurationState, reason, and outcome coercion/accessors. The native manager no longer emits the internally contradictory failed/NOT-LOCKED/unlocked attempt: an already-unlocked request exits as RO-LOCK-AUTH-NOT-LOCKED at the command Result boundary before provider invocation or Core start, and that code is absent from the provider-attempt decoder. Direct replay accepted exactly succeeded/UNLOCKED/unlocked and all five adverse/locked provider outcomes. Existing reconciliation still permits only the explicit succeeded native tuple to clear fail-closed state. All focused native, renderer/runtime, security/profile, type/lint, Clippy/format, architecture, path, and hygiene checks passed, with the prior Windows password, SID, reservation, generation, Core-stop, panic, restart, and redaction boundaries unchanged."
+    }
+  ]
+}
