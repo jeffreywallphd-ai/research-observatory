@@ -3997,7 +3997,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     "taskctl.canonical_control_artifact_path",
                     return_value=("artifacts/evidence/W1.A05.B00.json", evidence_path),
                 ),
-                patch("taskctl.require_clean_repository"),
+                patch("taskctl.require_clean_repository") as clean,
                 patch("taskctl.load_bootstrap_scope_addenda", return_value=([], [])),
                 patch("taskctl.bootstrap_attempt_errors", return_value=[]),
                 patch("taskctl.subprocess.run", side_effect=ecr_only),
@@ -4011,6 +4011,14 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     tasks,
                     gates,
                 )
+
+        clean.assert_called_once_with(
+            REPO,
+            allowed_untracked={
+                "artifacts/evidence/W1.A04.B00.json",
+                "artifacts/evidence/W1.A05.B00.json",
+            },
+        )
 
         self.assertEqual(before, data["wave_amendments"][:3])
         self.assertEqual(["W1.A01", "W1.A02", "W1.A03", "W1.A04", "W1.A05"], [item["id"] for item in data["wave_amendments"]])
