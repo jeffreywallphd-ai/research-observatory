@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T01",
+  "commit": "6111293f8d534e79aa8a509dfa8d37e43b218037",
+  "baseCommit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A05.T01.json",
+    "sha256": "63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063",
+    "commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+    "reason": "Bounded R02 remediation for W1.A05.T01-R01-F01."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "artifacts/evidence/W1.A05.T01.json",
+    "artifacts/evidence/W1.A05.T01.review-R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "exitCode": 0,
+      "result": "All 30 native library tests passed. The matrix replays every provider outcome, native-only Core start, cancellation, denial/backoff, unavailable/busy/failure paths, already-unlocked command rejection, stale generation and Core stop, concurrent prompt reservation, provider panic cleanup, idle/manual/restart lock behavior, profile redaction, and protected-action invalidation."
+    },
+    {
+      "command": "bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "exitCode": 0,
+      "result": "Both focused files passed all 14 tests. New regressions reject object and accessor values for state, configurationState, reason, and outcome; reject typed NOT-LOCKED attempts; reconstruct snapshots from exact own data properties; preserve the complete success/adverse state matrix; and retain native-success-only fail-closed recovery."
+    },
+    {
+      "command": "bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit; bundled-node apps/desktop/scripts/lint.mjs",
+      "exitCode": 0,
+      "result": "Desktop TypeScript checking and the governed desktop lint passed."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
+      "exitCode": 0,
+      "result": "Rust formatting passed and Clippy completed with warnings denied."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests",
+      "exitCode": 0,
+      "result": "All four focused source and profile-contract tests passed, preserving the argument-free native command, non-persisting Windows password prompt, same-process SID comparison, credential cleanup, provider construction authority, generation binding, and protected-command guards."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.security.test_windows_credentials",
+      "exitCode": 0,
+      "result": "The broad Windows credential security module passed 10 tests with one expected platform skip, independently resolving the earlier toolchain-dependent deferral without changing unrelated Core code."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; git diff --check",
+      "exitCode": 0,
+      "result": "The architecture contract passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; changed security tests passed Ruff; and the candidate passed Git whitespace checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --affected-base 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a --affected-head 6111293f8d534e79aa8a509dfa8d37e43b218037 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T01-remediation-selection.json",
+      "exitCode": 0,
+      "result": "The governed changed-path selector accepted the bounded desktop and security-local coverage inventory with broader W1 qualification explicitly deferred to W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "application_lock_unlock remains argument-free and constructs no renderer-selected provider or outcome; only a native VerificationOutcome::Succeeded emits application-lock-changed.",
+        "The renderer accepts only the exact succeeded/RO-LOCK-UNLOCKED/unlocked tuple as explicit-unlock authority. Every malformed, transport-error, and adverse path remains locked or fail-closed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The production adapter remains WindowsPasswordVerificationProvider, including the same submitted-token/current-process-token EqualSid comparison and credential-buffer and handle cleanup.",
+        "The remediation changes no provider selection, credential API, prompt flags, user/domain mapping, or SID authority."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "W1.A05.T01-R01-F01 is remediated by decoding only exact own data properties, requiring primitive exact enum values, and reconstructing a fresh typed snapshot rather than returning the bridge object.",
+        "The native/client matrix retains succeeded, cancelled, denied, unavailable, busy, and failed provider outcomes with exact reason/state pairs. An already-unlocked invocation is now a native command-state error, not a contradictory failed/unlocked provider outcome, and therefore cannot be treated as explicit unlock."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Native tests replay startup/manual/idle/restart, every password-provider outcome, backoff, generation races, Core unavailability and stop, concurrent reservations, and panic cleanup.",
+        "Renderer tests replay success/unlocked, every adverse/locked tuple, malformed and coercible data denial, fail-closed reconciliation, and redacted user messages."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Product remediation changes only the native application-lock manager/command boundary and its renderer decoder/tests. The intervening evidence and planning projections are the append-only R01 review record required by the workflow.",
+        "No Windows Hello implementation, provider settings, profile schema, project security, encryption, privacy, identity, dependency, approved experience reference, or broader desktop supervision design changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This R02 candidate is bounded to W1.A05.T01-R01-F01. Root cause: the R01 candidate enforced exact top-level keys but reused a legacy snapshot decoder that coerced nested enum-like values and returned the original bridge object; independently, the native manager represented an illegal already-unlocked command state as though it were one of the provider's six typed outcomes. The remediation closes both assumptions with descriptor-based exact-data decoding, primitive equality, trusted reconstruction, and a native command-state error outside ApplicationUnlockAttempt. Incremental risks are accessor execution, object coercion, a mismatched reason/outcome/state tuple, accidental fail-closed clearance, provider invocation or Core start while already unlocked, and regression of reservation/generation/Core-stop/password parity. The selected native, renderer/runtime, type/lint, Clippy/fmt, focused and broad credential, architecture, Ruff, Git, and affected-selection checks directly cover those risks and replay every prior passing boundary.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "desktop:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "Windows Hello availability and verification, provider selection/configuration, settings UI and accessibility, and W1.A05.S01/S02 end-to-end integration remain owned by W1.A05.T02 through T04 and their slice reviews.",
+      "The complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-security-contract-task-review",
+    "openFindingIds": [
+      "W1.A05.T01-R01-F01"
+    ],
+    "note": "Replay W1.A05.T01-R01-F01 against 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a..6111293f8d534e79aa8a509dfa8d37e43b218037. Confirm exact primitive/data-property decoding and trusted reconstruction, the closed reason/outcome/state matrix, already-unlocked command-error semantics, native-success-only fail-closed recovery, and unchanged password/SID/reservation/generation/Core-stop/panic/restart/redaction boundaries."
+  }
+}

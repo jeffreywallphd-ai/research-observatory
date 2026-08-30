@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b4a1227e8cded7f9d04fa8b2aa378b56127edd9ef8350a0fba256f7b67246975
+source_sha256: 6c479cee9f6aec90399726655bda6485951e95a89e0ffd92a413dae9e093fdee
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1032,7 +1032,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T01 - Refactor native verification behind a provider-neutral contract
 
-**Status / owner / review:** `IN_PROGRESS` / codex / codex-independent-application-lock-security-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / codex-independent-application-lock-security-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A05.B00`, `CAP-02.S04.T02`
 
@@ -1057,6 +1057,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A05.T01.json` at `31e7f7e2b06ba469c59094fc3b50933c7ba85d9a`
+- `artifacts/evidence/W1.A05.T01.remediation-01.json` at `6111293f8d534e79aa8a509dfa8d37e43b218037`
 
 #### Review history — W1.A05.T01
 
@@ -1092,7 +1093,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `3d5c43eba52747a6a19a07ca9b9e4111b150f56dd47b76a15fbf420d6c4c2f00`
+
+- Candidate / base / branch: `6111293f8d534e79aa8a509dfa8d37e43b218037` / `31e7f7e2b06ba469c59094fc3b50933c7ba85d9a` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T16:23:17+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T01.remediation-01.json` / `64a164628e4cee2956f5b9288c5e58fbfe8f41dfa27d662366f2c6322e016973` / `6111293f8d534e79aa8a509dfa8d37e43b218037`
+- Acceptance-criteria SHA-256: `834b342f697d8ee1d633785bf2604786309ebf57f06b7ac37c0bcdfe5b1668ae`
+- Verification-selection SHA-256: `dc30513d44b030e16da15074bf679be1bb0ac0d090e8c159dedd56b9ed4e40b8`
+- Changed paths: `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `artifacts/evidence/W1.A05.T01.json`, `artifacts/evidence/W1.A05.T01.review-R01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`
+- Selected checks: `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib`, `bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx`, `bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit; bundled-node apps/desktop/scripts/lint.mjs`, `cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings`, `.venv\Scripts\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests`, `.venv\Scripts\python.exe -m unittest tests.security.test_windows_credentials`, `.venv\Scripts\python.exe tools\architecture_check.py --repo .; .venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; git diff --check`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --affected-base 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a --affected-head 6111293f8d534e79aa8a509dfa8d37e43b218037 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T01-remediation-selection.json`
+- Deferred checks: `Windows Hello availability and verification, provider selection/configuration, settings UI and accessibility, and W1.A05.S01/S02 end-to-end integration remain owned by W1.A05.T02 through T04 and their slice reviews.`, `The complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit.`
+- Selection rationale: This R02 candidate is bounded to W1.A05.T01-R01-F01. Root cause: the R01 candidate enforced exact top-level keys but reused a legacy snapshot decoder that coerced nested enum-like values and returned the original bridge object; independently, the native manager represented an illegal already-unlocked command state as though it were one of the provider's six typed outcomes. The remediation closes both assumptions with descriptor-based exact-data decoding, primitive equality, trusted reconstruction, and a native command-state error outside ApplicationUnlockAttempt. Incremental risks are accessor execution, object coercion, a mismatched reason/outcome/state tuple, accidental fail-closed clearance, provider invocation or Core start while already unlocked, and regression of reservation/generation/Core-stop/password parity. The selected native, renderer/runtime, type/lint, Clippy/fmt, focused and broad credential, architecture, Ruff, Git, and affected-selection checks directly cover those risks and replay every prior passing boundary.
+- Prior round / replayed open findings: `R01` / `W1.A05.T01-R01-F01`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by codex-independent-application-lock-security-reviewer at `2026-08-30T16:14:05+00:00`
 
