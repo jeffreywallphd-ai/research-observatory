@@ -3728,7 +3728,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
             with (
                 patch("taskctl.git_commit_exists", return_value=True),
-                patch("taskctl.git_is_ancestor", return_value=True),
+                patch(
+                    "taskctl.git_is_ancestor",
+                    side_effect=lambda _repo, ancestor, descendant="HEAD": (
+                        ancestor != taskctl_module.BOOTSTRAP_SCOPE_CONTROL_CUTOVER
+                    ),
+                ),
                 patch("taskctl.validate_task_evidence", return_value=[]),
                 patch("taskctl.changed_file_errors", return_value=[]),
                 patch("taskctl.subprocess.run", side_effect=scoped_diff),

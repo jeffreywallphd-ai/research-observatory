@@ -106,6 +106,7 @@ HISTORICAL_W1_A04_WITNESS = {
     "commit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
 }
 BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH = "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json"
+BOOTSTRAP_SCOPE_CONTROL_CUTOVER = "e886dd196e767b52ec253ce5286a0064d5a59c2f"
 TASK_RECOVERY_CONTRACT_FIELDS = (
     "id",
     "capability_id",
@@ -2275,7 +2276,17 @@ def bootstrap_attempt_errors(
             errors.append(f"{bootstrap_id}: bootstrap submission branch does not match the current codex branch")
     frozen_scope_base = attempt.get("scope_base_commit")
     scope_base = evidence_base
-    if frozen_scope_base is not None:
+    scope_required = (
+        expected_base is None
+        and git_commit_exists(repo, BOOTSTRAP_SCOPE_CONTROL_CUTOVER)
+        and git_is_ancestor(repo, BOOTSTRAP_SCOPE_CONTROL_CUTOVER, candidate)
+    )
+    if frozen_scope_base is None:
+        if scope_required:
+            errors.append(
+                f"{bootstrap_id}: current bootstrap remediation lacks its frozen prior-candidate authority scope"
+            )
+    else:
         if not isinstance(frozen_scope_base, str) or frozen_scope_base != lineage_base:
             errors.append(f"{bootstrap_id}: bootstrap authority scope does not start at its prior candidate")
         else:
@@ -2323,9 +2334,6 @@ def bootstrap_packet_errors(
     expected_attempt_ids = [f"R{index:02d}" for index in range(1, len(attempts) + 1)]
     if [str(item.get("id")) for item in attempts] != expected_attempt_ids:
         errors.append(f"{bootstrap_id}: bootstrap attempt IDs are not sequential")
-    lifecycle_status = str((amendment.get("lifecycle") or {}).get("status") or "")
-    if attempts and lifecycle_status not in AMENDMENT_TERMINAL_STATES and bootstrap.get("scope_base_commit") is None:
-        errors.append(f"{bootstrap_id}: current bootstrap remediation lacks its frozen prior-candidate authority scope")
     allowed_patterns = bootstrap_authorized_patterns(repo, packet, bootstrap)
     approval_commit = str(amendment.get("approval_reference", {}).get("introduction_commit") or "")
     lineage_base = approval_commit
