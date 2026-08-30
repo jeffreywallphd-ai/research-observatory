@@ -445,6 +445,9 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             "ECR-0004-experience-proposal.md",
             "ECR-0004-application-settings-reference.html",
             "Estimate L · dependencies: W1.A05.B00, CAP-02.S04.T02",
+            "signed-in session alone cannot remove protection",
+            "every valid persisted v1 lock profile migrates to Windows password",
+            "ECR-0004-R01-F01",
             "Pending, non-executable proposal; no bootstrap/task authority",
         ):
             self.assertIn(marker, detail)

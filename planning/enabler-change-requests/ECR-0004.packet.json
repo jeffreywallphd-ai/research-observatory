@@ -155,11 +155,11 @@
         "W1.A05.T04"
       ],
       "acceptanceCriteria": [
-        "The configuration accepts exactly none, windows-password, or windows-hello; missing legacy configuration becomes explicit none and malformed enabled configuration fails locked.",
+        "The configuration accepts exactly none, windows-password, or windows-hello; absent legacy state becomes explicit none, every valid persisted application-lock-profile.v1.json becomes windows-password with profile name and inactivity semantics preserved, and malformed or unknown protected state fails locked.",
         "Protected-mode enablement and changes verify required providers before atomic publication; cancellation, denial, unavailability, write failure, or concurrency leave the prior setting unchanged.",
-        "Reducing protection to no login requires explicit confirmation and is never an automatic migration, fallback, or recovery side effect.",
+        "Every protected-to-none transition or protected-profile reset requires successful current-provider verification or an explicit native Windows-password token for the desktop process user SID before warning and confirmation; the signed-in session alone cannot remove protection.",
         "Application Settings is app-wide, distinct from Project Settings, conforms to RO-UI-ACADEMIC-MINIMAL-1.4, and provides accessible status, preview, confirmation, recovery, and error behavior.",
-        "End-to-end restart, migration, failure, denial, cancellation, recovery, accessibility, and no-silent-downgrade evidence receives independent security and experience review."
+        "End-to-end restart, absent-state and valid-v1 zero/nonzero-timeout migration, unauthenticated-disable/reset denial, unavailable-Hello recovery, corruption, failure, cancellation, accessibility, and no-silent-downgrade evidence receives independent security and experience review."
       ]
     }
   ],
@@ -229,16 +229,16 @@
         "W1.A05.T02"
       ],
       "acceptanceCriteria": [
-        "The versioned configuration stores exactly none, windows-password, or windows-hello; new installs and missing legacy configuration resolve to explicit none.",
+        "The versioned configuration stores exactly none, windows-password, or windows-hello; new installs and absent legacy state resolve to explicit none, while every valid persisted application-lock-profile.v1.json resolves to windows-password with its profile name and inactivity timeout preserved.",
         "Enabling a protected mode verifies the destination provider before atomic publication, and switching protected modes authenticates the current mode and verifies the destination before publication.",
-        "Changing an enabled mode to none requires explicit confirmed intent; no migration, fallback, error, cancellation, denial, or recovery implicitly reduces protection.",
+        "Every protected-to-none transition and every corrupt or unavailable-provider reset first requires successful verification by the configured provider or an explicit native Windows-password recovery token whose SID matches the desktop process user; warning and confirmation follow proof, and session possession, confirmation, or audit alone is insufficient.",
         "Cancellation, denial, unavailable destination, write failure, crash, or concurrent update preserves the prior configuration byte-stably and returns a typed failure.",
-        "Malformed or unreadable protected-mode configuration fails locked; an explicit reset from the current interactive Windows session is confirmed, atomic, and locally audited."
+        "A valid v1 zero-minute profile remains a windows-password/manual-lock profile with inactivity locking disabled; a nonzero timeout preserves restart and inactivity locking. Malformed, unreadable, corrupt, or unknown-version protected state remains locked until approved same-user proof succeeds, and if proof is unavailable, denied, or cancelled the user is directed to Windows/provider recovery without policy mutation."
       ],
       "verification": [
-        "Run configuration schema, migration, default, corruption, unknown-version, and fail-locked tests.",
+        "Run configuration schema, absent-state default, valid-v1 profile-name and zero/nonzero-timeout migration, corrupt/unknown-version, and fail-locked tests.",
         "Run transactional persistence, crash/restart, rollback, stale-writer, concurrent-update, cancellation, denial, unavailable-provider, and write-failure tests.",
-        "Run security contract tests proving provider verification ordering, no silent downgrade, explicit recovery, audit redaction, and unchanged project/privacy/encryption settings.",
+        "Run security contract tests proving provider verification ordering; unauthenticated protected-to-none and reset denial; same-SID Windows-password recovery; unavailable-Hello, cancellation, and denial behavior; no silent downgrade; audit redaction; and unchanged project/privacy/encryption settings.",
         "Run affected application/native integration checks and record broader UI/accessibility and W1-exit coverage as deferred to T04, S02 review, and Wave qualification.",
         "Obtain independent commit-bound security/migration task review."
       ]
@@ -359,11 +359,11 @@
     "files": [
       {
         "path": "planning/enabler-change-requests/ECR-0004-experience-proposal.md",
-        "sha256": "b54901056db89dcdbbf67eaf9be8c3067b33cd94ebcb170639dd42fb7229eb62"
+        "sha256": "a237a6e42150ae2fd02a2fac786f414399949af138e93eb7a6105469beff6dd5"
       },
       {
         "path": "planning/enabler-change-requests/ECR-0004-application-settings-reference.html",
-        "sha256": "7044f311db1b42cc69318e1052021816c784017b5e4d3d14603c1f1c831f84c0"
+        "sha256": "ee93250bdbd6719d940fc6c82c7d7263b9a9c235c53d5ab18b07f99c6dbc9106"
       }
     ]
   },
@@ -372,8 +372,8 @@
     "W1.A05 remains non-executable before exact human approval, and B00 remains the sole lawful first mutation after approval while W1 stays paused and ordinary tasks remain unchanged.",
     "B00 truthfully materializes the W1.A04 terminal reservation, appends only the exact W1.A05 inventory, and creates the canonical RO-UI-ACADEMIC-MINIMAL-1.4 reference and human approval record before product implementation.",
     "The native supervisor remains the sole unlock authority; password same-user SID verification is preserved and Windows Hello is OS-owned with no PIN or biometric capture.",
-    "The exact sign-in modes are no login, Windows password, and Windows Hello; no login is the explicit default and missing legacy configuration migrates to it without weakening any other security or privacy boundary.",
-    "Protected-mode transitions verify providers before atomic publication, protection reduction is explicit and confirmed, malformed enabled configuration fails locked, and no failure, cancellation, denial, unavailability, recovery, or migration silently downgrades protection.",
+    "The exact sign-in modes are no login, Windows password, and Windows Hello; no login is the explicit new/absent-state default, while every valid persisted v1 lock profile migrates to Windows password with profile name plus zero/nonzero inactivity, restart, and manual-lock semantics preserved.",
+    "Protected-mode transitions verify providers before atomic publication; every protection reduction/reset requires current-provider or same-SID native Windows-password proof before warning and confirmation; malformed or unknown protected configuration fails locked; and no failure, cancellation, denial, unavailability, recovery, or migration silently downgrades protection.",
     "The application-wide settings experience is distinct from Project Settings, conforms to the approved reference, preserves project/workflow position, and satisfies accessibility, redaction, restart, recovery, and truthful availability contracts.",
     "The only refactor task is W1.A05.T01 at 5 of 194 approved-W1 estimate points; the owner-directed exception is scoped only to T01 and no major refactor or unrelated debt work is introduced.",
     "B00, every task, both slices, and amendment exit receive independent commit-bound review; all blocking findings close append-only and adoption records a security/experience checkpoint while W1 remains paused.",
@@ -383,7 +383,7 @@
     "Validate the packet against the exact Draft 2020-12 v4 schema, recompute every declared file hash, and verify the complete base/adopted/reserved/migration authority chain and current quiescent boundary.",
     "At B00, validate generic post-migration materialization, immutable reservation handling, exact task/slice projection, canonical reference approval ordering, generated planning/reference views, backlog schema, and no product-source or ordinary-task change.",
     "At T01 and T02, run risk-selected native/application/cross-process tests for password parity, same-user denial, Hello availability and outcomes, credential non-capture, cancellation, denial, failure, recovery, restart, redaction, and renderer-bypass resistance.",
-    "At T03, run configuration schema/migration, default, corruption, fail-locked, atomic publication, rollback, stale-writer, concurrency, crash/restart, provider-ordering, explicit reset, audit-redaction, and no-silent-downgrade tests.",
+    "At T03, run configuration schema; absent-state default; valid persisted v1 profile migration with profile-name and zero/nonzero-timeout fixtures; corrupt/unknown-v1 fail-locked behavior; unauthenticated disable/reset denials; unavailable-Hello same-SID recovery; atomic publication; rollback; stale-writer; concurrency; crash/restart; audit-redaction; and no-silent-downgrade tests.",
     "At T04, run approved-reference conformance, renderer interactions, keyboard, focus, announcements, zoom/reflow, responsive layout, themes, reduced motion, WCAG AA, locked-surface redaction, project/workflow-position, recovery, and desktop end-to-end tests.",
     "At S01 and S02 review, run accumulated integration and adversarial checks for their credible security/contract/migration/experience risk surfaces; record a security/experience integration checkpoint at amendment exit.",
     "Run the complete affected/full repository and Windows-x64 deployment-profile matrix at W1 exit, not automatically at each ordinary task unless a task criterion or shared-infrastructure risk requires it.",
@@ -393,8 +393,8 @@
     "Before approval, reject, defer, or withdraw the inert packet; W1 remains paused at its current recoverable boundary and no product or reference authority changes.",
     "A failed B00 review preserves its immutable attempt and uses strict-descendant bootstrap resubmission; no task materializes and no canonical reference is represented as approved unless its approval binding is valid.",
     "A failed task, slice, or exit review preserves prior packets, findings, evidence, and closures and uses bounded remediation that replays the open risk boundary without restarting unrelated review.",
-    "Authentication configuration publication is atomic; any verification, persistence, crash, or concurrency failure keeps the prior bytes and mode, while malformed protected-mode state fails locked.",
-    "Hello unavailability never changes stored policy. Retry, explicit same-user password recovery, or a deliberate confirmed and audited reset from the current interactive Windows session are the only recovery choices.",
+    "Authentication configuration publication is atomic; any verification, persistence, crash, or concurrency failure keeps the prior bytes and mode, while malformed, unreadable, corrupt, or unknown protected state fails locked.",
+    "Hello unavailability never changes stored policy. Retry or explicit native Windows-password recovery with a returned token matching the desktop process user SID are the only paths to a later confirmed reset; if same-user proof is unavailable, denied, or cancelled, remain locked and direct the user to Windows/provider recovery.",
     "Before adoption, withhold the checkpoint if authority, experience ordering, security, migration, evidence, or review validation fails; never rewrite predecessor Wave, amendment, approval, migration, finding, evidence, or Git history."
   ],
   "nonGoals": [
@@ -402,13 +402,13 @@
     "No remote, university, cloud, OIDC, multi-user, role, tenant, or institutional identity work and no change to later identity capability authority.",
     "No project encryption, filesystem-permission, Core isolation, privacy/egress, audit/lineage, backup, storage, or Project Settings redesign.",
     "No major refactor, general authentication framework, cross-platform Hello substitute, unrelated technical-debt cleanup, or work outside the exact four tasks.",
-    "No silent fallback, automatic protection downgrade, fabricated Hello availability, weak test substitution, or deletion/weakening of a valid security or experience test.",
+    "No session-presence-only reset, unauthenticated protected-to-none transition, silent fallback, automatic protection downgrade, fabricated Hello availability, weak test substitution, or deletion/weakening of a valid security or experience test.",
     "No W1 repeat approval, Wave resume before adoption, W1 qualification, G1 approval, local-main integration before completion, remote push, external effect, destructive action, or substantial spend."
   ],
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0004.md",
-      "sha256": "bba01963f86432a10ed7163876c33d472895b1cf62eb74a4c1d38843a68743b7",
+      "sha256": "0513c51eedf04ddfcceb5db8ad9745f89840f5857884da323829889bc800a683",
       "role": "canonical-proposal"
     },
     {
@@ -418,7 +418,7 @@
     },
     {
       "path": "planning/enabler-change-requests/ECR-0004-review.html",
-      "sha256": "aee3bdfa9c9c9b3c96858a6c2287fbcd32a224b9579e21da69e1a9a38c63c863",
+      "sha256": "d66eb5adcbe6b6aff1b169b2b35af342d477459eb66eda177ac4a1e1a2e2efcd",
       "role": "human-review"
     }
   ]
