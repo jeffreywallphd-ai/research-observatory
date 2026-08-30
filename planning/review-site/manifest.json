@@ -19288,15 +19288,75 @@
         {
           "task_id": "W1.A05.T01",
           "title": "Refactor native verification behind a provider-neutral contract",
-          "status": "IN_PROGRESS",
-          "mode": "latest-review-only",
+          "status": "REVIEW",
+          "mode": "append-only",
           "latest_review": {
             "reviewer": null,
             "result": null,
             "reviewed_at": null,
             "notes": null
           },
-          "review_control": null
+          "review_control": {
+            "version": 1,
+            "attempts": [],
+            "current_submission": {
+              "id": "R01",
+              "submitted_by": "codex",
+              "submitted_at": "2026-08-30T16:01:24+00:00",
+              "candidate_commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+              "base_commit": "fb06c39b051b8db253fb62a20d69e09cfc2b2b5b",
+              "branch": "codex/w1-windows-local-runtime",
+              "evidence_reference": {
+                "type": "criterion-manifest",
+                "path": "artifacts/evidence/W1.A05.T01.json",
+                "sha256": "63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063",
+                "commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+                "recorded_at": "2026-08-30T16:01:24+00:00"
+              },
+              "acceptance_criteria_sha256": "834b342f697d8ee1d633785bf2604786309ebf57f06b7ac37c0bcdfe5b1668ae",
+              "changed_paths": [
+                "apps/desktop/src-tauri/src/application_lock.rs",
+                "apps/desktop/src-tauri/src/application_lock_verification.rs",
+                "apps/desktop/src-tauri/src/lib.rs",
+                "apps/desktop/src/app/ApplicationRuntime.tsx",
+                "apps/desktop/src/app/applicationLock.test.ts",
+                "apps/desktop/src/app/applicationLock.ts",
+                "docs/planning-implementation-plan.md",
+                "planning/backlog.yaml",
+                "planning/review-site/enablers/ECR-0004.html",
+                "planning/review-site/manifest.json",
+                "planning/status-summary.md",
+                "tests/security/test_application_lock_source.py",
+                "tests/security/test_windows_credentials.py"
+              ],
+              "selected_checks": [
+                "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+                "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
+                "bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+                "bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit; bundled-node apps/desktop/scripts/lint.mjs",
+                ".venv\\Scripts\\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests",
+                ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .",
+                ".venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; git diff --check",
+                ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --affected-base fb06c39b051b8db253fb62a20d69e09cfc2b2b5b --affected-head 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T01-affected-selection.json"
+              ],
+              "deferred_checks": [
+                "Windows Hello availability and verification, provider selection/configuration, application settings UI and accessibility, and W1.A05.S01/S02 end-to-end integration remain owned by T02 through T04 and their slice reviews.",
+                "Desktop performance and the complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and cross-capability matrix remain due once at W1 exit.",
+                "The broad legacy tests.security.test_windows_credentials module cannot currently import because tracked Core baseline commit 300a1a42 contains an unrelated invalid multi-exception clause in domain_contracts.py. T01 moved its two application-lock source assertions into an independently runnable focused module, where they pass; repairing the unrelated Core defect is not included in this bounded provider refactor."
+              ],
+              "selection_rationale": "W1.A05.T01 changes a native Windows authentication boundary, the success-to-Core-restart authority transition, and the typed renderer/native contract. Credible failures are renderer/provider substitution, collapsed adverse outcomes, stale or concurrent success, Core creation after invalidation, same-SID regression, credential persistence or leakage, reservation/backoff corruption, unlocked invocation, and user-visible error disclosure. Full native library tests, warnings-denied compilation, strict renderer contract tests, desktop lint/type checking, focused Windows credential and portable profile assertions, architecture checks, changed-test quality, and Git hygiene cover those risks. The task does not change dependencies, persistence schemas, project data, UI structure, or approved experience references.",
+              "selection_sha256": "7b4b5a00949a5fa92977b4a7805fb674f6e40588450035273d0077d54e341283",
+              "prior_attempt_id": null,
+              "open_finding_ids": [],
+              "root_cause_analysis": null,
+              "selected_command_ids": [
+                "foundation:architecture",
+                "desktop:unit",
+                "security-local:unit"
+              ],
+              "packet_sha256": "029283890ff92e39628fe94d82ed1ba3c8fec437046a7f1dff0fd86affe74e8a"
+            }
+          }
         },
         {
           "task_id": "W1.A05.T02",
