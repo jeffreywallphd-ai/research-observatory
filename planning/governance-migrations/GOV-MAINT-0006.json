@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0006",
   "title": "Admit approved Wave-amendment tasks to the governed UI lineage contract",
-  "status": "candidate",
+  "status": "changes-requested",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -72,6 +72,20 @@
     ]
   },
   "rollback": "Do not begin product UI work or integrate this candidate if independent review finds a blocking defect. Revert only the strict-descendant maintenance candidate to predecessor 212108b; W1.A05.T04 remains claimed but product-unmodified, the approved v1.4 package remains unchanged, and no task/release authority changes.",
-  "reviewAttempts": [],
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0006.R01",
+      "reviewedCommit": "16286123ba2f52b1e63907ca1f0bce23e24ebe57",
+      "reviewer": "agent:gov-maint-0006-reviewer",
+      "reviewedAt": "2026-08-30T18:57:45.4460770Z",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": [
+        "GOV-MAINT-0006-R01-F01",
+        "GOV-MAINT-0006-R01-F02"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0006.review-R01.json",
+      "sha256": "8baa34210a1f958a0295d01749457ee0902ecea2289ac1c02ee75baa80d4fda5"
+    }
+  ],
   "review": null
 }

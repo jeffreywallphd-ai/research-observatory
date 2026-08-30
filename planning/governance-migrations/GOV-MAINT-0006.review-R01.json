@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0006",
+  "reviewId": "GOV-MAINT-0006.R01",
+  "reviewedCommit": "16286123ba2f52b1e63907ca1f0bce23e24ebe57",
+  "reviewer": "agent:gov-maint-0006-reviewer",
+  "reviewedAt": "2026-08-30T18:57:45.4460770Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "design/ui-change.schema.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0006.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0006-R01-F01",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "Namespaced implementation identities can self-review",
+      "reproduction": "With implementationAgent and reviewer both set to agent:codex, the gate strips the namespace only from the reviewer. An isolated real-Git fixture with exact ancestry, paths, review bytes, and ordering therefore returned ok true.",
+      "requiredResolution": "Canonicalize and validate implementation and reviewer identities symmetrically, reject equal canonical identities, and add the namespaced self-review regression."
+    },
+    {
+      "id": "GOV-MAINT-0006-R01-F02",
+      "severity": "LOW",
+      "blocking": false,
+      "title": "Verification suite counts are inaccurate",
+      "reproduction": "The candidate record reports 19 UI-gate and 18 taskctl-schema tests, while the independently executed complete suites contain and passed 22 and 27 tests.",
+      "requiredResolution": "Correct the evidence narrative to identify the complete executed suite counts."
+    }
+  ]
+}
