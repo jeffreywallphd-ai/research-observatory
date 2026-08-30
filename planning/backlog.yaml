@@ -31583,14 +31583,17 @@ wave_amendments:
       to T04, S02 review, and Wave qualification.
     - Obtain independent commit-bound security/migration task review.
     packet_task_sha256: 32cf27efeb770f022e3991167518e0e9cfe44b8897168942fc72ec644035060a
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-08-30T17:05:36+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-30T17:14:11+00:00'
+      expires_at: '2026-08-31T01:14:11+00:00'
+    started_at: '2026-08-30T17:14:11+00:00'
+    updated_at: '2026-08-30T17:14:11+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
