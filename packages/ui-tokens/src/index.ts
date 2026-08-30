@@ -1,5 +1,5 @@
 export const DESIGN_TOKEN_CONTRACT_VERSION = "1.0.0" as const;
-export const DESIGN_REFERENCE_ID = "RO-UI-ACADEMIC-MINIMAL-1.4" as const;
+export const DESIGN_REFERENCE_ID = "RO-UI-ACADEMIC-MINIMAL-1.3" as const;
 
 export const semanticTones = ["neutral", "info", "success", "warning", "danger", "violet"] as const;
 export type SemanticTone = (typeof semanticTones)[number];

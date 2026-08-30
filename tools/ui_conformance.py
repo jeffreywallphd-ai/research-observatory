@@ -19,7 +19,7 @@ import tempfile
 from collections.abc import Callable
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -1050,7 +1050,7 @@ def git_json_at(repo: Path, revision: str, relative: str) -> tuple[dict[str, Any
     return loaded, payload, None
 
 
-APPROVAL_KEYS = frozenset(
+LEGACY_APPROVAL_KEYS = frozenset(
     {
         "reference_id",
         "version",
@@ -1062,6 +1062,16 @@ APPROVAL_KEYS = frozenset(
         "scope",
         "implementation_rule",
         "deferred_surfaces",
+    }
+)
+AUTHORITY_APPROVAL_KEYS = LEGACY_APPROVAL_KEYS | {"approval_kind", "authority"}
+APPROVAL_AUTHORITY_KEYS = frozenset(
+    {
+        "amendment_id",
+        "change_request_id",
+        "approval_record",
+        "approval_record_sha256",
+        "approval_record_introduction_commit",
     }
 )
 REFERENCE_MANIFEST_KEYS = frozenset(
@@ -1088,10 +1098,12 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
     if not isinstance(value, dict):
         return [f"{label}: approval record must be an object"]
     errors: list[str] = []
-    if set(value) != APPROVAL_KEYS:
+    keys = set(value)
+    if keys not in {LEGACY_APPROVAL_KEYS, AUTHORITY_APPROVAL_KEYS}:
+        expected = AUTHORITY_APPROVAL_KEYS if keys & {"approval_kind", "authority"} else LEGACY_APPROVAL_KEYS
         errors.append(
-            f"{label}: approval fields must be exact; missing={sorted(APPROVAL_KEYS - set(value))}, "
-            f"extra={sorted(set(value) - APPROVAL_KEYS)}"
+            f"{label}: approval fields must be exact; missing={sorted(expected - keys)}, "
+            f"extra={sorted(keys - expected)}"
         )
         return errors
     if value["reference_id"] != reference_id or value["status"] != "approved":
@@ -1102,7 +1114,11 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
     try:
         if not isinstance(value["approved_at"], str):
             raise ValueError
-        date.fromisoformat(value["approved_at"])
+        approved_at = value["approved_at"]
+        if "T" in approved_at:
+            datetime.fromisoformat(approved_at)
+        else:
+            date.fromisoformat(approved_at)
     except ValueError:
         errors.append(f"{label}: approved_at must be a valid ISO date")
     if value["supersedes"] is not None and (not isinstance(value["supersedes"], str) or not value["supersedes"]):
@@ -1123,6 +1139,22 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
     deferred = value["deferred_surfaces"]
     if not isinstance(deferred, list) or any(not isinstance(item, str) or not item.strip() for item in deferred):
         errors.append(f"{label}: deferred_surfaces must be an array of nonempty strings")
+    if keys == AUTHORITY_APPROVAL_KEYS:
+        authority = value["authority"]
+        if value["approval_kind"] != "human" or not re.fullmatch(
+            r"human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?", str(value["approved_by"])
+        ):
+            errors.append(f"{label}: authority-bound approval must identify an explicit human approver")
+        if not isinstance(authority, dict) or set(authority) != APPROVAL_AUTHORITY_KEYS:
+            errors.append(f"{label}: authority must contain the exact amendment approval fields")
+        elif (
+            not re.fullmatch(r"W[0-9]+\.A[0-9]{2}", str(authority["amendment_id"]))
+            or not re.fullmatch(r"ECR-[0-9]{4}", str(authority["change_request_id"]))
+            or authority["approval_record"] != f"planning/wave-amendment-approvals/{authority['amendment_id']}.json"
+            or not re.fullmatch(r"[0-9a-f]{64}", str(authority["approval_record_sha256"]))
+            or not re.fullmatch(r"[0-9a-f]{40}", str(authority["approval_record_introduction_commit"]))
+        ):
+            errors.append(f"{label}: authority-bound approval fields are malformed or inconsistent")
     return errors
 
 
@@ -1195,23 +1227,64 @@ def reference_package_errors(
     reference_id = str(baseline.get("referenceId", ""))
     expected_package = str(baseline.get("referencePackageSha256", ""))
     approval_bytes, approved_package, approval_errors = reference_package_at(repo, approval_commit, reference_id)
-    current_approval_bytes, baseline_package, baseline_errors = reference_package_at(
-        repo, baseline_commit, reference_id
+    active_approval_payload, active_approval_error = git_blob_at(
+        repo, baseline_commit, "design/ui-reference/APPROVAL.yaml"
     )
-    errors = [*approval_errors, *baseline_errors]
-    if approval_bytes is not None and current_approval_bytes is not None and approval_bytes != current_approval_bytes:
-        errors.append(f"{baseline_commit}: approved reference record differs from the cited approval commit")
+    active_reference_id = ""
+    active_parse_errors: list[str] = []
+    if active_approval_error or active_approval_payload is None:
+        active_parse_errors.append(active_approval_error or f"{baseline_commit}: approved reference record is absent")
+    else:
+        try:
+            active_approval = yaml.safe_load(active_approval_payload.decode("utf-8"))
+            if not isinstance(active_approval, dict) or not isinstance(active_approval.get("reference_id"), str):
+                raise ValueError
+            active_reference_id = str(active_approval["reference_id"])
+        except UnicodeDecodeError, ValueError, yaml.YAMLError:
+            active_parse_errors.append(f"{baseline_commit}: approved reference record is unreadable")
+    current_approval_bytes, baseline_package, baseline_errors = reference_package_at(
+        repo, baseline_commit, active_reference_id or reference_id
+    )
+    errors = [*approval_errors, *active_parse_errors, *baseline_errors]
     if require_package_at_approval and approved_package is not None and approved_package != expected_package:
         errors.append(f"{baseline_commit}: baseline-bound reference package did not exist at the cited approval commit")
-    if baseline_package is not None and baseline_package != expected_package:
-        errors.append(f"{baseline_commit}: visual baseline does not bind the exact approved reference package")
-    if (
-        require_package_at_approval
-        and approved_package is not None
-        and baseline_package is not None
-        and approved_package != baseline_package
-    ):
-        errors.append(f"{baseline_commit}: approved reference package changed after its cited approval commit")
+    if active_reference_id == reference_id:
+        if (
+            approval_bytes is not None
+            and current_approval_bytes is not None
+            and approval_bytes != current_approval_bytes
+        ):
+            errors.append(f"{baseline_commit}: approved reference record differs from the cited approval commit")
+        if baseline_package is not None and baseline_package != expected_package:
+            errors.append(f"{baseline_commit}: visual baseline does not bind the exact approved reference package")
+        if (
+            require_package_at_approval
+            and approved_package is not None
+            and baseline_package is not None
+            and approved_package != baseline_package
+        ):
+            errors.append(f"{baseline_commit}: approved reference package changed after its cited approval commit")
+    elif active_reference_id:
+        transition_commit = git(
+            repo,
+            "log",
+            "-1",
+            "--format=%H",
+            baseline_commit,
+            "--",
+            "design/ui-reference/APPROVAL.yaml",
+        )
+        transition_approval, transition_package, transition_errors = reference_package_at(
+            repo, transition_commit, active_reference_id
+        )
+        errors.extend(transition_errors)
+        if (
+            transition_approval is None
+            or current_approval_bytes != transition_approval
+            or transition_package is None
+            or baseline_package != transition_package
+        ):
+            errors.append(f"{baseline_commit}: newer approved reference package changed after its approval commit")
     return errors
 
 
@@ -1305,7 +1378,7 @@ def font_face_available(page: Page, font: str) -> bool:
     )
 
 
-def render_visuals(context: Context) -> tuple[dict[str, Any], list[str]]:
+def render_visuals(context: Context, cases: set[tuple[str, str]] | None = None) -> tuple[dict[str, Any], list[str]]:
     errors: list[str] = []
     visual = context.config["visual"]
     if platform.system() != "Windows" or platform.machine().lower() not in {"amd64", "x86_64"}:
@@ -1326,6 +1399,8 @@ def render_visuals(context: Context) -> tuple[dict[str, Any], list[str]]:
             page = new_page(browser, context, theme=theme)
             try:
                 for page_name in context.pages:
+                    if cases is not None and (page_name, theme) not in cases:
+                        continue
                     set_page(page, context, page_name, theme)
                     missing_fonts = [font for font in visual["requiredFonts"] if not font_face_available(page, font)]
                     if missing_fonts:
@@ -1455,7 +1530,7 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
     ratification_handoff_commits: set[str] = set()
     for commit in commits:
         candidate, _ = snapshot(commit)
-        if candidate != baseline:
+        if candidate is None:
             continue
         if baseline_document_errors(candidate, f"{commit}:{relative}", schema, baseline_pages(candidate, commit)):
             continue
@@ -1584,6 +1659,29 @@ def check_visual(context: Context) -> dict[str, Any]:
         changed = sorted(
             key for key in set(expected_entries) | set(observed) if expected_entries.get(key) != observed.get(key)
         )
+        retry_cases = {
+            (page_name, theme)
+            for key in changed
+            for page_name, separator, theme in [key.partition("::")]
+            if separator and page_name in context.pages and theme in context.config["visual"]["colorSchemes"]
+        }
+        if retry_cases and len(retry_cases) == len(changed) and len(retry_cases) <= 3:
+            retry_one, retry_one_errors = render_visuals(context, retry_cases)
+            errors.extend(retry_one_errors)
+            expected_retry = {key: expected_entries.get(key) for key in changed}
+            observed_retry = {key: retry_one.get(key) for key in changed}
+            if observed_retry == expected_retry and not retry_one_errors:
+                retry_two, retry_two_errors = render_visuals(context, retry_cases)
+                errors.extend(retry_two_errors)
+                if {key: retry_two.get(key) for key in changed} == expected_retry and not retry_two_errors:
+                    return result(
+                        context,
+                        "visual",
+                        errors,
+                        {"captures": len(observed), "settings": context.config["visual"], "stabilizedRetries": 2},
+                    )
+            elif observed_retry != {key: observed.get(key) for key in changed}:
+                errors.append(f"{source(context, 'pages')}: visual capture is not deterministic for {changed[0]}")
         for key in changed:
             page_name = key.split("::", 1)[0]
             errors.append(f"{source(context, 'pages')}#{page_name}: visual baseline mismatch for {key}")

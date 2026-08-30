@@ -398,6 +398,21 @@ class UiConformanceTests(unittest.TestCase):
         self.assertTrue(any("settings" in error for error in baseline_errors))
         self.assertTrue(any("approval fields must be exact" in error for error in approval_errors))
 
+    def test_actual_authority_bound_v14_approval_shape_is_exact(self) -> None:
+        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+
+        errors = approval_record_errors(approval, "v1.4-approval", "RO-UI-ACADEMIC-MINIMAL-1.4")
+
+        self.assertEqual([], errors)
+        malformed = dict(approval)
+        malformed.pop("approval_kind")
+        malformed_errors = approval_record_errors(
+            malformed,
+            "malformed-v1.4-approval",
+            "RO-UI-ACADEMIC-MINIMAL-1.4",
+        )
+        self.assertTrue(any("approval fields must be exact" in error for error in malformed_errors), malformed_errors)
+
     def test_same_reference_baseline_rewrite_requires_new_approval(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "repo"
@@ -716,6 +731,29 @@ class UiConformanceTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertTrue(any("CAPABILITY_COVERAGE.json#index.html" in error for error in result["errors"]))
+
+    def test_transient_visual_mismatch_requires_two_matching_targeted_retries(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context = self.context_copy(temporary)
+            baseline_path = context.repo / "verification" / "baselines" / "desktop-ui.json"
+            baseline_path.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "verification" / "baselines" / "desktop-ui.json", baseline_path)
+            baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+            observed = json.loads(json.dumps(baseline["entries"]))
+            observed["index.html::dark"]["sha256"] = "0" * 64
+            retry = {"index.html::dark": baseline["entries"]["index.html::dark"]}
+            with (
+                mock.patch("ui_conformance.baseline_history_errors", return_value=[]),
+                mock.patch(
+                    "ui_conformance.render_visuals",
+                    side_effect=[(observed, []), (retry, []), (retry, [])],
+                ) as renderer,
+            ):
+                result = check_visual(context)
+
+        self.assertTrue(result["ok"], result["errors"])
+        self.assertEqual(2, result["details"]["stabilizedRetries"])
+        self.assertEqual(3, renderer.call_count)
 
 
 if __name__ == "__main__":

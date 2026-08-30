@@ -54,12 +54,12 @@
     ]
   },
   "verification": {
-    "riskAnalysis": "This changes evidence-control acceptance and governed visual lineage but not product authority. Selected checks prove exact Git ancestry and immutable independent review, denial of self-review and substitution, historical route/baseline pairing, unchanged package approval, dynamic route inventory, exact v1.4 token/route/workflow/accessibility contracts, deterministic baseline generation, product build binding, and the already remediated recovery interactions. The authoritative visual-history replay must run after this baseline is committed and before independent review.",
+    "riskAnalysis": "This changes evidence-control acceptance and governed visual lineage but not product authority. Selected checks prove exact Git ancestry and immutable independent review, denial of self-review and substitution, zero net governed-product semantic delta across an adopted maintenance sequence, version-aware approval validation, persistent historical ratification, historical route/baseline pairing, unchanged package approval, dynamic route inventory, exact v1.4 reference contracts, bounded visual stabilization, product build binding, and the already remediated recovery interactions. The authoritative visual-history replay must run after each remediation candidate is committed and before independent review.",
     "results": [
       {
         "check": "generic UI maintenance provenance",
         "result": "passed",
-        "detail": "All 27 focused UI-gate tests passed, including post-implementation reviewed maintenance admission, self-review denial, direct ancestry, immutable review projection, post-review substitution denial, and every existing task-review and pre-implementation path."
+        "detail": "All 28 focused UI-gate tests passed, including post-implementation reviewed maintenance admission, real-Git mixed product/control denial, self-review denial, direct ancestry, immutable review projection, post-review substitution denial, and every existing task-review and pre-implementation path."
       },
       {
         "check": "approved v1.4 reference integrity",
@@ -74,7 +74,7 @@
       {
         "check": "v1.4 visual baseline generation",
         "result": "passed",
-        "detail": "The controlled Windows x64 Chromium writer produced 66 light/dark captures for the 33 approved routes. Commit-bound visual history and exact-capture replay remain required before review."
+        "detail": "The controlled Windows x64 Chromium writer produced 66 light/dark captures for the 33 approved routes. The 23-test conformance suite validates the actual authority-bound v1.4 approval and bounded two-retry stabilization, and the complete reachable baseline history now returns zero errors. Commit-bound exact-capture replay remains required before R02 review."
       },
       {
         "check": "corrected desktop product boundary",
@@ -82,6 +82,19 @@
         "detail": "The product build, 35 focused renderer tests, 25 applicable native lock tests, desktop lint/type checks, and all seven built-product tests passed at the frozen product predecessor, including polling, Hello recovery, cancellation, focus, busy, and Core-ready behavior."
       }
     ]
+  },
+  "remediation": {
+    "priorReviewId": "GOV-MAINT-0007.R01",
+    "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0007.review-R01.json",
+    "priorReviewSha256": "514be98f22872f2ff1bd4a93331fdddee6b5a47062e0061a1ca7baaf1fe0f76f",
+    "resolvedFindingIds": [
+      "GOV-MAINT-0007-R01-F01",
+      "GOV-MAINT-0007-R01-F02",
+      "GOV-MAINT-0007-R01-F03"
+    ],
+    "rootCause": "R01 treated one historical approval shape and the final baseline as universal current truth, and authenticated a maintenance path envelope without proving that its net effect remained outside governed product implementation. The exact-pixel runner also treated one transient capture as a stable difference.",
+    "resolution": "Validate the legacy and authority-bound approval shapes as separate exact contracts; discover every ratification edge across reachable history; permit an intact newer approved package to precede its baseline activation without rewriting the still-active prior baseline; retry at most three mismatched cases twice and accept only two exact baseline matches; and reject adoption while any governed application or UI-token path differs semantically between the frozen predecessor and final reviewed maintenance candidate. Restore the three governed product metadata files to their predecessor values in the maintenance remediation and apply their approved v1.4 values later through T04 product authority.",
+    "recurrenceControl": "Actual-record, full-history, transient-capture, and real-Git mixed product/control regressions now cover all three findings. The adverse R01 candidate remains immutable, while an adopted sequence is admissible only if its final reviewed state has zero net governed-product semantic delta; JSON whitespace alone cannot conceal a value change."
   },
   "rollback": "If independent review finds a blocking defect, do not adopt the maintenance or submit T04. Revert only the strict-descendant maintenance candidate to predecessor fe50e7c; the corrected product candidate remains committed, T04 remains IN_PROGRESS at its original claim base, v1.3 remains the active verification reference, v1.4 remains approved but inactive, and no task or release authority changes.",
   "reviewAttempts": [
