@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 08dea1fbc625b28972b4a8a2c71c7edb9523ccce5e99bbb60d25287d2b76b5ad
+source_sha256: d082bec1c45615ab032496582cda7b7b07b1894a572a8aa37b7d4e137bafe349
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -20,7 +20,7 @@ manual_edit: prohibited
 | Enabler tasks | 3 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 3 |
+| Wave amendments | 5 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -62,6 +62,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `ADOPTED` | 3 |
+| `APPROVED` | 1 |
+| `SUPERSEDED` | 1 |
 
 ### Enabler task state
 
@@ -79,6 +81,8 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` | `NONE` | `NONE` | 0 |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
+| `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` | `NONE` | `NONE` | 0 |
+| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
 
 ## Amendment-exit review and adoption projections
 
@@ -301,6 +305,34 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 - `W1.CP02` `security` by codex at `2026-08-22T20:58:21+00:00` — Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001 release and explicit ordinary Wave resume.
   - amendment `W1.A03` / `artifacts/evidence/W1.A03.adoption-R02.json` / `bd8085d6a9996bdf03ed21876740893470a330c4944f3ea6f7d2f61889f1418e` / `e125f983fcc2b5827516a97a811e53b822d2bd9f`
+
+### Amendment-exit review and adoption — W1.A04
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** Approved reservation was never materialized or executed and is terminally superseded.
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+### Amendment-exit review and adoption — W1.A05
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
 
 
 ## Task review history projections

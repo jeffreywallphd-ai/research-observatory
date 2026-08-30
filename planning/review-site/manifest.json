@@ -162,7 +162,8 @@
         "W2"
       ],
       "interrupting_change_request_ids": [
-        "ECR-0003"
+        "ECR-0003",
+        "ECR-0004"
       ],
       "interrupting_recovery_request_ids": []
     },
@@ -18774,7 +18775,7 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A04.json",
       "approval_sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
       "approval_status": "APPROVED",
-      "lifecycle_status": "NOT_MATERIALIZED",
+      "lifecycle_status": "SUPERSEDED",
       "bootstrap_status": "NOT_SUBMITTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [],
@@ -18792,11 +18793,11 @@
         "amendment_id": "W1.A04",
         "mode": "latest-completion-only",
         "latest_completion": {
-          "status": null,
+          "status": "PENDING",
           "reviewer": null,
           "reviewed_at": null,
-          "evidence": null,
-          "notes": null
+          "evidence": [],
+          "notes": "Approved reservation was never materialized or executed and is terminally superseded."
         },
         "exit_review_control": null
       },
@@ -18819,10 +18820,32 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A05.json",
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
-      "lifecycle_status": "NOT_MATERIALIZED",
-      "bootstrap_status": "NOT_SUBMITTED",
+      "lifecycle_status": "APPROVED",
+      "bootstrap_status": "REVIEW",
       "campaign_status": "NONE",
-      "bootstrap_attempts": [],
+      "bootstrap_attempts": [
+        {
+          "id": "R01",
+          "implementer": "codex",
+          "implementation_commit": "b47c5e81860df04cce886ede9e614d68c22c7119",
+          "evidence": [
+            {
+              "type": "criterion-manifest",
+              "path": "artifacts/evidence/W1.A05.B00.json",
+              "sha256": "97a037be730ed1f3d7d78472a73331b8514ae931d02ae6f16618380c75f91632",
+              "commit": "b47c5e81860df04cce886ede9e614d68c22c7119",
+              "recorded_at": "2026-08-30T11:46:15+00:00"
+            }
+          ],
+          "review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "current_status": "REVIEW"
+        }
+      ],
       "slice_contributions": [
         {
           "id": "W1.A05.S01",
@@ -19180,10 +19203,10 @@
         "amendment_id": "W1.A05",
         "mode": "latest-completion-only",
         "latest_completion": {
-          "status": null,
+          "status": "PENDING",
           "reviewer": null,
           "reviewed_at": null,
-          "evidence": null,
+          "evidence": [],
           "notes": null
         },
         "exit_review_control": null

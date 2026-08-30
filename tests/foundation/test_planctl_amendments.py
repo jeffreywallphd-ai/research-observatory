@@ -24,6 +24,7 @@ from planctl import (  # noqa: E402
     _v4_packet_review_errors,
     approve_ecr,
     ecr_validation_errors,
+    load_backlog,
 )
 
 
@@ -225,6 +226,29 @@ class PlanctlAmendmentTests(unittest.TestCase):
         schema = REPO / "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
         self.assertEqual([], _schema_errors(packet, schema, "ECR v4 fixture"))
         self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+
+        backlog, _ = load_backlog(REPO)
+        pre_bootstrap = copy.deepcopy(backlog)
+        pre_bootstrap["wave_amendments"] = [
+            item for item in pre_bootstrap["wave_amendments"] if item["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        with patch("planctl.load_backlog", return_value=(pre_bootstrap, REPO / "planning/backlog.yaml")):
+            self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+
+        altered_terminal = copy.deepcopy(backlog)
+        reserved = next(item for item in altered_terminal["wave_amendments"] if item["id"] == "W1.A04")
+        reserved["lifecycle"]["status"] = "ADOPTED"
+        with patch("planctl.load_backlog", return_value=(altered_terminal, REPO / "planning/backlog.yaml")):
+            self.assertTrue(
+                any("terminal migration materialization" in error for error in _authority_chain_v4_errors(REPO, packet))
+            )
+
+        partial_append = copy.deepcopy(backlog)
+        partial_append["wave_amendments"] = [
+            item for item in partial_append["wave_amendments"] if item["id"] != "W1.A05"
+        ]
+        with patch("planctl.load_backlog", return_value=(partial_append, REPO / "planning/backlog.yaml")):
+            self.assertTrue(any("predecessor chain" in error for error in _authority_chain_v4_errors(REPO, packet)))
 
         tampered = copy.deepcopy(packet)
         tampered["authorityChain"]["reservedAmendments"][0]["approvalReference"]["sha256"] = "0" * 64

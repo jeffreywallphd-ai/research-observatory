@@ -28410,8 +28410,8 @@ verification_profiles:
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
 control_plane:
-  revision: 11
-  minimum_tool_revision: 11
+  revision: 12
+  minimum_tool_revision: 12
   active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
@@ -29020,6 +29020,24 @@ control_plane:
       approved_state_commit: eb10e880aec3ddf26e9311f4de7ee1370029a0d6
     adopted_by: codex
     adopted_at: '2026-08-25T23:25:46+00:00'
+  maintenance_increments:
+  - id: MI-0001
+    kind: post-migration-amendment-bootstrap
+    predecessor_revision: 11
+    successor_revision: 12
+    change_request_id: ECR-0004
+    amendment_id: W1.A05
+    approval_reference:
+      path: planning/wave-amendment-approvals/W1.A05.json
+      sha256: a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267
+      introduction_commit: 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b
+    migration_reference:
+      id: GOV-MIG-0001
+      path: planning/governance-migrations/GOV-MIG-0001.json
+      sha256: 4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d
+      commit: d8adf48e9c2e0319e4ece573a9381f6ec305310e
+    applied_by: codex
+    applied_at: '2026-08-30T11:46:16+00:00'
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
@@ -30835,3 +30853,86 @@ wave_amendments:
         findings: []
         closures: []
       current_submission: null
+- id: W1.A04
+  change_request_id: ECR-0003
+  target_wave: W1
+  kind: gate-integrity-safety-defect
+  approval_reference:
+    path: planning/wave-amendment-approvals/W1.A04.json
+    sha256: 4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab
+    introduction_commit: 4f92ba991fd19a2c0ae413b34416a2901d7f84b9
+  lifecycle:
+    status: SUPERSEDED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: repository-owner
+      at: '2026-08-24T00:45:22.3039895Z'
+      rationale: The repository owner approved ECR-0003/W1.A04 in direct response to the exact-commit approval request for
+        77896d26ddac0569e286fe8481c0676408c716b1. Authorize only bootstrap W1.A04.B00 and task W1.A04.T01 as hash-bound in
+        the packet; keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, HOLD-W1-GRR-0002 release, and an
+        explicit ordinary W1 resume.
+    - id: E02
+      status: SUPERSEDED
+      actor: governance-migration:GOV-MIG-0001
+      at: '2026-08-27T16:03:47-04:00'
+      rationale: Recorded the approved but unmaterialized reservation as terminal superseded history under GOV-MIG-0001; no bootstrap,
+        task, campaign, or product authority was executed.
+  bootstrap: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: Approved reservation was never materialized or executed and is terminally superseded.
+- id: W1.A05
+  change_request_id: ECR-0004
+  target_wave: W1
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W1.A05.json
+    sha256: a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267
+    introduction_commit: 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: repository-owner
+      at: '2026-08-30T06:03:51.1527117-04:00'
+      rationale: The repository owner approved ECR-0004/W1.A05 in direct response to the exact-commit approval request for
+        25584d82ce5d6bd55e476cd746100eef0790a33d. Authorize only bootstrap W1.A05.B00, slice contributions W1.A05.S01 and
+        W1.A05.S02, and tasks W1.A05.T01 through W1.A05.T04 as hash-bound in the packet. Approve the proposed Application
+        Security & sign-in experience and reserve RO-UI-ACADEMIC-MINIMAL-1.4 for bootstrap materialization. Keep W1 paused
+        until amendment adoption and explicit ordinary resume.
+  bootstrap:
+    id: W1.A05.B00
+    status: REVIEW
+    implementer: codex
+    implementation_commit: b47c5e81860df04cce886ede9e614d68c22c7119
+    submission_branch: codex/w1-windows-local-runtime
+    scope_addenda:
+    - path: planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json
+      sha256: 64cfafd59f6d4be0317ff88d538375a64b92be0b42f78bcd0ec5fe9e0c85326e
+      introduction_commit: 55070f5c3222891e21cd66021adb61d8322097e5
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A05.B00.json
+      sha256: 97a037be730ed1f3d7d78472a73331b8514ae931d02ae6f16618380c75f91632
+      commit: b47c5e81860df04cce886ede9e614d68c22c7119
+      recorded_at: '2026-08-30T11:46:15+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

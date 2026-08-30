@@ -7084,6 +7084,9 @@ def materialized_superseded_reservation(
 ) -> dict[str, Any]:
     """Project one approved, unmaterialized reservation as terminal history."""
     amendment_id = str(reservation.get("id") or "")
+    migration_id = str(migration.get("migrationId") or migration.get("id") or "")
+    if not migration_id:
+        raise SystemExit(f"Cannot materialize reserved amendment {amendment_id}: migration identity is absent")
     reference = reservation.get("approvalReference") or {}
     relative = str(reference.get("path") or "")
     try:
@@ -7152,11 +7155,11 @@ def materialized_superseded_reservation(
                 {
                     "id": "E02",
                     "status": "SUPERSEDED",
-                    "actor": f"governance-migration:{migration.get('id')}",
+                    "actor": f"governance-migration:{migration_id}",
                     "at": migration.get("authorizedAt"),
                     "rationale": (
                         "Recorded the approved but unmaterialized reservation as terminal superseded history under "
-                        f"{migration.get('id')}; no bootstrap, task, campaign, or product authority was executed."
+                        f"{migration_id}; no bootstrap, task, campaign, or product authority was executed."
                     ),
                 },
             ],
