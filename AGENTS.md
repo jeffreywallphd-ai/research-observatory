@@ -281,6 +281,30 @@ Restoring code to an already approved reference does not require a new reference
 
 ## Verification
 
+### Task-start acceptance closure
+
+After claiming a task and before changing product code, perform the concise
+task-start planning pass in `docs/automation/task-start-planning.md`. Translate
+the approved task contract into the smallest useful acceptance-closure map:
+criteria and governing authorities, state/invariant risks, identity and
+authority fields, compatibility/predecessor fixtures, material failure and
+recovery cases, principal-boundary proof, and governed experience states where
+they are actually affected. Inspect the current implementation and prior
+findings at those boundaries. Turn the material rows into failing or
+characterization tests before production code where practical.
+
+This is an implementation discipline, not a new plan, controller, task state,
+approval, or universal document-production gate. Reuse working notes, the task
+evidence draft, or a concise worksheet; do not create ceremony for low-risk or
+irrelevant dimensions. Mark a dimension not applicable with one sentence when
+that prevents ambiguity. Stop only if the pass exposes a real unmet authority,
+dependency, design, safety, or feasibility gate. For migrations,
+public/cross-process contracts, security/evidence controls, or multi-layer
+experience/export paths, consider a read-only adversarial preflight when the
+risk justifies its cost and an independent agent is available. That preflight
+narrows implementation risk and does not approve the task, create a review
+round, or replace its commit-bound review.
+
 ### Risk-based test selection
 
 At task implementation and task review, select checks according to the credible

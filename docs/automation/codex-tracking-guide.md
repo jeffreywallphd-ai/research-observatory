@@ -14,8 +14,13 @@ boundaries do not end the campaign; complete Wave qualification does.
 2. Confirm the complete pre-Wave packet is approved at one immutable commit and readiness passes.
 3. Read the Wave page, relevant capability packet, active slice plan, affected ADRs/architecture, and UI reference.
 4. Claim the task with branch, worktree, base SHA, and lease.
-5. Generate the task contract and changed-path verification set.
-6. Stop before editing if a required authority or approved plan is missing.
+5. Run the risk-selected task-start acceptance-closure pass in
+   `task-start-planning.md`. Inspect the current implementation and relevant
+   prior findings, then turn material rows into failing or characterization
+   tests where practical.
+6. Generate the task contract and changed-path verification set.
+7. Stop before editing only if a required authority or approved plan is missing
+   or the pass exposes another mandatory gate.
 
 ## Command sequence
 
@@ -149,6 +154,9 @@ reinterpret a capability or slice boundary as a routine approval prompt.
 Before claiming, use `taskctl next` and `taskctl show` to identify the active
 Wave campaign's next `READY` task. Permitted scope is its objective, deliverables,
 criteria, dependencies, profile/platform, and governing sources. At task scope,
+complete the concise acceptance-closure pass described in
+`task-start-planning.md`; do not turn it into another approval request or an
+exhaustive matrix for risks the changed path cannot reach. Then
 select the narrowest checks from its declared verification coverage and the
 changed-path impact map that exercise credible failure paths. Defer accumulated
 affected-profile checks to risk-cluster checkpoints and complete profiles to Wave
