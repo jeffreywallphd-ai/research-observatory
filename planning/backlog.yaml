@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -30896,7 +30896,7 @@ wave_amendments:
     sha256: a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267
     introduction_commit: 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -30907,6 +30907,11 @@ wave_amendments:
         W1.A05.S02, and tasks W1.A05.T01 through W1.A05.T04 as hash-bound in the packet. Approve the proposed Application
         Security & sign-in experience and reserve RO-UI-ACADEMIC-MINIMAL-1.4 for bootstrap materialization. Keep W1 paused
         until amendment adoption and explicit ordinary resume.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex
+      at: '2026-08-30T15:34:03+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W1.A05.B00
     status: APPROVED
@@ -31002,7 +31007,205 @@ wave_amendments:
       scope_base_commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
     scope_base_commit: 4469adedd4b3fae0e64044ab1f8004d2553f0091
   campaign: null
-  tasks: []
+  tasks:
+  - id: W1.A05.T01
+    amendment_id: W1.A05
+    title: Refactor native verification behind a provider-neutral contract
+    objective: Separate lock lifecycle and state from provider invocation while preserving native-supervisor unlock authority,
+      the current Windows-password path, the same-user SID guarantee, restart behavior, and redacted failures.
+    dependencies:
+    - W1.A05.B00
+    - CAP-02.S04.T02
+    acceptance_criteria:
+    - The native supervisor remains the sole unlock authority and the renderer cannot manufacture or bypass a successful verification
+      result.
+    - The current Windows credential flow is represented by a provider adapter and a successful returned token must still
+      identify the desktop process user SID.
+    - Provider-neutral contracts distinguish success, cancellation, denial, unavailability, busy, and failure without collapsing
+      them into success or fallback.
+    - Existing startup, manual-lock, inactivity, restart, lock-state, and redacted-error behavior remains parity-tested for
+      the password provider.
+    - The change is confined to the provider seam and directly affected contracts/tests; it does not redesign project security,
+      encryption, privacy, identity, or desktop supervision.
+    verification_commands:
+    - Run affected Rust native unit and integration tests for application-lock state, password verification, same-user SID
+      denial, cancellation, failure, restart, and lock persistence.
+    - Run desktop/application contract tests proving typed provider outcomes and that renderer messages cannot unlock without
+      a native success result.
+    - Run architecture/dependency checks for the supervisor, application, and renderer boundaries plus changed-path formatting,
+      lint, and type checks.
+    - Record password parity and explicit deferred coverage for Hello, configuration, settings UI, slice integration, and
+      W1-exit qualification.
+    - Obtain independent commit-bound security/contract task review.
+    packet_task_sha256: 8964dcfd6d08ef7109faa5d6dd7e1fec9187f6f4a597bcd551c40de59af5d622
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A05.T02
+    amendment_id: W1.A05
+    title: Implement the Windows Hello native verifier
+    objective: Add an OS-owned Windows Hello current-user presence adapter with truthful availability, denial, cancellation,
+      failure, and explicit password-recovery behavior and no app access to PIN or biometric material.
+    dependencies:
+    - W1.A05.B00
+    - W1.A05.T01
+    acceptance_criteria:
+    - Windows Hello verification is initiated and adjudicated through an OS-owned API for the current interactive Windows
+      user; the application never receives or stores a PIN or biometric template.
+    - The adapter exposes checking, available, not present, not configured, policy-disabled, busy, cancelled, denied, and
+      failed states through the approved typed contract.
+    - Cancellation, denial, unavailability, policy disablement, busy, and failure keep the application locked and never silently
+      invoke password or no-login behavior.
+    - Explicit Windows-password recovery is available only after deliberate user selection and retains the same-user SID guarantee.
+    - Unsupported or non-Windows test environments report unavailable and cannot fabricate a successful Hello assertion; release-authoritative
+      behavior is verified on Windows x64.
+    verification_commands:
+    - Run native adapter unit/contract tests with injectable OS boundaries for every availability and verification result.
+    - Run Windows-x64 integration tests for configured success where the platform permits and deterministic denial/cancellation/unavailable/restart
+      behavior otherwise.
+    - Run security checks for credential/PIN/biometric non-capture, redacted logs, same-user recovery, replay resistance,
+      and fail-closed cross-process messages.
+    - Complete W1.A05.S01 end-to-end lock/unlock, failure, restart, and adversarial verification and obtain independent slice
+      security/contract review.
+    - Obtain independent commit-bound task review before slice approval.
+    packet_task_sha256: 2272a51e0d8ed54298b37271060a47aedd2e824ea61f8739fc1a47e02348d1ad
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A05.T03
+    amendment_id: W1.A05
+    title: Add versioned application sign-in configuration and safe transitions
+    objective: Persist exactly no login, Windows password, or Windows Hello as an application-wide versioned policy with no
+      login as the explicit default, verified atomic transitions, fail-locked corruption handling, and deliberate audited
+      recovery.
+    dependencies:
+    - W1.A05.B00
+    - W1.A05.T01
+    - W1.A05.T02
+    acceptance_criteria:
+    - The versioned configuration stores exactly none, windows-password, or windows-hello; new installs and absent legacy
+      state resolve to explicit none, while every valid persisted application-lock-profile.v1.json resolves to windows-password
+      with its profile name and inactivity timeout preserved.
+    - Enabling a protected mode verifies the destination provider before atomic publication, and switching protected modes
+      authenticates the current mode and verifies the destination before publication.
+    - Every protected-to-none transition and every corrupt or unavailable-provider reset first requires successful verification
+      by the configured provider or an explicit native Windows-password recovery token whose SID matches the desktop process
+      user; warning and confirmation follow proof, and session possession, confirmation, or audit alone is insufficient.
+    - Cancellation, denial, unavailable destination, write failure, crash, or concurrent update preserves the prior configuration
+      byte-stably and returns a typed failure.
+    - A valid v1 zero-minute profile remains a windows-password/manual-lock profile with inactivity locking disabled; a nonzero
+      timeout preserves restart and inactivity locking. Malformed, unreadable, corrupt, or unknown-version protected state
+      remains locked until approved same-user proof succeeds, and if proof is unavailable, denied, or cancelled the user is
+      directed to Windows/provider recovery without policy mutation.
+    verification_commands:
+    - Run configuration schema, absent-state default, valid-v1 profile-name and zero/nonzero-timeout migration, corrupt/unknown-version,
+      and fail-locked tests.
+    - Run transactional persistence, crash/restart, rollback, stale-writer, concurrent-update, cancellation, denial, unavailable-provider,
+      and write-failure tests.
+    - Run security contract tests proving provider verification ordering; unauthenticated protected-to-none and reset denial;
+      same-SID Windows-password recovery; unavailable-Hello, cancellation, and denial behavior; no silent downgrade; audit
+      redaction; and unchanged project/privacy/encryption settings.
+    - Run affected application/native integration checks and record broader UI/accessibility and W1-exit coverage as deferred
+      to T04, S02 review, and Wave qualification.
+    - Obtain independent commit-bound security/migration task review.
+    packet_task_sha256: 32cf27efeb770f022e3991167518e0e9cfe44b8897168942fc72ec644035060a
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A05.T04
+    amendment_id: W1.A05
+    title: Implement Application Settings Security & sign-in
+    objective: Implement the approved application-wide settings destination and Security & sign-in experience for the three
+      modes, truthful provider status, lock preview, confirmation, and recovery while preserving project/workflow position
+      and credential secrecy.
+    dependencies:
+    - W1.A05.B00
+    - W1.A05.T03
+    acceptance_criteria:
+    - The application shell exposes Application Settings separately from Project Settings and labels the Security & sign-in
+      scope as this application on the current Windows account.
+    - The page displays current and default mode, prerequisites, Hello availability, startup/manual/idle/restart preview,
+      provider-specific recovery, and the unchanged protection boundaries in plain language.
+    - Enabling/changing protected modes and reducing protection use the approved verification and confirmation flows; cancellation,
+      denial, busy, unavailable, or failure restores focus and changes nothing.
+    - Locked and recovery views disclose no project name, path, command, research content, credential, PIN, or biometric and
+      never offer a silent provider fallback.
+    - The experience conforms to RO-UI-ACADEMIC-MINIMAL-1.4 for keyboard, focus, announcements, zoom/reflow, responsive layout,
+      themes, reduced motion, WCAG AA, and preserved project/workflow position.
+    verification_commands:
+    - Run renderer unit and interaction tests for all three modes, provider status classes, confirmations, recovery choices,
+      cancellation/denial/failure, and focus restoration.
+    - Run design-reference conformance, accessibility, keyboard, screen-reader announcement, zoom/reflow, theme, reduced-motion,
+      and responsive checks against RO-UI-ACADEMIC-MINIMAL-1.4.
+    - Run desktop/native end-to-end tests for first run, mode enable/switch/disable, manual and idle lock, restart, Hello
+      unavailable, explicit password recovery, deliberate reset, corruption, and no-silent-downgrade behavior.
+    - Complete W1.A05.S02 security/experience integration review and the amendment-exit affected build/smoke/security/accessibility
+      matrix.
+    - Obtain independent commit-bound task and slice review with all blocking findings closed.
+    packet_task_sha256: ff45d72ed01731d320263cb288fe2d82fcede4b71b14be98634a82bf03a65e54
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null

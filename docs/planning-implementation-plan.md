@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 32c361563caa36d33ae1e3124e7cb05fe08d0d19c3fd225d540a4722f0b7781b
+source_sha256: 57a7f702b86629ab9265f0ba22a1838123d6abbc200b127cea46fb28dea4693c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 3 |
+| Enabler tasks | 7 |
 | Waves | 12 |
 | Wave approval bases | 1 |
 | Wave amendments | 5 |
@@ -44,7 +44,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
-| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `APPROVED` |
+| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -1006,11 +1006,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A05.json` (`a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-08-30T06:03:51.1527117-04:00` by repository-owner: The repository owner approved ECR-0004/W1.A05 in direct response to the exact-commit approval request for 25584d82ce5d6bd55e476cd746100eef0790a33d. Authorize only bootstrap W1.A05.B00, slice contributions W1.A05.S01 and W1.A05.S02, and tasks W1.A05.T01 through W1.A05.T04 as hash-bound in the packet. Approve the proposed Application Security & sign-in experience and reserve RO-UI-ACADEMIC-MINIMAL-1.4 for bootstrap materialization. Keep W1 paused until amendment adoption and explicit ordinary resume.
+- `E02` `MATERIALIZED` at `2026-08-30T15:34:03+00:00` by codex: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W1.A05
 
@@ -1027,6 +1028,134 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W1.A05.T01 - Refactor native verification behind a provider-neutral contract
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A05.B00`, `CAP-02.S04.T02`
+
+**Objective:** Separate lock lifecycle and state from provider invocation while preserving native-supervisor unlock authority, the current Windows-password path, the same-user SID guarantee, restart behavior, and redacted failures.
+
+**Acceptance criteria:**
+
+- The native supervisor remains the sole unlock authority and the renderer cannot manufacture or bypass a successful verification result.
+- The current Windows credential flow is represented by a provider adapter and a successful returned token must still identify the desktop process user SID.
+- Provider-neutral contracts distinguish success, cancellation, denial, unavailability, busy, and failure without collapsing them into success or fallback.
+- Existing startup, manual-lock, inactivity, restart, lock-state, and redacted-error behavior remains parity-tested for the password provider.
+- The change is confined to the provider seam and directly affected contracts/tests; it does not redesign project security, encryption, privacy, identity, or desktop supervision.
+
+**Verification:**
+
+- Run affected Rust native unit and integration tests for application-lock state, password verification, same-user SID denial, cancellation, failure, restart, and lock persistence.
+- Run desktop/application contract tests proving typed provider outcomes and that renderer messages cannot unlock without a native success result.
+- Run architecture/dependency checks for the supervisor, application, and renderer boundaries plus changed-path formatting, lint, and type checks.
+- Record password parity and explicit deferred coverage for Hello, configuration, settings UI, slice integration, and W1-exit qualification.
+- Obtain independent commit-bound security/contract task review.
+
+#### Review history — W1.A05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W1.A05.T02 - Implement the Windows Hello native verifier
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A05.B00`, `W1.A05.T01`
+
+**Objective:** Add an OS-owned Windows Hello current-user presence adapter with truthful availability, denial, cancellation, failure, and explicit password-recovery behavior and no app access to PIN or biometric material.
+
+**Acceptance criteria:**
+
+- Windows Hello verification is initiated and adjudicated through an OS-owned API for the current interactive Windows user; the application never receives or stores a PIN or biometric template.
+- The adapter exposes checking, available, not present, not configured, policy-disabled, busy, cancelled, denied, and failed states through the approved typed contract.
+- Cancellation, denial, unavailability, policy disablement, busy, and failure keep the application locked and never silently invoke password or no-login behavior.
+- Explicit Windows-password recovery is available only after deliberate user selection and retains the same-user SID guarantee.
+- Unsupported or non-Windows test environments report unavailable and cannot fabricate a successful Hello assertion; release-authoritative behavior is verified on Windows x64.
+
+**Verification:**
+
+- Run native adapter unit/contract tests with injectable OS boundaries for every availability and verification result.
+- Run Windows-x64 integration tests for configured success where the platform permits and deterministic denial/cancellation/unavailable/restart behavior otherwise.
+- Run security checks for credential/PIN/biometric non-capture, redacted logs, same-user recovery, replay resistance, and fail-closed cross-process messages.
+- Complete W1.A05.S01 end-to-end lock/unlock, failure, restart, and adversarial verification and obtain independent slice security/contract review.
+- Obtain independent commit-bound task review before slice approval.
+
+#### Review history — W1.A05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A05.B00`, `W1.A05.T01`, `W1.A05.T02`
+
+**Objective:** Persist exactly no login, Windows password, or Windows Hello as an application-wide versioned policy with no login as the explicit default, verified atomic transitions, fail-locked corruption handling, and deliberate audited recovery.
+
+**Acceptance criteria:**
+
+- The versioned configuration stores exactly none, windows-password, or windows-hello; new installs and absent legacy state resolve to explicit none, while every valid persisted application-lock-profile.v1.json resolves to windows-password with its profile name and inactivity timeout preserved.
+- Enabling a protected mode verifies the destination provider before atomic publication, and switching protected modes authenticates the current mode and verifies the destination before publication.
+- Every protected-to-none transition and every corrupt or unavailable-provider reset first requires successful verification by the configured provider or an explicit native Windows-password recovery token whose SID matches the desktop process user; warning and confirmation follow proof, and session possession, confirmation, or audit alone is insufficient.
+- Cancellation, denial, unavailable destination, write failure, crash, or concurrent update preserves the prior configuration byte-stably and returns a typed failure.
+- A valid v1 zero-minute profile remains a windows-password/manual-lock profile with inactivity locking disabled; a nonzero timeout preserves restart and inactivity locking. Malformed, unreadable, corrupt, or unknown-version protected state remains locked until approved same-user proof succeeds, and if proof is unavailable, denied, or cancelled the user is directed to Windows/provider recovery without policy mutation.
+
+**Verification:**
+
+- Run configuration schema, absent-state default, valid-v1 profile-name and zero/nonzero-timeout migration, corrupt/unknown-version, and fail-locked tests.
+- Run transactional persistence, crash/restart, rollback, stale-writer, concurrent-update, cancellation, denial, unavailable-provider, and write-failure tests.
+- Run security contract tests proving provider verification ordering; unauthenticated protected-to-none and reset denial; same-SID Windows-password recovery; unavailable-Hello, cancellation, and denial behavior; no silent downgrade; audit redaction; and unchanged project/privacy/encryption settings.
+- Run affected application/native integration checks and record broader UI/accessibility and W1-exit coverage as deferred to T04, S02 review, and Wave qualification.
+- Obtain independent commit-bound security/migration task review.
+
+#### Review history — W1.A05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A05.B00`, `W1.A05.T03`
+
+**Objective:** Implement the approved application-wide settings destination and Security & sign-in experience for the three modes, truthful provider status, lock preview, confirmation, and recovery while preserving project/workflow position and credential secrecy.
+
+**Acceptance criteria:**
+
+- The application shell exposes Application Settings separately from Project Settings and labels the Security & sign-in scope as this application on the current Windows account.
+- The page displays current and default mode, prerequisites, Hello availability, startup/manual/idle/restart preview, provider-specific recovery, and the unchanged protection boundaries in plain language.
+- Enabling/changing protected modes and reducing protection use the approved verification and confirmation flows; cancellation, denial, busy, unavailable, or failure restores focus and changes nothing.
+- Locked and recovery views disclose no project name, path, command, research content, credential, PIN, or biometric and never offer a silent provider fallback.
+- The experience conforms to RO-UI-ACADEMIC-MINIMAL-1.4 for keyboard, focus, announcements, zoom/reflow, responsive layout, themes, reduced motion, WCAG AA, and preserved project/workflow position.
+
+**Verification:**
+
+- Run renderer unit and interaction tests for all three modes, provider status classes, confirmations, recovery choices, cancellation/denial/failure, and focus restoration.
+- Run design-reference conformance, accessibility, keyboard, screen-reader announcement, zoom/reflow, theme, reduced-motion, and responsive checks against RO-UI-ACADEMIC-MINIMAL-1.4.
+- Run desktop/native end-to-end tests for first run, mode enable/switch/disable, manual and idle lock, restart, Hello unavailable, explicit password recovery, deliberate reset, corruption, and no-silent-downgrade behavior.
+- Complete W1.A05.S02 security/experience integration review and the amendment-exit affected build/smoke/security/accessibility matrix.
+- Obtain independent commit-bound task and slice review with all blocking findings closed.
+
+#### Review history — W1.A05.T04
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 # Capability contributions, slices, and tasks

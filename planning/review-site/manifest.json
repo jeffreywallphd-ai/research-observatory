@@ -18820,7 +18820,7 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A05.json",
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
-      "lifecycle_status": "APPROVED",
+      "lifecycle_status": "MATERIALIZED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
@@ -19284,7 +19284,60 @@
           ]
         }
       ],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W1.A05.T01",
+          "title": "Refactor native verification behind a provider-neutral contract",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W1.A05.T02",
+          "title": "Implement the Windows Hello native verifier",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W1.A05.T03",
+          "title": "Add versioned application sign-in configuration and safe transitions",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W1.A05.T04",
+          "title": "Implement Application Settings Security & sign-in",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W1.A05",
         "mode": "latest-completion-only",
