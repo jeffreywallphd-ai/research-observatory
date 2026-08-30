@@ -6915,8 +6915,9 @@ def amendment_exit_review_control_errors(
 
 def amendment_path_authorized(path: str, patterns: list[str]) -> bool:
     for pattern in patterns:
-        if pattern.endswith("/**"):
-            prefix = pattern[:-3].rstrip("/")
+        if pattern.endswith("/**") or pattern.endswith("/*"):
+            suffix_length = 3 if pattern.endswith("/**") else 2
+            prefix = pattern[:-suffix_length].rstrip("/")
             if path == prefix or path.startswith(prefix + "/"):
                 return True
         elif path == pattern:

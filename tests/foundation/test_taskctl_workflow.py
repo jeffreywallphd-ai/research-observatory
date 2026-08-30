@@ -21,6 +21,7 @@ import taskctl as taskctl_module  # noqa: E402
 from taskctl import (  # noqa: E402
     amendment_history_snapshot,
     amendment_identity_snapshot,
+    amendment_path_authorized,
     approved_wave_snapshot,
     bootstrap_authorized_patterns,
     bootstrap_scope_addendum_errors,
@@ -5532,6 +5533,13 @@ class TaskctlWorkflowTests(unittest.TestCase):
             ],
             patterns,
         )
+
+    def test_legacy_star_scope_is_bounded_to_the_declared_directory_tree(self) -> None:
+        patterns = ["design/ui-reference/*"]
+        self.assertTrue(amendment_path_authorized("design/ui-reference/APPROVAL.yaml", patterns))
+        self.assertTrue(amendment_path_authorized("design/ui-reference/assets/app.css", patterns))
+        self.assertFalse(amendment_path_authorized("design/ui-reference-escape/app.css", patterns))
+        self.assertFalse(amendment_path_authorized("design/other/app.css", patterns))
 
     def test_parser_exposes_only_the_approved_amendment_lifecycle_commands(self) -> None:
         parser = build_parser()
