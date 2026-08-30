@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 57a7f702b86629ab9265f0ba22a1838123d6abbc200b127cea46fb28dea4693c
+source_sha256: dc576e75b85f8acb539c6dbbd4e4bd25a808cb59e8f048e472332eaa25359b14
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -44,7 +44,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
-| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `MATERIALIZED` |
+| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ACTIVE` |
 
 ## Waves
 
@@ -1006,12 +1006,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A05.json` (`a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267`)
 
-**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-08-30T06:03:51.1527117-04:00` by repository-owner: The repository owner approved ECR-0004/W1.A05 in direct response to the exact-commit approval request for 25584d82ce5d6bd55e476cd746100eef0790a33d. Authorize only bootstrap W1.A05.B00, slice contributions W1.A05.S01 and W1.A05.S02, and tasks W1.A05.T01 through W1.A05.T04 as hash-bound in the packet. Approve the proposed Application Security & sign-in experience and reserve RO-UI-ACADEMIC-MINIMAL-1.4 for bootstrap materialization. Keep W1 paused until amendment adoption and explicit ordinary resume.
 - `E02` `MATERIALIZED` at `2026-08-30T15:34:03+00:00` by codex: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-08-30T15:37:08+00:00` by codex: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W1.A05
 
@@ -1031,7 +1032,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T01 - Refactor native verification behind a provider-neutral contract
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `CAP-02.S04.T02`
 
@@ -4810,7 +4811,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

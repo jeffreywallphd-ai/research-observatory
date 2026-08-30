@@ -18820,9 +18820,9 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A05.json",
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
-      "lifecycle_status": "MATERIALIZED",
+      "lifecycle_status": "ACTIVE",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "NONE",
+      "campaign_status": "ACTIVE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -19288,7 +19288,7 @@
         {
           "task_id": "W1.A05.T01",
           "title": "Refactor native verification behind a provider-neutral contract",
-          "status": "NOT_STARTED",
+          "status": "READY",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,
