@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1e3449472570fdcfd49df7c794ae2b8592ee12208e0bfacfe8a285694ff69766
+source_sha256: 3111e878946010b5e37a131b90b56a1890676503a771772b2310155a07bb09a5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1032,7 +1032,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T01 - Refactor native verification behind a provider-neutral contract
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `CAP-02.S04.T02`
 
@@ -1054,13 +1054,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Record password parity and explicit deferred coverage for Hello, configuration, settings UI, slice integration, and W1-exit qualification.
 - Obtain independent commit-bound security/contract task review.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A05.T01.json` at `31e7f7e2b06ba469c59094fc3b50933c7ba85d9a`
+
 #### Review history — W1.A05.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `029283890ff92e39628fe94d82ed1ba3c8fec437046a7f1dff0fd86affe74e8a`
+
+- Candidate / base / branch: `31e7f7e2b06ba469c59094fc3b50933c7ba85d9a` / `fb06c39b051b8db253fb62a20d69e09cfc2b2b5b` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T16:01:24+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T01.json` / `63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063` / `31e7f7e2b06ba469c59094fc3b50933c7ba85d9a`
+- Acceptance-criteria SHA-256: `834b342f697d8ee1d633785bf2604786309ebf57f06b7ac37c0bcdfe5b1668ae`
+- Verification-selection SHA-256: `7b4b5a00949a5fa92977b4a7805fb674f6e40588450035273d0077d54e341283`
+- Changed paths: `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/application_lock_verification.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/security/test_application_lock_source.py`, `tests/security/test_windows_credentials.py`
+- Selected checks: `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib`, `cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings`, `bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx`, `bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit; bundled-node apps/desktop/scripts/lint.mjs`, `.venv\Scripts\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests`, `.venv\Scripts\python.exe tools\architecture_check.py --repo .`, `.venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; .venv\Scripts\ruff.exe format --check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; git diff --check`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --affected-base fb06c39b051b8db253fb62a20d69e09cfc2b2b5b --affected-head 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T01-affected-selection.json`
+- Deferred checks: `Windows Hello availability and verification, provider selection/configuration, application settings UI and accessibility, and W1.A05.S01/S02 end-to-end integration remain owned by T02 through T04 and their slice reviews.`, `Desktop performance and the complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and cross-capability matrix remain due once at W1 exit.`, `The broad legacy tests.security.test_windows_credentials module cannot currently import because tracked Core baseline commit 300a1a42 contains an unrelated invalid multi-exception clause in domain_contracts.py. T01 moved its two application-lock source assertions into an independently runnable focused module, where they pass; repairing the unrelated Core defect is not included in this bounded provider refactor.`
+- Selection rationale: W1.A05.T01 changes a native Windows authentication boundary, the success-to-Core-restart authority transition, and the typed renderer/native contract. Credible failures are renderer/provider substitution, collapsed adverse outcomes, stale or concurrent success, Core creation after invalidation, same-SID regression, credential persistence or leakage, reservation/backoff corruption, unlocked invocation, and user-visible error disclosure. Full native library tests, warnings-denied compilation, strict renderer contract tests, desktop lint/type checking, focused Windows credential and portable profile assertions, architecture checks, changed-test quality, and Git hygiene cover those risks. The task does not change dependencies, persistence schemas, project data, UI structure, or approved experience references.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W1.A05.T02 - Implement the Windows Hello native verifier
 

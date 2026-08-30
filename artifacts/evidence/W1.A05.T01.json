@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T01",
+  "commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+  "baseCommit": "fb06c39b051b8db253fb62a20d69e09cfc2b2b5b",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/application_lock_verification.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/security/test_application_lock_source.py",
+    "tests/security/test_windows_credentials.py"
+  ],
+  "checks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "exitCode": 0,
+      "result": "All 30 native desktop library tests passed on Windows x64. The 13 application-lock/provider tests cover the six typed outcomes, success-only Core start, cancellation, denial and bounded backoff, unavailable/busy/failure isolation, Core restart failure, concurrent admission, unlocked invocation denial, generation-stale success cleanup, provider panic cleanup, manual and idle lock, profile publication races, redacted audit, and exact Windows prompt/domain behavior."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
+      "exitCode": 0,
+      "result": "The exact Rust surface is formatted and the Windows desktop library passes Clippy with warnings denied, compiling and linking the production CredUI, LogonUserW, process-token, SID, handle, and secret-zeroization adapter path."
+    },
+    {
+      "command": "bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "exitCode": 0,
+      "result": "All 12 focused renderer/application tests passed. The strict decoder accepts only six fixed outcomes with allowed redacted reason codes, requires a native succeeded/unlocked or adverse/locked pairing, rejects unknown/prototype and forged state combinations, and preserves the existing cancellation, rate-limit, Core-unavailable, and generic password failure copy."
+    },
+    {
+      "command": "bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit; bundled-node apps/desktop/scripts/lint.mjs",
+      "exitCode": 0,
+      "result": "Desktop TypeScript type checking and the repository desktop lint passed for the typed application-unlock response and renderer integration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests",
+      "exitCode": 0,
+      "result": "All four focused security/source and portable profile-contract tests passed. They pin the non-persisting Windows prompt flags, NameSamCompatible prefill, local/down-level and UPN domain mapping, LogonUserW, current-process token and EqualSid checks, handle closure, volatile buffer clearing, argument-free native unlock bridge, generation binding, protected-command guards, and unchanged strict application-lock profile."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "The machine-checked architecture contract passed with 13 repository areas, 12 modules, five stable interfaces, and three deployment profiles; the provider seam did not cross or weaken a declared application/renderer/Core boundary."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; git diff --check",
+      "exitCode": 0,
+      "result": "The directly changed Python security tests pass Ruff lint and formatting, and the exact implementation range passes Git whitespace hygiene."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --affected-base fb06c39b051b8db253fb62a20d69e09cfc2b2b5b --affected-head 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T01-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed changed-path selector passed with no unknown paths and retained desktop performance at W1 exit. Risk-selected task checks were narrowed to the native/provider, typed renderer, Windows credential-source, portable profile, architecture, formatting, lint, and type surfaces that can plausibly fail from T01."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "application_lock_unlock remains an argument-free Tauri command, constructs no renderer-selected provider or outcome, and emits an unlocked snapshot only when the native manager returns VerificationOutcome::Succeeded.",
+        "The native manager reserves exactly one locked-generation attempt, invokes the provider once, rechecks the reservation before and after Core start, publishes Unlocked only after RuntimeState::Ready, and immediately stop_for_application_lock on stale or failed Core startup. Protected native operations still require the manager-owned lock generation, so renderer data cannot confer native authority."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "WindowsPasswordVerificationProvider implements the provider-neutral native interface and owns the existing OS credential prompt, identity parsing, LogonUserW validation, current desktop process token lookup, and EqualSid comparison.",
+        "Windows tests and source assertions retain ALWAYS_SHOW_UI, DO_NOT_PERSIST, EXCLUDE_CERTIFICATES, GENERIC_CREDENTIALS, and VALIDATE_USERNAME flags; NameSamCompatible prefill; null UPN domain versus retained down-level domain; volatile username/domain/password clearing; and RAII handle closure. A mismatched returned token remains Denied and can never produce Succeeded."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The native VerificationOutcome serializes exactly succeeded, cancelled, denied, unavailable, busy, and failed. The manager has an explicit fail-closed branch for each value, starts Core only for succeeded, never invokes another provider, and retains a locked snapshot for every adverse outcome.",
+        "The application contract strictly decodes the same six outcomes and fixed redacted reason codes, rejects outcome/state mismatches and unknown/prototype outcomes, and permits fail-closed reconciliation to clear only from a succeeded native unlock response carrying an unlocked native snapshot."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The password adapter preserves absent-profile startup, zero-minute unlocked startup, nonzero-timeout restart lock, corrupt-profile fail lock, manual and native-idle lock, generation invalidation, one-attempt admission, denial backoff, cancellation, Core restart failure, fresh-Core/no-project restoration behavior, and content-free fixed-code audit behavior.",
+        "The renderer retains the exact user-visible cancellation, temporary rate-limit, accepted-credentials/Core-unavailable, and generic verification-failure messages. Expected adverse provider results now arrive as typed native attempts; unexpected bridge failures still reconcile through native status and fail closed."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Production changes are confined to the application-lock coordinator, a new native verification-provider module, the argument-free native bridge, directly affected renderer contract/runtime code, and focused tests. The portable application-lock profile bytes and schema are unchanged.",
+        "No Windows Hello implementation, sign-in configuration, settings route/UI, project security, encryption, privacy, identity, Core supervision redesign, dependency, migration, or governed experience-reference change is included."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "W1.A05.T01 changes a native Windows authentication boundary, the success-to-Core-restart authority transition, and the typed renderer/native contract. Credible failures are renderer/provider substitution, collapsed adverse outcomes, stale or concurrent success, Core creation after invalidation, same-SID regression, credential persistence or leakage, reservation/backoff corruption, unlocked invocation, and user-visible error disclosure. Full native library tests, warnings-denied compilation, strict renderer contract tests, desktop lint/type checking, focused Windows credential and portable profile assertions, architecture checks, changed-test quality, and Git hygiene cover those risks. The task does not change dependencies, persistence schemas, project data, UI structure, or approved experience references.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "desktop:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "Windows Hello availability and verification, provider selection/configuration, application settings UI and accessibility, and W1.A05.S01/S02 end-to-end integration remain owned by T02 through T04 and their slice reviews.",
+      "Desktop performance and the complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and cross-capability matrix remain due once at W1 exit.",
+      "The broad legacy tests.security.test_windows_credentials module cannot currently import because tracked Core baseline commit 300a1a42 contains an unrelated invalid multi-exception clause in domain_contracts.py. T01 moved its two application-lock source assertions into an independently runnable focused module, where they pass; repairing the unrelated Core defect is not included in this bounded provider refactor."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-security-contract-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a and this R01 manifest. Confirm the argument-free native authority boundary; exact six-outcome contract; password prompt, parsing, LogonUserW and same-process SID parity; single reservation/backoff semantics; pre/post-Core generation checks and raced-Core stop; panic/failure cleanup; strict renderer outcome/state decoding and redacted messages; unchanged profile/startup/manual/idle/restart behavior; and absence of Hello/configuration/settings or broader security redesign. Treat the disclosed unrelated Core syntax defect and W1-exit breadth separately from T01 acceptance unless independent reproduction shows they invalidate this exact candidate."
+  }
+}
