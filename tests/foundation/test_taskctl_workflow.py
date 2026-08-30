@@ -3830,6 +3830,59 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 errors,
             )
 
+    def test_current_bootstrap_remediation_requires_its_persisted_authority_scope(self) -> None:
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
+        amendment = copy.deepcopy(next(item for item in data["wave_amendments"] if item["id"] == "W1.A05"))
+        approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A05.json").read_text(encoding="utf-8"))
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0004.packet.json").read_text(encoding="utf-8")
+        )
+
+        exact_errors = taskctl_module.bootstrap_packet_errors(REPO, amendment, approval, packet)
+        self.assertNotIn("lacks its frozen prior-candidate authority scope", "\n".join(exact_errors))
+        self.assertTrue(amendment["bootstrap"]["attempts"])
+        self.assertTrue(
+            all("scope_base_commit" not in attempt for attempt in amendment["bootstrap"]["attempts"]),
+            "immutable pre-control attempts must remain readable without a fabricated boundary",
+        )
+
+        amendment["bootstrap"].pop("scope_base_commit")
+        errors = taskctl_module.bootstrap_packet_errors(REPO, amendment, approval, packet)
+        self.assertIn(
+            "W1.A05.B00: current bootstrap remediation lacks its frozen prior-candidate authority scope",
+            errors,
+        )
+
+        amendment["bootstrap"].update(
+            status="REVIEW",
+            review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+        )
+        isolated_data = copy.deepcopy(data)
+        isolated_data["wave_amendments"] = [
+            amendment if item["id"] == "W1.A05" else item for item in isolated_data["wave_amendments"]
+        ]
+        with (
+            self.assertRaisesRegex(SystemExit, "lacks its frozen prior-candidate authority scope"),
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.persist"),
+        ):
+            taskctl_module.command_amendment_bootstrap_review(
+                Namespace(
+                    amendment="W1.A05",
+                    reviewer="new-independent-reviewer",
+                    result="approved",
+                    note="must deny omitted authority scope",
+                    file=str(REPO / "planning/backlog.yaml"),
+                ),
+                isolated_data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
     def test_b00_r04_historical_bootstrap_validation_does_not_depend_on_live_branch(self) -> None:
         data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
             self.b00_resubmitted_review_bootstrap_fixture()
