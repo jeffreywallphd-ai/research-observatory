@@ -30909,7 +30909,7 @@ wave_amendments:
         until amendment adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A05.B00
-    status: REVIEW
+    status: CHANGES_REQUESTED
     implementer: codex
     implementation_commit: 4469adedd4b3fae0e64044ab1f8004d2553f0091
     submission_branch: codex/w1-windows-local-runtime
@@ -30924,10 +30924,12 @@ wave_amendments:
       commit: 4469adedd4b3fae0e64044ab1f8004d2553f0091
       recorded_at: '2026-08-30T13:57:32+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: w1-a05-b00-independent-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-30T14:07:00+00:00'
+      notes: 'R04 ledger artifacts/evidence/W1.A05.B00.review-04.json (sha256 f1f28bc431574531c6d61ee5c61c267ce4278c6f101c2b0121fddb341ed50d01):
+        R01-R03 are closed; W1-A05-B00-R04-F01 requires the frozen-state compatibility assertion to classify archived attempts
+        by authenticated cutover ancestry.'
     attempts:
     - id: R01
       implementer: codex

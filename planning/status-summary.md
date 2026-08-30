@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: fc76999c2df48d22f4ad824f1ff1ecc66905c4d37cf356a53a5ab32355eb689f
+source_sha256: 4c9f9bd94ed1c232d675c058e02d8ee9f2023fd9df7195a63d12c0cd32be47c0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -82,7 +82,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` | `NONE` | `NONE` | 0 |
-| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
+| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `APPROVED` | `CHANGES_REQUESTED` | `NONE` | 0 |
 
 ## Amendment-exit review and adoption projections
 
