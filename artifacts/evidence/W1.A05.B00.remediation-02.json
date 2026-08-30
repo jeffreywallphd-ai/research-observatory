@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.B00",
+  "commit": "e886dd196e767b52ec253ce5286a0064d5a59c2f",
+  "baseCommit": "7b028d4f6ece3f16d58ed544f933c3f5d8370773",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A05.B00.remediation-01.json",
+    "sha256": "59f59c03433b6bef3ddaeda5151a50fe0de83404c2592ed38a643297708613d6",
+    "commit": "cf8a2568a29766c27a0f73cfb9036d86f91b62ac"
+  },
+  "priorReview": {
+    "path": "artifacts/evidence/W1.A05.B00.review-02.json",
+    "sha256": "41d228df518fb21f6609dabce85962e36f9add46ff08199444d8dd3cbf3434f8",
+    "implementationCommit": "cf8a2568a29766c27a0f73cfb9036d86f91b62ac",
+    "submittedStateCommit": "676475dbb878243d5106ead39b0ed0df0882b6a9",
+    "result": "changes-requested"
+  },
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.schema.json",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "rootCauseAnalysis": {
+    "cause": "R01 correctly separated the evidence delta from already reviewed workflow-transition commits, but the same implementer-selected base was also reused as the authority-scope boundary. That conflated two different questions: which bytes belong to the remediation evidence, and which lineage must remain inside approved authority.",
+    "correction": "New bootstrap resubmissions keep manifest changedFiles truthful to baseCommit..candidate while taskctl independently freezes scope_base_commit to the prior candidate and scans that complete lineage for unauthorized paths.",
+    "recurrenceControl": "An isolated real-Git regression inserts an unauthorized commit before the manifest base and proves it is rejected even though the manifest's base-to-candidate changedFiles remain exact. The frozen scope boundary is persisted with the submission and revalidated during later review transitions."
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 100 taskctl schema and workflow tests passed in 378.222 seconds with the implementation bytes frozen at ancestor a657222. The final candidate adds only the deterministic R02 planning projections."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema.BacklogSchemaTests.test_canonical_backlog_passes_schema_and_semantic_validation tests.foundation.test_taskctl_schema.BacklogSchemaTests.test_bootstrap_authority_scope_commit_is_optional_and_exact tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_b00_r01_bootstrap_resubmit_is_append_only_and_strictly_descendant tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_remediation_scope_rejects_unauthorized_intervening_commit",
+      "exitCode": 0,
+      "result": "All four focused controller and schema tests passed with the final implementation bytes now frozen at exact candidate e886dd196e767b52ec253ce5286a0064d5a59c2f in 4.872 seconds, including the real-Git unauthorized-intervening-commit denial."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_reference_check tests.foundation.test_planctl_amendments",
+      "exitCode": 0,
+      "result": "All 15 UI-reference and ECR/planctl authority tests passed in 193.688 seconds with the implementation bytes frozen at ancestor a657222."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 168 governed Python files after the implementation was frozen; no Python source changed in the final projection-only commit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0004 --require-approved",
+      "exitCode": 0,
+      "result": "At exact candidate e886dd196e767b52ec253ce5286a0064d5a59c2f, the 20-capability, 117-slice, 359-task, 12-gate backlog passed; generated views passed; the 488-page planning site passed; and ECR-0004 remained approved and history-bound."
+    },
+    {
+      "command": "git diff --check 7b028d4f6ece3f16d58ed544f933c3f5d8370773 e886dd196e767b52ec253ce5286a0064d5a59c2f --; git diff --name-only 7b028d4f6ece3f16d58ed544f933c3f5d8370773 e886dd196e767b52ec253ce5286a0064d5a59c2f --",
+      "exitCode": 0,
+      "result": "Patch hygiene passed and the evidence delta contains exactly the nine authorized paths declared in changedFiles. The separate authority scan is frozen at prior candidate cf8a2568a29766c27a0f73cfb9036d86f91b62ac."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R01 remains closed: legacy pre-supersession witness tests use synthetic content and terminal W1.A04 supersession does not read the protected live witness.",
+        "R02 finding W1-A05-B00-R02-F01 is reproduced by a real temporary Git history and closed by an independently frozen prior-candidate authority scan."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The approved amendment, slice, task, dependency, estimate, and ordinary Wave projections are unchanged; only the bounded bootstrap controller, focused tests, and deterministic review-state views changed.",
+        "Evidence truth and authority scope are separate: changedFiles remains exact for baseCommit..candidate while scope_base_commit is controller-selected from the immutable prior candidate."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "RO-UI-ACADEMIC-MINIMAL-1.4 and its governed experience content remain unchanged; only the review-site pages whose R02 status content changed were regenerated.",
+        "The 15-test UI-reference and planctl authority suite and the exact generated-site check pass."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "W1 remains PAUSED at Wave scope, W1.A05 remains CHANGES_REQUESTED before resubmission, no amendment task or product work is claimed, and no runtime path changed.",
+        "R01 and R02 are preserved append-only with their exact ledgers, hashes, candidates, submitted-state commits, findings, and dispositions."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The selected taskctl/schema, adversarial Git, UI-reference/planctl, quality, backlog, generated-view, planning-site, ECR, and diff-hygiene checks pass across the frozen implementation and exact final candidate.",
+        "R03 review must replay W1-A05-B00-R02-F01 and confirm that the current nine-path delta plus the complete cf8a256..e886dd1 authority lineage remain within approved B00 scope."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 exposed a fail-open scope-boundary design in future bootstrap remediation histories. The correction changes only taskctl bootstrap-resubmission state and validation, adds a real-Git adversarial regression, and regenerates review-state projections. Full taskctl/schema, authority, and governed Python checks were selected because this code controls evidence and review authority.",
+    "deferred": "Windows-password parity, Windows Hello OS behavior, versioned sign-in configuration, renderer settings, accessibility interaction, and end-to-end lock/restart/recovery behavior remain assigned to W1.A05.T01-T04 and their independent slice and W1-exit reviews."
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-control-security-experience-remediation-review",
+    "openFindingIds": [
+      "W1-A05-B00-R02-F01"
+    ],
+    "note": "Replay R02 finding W1-A05-B00-R02-F01 against exact candidate e886dd196e767b52ec253ce5286a0064d5a59c2f. Confirm the evidence delta remains truthful from 7b028d4f6ece3f16d58ed544f933c3f5d8370773 while taskctl freezes and validates the complete authority scope from prior candidate cf8a2568a29766c27a0f73cfb9036d86f91b62ac."
+  }
+}
