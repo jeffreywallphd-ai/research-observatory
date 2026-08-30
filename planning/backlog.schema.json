@@ -640,6 +640,7 @@
         "implementer": {"type": "string", "minLength": 1},
         "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
         "submission_branch": {"type": "string", "pattern": "^codex/.+$"},
+        "scope_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
         "evidence": {"$ref": "#/$defs/taskEvidence"},
         "review": {"$ref": "#/$defs/review"}
       },
@@ -657,6 +658,7 @@
             "implementer": {"type": ["string", "null"]},
             "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
             "submission_branch": {"type": ["string", "null"], "pattern": "^codex/.+$"},
+            "scope_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
             "evidence": {"$ref": "#/$defs/taskEvidence"},
             "review": {"$ref": "#/$defs/review"},
             "attempts": {
