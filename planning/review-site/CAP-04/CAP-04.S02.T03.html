@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Open-access location resolution, academic graph lookup, citations/references, and related-paper recommendations with policy controls.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-04.S02.T02"><li data-task-dependency="CAP-04.S02.T02"><a href="CAP-04.S02.T02.html"><code>CAP-04.S02.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>search</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile search</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S02.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S02.T03` - Implement Unpaywall and Semantic Scholar adapters
+<section class="task-summary" data-task-plan="CAP-04.S02.T03" data-task-plan-sha256="6007836615b85cc9d14cc316e62e39cb3cb595d2dda8cb6c27eebe07caca86e7"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S02.T03` - Implement Unpaywall and Semantic Scholar adapters
 **Objective:** Open-access location resolution, academic graph lookup, citations/references, and related-paper recommendations with policy controls.
 
 **Dependencies:** `CAP-04.S02.T02`

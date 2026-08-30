@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Versioned manifest for source identity, operations, authentication, terms, rate limits, data classes, and required permissions.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>An unsupported capability is rejected before execution; plugin version and permissions appear in provenance; breaking SDK changes follow compatibility policy.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-04.S04.T03|CAP-00.S03.T03"><li data-task-dependency="CAP-04.S04.T03"><a href="CAP-04.S04.T03.html"><code>CAP-04.S04.T03</code></a></li><li data-task-dependency="CAP-00.S03.T03"><code>CAP-00.S03.T03</code></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>foundation</li><li>service</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile foundation</li><li>python tools/taskctl.py validate</li><li>python tools/verify.py --profile service</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S05.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-04.S05.T01` - Publish connector plugin manifest and capability API
+<section class="task-summary" data-task-plan="CAP-04.S05.T01" data-task-plan-sha256="d1c51b4032df25c11d08ff8103df439f91a51c65ae2c9cb841ca4b028a3ce4a7"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-04.S05.T01` - Publish connector plugin manifest and capability API
 **Objective:** Versioned manifest for source identity, operations, authentication, terms, rate limits, data classes, and required permissions.
 
 **Dependencies:** `CAP-04.S04.T03`, `CAP-00.S03.T03`
@@ -87,8 +87,7 @@
 python tools/verify.py --profile foundation
 python tools/taskctl.py validate
 python tools/verify.py --profile service
-```
-</pre></article></section>
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-04.S05.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

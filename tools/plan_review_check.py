@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import html
 import json
+import re
 import sys
 from collections import Counter
 from html.parser import HTMLParser
@@ -15,6 +16,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import yaml
+from plan_review_site import extract_task_section
 
 
 def sha256(path: Path) -> str:
@@ -33,6 +35,18 @@ def frontmatter(path: Path) -> dict[str, Any]:
     if end < 0:
         raise ValueError(f"{path}: unterminated YAML front matter")
     return yaml.safe_load(text[4:end]) or {}
+
+
+def markdown_body(path: Path) -> str:
+    text = path.read_text(encoding="utf-8")
+    end = text.find("\n---\n", 4)
+    if not text.startswith("---\n") or end < 0:
+        raise ValueError(f"{path}: invalid YAML front matter")
+    return text[end + 5 :]
+
+
+def text_sha256(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
 class PageParser(HTMLParser):
@@ -697,6 +711,7 @@ def main() -> int:
                 errors.append(f"{sid}: missing slice page {page}")
                 continue
             source_tasks = (backlog_slices.get(str(sid)) or {}).get("tasks", [])
+            source_body = markdown_body(source)
             errors.extend(task_review_manifest_errors(str(sid), slice_entry.get("task_reviews"), source_tasks))
             expected_task_ids = [str(task["id"]) for task in source_tasks]
             task_entries = slice_entry.get("tasks", [])
@@ -721,6 +736,20 @@ def main() -> int:
                     "status"
                 ):
                     errors.append(f"{task_id}: task page projection differs from authoritative backlog")
+                expected_dependencies = list(source_task.get("dependencies", []))
+                expected_claim = {
+                    "owner": source_task.get("owner") or (source_task.get("claim") or {}).get("agent"),
+                    "branch": source_task.get("branch") or (source_task.get("claim") or {}).get("branch"),
+                    "base_sha": source_task.get("base_sha") or (source_task.get("claim") or {}).get("base_sha"),
+                }
+                plan_section = extract_task_section(source_body, task_id)
+                expected_plan_hash = text_sha256(plan_section) if plan_section else None
+                if task_entry.get("dependencies") != expected_dependencies:
+                    errors.append(f"{task_id}: dependency manifest differs from authoritative backlog order")
+                if task_entry.get("claim") != expected_claim:
+                    errors.append(f"{task_id}: claim manifest differs from authoritative backlog")
+                if task_entry.get("plan_section_sha256") != expected_plan_hash:
+                    errors.append(f"{task_id}: task-plan manifest hash differs from the authored slice plan")
                 task_page = site / str(task_entry.get("page") or "")
                 if not task_page.exists():
                     errors.append(f"{task_id}: missing task page {task_page}")
@@ -739,6 +768,27 @@ def main() -> int:
                 task_text = task_page.read_text(encoding="utf-8")
                 if f'data-task-page="{html.escape(task_id, quote=True)}"' not in task_text:
                     errors.append(f"{task_id}: task page is missing its task identity marker")
+                dependency_inventory = "|".join(str(item) for item in expected_dependencies)
+                if f'data-task-dependencies="{html.escape(dependency_inventory, quote=True)}"' not in task_text:
+                    errors.append(f"{task_id}: rendered dependency inventory differs from authoritative backlog")
+                rendered_dependencies = [
+                    html.unescape(value) for value in re.findall(r'data-task-dependency="([^"]+)"', task_text)
+                ]
+                if rendered_dependencies != [str(item) for item in expected_dependencies]:
+                    errors.append(f"{task_id}: rendered dependency order differs from authoritative backlog")
+                for attribute, value in (
+                    ("data-task-owner", expected_claim["owner"] or "unclaimed"),
+                    ("data-task-branch", expected_claim["branch"] or "none"),
+                    ("data-task-base-sha", expected_claim["base_sha"] or "none"),
+                ):
+                    if f'{attribute}="{html.escape(str(value), quote=True)}"' not in task_text:
+                        errors.append(f"{task_id}: rendered claim projection differs at {attribute}")
+                if (
+                    not expected_plan_hash
+                    or f'data-task-plan="{html.escape(task_id, quote=True)}"' not in task_text
+                    or f'data-task-plan-sha256="{expected_plan_hash}"' not in task_text
+                ):
+                    errors.append(f"{task_id}: authored task-plan projection is missing or altered")
                 worksheet_marker = f'data-task-worksheet="{html.escape(task_id, quote=True)}"'
                 absent_marker = f'data-task-worksheet-absent="{html.escape(task_id, quote=True)}"'
                 if expected_worksheet and worksheet_marker not in task_text:

@@ -44,14 +44,59 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Versioned entities and relations for works, passages, theories, constructs, definitions, methods, measures, contexts, claims, findings, assumptions, stakeholders, and opportunities.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Terms have stable IDs, labels, definitions, provenance, allowed relations, and deprecation rules; competing definitions are representable rather than overwritten.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-03.S01.T03|CAP-07.S04.T02"><li data-task-dependency="CAP-03.S01.T03"><a href="../CAP-03/CAP-03.S01.T03.html"><code>CAP-03.S01.T03</code></a></li><li data-task-dependency="CAP-07.S04.T02"><a href="../CAP-07/CAP-07.S04.T02.html"><code>CAP-07.S04.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>evidence</li><li>graph</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile evidence</li><li>python tools/verify.py --profile graph</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-08.S01.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><p>No task-specific Section 9 plan was found.</p></article></section>
+<section class="task-summary" data-task-plan="CAP-08.S01.T01" data-task-plan-sha256="dfc7089c08ea759daea6c5f668f9aef31b517d07dbf3806b0861098923b27a2f"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### CAP-08.S01.T01 — Implement the stable core ontology and relation vocabulary
+
+**Objective.** Versioned entities and relations for works, passages, theories, constructs, definitions, methods, measures, contexts, claims, findings, assumptions, stakeholders, and opportunities.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-03.S01.T03`, `CAP-07.S04.T02` |
+| Estimate / risk | `L` / `high` |
+| Review gate | `agent-review` |
+| Verification profiles | `evidence`, `graph` |
+
+**Expected deliverables**
+
+- Versioned entities and relations for works, passages, theories, constructs, definitions, methods, measures, contexts, claims, findings, assumptions, stakeholders, and opportunities.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-08.S01.T01`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
+3. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
+4. Preserve canonical evidence and decisions as authority; update only the versioned derivative projection/candidate relation. Test disputed, stale, cyclic, missing and rebuild cases.
+5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Terms have stable IDs, labels, definitions, provenance, allowed relations, and deprecation rules; competing definitions are representable rather than overwritten.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile evidence
+python tools/verify.py --profile graph
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-08.S01.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

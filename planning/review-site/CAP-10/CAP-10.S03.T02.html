@@ -44,14 +44,59 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Guided desktop workspace that assembles evidence packets, nearest-prior comparisons, contribution under alternative outcomes, decisions, and publication-ready export.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Missing required sections and unresolved high threats block provisional acceptance; exported dossier includes bounded status and unresolved uncertainty.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-10.S03.T01"><li data-task-dependency="CAP-10.S03.T01"><a href="CAP-10.S03.T01.html"><code>CAP-10.S03.T01</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>novelty</li><li>evidence</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile novelty</li><li>python tools/verify.py --profile evidence</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-10.S03.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><p>No task-specific Section 9 plan was found.</p></article></section>
+<section class="task-summary" data-task-plan="CAP-10.S03.T02" data-task-plan-sha256="32408846ff3f740edd0f31f15a74cf7dd8900fb02c58a5c4f4d730bb1a96bd64"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### CAP-10.S03.T02 — Build dossier assembly, review, and export workspace
+
+**Objective.** Guided desktop workspace that assembles evidence packets, nearest-prior comparisons, contribution under alternative outcomes, decisions, and publication-ready export.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-10.S03.T01` |
+| Estimate / risk | `L` / `high` |
+| Review gate | `agent-review` |
+| Verification profiles | `desktop`, `novelty`, `evidence` |
+
+**Expected deliverables**
+
+- Guided desktop workspace that assembles evidence packets, nearest-prior comparisons, contribution under alternative outcomes, decisions, and publication-ready export.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-10.S03.T02`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Implement the approved Academic Minimal route and workflow state using shared components. Cover keyboard/focus, screen reader names, light/dark, loading, empty, offline, denied, stale, error and recovery states; update and approve the reference before any intentional UX divergence.
+3. Build from an immutable snapshot into a staging destination; apply rights filters, produce checksums/manifests, verify independently, then atomically finalize. Test cancellation, disk failure and round trip.
+4. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+5. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+6. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Missing required sections and unresolved high threats block provisional acceptance; exported dossier includes bounded status and unresolved uncertainty.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile desktop
+python tools/verify.py --profile novelty
+python tools/verify.py --profile evidence
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-10.S03.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

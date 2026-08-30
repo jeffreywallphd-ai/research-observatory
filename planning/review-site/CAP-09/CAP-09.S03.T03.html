@@ -44,14 +44,182 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Candidate analysis over comparable claims/findings with evidence packet, alternative explanation, and review state.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Candidates identify whether disagreement may arise from measure/context/time/method; no candidate is promoted as a finding without human confirmation.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-09.S03.T02"><li data-task-dependency="CAP-09.S03.T02"><a href="CAP-09.S03.T02.html"><code>CAP-09.S03.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>graph</li><li>evidence</li><li>novelty</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile graph</li><li>python tools/verify.py --profile evidence</li><li>python tools/verify.py --profile novelty</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-09.S03.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><p>No task-specific Section 9 plan was found.</p></article></section>
+<section class="task-summary" data-task-plan="CAP-09.S03.T03" data-task-plan-sha256="ddf9cdd1375a3a172e02b2d2e09ed51365b2a8414def2c3b948b840a964a42cd"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### CAP-09.S03.T03 — Implement support, contradiction, qualification, and boundary candidate detection
+
+**Objective.** Candidate analysis over comparable claims/findings with evidence packet, alternative explanation, and review state.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-09.S03.T02` |
+| Estimate / risk | `L` / `high` |
+| Review gate | `method-review` |
+| Verification profiles | `graph`, `evidence`, `novelty` |
+
+**Expected deliverables**
+
+- Candidate analysis over comparable claims/findings with evidence packet, alternative explanation, and review state.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-09.S03.T03`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
+3. Implement the approved Academic Minimal route and workflow state using shared components. Cover keyboard/focus, screen reader names, light/dark, loading, empty, offline, denied, stale, error and recovery states; update and approve the reference before any intentional UX divergence.
+4. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
+5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Candidates identify whether disagreement may arise from measure/context/time/method; no candidate is promoted as a finding without human confirmation.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile graph
+python tools/verify.py --profile evidence
+python tools/verify.py --profile novelty
+```
+
+
+## 10. Slice-wide verification matrix
+
+| Verification family | Required slice evidence |
+|---|---|
+| Domain and schema | Contract examples/negative cases; invariants and state transitions; stable IDs/revisions; property tests where valuable. |
+| Adapter and integration | Real local adapters with deterministic fixtures; idempotency; concurrency; transaction/outbox/dependency behavior; replaceability test double. |
+| End-to-end | Approved workflow from entry point through durable result, source inspection, user decision and restart. |
+| Failure and recovery | At least the Section 8 cases, cancellation acknowledgement, process restart, corrupted/partial derivative repair and no canonical loss. |
+| Security, privacy and rights | Authorization denial, prompt/source injection, malformed files/payloads, secret/content redaction, egress and export policy. |
+| Accessibility and UI reference | Route/page contract, shared tokens, light/dark, keyboard, focus, screen reader, zoom/reflow and visual-baseline checks. |
+| Performance and capacity | Declared fixtures, warm/cold measurements, p50/p95, memory/disk/model footprint, cancellation and regression threshold. |
+| Cross-capability | Upstream fixture compatibility, downstream contract fixture, staleness propagation and no forbidden module dependency. |
+| Independent review | Reviewer maps every criterion to evidence, challenges tests and confirms no concealed production blocker. |
+
+Task verification commands are authoritative minimums. The slice review must also run a clean-state combined profile and any benchmark/security/reference checks described here.
+
+## 11. Performance and resource budgets
+
+| Measure | Initial production budget / qualification target |
+|---|---|
+| Pair feature evaluation | &gt;= 10,000 deterministic pairs/s for cached normalized profiles. |
+| Set build | 100,000 studies with blocking completes &lt; 15 min on reference PC; no all-pairs path. |
+| Candidate review query | p95 &lt; 500 ms for filtered queues. |
+| Recalculation | Checkpoint and resume after cancellation/restart with no duplicate assessments. |
+
+Budgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.
+
+## 12. Observability and provenance
+
+Required metrics and diagnostics:
+
+- gold comparability precision/recall
+- gate exclusion reasons
+- set stability across versions
+- candidate precision by relation type
+- human confirmation/correction
+- pair workload avoided by blocking
+
+- One trace/correlation ID links desktop action, core command, workflow job, adapter/model call, provenance activity and evidence artifact.
+- Operational telemetry is content-redacted by default. Durable scholarly provenance records source IDs/passages/hashes, schema/policy/model versions, decisions and derivation—not secret-bearing logs.
+- Support bundles require user preview and classification-aware exclusion of source text, research ideas, prompts and unpublished results.
+- Every promoted output records dependencies so CAP-03 can mark it stale precisely.
+
+## 13. Adjacent-slice handoffs
+
+- Consumes normalized evidence/entity/claim records from CAP-08/S02.
+- Produces comparison sets and relation candidates for S04 maps, S05 synthesis and CAP-10 detectors.
+- Later empirical result integration reuses rule-pack architecture with separate evidence classes.
+
+Handoffs must include portable schemas, accepted/rejected examples, failure fixtures, manifest/version rules, performance baselines and evidence IDs. An informal README-only handoff is insufficient.
+
+## 14. Migration and backward compatibility
+
+- Version every durable schema, policy, model/index/graph manifest and export profile. Use forward migrations with preflight, backup, rollback/repair evidence and test fixtures from the prior supported release.
+- Rebuilding a derivative does not mutate canonical evidence/decisions. Old and new derivative versions remain distinguishable until promotion and dependent staleness are resolved.
+- Project moves and later Windows/macOS/Linux qualification cannot rely on absolute paths or machine-specific IDs in portable records.
+- Deprecations include reader compatibility, warnings, migration telemetry and a declared removal release. Unsupported old projects open read-only with repair/export options rather than silent partial upgrade.
+
+## 15. Required slice evidence bundle
+
+- Approved capability decision packet and this approved slice plan at immutable commits.
+- Reviewed commits/diffs for all tasks and criterion-to-evidence records.
+- Unit, contract, integration, end-to-end, failure, cancellation, restart, recovery, migration and performance reports.
+- Security/privacy/rights/research-integrity review and accessibility/UI conformance evidence where applicable.
+- Schemas, migrations, API/client fixtures, model/index/graph manifests, benchmark datasets and hashes.
+- Architecture dependency report, staleness/provenance traces and adjacent-slice handoff fixture.
+- Independent slice review with approved/changes-requested/blocked outcome.
+
+## 16. Definition of Ready
+
+- Capability packet is decision-complete and approved; each decision lists options, recommendation, accepted selection and migration boundary.
+- This plan and all other capability slice plans exist, pass structural checks and are approved.
+- Required ADRs/experience changes are approved before the campaign starts.
+- Dependencies, fixtures, credentials/licenses, platform resources and human authorities are available or explicitly stubbed.
+- The first task is `READY`, no conflicting lease exists, and the campaign can plausibly run to production-ready capability completion without routine stop points.
+
+## 17. Definition of Done
+
+- Every task is `DONE` and independently approved.
+- Slice-wide verification passes from a clean state on the required platform/profile.
+- Failure, denial, cancellation, restart, migration, recovery, security, accessibility and performance paths satisfy this plan.
+- No concealed TODO, placeholder, skipped mandatory test, unreviewed architecture divergence or production blocker remains.
+- Handoff contracts/fixtures and dependency/staleness behavior are accepted by the next slice.
+- The capability campaign automatically advances to its next dependency-ready slice.
+
+## 18. Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| False contradiction | Hard comparability gates, explanatory dimensions and human promotion. |
+| Rules encode one epistemology | Mode/domain packs, editable assumptions and versioned alternatives. |
+| Pair scaling | Blocking indexes and explicit budgets. |
+
+## 19. Required ADRs and human decisions
+
+- ADR-CAP09-COMPARABILITY: dimension packs, hard gates and promotion policy.
+
+All material choices in Sections 4–5 must appear in the capability packet. Before approval, reviewers may accept the recommendation, select a documented alternative, or require more evidence. After capability start, these choices are not reopened for preference; they are reopened only when implementation evidence demonstrates infeasibility or a newly discovered consequential issue outside the approved decision envelope.
+
+## 20. Research and standards basis
+
+- **Fact or Fiction: Verifying Scientific Claims** — Scientific claim/evidence verification benchmark and rationale retrieval.
+  https://aclanthology.org/2020.emnlp-main.609/
+- **PRISMA 2020 Statement** — Systematic-review flow and reporting outputs.
+  https://doi.org/10.1136/bmj.n71
+- **PROV-O: The PROV Ontology** — Interoperable provenance entities, activities, agents and derivations.
+  https://www.w3.org/TR/prov-o/
+
+These sources support implementation choices, not universal truth claims. Production selection remains conditional on project-specific benchmarks, licenses, privacy/rights constraints and the accepted capability decision packet.
+
+## 21. AI implementation runbook
+
+1. Run `python tools/planctl.py ready CAP-09 --require-approved` and `python tools/taskctl.py validate`.
+2. Confirm the active campaign is `CAP-09`, this is the current slice, and the approved packet/plan commits match the campaign record.
+3. Load only the governing context, capability packet, this slice plan, task record, affected code and tests.
+4. Execute all tasks in dependency order. Debug, refactor and use approved fallbacks without routine human pauses.
+5. After each task, run focused verification, attach criterion-linked evidence and obtain independent task review.
+6. After the last task, run the complete Section 10 matrix from a clean/restarted state and assemble the slice evidence bundle.
+7. Request independent slice review. On approval, let `taskctl` advance the campaign automatically to the next slice.
+8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-09.S03.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

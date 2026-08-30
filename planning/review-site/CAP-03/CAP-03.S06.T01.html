@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Typed domain/API contracts and migrations for WorkflowProfile, ProjectWorkflowSelection, WorkflowStageState, and reference/version linkage.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Exactly eight built-in profiles match the approved workflow catalog and can be extended only through a versioned, reviewed profile pack.</li><li>Ordered, optional, cyclical, supporting-tool, current, completed, attention, and stale states are represented without overloading analytical job state.</li><li>Changing profile preserves prior selection and stage history and produces an impact preview rather than rewriting the record.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-03.S02.T01|CAP-00.S06.T04"><li data-task-dependency="CAP-03.S02.T01"><a href="CAP-03.S02.T01.html"><code>CAP-03.S02.T01</code></a></li><li data-task-dependency="CAP-00.S06.T04"><code>CAP-00.S06.T04</code></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li><li>python tools/taskctl.py validate</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-03.S06.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-03.S06.T01` - Define the versioned use-case and workflow-profile contracts
+<section class="task-summary" data-task-plan="CAP-03.S06.T01" data-task-plan-sha256="d0c9adff471be873b068f7dae4cf84caa5629b60d5b300d8dbce22ec850514aa"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-03.S06.T01` - Define the versioned use-case and workflow-profile contracts
 **Objective:** Represent the fourteen approved use cases, ordered/optional/cyclical steps, rationale, checkpoints, expected outputs, version, migration, and relationship to the Research Intent Contract.
 
 **Dependencies:** `CAP-03.S02.T01`, `CAP-00.S06.T04`
@@ -87,8 +87,7 @@
 python tools/verify.py --profile service
 python tools/verify.py --profile data
 python tools/taskctl.py validate
-```
-</pre></article></section>
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-03.S06.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

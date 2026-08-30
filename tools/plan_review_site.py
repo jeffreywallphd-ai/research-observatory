@@ -59,11 +59,20 @@ def extract_section(markdown: str, number: int) -> str:
 
 
 def extract_task_section(markdown: str, task_id: str) -> str:
-    pattern = re.compile(
-        rf"(?ms)^###\s+9\.\d+\s+[^\n]*`{re.escape(task_id)}`[^\n]*\n.*?(?=^###\s+9\.\d+\s+|\Z)"
-    )
-    match = pattern.search(markdown)
-    return match.group(0) if match else ""
+    heading = re.compile(rf"(?m)^###\s+(?:9\.\d+\s+)?`?{re.escape(task_id)}`?(?:\s+[-—].*)?\s*$")
+    matches = list(heading.finditer(markdown))
+    if len(matches) > 1:
+        raise ValueError(f"Task plan contains duplicate headings for {task_id}")
+    if not matches:
+        return ""
+    start = matches[0].start()
+    following = re.search(r"(?m)^###\s+", markdown[matches[0].end() :])
+    end = matches[0].end() + following.start() if following else len(markdown)
+    return markdown[start:end].rstrip() + "\n"
+
+
+def text_sha256(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
 def task_page_name(task_id: str) -> str:
@@ -509,10 +518,10 @@ def task_worksheet_html(worksheet: dict[str, str] | None, task_id: str) -> str:
             "No optional task-start worksheet is assigned. This does not block execution.</p>"
         )
     return f"""
-<details class="plan-details task-worksheet" open data-task-worksheet="{esc(task_id)}" data-worksheet-sha256="{esc(worksheet['sha256'])}">
+<details class="plan-details task-worksheet" open data-task-worksheet="{esc(task_id)}" data-worksheet-sha256="{esc(worksheet["sha256"])}">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>{esc(worksheet['path'])}</code> · <strong>SHA-256:</strong> <code>{esc(worksheet['sha256'])}</code></div>
-  <article class="plan-article">{render_markdown(worksheet['markdown'])}</article>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>{esc(worksheet["path"])}</code> · <strong>SHA-256:</strong> <code>{esc(worksheet["sha256"])}</code></div>
+  <article class="plan-article">{render_markdown(worksheet["markdown"])}</article>
 </details>"""
 
 
@@ -1457,10 +1466,9 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 wave_approved_plan_count += int(plan_status == "approved")
                 slice_id = str(slice_["id"])
                 slice_open = any(
-                    str(task.get("status")) in {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED"}
-                    for task in slice_tasks
+                    str(task.get("status")) in {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED"} for task in slice_tasks
                 )
-                task_rows = []
+                wave_task_rows: list[str] = []
                 for task in slice_tasks:
                     task_id = str(task["id"])
                     task_open = str(task.get("status")) in {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED"}
@@ -1469,22 +1477,22 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                         if task_id in authored_task_ids
                         else '<span class="decision-meta">No authored task detail page is available.</span>'
                     )
-                    task_rows.append(
+                    wave_task_rows.append(
                         f'<details class="wave-task-card" data-wave-task="{esc(task_id)}"'
-                        f'{" open" if task_open else ""}><summary><span><strong>{esc(task_id)}</strong>'
-                        f'<small>{esc(task.get("title"))}</small></span>{status_badge(task.get("status"))}</summary>'
+                        f"{' open' if task_open else ''}><summary><span><strong>{esc(task_id)}</strong>"
+                        f"<small>{esc(task.get('title'))}</small></span>{status_badge(task.get('status'))}</summary>"
                         f'<div class="wave-card-body"><p>{esc(task.get("objective"))}</p>'
-                        f'{task_link}</div></details>'
+                        f"{task_link}</div></details>"
                     )
                 slice_rows.append(
                     f'<details class="wave-slice-card" data-wave-slice="{esc(slice_id)}"'
-                    f'{" open" if slice_open else ""}><summary><span><strong>{esc(label)}</strong>'
-                    f'<small>{esc(slice_id)} · {esc(slice_.get("title"))}</small></span>'
-                    f'{status_stack(plan_status, delivery_status(slice_tasks, slice_.get("completion")))}</summary>'
+                    f"{' open' if slice_open else ''}><summary><span><strong>{esc(label)}</strong>"
+                    f"<small>{esc(slice_id)} · {esc(slice_.get('title'))}</small></span>"
+                    f"{status_stack(plan_status, delivery_status(slice_tasks, slice_.get('completion')))}</summary>"
                     f'<div class="wave-card-body"><p>Plan: {esc(plan_status)} · Delivery: {esc(status)} · '
-                    f'{len(slice_tasks)} task{"s" if len(slice_tasks) != 1 else ""}</p>'
-                    f'{f"<a class=\"text-link\" href=\"../{esc(capability_id)}/{esc(slice_id)}.html\">Open slice page</a>" if slice_id in slice_plan_meta else "<span class=\"decision-meta\">No authored slice detail page is available.</span>"}'
-                    f'<div class="wave-task-list">{"".join(task_rows)}</div></div></details>'
+                    f"{len(slice_tasks)} task{'s' if len(slice_tasks) != 1 else ''}</p>"
+                    f"{f'<a class="text-link" href="../{esc(capability_id)}/{esc(slice_id)}.html">Open slice page</a>' if slice_id in slice_plan_meta else '<span class="decision-meta">No authored slice detail page is available.</span>'}"
+                    f'<div class="wave-task-list">{"".join(wave_task_rows)}</div></div></details>'
                 )
             alias = capability.get("alias", capability_id)
             title = capability.get("title")
@@ -1723,13 +1731,12 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         for slice_file in (slice_plan_dir / cid).glob("*.md"):
             slice_file_meta, _ = read_frontmatter(slice_file)
             slice_file_by_id[str(slice_file_meta["slice_id"])] = slice_file
-        authoritative_slice_ids = [
-            str(slice_["id"]) for slice_ in backlog_capabilities.get(cid, {}).get("slices", [])
+        authoritative_slice_ids = [str(slice_["id"]) for slice_ in backlog_capabilities.get(cid, {}).get("slices", [])]
+        slice_files = [
+            slice_file_by_id[slice_id] for slice_id in authoritative_slice_ids if slice_id in slice_file_by_id
         ]
-        slice_files = [slice_file_by_id[slice_id] for slice_id in authoritative_slice_ids if slice_id in slice_file_by_id]
         slice_files.extend(
-            slice_file_by_id[slice_id]
-            for slice_id in sorted(set(slice_file_by_id) - set(authoritative_slice_ids))
+            slice_file_by_id[slice_id] for slice_id in sorted(set(slice_file_by_id) - set(authoritative_slice_ids))
         )
         slices: list[dict[str, Any]] = []
         for path in slice_files:
@@ -1737,17 +1744,23 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             page_name = f"{smeta['slice_id']}.html"
             backlog_slice = backlog_slices.get(str(smeta["slice_id"]), {})
             tasks = backlog_slice.get("tasks", [])
-            task_entries = [
-                {
-                    "task": task,
-                    "task_id": str(task["id"]),
-                    "title": task.get("title"),
-                    "page_name": task_page_name(str(task["id"])),
-                    "worksheet": task_worksheet_projection(repo, str(task["id"])),
-                    "plan_section": extract_task_section(sbody, str(task["id"])),
-                }
-                for task in tasks
-            ]
+            task_entries = []
+            for task in tasks:
+                task_id = str(task["id"])
+                plan_section = extract_task_section(sbody, task_id)
+                if not plan_section:
+                    raise ValueError(f"{path}: no authored task-plan heading found for {task_id}")
+                task_entries.append(
+                    {
+                        "task": task,
+                        "task_id": task_id,
+                        "title": task.get("title"),
+                        "page_name": task_page_name(task_id),
+                        "worksheet": task_worksheet_projection(repo, task_id),
+                        "plan_section": plan_section,
+                        "plan_section_sha256": text_sha256(plan_section),
+                    }
+                )
             slices.append(
                 {
                     "path": path,
@@ -1863,11 +1876,11 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                 task = task_entry["task"]
                 review = task.get("review") or {}
                 task_cards.append(f"""
-<a class="task-card" href="{esc(task_entry['page_name'])}" data-slice-task="{esc(task_entry['task_id'])}">
+<a class="task-card" href="{esc(task_entry["page_name"])}" data-slice-task="{esc(task_entry["task_id"])}">
   <div class="slice-card-index">{task_index}</div>
-  <div><span class="eyebrow">{esc(task_entry['task_id'])}</span><h3>{esc(task_entry['title'])}</h3>
-  <p>{esc(task.get('objective'))}</p><small>Review: {esc(review.get('result') or 'not reviewed')} · Risk: {esc(task.get('risk'))}</small></div>
-  {status_badge(task.get('status'))}
+  <div><span class="eyebrow">{esc(task_entry["task_id"])}</span><h3>{esc(task_entry["title"])}</h3>
+  <p>{esc(task.get("objective"))}</p><small>Review: {esc(review.get("result") or "not reviewed")} · Risk: {esc(task.get("risk"))}</small></div>
+  {status_badge(task.get("status"))}
 </a>""")
             slice_main = f"""
 <section class="hero compact">
@@ -1914,8 +1927,11 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                 task_id = task_entry["task_id"]
                 review = task.get("review") or {}
                 claim = task.get("claim") or {}
+                claim_owner = task.get("owner") or claim.get("agent")
+                claim_branch = task.get("branch") or claim.get("branch")
+                claim_base = task.get("base_sha") or claim.get("base_sha")
                 dependencies = []
-                for dependency_id in task.get("depends_on", []):
+                for dependency_id in task.get("dependencies", []):
                     dependency_id = str(dependency_id)
                     location = task_locations.get(dependency_id)
                     if location and dependency_id in authored_task_ids:
@@ -1924,12 +1940,14 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                             if location["capability_id"] == cid
                             else f"../{location['capability_id']}/{task_page_name(dependency_id)}"
                         )
-                        dependencies.append(f'<li><a href="{esc(href)}"><code>{esc(dependency_id)}</code></a></li>')
+                        dependencies.append(
+                            f'<li data-task-dependency="{esc(dependency_id)}"><a href="{esc(href)}"><code>{esc(dependency_id)}</code></a></li>'
+                        )
                     else:
-                        dependencies.append(f"<li><code>{esc(dependency_id)}</code></li>")
-                task_prev = (
-                    sl["task_entries"][task_index - 1]["page_name"] if task_index > 0 else sl["page_name"]
-                )
+                        dependencies.append(
+                            f'<li data-task-dependency="{esc(dependency_id)}"><code>{esc(dependency_id)}</code></li>'
+                        )
+                task_prev = sl["task_entries"][task_index - 1]["page_name"] if task_index > 0 else sl["page_name"]
                 task_next = (
                     sl["task_entries"][task_index + 1]["page_name"]
                     if task_index + 1 < len(sl["task_entries"])
@@ -1937,22 +1955,22 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                 )
                 task_main = f"""
 <section class="hero compact" data-task-page="{esc(task_id)}">
-  <div class="hero-top"><div><span class="eyebrow">{esc(task_id)} · task {task_index + 1} of {len(sl['task_entries'])}</span><h1>{esc(task_entry['title'])}</h1><p>{esc(task.get('objective'))}</p></div>{status_badge(task.get('status'))}</div>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>{esc(smeta.get('wave'))}</dd></div><div><dt>Slice</dt><dd><a href="{esc(sl['page_name'])}">{esc(sl['alias'])}</a></dd></div><div><dt>Risk / review</dt><dd>{esc(task.get('risk'))} / {esc(task.get('review_gate'))}</dd></div><div><dt>Latest review</dt><dd>{esc(review.get('result') or 'not reviewed')}</dd></div></dl>
+  <div class="hero-top"><div><span class="eyebrow">{esc(task_id)} · task {task_index + 1} of {len(sl["task_entries"])}</span><h1>{esc(task_entry["title"])}</h1><p>{esc(task.get("objective"))}</p></div>{status_badge(task.get("status"))}</div>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>{esc(smeta.get("wave"))}</dd></div><div><dt>Slice</dt><dd><a href="{esc(sl["page_name"])}">{esc(sl["alias"])}</a></dd></div><div><dt>Risk / review</dt><dd>{esc(task.get("risk"))} / {esc(task.get("review_gate"))}</dd></div><div><dt>Latest review</dt><dd>{esc(review.get("result") or "not reviewed")}</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
-  <h3>Expected deliverables</h3>{task_values_html(task.get('deliverables'), empty='No deliverables recorded.')}
-  <h3>Acceptance criteria</h3>{task_values_html(task.get('acceptance_criteria'), empty='No acceptance criteria recorded.')}
-  <h3>Dependencies</h3>{'<ul class="gate-criteria">' + ''.join(dependencies) + '</ul>' if dependencies else '<p>None</p>'}
+  <h3>Expected deliverables</h3>{task_values_html(task.get("deliverables"), empty="No deliverables recorded.")}
+  <h3>Acceptance criteria</h3>{task_values_html(task.get("acceptance_criteria"), empty="No acceptance criteria recorded.")}
+  <h3>Dependencies</h3>{'<ul class="gate-criteria" data-task-dependencies="' + esc("|".join(str(item) for item in task.get("dependencies", []))) + '">' + "".join(dependencies) + "</ul>" if dependencies else '<p data-task-dependencies="">None</p>'}
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
-  <h3>Verification profiles</h3>{task_values_html(task.get('verification_profiles'), empty='No verification profile recorded.')}
-  <h3>Commands</h3>{task_values_html(task.get('verification_commands'), empty='No verification command recorded.')}
-  <p><strong>Claim projection:</strong> owner <code>{esc(claim.get('agent') or task.get('owner') or 'unclaimed')}</code> · branch <code>{esc(claim.get('branch') or 'none')}</code> · base <code>{esc(claim.get('base_sha') or 'none')}</code></p>
+  <h3>Verification profiles</h3>{task_values_html(task.get("verification_profiles"), empty="No verification profile recorded.")}
+  <h3>Commands</h3>{task_values_html(task.get("verification_commands"), empty="No verification command recorded.")}
+  <p data-task-claim="{esc(task_id)}" data-task-owner="{esc(claim_owner or "unclaimed")}" data-task-branch="{esc(claim_branch or "none")}" data-task-base-sha="{esc(claim_base or "none")}"><strong>Claim projection:</strong> owner <code>{esc(claim_owner or "unclaimed")}</code> · branch <code>{esc(claim_branch or "none")}</code> · base <code>{esc(claim_base or "none")}</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article">{render_markdown(task_entry['plan_section']) if task_entry['plan_section'] else '<p>No task-specific Section 9 plan was found.</p>'}</article></section>
+<section class="task-summary" data-task-plan="{esc(task_id)}" data-task-plan-sha256="{esc(task_entry["plan_section_sha256"])}"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article">{render_markdown(task_entry["plan_section"])}</article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-{task_worksheet_html(task_entry['worksheet'], task_id)}
+{task_worksheet_html(task_entry["worksheet"], task_id)}
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 {task_review_history_html(task)}
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="{esc(task_prev)}">Previous</a><a class="button button-primary" href="{esc(task_next)}">Next</a></nav>
@@ -2012,6 +2030,16 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                                 "title": task_entry["title"],
                                 "status": task_entry["task"].get("status"),
                                 "page": f"{cid}/{task_entry['page_name']}",
+                                "dependencies": list(task_entry["task"].get("dependencies", [])),
+                                "claim": {
+                                    "owner": task_entry["task"].get("owner")
+                                    or (task_entry["task"].get("claim") or {}).get("agent"),
+                                    "branch": task_entry["task"].get("branch")
+                                    or (task_entry["task"].get("claim") or {}).get("branch"),
+                                    "base_sha": task_entry["task"].get("base_sha")
+                                    or (task_entry["task"].get("claim") or {}).get("base_sha"),
+                                },
+                                "plan_section_sha256": task_entry["plan_section_sha256"],
                                 "worksheet": (
                                     {
                                         "path": task_entry["worksheet"]["path"],

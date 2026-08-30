@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-05.S01.T02"><li data-task-dependency="CAP-05.S01.T02"><a href="CAP-05.S01.T02.html"><code>CAP-05.S01.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li><li>service</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S01.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S01.T03` - Create acquisition queue, conflict, and entitlement placeholders
+<section class="task-summary" data-task-plan="CAP-05.S01.T03" data-task-plan-sha256="d95ed4e114d457056c9074649b757e4386bda6f1d0325c9e164993698ddd6c8f"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S01.T03` - Create acquisition queue, conflict, and entitlement placeholders
 **Objective:** Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.
 
 **Dependencies:** `CAP-05.S01.T02`

@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Core tables for projects, scholarly records, documents, workflows, evidence, ontologies, decisions, provenance, and settings.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Foreign keys and integrity constraints are enabled; concurrent read/write smoke tests pass; schema includes stable IDs and timestamps without storing derived blobs in arbitrary tables.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-02.S01.T01|CAP-03.S01.T01"><li data-task-dependency="CAP-02.S01.T01"><a href="CAP-02.S01.T01.html"><code>CAP-02.S01.T01</code></a></li><li data-task-dependency="CAP-03.S01.T01"><a href="../CAP-03/CAP-03.S01.T01.html"><code>CAP-03.S01.T01</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile data</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-02.S02.T01" data-task-owner="codex" data-task-branch="codex/w1-windows-local-runtime" data-task-base-sha="538683ea3c5797b1bd9dae77fd5f40d12995403f"><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>codex/w1-windows-local-runtime</code> · base <code>538683ea3c5797b1bd9dae77fd5f40d12995403f</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-02.S02.T01` - Create the initial normalized SQLite schema in WAL mode
+<section class="task-summary" data-task-plan="CAP-02.S02.T01" data-task-plan-sha256="8ce2f43abfc13e0838d3aaa6ed0c963f6af07a45ebc5d667e3d81fa23d7c4792"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-02.S02.T01` - Create the initial normalized SQLite schema in WAL mode
 **Objective:** Core tables for projects, scholarly records, documents, workflows, evidence, ontologies, decisions, provenance, and settings.
 
 **Dependencies:** `CAP-02.S01.T01`, `CAP-03.S01.T01`
@@ -85,8 +85,7 @@
 
 ```text
 python tools/verify.py --profile data
-```
-</pre></article></section>
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-02.S02.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

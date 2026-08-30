@@ -44,14 +44,44 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Assignments, reviewer queues, blinded stages, comments, mentions, due dates, notifications, and conflict states.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Concurrent edits use explicit version/conflict handling; notifications do not leak protected content; offline caches respect updated access.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-12.S04.T01"><li data-task-dependency="CAP-12.S04.T01"><a href="CAP-12.S04.T01.html"><code>CAP-12.S04.T01</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>server</li><li>desktop</li><li>evidence</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile server</li><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile evidence</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-12.S04.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><p>No task-specific Section 9 plan was found.</p></article></section>
+<section class="task-summary" data-task-plan="CAP-12.S04.T02" data-task-plan-sha256="a61d8a0e6746d7121e3ee623486096a400b65d15f3a36bb45f79e938b498afb1"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### CAP-12.S04.T02 — Implement collaborative screening, coding, verification, and task assignment
+
+**Objective.** Assignments, reviewer queues, blinded stages, comments, mentions, due dates, notifications, and conflict states.
+
+| Control | Value |
+|---|---|
+| Dependencies | CAP-12.S04.T01 |
+| Estimate / risk | `L` / `high` |
+| Review gate | `agent-review` |
+| Verification profiles | server, desktop, evidence |
+
+**Expected deliverables**
+
+- Assignments, reviewer queues, blinded stages, comments, mentions, due dates, notifications, and conflict states.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability packet, approved slice plan, dependencies, affected portable contracts and criterion-to-evidence IDs. Add failing tests for the expected path and at least one material denial, failure, cancellation, restart, migration or boundary condition before production code.
+2. Define or revise portable domain schemas and invariants first. Validate positive and negative fixtures; keep provider, OS, database, cluster, model and UI framework objects behind adapters.
+3. Implement the smallest end-to-end path through domain service, repository/adapter, durable workflow and approved UI/API surface. Make authorization, rights, transaction/idempotency, cancellation and restart boundaries explicit.
+4. Pin dependency/runtime/model/provider versions and record manifests. Treat external and model outputs as untrusted candidate state; validate before canonical persistence or execution.
+5. Exercise representative scale, degraded/fallback behavior and relevant platform/deployment profiles. Record latency, resource/cost and quality evidence against declared budgets.
+6. Test security, privacy, rights, research-integrity and accessibility boundaries. A failure must leave canonical state unchanged or exactly recoverable, with actionable user-visible status and provenance.
+7. Run focused tests plus every declared verification profile. Capture machine-readable reports, artifacts, screenshots/traces where applicable and hashes tied to the reviewed commit.
+8. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed blockers. Do not self-approve or advance until the review passes.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Concurrent edits use explicit version/conflict handling; notifications do not leak protected content; offline caches respect updated access.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-12.S04.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

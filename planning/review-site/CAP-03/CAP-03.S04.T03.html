@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Desktop task center showing workflow graph, queued/running/waiting/failed states, resource use, logs, decisions, retry, and cancel.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>User can distinguish active compute from waiting-for-review; cancellation reaches a safe point and reports retained artifacts; human approval resumes the exact workflow version.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-03.S04.T02"><li data-task-dependency="CAP-03.S04.T02"><a href="CAP-03.S04.T02.html"><code>CAP-03.S04.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-03.S04.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-03.S04.T03` - Build task center, progress, cancellation, and human-gate UI
+<section class="task-summary" data-task-plan="CAP-03.S04.T03" data-task-plan-sha256="f3e17c15650a871224a7a0f15420eed14751cb9a4e77130a265c38b93462dd1f"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-03.S04.T03` - Build task center, progress, cancellation, and human-gate UI
 **Objective:** Desktop task center showing workflow graph, queued/running/waiting/failed states, resource use, logs, decisions, retry, and cancel.
 
 **Dependencies:** `CAP-03.S04.T02`
