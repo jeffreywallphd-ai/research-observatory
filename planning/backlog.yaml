@@ -30909,9 +30909,9 @@ wave_amendments:
         until amendment adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A05.B00
-    status: CHANGES_REQUESTED
+    status: REVIEW
     implementer: codex
-    implementation_commit: b47c5e81860df04cce886ede9e614d68c22c7119
+    implementation_commit: cf8a2568a29766c27a0f73cfb9036d86f91b62ac
     submission_branch: codex/w1-windows-local-runtime
     scope_addenda:
     - path: planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json
@@ -30919,16 +30919,32 @@ wave_amendments:
       introduction_commit: 55070f5c3222891e21cd66021adb61d8322097e5
     evidence:
     - type: criterion-manifest
-      path: artifacts/evidence/W1.A05.B00.json
-      sha256: 97a037be730ed1f3d7d78472a73331b8514ae931d02ae6f16618380c75f91632
-      commit: b47c5e81860df04cce886ede9e614d68c22c7119
-      recorded_at: '2026-08-30T11:46:15+00:00'
+      path: artifacts/evidence/W1.A05.B00.remediation-01.json
+      sha256: 59f59c03433b6bef3ddaeda5151a50fe0de83404c2592ed38a643297708613d6
+      commit: cf8a2568a29766c27a0f73cfb9036d86f91b62ac
+      recorded_at: '2026-08-30T12:45:59+00:00'
     review:
-      reviewer: w1-a05-b00-independent-reviewer
-      result: changes-requested
-      reviewed_at: '2026-08-30T12:18:50+00:00'
-      notes: 'R01 ledger artifacts/evidence/W1.A05.B00.review-01.json (sha256 ec71791a7bebea388f8b75af15622201cd4e959c709605f18a472dafeda1cb83):
-        W1-A05-B00-R01-F01 requires synthetic pre-supersession witness coverage and post-supersession no-read assertions.'
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+    attempts:
+    - id: R01
+      implementer: codex
+      implementation_commit: b47c5e81860df04cce886ede9e614d68c22c7119
+      submission_branch: codex/w1-windows-local-runtime
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W1.A05.B00.json
+        sha256: 97a037be730ed1f3d7d78472a73331b8514ae931d02ae6f16618380c75f91632
+        commit: b47c5e81860df04cce886ede9e614d68c22c7119
+        recorded_at: '2026-08-30T11:46:15+00:00'
+      review:
+        reviewer: w1-a05-b00-independent-reviewer
+        result: changes-requested
+        reviewed_at: '2026-08-30T12:18:50+00:00'
+        notes: 'R01 ledger artifacts/evidence/W1.A05.B00.review-01.json (sha256 ec71791a7bebea388f8b75af15622201cd4e959c709605f18a472dafeda1cb83):
+          W1-A05-B00-R01-F01 requires synthetic pre-supersession witness coverage and post-supersession no-read assertions.'
   campaign: null
   tasks: []
   completion:

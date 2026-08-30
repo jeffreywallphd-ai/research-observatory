@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.B00",
+  "commit": "cf8a2568a29766c27a0f73cfb9036d86f91b62ac",
+  "baseCommit": "13a37a5dba45e9f853121638e0c67f0e6557093b",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A05.B00.json",
+    "sha256": "97a037be730ed1f3d7d78472a73331b8514ae931d02ae6f16618380c75f91632",
+    "commit": "b47c5e81860df04cce886ede9e614d68c22c7119"
+  },
+  "changedFiles": [
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 99 taskctl schema and workflow tests passed on exact candidate cf8a2568a29766c27a0f73cfb9036d86f91b62ac in 312.381 seconds. The replay includes synthetic pre-supersession witness rejection, post-supersession no-read behavior for present or missing inert paths, historic submission fixtures without access to the protected live witness, and remediation-scope selection from the frozen evidence base."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_reference_check tests.foundation.test_planctl_amendments",
+      "exitCode": 0,
+      "result": "All 15 UI-reference and ECR/planctl authority tests passed on the exact candidate in 153.008 seconds."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 168 governed Python files on the exact candidate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0004 --require-approved",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 359-task, 12-gate backlog passed; generated backlog views passed; the 488-page planning site passed; and ECR-0004 remained approved and history-bound."
+    },
+    {
+      "command": "git diff --check 13a37a5dba45e9f853121638e0c67f0e6557093b cf8a2568a29766c27a0f73cfb9036d86f91b62ac --; git diff --name-only 13a37a5dba45e9f853121638e0c67f0e6557093b cf8a2568a29766c27a0f73cfb9036d86f91b62ac --",
+      "exitCode": 0,
+      "result": "Patch hygiene passed and the remediation delta contains exactly the two authorized paths declared in changedFiles."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R01 finding W1-A05-B00-R01-F01 is reproduced and closed without changing terminal W1.A04 production behavior: once exact supersession authority is present, only the inert historical path is admitted and its bytes are not opened.",
+        "Pre-supersession missing, malformed, and hash/identity-mismatched evidence still fails closed using fully synthetic fixtures; the protected repository witness is no longer used as test input."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The amendment, task, slice, dependency, estimate, and ordinary-task projections remain unchanged from the reviewed submission; remediation touches only taskctl scope calculation and its focused tests.",
+        "The strict-descendant resubmission scope is calculated from the frozen remediation evidence base while the base must remain between the prior candidate and new candidate in Git ancestry."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "RO-UI-ACADEMIC-MINIMAL-1.4 and its approval, manifest, hashes, generated pages, dynamic inventory, sign-in modes, and security semantics are byte-unchanged by the remediation.",
+        "The exact 15-test UI-reference and planctl suite passes at the remediation candidate."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "W1 remains PAUSED at Wave scope; W1.A05 remains CHANGES_REQUESTED before resubmission; no campaign or tasks are materialized; and no product/runtime path changed.",
+        "The remediation-base rule prevents already reviewed submission/review transition commits from being misclassified as the new implementation delta without weakening ancestry, manifest changed-file truth, or authorized-path enforcement."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The complete selected schema/workflow, UI-reference, planctl, quality, backlog, generated-view, planning-site, ECR, and diff-hygiene checks pass at the exact remediation candidate.",
+        "R01 remains preserved in artifacts/evidence/W1.A05.B00.review-01.json and R02 must replay W1-A05-B00-R01-F01 plus the two-path incremental risk boundary before B00 can be approved."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 identified one contradictory compatibility fixture at the terminal historical-witness boundary. The remediation replaces live protected-witness reads with synthetic legacy fixtures, proves terminal no-read semantics, and corrects the generic resubmission scope boundary so already reviewed workflow-transition commits do not become the remediation delta. The selected checks replay the complete affected taskctl/schema surface plus UI/ECR authority and full governed Python quality.",
+    "deferred": "Windows-password parity, Windows Hello OS behavior, versioned sign-in configuration, renderer implementation, accessibility interaction, and end-to-end lock/restart/recovery behavior remain assigned to W1.A05.T01-T04 and their independent slice and W1-exit reviews."
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-control-security-experience-remediation-review",
+    "openFindingIds": [
+      "W1-A05-B00-R01-F01"
+    ],
+    "note": "Replay R01 finding W1-A05-B00-R01-F01 against exact candidate cf8a2568a29766c27a0f73cfb9036d86f91b62ac and the incremental 13a37a5dba45e9f853121638e0c67f0e6557093b..cf8a2568a29766c27a0f73cfb9036d86f91b62ac risk boundary. Confirm that terminal witness handling is no-read, pre-supersession denials remain synthetic and fail closed, prior R01 history is preserved, and remediation scope starts at the frozen evidence base without weakening ancestry or authorized-path checks."
+  }
+}
