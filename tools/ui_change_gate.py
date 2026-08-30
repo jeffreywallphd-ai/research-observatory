@@ -66,30 +66,6 @@ EXPECTED_IGNORED_SUFFIXES = {
     ".test.ts",
     ".test.tsx",
 }
-MAINTENANCE_PRODUCT_ROOTS = (
-    "apps/",
-    "modules/",
-    "packages/",
-    "packaging/",
-    "services/",
-    "workers/",
-)
-MAINTENANCE_PRODUCT_PATHS = frozenset(
-    {
-        ".node-version",
-        ".nvmrc",
-        ".python-version",
-        "Cargo.lock",
-        "Cargo.toml",
-        "package.json",
-        "pnpm-lock.yaml",
-        "pnpm-workspace.yaml",
-        "pyproject.toml",
-        "runtime-versions.json",
-        "rust-toolchain.toml",
-        "uv.lock",
-    }
-)
 GATE_CONTROL_PATHS = frozenset(
     {
         ".github/pull_request_template.md",
@@ -114,6 +90,15 @@ GATE_CONTROL_PATHS = frozenset(
         "verification/extensions/desktop-ui.json",
         "verification-profiles.json",
     }
+)
+MAINTENANCE_CONTROL_PATHS = GATE_CONTROL_PATHS | frozenset(
+    {
+        "tests/desktop/test_ui_conformance.py",
+        "tests/foundation/test_ui_change_gate.py",
+    }
+)
+MAINTENANCE_RECORD_PATH = re.compile(
+    r"^planning/governance-migrations/GOV-MAINT-[0-9]{4}(?:\.review-R[0-9]{2})?\.json$"
 )
 APPLICATION_ACTIVATION_PATHS = frozenset(
     {
@@ -177,11 +162,11 @@ def canonical_agent_identity(value: object, *, reviewer: bool = False) -> str | 
     return canonical or None
 
 
-def is_maintenance_product_path(path: str) -> bool:
-    return path in MAINTENANCE_PRODUCT_PATHS or path.startswith(MAINTENANCE_PRODUCT_ROOTS)
+def is_maintenance_control_path(path: str) -> bool:
+    return path in MAINTENANCE_CONTROL_PATHS or MAINTENANCE_RECORD_PATH.fullmatch(path) is not None
 
 
-def maintenance_product_semantics_changed(repo: Path, predecessor: str, candidate: str, path: str) -> bool:
+def maintenance_path_semantics_changed(repo: Path, predecessor: str, candidate: str, path: str) -> bool:
     try:
         before = blob(repo, predecessor, path)
         after = blob(repo, candidate, path)
@@ -559,15 +544,16 @@ def reviewed_preimplementation_maintenance_errors(
             prior_review_commit = introduction
             final_review_introduction = introduction
         final_candidate = resolve_commit(repo, str(attempts[-1].get("reviewedCommit")))
-        net_product_paths = sorted(
+        net_non_control_paths = sorted(
             path
             for path in changed_paths(repo, predecessor, final_candidate)
-            if is_maintenance_product_path(path)
-            and maintenance_product_semantics_changed(repo, predecessor, final_candidate, path)
+            if not is_maintenance_control_path(path)
+            and maintenance_path_semantics_changed(repo, predecessor, final_candidate, path)
         )
-        if net_product_paths:
+        if net_non_control_paths:
             errors.append(
-                "pre-UI gate maintenance must be control-only and cannot retain product paths: " + net_product_paths[0]
+                "pre-UI gate maintenance must be control-only and cannot retain product paths: "
+                + net_non_control_paths[0]
             )
         if final_review_introduction is None or blob(repo, head, record_path) != blob(
             repo, final_review_introduction, record_path
