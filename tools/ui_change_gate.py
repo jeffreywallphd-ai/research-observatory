@@ -67,10 +67,28 @@ EXPECTED_IGNORED_SUFFIXES = {
     ".test.tsx",
 }
 MAINTENANCE_PRODUCT_ROOTS = (
-    "apps/desktop/src/",
-    "modules/ui/",
-    "packages/ui-components/",
-    "packages/ui-tokens/",
+    "apps/",
+    "modules/",
+    "packages/",
+    "packaging/",
+    "services/",
+    "workers/",
+)
+MAINTENANCE_PRODUCT_PATHS = frozenset(
+    {
+        ".node-version",
+        ".nvmrc",
+        ".python-version",
+        "Cargo.lock",
+        "Cargo.toml",
+        "package.json",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+        "pyproject.toml",
+        "runtime-versions.json",
+        "rust-toolchain.toml",
+        "uv.lock",
+    }
 )
 GATE_CONTROL_PATHS = frozenset(
     {
@@ -160,7 +178,7 @@ def canonical_agent_identity(value: object, *, reviewer: bool = False) -> str | 
 
 
 def is_maintenance_product_path(path: str) -> bool:
-    return path.startswith(MAINTENANCE_PRODUCT_ROOTS)
+    return path in MAINTENANCE_PRODUCT_PATHS or path.startswith(MAINTENANCE_PRODUCT_ROOTS)
 
 
 def maintenance_product_semantics_changed(repo: Path, predecessor: str, candidate: str, path: str) -> bool:
