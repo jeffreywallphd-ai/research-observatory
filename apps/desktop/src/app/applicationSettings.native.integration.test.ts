@@ -127,11 +127,11 @@ nativeDescribe("native application-lock JSON through the production renderer con
     ]);
   });
 
-  it("reconciles a simulated lost commit response from native committed status", async () => {
+  it("reconciles a simulated lost commit response from the native idempotent receipt", async () => {
     const transport = new NativeQueueTransport([
       witness.enablePassword.prepared,
       new Error("simulated response loss"),
-      witness.enablePassword.statusAfterCommit,
+      witness.enablePassword.committed,
     ]);
     const result = await new ApplicationSettingsController(transport).prepare({
       mode: "windows-password",
@@ -143,7 +143,7 @@ nativeDescribe("native application-lock JSON through the production renderer con
     expect(transport.commands).toEqual([
       "application_sign_in_transition_prepare",
       "application_sign_in_transition_commit",
-      "application_lock_status",
+      "application_sign_in_transition_commit",
     ]);
   });
 });

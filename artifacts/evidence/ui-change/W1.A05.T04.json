@@ -27,17 +27,22 @@
     {
       "command": "npm test --prefix apps/desktop && apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false && node apps/desktop/scripts/lint.mjs",
       "result": "passed",
-      "scope": "All 89 ordinary desktop tests passed with three native-fixture tests deliberately skipped outside their harness; strict TypeScript and desktop lint passed. The focused sign-in surface covers modes, provider states, native proof-before-warning, cancellation, overlap denial, response-loss reconciliation, locked secrecy, explicit recovery, and the exact v1.4 metadata activation."
+      "scope": "All 91 ordinary desktop tests passed with three native-fixture tests deliberately skipped outside their harness; strict TypeScript and desktop lint passed. The focused sign-in surface covers modes, provider states, native proof-before-warning, cancellation, overlap denial, exact-target and idempotent-receipt response-loss reconciliation, locked secrecy, explicit recovery, and the exact v1.4 metadata activation."
     },
     {
       "command": "node apps/desktop/scripts/application-lock-renderer-integration.mjs",
       "result": "passed",
-      "scope": "An ignored, explicitly invoked Rust witness exercised the real ApplicationLockManager and PolicyStore for enable, commit, cancel, unavailable Hello, invalid-policy denial, and explicit recovery. Its production serde JSON passed all three production TypeScript decoder/controller integration tests."
+      "scope": "An ignored, explicitly invoked Rust witness exercised the real ApplicationLockManager and PolicyStore for enable, commit, cancel, unavailable Hello, invalid-policy denial, explicit recovery, and same-handle receipt replay. Its production serde JSON passed all three production TypeScript decoder/controller integration tests."
     },
     {
       "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests && npm run build --prefix apps/desktop",
       "result": "passed",
-      "scope": "All 32 applicable native application-lock tests passed with one renderer witness separately invoked, and the assembled product/reference desktop build completed with the distinct Application Settings implementation and exact v1.4 reference binding."
+      "scope": "All 25 focused native application-lock tests passed with one renderer witness separately invoked, and the assembled product/reference desktop build completed with the distinct Application Settings implementation and exact v1.4 reference binding."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "result": "passed",
+      "scope": "The built-product browser harness preserved the open project and unsaved Research Intent position across the Application Settings detour, restored the actual top-bar, sidebar, and command initiators, kept locked recovery background content inert, suppressed all global shortcuts while the alertdialog owned focus, and produced no deferred shortcut dialog after unlock."
     }
   ],
   "implementationScope": "Implement the already approved Academic Minimal v1.4 Application Settings Security & sign-in destination. The renderer presents native policy state, provider availability, preview, explicit recovery, proof-gated warning, deliberate commit, bounded locked output, and status reconciliation without receiving credentials, inventing authority, falling back between providers, or changing Project Settings and project/workflow protection."
