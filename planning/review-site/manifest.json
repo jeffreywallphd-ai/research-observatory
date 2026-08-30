@@ -18821,7 +18821,7 @@
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -18838,12 +18838,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "w1-a05-b00-independent-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-30T12:18:50+00:00",
+            "notes": "R01 ledger artifacts/evidence/W1.A05.B00.review-01.json (sha256 ec71791a7bebea388f8b75af15622201cd4e959c709605f18a472dafeda1cb83): W1-A05-B00-R01-F01 requires synthetic pre-supersession witness coverage and post-supersession no-read assertions."
           },
-          "current_status": "REVIEW"
+          "current_status": "CHANGES_REQUESTED"
         }
       ],
       "slice_contributions": [
