@@ -674,6 +674,18 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
         if proposal is None or review is None:
             raise ValueError(f"{change_id} must declare canonical-proposal and human-review files")
 
+        governed_experience = dict(packet.get("governedExperience") or {})
+        governed_experience_files: list[dict[str, Any]] = []
+        for item in governed_experience.get("files") or []:
+            relative = str(item.get("path") or "")
+            source = repository_file(repo, relative, label=f"{change_id} governed experience")
+            actual = sha256(source)
+            expected = str(item.get("sha256") or "").lower()
+            if actual != expected:
+                raise ValueError(f"{change_id} governed experience hash mismatch: {relative}")
+            governed_experience_files.append({"path": relative, "sha256": actual})
+        governed_experience["files"] = governed_experience_files
+
         packet_relative = packet_path.relative_to(repo).as_posix()
         packet_hash = sha256(packet_path)
         approval_tuple = approval_by_change.get(change_id)
@@ -749,12 +761,16 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
                 "approved_at": (approval or {}).get("approvedAt"),
                 "authority": packet.get("authority") or {},
                 "authority_chain": packet.get("authorityChain") or {},
+                "migration_authority": packet.get("migrationAuthority") or {},
                 "effective_base": (approval or {}).get("effectiveBase") or {},
                 "bootstrap_unit": bootstrap_id,
                 "bootstrap_attempts": bootstrap_attempts,
                 "scope_addenda": scope_addenda,
+                "slice_contributions": packet.get("sliceContributions") or [],
                 "authorized_task_ids": packet.get("authorizedTaskIds") or [],
                 "task_inventory": packet.get("taskInventory") or [],
+                "refactor_budget": packet.get("refactorBudget") or {},
+                "governed_experience": governed_experience,
                 "task_reviews": [task_review_projection(task) for task in (amendment or {}).get("tasks", [])],
                 "exit_review": amendment_exit_projection(amendment or {"id": packet.get("proposedAmendmentId")}),
                 "adoption_checkpoints": amendment_adoption_checkpoints(amendment or {}, waves),
@@ -1224,6 +1240,30 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                         "Adopted predecessor authority; preserved unchanged",
                     )
                 )
+            for reservation in authority_chain.get("reservedAmendments") or []:
+                approval_reference = reservation.get("approvalReference") or {}
+                supersession = reservation.get("supersededByMigration") or {}
+                enabler_authority_rows.append(
+                    (
+                        f"{reservation.get('id')} · reserved",
+                        reservation.get("packetCommit"),
+                        approval_reference.get("introductionCommit") or approval_reference.get("sha256"),
+                        (
+                            "Approved but unmaterialized; superseded by "
+                            f"{supersession.get('id') or 'recorded migration'} and never executable here"
+                        ),
+                    )
+                )
+            migration_authority = record.get("migration_authority") or {}
+            if migration_authority:
+                enabler_authority_rows.append(
+                    (
+                        migration_authority.get("id") or "Migration authority",
+                        migration_authority.get("commit"),
+                        migration_authority.get("sha256"),
+                        "Post-migration governance authority; does not grant product execution",
+                    )
+                )
         else:
             enabler_authority_rows = [
                 (
@@ -1255,8 +1295,45 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         task_badge = "authorized" if current_is_approved else "pending"
         task_rows = "".join(
             f"<li><span><strong>{esc(task.get('id'))} — {esc(task.get('title'))}</strong>"
-            f"<small>{esc(task.get('objective'))}</small></span>{status_badge(task_badge)}</li>"
+            f"<small>{esc(task.get('objective'))}</small>"
+            f"<small>Estimate {esc(task.get('estimate') or 'not declared')} · dependencies: "
+            f"{esc(', '.join(str(item) for item in task.get('dependencies', [])) or 'none')}</small>"
+            f"</span>{status_badge(task_badge)}</li>"
             for task in record["task_inventory"]
+        )
+        enabler_slice_rows = "".join(
+            f'<details class="plan-details"><summary>{esc(item.get("id"))} — '
+            f"{esc(item.get('title'))}</summary><p>{esc(item.get('objective'))}</p>"
+            f"<p><strong>Work type:</strong> {esc(item.get('workType'))}. "
+            f"<strong>Tasks:</strong> {esc(', '.join(str(task_id) for task_id in item.get('taskIds', [])))}. "
+            f"<strong>Refactor tasks:</strong> "
+            f"{esc(', '.join(str(task_id) for task_id in item.get('refactorTaskIds', [])) or 'none')}.</p>"
+            f'<ul class="gate-criteria">'
+            f"{''.join(f'<li>{esc(criterion)}</li>' for criterion in item.get('acceptanceCriteria', []))}"
+            f"</ul></details>"
+            for item in record.get("slice_contributions", [])
+        )
+        refactor_budget = record.get("refactor_budget") or {}
+        refactor_baseline = refactor_budget.get("baseline") or {}
+        refactor_policy = refactor_budget.get("limitPolicy") or {}
+        refactor_rows = "".join(
+            f"<tr><th><code>{esc(item.get('taskId'))}</code></th><td>{esc(item.get('estimate'))}</td>"
+            f"<td>{esc(item.get('points'))}</td></tr>"
+            for item in refactor_budget.get("refactorAllocations", [])
+        )
+        refactor_policy_detail = (
+            f"Owner-directed exception by {esc(refactor_policy.get('authorizedBy'))}: "
+            f"{esc(refactor_policy.get('authorization'))} Scope: "
+            f"{esc(', '.join(str(task_id) for task_id in refactor_policy.get('scopeTaskIds', [])))}. "
+            f"Rationale: {esc(refactor_policy.get('rationale'))}"
+            if refactor_policy.get("mode") == "owner-directed-wave-exception"
+            else f"Standard refactor limit: {esc(refactor_policy.get('limitPercent'))}%"
+        )
+        governed_experience = record.get("governed_experience") or {}
+        governed_experience_rows = "".join(
+            f'<li><a href="{esc((repo / str(item.get("path"))).resolve().as_uri())}">'
+            f"{esc(item.get('path'))}</a> — <code>{esc(item.get('sha256'))}</code></li>"
+            for item in governed_experience.get("files", [])
         )
         task_count = len(record["task_inventory"])
         task_completion = (
@@ -1319,21 +1396,41 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         )
         detail_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(record["amendment_id"])} · {esc(record["target_wave"])}</span><h1>{esc(record["change_request_id"])} — {esc(proposal_meta.get("title"))}</h1></div>{status_badge(record["approval_status"])}</div>
-  <p>{esc(record["classification"])}. This page preserves the distinction between authorized scope and executable state.</p>
+  <div class="hero-top"><div><span class="eyebrow">{esc(record["amendment_id"])} · {
+            esc(record["target_wave"])
+        }</span><h1>{esc(record["change_request_id"])} — {esc(proposal_meta.get("title"))}</h1></div>{
+            status_badge(record["approval_status"])
+        }</div>
+  <p>{
+            esc(record["classification"])
+        }. This page preserves the distinction between authorized scope and executable state.</p>
 </section>
 <section class="review-toolbar">
   <h2>Proposal, approval, materialization, and campaign state</h2>
-  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>{esc(record["proposal_status"])} / {esc(record["proposal_execution_state"])}</dd></div><div><dt>Human approval</dt><dd>{esc(record["approval_status"])}</dd></div><div><dt>Materialization lifecycle</dt><dd>{esc(record["lifecycle_status"])}</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>{esc(record["proposal_status"])} / {
+            esc(record["proposal_execution_state"])
+        }</dd></div><div><dt>Human approval</dt><dd>{
+            esc(record["approval_status"])
+        }</dd></div><div><dt>Materialization lifecycle</dt><dd>{
+            esc(record["lifecycle_status"])
+        }</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
   <p>{approval_summary}</p>
 </section>
 <section class="review-toolbar">
   <h2>Hash-bound source records</h2>
   <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
-  <tr><th>Proposal</th><td><code>{esc(record["proposal_path"])}</code></td><td><code>{esc(record["proposal_sha256"])}</code></td></tr>
-  <tr><th>Packet</th><td><code>{esc(record["packet_path"])}</code></td><td><code>{esc(record["packet_sha256"])}</code></td></tr>
-  <tr><th>Human review</th><td><code>{esc(record["review_path"])}</code></td><td><code>{esc(record["review_sha256"])}</code></td></tr>
-  <tr><th>Approval</th><td><code>{esc(record["approval_path"] or "pending")}</code></td><td><code>{esc(record["approval_sha256"] or "pending")}</code></td></tr>
+  <tr><th>Proposal</th><td><code>{esc(record["proposal_path"])}</code></td><td><code>{
+            esc(record["proposal_sha256"])
+        }</code></td></tr>
+  <tr><th>Packet</th><td><code>{esc(record["packet_path"])}</code></td><td><code>{
+            esc(record["packet_sha256"])
+        }</code></td></tr>
+  <tr><th>Human review</th><td><code>{esc(record["review_path"])}</code></td><td><code>{
+            esc(record["review_sha256"])
+        }</code></td></tr>
+  <tr><th>Approval</th><td><code>{esc(record["approval_path"] or "pending")}</code></td><td><code>{
+            esc(record["approval_sha256"] or "pending")
+        }</code></td></tr>
 {addendum_rows}
   </tbody></table>
 </section>
@@ -1343,25 +1440,65 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 </section>
 <section class="review-toolbar">
   <h2>Append-only bootstrap review attempts</h2>
-  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody>{bootstrap_attempt_rows or '<tr><td colspan="4">Not submitted</td></tr>'}</tbody></table>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody>{
+            bootstrap_attempt_rows or '<tr><td colspan="4">Not submitted</td></tr>'
+        }</tbody></table>
 </section>
 <section class="review-toolbar">
   <h2>Ordered Wave authority chain</h2>
-  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody>{rendered_authority}</tbody></table>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody>{
+            rendered_authority
+        }</tbody></table>
   <p>{authority_summary}</p>
 </section>
+{
+            f'''<section class="review-toolbar">
+  <h2>Proposed slice contributions</h2>
+  <p>These slices are packet data, not hard-coded review-page inventory. They remain non-executable until exact approval and independently approved bootstrap materialization.</p>
+  {enabler_slice_rows}
+</section>'''
+            if enabler_slice_rows
+            else ""
+        }
+{
+            f'''<section class="review-toolbar">
+  <h2>Refactor allocation and planning exception</h2>
+  <dl class="summary-grid"><div><dt>Approved-Wave baseline</dt><dd>{esc(refactor_baseline.get("totalPoints"))} points at <code>{esc(refactor_baseline.get("sourceCommit"))}</code></dd></div><div><dt>Refactor allocation</dt><dd>{esc(refactor_budget.get("refactorPoints"))} points / {esc(refactor_budget.get("refactorSharePercent"))}%</dd></div><div><dt>Policy</dt><dd>{esc(refactor_policy.get("mode"))}</dd></div><div><dt>Method</dt><dd>{esc(refactor_budget.get("method"))}</dd></div></dl>
+  <table><thead><tr><th>Refactor task</th><th>Estimate</th><th>Points</th></tr></thead><tbody>{refactor_rows or '<tr><td colspan="3">No refactor task declared</td></tr>'}</tbody></table>
+  <p>{refactor_policy_detail}</p>
+</section>'''
+            if refactor_budget
+            else ""
+        }
+{
+            f'''<section class="review-toolbar">
+  <h2>Governed experience proposal</h2>
+  <p>Reference <code>{esc(governed_experience.get("referenceId"))}</code> requires human approval: {esc(governed_experience.get("approvalRequired"))}. Approval reserves the reference; bootstrap must materialize its canonical approval before renderer implementation.</p>
+  <ul class="gate-criteria">{governed_experience_rows}</ul>
+</section>'''
+            if governed_experience
+            else ""
+        }
 <section class="review-toolbar">
   <h2>{inventory_heading}</h2><ul class="wave-slice-list">{task_rows}</ul>
   <h3>Exit criteria</h3><ul class="gate-criteria">{criteria}</ul>
 </section>
-<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The {inventory_projection} above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The {
+            inventory_projection
+        } above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
 {task_review_rows or "<p>No amendment task has been materialized.</p>"}
 {exit_review}
 <section class="callout callout-warning">
-  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>{safe_resume} The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>{
+            safe_resume
+        } The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
 </section>
-<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria">{rollback}</ul></details>
-<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article">{render_markdown(strip_first_h1(proposal_body))}</article></details>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria">{
+            rollback
+        }</ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article">{
+            render_markdown(strip_first_h1(proposal_body))
+        }</article></details>
 """
         detail_page = shell(
             title=f"{record['change_request_id']} {proposal_meta.get('title')}",
@@ -1405,7 +1542,10 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "bootstrap_status",
                     "campaign_status",
                     "bootstrap_attempts",
+                    "slice_contributions",
                     "authorized_task_ids",
+                    "refactor_budget",
+                    "governed_experience",
                     "scope_addenda",
                     "task_reviews",
                     "exit_review",

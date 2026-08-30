@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ECR-0004 Add configurable local sign-in and Windows Hello to W1 - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="enabler-detail">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="waves">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities" hidden>
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves">
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item active" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+</aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">ECR-0004</span></nav>
+
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">W1.A05 · W1</span><h1>ECR-0004 — Add configurable local sign-in and Windows Hello to W1</h1></div><span class="status status-pending">Pending</span></div>
+  <p>product-scope-security-experience. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>pending-approval / non-executable</dd></div><div><dt>Human approval</dt><dd>PENDING</dd></div><div><dt>Materialization lifecycle</dt><dd>NOT_MATERIALIZED</dd></div><div><dt>Amendment campaign</dt><dd>NONE</dd></div></dl>
+  <p>No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, amendment, Wave-resume, or release-gate authority.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0004.md</code></td><td><code>bba01963f86432a10ed7163876c33d472895b1cf62eb74a4c1d38843a68743b7</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0004.packet.json</code></td><td><code>3a4e355d9617923c1bed5801032e6e343a198c59180f60e534af8679b43ff2f3</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0004-review.html</code></td><td><code>aee3bdfa9c9c9b3c96858a6c2287fbcd32a224b9579e21da69e1a9a38c63c863</code></td></tr>
+  <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
+
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria"><li>None</li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody><tr><td colspan="4">Not submitted</td></tr></tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W1 base approval</th><td><code>594e63be501711d67d17a4aef176bb9b6a8748be</code></td><td><code>901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701</code></td><td>Original complete Wave packet</td></tr><tr><th>W1.A01</th><td><code>c5bbd97c0cdc665eecb973f5862478ef7be97752</code></td><td><code>a20685b90532c60e0286e5e05f68b46c613e935d</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A02</th><td><code>57d73bcf314ea6aab38b8056ead118d6ef270921</code></td><td><code>6e9c440102a5c463bb35d81f4dbdc3453d9ce029</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A03</th><td><code>ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4</code></td><td><code>95c007b58619dfd82b5f443eea3d8e71e7efe082</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A04 · reserved</th><td><code>77896d26ddac0569e286fe8481c0676408c716b1</code></td><td><code>4f92ba991fd19a2c0ae413b34416a2901d7f84b9</code></td><td>Approved but unmaterialized; superseded by GOV-MIG-0001 and never executable here</td></tr><tr><th>GOV-MIG-0001</th><td><code>d8adf48e9c2e0319e4ece573a9381f6ec305310e</code></td><td><code>4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d</code></td><td>Post-migration governance authority; does not grant product execution</td></tr><tr><th>W1.A05</th><td><code>3a4e355d9617923c1bed5801032e6e343a198c59180f60e534af8679b43ff2f3</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <p>Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. W1.A05 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W1.A05.B00</code> and the exact bounded task inventory below.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed slice contributions</h2>
+  <p>These slices are packet data, not hard-coded review-page inventory. They remain non-executable until exact approval and independently approved bootstrap materialization.</p>
+  <details class="plan-details"><summary>W1.A05.S01 — Provider-neutral application lock and Windows Hello</summary><p>Preserve the native supervisor and same-user password guarantee behind a provider-neutral verification contract, then add an OS-owned Windows Hello adapter with explicit availability and failure semantics.</p><p><strong>Work type:</strong> mixed-refactor-and-new. <strong>Tasks:</strong> W1.A05.T01, W1.A05.T02. <strong>Refactor tasks:</strong> W1.A05.T01.</p><ul class="gate-criteria"><li>Existing Windows-password behavior and same-process-user SID proof remain available through the native supervisor with no renderer unlock authority.</li><li>Windows Hello uses an OS-owned user-presence prompt and the application never receives or stores a PIN or biometric.</li><li>Success, cancellation, denial, checking, unavailable, not configured, policy-disabled, busy, and failed outcomes are typed and cannot silently fall back or unlock.</li><li>Startup, manual lock, inactivity, restart, redaction, and explicit same-user recovery paths are proven across the native/application boundary.</li><li>The slice receives independent security and cross-process contract review with no open blocking finding before S02 begins.</li></ul></details><details class="plan-details"><summary>W1.A05.S02 — Configurable local sign-in and application security settings</summary><p>Add versioned application-wide sign-in policy and the governed Application Settings Security &amp; sign-in experience with no login as the explicit default and password or Hello as optional protected modes.</p><p><strong>Work type:</strong> new-product-work. <strong>Tasks:</strong> W1.A05.T03, W1.A05.T04. <strong>Refactor tasks:</strong> none.</p><ul class="gate-criteria"><li>The configuration accepts exactly none, windows-password, or windows-hello; missing legacy configuration becomes explicit none and malformed enabled configuration fails locked.</li><li>Protected-mode enablement and changes verify required providers before atomic publication; cancellation, denial, unavailability, write failure, or concurrency leave the prior setting unchanged.</li><li>Reducing protection to no login requires explicit confirmation and is never an automatic migration, fallback, or recovery side effect.</li><li>Application Settings is app-wide, distinct from Project Settings, conforms to RO-UI-ACADEMIC-MINIMAL-1.4, and provides accessible status, preview, confirmation, recovery, and error behavior.</li><li>End-to-end restart, migration, failure, denial, cancellation, recovery, accessibility, and no-silent-downgrade evidence receives independent security and experience review.</li></ul></details>
+</section>
+<section class="review-toolbar">
+  <h2>Refactor allocation and planning exception</h2>
+  <dl class="summary-grid"><div><dt>Approved-Wave baseline</dt><dd>194 points at <code>594e63be501711d67d17a4aef176bb9b6a8748be</code></dd></div><div><dt>Refactor allocation</dt><dd>5 points / 2.6%</dd></div><div><dt>Policy</dt><dd>owner-directed-wave-exception</dd></div><div><dt>Method</dt><dd>Freeze every W1 task and estimate from planning/backlog.yaml at the immutable approved Wave packet commit, convert S=1, M=3, and L=5, and divide the exact points of tasks classified as refactoring by the 194-point baseline. T02 through T04 are new product work.</dd></div></dl>
+  <table><thead><tr><th>Refactor task</th><th>Estimate</th><th>Points</th></tr></thead><tbody><tr><th><code>W1.A05.T01</code></th><td>L</td><td>5</td></tr></tbody></table>
+  <p>Owner-directed exception by repository-owner: For this refactor, don&#x27;t worry about the 15% rule. Just get the work done within this wave. Scope: W1.A05.T01. Rationale: The repository owner explicitly directed completion of the authentication-provider refactor within W1. The exception is limited to T01 and does not waive any authority, security, evidence, or review control; the exact itemized allocation is 5 of 194 approved-W1 points (2.6%) and is independently below the normal cap.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Governed experience proposal</h2>
+  <p>Reference <code>RO-UI-ACADEMIC-MINIMAL-1.4</code> requires human approval: True. Approval reserves the reference; bootstrap must materialize its canonical approval before renderer implementation.</p>
+  <ul class="gate-criteria"><li><a href="file:///C:/workspace/research-observatory/planning/enabler-change-requests/ECR-0004-experience-proposal.md">planning/enabler-change-requests/ECR-0004-experience-proposal.md</a> — <code>b54901056db89dcdbbf67eaf9be8c3067b33cd94ebcb170639dd42fb7229eb62</code></li><li><a href="file:///C:/workspace/research-observatory/planning/enabler-change-requests/ECR-0004-application-settings-reference.html">planning/enabler-change-requests/ECR-0004-application-settings-reference.html</a> — <code>7044f311db1b42cc69318e1052021816c784017b5e4d3d14603c1f1c831f84c0</code></li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed bounded inventory</h2><ul class="wave-slice-list"><li><span><strong>W1.A05.T01 — Refactor native verification behind a provider-neutral contract</strong><small>Separate lock lifecycle and state from provider invocation while preserving native-supervisor unlock authority, the current Windows-password path, the same-user SID guarantee, restart behavior, and redacted failures.</small><small>Estimate L · dependencies: W1.A05.B00, CAP-02.S04.T02</small></span><span class="status status-pending">Pending</span></li><li><span><strong>W1.A05.T02 — Implement the Windows Hello native verifier</strong><small>Add an OS-owned Windows Hello current-user presence adapter with truthful availability, denial, cancellation, failure, and explicit password-recovery behavior and no app access to PIN or biometric material.</small><small>Estimate L · dependencies: W1.A05.B00, W1.A05.T01</small></span><span class="status status-pending">Pending</span></li><li><span><strong>W1.A05.T03 — Add versioned application sign-in configuration and safe transitions</strong><small>Persist exactly no login, Windows password, or Windows Hello as an application-wide versioned policy with no login as the explicit default, verified atomic transitions, fail-locked corruption handling, and deliberate audited recovery.</small><small>Estimate M · dependencies: W1.A05.B00, W1.A05.T01, W1.A05.T02</small></span><span class="status status-pending">Pending</span></li><li><span><strong>W1.A05.T04 — Implement Application Settings Security &amp; sign-in</strong><small>Implement the approved application-wide settings destination and Security &amp; sign-in experience for the three modes, truthful provider status, lock preview, confirmation, and recovery while preserving project/workflow position and credential secrecy.</small><small>Estimate L · dependencies: W1.A05.B00, W1.A05.T03</small></span><span class="status status-pending">Pending</span></li></ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria"><li>The exact W1 base, adopted W1.A01 through W1.A03 chain, approved-but-unmaterialized W1.A04 reservation, and GOV-MIG-0001 supersession remain complete, hash-bound, ordered, ancestral, and unchanged.</li><li>W1.A05 remains non-executable before exact human approval, and B00 remains the sole lawful first mutation after approval while W1 stays paused and ordinary tasks remain unchanged.</li><li>B00 truthfully materializes the W1.A04 terminal reservation, appends only the exact W1.A05 inventory, and creates the canonical RO-UI-ACADEMIC-MINIMAL-1.4 reference and human approval record before product implementation.</li><li>The native supervisor remains the sole unlock authority; password same-user SID verification is preserved and Windows Hello is OS-owned with no PIN or biometric capture.</li><li>The exact sign-in modes are no login, Windows password, and Windows Hello; no login is the explicit default and missing legacy configuration migrates to it without weakening any other security or privacy boundary.</li><li>Protected-mode transitions verify providers before atomic publication, protection reduction is explicit and confirmed, malformed enabled configuration fails locked, and no failure, cancellation, denial, unavailability, recovery, or migration silently downgrades protection.</li><li>The application-wide settings experience is distinct from Project Settings, conforms to the approved reference, preserves project/workflow position, and satisfies accessibility, redaction, restart, recovery, and truthful availability contracts.</li><li>The only refactor task is W1.A05.T01 at 5 of 194 approved-W1 estimate points; the owner-directed exception is scoped only to T01 and no major refactor or unrelated debt work is introduced.</li><li>B00, every task, both slices, and amendment exit receive independent commit-bound review; all blocking findings close append-only and adoption records a security/experience checkpoint while W1 remains paused.</li><li>No release gate, remote push, external effect, destructive action, university/cloud identity, project encryption/privacy weakening, predecessor history rewrite, or W1 qualification claim occurs within packet approval.</li></ul>
+</section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The proposed packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<p>No amendment task has been materialized.</p>
+
+<section data-amendment-exit-id="W1.A05" data-exit-review-mode="latest-completion-only">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>
+  <section class="review-toolbar" data-latest-completion-projection="W1.A05" data-latest-completion-status="PENDING" data-latest-completion-reviewer="none" data-latest-completion-reviewed-at="none" data-latest-completion-notes="none"><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>PENDING</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div><div><dt>Evidence</dt><dd>None</dd></div></dl><p><strong>Latest notes:</strong> None</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+<p>No bound amendment-adoption checkpoint is recorded.</p>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>First obtain independent approval of this exact packet and explicit human approval. Only then may the amendment continue through independently approved bootstrap, materialization, completion and independent approval of all 4 tasks, amendment-exit control/security review, and the W1 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria"><li>Before approval, reject, defer, or withdraw the inert packet; W1 remains paused at its current recoverable boundary and no product or reference authority changes.</li><li>A failed B00 review preserves its immutable attempt and uses strict-descendant bootstrap resubmission; no task materializes and no canonical reference is represented as approved unless its approval binding is valid.</li><li>A failed task, slice, or exit review preserves prior packets, findings, evidence, and closures and uses bounded remediation that replays the open risk boundary without restarting unrelated review.</li><li>Authentication configuration publication is atomic; any verification, persistence, crash, or concurrency failure keeps the prior bytes and mode, while malformed protected-mode state fails locked.</li><li>Hello unavailability never changes stored policy. Retry, explicit same-user password recovery, or a deliberate confirmed and audited reset from the current interactive Windows session are the only recovery choices.</li><li>Before adoption, withhold the checkpoint if authority, experience ordering, security, migration, evidence, or review validation fails; never rewrite predecessor Wave, amendment, approval, migration, finding, evidence, or Git history.</li></ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article"><pre class='markdown-fallback'>Status: pending independent packet review and explicit exact-commit human
+approval; non-executable.
+
+Proposed authority: `W1.A05`, ordered after adopted `W1.A01`–`W1.A03` and
+the approved-but-unmaterialized `W1.A04` reservation superseded by
+`GOV-MIG-0001`.
+
+Classification: `product-scope-security-experience`.
+
+## 1. Decision requested
+
+Approve one append-only W1 amendment owned by `CAP-02` with two ordered slice
+contributions and four tasks:
+
+1. `W1.A05.S01` refactors the native application-lock verifier behind a
+   provider-neutral contract, preserving the existing Windows-password path,
+   then adds an OS-owned Windows Hello adapter.
+2. `W1.A05.S02` adds versioned application-wide sign-in configuration and the
+   governed **Application Settings → Security &amp; sign-in** experience. The exact
+   modes are `No login`, `Windows password`, and `Windows Hello`; `No login` is
+   the explicit default.
+
+This approval also accepts the proposed experience decision in
+`ECR-0004-experience-proposal.md` and reserves
+`RO-UI-ACADEMIC-MINIMAL-1.4`. The canonical reference and human approval record
+must be materialized in the independently reviewed bootstrap, after this
+approval and before renderer implementation. This ordering prevents a proposed
+page from masquerading as an approved experience reference.
+
+W1 remains paused until the amendment is approved, bootstrapped, independently
+reviewed task by task and slice by slice, exit-reviewed, and adopted. Approval
+does not implement product behavior, resume W1, complete a task or slice,
+qualify W1, approve G1, merge to main, or push remotely.
+
+## 2. Wave and capability initiation assessment
+
+### 2.1 Product vision and best-practice fit
+
+Research Observatory is local-first and researcher-controlled. For a typical
+single-user Windows PC, the signed-in Windows account is a proportionate local
+access boundary; an unconditional second password prompt adds friction without
+creating a second operating-system account boundary. Researchers with stronger
+local-presence requirements should be able to opt into an OS-owned verifier
+without the application handling a PIN or biometric.
+
+The selected design therefore makes no app reauthentication the default, keeps
+the current same-user Windows-password verifier as an explicit option, and adds
+Windows Hello as the preferred convenience verifier when configured. It does
+not weaken project encryption, filesystem permissions, Core isolation, privacy
+or egress policy, audit and lineage, or later remote identity.
+
+### 2.2 Current implementation assessment
+
+The tested implementation already has a strong native-supervisor boundary:
+`application_lock.rs` owns lock state and calls the Windows credential UI plus
+`LogonUserW`; a successful token must have the same SID as the desktop process.
+No profile already behaves like an unlocked first run, but this is an implicit
+absence of configuration rather than a versioned policy. The renderer currently
+hosts a local-profile lock dialog, and the approved static settings page is
+project-scoped rather than application-scoped.
+
+The implementation aligns with ADR-0018&#x27;s placement and same-user guarantee.
+Its weaknesses for this outcome are the verifier-specific coupling, lack of a
+Windows Hello adapter, lack of an explicit mode/migration contract, and lack of
+an app-wide security-settings surface. The amendment preserves the strong
+native boundary and repairs only those prerequisites.
+
+### 2.3 Refactor disposition
+
+Only `W1.A05.T01` is technical-debt refactoring. It is a bounded provider
+seam, not a redesign of project security or desktop supervision. On the exact
+approved W1 baseline it is 5 of 194 estimate points (2.6%). The repository owner
+explicitly directed that this authentication refactor be completed in W1
+without applying the 15% planning cap. The packet records that exception only
+for T01; the actual allocation is below 15% regardless. T02–T04 are new product
+work. No major refactor is authorized.
+
+## 3. Frozen authority and stopped boundary
+
+The immutable W1 base is packet commit
+`594e63be501711d67d17a4aef176bb9b6a8748be`, approved by record commit
+`901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701`. Adopted `W1.A01`,
+`W1.A02/ECR-0001`, and `W1.A03/ECR-0002` remain unchanged.
+
+`W1.A04/ECR-0003` was approved but never materialized. `GOV-MIG-0001` released
+the incident-specific recovery hold, froze the older controllers as historical
+validators, and superseded that unmaterialized reservation. W1.A05 does not
+rewrite, adopt, or execute W1.A04. Its bootstrap must record the reservation
+truthfully in the current ledger so the amendment sequence remains append-only.
+
+At packet preparation W1 is `PAUSED` at Wave scope, with no active task in
+`IN_PROGRESS` or `REVIEW`, no active recovery hold, and no active amendment
+campaign. `CAP-03.S04.T01` is `BLOCKED`; ordinary W1 work remains untouched.
+
+## 4. Governed experience decision
+
+The proposed reference is
+[`ECR-0004-experience-proposal.md`](ECR-0004-experience-proposal.md), with the
+reviewable HTML mock-up in
+[`ECR-0004-application-settings-reference.html`](ECR-0004-application-settings-reference.html).
+It establishes:
+
+- a distinct application-level Settings destination, not an extension of
+  project settings;
+- exactly three sign-in modes with `No login` labeled as the default;
+- OS-owned password and Hello prompts, with no credential, PIN, or biometric
+  storage by Research Observatory;
+- explicit verification before enabling or changing providers;
+- explicit warning and confirmation before reducing protection to `No login`;
+- no silent fallback or downgrade;
+- fail-locked handling for malformed enabled-mode configuration;
+- explicit Hello availability, denial, cancellation, failure, and recovery
+  states; and
+- keyboard, focus, announcement, responsive, reduced-motion, and WCAG AA
+  obligations inherited from Academic Minimal.
+
+`No login` removes only Research Observatory startup/manual/idle
+reauthentication. The page must not imply that it disables Windows account
+access, encrypted storage, project privacy, Core isolation, or audit controls.
+
+## 5. Selected implementation plan
+
+### 5.1 W1.A05.B00 — append-only amendment bootstrap
+
+The bootstrap runs only after exact packet approval. It must:
+
+1. materialize the approved-but-unmaterialized W1.A04 reservation as terminal
+   superseded history without creating an executable W1.A04 campaign;
+2. append only the exact W1.A05 slices, tasks, dependencies, acceptance
+   criteria, estimates, verification duties, and paused campaign projection;
+3. materialize `RO-UI-ACADEMIC-MINIMAL-1.4` from the exact approved proposal,
+   with a canonical `APPROVAL.yaml` citing the W1.A05 approval and
+   `human:repository-owner`;
+4. regenerate affected planning and design-reference views without hand-coded
+   identities or duplicated source data;
+5. keep W1 paused, leave every ordinary task unchanged, and perform no product
+   implementation; and
+6. receive independent control/security/experience review before T01 can be
+   claimed.
+
+Bootstrap implementation may change only the packet-authorized backlog,
+controller/schema, focused tests, canonical design-reference materialization,
+and mechanically generated planning/reference views. Any scope addition uses
+the existing append-only addendum mechanism; it is not inferred from a tool
+failure.
+
+### 5.2 W1.A05.S01 — provider refactor and Windows Hello
+
+#### W1.A05.T01 — provider-neutral native verification contract (L, refactor)
+
+- Separate lock lifecycle/state from provider invocation while retaining the
+  native supervisor as the sole unlock authority.
+- Preserve current Windows-password behavior and the same-process-user SID
+  guarantee.
+- Define typed outcomes for success, cancellation, denial, unavailability,
+  busy, and failure without translating them into silent fallback.
+- Preserve startup, manual-lock, inactivity, restart, and redacted-error
+  behavior unless the configured mode explicitly disables app lock.
+- Add focused unit/contract tests proving parity and failure isolation.
+
+#### W1.A05.T02 — Windows Hello native adapter (L, new product work)
+
+- Invoke an OS-owned Windows Hello user-presence API for the current interactive
+  Windows user; the app never receives a PIN or biometric template.
+- Distinguish checking, available, not present, not configured, policy-disabled,
+  busy, cancelled, denied, and failed states.
+- Keep the application locked after cancellation, denial, unavailability, or
+  failure; never silently switch providers or modes.
+- Expose explicit same-user password recovery only after user selection and
+  preserve auditable, bounded errors across the native/renderer contract.
+- Add native contract, denial, cancellation, restart, and Windows-x64 adapter
+  integration tests; unsupported environments must report unavailable, not
+  fabricate success.
+
+### 5.3 W1.A05.S02 — configurable local sign-in and application settings
+
+#### W1.A05.T03 — versioned sign-in configuration and transitions (M, new product work)
+
+- Store exactly `none`, `windows-password`, or `windows-hello` in a versioned,
+  application-wide configuration; default and missing legacy state migrate to
+  explicit `none`.
+- Enabling a protected mode verifies its provider before atomic publication.
+- Switching protected providers authenticates the current mode and verifies
+  the destination provider before publication.
+- Disabling protection requires explicit confirmed intent. Cancellation,
+  denial, write failure, or unavailable destination leaves the prior config
+  byte-stable.
+- Malformed/unreadable enabled configuration fails locked. A deliberate reset
+  to no login is locally audited and cannot occur as fallback.
+- Add migration, atomicity, rollback, corruption, restart, and concurrency
+  tests.
+
+#### W1.A05.T04 — Application Settings security experience (L, new product work)
+
+- Implement the approved application-level Settings route and Security &amp;
+  sign-in page without conflating it with Project Settings.
+- Render current/default mode, prerequisites, Hello availability, lock preview,
+  provider-specific recovery, and protection-reduction confirmation.
+- Connect the UI only through typed application/native contracts; never expose
+  credential material or project/research content on a locked surface.
+- Preserve the current project and guided-workflow position when entering and
+  leaving application settings.
+- Prove keyboard, focus, announcement, zoom/reflow, theme, reduced-motion,
+  cancellation, denial, failure, recovery, restart, and no-silent-downgrade
+  behavior with conformance to `RO-UI-ACADEMIC-MINIMAL-1.4`.
+
+## 6. Dependencies and execution order
+
+Every task depends on independently approved `W1.A05.B00`.
+
+1. T01 additionally depends on completed `CAP-02.S04.T02`, the existing native
+   application-lock foundation.
+2. T02 depends on T01.
+3. T03 depends on T01 and T02 so configuration cannot select an absent or
+   untyped provider.
+4. T04 depends on T03 so the governed page is a client of proven transition
+   behavior, not the place where security policy is invented.
+
+The S01 slice receives independent security/contract review before S02 begins.
+S02 receives independent security/experience review before amendment exit. The
+amendment exit records a security/experience integration checkpoint. Routine
+task corrections preserving approved authority require no new human approval.
+
+## 7. Verification and completion
+
+Risk-selected task checks must cover changed native, application, persistence,
+renderer, design-reference, accessibility, and contract surfaces. The slice
+reviews then run accumulated integration and adversarial checks for their risk
+boundaries. W1 exit retains the full affected/full repository and Windows-x64
+qualification matrix.
+
+The amendment is complete only when:
+
+- B00 is independently approved and the reference materialization predates all
+  renderer implementation;
+- all four tasks are criterion-evidenced at exact commits and independently
+  approved;
+- both slices have end-to-end and adversarial evidence plus independent review;
+- password parity, Hello availability/denial/cancellation, no-login default,
+  config migration, atomic transitions, fail-locked corruption, recovery,
+  restart, accessibility, and no-silent-downgrade paths pass;
+- the refactor remains bounded to T01 and no major refactor enters by stealth;
+- the amendment receives independent exit review and an exact W1
+  security/experience adoption checkpoint; and
+- W1 is still paused at adoption, ready for explicit ordinary resume.
+
+## 8. Rollback and recovery
+
+- Before approval, reject, defer, or withdraw the inert proposal; W1 remains at
+  the current paused boundary.
+- A failed B00 review preserves its immutable attempt and uses strict-descendant
+  bootstrap resubmission; no product task materializes.
+- A failed task, slice, or exit review preserves the adverse history and uses
+  bounded remediation that replays open findings without restarting unrelated
+  review.
+- Configuration publication is atomic. Failure keeps the previous mode; a
+  malformed protected-mode configuration fails locked.
+- Hello unavailability never rewrites configuration. Explicit recovery or a
+  deliberate, confirmed and audited reset is required.
+- Before adoption, withhold the checkpoint if any exact authority, experience,
+  security, migration, or verification binding fails. Never rewrite predecessor
+  Wave, amendment, approval, finding, evidence, or Git history.
+
+## 9. Alternatives
+
+1. **Provider seam, Hello adapter, explicit configuration, and app-level
+   settings — selected.** It preserves the strong native boundary while making
+   the average-user default proportionate and the stronger modes optional.
+2. **Keep password-only lock.** Rejected because it retains unnecessary default
+   friction and does not satisfy the requested Hello or configuration outcomes.
+3. **Replace password directly with Hello.** Rejected because Hello may be
+   unavailable or policy-disabled and because users requested all three modes.
+4. **Put the controls in Project Settings.** Rejected because the setting
+   applies to the desktop application and Windows account, not a project.
+5. **Implement a custom PIN.** Rejected because the app would become a
+   credential verifier and secret store without adding an OS security boundary.
+6. **Silently fall back when Hello fails.** Rejected because it hides a
+   protection change and makes cancellation or policy denial unsafe.
+7. **Defer the work to a later Wave.** Available, but it would leave the W1
+   local-runtime experience inconsistent with the requested default and require
+   another future governed experience change.
+
+## 10. Exact approval and next condition
+
+Approval is legally available only after all declared packet and experience
+files are committed at one clean immutable commit, v4 schema and historical
+authority validation pass, generated review surfaces are current, and an
+independent security/architecture/experience reviewer records `APPROVED` for
+that exact commit with no open blocking finding.
+
+Required human statement:
+
+&gt; Approve ECR-0004 as W1.A05 at packet commit `&lt;40-character SHA&gt;`, authorizing
+&gt; only bootstrap W1.A05.B00, slice contributions W1.A05.S01 and W1.A05.S02,
+&gt; and tasks W1.A05.T01 through W1.A05.T04 as hash-bound in the packet. Approve
+&gt; the proposed Application Security &amp; sign-in experience and reserve
+&gt; RO-UI-ACADEMIC-MINIMAL-1.4 for bootstrap materialization. Keep W1 paused until
+&gt; amendment adoption and explicit ordinary resume.
+
+That statement authorizes creation of a new immutable
+`planning/wave-amendment-approvals/W1.A05.json` record. It does not append the
+amendment to the backlog, execute B00 or a product task, approve a task or slice,
+resume W1, qualify W1, approve G1, merge to main, or push remotely.</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>

@@ -17412,10 +17412,15 @@
           "current_status": "APPROVED"
         }
       ],
+      "slice_contributions": [],
       "authorized_task_ids": [
         "W1.A02.T01",
         "W1.A02.T02"
       ],
+      "refactor_budget": {},
+      "governed_experience": {
+        "files": []
+      },
       "scope_addenda": [
         {
           "path": "planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json",
@@ -18357,9 +18362,14 @@
           "current_status": "APPROVED"
         }
       ],
+      "slice_contributions": [],
       "authorized_task_ids": [
         "W1.A03.T01"
       ],
+      "refactor_budget": {},
+      "governed_experience": {
+        "files": []
+      },
       "scope_addenda": [],
       "task_reviews": [
         {
@@ -18768,9 +18778,14 @@
       "bootstrap_status": "NOT_SUBMITTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [],
+      "slice_contributions": [],
       "authorized_task_ids": [
         "W1.A04.T01"
       ],
+      "refactor_budget": {},
+      "governed_experience": {
+        "files": []
+      },
       "scope_addenda": [],
       "task_reviews": [],
       "exit_review": {
@@ -18787,6 +18802,382 @@
       },
       "adoption_checkpoints": [],
       "page": "enablers/ECR-0003.html"
+    },
+    {
+      "change_request_id": "ECR-0004",
+      "amendment_id": "W1.A05",
+      "target_wave": "W1",
+      "classification": "product-scope-security-experience",
+      "proposal_status": "pending-approval",
+      "proposal_execution_state": "non-executable",
+      "packet_path": "planning/enabler-change-requests/ECR-0004.packet.json",
+      "packet_sha256": "3a4e355d9617923c1bed5801032e6e343a198c59180f60e534af8679b43ff2f3",
+      "proposal_path": "planning/enabler-change-requests/ECR-0004.md",
+      "proposal_sha256": "bba01963f86432a10ed7163876c33d472895b1cf62eb74a4c1d38843a68743b7",
+      "review_path": "planning/enabler-change-requests/ECR-0004-review.html",
+      "review_sha256": "aee3bdfa9c9c9b3c96858a6c2287fbcd32a224b9579e21da69e1a9a38c63c863",
+      "approval_path": null,
+      "approval_sha256": null,
+      "approval_status": "PENDING",
+      "lifecycle_status": "NOT_MATERIALIZED",
+      "bootstrap_status": "NOT_SUBMITTED",
+      "campaign_status": "NONE",
+      "bootstrap_attempts": [],
+      "slice_contributions": [
+        {
+          "id": "W1.A05.S01",
+          "capabilityId": "CAP-02",
+          "title": "Provider-neutral application lock and Windows Hello",
+          "objective": "Preserve the native supervisor and same-user password guarantee behind a provider-neutral verification contract, then add an OS-owned Windows Hello adapter with explicit availability and failure semantics.",
+          "workType": "mixed-refactor-and-new",
+          "refactorTaskIds": [
+            "W1.A05.T01"
+          ],
+          "taskIds": [
+            "W1.A05.T01",
+            "W1.A05.T02"
+          ],
+          "acceptanceCriteria": [
+            "Existing Windows-password behavior and same-process-user SID proof remain available through the native supervisor with no renderer unlock authority.",
+            "Windows Hello uses an OS-owned user-presence prompt and the application never receives or stores a PIN or biometric.",
+            "Success, cancellation, denial, checking, unavailable, not configured, policy-disabled, busy, and failed outcomes are typed and cannot silently fall back or unlock.",
+            "Startup, manual lock, inactivity, restart, redaction, and explicit same-user recovery paths are proven across the native/application boundary.",
+            "The slice receives independent security and cross-process contract review with no open blocking finding before S02 begins."
+          ]
+        },
+        {
+          "id": "W1.A05.S02",
+          "capabilityId": "CAP-02",
+          "title": "Configurable local sign-in and application security settings",
+          "objective": "Add versioned application-wide sign-in policy and the governed Application Settings Security & sign-in experience with no login as the explicit default and password or Hello as optional protected modes.",
+          "workType": "new-product-work",
+          "refactorTaskIds": [],
+          "taskIds": [
+            "W1.A05.T03",
+            "W1.A05.T04"
+          ],
+          "acceptanceCriteria": [
+            "The configuration accepts exactly none, windows-password, or windows-hello; missing legacy configuration becomes explicit none and malformed enabled configuration fails locked.",
+            "Protected-mode enablement and changes verify required providers before atomic publication; cancellation, denial, unavailability, write failure, or concurrency leave the prior setting unchanged.",
+            "Reducing protection to no login requires explicit confirmation and is never an automatic migration, fallback, or recovery side effect.",
+            "Application Settings is app-wide, distinct from Project Settings, conforms to RO-UI-ACADEMIC-MINIMAL-1.4, and provides accessible status, preview, confirmation, recovery, and error behavior.",
+            "End-to-end restart, migration, failure, denial, cancellation, recovery, accessibility, and no-silent-downgrade evidence receives independent security and experience review."
+          ]
+        }
+      ],
+      "authorized_task_ids": [
+        "W1.A05.T01",
+        "W1.A05.T02",
+        "W1.A05.T03",
+        "W1.A05.T04"
+      ],
+      "refactor_budget": {
+        "baseline": {
+          "waveId": "W1",
+          "sourceCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+          "sourcePath": "planning/backlog.yaml",
+          "estimateScale": {
+            "S": 1,
+            "M": 3,
+            "L": 5
+          },
+          "tasks": [
+            {
+              "id": "CAP-01.S01.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S03.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-01.S03.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-01.S04.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S04.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S02.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S02.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T04",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S04.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S04.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S04.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S06.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T04",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T05",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-07.S01.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-07.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-07.S01.T03",
+              "estimate": "L",
+              "points": 5
+            }
+          ],
+          "totalPoints": 194
+        },
+        "refactorAllocations": [
+          {
+            "taskId": "W1.A05.T01",
+            "estimate": "L",
+            "points": 5
+          }
+        ],
+        "refactorPoints": 5,
+        "refactorSharePercent": 2.6,
+        "limitPolicy": {
+          "mode": "owner-directed-wave-exception",
+          "authorizedBy": "repository-owner",
+          "authorization": "For this refactor, don't worry about the 15% rule. Just get the work done within this wave.",
+          "scopeTaskIds": [
+            "W1.A05.T01"
+          ],
+          "rationale": "The repository owner explicitly directed completion of the authentication-provider refactor within W1. The exception is limited to T01 and does not waive any authority, security, evidence, or review control; the exact itemized allocation is 5 of 194 approved-W1 points (2.6%) and is independently below the normal cap."
+        },
+        "refactorTaskIds": [
+          "W1.A05.T01"
+        ],
+        "method": "Freeze every W1 task and estimate from planning/backlog.yaml at the immutable approved Wave packet commit, convert S=1, M=3, and L=5, and divide the exact points of tasks classified as refactoring by the 194-point baseline. T02 through T04 are new product work."
+      },
+      "governed_experience": {
+        "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+        "approvalRequired": true,
+        "files": [
+          {
+            "path": "planning/enabler-change-requests/ECR-0004-experience-proposal.md",
+            "sha256": "b54901056db89dcdbbf67eaf9be8c3067b33cd94ebcb170639dd42fb7229eb62"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0004-application-settings-reference.html",
+            "sha256": "7044f311db1b42cc69318e1052021816c784017b5e4d3d14603c1f1c831f84c0"
+          }
+        ]
+      },
+      "scope_addenda": [],
+      "task_reviews": [],
+      "exit_review": {
+        "amendment_id": "W1.A05",
+        "mode": "latest-completion-only",
+        "latest_completion": {
+          "status": null,
+          "reviewer": null,
+          "reviewed_at": null,
+          "evidence": null,
+          "notes": null
+        },
+        "exit_review_control": null
+      },
+      "adoption_checkpoints": [],
+      "page": "enablers/ECR-0004.html"
     }
   ],
   "governance_recoveries": [
