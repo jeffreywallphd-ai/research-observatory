@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T04",
+  "commit": "50ea2c5200e67b8416ba00a36c140ae6a5cda00c",
+  "baseCommit": "bd8d752a0fcec1f40b1a8abe59b793c783946e4e",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/package.json",
+    "apps/desktop/scripts/application-lock-renderer-integration.mjs",
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.test.tsx",
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "apps/desktop/src/app/applicationSettings.native.integration.test.ts",
+    "apps/desktop/src/app/applicationSettings.test.ts",
+    "apps/desktop/src/app/applicationSettings.ts",
+    "apps/desktop/src/app/audit-lineage.conformance.json",
+    "artifacts/evidence/W1.A05.T04.task-start.md",
+    "artifacts/evidence/ui-change/W1.A05.T04.json",
+    "design/ui-change.schema.json",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-tokens/src/index.ts",
+    "packages/ui-tokens/token-contract.json",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0006.json",
+    "planning/governance-migrations/GOV-MAINT-0006.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0006.review-R02.json",
+    "planning/governance-migrations/GOV-MAINT-0006.review-R03.json",
+    "planning/governance-migrations/GOV-MAINT-0007.json",
+    "planning/governance-migrations/GOV-MAINT-0007.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0007.review-R02.json",
+    "planning/governance-migrations/GOV-MAINT-0007.review-R03.json",
+    "planning/governance-migrations/GOV-MAINT-0007.review-R04.json",
+    "planning/governance-migrations/GOV-MAINT-0007.review-R05.json",
+    "planning/governance-migrations/GOV-MAINT-0008.json",
+    "planning/governance-migrations/GOV-MAINT-0008.review-R01.json",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/desktop_app_check.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "checks": [
+    {
+      "command": "npm --prefix apps/desktop test -- --run; node apps/desktop/node_modules/typescript/bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm --prefix apps/desktop run build; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "exitCode": 0,
+      "result": "At exact candidate head 50ea2c5, all 15 executed desktop test files and 89 tests passed with three native-fixture cases deliberately skipped outside their harness; strict TypeScript and lint passed; the functional product and 42-artifact reference fixture rebuilt; and the built-frame validator passed the Application Settings draft reconciliation, lock/recovery, focus, live-region, responsive, theme, and preserved product-workflow contracts with no critical violation."
+    },
+    {
+      "command": "node apps/desktop/scripts/application-lock-renderer-integration.mjs; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests --locked",
+      "exitCode": 0,
+      "result": "The explicit native/renderer harness passed one real Rust witness through three production TypeScript decoder/controller tests. The focused native replay passed 25 application-lock tests with the same renderer witness deliberately ignored in the ordinary filtered run, preserving atomic transition, cancellation, conflict, recovery, restart, provider, single-instance, redaction, and no-downgrade boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 50ea2c5200e67b8416ba00a36c140ae6a5cda00c",
+      "exitCode": 0,
+      "result": "The exact task range passed as one approved-reference implementation for RO-UI-ACADEMIC-MINIMAL-1.4. The authenticated evidence contract resolves to the exact eight governed implementation paths and approved package hash, including the independently reviewed and adopted generic governance-control maintenance history."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check tokens|routes|workflows|accessibility|visual",
+      "exitCode": 0,
+      "result": "All five separately invoked conformance checks passed under the repository-pinned Playwright 1.58.0 and Chromium 145.0.7632.6: 109 tokens with no undefined references, 33 routes and 540 required-region contracts, 14 workflow profiles with 139 browser and 390 keyboard cases, 66 responsive/accessibility cases, and all 66 controlled light/dark visual captures matching the approved baseline."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate tests.foundation.test_taskctl_schema; .venv\\Scripts\\ruff.exe check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py; .venv\\Scripts\\ruff.exe format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py; python tools/taskctl.py --file planning/backlog.yaml validate; git diff --check",
+      "exitCode": 0,
+      "result": "The reviewed control increments passed all 34 UI-gate and 27 taskctl-schema tests, Ruff, canonical backlog validation (20 capabilities, 117 slices, 363 tasks, 12 gates), JSON parsing, exact ancestry/provenance checks, and Git whitespace hygiene before adoption. The exact current-head UI gate then replayed the complete task range successfully."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --affected-head 50ea2c5200e67b8416ba00a36c140ae6a5cda00c --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed affected selector accepted the exact desktop, security-local, and service risk inventory with the complete packaging, performance, and cross-capability qualification matrix deferred to W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The shell exposes a distinct Application Settings destination and retains Project Settings as a separate project-scoped destination. Application Settings identifies Security & sign-in as applying to this application on the current Windows account, and opening or returning from it preserves the prior project and workflow position.",
+        "Renderer interaction tests and the built functional frame prove both destinations, semantic headings, return/cancel focus restoration, and unchanged project navigation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The workspace renders the native current policy separately from the editable draft, labels No login as the default, and displays exact provider availability, prerequisites, startup/manual/idle/restart behavior, recovery, timeout, and unchanged project protection in plain language.",
+        "Strict model and interaction tests cover all three modes, checking/available/not-present/not-configured/policy-disabled/busy/unavailable/failed Hello states, zero and nonzero timeouts, invalid policy, and provider-specific recovery without inferred success."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Every change uses the native prepare/commit boundary. Protection-reducing warning appears only after successful native proof, cancellation commits confirmed false, protected enable/switch commits only after destination verification, and overlapping operations are denied.",
+        "Cancellation, denial, busy, unavailable, malformed, conflict, expiry, invoke rejection, and response-loss reconciliation tests preserve the prior native snapshot, issue bounded announcements, restore focus, and never create renderer authority."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Locked and recovery renderers consume bounded native state and exclude deliberately supplied project names, paths, commands, research text, credentials, PINs, and biometric terms. They name only the configured provider and explicit recovery action.",
+        "Hello unavailability never falls back automatically. Windows-password recovery is an explicit dedicated native prepare path, still requires proof and deliberate confirmation, and failure leaves the application locked with the prior policy unchanged."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The implementation binds exactly to approved reference RO-UI-ACADEMIC-MINIMAL-1.4 and package SHA-256 034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e. The route, token, workflow, accessibility, responsive, and 66-capture light/dark visual contracts all pass.",
+        "Semantic interaction tests and the built-frame validator prove radio-card operation, logical keyboard order, focus containment/restoration, live announcements, visible focus, reflow, 100/150/200 percent design-system cases, themes, reduced motion, and preserved workflow position."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T04 crosses the governed desktop experience, renderer/native security contract, and UI evidence-control boundary. Credible failures are confusing application and project authority; treating a draft or malformed payload as committed policy; warning before native proof; silent Hello fallback; ambiguous commit-response loss; overlap, cancellation, conflict, or recovery changing policy; locked-surface disclosure; lost workflow/focus position; accessibility or responsive regressions; incomplete v1.4 activation; or evidence that cannot authenticate the exact approved reference and task range. The selected strict model/interaction tests, real Rust-to-TypeScript witness, focused native replay, fresh product build and built-frame check, exact UI gate, complete approved-reference conformance matrix, and independently reviewed governance-control tests directly cover those risks.",
+    "selectedCommandIds": [
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "A real configured Windows Hello success prompt remains hardware-conditional; the release-authoritative host reports not-present. T02 already proves the typed OS mapping and this task proves every renderer availability state without fabricating hardware evidence.",
+      "W1.A05.S02 owns the independent security/experience slice integration review and amendment-exit affected build, smoke, security, and accessibility union after T04 task approval.",
+      "The complete W1 Windows-x64 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "independent-security-experience-task-review",
+    "openFindingIds": [],
+    "note": "Authenticate base bd8d752a0fcec1f40b1a8abe59b793c783946e4e, candidate 50ea2c5200e67b8416ba00a36c140ae6a5cda00c, exact changed paths, the v1.4 evidence contract and approval lineage, and adopted GOV-MAINT-0006 through GOV-MAINT-0008 review chains. Review application/project scope separation, strict native snapshot authority, proof-before-warning and deliberate commit, every adverse/reconciliation path, explicit no-fallback recovery, locked-surface secrecy, preserved workflow/focus position, and the full governed conformance result."
+  }
+}

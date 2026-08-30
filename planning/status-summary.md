@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8410f5beaa0de3ce4d7452576d9a28b759be0b449439bb83ee6d4765727269d8
+source_sha256: b1465a05ab719d3ae0b55072fb68cce027837378380eccd9648fe75af9b7a065
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,7 +69,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 6 |
 
 ## Wave authority and append-only amendments
@@ -402,6 +402,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A05.T01` | `append-only v1` | 2 | `-` | approved / codex-independent-application-lock-security-reviewer | - |
 | `W1.A05.T02` | `append-only v1` | 1 | `-` | approved / codex-independent-windows-hello-security-reviewer | - |
 | `W1.A05.T03` | `append-only v1` | 2 | `-` | approved / codex-independent-sign-in-policy-security-reviewer | - |
+| `W1.A05.T04` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -466,4 +467,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-03.S04.T01` Define workflow, step, job, attempt, artifact, and human-task contracts | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A05.T04` Implement Application Settings Security & sign-in | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A05.T04` Implement Application Settings Security & sign-in | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
