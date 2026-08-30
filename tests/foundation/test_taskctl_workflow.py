@@ -4716,6 +4716,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertNotIn("W1.A02: terminal lifecycle did not restore ordinary Wave scope", errors)
         self.assertNotIn("W1: amendment-hold scope requires exactly one executable amendment owner", errors)
 
+        prior_task = copy.deepcopy(predecessor["tasks"][0])
         for task in predecessor["tasks"]:
             tasks.pop(task["id"])
         predecessor.update(
@@ -4732,7 +4733,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     {
                         "id": "E02",
                         "status": "SUPERSEDED",
-                        "actor": "governance-migration:test-migration",
+                        "actor": "governance-migration:GOV-MIG-9999",
                         "at": "2026-08-21T00:00:00+00:00",
                         "rationale": "Recorded the unexecuted reservation as terminal history.",
                     },
@@ -4757,18 +4758,67 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertNotIn(predecessor_error, errors)
         self.assertNotIn("W1.A02: terminal lifecycle did not restore ordinary Wave scope", errors)
 
-        predecessor["bootstrap"] = {"id": "W1.A02.B00", "status": "APPROVED"}
-        errors = validate(data, capabilities, slices, tasks, gates)
-        self.assertIn(predecessor_error, errors)
-        predecessor["bootstrap"] = None
+        canonical_predecessor = copy.deepcopy(predecessor)
+        invalid_predecessors: list[tuple[str, dict[str, Any]]] = []
 
-        predecessor["lifecycle"]["status"] = "WITHDRAWN"
-        predecessor["lifecycle"]["history"][-1]["status"] = "WITHDRAWN"
-        errors = validate(data, capabilities, slices, tasks, gates)
-        self.assertIn(predecessor_error, errors)
+        extra_approved = copy.deepcopy(canonical_predecessor)
+        extra_approved["lifecycle"]["history"].insert(1, copy.deepcopy(extra_approved["lifecycle"]["history"][0]))
+        extra_approved["lifecycle"]["history"][1]["id"] = "E02"
+        extra_approved["lifecycle"]["history"][2]["id"] = "E03"
+        invalid_predecessors.append(("extra-approved", extra_approved))
 
-        predecessor["lifecycle"]["status"] = "MATERIALIZED"
-        predecessor["lifecycle"]["history"][-1]["status"] = "MATERIALIZED"
+        extra_superseded = copy.deepcopy(canonical_predecessor)
+        extra_superseded["lifecycle"]["history"].append(copy.deepcopy(extra_superseded["lifecycle"]["history"][-1]))
+        extra_superseded["lifecycle"]["history"][-1]["id"] = "E03"
+        invalid_predecessors.append(("extra-superseded", extra_superseded))
+
+        for name, actor in (
+            ("empty-migration-id", "governance-migration:"),
+            ("invalid-migration-id", "governance-migration:test-migration"),
+            ("non-migration-actor", "repository-owner"),
+        ):
+            invalid = copy.deepcopy(canonical_predecessor)
+            invalid["lifecycle"]["history"][-1]["actor"] = actor
+            invalid_predecessors.append((name, invalid))
+
+        with_bootstrap = copy.deepcopy(canonical_predecessor)
+        with_bootstrap["bootstrap"] = {"id": "W1.A02.B00", "status": "APPROVED"}
+        invalid_predecessors.append(("bootstrap", with_bootstrap))
+
+        with_campaign = copy.deepcopy(canonical_predecessor)
+        with_campaign["campaign"] = {"status": "COMPLETE"}
+        invalid_predecessors.append(("campaign", with_campaign))
+
+        with_task = copy.deepcopy(canonical_predecessor)
+        with_task["tasks"] = [prior_task]
+        invalid_predecessors.append(("task", with_task))
+
+        for name, completion_update in (
+            ("completion-evidence", {"evidence": ["exit.json"]}),
+            ("completion-reviewer", {"reviewer": "independent-reviewer"}),
+            ("completion-review-time", {"reviewed_at": "2026-08-21T00:00:00+00:00"}),
+            ("exit-review-control", {"exit_review_control": {"attempts": []}}),
+        ):
+            invalid = copy.deepcopy(canonical_predecessor)
+            invalid["completion"].update(completion_update)
+            invalid_predecessors.append((name, invalid))
+
+        for terminal_status in ("WITHDRAWN", "DEFERRED"):
+            invalid = copy.deepcopy(canonical_predecessor)
+            invalid["lifecycle"]["status"] = terminal_status
+            invalid["lifecycle"]["history"][-1]["status"] = terminal_status
+            invalid_predecessors.append((terminal_status.lower(), invalid))
+
+        for name, invalid in invalid_predecessors:
+            with self.subTest(invalid_predecessor=name):
+                data["wave_amendments"][0] = invalid
+                errors = validate(data, capabilities, slices, tasks, gates)
+                self.assertIn(predecessor_error, errors)
+
+        materialized_predecessor = copy.deepcopy(canonical_predecessor)
+        materialized_predecessor["lifecycle"]["status"] = "MATERIALIZED"
+        materialized_predecessor["lifecycle"]["history"][-1]["status"] = "MATERIALIZED"
+        data["wave_amendments"][0] = materialized_predecessor
         errors = validate(data, capabilities, slices, tasks, gates)
         self.assertIn("W1: more than one amendment owns the shared amendment-hold scope", errors)
 
