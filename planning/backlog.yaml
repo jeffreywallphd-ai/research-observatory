@@ -8706,7 +8706,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T02
     - CAP-02.S02.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-03.S03.T01
       capability_id: CAP-03
@@ -10953,16 +10953,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: codex-independent-provenance-slice-reviewer
       reviewed_at: '2026-08-30T00:27:13+00:00'
       evidence:
-      - artifacts/evidence/CAP-03.S03.integration-R01.json
-      notes: 'R01 ledger artifacts/evidence/CAP-03.S03.integration.review-R01.json SHA-256 3539e82a3807c6cfdb9fdbd5c6d281f8b2a146c73e3e5c365cb11cf425729e56.
-        HIGH CAP-03.S03-INTEGRATION-R01-F01: cursor and scan ceilings can hide accepted-bound lineage while returning terminal
-        verified/exportable authority; full graph is materialized per page and representative performance evidence is absent.
-        All 15 task findings remain closed. Require explicit continuation or incomplete denial, bounded streaming/snapshot,
-        >10100-fact and scan-limit end-to-end regressions, restart/order/trust monotonicity, and Section 11 benchmark.'
+      - artifacts/evidence/CAP-03.S03.integration-R02.json
+      notes: R02 strict-descendant remediation closes CAP-03.S03-INTEGRATION-R01-F01 with explicit fail-closed cursor/scan
+        truncation authority, bounded batched traversal, >10,100-fact restart-stable SQLite evidence, generated-client/renderer
+        denial tests, and a 7.163-second p95 Section 11 benchmark. All 15 task findings remain closed; independent slice approval
+        remains required.
   - id: CAP-03.S04
     title: Portable workflow model and local worker fabric
     outcome: Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.

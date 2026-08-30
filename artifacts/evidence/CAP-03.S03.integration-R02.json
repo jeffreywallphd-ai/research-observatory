@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-03.S03",
+  "attemptId": "R02",
+  "stateCommit": "db559efb15afb886de57e4a8a2f2f36758690a51",
+  "productCandidateCommit": "807c052e6450c94920afae0f91641c72de6af8d0",
+  "branch": "codex/w1-windows-local-runtime",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-03/CAP-03.S03-append-only-provenance-and-audit-ledger.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "priorReview": {
+    "submissionCommit": "b98feb5ae6daadd70835b608ba38b170034f6eb7",
+    "reviewRecord": "artifacts/evidence/CAP-03.S03.integration.review-R01.json",
+    "reviewRecordSha256": "3539e82a3807c6cfdb9fdbd5c6d281f8b2a146c73e3e5c365cb11cf425729e56",
+    "disposition": "changes-requested",
+    "blockingFindingIds": [
+      "CAP-03.S03-INTEGRATION-R01-F01"
+    ]
+  },
+  "outcome": "CAP-03.S03 now exposes every accepted-bound large-lineage limit as explicit incomplete authority across the SQLite repository, authenticated Core response, OpenAPI and generated client, and Audit and Lineage workspace. Cursor and scan truncation force integrity-review, deny export, and remain visible to the researcher. The repository uses stable breadth-first traversal in bounded 256-revision snapshot batches and materializes no more than the requested page of LineageNode projections. A real 4,161-revision, 16,642-fact Windows SQLite fixture proves the cursor and scan boundaries, restart-stable ordering, bounded page materialization, fail-closed export, and a 7.163-second p95 against an 18-second regression limit.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-03.S03.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S03.T01.R03.json",
+          "sha256": "5a5357313519ef3ac5e39e4f2777e703e372d78aef8706f4b06ece0a1556df8e"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S03.T01.review-R03.json",
+          "sha256": "2c2f6324efa31d90705e84b8fdf8a94a30e68cc8dabf74eca6676f1fb2f0ca03"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S03.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S03.T02.R03.json",
+          "sha256": "dc151da5b7f28aa8be8fe776e4bce384aaa4d60db70155bc49832f1de5cbaf9c"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S03.T02.review-R03.json",
+          "sha256": "4fd104c61abfbab9fdc711ca3759b49d90a63db8b1c42f899168de1f2767c0cf"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S03.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S03.T03.R04.json",
+          "sha256": "7440517b4d2aa3e5b8310fca2a658968744b7b37e244ae6582a63dca332b4572"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S03.T03.review-R04.json",
+          "sha256": "06c7bfed31be4775e01000999157820be8b144fed5ee80855b69eeab51402141"
+        }
+      ]
+    }
+  ],
+  "rootCauseAnalysis": {
+    "findingId": "CAP-03.S03-INTEGRATION-R01-F01",
+    "rootCause": "The original repository treated its internal cursor and scan ceilings as invisible implementation details. When a true continuation crossed the cursor ceiling, it returned a terminal null cursor without changing integrity or export authority. When the breadth-first frontier crossed the scan ceiling, it stopped silently. The renderer correctly treated a null cursor as complete because the cross-process contract carried no truncation fact. The same implementation rebuilt and materialized the complete bounded graph for every page with per-revision and per-event queries, and the slice evidence had no representative cardinality benchmark to expose either behavior.",
+    "correction": "The LineagePage contract now carries a strict truncated/truncationReason pair. Both limits force integrity-review and integrity-review export denial in the repository and Pydantic response model; the generator, exact generated decoder/client, pagination merge, readiness predicate, and UI preserve that authority monotonically. Traversal is breadth-first but batches at most 256 revisions per indexed SQLite snapshot and materializes at most pageSize LineageNode objects. A governed benchmark creates and reopens a real project above the 10,100-fact boundary and separately exercises the scan limit.",
+    "whyPriorTestsMissedIt": "Prior unit, integration, client, and renderer fixtures all remained below both internal ceilings. They proved ordinary pagination and downstream monotonicity but never modeled a true has-more state beyond 10,000 or an unvisited frontier at the scan budget. Section 11 required a representative benchmark, but R01 did not include one.",
+    "prevention": "The new fields are part of OpenAPI and generated TypeScript, server and client semantic validators reject contradictory authority, SQLite/Core/client/renderer tests exercise both limit reasons and denial behavior, the large-lineage performance tool is included in governed Ruff/mypy scope, and this slice evidence records an explicit performance threshold and raw samples."
+  },
+  "integrationChecks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_provenance_contracts tests.data.test_sqlite_schema tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_local_object_store tests.data.test_storage_maintenance tests.service.test_provenance tests.service.test_core_api tests.service.test_research_intents tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file",
+      "exitCode": 0,
+      "result": "All 117 selected contract, schema, repository, migration, object-store, maintenance, provenance/Core/intent service, and packaged-sidecar tests passed. The final bounded-cache adjustment was replayed through all 23 repository and provenance-service tests. Coverage includes explicit scan/cursor truncation, restart stability, Pydantic fail-closed semantics, prior append-only/migration/recovery authority, and a packaged sidecar that runs without system Python."
+    },
+    {
+      "command": "repository Node 24 focused generated-client and AuditLineageWorkspace Vitest; strict packages/contracts and desktop TypeScript checks; core_api_contract.py --check",
+      "exitCode": 0,
+      "result": "All 18 focused portable-client/renderer tests passed, both strict TypeScript projects passed, and generated OpenAPI/client parity passed. Exact-field decoding, contradictory truncation rejection, valid bounded truncation, monotonic page merge, incomplete UI state, and export denial are covered."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/provenance_lineage_performance_check.py --repo . --report artifacts/tmp/CAP-03.S03-integration-R02-lineage-performance.json",
+      "exitCode": 0,
+      "result": "The governed real-SQLite Windows x64 benchmark passed on fixture provenance-lineage-wide-dag-v1 with 4,161 revisions and 16,642 accepted-bound facts. Three new-connection/full-integrity samples were 7,113.426, 7,162.811, and 7,102.050 milliseconds (nearest-rank p95 7,162.811 ms) against a 15,000 ms reference, 18,000 ms 20-percent regression limit, and 30,000 ms absolute limit. Cursor 10,000 returned 100 facts, disclosed 6,542 hidden accepted-bound facts as cursor-limit, and denied export; the bounded scan fixture disclosed scan-limit and denied export. Ordering was stable across reopen and page materialization remained at 100. Report SHA-256 0085d81d13c2900e67b63c83a6df8ca9459c68fa1eaab21a1d02ec2883824345."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03-integration-R02-desktop.json",
+      "exitCode": 0,
+      "result": "The complete desktop verifier passed UI-component verification, lint, strict type checks, complete Vitest, production builds, Rust formatting, clippy, workspace tests, and native build. Report SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad."
+    },
+    {
+      "command": "ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; isolated ui_visual_regression_check.py",
+      "exitCode": 0,
+      "result": "Approved-reference integrity, 109 tokens, 32 routes, 14 workflow profiles, 390 keyboard cases, 64 responsive accessibility cases, and all 64 controlled light/dark Chromium captures passed against RO-UI-ACADEMIC-MINIMAL-1.3. The first visual attempt ran concurrently with four other browser checks and reported one transient index.html dark mismatch; the exact failing capture then matched its governed SHA-256 three consecutive times, and the authoritative isolated 64-capture rerun passed. Final visual report SHA-256 1ccb35ce81454e4fdb43b75859139a9a67e42c4d8076670497da2d2b4a4b82f2."
+    },
+    {
+      "command": "quality_check.py; architecture_check.py; repository_structure_check.py; agent_protocol_check.py; taskctl.py validate; backlog_views.py --check; plan_review_check.py; planctl.py wave ready W1 --require-approved; build_manifest.py; git diff --check",
+      "exitCode": 0,
+      "result": "All 167 governed Python files passed format, lint, and mypy; architecture, repository structure, and durable-Wave protocol passed; the 20-capability, 117-slice, 359-task backlog and 19-capability/111-slice/150-page review site passed; W1 remains ready under its immutable approval. Build manifest 0.1.0+g807c052.dirty truthfully names only the protected untracked witness and has SHA-256 0df7f7b08be07dab4fb3d6a6073454680ff00e83f476b74d082a4aedb72e5949. Patch hygiene passed."
+    }
+  ],
+  "findingReplay": {
+    "closedFindingIds": [
+      "CAP-03.S03.T01-R01-F01",
+      "CAP-03.S03.T01-R01-F02",
+      "CAP-03.S03.T01-R01-F03",
+      "CAP-03.S03.T01-R02-F01",
+      "CAP-03.S03.T01-R02-F02",
+      "CAP-03.S03.T02-R01-F01",
+      "CAP-03.S03.T02-R01-F02",
+      "CAP-03.S03.T02-R02-F01",
+      "CAP-03.S03.T02-R02-F02",
+      "CAP-03.S03.T03-R01-F01",
+      "CAP-03.S03.T03-R01-F02",
+      "CAP-03.S03.T03-R01-F03",
+      "CAP-03.S03.T03-R02-F01",
+      "CAP-03.S03.T03-R02-F02",
+      "CAP-03.S03.T03-R03-F01",
+      "CAP-03.S03-INTEGRATION-R01-F01"
+    ],
+    "openFindingIds": [],
+    "result": "Every prior task finding remains closed. CAP-03.S03-INTEGRATION-R01-F01 is replayed directly through explicit cursor-limit and scan-limit contract tests, a >10,100-fact real SQLite benchmark, restart-stable ordering, generated-client denial, renderer monotonicity/incomplete-state tests, and representative performance evidence. Formal closure remains exclusively with the independent R02 slice reviewer."
+  },
+  "profileSelection": {
+    "selected": "The correction changes a public cross-process response, append-only-data query behavior, generated client, export authority, and user-visible audit state. Contract, data, service, packaging, desktop, experience, architecture, quality, and representative performance checks were therefore selected.",
+    "deferredToWaveExit": "The complete cross-capability W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once all W1 slices close. No full repository/deployment profile was replayed solely for this bounded slice remediation."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskReviewsApproved": true,
+    "priorBlockingFindingReplayed": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The full cross-capability W1 qualification matrix remains due once at Wave exit.",
+      "Two stale schema-v6 assertions and the historical foundation controller/recovery baseline remain visible W1-exit reconciliation debt and were not changed or concealed by this remediation.",
+      "artifacts/evidence/W1.A04.B00.json remains untracked and unstaged at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9; it was not edited, staged, or deleted."
+    ]
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-03.S04 through CAP-03.S06",
+      "contract": "stable canonical identities, append-only provenance, exact bounded lineage, explicit truncation authority, integrity-review state, responsible actor/activity, restart-stable ordering, and fail-closed export",
+      "readyPendingSliceApproval": true
+    },
+    {
+      "consumer": "CAP-04 through CAP-07 scholarly evidence, synthesis, study, manuscript, reviewer, export, and recovery workflows",
+      "contract": "portable source/transformation/model/decision/invalidation trace with visible limit, rights, missing-fact, and completeness authority",
+      "readyPendingSliceApproval": true
+    }
+  ]
+}
