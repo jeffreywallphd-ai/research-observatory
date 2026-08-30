@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0007",
+  "reviewId": "GOV-MAINT-0007.R01",
+  "reviewedCommit": "ff6c3c3ea5fbc0c62a8e9dbf0c31614d9f3076dc",
+  "reviewer": "agent:gov-maint-0007-reviewer",
+  "reviewedAt": "2026-08-30T20:47:52.8979087Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "apps/desktop/src/app/audit-lineage.conformance.json",
+    "packages/ui-tokens/src/index.ts",
+    "packages/ui-tokens/token-contract.json",
+    "planning/governance-migrations/GOV-MAINT-0007.json",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0007-R01-F01",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "The v1.4 approval record is rejected by the candidate validator",
+      "reproduction": "Run `.venv\\Scripts\\python.exe -B tools/ui_conformance.py --repo . --check visual`; approval lineage rejects the legitimate `approval_kind` and `authority` fields.",
+      "requiredResolution": "Add exact version-aware validation for the v1.4 human-approval authority fields while preserving strict v1.3 validation, with an actual-record regression."
+    },
+    {
+      "id": "GOV-MAINT-0007-R01-F02",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "Historical visual ratification and deterministic replay remain invalid",
+      "reproduction": "The authoritative visual check exits 1 after 66 captures, reporting historical package/approval errors for the prior v1.3 lineage. An additional replay reported an index.html dark-theme mismatch while a later isolated render did not.",
+      "requiredResolution": "Preserve every valid historical ratification independently of the final baseline, validate each snapshot against its cited reference history, and demonstrate repeatable clean exact-candidate visual replay."
+    },
+    {
+      "id": "GOV-MAINT-0007-R01-F03",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "Post-implementation maintenance accepts arbitrary governed product mutation",
+      "reproduction": "In a real-Git fixture, include a modified apps/desktop/src/View.tsx with a gate-schema change and exact reviewed GOV-MAINT record; after direct-child adoption, ui_change_gate.validate returns ok=true.",
+      "requiredResolution": "Require a control-only post-implementation maintenance envelope, reject governed implementation paths, separate product activation changes into task-authorized commits, and add a real-Git mixed-envelope denial test."
+    }
+  ]
+}

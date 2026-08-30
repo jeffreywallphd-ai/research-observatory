@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0007",
   "title": "Activate the approved v1.4 experience through reviewed generic maintenance",
-  "status": "candidate",
+  "status": "changes-requested",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -84,6 +84,21 @@
     ]
   },
   "rollback": "If independent review finds a blocking defect, do not adopt the maintenance or submit T04. Revert only the strict-descendant maintenance candidate to predecessor fe50e7c; the corrected product candidate remains committed, T04 remains IN_PROGRESS at its original claim base, v1.3 remains the active verification reference, v1.4 remains approved but inactive, and no task or release authority changes.",
-  "reviewAttempts": [],
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0007.R01",
+      "reviewedCommit": "ff6c3c3ea5fbc0c62a8e9dbf0c31614d9f3076dc",
+      "reviewer": "agent:gov-maint-0007-reviewer",
+      "reviewedAt": "2026-08-30T20:47:52.8979087Z",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": [
+        "GOV-MAINT-0007-R01-F01",
+        "GOV-MAINT-0007-R01-F02",
+        "GOV-MAINT-0007-R01-F03"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0007.review-R01.json",
+      "sha256": "514be98f22872f2ff1bd4a93331fdddee6b5a47062e0061a1ca7baaf1fe0f76f"
+    }
+  ],
   "review": null
 }
