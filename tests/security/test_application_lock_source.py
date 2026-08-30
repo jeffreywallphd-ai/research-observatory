@@ -116,6 +116,9 @@ class ApplicationLockSourceBoundaryTests(unittest.TestCase):
         lock_source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_lock.rs").read_text(
             encoding="utf-8"
         )
+        policy_source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_sign_in_policy.rs").read_text(
+            encoding="utf-8"
+        )
         self.assertIn("self.policy_store.stage(&pending.target)", lock_source)
         self.assertIn("self.policy_store.publish(staged, &pending.source)", lock_source)
         self.assertIn("inner.generation != pending.generation", lock_source)
@@ -128,6 +131,10 @@ class ApplicationLockSourceBoundaryTests(unittest.TestCase):
         self.assertIn("support.clear_pending()", source)
         self.assertIn("lock.lock_if_idle()", source)
         self.assertIn('emit("application-lock-changed"', source)
+        self.assertIn("ApplicationLockManager::acquire(&application_data)", source)
+        self.assertNotIn("ApplicationLockManager::new(&application_data)", source)
+        self.assertIn("RO-DESKTOP-ALREADY-RUNNING", policy_source)
+        self.assertIn("ApplicationInstanceGuard", lock_source)
 
 
 if __name__ == "__main__":

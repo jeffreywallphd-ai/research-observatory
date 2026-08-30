@@ -318,7 +318,8 @@ pub fn run() {
                 .path()
                 .app_local_data_dir()
                 .map_err(|_| std::io::Error::other("application data unavailable"))?;
-            let lock = ApplicationLockManager::new(&application_data);
+            let lock = ApplicationLockManager::acquire(&application_data)
+                .map_err(std::io::Error::other)?;
             let support = SupportBundleManager::default();
             app.manage(supervisor.clone());
             app.manage(lock.clone());
