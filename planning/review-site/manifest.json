@@ -18821,7 +18821,7 @@
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -18880,12 +18880,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "w1-a05-b00-independent-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-30T13:36:04+00:00",
+            "notes": "R03 ledger artifacts/evidence/W1.A05.B00.review-03.json (sha256 45cfa8ac8832ad30d8f69ea54ebb20d3bb708be5823ea7ae2181387a7f7614b0): W1-A05-B00-R03-F01 requires current and future remediation projections to retain the exact frozen scope_base_commit while preserving immutable historical attempts."
           },
-          "current_status": "REVIEW"
+          "current_status": "CHANGES_REQUESTED"
         }
       ],
       "slice_contributions": [
