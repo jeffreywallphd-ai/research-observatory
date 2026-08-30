@@ -42,7 +42,51 @@
     "approvalSource": {"enum": ["MIGRATED_HISTORY"]},
     "migration": {"type": "object"},
     "bootstrapUnit": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}$"},
-    "independentPacketReview": {"type": "object"}
+    "independentPacketReview": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["reviewer", "candidateCommit", "result", "findingIdsClosed"],
+          "properties": {
+            "reviewer": {"type": "string", "minLength": 1},
+            "candidateCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "result": {"const": "APPROVED"},
+            "attemptId": {"type": "string", "pattern": "^R[0-9]{2}$"},
+            "findingIdsClosed": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "reviewer", "candidateCommit", "reviewedStateCommit", "result", "attemptId",
+            "findingIdsClosed", "ledger"
+          ],
+          "properties": {
+            "reviewer": {"type": "string", "minLength": 1},
+            "candidateCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "reviewedStateCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "result": {"const": "APPROVED"},
+            "attemptId": {"type": "string", "pattern": "^R[0-9]{2}$"},
+            "findingIdsClosed": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+            "ledger": {
+              "type": "object",
+              "required": ["path", "sha256", "introductionCommit"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "pattern": "^planning/enabler-change-requests/ECR-[0-9]{4}\\.review-R[0-9]{2}\\.json$"
+                },
+                "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                "introductionCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
   },
   "allOf": [
     {
