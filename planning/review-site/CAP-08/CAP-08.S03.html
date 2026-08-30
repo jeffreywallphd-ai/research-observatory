@@ -33,7 +33,7 @@
     <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item active" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
   </section>
 </div>
-<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-08.S01.html"><b>1</b><span><strong>SLICE-core-ontology-and-schema-pack-registry</strong><small>CAP-08.S01 · Core ontology and schema-pack registry</small></span></a><a class="slice-nav-item" href="CAP-08.S02.html"><b>2</b><span><strong>SLICE-source-grounded-extraction-pipeline</strong><small>CAP-08.S02 · Source-grounded extraction pipeline</small></span></a><a class="slice-nav-item active" href="CAP-08.S03.html"><b>3</b><span><strong>SLICE-evidence-record-status-confidence-and-uncertainty-model</strong><small>CAP-08.S03 · Evidence record, status, confidence, and uncertainty model</small></span></a><a class="slice-nav-item" href="CAP-08.S04.html"><b>4</b><span><strong>SLICE-independent-evidence-verification</strong><small>CAP-08.S04 · Independent evidence verification</small></span></a><a class="slice-nav-item" href="CAP-08.S05.html"><b>5</b><span><strong>SLICE-evidence-matrix-and-source-first-analysis-ui</strong><small>CAP-08.S05 · Evidence matrix and source-first analysis UI</small></span></a><a class="slice-nav-item" href="CAP-08.S06.html"><b>6</b><span><strong>SLICE-coder-comparison-adjudication-and-evidence-export</strong><small>CAP-08.S06 · Coder comparison, adjudication, and evidence export</small></span></a></nav></aside>
+<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-08.S01.html"><b>1</b><span><strong>SLICE-core-ontology-and-schema-pack-registry</strong><small>CAP-08.S01 · Core ontology and schema-pack registry</small></span></a><a class="slice-nav-item" href="CAP-08.S02.html"><b>2</b><span><strong>SLICE-source-grounded-extraction-pipeline</strong><small>CAP-08.S02 · Source-grounded extraction pipeline</small></span></a><a class="slice-nav-item active" href="CAP-08.S03.html"><b>3</b><span><strong>SLICE-evidence-record-status-confidence-and-uncertainty-model</strong><small>CAP-08.S03 · Evidence record, status, confidence, and uncertainty model</small></span></a><a class="slice-nav-item" href="CAP-08.S04.html"><b>4</b><span><strong>SLICE-independent-evidence-verification</strong><small>CAP-08.S04 · Independent evidence verification</small></span></a><a class="slice-nav-item" href="CAP-08.S05.html"><b>5</b><span><strong>SLICE-evidence-matrix-and-source-first-analysis-ui</strong><small>CAP-08.S05 · Evidence matrix and source-first analysis UI</small></span></a><a class="slice-nav-item" href="CAP-08.S06.html"><b>6</b><span><strong>SLICE-coder-comparison-adjudication-and-evidence-export</strong><small>CAP-08.S06 · Coder comparison, adjudication, and evidence export</small></span></a></nav><h2>Slice tasks</h2><nav class='slice-nav task-nav'><a class="slice-nav-item" href="CAP-08.S03.T01.html"><b>1</b><span><strong>CAP-08.S03.T01</strong><small>Implement evidence-record persistence and lineage</small></span></a><a class="slice-nav-item" href="CAP-08.S03.T02.html"><b>2</b><span><strong>CAP-08.S03.T02</strong><small>Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states</small></span></a><a class="slice-nav-item" href="CAP-08.S03.T03.html"><b>3</b><span><strong>CAP-08.S03.T03</strong><small>Implement decomposed confidence and missingness</small></span></a></nav></aside>
     <main id="main-content" class="main-panel">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-evidence-verification</a><span>/</span><span aria-current="page">SLICE-evidence-record-status-confidence-and-uncertainty-model (CAP-08.S03)</span></nav>
 
@@ -58,9 +58,28 @@ These selections are recommendations until the capability packet and ADRs are ap
 | **Record identity** | UUIDv7 evidence assertion identity plus immutable revision/attempt IDs; semantic duplicate linking is separate. | Use field/value as primary key. | Multiple independent observations, interpretations and disputes can share values without being the same record. | [RFC 9562 - Universally Unique IDentifiers](https://www.rfc-editor.org/rfc/rfc9562.html) |
 | **Transition authority** | Commands enforce allowed state transitions, actor role and required evidence; adjudication creates a new resolution record. | Direct status column edits. | The audit model must explain who changed epistemic status and why. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
 | **Confidence** | Store component assessments and calibration bands, with “unknown/not assessed” first-class. | Average model confidence values. | Components arise from different processes and should not be collapsed without an explicit analysis. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
-
 </pre></article></section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Authoritative task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>## 9. Task-by-task implementation plan
+<section class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Tasks</h2><p>Open a task for its objective, acceptance criteria, implementation plan, verification inventory, optional worksheet, and immutable review history.</p></section>
+<div class="task-list">
+<a class="task-card" href="CAP-08.S03.T01.html" data-slice-task="CAP-08.S03.T01">
+  <div class="slice-card-index">1</div>
+  <div><span class="eyebrow">CAP-08.S03.T01</span><h3>Implement evidence-record persistence and lineage</h3>
+  <p>Canonical record for field/relation, raw and normalized value, source anchors, extraction activity, schema, model, confidence dimensions, and dependencies.</p><small>Review: not reviewed · Risk: high</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a>
+<a class="task-card" href="CAP-08.S03.T02.html" data-slice-task="CAP-08.S03.T02">
+  <div class="slice-card-index">2</div>
+  <div><span class="eyebrow">CAP-08.S03.T02</span><h3>Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states</h3>
+  <p>State machine, transition rules, labels, downstream-use policy, and UI badges for evidence status.</p><small>Review: not reviewed · Risk: high</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a>
+<a class="task-card" href="CAP-08.S03.T03.html" data-slice-task="CAP-08.S03.T03">
+  <div class="slice-card-index">3</div>
+  <div><span class="eyebrow">CAP-08.S03.T03</span><h3>Implement decomposed confidence and missingness</h3>
+  <p>Separate extraction, entailment, entity-link, comparability, source-quality, and corpus-coverage fields plus not-reported/unclear/not-applicable states.</p><small>Review: not reviewed · Risk: high</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a></div>
+<details class="plan-details"><summary>Read the complete task-by-task implementation plan</summary><article class="plan-article"><pre class='markdown-fallback'>## 9. Task-by-task implementation plan
 
 ### CAP-08.S03.T01 — Implement evidence-record persistence and lineage
 
@@ -206,28 +225,7 @@ python tools/verify.py --profile evidence
 python tools/verify.py --profile desktop
 ```
 
-
-</pre></article></section>
-<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
-
-<section class="review-toolbar" data-task-review-id="CAP-08.S03.T01" data-review-mode="latest-review-only">
-  <h3>CAP-08.S03.T01 — Implement evidence-record persistence and lineage</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-08.S03.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
-<section class="review-toolbar" data-task-review-id="CAP-08.S03.T02" data-review-mode="latest-review-only">
-  <h3>CAP-08.S03.T02 — Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-08.S03.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
-<section class="review-toolbar" data-task-review-id="CAP-08.S03.T03" data-review-mode="latest-review-only">
-  <h3>CAP-08.S03.T03 — Implement decomposed confidence and missingness</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-08.S03.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
+</pre></article></details>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-08.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and both plan validators pass in approval mode. Once the capability campaign starts, the agent should execute continuously through its slices and pause only for an allowed infeasibility, external dependency, unavailable required hardware, explicit human decision, or approved design gate.
 
 &lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Capability decisions approved&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Slice plan approved&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Tasks executed&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Slice integration&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Independent review&lt;/span&gt;&lt;/div&gt;
@@ -671,13 +669,13 @@ All material choices in Sections 4–5 must appear in the capability packet. Bef
 
 ## 20. Research and standards basis
 
-- **PROV-O: The PROV Ontology** — Interoperable provenance entities, activities, agents and derivations.  
+- **PROV-O: The PROV Ontology** — Interoperable provenance entities, activities, agents and derivations.
   https://www.w3.org/TR/prov-o/
-- **RFC 9562 - Universally Unique IDentifiers** — Stable sortable UUIDv7 identifiers.  
+- **RFC 9562 - Universally Unique IDentifiers** — Stable sortable UUIDv7 identifiers.
   https://www.rfc-editor.org/rfc/rfc9562.html
-- **Fact or Fiction: Verifying Scientific Claims** — Scientific claim/evidence verification benchmark and rationale retrieval.  
+- **Fact or Fiction: Verifying Scientific Claims** — Scientific claim/evidence verification benchmark and rationale retrieval.
   https://aclanthology.org/2020.emnlp-main.609/
-- **Web Annotation Data Model** — Multi-selector source anchors and revision-aware annotations.  
+- **Web Annotation Data Model** — Multi-selector source anchors and revision-aware annotations.
   https://www.w3.org/TR/annotation-model/
 
 These sources support implementation choices, not universal truth claims. Production selection remains conditional on project-specific benchmarks, licenses, privacy/rights constraints and the accepted capability decision packet.
@@ -691,8 +689,7 @@ These sources support implementation choices, not universal truth claims. Produc
 5. After each task, run focused verification, attach criterion-linked evidence and obtain independent task review.
 6. After the last task, run the complete Section 10 matrix from a clean/restarted state and assemble the slice evidence bundle.
 7. Request independent slice review. On approval, let `taskctl` advance the campaign automatically to the next slice.
-8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.
-</pre></article></details>
+8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.</pre></article></details>
 <nav class="page-turn" aria-label="Slice navigation"><a class="button button-quiet" href="CAP-08.S02.html">Previous</a><a class="button button-primary" href="CAP-08.S04.html">Next</a></nav>
 
     </main>

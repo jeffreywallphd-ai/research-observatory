@@ -33,7 +33,7 @@
     <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item active" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
   </section>
 </div>
-<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-07.S01.html"><b>1</b><span><strong>SLICE-model-task-provider-and-routing-contracts</strong><small>CAP-07.S01 · Model task, provider, and routing contracts</small></span></a><a class="slice-nav-item active" href="CAP-07.S02.html"><b>2</b><span><strong>SLICE-local-model-runtime-and-model-management</strong><small>CAP-07.S02 · Local model runtime and model management</small></span></a><a class="slice-nav-item" href="CAP-07.S03.html"><b>3</b><span><strong>SLICE-approved-remote-model-providers</strong><small>CAP-07.S03 · Approved remote model providers</small></span></a><a class="slice-nav-item" href="CAP-07.S04.html"><b>4</b><span><strong>SLICE-prompt-schema-and-structured-output-registry</strong><small>CAP-07.S04 · Prompt, schema, and structured-output registry</small></span></a><a class="slice-nav-item" href="CAP-07.S05.html"><b>5</b><span><strong>SLICE-ai-observability-budgets-and-evaluation-operations</strong><small>CAP-07.S05 · AI observability, budgets, and evaluation operations</small></span></a></nav></aside>
+<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-07.S01.html"><b>1</b><span><strong>SLICE-model-task-provider-and-routing-contracts</strong><small>CAP-07.S01 · Model task, provider, and routing contracts</small></span></a><a class="slice-nav-item active" href="CAP-07.S02.html"><b>2</b><span><strong>SLICE-local-model-runtime-and-model-management</strong><small>CAP-07.S02 · Local model runtime and model management</small></span></a><a class="slice-nav-item" href="CAP-07.S03.html"><b>3</b><span><strong>SLICE-approved-remote-model-providers</strong><small>CAP-07.S03 · Approved remote model providers</small></span></a><a class="slice-nav-item" href="CAP-07.S04.html"><b>4</b><span><strong>SLICE-prompt-schema-and-structured-output-registry</strong><small>CAP-07.S04 · Prompt, schema, and structured-output registry</small></span></a><a class="slice-nav-item" href="CAP-07.S05.html"><b>5</b><span><strong>SLICE-ai-observability-budgets-and-evaluation-operations</strong><small>CAP-07.S05 · AI observability, budgets, and evaluation operations</small></span></a></nav><h2>Slice tasks</h2><nav class='slice-nav task-nav'><a class="slice-nav-item" href="CAP-07.S02.T01.html"><b>1</b><span><strong>CAP-07.S02.T01</strong><small>Integrate a supervised local inference runtime</small></span></a><a class="slice-nav-item" href="CAP-07.S02.T02.html"><b>2</b><span><strong>CAP-07.S02.T02</strong><small>Implement model catalog, download/import, integrity, and license consent</small></span></a><a class="slice-nav-item" href="CAP-07.S02.T03.html"><b>3</b><span><strong>CAP-07.S02.T03</strong><small>Implement hardware profiles and adaptive resource limits</small></span></a></nav></aside>
     <main id="main-content" class="main-panel">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-model-gateway</a><span>/</span><span aria-current="page">SLICE-local-model-runtime-and-model-management (CAP-07.S02)</span></nav>
 
@@ -58,9 +58,28 @@ These selections are recommendations until the capability packet and ADRs are ap
 | **Runtime split** | llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers. | One monolithic Python transformers service for every workload. | The split improves cross-platform packaging and resource efficiency while the gateway hides runtime details. | [llama.cpp](https://github.com/ggml-org/llama.cpp) |
 | **Artifact acceptance** | Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation. | Download latest by mutable model name. | Reproducibility, security and legal use require immutable artifacts and explicit consent. | [Safetensors Documentation](https://huggingface.co/docs/safetensors/index) |
 | **Hardware profiles** | Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback. | Optimistically allocate all GPU/RAM. | Research desktops and DGX-class lab machines vary widely; adaptive limits prevent instability. | [ONNX Runtime Execution Providers](https://onnxruntime.ai/docs/execution-providers/) |
-
 </pre></article></section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Authoritative task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>## 9. Task-by-task implementation plan
+<section class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Tasks</h2><p>Open a task for its objective, acceptance criteria, implementation plan, verification inventory, optional worksheet, and immutable review history.</p></section>
+<div class="task-list">
+<a class="task-card" href="CAP-07.S02.T01.html" data-slice-task="CAP-07.S02.T01">
+  <div class="slice-card-index">1</div>
+  <div><span class="eyebrow">CAP-07.S02.T01</span><h3>Integrate a supervised local inference runtime</h3>
+  <p>Sidecar-managed llama.cpp-compatible runtime with health, cancellation, streaming, batching limits, hardware detection, and safe shutdown.</p><small>Review: not reviewed · Risk: high</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a>
+<a class="task-card" href="CAP-07.S02.T02.html" data-slice-task="CAP-07.S02.T02">
+  <div class="slice-card-index">2</div>
+  <div><span class="eyebrow">CAP-07.S02.T02</span><h3>Implement model catalog, download/import, integrity, and license consent</h3>
+  <p>Model manifest catalog, resumable download or local import, checksums/signatures, disk estimates, license display, and removal.</p><small>Review: not reviewed · Risk: high</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a>
+<a class="task-card" href="CAP-07.S02.T03.html" data-slice-task="CAP-07.S02.T03">
+  <div class="slice-card-index">3</div>
+  <div><span class="eyebrow">CAP-07.S02.T03</span><h3>Implement hardware profiles and adaptive resource limits</h3>
+  <p>CPU/GPU/RAM/VRAM detection, recommended models, context/batch caps, concurrency, thermal-friendly modes, and user overrides.</p><small>Review: not reviewed · Risk: medium</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a></div>
+<details class="plan-details"><summary>Read the complete task-by-task implementation plan</summary><article class="plan-article"><pre class='markdown-fallback'>## 9. Task-by-task implementation plan
 
 ### CAP-07.S02.T01 — Integrate a supervised local inference runtime
 
@@ -205,28 +224,7 @@ python tools/verify.py --profile ai
 python tools/verify.py --profile e2e-local
 ```
 
-
-</pre></article></section>
-<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
-
-<section class="review-toolbar" data-task-review-id="CAP-07.S02.T01" data-review-mode="latest-review-only">
-  <h3>CAP-07.S02.T01 — Integrate a supervised local inference runtime</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-07.S02.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
-<section class="review-toolbar" data-task-review-id="CAP-07.S02.T02" data-review-mode="latest-review-only">
-  <h3>CAP-07.S02.T02 — Implement model catalog, download/import, integrity, and license consent</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-07.S02.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
-<section class="review-toolbar" data-task-review-id="CAP-07.S02.T03" data-review-mode="latest-review-only">
-  <h3>CAP-07.S02.T03 — Implement hardware profiles and adaptive resource limits</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-07.S02.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
+</pre></article></details>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-07.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and both plan validators pass in approval mode. Once the capability campaign starts, the agent should execute continuously through its slices and pause only for an allowed infeasibility, external dependency, unavailable required hardware, explicit human decision, or approved design gate.
 
 &lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Capability decisions approved&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Slice plan approved&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Tasks executed&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Slice integration&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Independent review&lt;/span&gt;&lt;/div&gt;
@@ -670,13 +668,13 @@ All material choices in Sections 4–5 must appear in the capability packet. Bef
 
 ## 20. Research and standards basis
 
-- **llama.cpp** — Cross-platform local generative inference, embeddings, reranking, grammar constraints and OpenAI-compatible service.  
+- **llama.cpp** — Cross-platform local generative inference, embeddings, reranking, grammar constraints and OpenAI-compatible service.
   https://github.com/ggml-org/llama.cpp
-- **ONNX Runtime Execution Providers** — Portable CPU/CUDA/DirectML/CoreML inference for embedding, reranking and classification models.  
+- **ONNX Runtime Execution Providers** — Portable CPU/CUDA/DirectML/CoreML inference for embedding, reranking and classification models.
   https://onnxruntime.ai/docs/execution-providers/
-- **Safetensors Documentation** — Safer tensor serialization and model artifact inspection.  
+- **Safetensors Documentation** — Safer tensor serialization and model artifact inspection.
   https://huggingface.co/docs/safetensors/index
-- **Hugging Face Hub Cache Management** — Content-addressed model cache, revisions, cleanup and offline behavior.  
+- **Hugging Face Hub Cache Management** — Content-addressed model cache, revisions, cleanup and offline behavior.
   https://huggingface.co/docs/huggingface_hub/guides/manage-cache
 
 These sources support implementation choices, not universal truth claims. Production selection remains conditional on project-specific benchmarks, licenses, privacy/rights constraints and the accepted capability decision packet.
@@ -690,8 +688,7 @@ These sources support implementation choices, not universal truth claims. Produc
 5. After each task, run focused verification, attach criterion-linked evidence and obtain independent task review.
 6. After the last task, run the complete Section 10 matrix from a clean/restarted state and assemble the slice evidence bundle.
 7. Request independent slice review. On approval, let `taskctl` advance the campaign automatically to the next slice.
-8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.
-</pre></article></details>
+8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.</pre></article></details>
 <nav class="page-turn" aria-label="Slice navigation"><a class="button button-quiet" href="CAP-07.S01.html">Previous</a><a class="button button-primary" href="CAP-07.S03.html">Next</a></nav>
 
     </main>

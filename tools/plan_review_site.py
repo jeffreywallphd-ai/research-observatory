@@ -24,8 +24,8 @@ except ImportError:  # pragma: no cover - generated site still works with plain 
     mistune = None
 
 
-SITE_SCHEMA_VERSION = "1.3"
-REVIEW_INTERFACE_RELEASE = "1.3.10"
+SITE_SCHEMA_VERSION = "1.4"
+REVIEW_INTERFACE_RELEASE = "1.4.0"
 FEEDBACK_SCHEMA_VERSION = "1.1"
 OTHER_SENTINEL = "__OTHER__"
 
@@ -58,9 +58,40 @@ def extract_section(markdown: str, number: int) -> str:
     return match.group(0) if match else ""
 
 
+def extract_task_section(markdown: str, task_id: str) -> str:
+    pattern = re.compile(
+        rf"(?ms)^###\s+9\.\d+\s+[^\n]*`{re.escape(task_id)}`[^\n]*\n.*?(?=^###\s+9\.\d+\s+|\Z)"
+    )
+    match = pattern.search(markdown)
+    return match.group(0) if match else ""
+
+
+def task_page_name(task_id: str) -> str:
+    if not re.fullmatch(r"CAP-\d+\.S\d+\.T\d+", task_id):
+        raise ValueError(f"Unsafe or unsupported task identity: {task_id}")
+    return f"{task_id}.html"
+
+
+def task_worksheet_projection(repo: Path, task_id: str) -> dict[str, str] | None:
+    task_page_name(task_id)
+    relative = Path("artifacts") / "evidence" / f"{task_id}.task-start.md"
+    worksheet = repo / relative
+    if not worksheet.is_file():
+        return None
+    return {
+        "path": relative.as_posix(),
+        "sha256": sha256(worksheet),
+        "markdown": worksheet.read_text(encoding="utf-8"),
+    }
+
+
 def markdown_renderer():
     if mistune is None:
-        return lambda value: f"<pre class='markdown-fallback'>{html.escape(value)}</pre>"
+        return lambda value: (
+            "<pre class='markdown-fallback'>"
+            + html.escape("\n".join(line.rstrip() for line in value.splitlines()))
+            + "</pre>"
+        )
     return mistune.create_markdown(escape=False, plugins=["table", "task_lists"])
 
 
@@ -459,6 +490,38 @@ def slice_nav(slices: list[dict[str, Any]], active: str | None) -> str:
     return "<h2>Capability slices</h2><nav class='slice-nav'>" + "".join(rows) + "</nav>"
 
 
+def task_nav(tasks: list[dict[str, Any]], active: str | None) -> str:
+    rows = []
+    for index, task in enumerate(tasks, start=1):
+        task_id = str(task["task_id"])
+        cls = " active" if task_id == active else ""
+        rows.append(
+            f'<a class="slice-nav-item{cls}" href="{esc(task["page_name"])}"><b>{index}</b><span>'
+            f"<strong>{esc(task_id)}</strong><small>{esc(task['title'])}</small></span></a>"
+        )
+    return "<h2>Slice tasks</h2><nav class='slice-nav task-nav'>" + "".join(rows) + "</nav>"
+
+
+def task_worksheet_html(worksheet: dict[str, str] | None, task_id: str) -> str:
+    if worksheet is None:
+        return (
+            f'<p class="decision-meta" data-task-worksheet-absent="{esc(task_id)}">'
+            "No optional task-start worksheet is assigned. This does not block execution.</p>"
+        )
+    return f"""
+<details class="plan-details task-worksheet" open data-task-worksheet="{esc(task_id)}" data-worksheet-sha256="{esc(worksheet['sha256'])}">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>{esc(worksheet['path'])}</code> · <strong>SHA-256:</strong> <code>{esc(worksheet['sha256'])}</code></div>
+  <article class="plan-article">{render_markdown(worksheet['markdown'])}</article>
+</details>"""
+
+
+def task_values_html(values: list[Any] | None, *, empty: str = "None") -> str:
+    if not values:
+        return f"<p>{esc(empty)}</p>"
+    return '<ul class="gate-criteria">' + "".join(f"<li>{esc(value)}</li>" for value in values) + "</ul>"
+
+
 def decision_card(decision: dict[str, Any], plan_hash: str) -> str:
     did = decision["id"]
     candidates = decision.get("candidates", [])
@@ -822,6 +885,23 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         for capability in backlog_capabilities.values()
         for slice_ in capability.get("slices", [])
     }
+    backlog_tasks: dict[str, dict[str, Any]] = {}
+    task_locations: dict[str, dict[str, str]] = {}
+    for capability in backlog_capabilities.values():
+        capability_id = str(capability["id"])
+        for slice_ in capability.get("slices", []):
+            slice_id = str(slice_["id"])
+            for task in slice_.get("tasks", []):
+                task_id = str(task["id"])
+                page_name = task_page_name(task_id)
+                if task_id in backlog_tasks:
+                    raise ValueError(f"Duplicate task identity in backlog: {task_id}")
+                backlog_tasks[task_id] = task
+                task_locations[task_id] = {
+                    "capability_id": capability_id,
+                    "slice_id": slice_id,
+                    "page": f"{capability_id}/{page_name}",
+                }
     waves = [wave for wave in backlog.get("waves", []) if isinstance(wave, dict)]
     gates_by_wave = {
         str(gate.get("after_wave")): gate for gate in backlog.get("release_gates", []) if isinstance(gate, dict)
@@ -839,6 +919,12 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
     for path in slice_plan_dir.glob("CAP-*/*.md"):
         meta, _ = read_frontmatter(path)
         slice_plan_meta[str(meta["slice_id"])] = meta
+    authored_capability_ids = {str(item["id"]) for item in capabilities}
+    authored_task_ids = {
+        task_id
+        for task_id, location in task_locations.items()
+        if location["capability_id"] in authored_capability_ids and location["slice_id"] in slice_plan_meta
+    }
 
     # Rebuild into a clean directory so stale pages or convenience launchers cannot
     # be mistaken for governed review pages or break page-count validation.
@@ -1369,23 +1455,49 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 plan_status = slice_plan_meta.get(str(slice_["id"]), {}).get("status", "missing")
                 wave_plan_count += int(plan_status != "missing")
                 wave_approved_plan_count += int(plan_status == "approved")
-                if capability_id in {item["id"] for item in capabilities}:
-                    label_html = (
-                        f'<a href="../{esc(capability_id)}/{esc(slice_["id"])}.html">'
-                        f"{esc(label)} <small>({esc(slice_['id'])})</small></a>"
+                slice_id = str(slice_["id"])
+                slice_open = any(
+                    str(task.get("status")) in {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED"}
+                    for task in slice_tasks
+                )
+                task_rows = []
+                for task in slice_tasks:
+                    task_id = str(task["id"])
+                    task_open = str(task.get("status")) in {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED"}
+                    task_link = (
+                        f'<a class="text-link" href="../{esc(capability_id)}/{esc(task_page_name(task_id))}">Open task page</a>'
+                        if task_id in authored_task_ids
+                        else '<span class="decision-meta">No authored task detail page is available.</span>'
                     )
-                else:
-                    label_html = f"{esc(label)} <small>({esc(slice_['id'])})</small>"
+                    task_rows.append(
+                        f'<details class="wave-task-card" data-wave-task="{esc(task_id)}"'
+                        f'{" open" if task_open else ""}><summary><span><strong>{esc(task_id)}</strong>'
+                        f'<small>{esc(task.get("title"))}</small></span>{status_badge(task.get("status"))}</summary>'
+                        f'<div class="wave-card-body"><p>{esc(task.get("objective"))}</p>'
+                        f'{task_link}</div></details>'
+                    )
                 slice_rows.append(
-                    f"<li><span>{label_html}<small>{esc(slice_.get('title'))} · Plan: {esc(plan_status)} · "
-                    f"Delivery: {esc(status)}</small></span>{status_stack(plan_status, delivery_status(slice_tasks, slice_.get('completion')))}</li>"
+                    f'<details class="wave-slice-card" data-wave-slice="{esc(slice_id)}"'
+                    f'{" open" if slice_open else ""}><summary><span><strong>{esc(label)}</strong>'
+                    f'<small>{esc(slice_id)} · {esc(slice_.get("title"))}</small></span>'
+                    f'{status_stack(plan_status, delivery_status(slice_tasks, slice_.get("completion")))}</summary>'
+                    f'<div class="wave-card-body"><p>Plan: {esc(plan_status)} · Delivery: {esc(status)} · '
+                    f'{len(slice_tasks)} task{"s" if len(slice_tasks) != 1 else ""}</p>'
+                    f'{f"<a class=\"text-link\" href=\"../{esc(capability_id)}/{esc(slice_id)}.html\">Open slice page</a>" if slice_id in slice_plan_meta else "<span class=\"decision-meta\">No authored slice detail page is available.</span>"}'
+                    f'<div class="wave-task-list">{"".join(task_rows)}</div></div></details>'
                 )
             alias = capability.get("alias", capability_id)
             title = capability.get("title")
-            if capability_id in {item["id"] for item in capabilities}:
-                heading = f'<a href="../{esc(capability_id)}/index.html">{esc(alias)}</a>'
-            else:
-                heading = esc(alias)
+            capability_open = any(
+                str(task.get("status")) in {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED"}
+                for slice_ in increment_slices
+                for task in slice_.get("tasks", [])
+            )
+            capability_link = (
+                f'<a class="text-link" href="../{esc(capability_id)}/index.html">Open capability page</a>'
+                if capability_id in authored_capability_ids
+                else '<span class="decision-meta">No authored capability detail page is available.</span>'
+            )
             decision_groups = "".join(
                 [
                     (
@@ -1422,11 +1534,14 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 ]
             )
             increment_cards.append(f"""
-<section class="wave-capability">
-  <div class="capability-card-top"><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{heading}</h2><p>{esc(title)}</p></div>{status_stack(cap_meta.get("status", "historical"), delivery_status([task for slice_ in increment_slices for task in slice_.get("tasks", [])]))}</div>
-  {decision_groups if cap_decisions else '<p class="decision-meta">Historical foundation contribution; approval is bound by the Wave record.</p>'}
-  <ol class="wave-slice-list">{"".join(slice_rows)}</ol>
-</section>""")
+<details class="wave-capability" data-wave-capability="{esc(capability_id)}"{" open" if capability_open else ""}>
+  <summary><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{esc(alias)}</h2><p>{esc(title)}</p></div>{status_stack(cap_meta.get("status", "historical"), delivery_status([task for slice_ in increment_slices for task in slice_.get("tasks", [])]))}</summary>
+  <div class="wave-card-body">
+    {capability_link}
+    {decision_groups if cap_decisions else '<p class="decision-meta">Historical foundation contribution; approval is bound by the Wave record.</p>'}
+    <div class="wave-slice-list">{"".join(slice_rows)}</div>
+  </div>
+</details>""")
 
         criteria = "".join(f"<li>{esc(criterion)}</li>" for criterion in gate.get("criteria", []))
         unlocks = ", ".join(str(item) for item in gate.get("unlocks_waves", [])) or "No further wave"
@@ -1577,6 +1692,13 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     for slice_ in capability.get("slices", [])
                     if slice_.get("wave") == wave_id
                 ],
+                "task_ids": [
+                    str(task["id"])
+                    for capability in backlog_capabilities.values()
+                    for slice_ in capability.get("slices", [])
+                    if slice_.get("wave") == wave_id
+                    for task in slice_.get("tasks", [])
+                ],
                 "slice_count": wave_slice_count,
                 "task_count": wave_task_count,
                 "exit_gate_id": gate.get("id"),
@@ -1597,12 +1719,35 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         cap_dir.mkdir(parents=True, exist_ok=True)
         cap_hash = sha256(cap_path)
 
-        slice_files = sorted((slice_plan_dir / cid).glob("*.md"))
+        slice_file_by_id: dict[str, Path] = {}
+        for slice_file in (slice_plan_dir / cid).glob("*.md"):
+            slice_file_meta, _ = read_frontmatter(slice_file)
+            slice_file_by_id[str(slice_file_meta["slice_id"])] = slice_file
+        authoritative_slice_ids = [
+            str(slice_["id"]) for slice_ in backlog_capabilities.get(cid, {}).get("slices", [])
+        ]
+        slice_files = [slice_file_by_id[slice_id] for slice_id in authoritative_slice_ids if slice_id in slice_file_by_id]
+        slice_files.extend(
+            slice_file_by_id[slice_id]
+            for slice_id in sorted(set(slice_file_by_id) - set(authoritative_slice_ids))
+        )
         slices: list[dict[str, Any]] = []
         for path in slice_files:
             smeta, sbody = read_frontmatter(path)
             page_name = f"{smeta['slice_id']}.html"
             backlog_slice = backlog_slices.get(str(smeta["slice_id"]), {})
+            tasks = backlog_slice.get("tasks", [])
+            task_entries = [
+                {
+                    "task": task,
+                    "task_id": str(task["id"]),
+                    "title": task.get("title"),
+                    "page_name": task_page_name(str(task["id"])),
+                    "worksheet": task_worksheet_projection(repo, str(task["id"])),
+                    "plan_section": extract_task_section(sbody, str(task["id"])),
+                }
+                for task in tasks
+            ]
             slices.append(
                 {
                     "path": path,
@@ -1613,8 +1758,9 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "title": smeta["title"],
                     "page_name": page_name,
                     "sha256": sha256(path),
-                    "delivery_status": delivery_status(backlog_slice.get("tasks", []), backlog_slice.get("completion")),
-                    "tasks": backlog_slice.get("tasks", []),
+                    "delivery_status": delivery_status(tasks, backlog_slice.get("completion")),
+                    "tasks": tasks,
+                    "task_entries": task_entries,
                 }
             )
 
@@ -1712,7 +1858,17 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
             section9 = extract_section(sl["body"], 9)
             prev_link = slices[index - 1]["page_name"] if index > 0 else "index.html"
             next_link = slices[index + 1]["page_name"] if index + 1 < len(slices) else "index.html"
-            task_review_rows = "".join(task_review_history_html(task) for task in sl["tasks"])
+            task_cards = []
+            for task_index, task_entry in enumerate(sl["task_entries"], start=1):
+                task = task_entry["task"]
+                review = task.get("review") or {}
+                task_cards.append(f"""
+<a class="task-card" href="{esc(task_entry['page_name'])}" data-slice-task="{esc(task_entry['task_id'])}">
+  <div class="slice-card-index">{task_index}</div>
+  <div><span class="eyebrow">{esc(task_entry['task_id'])}</span><h3>{esc(task_entry['title'])}</h3>
+  <p>{esc(task.get('objective'))}</p><small>Review: {esc(review.get('result') or 'not reviewed')} · Risk: {esc(task.get('risk'))}</small></div>
+  {status_badge(task.get('status'))}
+</a>""")
             slice_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(sl["slice_id"])} · ordered slice {index + 1} of {len(slices)}</span><h1>{esc(sl["alias"])}</h1><p>{esc(sl["title"])}</p></div>{status_stack(smeta.get("status"), sl["delivery_status"])}</div>
@@ -1724,9 +1880,9 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
   <a class="button button-primary" href="index.html#decision-register">Review capability decisions</a>
 </section>
 <section class="decision-summary"><div class="section-heading"><span class="eyebrow">Slice decisions</span><h2>Recommended implementation selections</h2></div><article class="plan-article compact-article">{render_markdown(section4)}</article></section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Authoritative task plan</h2></div><article class="plan-article compact-article">{render_markdown(section9)}</article></section>
-<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
-{task_review_rows or "<p>No authoritative task records are present for this slice.</p>"}
+<section class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Tasks</h2><p>Open a task for its objective, acceptance criteria, implementation plan, verification inventory, optional worksheet, and immutable review history.</p></section>
+<div class="task-list">{"".join(task_cards) or "<p>No authoritative task records are present for this slice.</p>"}</div>
+<details class="plan-details"><summary>Read the complete task-by-task implementation plan</summary><article class="plan-article">{render_markdown(section9)}</article></details>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article">{render_markdown(strip_first_h1(sl["body"]))}</article></details>
 <nav class="page-turn" aria-label="Slice navigation"><a class="button button-quiet" href="{esc(prev_link)}">Previous</a><a class="button button-primary" href="{esc(next_link)}">Next</a></nav>
 """
@@ -1746,11 +1902,88 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                         wave_prefix="../waves/",
                         default_tab="capabilities",
                     )
-                    + slice_nav(slices, sl["slice_id"]),
+                    + slice_nav(slices, sl["slice_id"])
+                    + task_nav(sl["task_entries"], None),
                     main=slice_main,
                 ),
             )
             (cap_dir / sl["page_name"]).write_text(slice_page, encoding="utf-8")
+
+            for task_index, task_entry in enumerate(sl["task_entries"]):
+                task = task_entry["task"]
+                task_id = task_entry["task_id"]
+                review = task.get("review") or {}
+                claim = task.get("claim") or {}
+                dependencies = []
+                for dependency_id in task.get("depends_on", []):
+                    dependency_id = str(dependency_id)
+                    location = task_locations.get(dependency_id)
+                    if location and dependency_id in authored_task_ids:
+                        href = (
+                            task_page_name(dependency_id)
+                            if location["capability_id"] == cid
+                            else f"../{location['capability_id']}/{task_page_name(dependency_id)}"
+                        )
+                        dependencies.append(f'<li><a href="{esc(href)}"><code>{esc(dependency_id)}</code></a></li>')
+                    else:
+                        dependencies.append(f"<li><code>{esc(dependency_id)}</code></li>")
+                task_prev = (
+                    sl["task_entries"][task_index - 1]["page_name"] if task_index > 0 else sl["page_name"]
+                )
+                task_next = (
+                    sl["task_entries"][task_index + 1]["page_name"]
+                    if task_index + 1 < len(sl["task_entries"])
+                    else sl["page_name"]
+                )
+                task_main = f"""
+<section class="hero compact" data-task-page="{esc(task_id)}">
+  <div class="hero-top"><div><span class="eyebrow">{esc(task_id)} · task {task_index + 1} of {len(sl['task_entries'])}</span><h1>{esc(task_entry['title'])}</h1><p>{esc(task.get('objective'))}</p></div>{status_badge(task.get('status'))}</div>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>{esc(smeta.get('wave'))}</dd></div><div><dt>Slice</dt><dd><a href="{esc(sl['page_name'])}">{esc(sl['alias'])}</a></dd></div><div><dt>Risk / review</dt><dd>{esc(task.get('risk'))} / {esc(task.get('review_gate'))}</dd></div><div><dt>Latest review</dt><dd>{esc(review.get('result') or 'not reviewed')}</dd></div></dl>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
+  <h3>Expected deliverables</h3>{task_values_html(task.get('deliverables'), empty='No deliverables recorded.')}
+  <h3>Acceptance criteria</h3>{task_values_html(task.get('acceptance_criteria'), empty='No acceptance criteria recorded.')}
+  <h3>Dependencies</h3>{'<ul class="gate-criteria">' + ''.join(dependencies) + '</ul>' if dependencies else '<p>None</p>'}
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
+  <h3>Verification profiles</h3>{task_values_html(task.get('verification_profiles'), empty='No verification profile recorded.')}
+  <h3>Commands</h3>{task_values_html(task.get('verification_commands'), empty='No verification command recorded.')}
+  <p><strong>Claim projection:</strong> owner <code>{esc(claim.get('agent') or task.get('owner') or 'unclaimed')}</code> · branch <code>{esc(claim.get('branch') or 'none')}</code> · base <code>{esc(claim.get('base_sha') or 'none')}</code></p>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article">{render_markdown(task_entry['plan_section']) if task_entry['plan_section'] else '<p>No task-specific Section 9 plan was found.</p>'}</article></section>
+<section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
+{task_worksheet_html(task_entry['worksheet'], task_id)}
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
+{task_review_history_html(task)}
+<nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="{esc(task_prev)}">Previous</a><a class="button button-primary" href="{esc(task_next)}">Next</a></nav>
+"""
+                task_page = shell(
+                    title=f"{task_id} {task_entry['title']}",
+                    page_type="task",
+                    capability_id=cid,
+                    depth=1,
+                    body=layout(
+                        breadcrumbs=(
+                            f'<a href="../index.html">Planning review</a><span>/</span>'
+                            f'<a href="index.html">{esc(cap_alias)}</a><span>/</span>'
+                            f'<a href="{esc(sl["page_name"])}">{esc(sl["alias"])}</a><span>/</span>'
+                            f'<span aria-current="page">{esc(task_id)}</span>'
+                        ),
+                        sidebar=planning_nav(
+                            capabilities=capabilities,
+                            waves=waves,
+                            active_capability=cid,
+                            active_wave=str(smeta.get("wave")),
+                            capability_prefix="../",
+                            wave_prefix="../waves/",
+                            default_tab="capabilities",
+                        )
+                        + slice_nav(slices, sl["slice_id"])
+                        + task_nav(sl["task_entries"], task_id),
+                        main=task_main,
+                    ),
+                )
+                (cap_dir / task_entry["page_name"]).write_text(task_page, encoding="utf-8")
 
         manifest["capabilities"].append(
             {
@@ -1773,6 +2006,23 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                         "page": f"{cid}/{sl['page_name']}",
                         "task_count": len(sl["meta"].get("task_ids", [])),
                         "task_reviews": [task_review_projection(task) for task in sl["tasks"]],
+                        "tasks": [
+                            {
+                                "task_id": task_entry["task_id"],
+                                "title": task_entry["title"],
+                                "status": task_entry["task"].get("status"),
+                                "page": f"{cid}/{task_entry['page_name']}",
+                                "worksheet": (
+                                    {
+                                        "path": task_entry["worksheet"]["path"],
+                                        "sha256": task_entry["worksheet"]["sha256"],
+                                    }
+                                    if task_entry["worksheet"]
+                                    else None
+                                ),
+                            }
+                            for task_entry in sl["task_entries"]
+                        ],
                     }
                     for sl in slices
                 ],
@@ -1781,9 +2031,14 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
 
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     total_slices = sum(len(item.get("slices", [])) for item in manifest["capabilities"])
+    total_tasks = sum(
+        len(slice_.get("tasks", []))
+        for capability in manifest["capabilities"]
+        for slice_ in capability.get("slices", [])
+    )
     readme = f"""# Static planning review site
 
-Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} Wave packet/gate pages, {len(manifest["capabilities"])} capability pages, {total_slices} individual slice pages, {len(manifest["enabler_change_requests"])} hash-bound enabler change request pages, and {len(manifest["governance_recoveries"])} governance recovery pages plus their registers. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, exit-gate decision, and any interrupting append-only amendment or recovery hold. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
+Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} Wave packet/gate pages, {len(manifest["capabilities"])} capability pages, {total_slices} individual slice pages, {total_tasks} individual task pages, {len(manifest["enabler_change_requests"])} hash-bound enabler change request pages, and {len(manifest["governance_recoveries"])} governance recovery pages plus their registers. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, exit-gate decision, and any interrupting append-only amendment or recovery hold. Its nested capability, slice, and task cards are generated from the authoritative backlog. Descriptive aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys. Task pages display an optional task-start worksheet only when `artifacts/evidence/<TASK-ID>.task-start.md` exists; worksheet absence is non-blocking.
 
 Canonical commands:
 
@@ -2002,11 +2257,22 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
 .decision-meta { color: var(--text-soft); font-size: .8rem; }
 .slice-list { display: grid; gap: 10px; }
 .wave-capability-list { display: grid; gap: 14px; }
-.wave-capability { padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.wave-capability { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: clip; }
+.wave-capability > summary, .wave-slice-card > summary, .wave-task-card > summary { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 16px 18px; cursor: pointer; list-style-position: inside; }
+.wave-capability > summary:hover, .wave-slice-card > summary:hover, .wave-task-card > summary:hover { background: var(--primary-soft); }
+.wave-capability > summary:focus-visible, .wave-slice-card > summary:focus-visible, .wave-task-card > summary:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
 .wave-capability h2 { margin: 4px 0; font: 700 1.25rem/1.2 var(--font-display); }
 .wave-capability h2 a { color: var(--primary); text-decoration: none; }
 .wave-capability p { margin: 4px 0; color: var(--text-soft); }
-.wave-slice-list { display: grid; gap: 7px; margin: 16px 0 0; padding: 0; list-style-position: inside; }
+.wave-card-body { padding: 0 18px 18px; }
+.wave-slice-list, .wave-task-list { display: grid; gap: 9px; margin: 16px 0 0; padding: 0; }
+.wave-slice-card, .wave-task-card { border: 1px solid var(--line); border-radius: 9px; background: var(--canvas); overflow: clip; }
+.wave-slice-card > summary > span, .wave-task-card > summary > span { display: grid; gap: 2px; }
+.wave-slice-card > summary small, .wave-task-card > summary small { color: var(--text-soft); font-weight: 500; }
+.wave-task-list { margin-left: 18px; }
+.wave-task-card { background: var(--surface); }
+.wave-task-card .wave-card-body { padding-top: 2px; }
+.wave-slice-list { list-style-position: inside; }
 .wave-slice-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--canvas); }
 .wave-slice-list li > span { display: grid; gap: 2px; font-weight: 750; }
 .wave-slice-list a { color: var(--primary); text-decoration: none; }
@@ -2017,6 +2283,13 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
 .slice-card-index { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-weight: 850; }
 .slice-card h3 { margin: 2px 0; font: 700 1.08rem/1.25 var(--font-display); }
 .slice-card p { margin: 0; color: var(--text-soft); font-size: .8rem; }
+.task-list { display: grid; gap: 10px; }
+.task-card { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 14px; padding: 15px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); text-decoration: none; color: var(--text); }
+.task-card:hover { border-color: var(--primary); box-shadow: var(--shadow); }
+.task-card h3 { margin: 2px 0; font: 700 1.08rem/1.25 var(--font-display); }
+.task-card p { margin: 0 0 4px; color: var(--text-soft); font-size: .8rem; }
+.task-card small { color: var(--text-soft); }
+.worksheet-meta { padding: 0 20px 8px; overflow-wrap: anywhere; color: var(--text-soft); }
 .plan-details { margin-top: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .plan-details > summary { padding: 16px 18px; cursor: pointer; font-weight: 800; }
 .plan-article { padding: 0 20px 24px; overflow-wrap: anywhere; }
@@ -2049,6 +2322,10 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
   .summary-grid { grid-template-columns: 1fr 1fr; }
   .slice-card { grid-template-columns: 34px 1fr; }
   .slice-card .status-stack { grid-column: 2; justify-items: start; }
+  .task-card { grid-template-columns: 34px 1fr; }
+  .task-card .status { grid-column: 2; justify-self: start; }
+  .wave-capability > summary, .wave-slice-card > summary, .wave-task-card > summary { align-items: flex-start; flex-direction: column; }
+  .wave-task-list { margin-left: 0; }
 }
 @media print {
   .site-header, .side-panel, .site-footer, .review-toolbar, .page-turn { display: none !important; }

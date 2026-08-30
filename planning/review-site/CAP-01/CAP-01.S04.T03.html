@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>CAP-01.S04.T03 Build desktop diagnostics and support-bundle collection - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="task" data-capability-id="CAP-01">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="capabilities">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities">
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item active" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves" hidden>
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item active" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-01.S01.html"><b>1</b><span><strong>SLICE-tauri-and-react-application-shell</strong><small>CAP-01.S01 · Tauri and React application shell</small></span></a><a class="slice-nav-item" href="CAP-01.S02.html"><b>2</b><span><strong>SLICE-desktop-design-system-and-accessibility-foundation</strong><small>CAP-01.S02 · Desktop design system and accessibility foundation</small></span></a><a class="slice-nav-item" href="CAP-01.S03.html"><b>3</b><span><strong>SLICE-packaged-python-fastapi-sidecar</strong><small>CAP-01.S03 · Packaged Python/FastAPI sidecar</small></span></a><a class="slice-nav-item active" href="CAP-01.S04.html"><b>4</b><span><strong>SLICE-authenticated-desktop-service-contract</strong><small>CAP-01.S04 · Authenticated desktop-service contract</small></span></a><a class="slice-nav-item" href="CAP-01.S05.html"><b>5</b><span><strong>SLICE-windows-installation-and-update-channels</strong><small>CAP-01.S05 · Windows installation and update channels</small></span></a></nav><h2>Slice tasks</h2><nav class='slice-nav task-nav'><a class="slice-nav-item" href="CAP-01.S04.T01.html"><b>1</b><span><strong>CAP-01.S04.T01</strong><small>Implement loopback authentication and endpoint binding controls</small></span></a><a class="slice-nav-item" href="CAP-01.S04.T02.html"><b>2</b><span><strong>CAP-01.S04.T02</strong><small>Generate and consume versioned API contracts</small></span></a><a class="slice-nav-item active" href="CAP-01.S04.T03.html"><b>3</b><span><strong>CAP-01.S04.T03</strong><small>Build desktop diagnostics and support-bundle collection</small></span></a></nav></aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-windows-desktop-runtime</a><span>/</span><a href="CAP-01.S04.html">SLICE-authenticated-desktop-service-contract</a><span>/</span><span aria-current="page">CAP-01.S04.T03</span></nav>
+
+<section class="hero compact" data-task-page="CAP-01.S04.T03">
+  <div class="hero-top"><div><span class="eyebrow">CAP-01.S04.T03 · task 3 of 3</span><h1>Build desktop diagnostics and support-bundle collection</h1><p>Diagnostics page for component versions, health, storage paths, resource use, recent failures, and redacted support export.</p></div><span class="status status-done">Done</span></div>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W1</dd></div><div><dt>Slice</dt><dd><a href="CAP-01.S04.html">SLICE-authenticated-desktop-service-contract</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>approved</dd></div></dl>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
+  <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Diagnostics page for component versions, health, storage paths, resource use, recent failures, and redacted support export.</li></ul>
+  <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>A user can generate a bounded support bundle without project documents or secrets; diagnostic data links desktop actions to service trace IDs.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
+  <h3>Dependencies</h3><p>None</p>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
+  <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>security-local</li></ul>
+  <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile security-local</li></ul>
+  <p><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>none</code> · base <code>none</code></p>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-01.S04.T03` - Build desktop diagnostics and support-bundle collection
+**Objective:** Diagnostics page for component versions, health, storage paths, resource use, recent failures, and redacted support export.
+
+**Dependencies:** `CAP-01.S04.T02`
+**Risk / review gate:** `medium` / `agent-review`
+**Verification profiles:** `desktop`, `service`, `security-local`
+
+**Expected deliverables**
+- Diagnostics page for component versions, health, storage paths, resource use, recent failures, and redacted support export.
+
+**Ordered implementation sequence**
+1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-01.S04.T03`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
+2. Implement the domain/core path behind the approved port or aggregate boundary. Keep side effects behind adapters, use explicit transaction/idempotency boundaries, and emit provenance/dependency facts atomically where the governing architecture requires them.
+3. Implement the desktop interaction using shared Academic Minimal tokens/components and the approved page/workflow contract. Cover keyboard, focus, screen reader, light/dark, loading, empty, offline, denied, error, and recovery states. If the required experience differs materially, stop and update/approve the governed reference before application code.
+4. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
+5. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
+6. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+
+**Acceptance criteria from the authoritative backlog**
+- A user can generate a bounded support bundle without project documents or secrets; diagnostic data links desktop actions to service trace IDs.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Required criterion-linked evidence**
+- Reviewed commit SHA, changed-file inventory, and scope-deviation explanation if any.
+- Named automated tests and report paths mapped to each acceptance criterion.
+- Failure/boundary/restart evidence appropriate to the task risk and verification profiles.
+- Security, rights, accessibility, migration, or design-reference review evidence when relevant.
+- Updated schema/API/client/migration/fixture/documentation hashes where applicable.
+- Independent reviewer result; the implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile desktop
+python tools/verify.py --profile service
+python tools/verify.py --profile security-local
+```
+
+## 10. Slice-wide verification matrix
+| Verification area | Required evidence |
+|---|---|
+| Backlog profiles | `desktop`, `security-local`, `service` |
+| Unit and invariant | Domain/value/state-machine, adapter, normalization, and negative tests for every task-owned rule. |
+| Contract and compatibility | Schema/OpenAPI/generated-client or manifest validation, prior-version fixtures, unknown-field behavior, and drift checks. |
+| Integration | Real local adapters against the miniature fixture project; no mocked success at the principal slice boundary. |
+| End to end | Representative researcher path from the upstream dependency through the slice outcome and downstream handoff fixture. |
+| Failure and denial | At least the material cases in Section 8, including canonical state and user-visible recovery assertions. |
+| Cancellation and restart | Cancel during a material operation, restart desktop/Core/worker, reconcile authoritative state, and resume or clean up safely. |
+| Security/privacy/rights | Required threat-boundary, permission, redaction, egress, restricted-content, and malicious-fixture tests. |
+| Accessibility and UI | Keyboard, focus, screen reader semantics, theme parity, approved page/workflow contract, and visual regression when user-facing. |
+| Migration/recovery | Prior compatible fixtures, interrupted migration/upgrade where applicable, rollback or repair, and retained historical state. |
+| Performance | Representative dataset/hardware benchmark with budgets from Section 11 and regression threshold. |
+| Architecture | Dependency/port checks, no direct renderer database/filesystem/secret access, and no hosted infrastructure introduced prematurely. |
+| Independent review | Reviewer verifies that tests exercise the stated outcome rather than merely matching implementation details. |
+
+**Commands inherited from the backlog**
+
+```text
+python tools/verify.py --profile desktop
+python tools/verify.py --profile security-local
+python tools/verify.py --profile service
+```
+
+## 11. Performance and resource budgets
+- Handshake and health requests target &lt;=100 ms local p95 after readiness.
+- Generated client adds no runtime schema duplication beyond boundary validation.
+- SSE backpressure and event retention are bounded.
+
+The implementation must record the hardware/OS, fixture version, warm/cold state, repetitions, percentile or distribution used, and a regression threshold. A budget may be refined by benchmark evidence, but relaxation requires review and must not conceal algorithmic or resource regressions.
+
+## 12. Observability and provenance
+- Trace IDs cross renderer, Tauri command, Core request, workflow operation, and support bundle.
+- Record auth failures and contract mismatches without logging tokens or payloads.
+
+Runtime telemetry and support diagnostics are distinct from durable scholarly provenance. Both use trace/correlation identifiers, but default diagnostics must exclude research content, secrets, raw documents, manuscript text, and sensitive query terms.
+
+## 13. Adjacent-slice handoffs
+- All later desktop workspaces depend on this contract and must not bypass it with direct database access.
+- CAP-03.S04 provides durable operation state for progress APIs.
+- Hosted deployments reuse domain/API contracts but replace launch-token authentication with institutional/cloud identity.
+
+**Handoff acceptance rule:** A downstream slice must be able to consume the documented contract and fixture without importing private implementation modules or reconstructing hidden state.
+
+## 14. Migration and backward compatibility
+- Additive API changes remain compatible within a declared range; breaking changes require a new major contract and coordinated desktop/Core release.
+- Generated client artifacts carry source OpenAPI hash and generator version.
+
+Every compatibility-sensitive artifact records its format/schema/protocol/parser/component version. Breaking evolution requires an accepted ADR, tested migration or bridge path, and explicit behavior for older projects/clients.
+
+## 15. Required slice evidence bundle
+- Approved slice-plan identifier and approval record.
+- All task criterion-to-evidence records on the reviewed commit.
+- Slice-wide verification report and commands.
+- Unit, contract, integration, end-to-end, failure, cancellation, restart, migration/recovery, security/rights/privacy, accessibility/UI, and performance reports as applicable.
+- Architecture dependency and approved-reference conformance reports.
+- Updated contracts, generated artifacts, migrations, fixtures, threat model, ADRs, operational/recovery documentation, and source acknowledgments.
+- Independent slice review confirming production-ready vertical behavior and downstream handoff quality.
+- No concealed TODO/FIXME, disabled failing test, manual-only production step, or untracked follow-up required for the slice outcome.
+
+## 16. Definition of Ready
+- The containing capability campaign is eligible or explicitly selected, and all predecessor capabilities required by its first active slice are complete or gated.
+- Status is READY and all dependency task IDs are DONE.
+- The task wave has no activation gate or its activation gate is approved.
+- The objective, deliverable, acceptance criteria, verification profiles, platform targets, and review gate are understandable without hidden context.
+- Required architecture, experience, template, or scholarly-method decisions exist or the task explicitly creates them.
+- Required credentials, fixtures, models, reports, and platforms are available or intentionally stubbed.
+- No unresolved blocker or active conflicting lease is recorded.
+- For intentional user-facing change, the proposed style-guide/workflow/page-reference revision is validated and approved, and its reference ID is recorded on the task.
+
+**Slice-specific readiness additions**
+- This plan is approved and its approval metadata identifies the reviewed commit/reference.
+- All blocking ADRs in Section 19 are accepted.
+- Required official-source constraints, licenses, fixtures, platform resources, and test credentials are available or safely stubbed.
+- The first task is READY under `taskctl` and no prior slice in the active capability remains incomplete.
+
+## 17. Definition of Done
+- Deliverables and all task acceptance criteria are satisfied.
+- Verification commands pass on the reviewed commit and criterion-to-evidence records are attached.
+- Security, privacy, rights, accessibility, scholarly-method, platform, migration, or release gates are completed when specified.
+- Documentation, tests, migrations, fixtures, provenance, and stale-dependency behavior are updated as relevant.
+- An independent reviewer sets review.result to approved and status to DONE.
+- Newly discovered work is recorded as explicit backlog tasks rather than hidden TODOs.
+- The task lease is released and branch/worktree disposition is recorded.
+- User-facing implementation conforms to the approved reference ID through token, route/page-contract, workflow-navigation, accessibility, and visual-regression evidence.
+- Task completion does not by itself complete the slice or capability; slice and capability end-to-end reviews must also pass.
+
+**Slice-specific completion additions**
+- The promised outcome is demonstrable end to end: Local IPC is private, versioned, cancellable, and observable.
+- All task implementations operate together from a clean project/install state, not only in isolated tests.
+- The slice evidence bundle passes independent review and the downstream handoff fixtures/contracts are usable.
+- Capability campaign state advances only after the slice completion record is approved.
+
+## 18. Risks and mitigations
+| Risk | Required mitigation |
+|---|---|
+| Architecture drift | Enforce ports/contracts/dependency checks and compare against this plan and accepted ADRs. |
+| Procedural completion without semantic completion | Reviewer maps each acceptance criterion to an actual behavioral test and end-to-end evidence. |
+| Vendor or technology lock-in | Keep durable state/contracts independent and require migration/export tests. |
+| Hidden security or rights bypass | Test service-level denial through alternate UI/API paths and inspect audit evidence. |
+| Recovery only works on the happy path | Fault-inject interruption/restart/corruption at material boundaries and verify canonical state. |
+| UX fragmentation | Validate workflow placement, next-step guidance, support-tool return, and approved reference conformance. |
+| Performance overfitting | Use representative fixtures and minimum hardware, publish methodology, and retain regression baselines. |
+| Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
+
+## 19. Required ADRs and human decisions
+- ADR: OpenAPI client generator and checked-in/generated artifact policy.
+- ADR: Local SSE versus WebSocket progress transport.
+
+A listed item beginning with `ADR REQUIRED` blocks the relevant implementation choice. Other ADRs may be completed within the first task only when that task explicitly owns the decision and the capability campaign approval permits it.
+
+## 20. Research and standards basis
+| Key | Primary or official source | Applied decision |
+|---|---|---|
+| `FASTAPI_CLIENT` | [FastAPI - Generate Clients](https://fastapi.tiangolo.com/advanced/generate-clients/) - FastAPI | OpenAPI-derived TypeScript clients and contract drift control. |
+| `OPENAPI` | [OpenAPI Specification 3.1.1](https://spec.openapis.org/oas/v3.1.1.html) - OpenAPI Initiative | Versioned HTTP API contracts. |
+| `RFC9457` | [RFC 9457 - Problem Details for HTTP APIs](https://www.rfc-editor.org/rfc/rfc9457.html) - IETF | Machine-readable and actionable API failure envelopes. |
+| `RFC9110` | [RFC 9110 - HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) - IETF | Conditional requests and HTTP semantics. |
+| `OPENTELEMETRY` | [OpenTelemetry Specification](https://opentelemetry.io/docs/specs/otel/) - OpenTelemetry | Trace/span correlation. |
+
+These sources constrain implementation choices but do not replace repository-specific benchmarks, threat analysis, licensing review, accessibility testing, or ADR approval. Source access should be rechecked when implementation begins because APIs, libraries, platform guidance, and license terms can change.
+
+## 21. AI implementation runbook
+
+**Long-running campaign rule.** Continue through dependency-ready tasks and slices without repeatedly requesting decisions already settled by the approved capability packet. Use only classified pause categories and attach exact evidence/next action.
+1. Run the repository validators and confirm this plan is approved, matches the current backlog slice/task IDs, and has no unresolved blocking ADR.
+2. Confirm `CAP-01` is the active capability campaign and `CAP-01.S04` is the next eligible slice.
+3. Claim the first READY task in order: `CAP-01.S04.T01`. Do not globally select work outside the capability.
+4. Load only the governing documents, accepted ADRs, approved UI reference sections, this plan, task contract, and affected code/tests.
+5. Implement one task at a time. Preserve unrelated working changes; do not weaken tests, delete evidence, or make hidden architectural decisions.
+6. After each task, run focused verification, attach criterion-linked evidence, obtain the required independent task review, and transition state through `taskctl`.
+7. After all tasks are DONE, execute the complete Section 10 slice matrix from a clean state and assemble the Section 15 evidence bundle.
+8. Request an independent slice review. Address findings through tracked tasks or reopen the affected task; never self-approve or mark the slice complete based on narrative evidence alone.
+9. Record the approved slice completion and handoff artifacts, then allow the capability campaign to select the next dependent slice.
+
+---
+**Generated for Research Observatory baseline 1.3, supplemental planning release 1.3.4.**
+**Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
+**Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
+<section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
+<p class="decision-meta" data-task-worksheet-absent="CAP-01.S04.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
+
+<section class="review-toolbar" data-task-review-id="CAP-01.S04.T03" data-review-mode="latest-review-only">
+  <h3>CAP-01.S04.T03 — Build desktop diagnostics and support-bundle collection</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-01.S04.T03" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-13T20:56:57+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-13T20:56:57+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Focused re-review verified exact protected two-file hardening after the planning-only REVIEW/CHANGES_REQUESTED transition; immutable 1cd9dee/quality-scope/evidence/approval attestation and hostile denials; cumulative UI gate; 16 gate tests; pinned packages/contracts 6/6; taskctl/views and clean state.</p>
+</section>
+<nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-01.S04.T02.html">Previous</a><a class="button button-primary" href="CAP-01.S04.html">Next</a></nav>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>
