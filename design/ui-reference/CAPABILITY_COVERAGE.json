@@ -1,8 +1,8 @@
 {
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.3",
-  "version": "1.3",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.4",
+  "version": "1.4",
   "date": "2026-08-07",
-  "product_page_count": 32,
+  "product_page_count": 33,
   "capabilities": [
     {
       "capability": "CAP-00",
@@ -955,9 +955,38 @@
       ],
       "illustrative_values": true
     },
+    "application-settings.html": {
+      "page": "Application Settings",
+      "purpose": "Application-wide Security & sign-in, provider status and recovery, appearance, and diagnostics for this Windows account.",
+      "capabilities": [
+        "CAP-02"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "application-wide scope",
+        "no-login default",
+        "Windows password option",
+        "Windows Hello option",
+        "provider availability states",
+        "lock behavior preview",
+        "same-user proof before protection reduction",
+        "explicit recovery without silent fallback",
+        "versioned migration behavior",
+        "Application Settings and Project Settings separation"
+      ],
+      "illustrative_values": true
+    },
     "project-settings.html": {
       "page": "Project Settings",
-      "purpose": "Storage, protection, privacy, backup, accessibility, app lock, and Windows/macOS/Linux project portability.",
+      "purpose": "Project storage, protection, privacy, backup, accessibility, and Windows/macOS/Linux project portability.",
       "capabilities": [
         "CAP-02",
         "CAP-11",
@@ -978,7 +1007,7 @@
         "privacy/egress",
         "backup/restore",
         "appearance/accessibility",
-        "app lock",
+        "Application Settings link for app-wide sign-in",
         "local/deferred project-home profile"
       ],
       "illustrative_values": true

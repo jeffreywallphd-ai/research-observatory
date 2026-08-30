@@ -218,6 +218,11 @@ body.sidebar-collapsed .main-shell { margin-left: var(--sidebar-collapsed-width)
 .input:focus, .select:focus, .textarea:focus { border-color: var(--brand-500); outline: none; box-shadow: var(--focus-ring); }
 .field { display: grid; gap: var(--space-2); }
 .field-label { color: var(--text-strong); font-size: var(--text-xs); font-weight: 760; }
+.choice-fieldset { border: 0; margin: 1rem 0; padding: 0; }
+.mode-grid { display: grid; gap: var(--space-3); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mode-card { display: grid; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: var(--surface-1); cursor: pointer; }
+.mode-card:has(input:checked) { border-color: var(--brand-600); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-600) 18%, transparent); }
+.mode-card input { margin-right: var(--space-2); }
 .field-help { color: var(--text-muted); font-size: var(--text-2xs); }
 
 .tabs { display: flex; align-items: center; gap: var(--space-1); border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--space-4); }
@@ -631,4 +636,7 @@ html[data-theme="dark"] .revision-item.active { background: color-mix(in srgb, v
   .research-production-layout, .blueprint-layout, .manuscript-layout, .review-workspace, .revision-layout { grid-template-columns: 1fr; }
   .stage-rail, .blueprint-outline, .manuscript-outline, .revision-index { position: static; max-height: none; }
   .manuscript-page { min-height: 0; margin: var(--space-4); padding: 48px; }
+}
+@media (max-width: 900px) {
+  .mode-grid { grid-template-columns: 1fr; }
 }

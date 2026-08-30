@@ -1,10 +1,10 @@
 # Research Observatory UI Reference
 
-This directory is the approved, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.3**.
+This directory is the approved, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.4**.
 
 ## Start with the workflow
 
-Open `new-project.html` to see use-case selection, `index.html` for the current project workflow, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.
+Open `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.
 
 ## Authority
 

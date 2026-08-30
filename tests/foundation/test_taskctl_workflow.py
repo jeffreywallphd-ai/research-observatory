@@ -22,6 +22,7 @@ from taskctl import (  # noqa: E402
     amendment_history_snapshot,
     amendment_identity_snapshot,
     approved_wave_snapshot,
+    bootstrap_authorized_patterns,
     bootstrap_scope_addendum_errors,
     build_parser,
     canonical_json_sha256,
@@ -457,7 +458,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
     ) -> tuple[dict, dict, dict, dict, dict]:
         context = load(str(REPO / "planning" / "backlog.yaml"))
         context[0]["wave_amendments"] = [
-            amendment for amendment in context[0]["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02"}
+            amendment
+            for amendment in context[0]["wave_amendments"]
+            if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03"}
         ]
         amendment = next(item for item in context[0]["wave_amendments"] if item["id"] == "W1.A02")
         amendment["bootstrap"] = copy.deepcopy(bootstrap)
@@ -3945,6 +3948,127 @@ class TaskctlWorkflowTests(unittest.TestCase):
                         gates,
                     )
 
+    def test_post_migration_v4_append_records_reserved_history_and_bounded_maintenance(self) -> None:
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
+        data = copy.deepcopy(data)
+        before = copy.deepcopy(data["wave_amendments"])
+        approval_path = REPO / "planning/wave-amendment-approvals/W1.A05.json"
+        approval_payload = approval_path.read_bytes()
+        approval = json.loads(approval_payload)
+        packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0004.packet.json").read_bytes())
+        approval_commit = subprocess.check_output(
+            ["git", "log", "--diff-filter=A", "--format=%H", "--", approval_path.relative_to(REPO).as_posix()],
+            cwd=REPO,
+            text=True,
+        ).strip()
+        candidate = "b" * 40
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence_path = Path(temporary) / "W1.A05.B00.json"
+            evidence_path.write_text("{}\n", encoding="utf-8", newline="\n")
+            args = Namespace(
+                amendment="W1.A05",
+                approval_commit=approval_commit,
+                implementation_commit=candidate,
+                evidence="artifacts/evidence/W1.A05.B00.json",
+                agent="codex",
+                file=str(REPO / "planning/backlog.yaml"),
+            )
+            original_intro = taskctl_module.approval_introduction_commit
+            original_run = subprocess.run
+
+            def exact_intro(repo: Path, relative: str) -> str | None:
+                if relative == "planning/wave-amendment-approvals/W1.A05.json":
+                    return approval_commit
+                return original_intro(repo, relative)
+
+            def ecr_only(command: list[str], *run_args: Any, **run_kwargs: Any) -> subprocess.CompletedProcess[Any]:
+                if len(command) > 1 and str(command[1]).endswith("planctl.py"):
+                    return subprocess.CompletedProcess(command, 0, "ECR-0004 is approved\n", "")
+                return original_run(command, *run_args, **run_kwargs)
+
+            with (
+                patch("taskctl.discover_repository", return_value=REPO),
+                patch("taskctl.recovery_hold_errors", return_value=[]),
+                patch("taskctl.load_amendment_authority", return_value=(approval, packet, approval_payload)),
+                patch("taskctl.approval_introduction_commit", side_effect=exact_intro),
+                patch("taskctl.git_head_branch", return_value=(candidate, "codex/w1-windows-local-runtime")),
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch(
+                    "taskctl.canonical_control_artifact_path",
+                    return_value=("artifacts/evidence/W1.A05.B00.json", evidence_path),
+                ),
+                patch("taskctl.require_clean_repository"),
+                patch("taskctl.load_bootstrap_scope_addenda", return_value=([], [])),
+                patch("taskctl.bootstrap_attempt_errors", return_value=[]),
+                patch("taskctl.subprocess.run", side_effect=ecr_only),
+                patch("taskctl.save_validated") as save,
+            ):
+                taskctl_module.command_amendment_append_bootstrap_submit(
+                    args,
+                    data,
+                    capabilities,
+                    slices,
+                    tasks,
+                    gates,
+                )
+
+        self.assertEqual(before, data["wave_amendments"][:3])
+        self.assertEqual(["W1.A01", "W1.A02", "W1.A03", "W1.A04", "W1.A05"], [item["id"] for item in data["wave_amendments"]])
+        self.assertEqual("SUPERSEDED", data["wave_amendments"][3]["lifecycle"]["status"])
+        self.assertIsNone(data["wave_amendments"][3]["bootstrap"])
+        self.assertEqual("APPROVED", data["wave_amendments"][4]["lifecycle"]["status"])
+        self.assertEqual("REVIEW", data["wave_amendments"][4]["bootstrap"]["status"])
+        self.assertEqual(12, data["control_plane"]["revision"])
+        self.assertEqual("W1.A05", data["control_plane"]["maintenance_increments"][0]["amendment_id"])
+        self.assertEqual("PAUSED", next(item for item in data["waves"] if item["id"] == "W1")["campaign"]["status"])
+        save.assert_called_once()
+
+    def test_post_migration_v4_append_denies_an_active_recovery_hold(self) -> None:
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
+        data = copy.deepcopy(data)
+        next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")[
+            "status"
+        ] = "ACTIVE"
+        approval_path = REPO / "planning/wave-amendment-approvals/W1.A05.json"
+        approval_payload = approval_path.read_bytes()
+        approval = json.loads(approval_payload)
+        packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0004.packet.json").read_bytes())
+        args = Namespace(
+            amendment="W1.A05",
+            approval_commit="a" * 40,
+            implementation_commit="b" * 40,
+            evidence="artifacts/evidence/W1.A05.B00.json",
+            agent="codex",
+            file=str(REPO / "planning/backlog.yaml"),
+        )
+        before = json.dumps(data, sort_keys=True)
+        with (
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.recovery_hold_errors", return_value=[]),
+            patch("taskctl.load_amendment_authority", return_value=(approval, packet, approval_payload)),
+            patch("taskctl.subprocess.run", return_value=subprocess.CompletedProcess([], 0, "", "")),
+            patch("taskctl.save_validated") as save,
+            self.assertRaisesRegex(SystemExit, "exact released revision-11 control boundary"),
+        ):
+            taskctl_module.command_amendment_append_bootstrap_submit(
+                args,
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+        self.assertEqual(before, json.dumps(data, sort_keys=True))
+        save.assert_not_called()
+
+    def test_superseded_w1_a04_witness_is_admitted_without_reading_it(self) -> None:
+        data = {"wave_amendments": [{"id": "W1.A04", "lifecycle": {"status": "SUPERSEDED"}}]}
+        with patch.object(Path, "read_bytes", side_effect=AssertionError("witness must not be opened")):
+            self.assertEqual(
+                {"artifacts/evidence/W1.A04.B00.json"},
+                taskctl_module.wave_resume_allowed_untracked(data, "W1", REPO),
+            )
+
     def test_b00_r04_bootstrap_review_denies_the_wrong_live_branch(self) -> None:
         data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
             self.b00_initial_review_bootstrap_fixture()
@@ -5373,6 +5497,26 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     "W1.A02.B00: bootstrap scope-addendum hash mismatch",
                     bootstrap_scope_addendum_errors(repo, reference, "W1.A02", "W1.A02.B00"),
                 )
+
+    def test_bootstrap_authorized_patterns_include_the_bound_addendum_record(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            relative = "planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json"
+            path = repo / relative
+            path.parent.mkdir(parents=True)
+            path.write_text(
+                json.dumps({"authorizedAdditionalPaths": ["tools/ui_reference_check.py"]}),
+                encoding="utf-8",
+            )
+            patterns = bootstrap_authorized_patterns(
+                repo,
+                {"bootstrapUnit": {"authorizedPaths": ["design/ui-reference/*"]}},
+                {"scope_addenda": [{"path": relative}]},
+            )
+        self.assertEqual(
+            ["design/ui-reference/*", relative, "tools/ui_reference_check.py"],
+            patterns,
+        )
 
     def test_parser_exposes_only_the_approved_amendment_lifecycle_commands(self) -> None:
         parser = build_parser()

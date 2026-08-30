@@ -77,7 +77,7 @@ GCR_ADOPTION_TRANSACTION_PATHS = (
     "planning/governance-control-recovery/GCR-0007.B00.adoption-backlog.next",
     "planning/governance-control-recovery/GCR-0007.B00.adoption-state.next",
 )
-AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
+AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN", "SUPERSEDED"}
 EXACT_T03_RECOVERY = {
     "task_id": "CAP-02.S04.T03",
     "wave_id": "W1",
@@ -682,7 +682,7 @@ def blocking_wave_amendments(data: dict[str, Any], wave_id: str) -> list[dict[st
         amendment
         for amendment in data.get("wave_amendments", [])
         if amendment.get("target_wave") == wave_id
-        and amendment.get("kind") == "gate-integrity-safety-defect"
+        and amendment.get("kind") != "migrated-replanning"
         and (amendment.get("lifecycle") or {}).get("status") not in AMENDMENT_TERMINAL_STATES
     ]
 
@@ -757,7 +757,7 @@ def wave_complete(
             and (
                 amendments.get(str(task.get("_amendment_id") or task.get("amendment_id")), {}).get("lifecycle") or {}
             ).get("status")
-            in {"DEFERRED", "WITHDRAWN"}
+            in {"DEFERRED", "WITHDRAWN", "SUPERSEDED"}
         )
     ]
     return (
@@ -2174,6 +2174,8 @@ def bootstrap_authorized_patterns(
     patterns = [str(item) for item in (packet.get("bootstrapUnit") or {}).get("authorizedPaths", [])]
     for reference in bootstrap.get("scope_addenda", []):
         relative = str(reference.get("path") or "")
+        if relative:
+            patterns.append(relative)
         path = repo.joinpath(*PurePosixPath(relative).parts)
         try:
             record = json.loads(path.read_text(encoding="utf-8"))
@@ -3541,6 +3543,14 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
                 for recovery_hold in control.get("recovery_holds", [])
                 for supplement in recovery_hold.get("supplements", [])
             )
+            transitions.extend(
+                (
+                    int(increment.get("predecessor_revision") or 0),
+                    int(increment.get("successor_revision") or 0),
+                    str(increment.get("id") or ""),
+                )
+                for increment in control.get("maintenance_increments", [])
+            )
             ordered_transitions = sorted(transitions, key=lambda item: (item[0], item[1], item[2]))
             cursor = min((item[0] for item in ordered_transitions), default=RECOVERY_BASE_REVISION)
             for predecessor, successor, transition_id in ordered_transitions:
@@ -3703,6 +3713,40 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
             )
     control = data.get("control_plane") or {}
     revision = int(control.get("revision") or 0)
+    maintenance = control.get("maintenance_increments") or []
+    if revision < 12 and maintenance:
+        errors.append("control revisions before 12 cannot contain maintenance increments")
+    if revision >= 12:
+        if len(maintenance) != 1:
+            errors.append("control revision 12 requires exactly one bounded maintenance increment")
+        else:
+            increment = maintenance[0] or {}
+            amendment = wave_amendment_map(data).get(str(increment.get("amendment_id") or "")) or {}
+            if (
+                increment.get("id") != "MI-0001"
+                or increment.get("kind") != "post-migration-amendment-bootstrap"
+                or increment.get("predecessor_revision") != 11
+                or increment.get("successor_revision") != 12
+                or amendment.get("kind") != "product-scope-security-experience"
+                or increment.get("change_request_id") != amendment.get("change_request_id")
+                or increment.get("approval_reference") != amendment.get("approval_reference")
+                or not increment.get("applied_by")
+                or not valid_json_datetime(increment.get("applied_at"))
+            ):
+                errors.append("control revision 12 maintenance increment identity or authority is invalid")
+            if repo is not None and amendment:
+                try:
+                    _approval, packet, _payload = load_amendment_authority(
+                        repo, str(increment.get("amendment_id") or "")
+                    )
+                except SystemExit as exc:
+                    errors.append(f"control revision 12 maintenance authority is invalid: {exc}")
+                else:
+                    if (
+                        packet.get("schemaVersion") != "4.0-proposal"
+                        or packet.get("migrationAuthority") != increment.get("migration_reference")
+                    ):
+                        errors.append("control revision 12 maintenance increment differs from its v4 authority")
     live_state: dict[str, Any] = {}
     if repo is not None:
         state_path = repo / "planning/governance-control-recovery/GCR-0001.B00.state.json"
@@ -3761,6 +3805,7 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         for supplement in hold.get("supplements", [])
         if supplement.get("successor_control_revision") is not None
     ]
+    successors.extend(int(item.get("successor_revision") or 0) for item in maintenance)
     latest_successor = max(
         [int((generations[-1] or {}).get("successor_revision") or 0), *successors],
         default=GCR_ADOPTION_REVISION,
@@ -5168,7 +5213,11 @@ def validate(
         bootstrap = amendment.get("bootstrap") or {}
         campaign = amendment.get("campaign") or {}
         task_list = amendment.get("tasks", [])
-        if amendment.get("kind") == "gate-integrity-safety-defect" and bootstrap.get("id") != f"{amendment_id}.B00":
+        if (
+            amendment.get("kind") == "gate-integrity-safety-defect"
+            and lifecycle.get("status") != "SUPERSEDED"
+            and bootstrap.get("id") != f"{amendment_id}.B00"
+        ):
             errors.append(f"{amendment_id}: interrupting amendment lacks its exact bootstrap identity")
         if amendment.get("kind") != "migrated-replanning":
             bootstrap_status = bootstrap.get("status")
@@ -5940,6 +5989,21 @@ def wave_resume_allowed_untracked(data: dict[str, Any], wave_id: str, repo: Path
     """Authenticate the one retained historic witness required by released W1 recovery history."""
     if wave_id != "W1":
         return set()
+    superseded = next(
+        (
+            amendment
+            for amendment in data.get("wave_amendments", [])
+            if amendment.get("id") == "W1.A04"
+            and (amendment.get("lifecycle") or {}).get("status") == "SUPERSEDED"
+        ),
+        None,
+    )
+    if superseded is not None:
+        # The canonical authority checks authenticate the exact W1.A04 approval
+        # and GOV-MIG-0001 supersession. The retained untracked witness is no
+        # longer live mutation authority and must not be opened merely to admit
+        # a later, independently approved amendment transition.
+        return {HISTORICAL_W1_A04_WITNESS["path"]}
     control = data.get("control_plane") or {}
     holds = control.get("recovery_holds") or []
     hold: dict[str, Any] = next((item for item in holds if item.get("id") == "HOLD-W1-GRR-0002"), {})
@@ -5984,6 +6048,14 @@ def task_evidence_allowed_untracked(
     if wave_id != "W1":
         return set()
     return wave_resume_allowed_untracked(data, wave_id, repo)
+
+
+def amendment_transition_allowed_untracked(
+    data: dict[str, Any], amendment_id: str, repo: Path
+) -> set[str]:
+    amendment = wave_amendment_map(data).get(amendment_id) or {}
+    wave_id = str(amendment.get("target_wave") or "")
+    return wave_resume_allowed_untracked(data, wave_id, repo) if wave_id else set()
 
 
 def git_head_branch(repo: Path) -> tuple[str, str]:
@@ -6987,6 +7059,349 @@ def exact_w1_a04_historic_submission_errors(
     return errors
 
 
+def materialized_superseded_reservation(
+    repo: Path,
+    wave_id: str,
+    reservation: dict[str, Any],
+    migration: dict[str, Any],
+) -> dict[str, Any]:
+    """Project one approved, unmaterialized reservation as terminal history."""
+    amendment_id = str(reservation.get("id") or "")
+    reference = reservation.get("approvalReference") or {}
+    relative = str(reference.get("path") or "")
+    try:
+        approval_path = safe_control_path(
+            repo,
+            relative,
+            prefix="planning/wave-amendment-approvals",
+            label=f"{amendment_id} reserved approval",
+        )
+        approval_payload = approval_path.read_bytes()
+        approval = json.loads(approval_payload)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Cannot authenticate reserved amendment {amendment_id}: {exc}") from exc
+    introduction = approval_introduction_commit(repo, relative)
+    if (
+        hashlib.sha256(approval_payload).hexdigest() != reference.get("sha256")
+        or introduction != reference.get("introductionCommit")
+        or git_blob(repo, introduction, relative) != approval_payload
+        or approval.get("status") != "APPROVED"
+        or approval.get("amendmentId") != amendment_id
+        or approval.get("targetWave") != wave_id
+        or approval.get("changeRequestId") != reservation.get("changeRequestId")
+    ):
+        raise SystemExit(f"Reserved amendment {amendment_id} approval authority is not exact")
+    packet_reference = approval.get("packet") or {}
+    packet_relative = str(packet_reference.get("path") or "")
+    try:
+        packet_path = safe_control_path(
+            repo,
+            packet_relative,
+            prefix="planning/enabler-change-requests",
+            label=f"{amendment_id} reserved packet",
+        )
+        packet_payload = packet_path.read_bytes()
+        packet = json.loads(packet_payload)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Cannot authenticate reserved amendment packet {amendment_id}: {exc}") from exc
+    if (
+        packet_reference.get("commit") != reservation.get("packetCommit")
+        or hashlib.sha256(packet_payload).hexdigest() != packet_reference.get("sha256")
+        or git_blob(repo, str(packet_reference.get("commit") or ""), packet_relative) != packet_payload
+        or packet.get("proposedAmendmentId") != amendment_id
+        or packet.get("changeRequestId") != reservation.get("changeRequestId")
+    ):
+        raise SystemExit(f"Reserved amendment {amendment_id} packet authority is not exact")
+    return {
+        "id": amendment_id,
+        "change_request_id": reservation.get("changeRequestId"),
+        "target_wave": wave_id,
+        "kind": packet.get("classification"),
+        "approval_reference": {
+            "path": relative,
+            "sha256": reference.get("sha256"),
+            "introduction_commit": introduction,
+        },
+        "lifecycle": {
+            "status": "SUPERSEDED",
+            "history": [
+                {
+                    "id": "E01",
+                    "status": "APPROVED",
+                    "actor": approval.get("approvedBy"),
+                    "at": approval.get("approvedAt"),
+                    "rationale": approval.get("decision"),
+                },
+                {
+                    "id": "E02",
+                    "status": "SUPERSEDED",
+                    "actor": f"governance-migration:{migration.get('id')}",
+                    "at": migration.get("authorizedAt"),
+                    "rationale": (
+                        "Recorded the approved but unmaterialized reservation as terminal superseded history under "
+                        f"{migration.get('id')}; no bootstrap, task, campaign, or product authority was executed."
+                    ),
+                },
+            ],
+        },
+        "bootstrap": None,
+        "campaign": None,
+        "tasks": [],
+        "completion": {
+            "status": "PENDING",
+            "reviewer": None,
+            "reviewed_at": None,
+            "evidence": [],
+            "notes": "Approved reservation was never materialized or executed and is terminally superseded.",
+        },
+    }
+
+
+def command_amendment_v4_bootstrap_submit(
+    args: argparse.Namespace,
+    data: dict[str, Any],
+    tasks: dict[str, dict[str, Any]],
+    *,
+    repo: Path,
+    approval: dict[str, Any],
+    packet: dict[str, Any],
+    approval_payload: bytes,
+    frozen_amendments: dict[str, str],
+    frozen_wave_bases: dict[str, str],
+) -> None:
+    """Append post-migration reservations and the next approved v4 amendment."""
+    ecr_check = subprocess.run(
+        [
+            sys.executable,
+            str(repo / "tools" / "planctl.py"),
+            "--repo",
+            str(repo),
+            "ecr",
+            "validate",
+            str(approval.get("changeRequestId")),
+            "--require-approved",
+        ],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if ecr_check.returncode != 0:
+        detail = "\n".join(part.strip() for part in (ecr_check.stdout, ecr_check.stderr) if part.strip())
+        raise SystemExit(f"Post-migration amendment authority validation failed:\n{detail}")
+    wave_id = str(packet.get("targetWave") or "")
+    existing = [item for item in data.get("wave_amendments", []) if item.get("target_wave") == wave_id]
+    chain = packet.get("authorityChain") or {}
+    ordered = chain.get("orderedAmendments") or []
+    reserved = chain.get("reservedAmendments") or []
+    if [item.get("id") for item in existing] != [item.get("id") for item in ordered]:
+        raise SystemExit("Post-migration amendment predecessor authority differs from the canonical backlog")
+    expected_reserved = [f"{wave_id}.A{index:02d}" for index in range(len(existing) + 1, len(existing) + len(reserved) + 1)]
+    if [item.get("id") for item in reserved] != expected_reserved:
+        raise SystemExit("Post-migration reserved amendments are not the exact next consecutive identities")
+    expected_id = f"{wave_id}.A{len(existing) + len(reserved) + 1:02d}"
+    if args.amendment != expected_id or packet.get("proposedAmendmentId") != expected_id:
+        raise SystemExit(f"Only the next post-migration Wave amendment may be appended: {expected_id}")
+    control = data.get("control_plane") or {}
+    activation = packet.get("activationBoundary") or {}
+    if (
+        control.get("revision") != 11
+        or control.get("minimum_tool_revision") != 11
+        or control.get("active_amendment") is not None
+        or active_recovery_holds(data)
+        or activation.get("activeRecoveryHolds") != []
+    ):
+        raise SystemExit("Post-migration amendment requires the exact released revision-11 control boundary")
+    wave = get(wave_map(data), wave_id, "wave")
+    campaign = wave.get("campaign") or {}
+    if (
+        activation.get("waveStatus") != "PAUSED"
+        or campaign.get("status") != "PAUSED"
+        or campaign.get("scope") != "wave"
+        or campaign.get("lease") is not None
+    ):
+        raise SystemExit("Target Wave is not at the exact paused Wave-scope activation boundary")
+    denied = set(activation.get("ordinaryTaskStatesDenied") or [])
+    if denied != {"IN_PROGRESS", "REVIEW"} or any(
+        task_wave(task) == wave_id and task.get("status") in denied for task in tasks.values()
+    ):
+        raise SystemExit("Ordinary Wave task work is not quiescent at the approved activation boundary")
+    if active_amendment_campaigns(data) or activation.get("otherEnablerCampaignDenied") is not True:
+        raise SystemExit("Another enabler campaign is active at the approved activation boundary")
+    migration_reference = packet.get("migrationAuthority") or {}
+    migration_relative = str(migration_reference.get("path") or "")
+    try:
+        migration_path = safe_control_path(
+            repo,
+            migration_relative,
+            prefix="planning/governance-migrations",
+            label="Post-migration amendment authority",
+        )
+        migration_payload = migration_path.read_bytes()
+        migration = json.loads(migration_payload)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Cannot authenticate the governance migration: {exc}") from exc
+    if (
+        hashlib.sha256(migration_payload).hexdigest() != migration_reference.get("sha256")
+        or git_blob(repo, str(migration_reference.get("commit") or ""), migration_relative) != migration_payload
+        or migration.get("migrationId") != migration_reference.get("id")
+        or migration.get("status") != "adopted"
+    ):
+        raise SystemExit("Post-migration amendment authority is not exact")
+    approval_relative = f"planning/wave-amendment-approvals/{args.amendment}.json"
+    introduction = approval_introduction_commit(repo, approval_relative)
+    approval_commit = str(args.approval_commit)
+    if approval_commit != introduction:
+        raise SystemExit("Approval commit must equal the immutable approval-record introduction commit")
+    implementation_commit = str(args.implementation_commit)
+    head, current_branch = git_head_branch(repo)
+    if (
+        implementation_commit == approval_commit
+        or implementation_commit != head
+        or not git_is_ancestor(repo, approval_commit, implementation_commit)
+    ):
+        raise SystemExit("Post-migration bootstrap implementation must be current HEAD and descend from approval")
+    evidence_relative, evidence_path = canonical_control_artifact_path(
+        repo,
+        str(args.evidence),
+        prefix="artifacts/evidence",
+        label="Post-migration amendment bootstrap evidence",
+    )
+    require_clean_repository(repo, allowed_untracked={HISTORICAL_W1_A04_WITNESS["path"]})
+    try:
+        evidence_payload = evidence_path.read_bytes()
+        parse_evidence_payload(evidence_payload, evidence_path.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
+    bootstrap_unit = packet.get("bootstrapUnit") or {}
+    scope_addenda, addendum_references = load_bootstrap_scope_addenda(
+        repo, args.amendment, str(bootstrap_unit.get("id"))
+    )
+    agent = normalized_identity(args.agent, "Bootstrap implementer")
+    candidate = {
+        "id": str(bootstrap_unit.get("id")),
+        "status": "REVIEW",
+        "implementer": agent,
+        "implementation_commit": implementation_commit,
+        "submission_branch": current_branch,
+        "scope_addenda": addendum_references,
+        "evidence": [
+            {
+                "type": "criterion-manifest",
+                "path": evidence_relative,
+                "sha256": evidence_sha256(evidence_payload),
+                "commit": implementation_commit,
+                "recorded_at": utc_now(),
+            }
+        ],
+        "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+    }
+    errors = bootstrap_attempt_errors(
+        repo,
+        args.amendment,
+        str(bootstrap_unit.get("id")),
+        [str(item) for item in bootstrap_unit.get("requiredOutcomes", [])],
+        candidate,
+        expected_base=approval_commit,
+        lineage_base=approval_commit,
+        allowed_patterns=[
+            *map(str, bootstrap_unit.get("authorizedPaths", [])),
+            *scope_addenda,
+            *(str(reference.get("path") or "") for reference in addendum_references),
+        ],
+        require_current_branch=True,
+    )
+    if errors:
+        raise SystemExit("Invalid post-migration amendment bootstrap evidence:\n- " + "\n- ".join(errors))
+    frozen_waves = exact_record_snapshot(data, "waves", identities={wave_id})
+    before_snapshot = amendment_identity_snapshot(data)
+    for reservation in reserved:
+        data.setdefault("wave_amendments", []).append(
+            materialized_superseded_reservation(repo, wave_id, reservation, migration)
+        )
+    data["wave_amendments"].append(
+        {
+            "id": args.amendment,
+            "change_request_id": approval.get("changeRequestId"),
+            "target_wave": wave_id,
+            "kind": packet.get("classification"),
+            "approval_reference": {
+                "path": approval_relative,
+                "sha256": hashlib.sha256(approval_payload).hexdigest(),
+                "introduction_commit": introduction,
+            },
+            "lifecycle": {
+                "status": "APPROVED",
+                "history": [
+                    {
+                        "id": "E01",
+                        "status": "APPROVED",
+                        "actor": approval.get("approvedBy"),
+                        "at": approval.get("approvedAt"),
+                        "rationale": approval.get("decision"),
+                    }
+                ],
+            },
+            "bootstrap": candidate,
+            "campaign": None,
+            "tasks": [],
+            "completion": {
+                "status": "PENDING",
+                "reviewer": None,
+                "reviewed_at": None,
+                "evidence": [],
+                "notes": None,
+            },
+        }
+    )
+    after_snapshot = amendment_identity_snapshot(data)
+    expected_suffix = tuple((item, ()) for item in [*expected_reserved, args.amendment])
+    if after_snapshot[: len(before_snapshot)] != before_snapshot or after_snapshot[len(before_snapshot) :] != expected_suffix:
+        raise SystemExit("Post-migration append would replace, reorder, or fork predecessor amendment authority")
+    maintenance = control.setdefault("maintenance_increments", [])
+    if maintenance:
+        raise SystemExit("Post-migration control maintenance increment has already been recorded")
+    maintenance.append(
+        {
+            "id": "MI-0001",
+            "kind": "post-migration-amendment-bootstrap",
+            "predecessor_revision": 11,
+            "successor_revision": CONTROL_TOOL_REVISION,
+            "change_request_id": approval.get("changeRequestId"),
+            "amendment_id": args.amendment,
+            "approval_reference": {
+                "path": approval_relative,
+                "sha256": hashlib.sha256(approval_payload).hexdigest(),
+                "introduction_commit": introduction,
+            },
+            "migration_reference": copy.deepcopy(migration_reference),
+            "applied_by": agent,
+            "applied_at": utc_now(),
+        }
+    )
+    control["revision"] = CONTROL_TOOL_REVISION
+    control["minimum_tool_revision"] = CONTROL_TOOL_REVISION
+    control["active_amendment"] = None
+    save_validated(
+        args.file,
+        data,
+        expected_sha256=getattr(args, "source_sha256", None),
+        expected_identity=getattr(args, "source_identity", None),
+        expected_approved_waves=getattr(args, "source_approved_waves", None),
+        expected_amendment_history=getattr(args, "source_amendment_history", None),
+        expected_task_review_history=getattr(args, "source_task_review_history", None),
+        expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
+        expected_wave_resume_history=getattr(args, "source_wave_resume_history", None),
+        expected_recovery_history=getattr(args, "source_recovery_history", None),
+        expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
+        expected_frozen_waves=frozen_waves,
+        expected_frozen_wave_bases=frozen_wave_bases,
+        expected_frozen_amendments=frozen_amendments,
+        repo=repo,
+    )
+    print(f"Appended reserved history and submitted {bootstrap_unit.get('id')} for independent review")
+
+
 def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, tasks, gates) -> None:
     """Append a later approved amendment without replacing any predecessor."""
     repo = discover_repository(args.file)
@@ -7007,6 +7422,20 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         raise SystemExit("Appended Wave amendment identity is invalid")
     wave_id = match.group(1)
     frozen_waves = exact_record_snapshot(data, "waves", identities={wave_id})
+    approval, packet, approval_payload = load_amendment_authority(repo, args.amendment)
+    if packet.get("schemaVersion") == "4.0-proposal":
+        command_amendment_v4_bootstrap_submit(
+            args,
+            data,
+            tasks,
+            repo=repo,
+            approval=approval,
+            packet=packet,
+            approval_payload=approval_payload,
+            frozen_amendments=frozen_amendments,
+            frozen_wave_bases=frozen_wave_bases,
+        )
+        return
     ordered = [item for item in existing if item.get("target_wave") == wave_id]
     expected_id = f"{wave_id}.A{len(ordered) + 1:02d}"
     if args.amendment != expected_id:
@@ -7019,7 +7448,6 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
     if len(holds) != 1 or (holds[0].get("bootstrap") or {}).get("status") != "APPROVED":
         raise SystemExit("A matching active recovery hold with independently approved bootstrap is required")
     hold = holds[0]
-    approval, packet, approval_payload = load_amendment_authority(repo, args.amendment)
     schema_version = str(packet.get("schemaVersion") or "")
     if schema_version not in {"2.0-proposal", "3.0-proposal"}:
         raise SystemExit("Subsequent amendment append requires a supported generic ECR packet")
@@ -7377,7 +7805,10 @@ def command_amendment_bootstrap_review(args, data, capabilities, slices, tasks, 
     if reviewer == bootstrap.get("implementer"):
         raise SystemExit("Bootstrap reviewer must be independent from the implementer")
     repo = discover_repository(args.file)
-    require_clean_repository(repo)
+    require_clean_repository(
+        repo,
+        allowed_untracked=amendment_transition_allowed_untracked(data, args.amendment, repo),
+    )
     approval, packet, _payload = load_amendment_authority(repo, args.amendment)
     require_amendment_packet_integrity(
         repo,
@@ -7428,7 +7859,13 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         raise SystemExit("Bootstrap evidence must be inside the repository") from exc
     if not evidence_relative.startswith("artifacts/evidence/"):
         raise SystemExit("Bootstrap evidence must be under artifacts/evidence")
-    require_clean_repository(repo, allowed_untracked={evidence_relative})
+    require_clean_repository(
+        repo,
+        allowed_untracked={
+            evidence_relative,
+            *amendment_transition_allowed_untracked(data, args.amendment, repo),
+        },
+    )
     try:
         evidence_payload = evidence_path.read_bytes()
         _manifest = parse_evidence_payload(evidence_payload, evidence_path.suffix)
@@ -7522,7 +7959,10 @@ def command_amendment_materialize(args, data, capabilities, slices, tasks, gates
         raise SystemExit("Amendment tasks have already been materialized or the lifecycle is not APPROVED")
     actor = normalized_identity(args.agent, "Materialization actor")
     repo = discover_repository(args.file)
-    require_clean_repository(repo)
+    require_clean_repository(
+        repo,
+        allowed_untracked=amendment_transition_allowed_untracked(data, args.amendment, repo),
+    )
     approval, packet, _payload = load_amendment_authority(repo, args.amendment)
     require_amendment_packet_integrity(repo, amendment, approval, packet)
     packet_tasks = packet.get("taskInventory", [])
@@ -7588,7 +8028,10 @@ def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -
     if wave_campaign.get("owner") != agent or wave_campaign.get("branch") != branch:
         raise SystemExit("Amendment activation must retain the paused Wave owner and codex branch")
     repo = discover_repository(args.file)
-    require_clean_repository(repo)
+    require_clean_repository(
+        repo,
+        allowed_untracked=amendment_transition_allowed_untracked(data, args.amendment, repo),
+    )
     approval, packet, _payload = load_amendment_authority(repo, args.amendment)
     require_amendment_packet_integrity(repo, amendment, approval, packet)
     expected = {item["id"]: canonical_json_sha256(item) for item in packet.get("taskInventory", [])}
@@ -7665,7 +8108,10 @@ def build_amendment_exit_submission(
         raise SystemExit(f"Invalid amendment exit evidence: {exc}") from exc
     branch = str(manifest.get("branch") or "")
     if migration_state_commit is None:
-        require_clean_repository(repo)
+        require_clean_repository(
+            repo,
+            allowed_untracked=amendment_transition_allowed_untracked(data, args.amendment, repo),
+        )
         declared_candidate = str(manifest.get("candidateCommit") or "")
         if (
             branch != current_branch
@@ -7880,7 +8326,13 @@ def command_amendment_review(args, data, capabilities, slices, tasks, gates) -> 
         raise SystemExit("Remediation review must bind the exact current frozen submission state")
     if not git_is_ancestor(repo, reviewed_state, current_head):
         raise SystemExit("Reviewed amendment exit state is not on current history")
-    require_clean_repository(repo, allowed_untracked={ledger_relative})
+    require_clean_repository(
+        repo,
+        allowed_untracked={
+            ledger_relative,
+            *amendment_transition_allowed_untracked(data, args.amendment, repo),
+        },
+    )
     attempt = prepare_amendment_exit_attempt(
         amendment,
         current_submission,
@@ -7920,7 +8372,10 @@ def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> N
         raise SystemExit("Controlled adoption requires --from <checkpoint-evidence>")
     actor = normalized_identity(args.agent, "Adoption actor")
     repo = discover_repository(args.file)
-    require_clean_repository(repo)
+    require_clean_repository(
+        repo,
+        allowed_untracked=amendment_transition_allowed_untracked(data, args.amendment, repo),
+    )
     current_head, current_branch = git_head_branch(repo)
     relative, path = safe_evidence_relative(repo, args.from_path, "Adoption checkpoint evidence")
     payload = git_blob(repo, current_head, relative)
