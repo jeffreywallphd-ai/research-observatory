@@ -51,15 +51,37 @@ class UiReferenceCheckTests(unittest.TestCase):
 
         self.assertEqual(first, second)
         self.assertTrue(first["ok"], first["errors"])
-        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.3", first["reference_id"])
-        self.assertEqual(32, first["product_pages"])
-        self.assertEqual(34, first["html_documents"])
+        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.4", first["reference_id"])
+        site = json.loads((REFERENCE / "SITE_MANIFEST.json").read_text(encoding="utf-8"))
+        manifest = yaml.safe_load((REFERENCE / "REFERENCE_MANIFEST.yaml").read_text(encoding="utf-8"))
+        self.assertEqual(len(site["pages"]), first["product_pages"])
+        self.assertEqual(
+            len([path for path in manifest["governed_files"] if path.endswith(".html")]),
+            first["html_documents"],
+        )
         self.assertEqual(14, first["workflow_profiles"])
         self.assertEqual(20, first["capability_records"])
-        self.assertEqual(54, first["governed_files"])
-        self.assertEqual(54, len(first["governed_hashes"]))
+        self.assertEqual(len(manifest["governed_files"]), first["governed_files"])
+        self.assertEqual(first["governed_files"], len(first["governed_hashes"]))
         self.assertTrue(first["generator_reproducible"])
         self.assertRegex(first["reference_package_sha256"], r"^[0-9a-f]{64}$")
+
+    def test_manifest_inventory_counts_must_match_the_governed_package(self) -> None:
+        mutations = {
+            "product pages": ("product_page_count", "product-page inventory is inconsistent"),
+            "HTML documents": ("html_document_count", "HTML inventory is inconsistent"),
+        }
+        for label, (field, expected) in mutations.items():
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temporary:
+                root = self.reference_copy(temporary)
+                site_path = root / "SITE_MANIFEST.json"
+                site = json.loads(site_path.read_text(encoding="utf-8"))
+                site[field] += 1
+                self.write_json(site_path, site)
+                self.update_governed_hash(root, "SITE_MANIFEST.json")
+                result = validate(root)
+            self.assertFalse(result["ok"])
+            self.assertTrue(any(expected in error for error in result["errors"]), result["errors"])
 
     def test_missing_modified_and_unapproved_governance_fail(self) -> None:
         mutations = {

@@ -11,11 +11,14 @@ navigation, and nonfunctional actions must never be configured as a production o
 development frontend. Applications may consume approved semantic tokens and
 implement only the page regions and workflows owned by completed capabilities.
 
-The gate requires exactly 32 reference pages, 34 HTML documents, 14 workflow
-profiles, 20 capability records, and page-contract parity. Every HTML link and
-asset must remain local, present, and inside `design/ui-reference`; network
-dependencies and W10/W11 hosted-administration routes are rejected. A temporary
-copy runs the deterministic generator and must reproduce all governed hashes.
+The gate requires the product-page and HTML-document counts declared by the site
+manifest to match the unique governed inventory exactly. It also requires 14
+workflow profiles, 20 capability records, and page-contract parity. This keeps
+the inventory deterministic without encoding a stale page total in the checker.
+Every HTML link and asset must remain local, present, and inside
+`design/ui-reference`; network dependencies and W10/W11 hosted-administration
+routes are rejected. A temporary copy runs the deterministic generator and must
+reproduce all governed hashes.
 
 Run the check directly with:
 

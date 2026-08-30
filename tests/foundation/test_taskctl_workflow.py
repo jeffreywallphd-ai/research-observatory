@@ -5514,7 +5514,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 {"scope_addenda": [{"path": relative}]},
             )
         self.assertEqual(
-            ["design/ui-reference/*", relative, "tools/ui_reference_check.py"],
+            [
+                "design/ui-reference/*",
+                "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json",
+                relative,
+                "tools/ui_reference_check.py",
+            ],
             patterns,
         )
 

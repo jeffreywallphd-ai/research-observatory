@@ -78,7 +78,7 @@ class BacklogSchemaTests(unittest.TestCase):
         data = copy.deepcopy(self.canonical)
         self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
 
-    def test_bootstrap_scope_addendum_is_exactly_one_generated_path(self) -> None:
+    def test_bootstrap_scope_addendum_schema_is_generic_strict_and_path_safe(self) -> None:
         schema = json.loads(
             (REPO / "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json").read_text(
                 encoding="utf-8"
@@ -89,7 +89,15 @@ class BacklogSchemaTests(unittest.TestCase):
         )
         validator = Draft202012Validator(schema, format_checker=FormatChecker())
         self.assertEqual([], list(validator.iter_errors(record)))
-        record["authorizedAdditionalPaths"].append("product/runtime.py")
+
+        current = json.loads(
+            (REPO / "planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual([], list(validator.iter_errors(current)))
+
+        record["authorizedAdditionalPaths"].append("../product/runtime.py")
         self.assertTrue(list(validator.iter_errors(record)))
 
     def test_duplicate_task_id_has_precise_diagnostic(self) -> None:
