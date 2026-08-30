@@ -3687,6 +3687,68 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     gates,
                 )
 
+    def test_bootstrap_remediation_scope_starts_at_its_frozen_evidence_base(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            evidence_path = repo / "artifacts/evidence/W1.A05.B00.remediation-01.json"
+            evidence_path.parent.mkdir(parents=True)
+            base = "c" * 40
+            candidate = "d" * 40
+            manifest = {
+                "commit": candidate,
+                "baseCommit": base,
+                "branch": "codex/w1-windows-local-runtime",
+                "changedFiles": ["tests/foundation/test_taskctl_workflow.py"],
+            }
+            evidence_path.write_text(json.dumps(manifest), encoding="utf-8")
+            payload = evidence_path.read_bytes()
+            attempt = {
+                "implementer": "codex",
+                "implementation_commit": candidate,
+                "submission_branch": manifest["branch"],
+                "evidence": [
+                    {
+                        "path": evidence_path.relative_to(repo).as_posix(),
+                        "sha256": evidence_sha256(payload),
+                        "commit": candidate,
+                    }
+                ],
+            }
+            commands: list[list[str]] = []
+
+            def scoped_diff(command: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
+                commands.append(command)
+                return subprocess.CompletedProcess(
+                    command,
+                    0,
+                    "tests/foundation/test_taskctl_workflow.py\n",
+                    "",
+                )
+
+            with (
+                patch("taskctl.git_commit_exists", return_value=True),
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch("taskctl.validate_task_evidence", return_value=[]),
+                patch("taskctl.changed_file_errors", return_value=[]),
+                patch("taskctl.subprocess.run", side_effect=scoped_diff),
+            ):
+                errors = taskctl_module.bootstrap_attempt_errors(
+                    repo,
+                    "W1.A05",
+                    "W1.A05.B00",
+                    ["Preserve the approved boundary."],
+                    attempt,
+                    expected_base=None,
+                    lineage_base="b" * 40,
+                    allowed_patterns=["tests/foundation/test_taskctl_workflow.py"],
+                )
+
+            self.assertEqual([], errors)
+            self.assertEqual(
+                ["git", "diff", "--name-only", base, candidate, "--"],
+                commands[-1],
+            )
+
     def test_b00_r04_historical_bootstrap_validation_does_not_depend_on_live_branch(self) -> None:
         data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
             self.b00_resubmitted_review_bootstrap_fixture()
