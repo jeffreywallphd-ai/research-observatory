@@ -8706,7 +8706,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T02
     - CAP-02.S02.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-03.S03.T01
       capability_id: CAP-03
@@ -10953,11 +10953,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-03.S03.integration-R01.json
+      notes: All three independently approved tasks and the accumulated affected contract, migration, persistence, restart/recovery,
+        lineage, integrity, rights, generated-client, renderer, accessibility, and controlled visual union pass at approved
+        descendant a488842.
   - id: CAP-03.S04
     title: Portable workflow model and local worker fabric
     outcome: Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 524e7691b7ab677c398aec9ca661503ecafd9fc5a394b2e859d0109338554b63
+source_sha256: 2b9d699c73e5ef58cd07906cff85eaa4ef3e62a22cf4dd693a725511746f9853
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4159,7 +4159,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The system can reconstruct how every material object and claim was produced and changed.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
