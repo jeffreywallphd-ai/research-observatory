@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0005.R01",
+  "maintenanceId": "GOV-MAINT-0005",
+  "reviewedCommit": "882d23c430d515a3c3629de2dfc3ce1d83d9c51c",
+  "submissionRecordCommit": "70140e44b2bf928aa6721a3602ee77ba53f07fdf",
+  "predecessorCommit": "492e9e6bba52e9c6087f84c1066661fd530bfdf3",
+  "reviewer": {
+    "identity": "codex-independent-governance-control-maintenance-reviewer",
+    "role": "independent-governance-control-maintenance-reviewer",
+    "agentTask": "/root/t03_r02_review"
+  },
+  "reviewedAt": "2026-08-30T11:09:13-04:00",
+  "disposition": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "id": "GOV-MAINT-0005-R01-F01",
+      "severity": "P1",
+      "blocking": true,
+      "title": "The reservation predicate admits noncanonical lifecycle histories without an identified migration",
+      "reproduction": "At exact implementation commit 882d23c430d515a3c3629de2dfc3ce1d83d9c51c, place an otherwise non-executable predecessor before the sole later MATERIALIZED amendment owner while the Wave is PAUSED at amendment-hold. Give the predecessor no bootstrap, campaign, tasks, completion reviewer/time/evidence, or executable status. validate() correctly admits the canonical two-event history [APPROVED, SUPERSEDED] with final actor governance-migration:GOV-MIG-0001. It also returns no predecessor or terminal-scope error for each of three noncanonical variants with fully sequential event IDs: [APPROVED, APPROVED, SUPERSEDED], [APPROVED, SUPERSEDED, SUPERSEDED], and [APPROVED, SUPERSEDED] whose final actor is the identity-free string governance-migration:. is_unexecuted_superseded_reservation uses len(history) >= 2, allows every event whose status is merely in {APPROVED, SUPERSEDED}, and checks only startswith('governance-migration:'). The general lifecycle validator checks current-versus-last status and sequential IDs but does not enforce the exact transition sequence or a nonempty migration identity. These malformed histories therefore suppress both 'predecessor ... is neither ADOPTED nor an unexecuted migration-superseded reservation' and 'terminal lifecycle did not restore ordinary Wave scope', even though they are not the exact APPROVED-then-identified-migration-SUPERSEDED reservation authorized by GOV-MAINT-0005.",
+      "requiredResolution": "Make the generic predicate recognize exactly two lifecycle events with exact ordered statuses APPROVED then SUPERSEDED, and require a normalized, nonempty migration identity after the governance-migration: namespace (preferably the canonical GOV-MIG-NNNN form used by the authenticated producer). Preserve the existing null bootstrap/campaign, empty task inventory, pending/unreviewed/unevidenced completion, sole-latest-owner, and ordinary ADOPTED-predecessor behavior. Add full validate() regressions for extra APPROVED, extra SUPERSEDED, empty/invalid migration identity, and the already covered bootstrap/campaign/task/completion-evidence/non-migration/WITHDRAWN/DEFERRED/executable cases."
+    }
+  ],
+  "verification": {
+    "scope": "The predecessor-to-implementation diff is exactly tests/foundation/test_taskctl_workflow.py and tools/taskctl.py. The submission adds only planning/governance-migrations/GOV-MAINT-0005.json. No backlog, product, Wave packet, governed experience, release-gate, dependency, runtime, service, renderer, or packaging path changed; git diff --check passed.",
+    "recordAuthentication": "The submitted maintenance record is byte-authenticated at SHA-256 bd7615d9e805c8cfdd2ec3a32f0bd47e516a6d1829bc32efd36c97685fb1fad7 and Git blob dd0fcc27efabe29845037ca83814e3d8edd9483b. The implementation is a strict descendant of predecessor 492e9e6bba52e9c6087f84c1066661fd530bfdf3 and the submission record is a strict descendant of implementation 882d23c430d515a3c3629de2dfc3ce1d83d9c51c.",
+    "focusedTest": "PASS: test_consecutive_amendment_hold_allows_adopted_or_unexecuted_superseded_predecessors passed independently. It proves the canonical unexecuted migration-superseded form can lawfully precede the sole latest owner under amendment-hold; adopted predecessor behavior remains green; bootstrap tampering and WITHDRAWN remain denied; a second executable owner remains denied.",
+    "adversarialStateTable": "Direct predicate replay returned false for bootstrap, campaign, task, completion evidence, completion reviewer, completion review time, non-PENDING completion, non-migration actor, WITHDRAWN, DEFERRED, and executable-history variants. Full validate() replay then reproduced the blocking over-admission for sequential extra-APPROVED, extra-SUPERSEDED, and empty-migration-identity histories. The predicate also ignores optional exit_review_control; remediation should explicitly decide and test whether any such control is compatible with the stated 'no completion review' form.",
+    "schemaAndWorkflow": "The complete 102-test taskctl schema/workflow matrix was run in an isolated exact-commit Git clone so the protected live witness remained completely unobserved. It produced 99 passes, one failure, and two errors. All three adverse results are isolation-environment fixtures rather than GOV-MAINT-0005 behavior: the clone intentionally lacks external GRR bootstrap evidence and the retained untracked historical witness, and canonical active worktree identities still point to the shared checkout. The focused maintenance test, canonical backlog schema/semantic validation, atomic-save test, sole-owner tests, and the changed helper's surrounding workflow cases passed. The submitted record's claim of 102/102 in the live exact implementation environment is not contradicted by this isolated run, but it is not represented here as independently reproduced.",
+    "atomicity": "The predecessor and implementation commits have identical planning/backlog.yaml bytes and their complete diff contains no canonical planning state. At predecessor 492e9e6bba52e9c6087f84c1066661fd530bfdf3, W1 remains PAUSED at ordinary Wave scope, W1.A04 is the two-event migration-superseded reservation with no bootstrap/campaign/tasks/completion evidence, W1.A05 remains APPROVED with its independently approved bootstrap but no materialized tasks or campaign, and G1 remains pending. The original rejected materialization therefore left no partial backlog mutation. The atomic-save failure/stale-writer regression also passed in the isolated suite.",
+    "authority": "The change does not itself materialize W1.A05, activate a campaign, claim a task, complete a task or Wave, change product/security/experience authority, approve G1, or authorize an external effect. The sole-latest executable-owner checks remain present and green. The finding concerns only the helper's overbroad recognition of historical predecessor shape and must be corrected without expanding those authorities.",
+    "protectedWitness": "The protected untracked artifacts/evidence/W1.A04.B00.json was not opened, read, hashed, enumerated through worktree status, staged, edited, deleted, or otherwise used. Broader tests were isolated through a commit-only Git bundle and temporary clone, which were removed after the run."
+  },
+  "filesEditedByReviewer": false
+}
