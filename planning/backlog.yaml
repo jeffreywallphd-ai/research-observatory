@@ -30909,9 +30909,9 @@ wave_amendments:
         until amendment adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A05.B00
-    status: CHANGES_REQUESTED
+    status: REVIEW
     implementer: codex
-    implementation_commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
+    implementation_commit: 4469adedd4b3fae0e64044ab1f8004d2553f0091
     submission_branch: codex/w1-windows-local-runtime
     scope_addenda:
     - path: planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json
@@ -30919,17 +30919,15 @@ wave_amendments:
       introduction_commit: 55070f5c3222891e21cd66021adb61d8322097e5
     evidence:
     - type: criterion-manifest
-      path: artifacts/evidence/W1.A05.B00.remediation-02.json
-      sha256: c79df5798b5fec4c0615bba5b2209966649437eed57931d06ef5c68132e6a210
-      commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
-      recorded_at: '2026-08-30T13:25:30+00:00'
+      path: artifacts/evidence/W1.A05.B00.remediation-03.json
+      sha256: fbfc34a7ff8bbae7b3ccc456a67c27dd99a2aea33582b5350764a62553189300
+      commit: 4469adedd4b3fae0e64044ab1f8004d2553f0091
+      recorded_at: '2026-08-30T13:57:32+00:00'
     review:
-      reviewer: w1-a05-b00-independent-reviewer
-      result: changes-requested
-      reviewed_at: '2026-08-30T13:36:04+00:00'
-      notes: 'R03 ledger artifacts/evidence/W1.A05.B00.review-03.json (sha256 45cfa8ac8832ad30d8f69ea54ebb20d3bb708be5823ea7ae2181387a7f7614b0):
-        W1-A05-B00-R03-F01 requires current and future remediation projections to retain the exact frozen scope_base_commit
-        while preserving immutable historical attempts.'
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
     attempts:
     - id: R01
       implementer: codex
@@ -30964,7 +30962,25 @@ wave_amendments:
         notes: 'R02 ledger artifacts/evidence/W1.A05.B00.review-02.json (sha256 41d228df518fb21f6609dabce85962e36f9add46ff08199444d8dd3cbf3434f8):
           W1-A05-B00-R02-F01 requires fail-closed coverage of unauthorized intervening commits before an implementer-selected
           remediation base.'
-    scope_base_commit: cf8a2568a29766c27a0f73cfb9036d86f91b62ac
+    - id: R03
+      implementer: codex
+      implementation_commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
+      submission_branch: codex/w1-windows-local-runtime
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W1.A05.B00.remediation-02.json
+        sha256: c79df5798b5fec4c0615bba5b2209966649437eed57931d06ef5c68132e6a210
+        commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
+        recorded_at: '2026-08-30T13:25:30+00:00'
+      review:
+        reviewer: w1-a05-b00-independent-reviewer
+        result: changes-requested
+        reviewed_at: '2026-08-30T13:36:04+00:00'
+        notes: 'R03 ledger artifacts/evidence/W1.A05.B00.review-03.json (sha256 45cfa8ac8832ad30d8f69ea54ebb20d3bb708be5823ea7ae2181387a7f7614b0):
+          W1-A05-B00-R03-F01 requires current and future remediation projections to retain the exact frozen scope_base_commit
+          while preserving immutable historical attempts.'
+      scope_base_commit: cf8a2568a29766c27a0f73cfb9036d86f91b62ac
+    scope_base_commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
   campaign: null
   tasks: []
   completion:
