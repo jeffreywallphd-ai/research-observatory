@@ -266,6 +266,7 @@ describe("generated Core API client", () => {
       ...lineage,
       items: [],
       missingRevisionIds: [],
+      legacyEventCount: 0,
       nextCursor: null,
       integrityState: "verified" as const,
       exportAllowed: true,
@@ -273,6 +274,36 @@ describe("generated Core API client", () => {
     };
     const terminating = createCoreApiClient(async () => response(200, terminalContinuation));
     await expect(terminating.lineage(continuationRequest)).resolves.toEqual(terminalContinuation);
+
+    for (const contradictory of [
+      {
+        ...lineage,
+        missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c0739aa"],
+        legacyEventCount: 0,
+        nextCursor: null,
+        integrityState: "verified" as const,
+        exportAllowed: true,
+        exportDenialReason: null,
+      },
+      {
+        ...lineage,
+        missingRevisionIds: [],
+        legacyEventCount: 1,
+        nextCursor: null,
+        integrityState: "verified" as const,
+        exportAllowed: true,
+        exportDenialReason: null,
+      },
+    ]) {
+      const firstPageAdversary = createCoreApiClient(async () => response(200, contradictory));
+      await expect(firstPageAdversary.lineage(request)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+      const continuationAdversary = createCoreApiClient(async () => response(200, {
+        ...contradictory,
+        items: [contradictory.items[1]!],
+      }));
+      await expect(continuationAdversary.lineage(continuationRequest))
+        .rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    }
   });
 
   it("decodes and evaluates only the exact compatible version envelope", async () => {

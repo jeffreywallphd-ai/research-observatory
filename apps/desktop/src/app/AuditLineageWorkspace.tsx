@@ -152,10 +152,14 @@ export function mergeLineagePage(
   if (next.items.some((item) => identities.has(item.factId))
     || (next.items[0]?.depth ?? lastDepth) < lastDepth) throw new Error("RO-CORE-RESPONSE-INVALID");
   const items = [...current.items, ...next.items];
+  const missingRevisionIds = [...new Set([...current.missingRevisionIds, ...next.missingRevisionIds])];
+  const legacyEventCount = Math.max(current.legacyEventCount, next.legacyEventCount);
   const integrityReview = current.integrityState === "integrity-review"
     || next.integrityState === "integrity-review"
     || current.exportDenialReason === "integrity-review"
-    || next.exportDenialReason === "integrity-review";
+    || next.exportDenialReason === "integrity-review"
+    || missingRevisionIds.length > 0
+    || legacyEventCount > 0;
   const rightsRestricted = current.exportDenialReason === "rights-restricted"
     || next.exportDenialReason === "rights-restricted"
     || items.some((item) => item.rightsStatus === "denied" || item.rightsStatus === "unknown");
@@ -167,9 +171,9 @@ export function mergeLineagePage(
   return {
     ...next,
     items,
-    missingRevisionIds: [...new Set([...current.missingRevisionIds, ...next.missingRevisionIds])],
+    missingRevisionIds,
     integrityState: integrityReview ? "integrity-review" : "verified",
-    legacyEventCount: Math.max(current.legacyEventCount, next.legacyEventCount),
+    legacyEventCount,
     exportAllowed: exportDenialReason === null,
     exportDenialReason,
   };
@@ -185,6 +189,8 @@ export function lineageManifestReady(
     && acceptedQuery.direction === trace.direction
     && trace.nextCursor === null
     && trace.integrityState === "verified"
+    && trace.missingRevisionIds.length === 0
+    && trace.legacyEventCount === 0
     && trace.exportAllowed
     && trace.exportDenialReason === null
     && !trace.items.some((item) => item.rightsStatus === "denied" || item.rightsStatus === "unknown");

@@ -208,6 +208,7 @@ describe("audit and lineage workspace", () => {
       ...lineage,
       items: [lineage.items[0]!],
       missingRevisionIds: [],
+      legacyEventCount: 0,
       nextCursor: 1,
       integrityState: "verified" as const,
       exportAllowed: true,
@@ -290,6 +291,7 @@ describe("audit and lineage workspace", () => {
     const exportable = {
       ...lineage,
       missingRevisionIds: [],
+      legacyEventCount: 0,
       nextCursor: null,
       integrityState: "verified" as const,
       exportAllowed: true,
@@ -306,6 +308,11 @@ describe("audit and lineage workspace", () => {
     expect(() => exportLineageManifest(lineage, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
     expect(() => exportLineageManifest(exportable, { ...acceptedQuery, direction: "descendants" }))
       .toThrow("RO-CORE-EXPORT-DENIED");
+    expect(lineageManifestReady({
+      ...exportable,
+      missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c0739aa"],
+    }, acceptedQuery)).toBe(false);
+    expect(lineageManifestReady({ ...exportable, legacyEventCount: 1 }, acceptedQuery)).toBe(false);
     expect(() => mergeLineagePage(
       { ...exportable, nextCursor: 3 },
       { ...exportable, items: [exportable.items[0]!], nextCursor: null },
@@ -344,6 +351,34 @@ describe("audit and lineage workspace", () => {
     const rightsMerged = mergeLineagePage(rightsDenied, verifiedFinal, 1);
     expect(rightsMerged).toMatchObject({ exportAllowed: false, exportDenialReason: "rights-restricted" });
     expect(() => exportLineageManifest(rightsMerged, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
+
+    const missingMerged = mergeLineagePage(
+      { ...exportable, items: [exportable.items[0]!], nextCursor: 1 },
+      {
+        ...verifiedFinal,
+        missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c0739aa"],
+      },
+      1,
+    );
+    expect(missingMerged).toMatchObject({
+      integrityState: "integrity-review",
+      exportAllowed: false,
+      exportDenialReason: "integrity-review",
+    });
+    expect(() => exportLineageManifest(missingMerged, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
+
+    const legacyMerged = mergeLineagePage(
+      { ...exportable, items: [exportable.items[0]!], nextCursor: 1 },
+      { ...verifiedFinal, legacyEventCount: 1 },
+      1,
+    );
+    expect(legacyMerged).toMatchObject({
+      legacyEventCount: 1,
+      integrityState: "integrity-review",
+      exportAllowed: false,
+      exportDenialReason: "integrity-review",
+    });
+    expect(() => exportLineageManifest(legacyMerged, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
 
     const terminal = mergeLineagePage(
       { ...exportable, items: [exportable.items[0]!], nextCursor: 1 },
