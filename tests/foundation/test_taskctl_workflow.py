@@ -480,6 +480,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         context[0]["control_plane"]["active_amendment"] = None
         context[0]["control_plane"]["recovery_holds"] = []
+        context[0]["control_plane"].pop("maintenance_increments", None)
         context[0]["control_plane"]["revision"] = 10
         context[0]["control_plane"]["minimum_tool_revision"] = 10
         wave = next(item for item in context[0]["waves"] if item["id"] == "W1")
@@ -2418,6 +2419,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual(set(), task_evidence_allowed_untracked(data, {"wave": "W2"}, REPO))
 
         unreleased = copy.deepcopy(data)
+        unreleased["wave_amendments"] = [
+            amendment for amendment in unreleased["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        unreleased["control_plane"].pop("maintenance_increments", None)
+        unreleased["control_plane"]["revision"] = 11
+        unreleased["control_plane"]["minimum_tool_revision"] = 11
         unreleased_hold = next(
             item for item in unreleased["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
         )
@@ -2425,6 +2432,10 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual(set(), wave_resume_allowed_untracked(unreleased, "W1", REPO))
 
         old_reader = copy.deepcopy(data)
+        old_reader["wave_amendments"] = [
+            amendment for amendment in old_reader["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        old_reader["control_plane"].pop("maintenance_increments", None)
         old_reader["control_plane"]["revision"] = 10
         self.assertEqual(set(), wave_resume_allowed_untracked(old_reader, "W1", REPO))
 
@@ -2504,7 +2515,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         record = {
             "id": "W1.R01",
             "wave_id": "W1",
-            "control_revision": data["control_plane"]["revision"],
+            "control_revision": historical["control_plane"]["revision"],
             "prior_status": "PAUSED",
             "pre_resume_commit": head,
             "prior_campaign_sha256": canonical_json_sha256(prior),
@@ -3672,6 +3683,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_w1_a04_historic_submission_guard_is_exact_and_fail_closed(self) -> None:
         data, *_ = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
+        data["wave_amendments"] = [
+            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        data["control_plane"].pop("maintenance_increments", None)
+        data["control_plane"]["revision"] = 11
+        data["control_plane"]["minimum_tool_revision"] = 11
         hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
         hold["status"] = "ACTIVE"
         hold["released_at"] = None
@@ -3793,6 +3810,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_w1_a04_historic_submit_uses_real_clean_git_workspace_once(self) -> None:
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
+        data["wave_amendments"] = [
+            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        data["control_plane"].pop("maintenance_increments", None)
+        data["control_plane"]["revision"] = 11
+        data["control_plane"]["minimum_tool_revision"] = 11
         hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
         hold["status"] = "ACTIVE"
         hold["released_at"] = None
@@ -3952,6 +3975,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_post_migration_v4_append_records_reserved_history_and_bounded_maintenance(self) -> None:
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
+        data["wave_amendments"] = [
+            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        data["control_plane"].pop("maintenance_increments", None)
+        data["control_plane"]["revision"] = 11
+        data["control_plane"]["minimum_tool_revision"] = 11
         before = copy.deepcopy(data["wave_amendments"])
         approval_path = REPO / "planning/wave-amendment-approvals/W1.A05.json"
         approval_payload = approval_path.read_bytes()
@@ -4037,6 +4066,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_post_migration_v4_append_denies_an_active_recovery_hold(self) -> None:
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
+        data["wave_amendments"] = [
+            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        data["control_plane"].pop("maintenance_increments", None)
+        data["control_plane"]["revision"] = 11
+        data["control_plane"]["minimum_tool_revision"] = 11
         next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")["status"] = (
             "ACTIVE"
         )

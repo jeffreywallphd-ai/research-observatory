@@ -1438,9 +1438,19 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     if not isinstance(frozen, list) or not isinstance(reserved, list):
         return [*errors, "ECR v4 ordered or reserved amendment authority is missing"]
     actual_ids = [str(item.get("id")) for item in actual]
+    actual_by_id = {str(item.get("id")): item for item in actual}
     frozen_ids = [str(_json_object(item).get("id")) for item in frozen]
-    expected_frozen = [f"{wave_id}.A{index:02d}" for index in range(1, len(actual) + 1)]
-    if actual_ids != expected_frozen or frozen_ids != actual_ids:
+    reserved_ids = [str(_json_object(item).get("id")) for item in reserved]
+    expected_frozen = [f"{wave_id}.A{index:02d}" for index in range(1, len(frozen) + 1)]
+    expected_reserved = [f"{wave_id}.A{index:02d}" for index in range(len(frozen) + 1, len(frozen) + len(reserved) + 1)]
+    expected_post_suffix = [*reserved_ids, proposed]
+    actual_suffix = actual_ids[len(frozen) :]
+    if (
+        frozen_ids != expected_frozen
+        or reserved_ids != expected_reserved
+        or actual_ids[: len(frozen)] != frozen_ids
+        or actual_suffix not in ([], expected_post_suffix)
+    ):
         errors.append("ECR v4 adopted predecessor chain is incomplete, gapped, reordered, or forked")
 
     ordered_commits: list[str] = [
@@ -1448,7 +1458,7 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         str(wave_base.get("approvalRecordCommit") or ""),
     ]
     ancestry_pairs: list[tuple[str, str]] = [(ordered_commits[0], ordered_commits[1])]
-    for packet_item, backlog_item in zip(frozen, actual, strict=False):
+    for packet_item, backlog_item in zip(frozen, actual[: len(frozen)], strict=False):
         item = _json_object(packet_item)
         reference = _json_object(item.get("approvalReference"))
         backlog_reference = _json_object(backlog_item.get("approval_reference"))
@@ -1490,17 +1500,37 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
 
     migration = _json_object(packet.get("migrationAuthority"))
     errors.extend(_migration_reference_errors(root, migration))
-    reserved_ids = [str(_json_object(item).get("id")) for item in reserved]
-    expected_reserved = [f"{wave_id}.A{index:02d}" for index in range(len(frozen) + 1, len(frozen) + len(reserved) + 1)]
-    if reserved_ids != expected_reserved:
-        errors.append("ECR v4 reserved amendment identities are not exact and consecutive")
     for reservation in reserved:
         item = _json_object(reservation)
         reference = _json_object(item.get("approvalReference"))
         if item.get("supersededByMigration") != migration:
             errors.append(f"ECR v4 {item.get('id')} reservation uses a different migration authority")
-        if item.get("id") in actual_ids:
-            errors.append(f"ECR v4 {item.get('id')} is both materialized and reserved")
+        materialized = _json_object(actual_by_id.get(str(item.get("id"))))
+        if materialized:
+            materialized_reference = _json_object(materialized.get("approval_reference"))
+            history = _json_object(materialized.get("lifecycle")).get("history") or []
+            latest = _json_object(history[-1]) if history else {}
+            completion = _json_object(materialized.get("completion"))
+            if (
+                materialized.get("change_request_id") != item.get("changeRequestId")
+                or materialized.get("target_wave") != wave_id
+                or materialized.get("kind") != "gate-integrity-safety-defect"
+                or materialized_reference
+                != {
+                    "path": reference.get("path"),
+                    "sha256": reference.get("sha256"),
+                    "introduction_commit": reference.get("introductionCommit"),
+                }
+                or _json_object(materialized.get("lifecycle")).get("status") != "SUPERSEDED"
+                or latest.get("status") != "SUPERSEDED"
+                or latest.get("actor") != f"governance-migration:{migration.get('id')}"
+                or materialized.get("bootstrap") is not None
+                or materialized.get("campaign") is not None
+                or materialized.get("tasks") != []
+                or completion.get("status") != "PENDING"
+                or completion.get("evidence") != []
+            ):
+                errors.append(f"ECR v4 {item.get('id')} terminal migration materialization is not exact")
         approval_path = _safe_repository_file(root, reference.get("path"))
         try:
             approval_payload = approval_path.read_bytes() if approval_path else b""
@@ -1532,6 +1562,13 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
 
     if proposed != f"{wave_id}.A{len(frozen) + len(reserved) + 1:02d}":
         errors.append("ECR v4 proposed amendment does not follow adopted and reserved authority")
+    materialized_proposed = _json_object(actual_by_id.get(proposed))
+    if materialized_proposed and (
+        materialized_proposed.get("change_request_id") != packet.get("changeRequestId")
+        or materialized_proposed.get("target_wave") != wave_id
+        or materialized_proposed.get("kind") != packet.get("classification")
+    ):
+        errors.append("ECR v4 materialized proposed amendment identity or classification differs from the packet")
     if packet.get("changeRequestId") != _next_global_ecr_id(root, str(packet.get("changeRequestId") or "")):
         errors.append("ECR v4 change-request identity is not next in the repository-global namespace")
 

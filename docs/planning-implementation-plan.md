@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 08dea1fbc625b28972b4a8a2c71c7edb9523ccce5e99bbb60d25287d2b76b5ad
+source_sha256: d082bec1c45615ab032496582cda7b7b07b1894a572a8aa37b7d4e137bafe349
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 3 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 3 |
+| Wave amendments | 5 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -43,6 +43,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
+| `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
+| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `APPROVED` |
 
 ## Waves
 
@@ -968,6 +970,63 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** APPROVED at candidate 0362cfe72c84f167338329490f6799ba9f84a808 and frozen submission state 89be94232e1022d31e4c4c148038ef5744d8c7df. Remediation evidence SHA-256 6a8dbbfe7501822bbee5aa522e1c9e6c3b23e385f1ee8c18a6588e71ae7d8cfe and the exact 12-path cumulative R02 scope are truthful. Bounded replay closed W1.A03.T01-R01-F01: generic W1.A03 packet integrity, complete historical T03 block/pause state hashes, current immutable-contract comparison, pre-mutation revalidation, and persisted original-state projection reject real amendment-task and target-task rewrites. Bounded replay closed W1.A03.T01-R01-F02: the isolated fixture now exercises the real command mutation and persistence stack through one save, expected-byte compare-and-swap, exclusive lock, fsync, and atomic replace; a competing writer reaches the real CAS guard and its bytes remain unchanged. Independently passed 101/101 focused recovery/schema/workflow/UI tests in 167.071 seconds, exact UI and 9/9 privacy replays, canonical backlog and ECR-0002 validation, 119-file quality, 148-page review-site and generated-view checks, protected-product/reference diff, exact scope, and Git hygiene. No unrelated task, slice, Wave, amendment, or release-gate approval is conferred.
 
 **Currently open findings:** -
+
+## W1.A04 - ECR-0003
+
+**Target Wave / class:** `W1` / `gate-integrity-safety-defect`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A04.json` (`4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab`)
+
+**Lifecycle / bootstrap / campaign / completion:** `SUPERSEDED` / `NONE` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-08-24T00:45:22.3039895Z` by repository-owner: The repository owner approved ECR-0003/W1.A04 in direct response to the exact-commit approval request for 77896d26ddac0569e286fe8481c0676408c716b1. Authorize only bootstrap W1.A04.B00 and task W1.A04.T01 as hash-bound in the packet; keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, HOLD-W1-GRR-0002 release, and an explicit ordinary W1 resume.
+- `E02` `SUPERSEDED` at `2026-08-27T16:03:47-04:00` by governance-migration:GOV-MIG-0001: Recorded the approved but unmaterialized reservation as terminal superseded history under GOV-MIG-0001; no bootstrap, task, campaign, or product authority was executed.
+
+### Amendment-exit review and adoption — W1.A04
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** Approved reservation was never materialized or executed and is terminally superseded.
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
+
+## W1.A05 - ECR-0004
+
+**Target Wave / class:** `W1` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A05.json` (`a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-08-30T06:03:51.1527117-04:00` by repository-owner: The repository owner approved ECR-0004/W1.A05 in direct response to the exact-commit approval request for 25584d82ce5d6bd55e476cd746100eef0790a33d. Authorize only bootstrap W1.A05.B00, slice contributions W1.A05.S01 and W1.A05.S02, and tasks W1.A05.T01 through W1.A05.T04 as hash-bound in the packet. Approve the proposed Application Security & sign-in experience and reserve RO-UI-ACADEMIC-MINIMAL-1.4 for bootstrap materialization. Keep W1 paused until amendment adoption and explicit ordinary resume.
+
+### Amendment-exit review and adoption — W1.A05
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 # Capability contributions, slices, and tasks

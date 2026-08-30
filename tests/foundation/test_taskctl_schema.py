@@ -43,6 +43,18 @@ class BacklogSchemaTests(unittest.TestCase):
             backlog.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
             return load(str(backlog), schema_path=self.schema)
 
+    def revision_eleven_copy(self) -> dict[str, Any]:
+        """Return the canonical state immediately before the revision-12 append."""
+        data = copy.deepcopy(self.canonical)
+        control = data["control_plane"]
+        control["revision"] = 11
+        control["minimum_tool_revision"] = 11
+        control.pop("maintenance_increments", None)
+        data["wave_amendments"] = [
+            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        ]
+        return data
+
     def test_canonical_backlog_passes_schema_and_semantic_validation(self) -> None:
         data, capabilities, slices, tasks, gates = load(
             str(REPO / "planning" / "backlog.yaml"), schema_path=self.schema
@@ -246,7 +258,7 @@ class BacklogSchemaTests(unittest.TestCase):
             self.load_copy(data)
 
     def test_gcr_generation_is_exact_and_revision_six_reader_fails_closed(self) -> None:
-        data = copy.deepcopy(self.canonical)
+        data = self.revision_eleven_copy()
         data["control_plane"]["revision"] = 7
         data["control_plane"]["minimum_tool_revision"] = 7
         next(hold for hold in data["control_plane"]["recovery_holds"] if hold["id"] == "HOLD-W1-GRR-0002")[
@@ -700,7 +712,7 @@ class BacklogSchemaTests(unittest.TestCase):
             self.load_copy(data)
 
     def test_revision_nine_schema_requires_the_exact_second_gcr_generation(self) -> None:
-        data = copy.deepcopy(self.canonical)
+        data = self.revision_eleven_copy()
         data["control_plane"]["revision"] = 9
         data["control_plane"]["minimum_tool_revision"] = 9
         data["control_plane"]["control_generations"] = data["control_plane"]["control_generations"][:2]
@@ -770,7 +782,7 @@ class BacklogSchemaTests(unittest.TestCase):
         self.assertTrue(taskctl.governance_control_generation_errors(missing, None))
 
     def test_revision_twelve_accepts_bounded_maintenance_with_or_without_neutral_gcr7(self) -> None:
-        data = copy.deepcopy(self.canonical)
+        data = self.revision_eleven_copy()
         generation = {
             "id": "GCR-0007",
             "bootstrap_id": "GCR-0007.B00",
@@ -926,14 +938,18 @@ class BacklogSchemaTests(unittest.TestCase):
             (REPO / "planning/enabler-change-requests/ECR-0004.packet.json").read_text(encoding="utf-8")
         )
         reservation = packet["authorityChain"]["reservedAmendments"][0]
-        data["wave_amendments"].append(
-            taskctl.materialized_superseded_reservation(
-                REPO,
-                "W1",
-                reservation,
-                packet["migrationAuthority"],
-            )
+        terminal = taskctl.materialized_superseded_reservation(
+            REPO,
+            "W1",
+            reservation,
+            packet["migrationAuthority"],
         )
+        self.assertEqual(
+            "governance-migration:GOV-MIG-0001",
+            terminal["lifecycle"]["history"][-1]["actor"],
+        )
+        self.assertIn("under GOV-MIG-0001", terminal["lifecycle"]["history"][-1]["rationale"])
+        data["wave_amendments"].append(terminal)
         hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
         for supplement in hold["supplements"]:
             errors, _packet = taskctl.recovery_supplement_authority_errors(data, REPO, hold, supplement)

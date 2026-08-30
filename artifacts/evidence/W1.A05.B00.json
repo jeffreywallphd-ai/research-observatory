@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.B00",
+  "commit": "b47c5e81860df04cce886ede9e614d68c22c7119",
+  "baseCommit": "1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "design/ui-reference/APPROVAL.yaml",
+    "design/ui-reference/CAPABILITY_COVERAGE.json",
+    "design/ui-reference/CAPABILITY_COVERAGE.md",
+    "design/ui-reference/PAGE_INVENTORY.md",
+    "design/ui-reference/PAGE_INVENTORY_SOURCE.md",
+    "design/ui-reference/README.md",
+    "design/ui-reference/REFERENCE_MANIFEST.yaml",
+    "design/ui-reference/SITE_MANIFEST.json",
+    "design/ui-reference/STYLE_GUIDE.md",
+    "design/ui-reference/STYLE_GUIDE_SOURCE.md",
+    "design/ui-reference/WORKFLOW_CATALOG.json",
+    "design/ui-reference/WORKFLOW_CATALOG.md",
+    "design/ui-reference/application-settings.html",
+    "design/ui-reference/assets/app.css",
+    "design/ui-reference/audit-lineage.html",
+    "design/ui-reference/claim-graph.html",
+    "design/ui-reference/corpus-canvas.html",
+    "design/ui-reference/critical-lens.html",
+    "design/ui-reference/document-reader.html",
+    "design/ui-reference/evidence-matrix.html",
+    "design/ui-reference/help-onboarding.html",
+    "design/ui-reference/index.html",
+    "design/ui-reference/ingestion-reconciliation.html",
+    "design/ui-reference/intent-contract.html",
+    "design/ui-reference/living-monitor.html",
+    "design/ui-reference/manuscript-blueprint.html",
+    "design/ui-reference/manuscript-studio.html",
+    "design/ui-reference/model-center.html",
+    "design/ui-reference/new-project.html",
+    "design/ui-reference/novelty-audit.html",
+    "design/ui-reference/opportunity-radar.html",
+    "design/ui-reference/parsing-quality.html",
+    "design/ui-reference/project-settings.html",
+    "design/ui-reference/projects.html",
+    "design/ui-reference/prototype-index.html",
+    "design/ui-reference/research-notebook.html",
+    "design/ui-reference/reviewer-simulation.html",
+    "design/ui-reference/revision-response.html",
+    "design/ui-reference/schema-manager.html",
+    "design/ui-reference/screening.html",
+    "design/ui-reference/scripts/build_mockups.py",
+    "design/ui-reference/search-studio.html",
+    "design/ui-reference/source-manager.html",
+    "design/ui-reference/study-design.html",
+    "design/ui-reference/style-guide.html",
+    "design/ui-reference/synthesis-studio.html",
+    "design/ui-reference/task-center.html",
+    "design/ui-reference/technical-reports.html",
+    "design/ui-reference/theory-map.html",
+    "docs/automation/ui-reference-validation.md",
+    "planning/backlog.schema.json",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json",
+    "planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json",
+    "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/foundation/test_ui_reference_check.py",
+    "tools/taskctl.py",
+    "tools/ui_reference_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_reference_check",
+      "exitCode": 0,
+      "result": "All 105 focused schema, amendment-workflow, evidence-boundary, scope-addendum, historic-recovery, and UI-reference tests passed on exact candidate b47c5e81860df04cce886ede9e614d68c22c7119 in 339.637 seconds."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 168 governed Python files on the exact candidate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo . --report artifacts/tmp/W1-A05-ui-reference-check.json; .venv\\Scripts\\python.exe design/ui-reference/scripts/verify_site.py",
+      "exitCode": 0,
+      "result": "RO-UI-ACADEMIC-MINIMAL-1.4 passed with 55 hash-bound files, 33 product pages, 35 HTML documents, 14 workflows, 20 capability records, zero errors, and reproducible generator output. The independent site verifier confirmed the same inventory."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/W1-A05-plan-review-check.json; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0004 --require-approved",
+      "exitCode": 0,
+      "result": "The deterministic review site passed with 19 capabilities, 111 slices, 337 tasks, and 488 HTML pages; the canonical 20-capability, 117-slice, 359-task, 12-gate backlog passed; and ECR-0004/W1.A05 remained approved and history-bound."
+    },
+    {
+      "command": "git diff --check; git status --short; git diff --name-only 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b b47c5e81860df04cce886ede9e614d68c22c7119 --",
+      "exitCode": 0,
+      "result": "Patch hygiene passed; the exact changed-file inventory matches this manifest; before evidence creation the only untracked path was the protected historical W1.A04 witness, which was neither opened nor modified."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The post-migration append validates the immutable W1 base, adopted W1.A01-W1.A03 records, W1.A04 reservation, and exact GOV-MIG-0001 bytes and ancestry before mutation.",
+        "W1.A04 is projected only as append-only APPROVED then SUPERSEDED history with no bootstrap, campaign, task, or revival; the protected historical witness is admitted after supersession without being read."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The v4 controller permits exactly the next consecutive W1.A05 identity, exact packet-authorized slice/task inventory, revision-11-to-12 maintenance transition, and one MI-0001 post-migration bootstrap record.",
+        "Tests prove that active recovery holds, altered predecessor identities, non-descendant candidates, unauthorized paths, malformed evidence, and ordinary task activity fail closed before persistence. The canonical append itself occurs atomically during bootstrap-submit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "RO-UI-ACADEMIC-MINIMAL-1.4 is materialized with an Application Settings page, three explicit sign-in modes, no-login default, provider status and recovery semantics, protection-reduction proof, application-wide scope, accessibility contracts, and a human approval record bound to W1.A05 approval commit 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b.",
+        "The approved addendum at candidate 9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b authorizes only the validator, test, and validation-document paths. The validator now enforces manifest-to-governed-inventory equality without a stale fixed count, while retaining exact hashes, offline confinement, generator reproduction, workflows, capability coverage, and contract parity."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The controller requires W1 to be PAUSED at Wave scope with no lease, no active amendment, no active recovery hold, and no task in IN_PROGRESS or REVIEW before the append.",
+        "Candidate b47c5e81860df04cce886ede9e614d68c22c7119 contains no native, application, renderer, persistence, packaging, or other product implementation, and no ordinary task was claimed or mutated."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The approved reference, enabler pages, index, manifest, schema, controller, and documentation were regenerated or validated from authoritative data; the current planning review site and UI reference both pass deterministic validation.",
+        "This manifest freezes exact candidate b47c5e81860df04cce886ede9e614d68c22c7119 for independent control, security, and experience review. W1.A05.T01 cannot be claimed until B00 is independently approved, materialized, and activated."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 changes governance schemas, append-only amendment authority, evidence attachment, protected historical-witness handling, a governed experience reference, and its deterministic validator. The selected checks therefore cover the complete focused taskctl schema/workflow suite, adversarial UI-reference validation, full governed Python quality, exact ECR authority, canonical backlog semantics, and deterministic planning/reference views. No product/runtime, dependency, packaging, storage, credential-provider, or renderer code is changed.",
+    "deferred": "Windows-password parity, Windows Hello OS behavior, versioned sign-in configuration, renderer implementation, accessibility interaction, and end-to-end lock/restart/recovery behavior belong to W1.A05.T01-T04 and their two independent slice reviews. Complete affected/full repository and Windows-x64 qualification remains due once at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-security-experience-review",
+    "note": "Review exact candidate b47c5e81860df04cce886ede9e614d68c22c7119 and this manifest as one frozen packet. Verify predecessor preservation, W1.A04 terminal supersession without witness access, revision-12 bounded maintenance, v4 append fail-closed behavior, addendum identity/path limits, evidence attachment, approved reference authority and security semantics, dynamic inventory validation without weakened hashes or contracts, generated-view truth, quiescent W1 state, and the absence of product implementation. Return one consolidated severity-ranked disposition before materialization."
+  }
+}
