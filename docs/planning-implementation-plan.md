@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2d475f4234e5ce5d2e8fa432efe03ed20aee9eb06708832af2afa3d19b3a272e
+source_sha256: d208b0a3180247679b608b5765baefc90e7fc20780a2d5ba7095e1c6cc3ecff5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1133,7 +1133,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T02 - Implement the Windows Hello native verifier
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`
 
@@ -1155,13 +1155,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Complete W1.A05.S01 end-to-end lock/unlock, failure, restart, and adversarial verification and obtain independent slice security/contract review.
 - Obtain independent commit-bound task review before slice approval.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A05.T02.json` at `3f91f7721e293b72d8367e1036c5875dc1f14ff2`
+
 #### Review history — W1.A05.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `90829877b916cb5569a1fb8cf7abb9ee5dfd1a539248a4ac96b08c2f8689bedd`
+
+- Candidate / base / branch: `3f91f7721e293b72d8367e1036c5875dc1f14ff2` / `d61f3250a701f0aa51d05c68ec69f9833dae683d` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T16:57:01+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T02.json` / `ee06f5c37e5d9261404a178da905a3e0a2e8c0e299e0255553d8d9989ed86f60` / `3f91f7721e293b72d8367e1036c5875dc1f14ff2`
+- Acceptance-criteria SHA-256: `270d2e825b8773cde6089e6efb404b88caa446f49386a91958bf2aec5d094a43`
+- Verification-selection SHA-256: `d2833bc7731a4340f7e68210a0f7c3ac5c7c9eea434f9f97a166ef820d656ef1`
+- Changed paths: `Cargo.lock`, `apps/desktop/src-tauri/Cargo.toml`, `apps/desktop/src-tauri/examples/hello_availability_check.rs`, `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/application_lock_verification.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `docs/architecture/application-lock.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/security/test_application_lock_source.py`
+- Selected checks: `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib`, `cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings; cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml --bins --locked; cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml --examples --locked`, `cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked`, `bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx`, `bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit (working directory apps/desktop); bundled-node apps/desktop/scripts/lint.mjs`, `.venv\Scripts\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests tests.security.test_windows_credentials`, `.venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py; .venv\Scripts\ruff.exe format --check tests/security/test_application_lock_source.py; .venv\Scripts\python.exe tools\architecture_check.py --repo .; git diff --check`, `cargo metadata --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --format-version 1 --no-deps; cargo tree --manifest-path apps/desktop/src-tauri/Cargo.toml -p research-observatory-desktop --target x86_64-pc-windows-msvc -i windows@0.61.3; cargo tree --manifest-path apps/desktop/src-tauri/Cargo.toml -p research-observatory-desktop --target x86_64-pc-windows-msvc -i windows-future@0.2.1`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --affected-base d61f3250a701f0aa51d05c68ec69f9833dae683d --affected-head 3f91f7721e293b72d8367e1036c5875dc1f14ff2 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T02-affected-selection.json`
+- Deferred checks: `A real configured Windows Hello success prompt remains conditional on release-authoritative hardware where the availability probe returns available; this host returns not-present. W1.A05.S01 review and W1 exit must consume that platform evidence when such hardware exists.`, `Persisted selection among no login, Windows password, and Windows Hello plus transition/recovery authorization is W1.A05.T03; the approved settings, focus, accessibility, and recovery UI is W1.A05.T04.`, `The complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit.`
+- Selection rationale: W1.A05.T02 changes an authentication/provider boundary, adds a desktop WinRT dependency surface, publishes a versioned native/renderer availability contract, and exposes a separate password-recovery command. Credible failures are using the UWP CoreWindow method instead of the HWND interop, treating an unavailable or unknown OS state as success, silently falling back to password, allowing a missing/stale window, receiving or retaining credential material, replaying a successful prompt after a lock-generation change, weakening same-SID password recovery, malformed cross-process state, or changing existing password/restart behavior. The selected native mapping and manager tests, live Windows availability harness, strict renderer decoder tests, source-boundary checks, broad password security replay, locked dependency resolution, Rust/TypeScript/Python quality checks, architecture validation, and Git hygiene cover those risks. The current host reports not-present, so an actual interactive Verified result is conditional hardware/user-presence coverage rather than a fabricated task claim.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
 

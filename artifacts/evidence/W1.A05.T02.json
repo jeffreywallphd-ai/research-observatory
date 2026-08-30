@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T02",
+  "commit": "3f91f7721e293b72d8367e1036c5875dc1f14ff2",
+  "baseCommit": "d61f3250a701f0aa51d05c68ec69f9833dae683d",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "Cargo.lock",
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/examples/hello_availability_check.rs",
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/application_lock_verification.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "docs/architecture/application-lock.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/security/test_application_lock_source.py"
+  ],
+  "checks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "exitCode": 0,
+      "result": "All 35 native library tests passed on Windows x64. The added matrix covers every approved availability state, every UserConsentVerificationResult mapping, no-prompt behavior for missing window and every unavailable/busy/failure class, no password fallback, exact serialization, and the real release-platform availability call. Existing reservation, backoff, generation, stale-result, Core-stop, panic cleanup, restart, password/SID, and redaction tests remain green."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings; cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml --bins --locked; cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml --examples --locked",
+      "exitCode": 0,
+      "result": "Rust formatting, warnings-denied Clippy, locked binary compilation, and all example harnesses passed with the HWND-bound WinRT interop enabled on the release-authoritative Windows target."
+    },
+    {
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked",
+      "exitCode": 0,
+      "result": "The real Windows x64 probe returned {\"schemaVersion\":\"1.0\",\"provider\":\"windows-hello\",\"availability\":\"not-present\"}. Because this host has no available Hello device, an interactive configured-success prompt was not technically available; no false success was fabricated."
+    },
+    {
+      "command": "bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "exitCode": 0,
+      "result": "Both focused renderer/runtime files passed all 15 tests. The versioned Hello availability decoder accepts exactly the approved provider/states, rejects object coercion, accessors, unsupported states, and malformed envelopes, and preserves native-success-only unlock reconciliation."
+    },
+    {
+      "command": "bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit (working directory apps/desktop); bundled-node apps/desktop/scripts/lint.mjs",
+      "exitCode": 0,
+      "result": "Desktop TypeScript checking against the actual app tsconfig and governed desktop lint passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests tests.security.test_windows_credentials",
+      "exitCode": 0,
+      "result": "Fifteen focused and broad security/profile tests passed with one expected Windows-token platform skip. Source-boundary checks require UserConsentVerifier availability, HWND-bound IUserConsentVerifierInterop, exact result mappings, no UWP/CoreWindow request, no Hello password/SID API access, argument-free availability/recovery commands, and the retained non-persisting same-SID password provider."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; git diff --check",
+      "exitCode": 0,
+      "result": "Changed Python passed Ruff lint/format, the architecture contract passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles, and Git whitespace hygiene passed."
+    },
+    {
+      "command": "cargo metadata --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --format-version 1 --no-deps; cargo tree --manifest-path apps/desktop/src-tauri/Cargo.toml -p research-observatory-desktop --target x86_64-pc-windows-msvc -i windows@0.61.3; cargo tree --manifest-path apps/desktop/src-tauri/Cargo.toml -p research-observatory-desktop --target x86_64-pc-windows-msvc -i windows-future@0.2.1",
+      "exitCode": 0,
+      "result": "The manifest and lockfile resolve exactly windows 0.61.3 and windows-future 0.2.1 on Windows only. Both versions were already present transitively through Tauri/WebView; T02 adds no new package version and pins only the Foundation, Security_Credentials_UI, Win32_Foundation, and Win32_System_WinRT features required by the adapter."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --affected-base d61f3250a701f0aa51d05c68ec69f9833dae683d --affected-head 3f91f7721e293b72d8367e1036c5875dc1f14ff2 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T02-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed selector accepted the bounded desktop/security-local check set with the complete cross-capability and packaging matrix deferred to W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "WindowsHelloVerificationProvider uses Windows.Security.Credentials.UI.UserConsentVerifier and the desktop-only IUserConsentVerifierInterop::RequestVerificationForWindowAsync operation bound to a native HWND.",
+        "The OS call receives only a fixed Research Observatory message and returns a typed enum. No PIN, face, fingerprint, biometric template, password, username, domain, token, or credential buffer enters the Hello adapter."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "VerificationAvailability and the strict versioned VerificationAvailabilitySnapshot expose checking, available, not-present, not-configured, policy-disabled, busy, unavailable, and failed; VerificationOutcome retains succeeded, cancelled, denied, unavailable, busy, and failed.",
+        "DeviceNotPresent, NotConfiguredForUser, DisabledByPolicy, DeviceBusy, RetriesExhausted, Canceled, Verified, unknown values, activation errors, and operation errors are exhaustively and deterministically mapped and contract-tested."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The provider prechecks availability and does not request verification for not-present, not-configured, policy-disabled, unsupported, busy, failed, or zero-window conditions. Only Verified maps to Succeeded.",
+        "The Hello module has no reference to CredUIPromptForCredentialsW, LogonUserW, WindowsPasswordVerificationProvider, or password buffers. All adverse outcomes enter the existing manager's locked-only path, and no automatic password or no-login fallback exists."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "application_lock_password_recovery is a separate argument-free native command and is never invoked by the Hello provider or primary unlock command. Its invocation is the deliberate recovery selection boundary.",
+        "Recovery delegates to the unchanged WindowsPasswordVerificationProvider path, which still requires LogonUserW success plus EqualSid between the returned token and desktop process token; only native success emits an unlocked event."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The non-Windows implementation returns unavailable and its cfg-gated regression test prohibits fabricated success; unavailable desktop interop activation also maps to unavailable.",
+        "The release-authoritative Windows x64 library and example harness compiled and ran. This host truthfully returned not-present, so no interactive success was claimed; injectable OS boundaries prove the configured Verified path while every deterministic denial/cancellation/unavailable/restart boundary remains enforced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "W1.A05.T02 changes an authentication/provider boundary, adds a desktop WinRT dependency surface, publishes a versioned native/renderer availability contract, and exposes a separate password-recovery command. Credible failures are using the UWP CoreWindow method instead of the HWND interop, treating an unavailable or unknown OS state as success, silently falling back to password, allowing a missing/stale window, receiving or retaining credential material, replaying a successful prompt after a lock-generation change, weakening same-SID password recovery, malformed cross-process state, or changing existing password/restart behavior. The selected native mapping and manager tests, live Windows availability harness, strict renderer decoder tests, source-boundary checks, broad password security replay, locked dependency resolution, Rust/TypeScript/Python quality checks, architecture validation, and Git hygiene cover those risks. The current host reports not-present, so an actual interactive Verified result is conditional hardware/user-presence coverage rather than a fabricated task claim.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "desktop:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "A real configured Windows Hello success prompt remains conditional on release-authoritative hardware where the availability probe returns available; this host returns not-present. W1.A05.S01 review and W1 exit must consume that platform evidence when such hardware exists.",
+      "Persisted selection among no login, Windows password, and Windows Hello plus transition/recovery authorization is W1.A05.T03; the approved settings, focus, accessibility, and recovery UI is W1.A05.T04.",
+      "The complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "independent-security-contract-task-review",
+    "openFindingIds": [],
+    "note": "Authenticate base d61f3250a701f0aa51d05c68ec69f9833dae683d, candidate 3f91f7721e293b72d8367e1036c5875dc1f14ff2, exact paths, checks, and conditional hardware statement. Review the desktop interop/WinRT lifetime, HWND binding, exhaustive state mapping, no-secret/no-fallback properties, manager generation/replay boundary, strict cross-process decoder, separate explicit password recovery with unchanged SameSid proof, unsupported-platform behavior, dependency scope, and T03/T04/W1 deferrals."
+  }
+}
