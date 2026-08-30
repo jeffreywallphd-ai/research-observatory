@@ -67,10 +67,12 @@ for local secrets. It fixes current-user rather than machine DPAPI scope, an
 application-authenticated opaque record envelope, compare-and-swap updates,
 callback-scoped delivery, redacted audit projection, and the exact destinations
 that can never contain secret material. OS paths and DPAPI types remain private
-adapter state. It also defines the native-supervisor application-lock profile:
-optional local display identity, bounded idle policy, same-Windows-user
-reauthentication, protected-action invalidation, Core capability clearing, and
-the explicit non-isolation residual threat.
+adapter state. It also defines the current three-mode native-supervisor
+application sign-in policy and the immutable password-profile migration
+predecessor: explicit no-login default, optional local display identity,
+bounded idle policy, native Windows-password or Windows Hello proof,
+confirmation-bound compare-and-swap transitions, protected-action invalidation,
+Core capability clearing, and the explicit non-isolation residual threat.
 
 `privacy/` fixes project-scoped offline and telemetry-off defaults, informed
 consent before non-offline preferences, per-task egress preview enforcement,

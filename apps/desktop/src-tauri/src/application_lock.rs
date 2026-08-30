@@ -1,21 +1,23 @@
 use std::collections::VecDeque;
-use std::fs::{self, OpenOptions};
-use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
+use sha2::{Digest, Sha256};
 
 use crate::application_lock_verification::{
-    NativeVerificationProvider, VerificationOutcome, WindowsPasswordVerificationProvider,
+    NativeVerificationProvider, VerificationOutcome, WindowsHelloVerificationProvider,
+    WindowsPasswordVerificationProvider,
+};
+pub use crate::application_sign_in_policy::SignInMode;
+use crate::application_sign_in_policy::{
+    PolicyLoadState, PolicySourceAuthority, PolicyStore, SignInPolicy, secure_random_hex,
 };
 use crate::supervisor::{RuntimeState, RuntimeSupervisor};
 
-const MAX_PROFILE_BYTES: u64 = 16 * 1024;
 const MAX_AUDIT_EVENTS: usize = 64;
-const PROFILE_FILE: &str = "application-lock-profile.v1.json";
-const REAUTHENTICATION: &str = "windows-current-user-credentials-same-sid";
+const TRANSITION_LIFETIME: Duration = Duration::from_secs(5 * 60);
 const THREAT_DISCLOSURE: &str =
     "Application-session protection only; this is not Windows-account isolation.";
 
@@ -38,8 +40,8 @@ pub enum ApplicationLockReason {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum LockConfigurationState {
-    Default,
     Valid,
+    Migrated,
     Invalid,
 }
 
@@ -48,11 +50,12 @@ pub enum LockConfigurationState {
 pub struct ApplicationLockSnapshot {
     pub schema_version: &'static str,
     pub state: ApplicationLockState,
+    pub sign_in_mode: SignInMode,
+    pub policy_revision: u64,
     pub profile_name: Option<String>,
     pub inactivity_timeout_minutes: u8,
     pub configuration_state: LockConfigurationState,
     pub reason: Option<ApplicationLockReason>,
-    pub reauthentication: &'static str,
     pub threat_disclosure: &'static str,
     pub retry_after_seconds: u64,
     pub audit_sequence: u64,
@@ -76,70 +79,71 @@ pub struct ApplicationUnlockAttempt {
     pub snapshot: ApplicationLockSnapshot,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct ApplicationLockProfile {
-    schema_version: String,
-    document_type: String,
-    profile_name: Option<String>,
-    inactivity_timeout_minutes: u8,
-    restart_policy: String,
-    lock_authority: String,
-    reauthentication: String,
-    protected_action_policy: String,
-    durable_operation_policy: String,
-    threat_boundary: String,
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum PolicyTransitionOutcome {
+    Prepared,
+    Committed,
+    Cancelled,
+    Denied,
+    Unavailable,
+    Busy,
+    Failed,
+    Conflict,
+    Expired,
 }
 
-impl ApplicationLockProfile {
-    fn new(profile_name: Option<String>, inactivity_timeout_minutes: u8) -> Self {
-        Self {
-            schema_version: "1.0".to_owned(),
-            document_type: "research-observatory-application-lock-profile".to_owned(),
-            profile_name,
-            inactivity_timeout_minutes,
-            restart_policy: "lock-when-inactivity-enabled".to_owned(),
-            lock_authority: "desktop-native-supervisor".to_owned(),
-            reauthentication: REAUTHENTICATION.to_owned(),
-            protected_action_policy: "invalidate-generation-stop-core-discard-renderer-state"
-                .to_owned(),
-            durable_operation_policy: "w1-stop-all-future-continuation-requires-explicit-allowlist"
-                .to_owned(),
-            threat_boundary: "application-session-protection-not-windows-account-isolation"
-                .to_owned(),
-        }
-    }
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PolicyTransitionResult {
+    pub schema_version: &'static str,
+    pub outcome: PolicyTransitionOutcome,
+    pub reason_code: &'static str,
+    pub handle: Option<String>,
+    pub source_mode: Option<SignInMode>,
+    pub target_mode: SignInMode,
+    pub warning_required: bool,
+    pub snapshot: ApplicationLockSnapshot,
+}
 
-    fn validate(&self) -> Result<(), &'static str> {
-        if self.schema_version != "1.0"
-            || self.document_type != "research-observatory-application-lock-profile"
-            || self.restart_policy != "lock-when-inactivity-enabled"
-            || self.lock_authority != "desktop-native-supervisor"
-            || self.reauthentication != REAUTHENTICATION
-            || self.protected_action_policy
-                != "invalidate-generation-stop-core-discard-renderer-state"
-            || self.durable_operation_policy
-                != "w1-stop-all-future-continuation-requires-explicit-allowlist"
-            || self.threat_boundary
-                != "application-session-protection-not-windows-account-isolation"
-            || !matches!(self.inactivity_timeout_minutes, 0 | 5 | 15 | 30 | 60)
-        {
-            return Err("RO-LOCK-CONFIGURATION-INVALID");
-        }
-        validate_profile_name(self.profile_name.as_deref())
-    }
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum TransitionProofClass {
+    ConfiguredProvider,
+    SameSidPasswordRecovery,
+}
+
+#[derive(Clone, Debug)]
+struct PendingTransition {
+    handle_digest: String,
+    source: PolicySourceAuthority,
+    source_mode: Option<SignInMode>,
+    target: SignInPolicy,
+    target_digest: String,
+    generation: u64,
+    proof_class: TransitionProofClass,
+    warning_required: bool,
+    expires_at: Instant,
+}
+
+#[derive(Clone, Debug)]
+struct CompletedTransition {
+    handle_digest: String,
+    receipt: PolicyTransitionResult,
 }
 
 struct ApplicationLockInner {
     state: ApplicationLockState,
     reason: Option<ApplicationLockReason>,
     configuration_state: LockConfigurationState,
-    profile: ApplicationLockProfile,
+    policy: SignInPolicy,
+    policy_source: PolicySourceAuthority,
     generation: u64,
     last_activity: Instant,
     failed_attempts: u8,
     retry_at: Option<Instant>,
     reauthentication_in_progress: bool,
+    pending_transition: Option<PendingTransition>,
+    completed_transition: Option<CompletedTransition>,
     audit_sequence: u64,
     audit: VecDeque<ApplicationLockAuditEvent>,
 }
@@ -149,13 +153,14 @@ impl ApplicationLockInner {
         ApplicationLockSnapshot {
             schema_version: "1.0",
             state: self.state,
+            sign_in_mode: self.policy.mode,
+            policy_revision: self.policy.revision(),
             profile_name: (self.state == ApplicationLockState::Unlocked)
-                .then(|| self.profile.profile_name.clone())
+                .then(|| self.policy.profile_name.clone())
                 .flatten(),
-            inactivity_timeout_minutes: self.profile.inactivity_timeout_minutes,
+            inactivity_timeout_minutes: self.policy.inactivity_timeout_minutes,
             configuration_state: self.configuration_state,
             reason: self.reason,
-            reauthentication: REAUTHENTICATION,
             threat_disclosure: THREAT_DISCLOSURE,
             retry_after_seconds: self
                 .retry_at
@@ -185,6 +190,9 @@ impl ApplicationLockInner {
     }
 
     fn lock(&mut self, reason: ApplicationLockReason) -> bool {
+        if !self.policy.mode.is_protected() {
+            return false;
+        }
         if self.state == ApplicationLockState::Locked {
             if self.reauthentication_in_progress {
                 self.generation = self.generation.saturating_add(1);
@@ -201,49 +209,50 @@ impl ApplicationLockInner {
 
 #[derive(Clone)]
 pub struct ApplicationLockManager {
-    profile_path: PathBuf,
+    policy_store: PolicyStore,
     shared: Arc<Mutex<ApplicationLockInner>>,
 }
 
 impl ApplicationLockManager {
     pub fn new(application_data: &Path) -> Self {
-        let profile_path = application_data.join("security").join(PROFILE_FILE);
-        let (profile, configuration_state, state, reason) = match read_profile(&profile_path) {
-            Ok(Some(profile)) if profile.inactivity_timeout_minutes > 0 => (
-                profile,
-                LockConfigurationState::Valid,
-                ApplicationLockState::Locked,
-                Some(ApplicationLockReason::ApplicationRestart),
-            ),
-            Ok(Some(profile)) => (
-                profile,
-                LockConfigurationState::Valid,
-                ApplicationLockState::Unlocked,
-                None,
-            ),
-            Ok(None) => (
-                ApplicationLockProfile::new(None, 0),
-                LockConfigurationState::Default,
-                ApplicationLockState::Unlocked,
-                None,
-            ),
-            Err(_) => (
-                ApplicationLockProfile::new(None, 0),
-                LockConfigurationState::Invalid,
+        let policy_store = PolicyStore::new(application_data);
+        let loaded = policy_store.initialize();
+        let configuration_state = match loaded.state {
+            PolicyLoadState::Valid => LockConfigurationState::Valid,
+            PolicyLoadState::Migrated => LockConfigurationState::Migrated,
+            PolicyLoadState::Invalid => LockConfigurationState::Invalid,
+        };
+        let (state, reason) = match loaded.state {
+            PolicyLoadState::Invalid => (
                 ApplicationLockState::Locked,
                 Some(ApplicationLockReason::ConfigurationInvalid),
             ),
+            PolicyLoadState::Valid | PolicyLoadState::Migrated
+                if loaded.policy.mode.is_protected()
+                    && loaded.policy.inactivity_timeout_minutes > 0 =>
+            {
+                (
+                    ApplicationLockState::Locked,
+                    Some(ApplicationLockReason::ApplicationRestart),
+                )
+            }
+            PolicyLoadState::Valid | PolicyLoadState::Migrated => {
+                (ApplicationLockState::Unlocked, None)
+            }
         };
         let mut inner = ApplicationLockInner {
             state,
             reason,
             configuration_state,
-            profile,
+            policy: loaded.policy,
+            policy_source: loaded.source,
             generation: u64::from(state == ApplicationLockState::Locked),
             last_activity: Instant::now(),
             failed_attempts: 0,
             retry_at: None,
             reauthentication_in_progress: false,
+            pending_transition: None,
+            completed_transition: None,
             audit_sequence: 0,
             audit: VecDeque::new(),
         };
@@ -251,7 +260,7 @@ impl ApplicationLockManager {
             inner.record("application-start", "locked", reason_code(reason));
         }
         Self {
-            profile_path,
+            policy_store,
             shared: Arc::new(Mutex::new(inner)),
         }
     }
@@ -325,8 +334,9 @@ impl ApplicationLockManager {
 
     pub fn lock_if_idle(&self) -> Option<ApplicationLockSnapshot> {
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
-        let timeout = inner.profile.inactivity_timeout_minutes;
+        let timeout = inner.policy.inactivity_timeout_minutes;
         if inner.state == ApplicationLockState::Unlocked
+            && inner.policy.mode.is_protected()
             && timeout > 0
             && inner.last_activity.elapsed() >= Duration::from_secs(u64::from(timeout) * 60)
             && inner.lock(ApplicationLockReason::Inactivity)
@@ -337,49 +347,547 @@ impl ApplicationLockManager {
         }
     }
 
-    pub fn configure(
+    pub fn prepare_policy_transition(
         &self,
+        target_mode: SignInMode,
         profile_name: Option<String>,
         inactivity_timeout_minutes: u8,
-    ) -> Result<ApplicationLockSnapshot, &'static str> {
-        self.configure_with_hook(profile_name, inactivity_timeout_minutes, || {})
+        hello_window: Option<isize>,
+    ) -> Result<PolicyTransitionResult, &'static str> {
+        self.prepare_policy_transition_with(
+            target_mode,
+            profile_name,
+            inactivity_timeout_minutes,
+            |mode| verify_system_mode(mode, hello_window),
+        )
     }
 
-    fn configure_with_hook(
+    fn prepare_policy_transition_with(
         &self,
+        target_mode: SignInMode,
         profile_name: Option<String>,
         inactivity_timeout_minutes: u8,
-        before_publish: impl FnOnce(),
-    ) -> Result<ApplicationLockSnapshot, &'static str> {
-        let profile_name = profile_name
-            .map(|value| value.trim().to_owned())
-            .filter(|value| !value.is_empty());
-        let profile = ApplicationLockProfile::new(profile_name, inactivity_timeout_minutes);
-        profile.validate()?;
-        let generation = self.begin_protected_action()?;
-        let staged = stage_profile(&self.profile_path, &profile)?;
-        before_publish();
-        let mut inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.state != ApplicationLockState::Unlocked || inner.generation != generation {
-            return Err("RO-APPLICATION-LOCKED");
+        mut verify: impl FnMut(SignInMode) -> VerificationOutcome,
+    ) -> Result<PolicyTransitionResult, &'static str> {
+        let (source_mode, source, generation, target, snapshot) = {
+            let mut inner = self.shared.lock().expect("lock mutex poisoned");
+            expire_pending_transition(&mut inner);
+            if inner.configuration_state == LockConfigurationState::Invalid {
+                return Ok(transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Denied,
+                    "RO-SIGN-IN-TRANSITION-RECOVERY-REQUIRED",
+                    None,
+                    None,
+                    target_mode,
+                    false,
+                ));
+            }
+            if inner.state != ApplicationLockState::Unlocked {
+                return Ok(transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Denied,
+                    "RO-SIGN-IN-TRANSITION-APPLICATION-LOCKED",
+                    None,
+                    Some(inner.policy.mode),
+                    target_mode,
+                    false,
+                ));
+            }
+            if inner.reauthentication_in_progress {
+                return Ok(transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Busy,
+                    "RO-SIGN-IN-TRANSITION-BUSY",
+                    None,
+                    Some(inner.policy.mode),
+                    target_mode,
+                    false,
+                ));
+            }
+            let target = SignInPolicy::normalized_target(
+                inner
+                    .policy
+                    .revision()
+                    .checked_add(1)
+                    .ok_or("RO-SIGN-IN-POLICY-REVISION-EXHAUSTED")?,
+                target_mode,
+                profile_name,
+                inactivity_timeout_minutes,
+            )?;
+            inner.reauthentication_in_progress = true;
+            (
+                inner.policy.mode,
+                inner.policy_source.clone(),
+                inner.generation,
+                target,
+                inner.snapshot(),
+            )
+        };
+        let mut reservation =
+            TransitionPreparationReservation::new(Arc::clone(&self.shared), generation);
+
+        let mut proof_modes = Vec::with_capacity(2);
+        if source_mode.is_protected() {
+            proof_modes.push(source_mode);
         }
-        staged.publish(&self.profile_path)?;
-        inner.profile = profile;
-        inner.configuration_state = LockConfigurationState::Valid;
-        inner.last_activity = Instant::now();
+        if target_mode.is_protected() && target_mode != source_mode {
+            proof_modes.push(target_mode);
+        }
+        for proof_mode in proof_modes {
+            let outcome = verify(proof_mode);
+            if outcome != VerificationOutcome::Succeeded {
+                let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                inner.record(
+                    "application-sign-in-transition-prepare",
+                    verification_audit_outcome(outcome),
+                    transition_verification_reason(outcome),
+                );
+                return Ok(transition_result(
+                    &inner,
+                    transition_outcome(outcome),
+                    transition_verification_reason(outcome),
+                    None,
+                    Some(source_mode),
+                    target_mode,
+                    false,
+                ));
+            }
+        }
+
+        let handle = secure_random_hex::<32>()?;
+        let handle_digest = sha256_hex(handle.as_bytes());
+        let target_digest = sha256_hex(&target.canonical_bytes()?);
+        let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        if inner.generation != generation
+            || inner.state != snapshot.state
+            || inner.configuration_state == LockConfigurationState::Invalid
+            || inner.policy_source != source
+            || !inner.reauthentication_in_progress
+        {
+            inner.record(
+                "application-sign-in-transition-prepare",
+                "failed",
+                "RO-SIGN-IN-TRANSITION-STALE",
+            );
+            return Ok(transition_result(
+                &inner,
+                PolicyTransitionOutcome::Conflict,
+                "RO-SIGN-IN-TRANSITION-STALE",
+                None,
+                Some(source_mode),
+                target_mode,
+                false,
+            ));
+        }
+        inner.pending_transition = Some(PendingTransition {
+            handle_digest,
+            source,
+            source_mode: Some(source_mode),
+            target,
+            target_digest,
+            generation,
+            proof_class: TransitionProofClass::ConfiguredProvider,
+            warning_required: source_mode.is_protected() && target_mode == SignInMode::None,
+            expires_at: Instant::now() + TRANSITION_LIFETIME,
+        });
         inner.record(
-            "application-lock-configure",
-            "succeeded",
-            "RO-LOCK-CONFIGURED",
+            "application-sign-in-transition-prepare",
+            "prepared",
+            "RO-SIGN-IN-TRANSITION-PREPARED",
         );
-        Ok(inner.snapshot())
+        reservation.retain();
+        Ok(transition_result(
+            &inner,
+            PolicyTransitionOutcome::Prepared,
+            "RO-SIGN-IN-TRANSITION-PREPARED",
+            Some(handle),
+            Some(source_mode),
+            target_mode,
+            source_mode.is_protected() && target_mode == SignInMode::None,
+        ))
+    }
+
+    pub fn prepare_password_recovery_reset(&self) -> Result<PolicyTransitionResult, &'static str> {
+        self.prepare_password_recovery_reset_with(|| WindowsPasswordVerificationProvider.verify())
+    }
+
+    fn prepare_password_recovery_reset_with(
+        &self,
+        verify: impl FnOnce() -> VerificationOutcome,
+    ) -> Result<PolicyTransitionResult, &'static str> {
+        let (source_mode, source, generation, target) = {
+            let mut inner = self.shared.lock().expect("lock mutex poisoned");
+            expire_pending_transition(&mut inner);
+            if inner.configuration_state != LockConfigurationState::Invalid
+                && !inner.policy.mode.is_protected()
+            {
+                return Ok(transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Denied,
+                    "RO-SIGN-IN-RECOVERY-NOT-REQUIRED",
+                    None,
+                    Some(inner.policy.mode),
+                    SignInMode::None,
+                    true,
+                ));
+            }
+            if inner.reauthentication_in_progress {
+                return Ok(transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Busy,
+                    "RO-SIGN-IN-TRANSITION-BUSY",
+                    None,
+                    (inner.configuration_state != LockConfigurationState::Invalid)
+                        .then_some(inner.policy.mode),
+                    SignInMode::None,
+                    true,
+                ));
+            }
+            let target = SignInPolicy::normalized_target(
+                inner
+                    .policy
+                    .revision()
+                    .checked_add(1)
+                    .ok_or("RO-SIGN-IN-POLICY-REVISION-EXHAUSTED")?,
+                SignInMode::None,
+                None,
+                0,
+            )?;
+            inner.reauthentication_in_progress = true;
+            (
+                (inner.configuration_state != LockConfigurationState::Invalid)
+                    .then_some(inner.policy.mode),
+                inner.policy_source.clone(),
+                inner.generation,
+                target,
+            )
+        };
+        let mut reservation =
+            TransitionPreparationReservation::new(Arc::clone(&self.shared), generation);
+        let outcome = verify();
+        if outcome != VerificationOutcome::Succeeded {
+            let mut inner = self.shared.lock().expect("lock mutex poisoned");
+            inner.record(
+                "application-sign-in-recovery-prepare",
+                verification_audit_outcome(outcome),
+                transition_verification_reason(outcome),
+            );
+            return Ok(transition_result(
+                &inner,
+                transition_outcome(outcome),
+                transition_verification_reason(outcome),
+                None,
+                source_mode,
+                SignInMode::None,
+                true,
+            ));
+        }
+
+        let handle = secure_random_hex::<32>()?;
+        let handle_digest = sha256_hex(handle.as_bytes());
+        let target_digest = sha256_hex(&target.canonical_bytes()?);
+        let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        if inner.generation != generation
+            || inner.policy_source != source
+            || !inner.reauthentication_in_progress
+        {
+            inner.record(
+                "application-sign-in-recovery-prepare",
+                "failed",
+                "RO-SIGN-IN-TRANSITION-STALE",
+            );
+            return Ok(transition_result(
+                &inner,
+                PolicyTransitionOutcome::Conflict,
+                "RO-SIGN-IN-TRANSITION-STALE",
+                None,
+                source_mode,
+                SignInMode::None,
+                true,
+            ));
+        }
+        inner.pending_transition = Some(PendingTransition {
+            handle_digest,
+            source,
+            source_mode,
+            target,
+            target_digest,
+            generation,
+            proof_class: TransitionProofClass::SameSidPasswordRecovery,
+            warning_required: true,
+            expires_at: Instant::now() + TRANSITION_LIFETIME,
+        });
+        inner.record(
+            "application-sign-in-recovery-prepare",
+            "prepared",
+            "RO-SIGN-IN-RECOVERY-PREPARED",
+        );
+        reservation.retain();
+        Ok(transition_result(
+            &inner,
+            PolicyTransitionOutcome::Prepared,
+            "RO-SIGN-IN-RECOVERY-PREPARED",
+            Some(handle),
+            source_mode,
+            SignInMode::None,
+            true,
+        ))
+    }
+
+    pub fn commit_policy_transition(
+        &self,
+        handle: &str,
+        confirmed: bool,
+    ) -> PolicyTransitionResult {
+        let handle_digest = sha256_hex(handle.as_bytes());
+        let pending = {
+            let mut inner = self.shared.lock().expect("lock mutex poisoned");
+            if let Some(completed) = &inner.completed_transition
+                && completed.handle_digest == handle_digest
+            {
+                return completed.receipt.clone();
+            }
+            if let Some(expired) = inner.pending_transition.clone()
+                && expired.handle_digest == handle_digest
+                && expired.expires_at <= Instant::now()
+            {
+                inner.pending_transition = None;
+                inner.reauthentication_in_progress = false;
+                inner.record(
+                    "application-sign-in-transition",
+                    "expired",
+                    "RO-SIGN-IN-TRANSITION-EXPIRED",
+                );
+                return transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Expired,
+                    "RO-SIGN-IN-TRANSITION-EXPIRED",
+                    None,
+                    expired.source_mode,
+                    expired.target.mode,
+                    expired.warning_required,
+                );
+            }
+            expire_pending_transition(&mut inner);
+            let Some(pending) = inner.pending_transition.clone() else {
+                return transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Denied,
+                    "RO-SIGN-IN-TRANSITION-HANDLE-INVALID",
+                    None,
+                    None,
+                    SignInMode::None,
+                    false,
+                );
+            };
+            if pending.handle_digest != handle_digest {
+                return transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Denied,
+                    "RO-SIGN-IN-TRANSITION-HANDLE-INVALID",
+                    None,
+                    pending.source_mode,
+                    pending.target.mode,
+                    pending.warning_required,
+                );
+            }
+            if !confirmed {
+                inner.pending_transition = None;
+                inner.reauthentication_in_progress = false;
+                inner.record(
+                    "application-sign-in-transition-commit",
+                    "cancelled",
+                    "RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED",
+                );
+                return transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Cancelled,
+                    "RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED",
+                    None,
+                    pending.source_mode,
+                    pending.target.mode,
+                    pending.warning_required,
+                );
+            }
+            pending
+        };
+
+        let _process_guard = match self.policy_store.lock() {
+            Ok(guard) => guard,
+            Err(_) => {
+                return self.transition_failure(
+                    &pending,
+                    PolicyTransitionOutcome::Failed,
+                    "RO-SIGN-IN-TRANSITION-LOCK-FAILED",
+                );
+            }
+        };
+        let staged = match self.policy_store.stage(&pending.target) {
+            Ok(staged) => staged,
+            Err(_) => {
+                return self.transition_failure(
+                    &pending,
+                    PolicyTransitionOutcome::Failed,
+                    "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
+                );
+            }
+        };
+        let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        if inner.generation != pending.generation
+            || inner.policy_source != pending.source
+            || inner
+                .pending_transition
+                .as_ref()
+                .is_none_or(|current| current.handle_digest != pending.handle_digest)
+            || !inner.reauthentication_in_progress
+            || pending
+                .target
+                .canonical_bytes()
+                .map_or(true, |bytes| sha256_hex(&bytes) != pending.target_digest)
+        {
+            inner.pending_transition = None;
+            inner.reauthentication_in_progress = false;
+            inner.record(
+                "application-sign-in-transition-commit",
+                "conflict",
+                "RO-SIGN-IN-TRANSITION-STALE",
+            );
+            return transition_result(
+                &inner,
+                PolicyTransitionOutcome::Conflict,
+                "RO-SIGN-IN-TRANSITION-STALE",
+                None,
+                pending.source_mode,
+                pending.target.mode,
+                pending.warning_required,
+            );
+        }
+        let publish = self.policy_store.publish(staged, &pending.source);
+        let source = match publish {
+            Ok(source) => source,
+            Err("RO-SIGN-IN-POLICY-CONFLICT") => {
+                inner.pending_transition = None;
+                inner.reauthentication_in_progress = false;
+                inner.record(
+                    "application-sign-in-transition-commit",
+                    "conflict",
+                    "RO-SIGN-IN-TRANSITION-CONFLICT",
+                );
+                return transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Conflict,
+                    "RO-SIGN-IN-TRANSITION-CONFLICT",
+                    None,
+                    pending.source_mode,
+                    pending.target.mode,
+                    pending.warning_required,
+                );
+            }
+            Err(_) => match self.policy_store.committed_source(&pending.target) {
+                Ok(Some(source)) => source,
+                Ok(None) | Err(_) => {
+                    inner.record(
+                        "application-sign-in-transition-commit",
+                        "failed",
+                        "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
+                    );
+                    return transition_result(
+                        &inner,
+                        PolicyTransitionOutcome::Failed,
+                        "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
+                        None,
+                        pending.source_mode,
+                        pending.target.mode,
+                        pending.warning_required,
+                    );
+                }
+            },
+        };
+
+        inner.policy = pending.target.clone();
+        inner.policy_source = source;
+        inner.configuration_state = LockConfigurationState::Valid;
+        inner.generation = inner.generation.saturating_add(1);
+        inner.state = ApplicationLockState::Unlocked;
+        inner.reason = None;
+        inner.last_activity = Instant::now();
+        inner.pending_transition = None;
+        inner.reauthentication_in_progress = false;
+        inner.record(
+            "application-sign-in-transition-commit",
+            "committed",
+            match pending.proof_class {
+                TransitionProofClass::ConfiguredProvider => "RO-SIGN-IN-TRANSITION-COMMITTED",
+                TransitionProofClass::SameSidPasswordRecovery => "RO-SIGN-IN-RECOVERY-COMMITTED",
+            },
+        );
+        let reason_code = match pending.proof_class {
+            TransitionProofClass::ConfiguredProvider => "RO-SIGN-IN-TRANSITION-COMMITTED",
+            TransitionProofClass::SameSidPasswordRecovery => "RO-SIGN-IN-RECOVERY-COMMITTED",
+        };
+        let receipt = transition_result(
+            &inner,
+            PolicyTransitionOutcome::Committed,
+            reason_code,
+            None,
+            pending.source_mode,
+            pending.target.mode,
+            pending.warning_required,
+        );
+        inner.completed_transition = Some(CompletedTransition {
+            handle_digest,
+            receipt: receipt.clone(),
+        });
+        receipt
+    }
+
+    fn transition_failure(
+        &self,
+        pending: &PendingTransition,
+        outcome: PolicyTransitionOutcome,
+        reason_code: &'static str,
+    ) -> PolicyTransitionResult {
+        let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        inner.record(
+            "application-sign-in-transition-commit",
+            "failed",
+            reason_code,
+        );
+        transition_result(
+            &inner,
+            outcome,
+            reason_code,
+            None,
+            pending.source_mode,
+            pending.target.mode,
+            pending.warning_required,
+        )
     }
 
     pub fn reauthenticate(
         &self,
         supervisor: &RuntimeSupervisor,
+        hello_window: Option<isize>,
     ) -> Result<ApplicationUnlockAttempt, &'static str> {
-        self.reauthenticate_with_native_provider(supervisor, &WindowsPasswordVerificationProvider)
+        let mode = {
+            let inner = self.shared.lock().expect("lock mutex poisoned");
+            if inner.configuration_state == LockConfigurationState::Invalid {
+                return Err("RO-LOCK-RECOVERY-REQUIRED");
+            }
+            inner.policy.mode
+        };
+        match mode {
+            SignInMode::None => Err("RO-LOCK-AUTH-NOT-PROTECTED"),
+            SignInMode::WindowsPassword => self.reauthenticate_with_native_provider(
+                supervisor,
+                &WindowsPasswordVerificationProvider,
+            ),
+            SignInMode::WindowsHello => {
+                let provider = hello_provider(hello_window)?;
+                self.reauthenticate_with_native_provider(supervisor, &provider)
+            }
+        }
     }
 
     pub(crate) fn reauthenticate_with_native_provider(
@@ -591,13 +1099,130 @@ impl Drop for ReauthenticationReservation {
     }
 }
 
-fn validate_profile_name(value: Option<&str>) -> Result<(), &'static str> {
-    if value.is_some_and(|name| {
-        name.is_empty() || name.chars().count() > 80 || name.chars().any(char::is_control)
-    }) {
-        return Err("RO-LOCK-CONFIGURATION-INVALID");
+struct TransitionPreparationReservation {
+    shared: Arc<Mutex<ApplicationLockInner>>,
+    generation: u64,
+    retained: bool,
+}
+
+impl TransitionPreparationReservation {
+    fn new(shared: Arc<Mutex<ApplicationLockInner>>, generation: u64) -> Self {
+        Self {
+            shared,
+            generation,
+            retained: false,
+        }
     }
-    Ok(())
+
+    fn retain(&mut self) {
+        self.retained = true;
+    }
+}
+
+impl Drop for TransitionPreparationReservation {
+    fn drop(&mut self) {
+        if self.retained {
+            return;
+        }
+        if let Ok(mut inner) = self.shared.lock()
+            && inner.generation == self.generation
+        {
+            inner.reauthentication_in_progress = false;
+        }
+    }
+}
+
+fn expire_pending_transition(inner: &mut ApplicationLockInner) {
+    if inner
+        .pending_transition
+        .as_ref()
+        .is_some_and(|pending| pending.expires_at <= Instant::now())
+    {
+        inner.pending_transition = None;
+        inner.reauthentication_in_progress = false;
+        inner.record(
+            "application-sign-in-transition",
+            "expired",
+            "RO-SIGN-IN-TRANSITION-EXPIRED",
+        );
+    }
+}
+
+fn transition_result(
+    inner: &ApplicationLockInner,
+    outcome: PolicyTransitionOutcome,
+    reason_code: &'static str,
+    handle: Option<String>,
+    source_mode: Option<SignInMode>,
+    target_mode: SignInMode,
+    warning_required: bool,
+) -> PolicyTransitionResult {
+    PolicyTransitionResult {
+        schema_version: "1.0",
+        outcome,
+        reason_code,
+        handle,
+        source_mode,
+        target_mode,
+        warning_required,
+        snapshot: inner.snapshot(),
+    }
+}
+
+fn transition_outcome(outcome: VerificationOutcome) -> PolicyTransitionOutcome {
+    match outcome {
+        VerificationOutcome::Succeeded => PolicyTransitionOutcome::Prepared,
+        VerificationOutcome::Cancelled => PolicyTransitionOutcome::Cancelled,
+        VerificationOutcome::Denied => PolicyTransitionOutcome::Denied,
+        VerificationOutcome::Unavailable => PolicyTransitionOutcome::Unavailable,
+        VerificationOutcome::Busy => PolicyTransitionOutcome::Busy,
+        VerificationOutcome::Failed => PolicyTransitionOutcome::Failed,
+    }
+}
+
+fn transition_verification_reason(outcome: VerificationOutcome) -> &'static str {
+    match outcome {
+        VerificationOutcome::Succeeded => "RO-SIGN-IN-TRANSITION-AUTH-SUCCEEDED",
+        VerificationOutcome::Cancelled => "RO-SIGN-IN-TRANSITION-AUTH-CANCELLED",
+        VerificationOutcome::Denied => "RO-SIGN-IN-TRANSITION-AUTH-DENIED",
+        VerificationOutcome::Unavailable => "RO-SIGN-IN-TRANSITION-AUTH-UNAVAILABLE",
+        VerificationOutcome::Busy => "RO-SIGN-IN-TRANSITION-AUTH-BUSY",
+        VerificationOutcome::Failed => "RO-SIGN-IN-TRANSITION-AUTH-FAILED",
+    }
+}
+
+fn verification_audit_outcome(outcome: VerificationOutcome) -> &'static str {
+    match outcome {
+        VerificationOutcome::Succeeded => "succeeded",
+        VerificationOutcome::Cancelled => "cancelled",
+        VerificationOutcome::Denied => "denied",
+        VerificationOutcome::Unavailable => "unavailable",
+        VerificationOutcome::Busy => "busy",
+        VerificationOutcome::Failed => "failed",
+    }
+}
+
+fn verify_system_mode(mode: SignInMode, hello_window: Option<isize>) -> VerificationOutcome {
+    match mode {
+        SignInMode::None => VerificationOutcome::Succeeded,
+        SignInMode::WindowsPassword => WindowsPasswordVerificationProvider.verify(),
+        SignInMode::WindowsHello => hello_window
+            .and_then(|window| WindowsHelloVerificationProvider::for_window(window).ok())
+            .map(|provider| provider.verify())
+            .unwrap_or(VerificationOutcome::Failed),
+    }
+}
+
+fn hello_provider(
+    hello_window: Option<isize>,
+) -> Result<WindowsHelloVerificationProvider, &'static str> {
+    hello_window
+        .ok_or("RO-LOCK-HELLO-WINDOW-UNAVAILABLE")
+        .and_then(WindowsHelloVerificationProvider::for_window)
+}
+
+fn sha256_hex(bytes: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(bytes))
 }
 
 fn reason_code(reason: ApplicationLockReason) -> &'static str {
@@ -609,162 +1234,88 @@ fn reason_code(reason: ApplicationLockReason) -> &'static str {
     }
 }
 
-fn read_profile(path: &Path) -> Result<Option<ApplicationLockProfile>, &'static str> {
-    let metadata = match fs::symlink_metadata(path) {
-        Ok(metadata) => metadata,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-        Err(_) => return Err("RO-LOCK-CONFIGURATION-INVALID"),
-    };
-    if metadata.file_type().is_symlink()
-        || !metadata.is_file()
-        || metadata.len() > MAX_PROFILE_BYTES
-    {
-        return Err("RO-LOCK-CONFIGURATION-INVALID");
-    }
-    let bytes = fs::read(path).map_err(|_| "RO-LOCK-CONFIGURATION-INVALID")?;
-    let profile: ApplicationLockProfile =
-        serde_json::from_slice(&bytes).map_err(|_| "RO-LOCK-CONFIGURATION-INVALID")?;
-    profile.validate()?;
-    Ok(Some(profile))
-}
-
-struct StagedProfile {
-    path: PathBuf,
-}
-
-impl StagedProfile {
-    fn publish(self, destination: &Path) -> Result<(), &'static str> {
-        replace_file(&self.path, destination)
-    }
-}
-
-impl Drop for StagedProfile {
-    fn drop(&mut self) {
-        let _ = fs::remove_file(&self.path);
-    }
-}
-
-fn stage_profile(
-    path: &Path,
-    profile: &ApplicationLockProfile,
-) -> Result<StagedProfile, &'static str> {
-    profile.validate()?;
-    let parent = path.parent().ok_or("RO-LOCK-CONFIGURATION-INVALID")?;
-    fs::create_dir_all(parent).map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
-    let parent_metadata =
-        fs::symlink_metadata(parent).map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
-    if parent_metadata.file_type().is_symlink() || !parent_metadata.is_dir() {
-        return Err("RO-LOCK-CONFIGURATION-WRITE-FAILED");
-    }
-    if let Ok(metadata) = fs::symlink_metadata(path)
-        && (metadata.file_type().is_symlink() || !metadata.is_file())
-    {
-        return Err("RO-LOCK-CONFIGURATION-WRITE-FAILED");
-    }
-    let bytes =
-        serde_json::to_vec_pretty(profile).map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
-    let staging = parent.join(format!(".{PROFILE_FILE}.{}.staging", std::process::id()));
-    let mut file = OpenOptions::new()
-        .create_new(true)
-        .write(true)
-        .open(&staging)
-        .map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
-    let result = (|| {
-        file.write_all(&bytes)
-            .map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
-        file.write_all(b"\n")
-            .map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
-        file.sync_all()
-            .map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
-        drop(file);
-        Ok(StagedProfile {
-            path: staging.clone(),
-        })
-    })();
-    if result.is_err() {
-        let _ = fs::remove_file(&staging);
-    }
-    result
-}
-
-#[cfg(windows)]
-fn replace_file(staging: &Path, destination: &Path) -> Result<(), &'static str> {
-    use windows_sys::Win32::Storage::FileSystem::{
-        MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH, MoveFileExW,
-    };
-    let staging = wide_path(staging);
-    let destination = wide_path(destination);
-    let replaced = unsafe {
-        MoveFileExW(
-            staging.as_ptr(),
-            destination.as_ptr(),
-            MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH,
-        )
-    };
-    if replaced == 0 {
-        Err("RO-LOCK-CONFIGURATION-WRITE-FAILED")
-    } else {
-        Ok(())
-    }
-}
-
-#[cfg(not(windows))]
-fn replace_file(staging: &Path, destination: &Path) -> Result<(), &'static str> {
-    fs::rename(staging, destination).map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")
-}
-
-#[cfg(windows)]
-fn wide_path(path: &Path) -> Vec<u16> {
-    use std::os::windows::ffi::OsStrExt;
-    path.as_os_str().encode_wide().chain(Some(0)).collect()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::path::PathBuf;
     use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
     use std::sync::mpsc;
 
     static TEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
 
-    fn manager() -> ApplicationLockManager {
-        let root = std::env::temp_dir().join(format!(
-            "research-observatory-lock-test-{}-{}",
+    fn root(name: &str) -> PathBuf {
+        std::env::temp_dir().join(format!(
+            "research-observatory-lock-test-{name}-{}-{}",
             std::process::id(),
             TEST_SEQUENCE.fetch_add(1, Ordering::Relaxed)
-        ));
+        ))
+    }
+
+    fn manager_at(
+        root: &Path,
+        mode: SignInMode,
+        inactivity_timeout_minutes: u8,
+    ) -> ApplicationLockManager {
+        let store = PolicyStore::new(&root);
+        let loaded = store.initialize();
+        let policy = SignInPolicy::normalized_target(2, mode, None, inactivity_timeout_minutes)
+            .expect("test policy");
+        let _guard = store.lock().expect("policy lock");
+        let staged = store.stage(&policy).expect("stage test policy");
+        store
+            .publish(staged, &loaded.source)
+            .expect("publish test policy");
+        drop(_guard);
         ApplicationLockManager::new(&root)
     }
 
+    fn manager() -> ApplicationLockManager {
+        manager_at(&root("password"), SignInMode::WindowsPassword, 0)
+    }
+
+    fn default_manager() -> ApplicationLockManager {
+        ApplicationLockManager::new(&root("default"))
+    }
+
     #[test]
-    fn profile_contract_rejects_unknown_timeout_and_sensitive_name_controls() {
+    fn explicit_none_is_the_default_and_never_enters_application_lock() {
+        let manager = default_manager();
+        let before = manager.status();
+        assert_eq!(before.sign_in_mode, SignInMode::None);
+        assert_eq!(before.configuration_state, LockConfigurationState::Valid);
+        assert_eq!(before.state, ApplicationLockState::Unlocked);
+        let (after, changed) = manager.lock(ApplicationLockReason::Manual);
+        assert!(!changed);
+        assert_eq!(after.state, ApplicationLockState::Unlocked);
+        assert!(manager.lock_if_idle().is_none());
+        assert!(manager.policy_store.canonical_path().is_file());
+    }
+
+    #[test]
+    fn policy_contract_rejects_unknown_timeout_and_sensitive_name_controls() {
         assert!(
-            ApplicationLockProfile::new(Some("Local researcher".to_owned()), 15)
-                .validate()
-                .is_ok()
+            SignInPolicy::normalized_target(
+                1,
+                SignInMode::WindowsPassword,
+                Some("Local researcher".to_owned()),
+                15,
+            )
+            .is_ok()
         );
         assert_eq!(
-            ApplicationLockProfile::new(None, 7).validate(),
-            Err("RO-LOCK-CONFIGURATION-INVALID")
+            SignInPolicy::normalized_target(1, SignInMode::WindowsPassword, None, 7),
+            Err("RO-SIGN-IN-POLICY-INVALID")
         );
         assert_eq!(
-            ApplicationLockProfile::new(Some("name\npath".to_owned()), 5).validate(),
-            Err("RO-LOCK-CONFIGURATION-INVALID")
+            SignInPolicy::normalized_target(
+                1,
+                SignInMode::WindowsPassword,
+                Some("name\npath".to_owned()),
+                5,
+            ),
+            Err("RO-SIGN-IN-POLICY-INVALID")
         );
-        let unknown = serde_json::json!({
-            "schemaVersion": "1.0",
-            "documentType": "research-observatory-application-lock-profile",
-            "profileName": null,
-            "inactivityTimeoutMinutes": 0,
-            "restartPolicy": "lock-when-inactivity-enabled",
-            "lockAuthority": "desktop-native-supervisor",
-            "reauthentication": REAUTHENTICATION,
-            "protectedActionPolicy": "invalidate-generation-stop-core-discard-renderer-state",
-            "durableOperationPolicy": "w1-stop-all-future-continuation-requires-explicit-allowlist",
-            "threatBoundary": "application-session-protection-not-windows-account-isolation",
-            "unexpected": true
-        });
-        assert!(serde_json::from_value::<ApplicationLockProfile>(unknown).is_err());
     }
 
     #[test]
@@ -772,7 +1323,7 @@ mod tests {
         let manager = manager();
         {
             let mut inner = manager.shared.lock().expect("lock mutex");
-            inner.profile.profile_name = Some("Sensitive profile".to_owned());
+            inner.policy.profile_name = Some("Sensitive profile".to_owned());
         }
         let ticket = manager.begin_protected_action().expect("unlocked ticket");
         let (snapshot, changed) = manager.lock(ApplicationLockReason::Manual);
@@ -855,7 +1406,7 @@ mod tests {
         let manager = manager();
         {
             let mut inner = manager.shared.lock().expect("lock mutex");
-            inner.profile.inactivity_timeout_minutes = 5;
+            inner.policy.inactivity_timeout_minutes = 5;
             inner.last_activity = Instant::now() - Duration::from_secs(301);
         }
         let snapshot = manager.lock_if_idle().expect("idle lock");
@@ -1024,34 +1575,380 @@ mod tests {
     }
 
     #[test]
-    fn concurrent_lock_prevents_profile_publication_and_removes_staging() {
+    fn concurrent_lock_invalidates_a_prepared_transition_without_publication() {
         let manager = manager();
-        let (staged_tx, staged_rx) = mpsc::sync_channel(1);
-        let (release_tx, release_rx) = mpsc::sync_channel(1);
-        let worker_manager = manager.clone();
-        let worker = std::thread::spawn(move || {
-            worker_manager.configure_with_hook(Some("Local researcher".to_owned()), 15, || {
-                staged_tx.send(()).expect("profile staged");
-                release_rx.recv().expect("release profile");
+        let prepared = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
             })
-        });
-        staged_rx.recv().expect("profile stage reached");
+            .expect("prepare transition");
+        let handle = prepared.handle.expect("opaque handle");
         manager.lock(ApplicationLockReason::Manual);
-        release_tx.send(()).expect("release staged profile");
+        let result = manager.commit_policy_transition(&handle, true);
+        assert_eq!(result.outcome, PolicyTransitionOutcome::Conflict);
+        assert_eq!(manager.status().sign_in_mode, SignInMode::WindowsPassword);
         assert_eq!(
-            worker.join().expect("profile worker"),
-            Err("RO-APPLICATION-LOCKED")
+            manager.policy_store.initialize().policy.mode,
+            SignInMode::WindowsPassword
         );
-        assert!(!manager.profile_path.exists());
-        let parent = manager.profile_path.parent().expect("profile parent");
+    }
+
+    #[test]
+    fn transitions_verify_the_exact_provider_sequence_before_preparation() {
+        let cases = [
+            (
+                SignInMode::None,
+                SignInMode::WindowsPassword,
+                vec![SignInMode::WindowsPassword],
+            ),
+            (
+                SignInMode::WindowsPassword,
+                SignInMode::WindowsHello,
+                vec![SignInMode::WindowsPassword, SignInMode::WindowsHello],
+            ),
+            (
+                SignInMode::WindowsHello,
+                SignInMode::WindowsPassword,
+                vec![SignInMode::WindowsHello, SignInMode::WindowsPassword],
+            ),
+            (
+                SignInMode::WindowsPassword,
+                SignInMode::None,
+                vec![SignInMode::WindowsPassword],
+            ),
+        ];
+        for (source, target, expected) in cases {
+            let manager = if source == SignInMode::None {
+                default_manager()
+            } else {
+                manager_at(&root("provider-order"), source, 0)
+            };
+            let mut actual = Vec::new();
+            let prepared = manager
+                .prepare_policy_transition_with(target, None, 0, |mode| {
+                    actual.push(mode);
+                    VerificationOutcome::Succeeded
+                })
+                .expect("prepare transition");
+            assert_eq!(prepared.outcome, PolicyTransitionOutcome::Prepared);
+            assert_eq!(actual, expected);
+            assert_eq!(
+                prepared.warning_required,
+                target == SignInMode::None && source.is_protected()
+            );
+            let cancelled = manager.commit_policy_transition(
+                prepared.handle.as_deref().expect("opaque handle"),
+                false,
+            );
+            assert_eq!(cancelled.outcome, PolicyTransitionOutcome::Cancelled);
+        }
+    }
+
+    #[test]
+    fn every_verification_failure_is_typed_and_preserves_policy_bytes() {
+        for (verification, expected) in [
+            (
+                VerificationOutcome::Cancelled,
+                PolicyTransitionOutcome::Cancelled,
+            ),
+            (VerificationOutcome::Denied, PolicyTransitionOutcome::Denied),
+            (
+                VerificationOutcome::Unavailable,
+                PolicyTransitionOutcome::Unavailable,
+            ),
+            (VerificationOutcome::Busy, PolicyTransitionOutcome::Busy),
+            (VerificationOutcome::Failed, PolicyTransitionOutcome::Failed),
+        ] {
+            let manager = manager();
+            let before = fs::read(manager.policy_store.canonical_path()).expect("policy bytes");
+            let result = manager
+                .prepare_policy_transition_with(SignInMode::WindowsHello, None, 0, |_| verification)
+                .expect("typed transition result");
+            assert_eq!(result.outcome, expected);
+            assert!(result.handle.is_none());
+            assert_eq!(
+                fs::read(manager.policy_store.canonical_path()).expect("policy bytes"),
+                before
+            );
+            assert!(
+                !manager
+                    .shared
+                    .lock()
+                    .expect("lock mutex")
+                    .reauthentication_in_progress
+            );
+        }
+    }
+
+    #[test]
+    fn confirmed_commit_is_atomic_and_same_handle_returns_the_committed_receipt() {
+        let manager = manager();
+        let prepared = manager
+            .prepare_policy_transition_with(SignInMode::WindowsHello, None, 15, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("prepare transition");
+        let handle = prepared.handle.expect("opaque handle");
+        assert_eq!(handle.len(), 64);
         assert!(
-            fs::read_dir(parent)
-                .expect("security directory")
-                .all(|entry| !entry
-                    .expect("directory entry")
-                    .file_name()
-                    .to_string_lossy()
-                    .contains("staging"))
+            !serde_json::to_string(&manager.audit())
+                .expect("audit json")
+                .contains(&handle)
         );
+        let committed = manager.commit_policy_transition(&handle, true);
+        assert_eq!(committed.outcome, PolicyTransitionOutcome::Committed);
+        assert_eq!(committed.snapshot.sign_in_mode, SignInMode::WindowsHello);
+        assert_eq!(committed.snapshot.inactivity_timeout_minutes, 15);
+        assert_eq!(manager.commit_policy_transition(&handle, true), committed);
+        let reopened = ApplicationLockManager::new(
+            manager
+                .policy_store
+                .canonical_path()
+                .parent()
+                .and_then(Path::parent)
+                .expect("application data"),
+        );
+        assert_eq!(reopened.status().sign_in_mode, SignInMode::WindowsHello);
+        assert_eq!(reopened.status().state, ApplicationLockState::Locked);
+        assert_eq!(
+            reopened.status().reason,
+            Some(ApplicationLockReason::ApplicationRestart)
+        );
+    }
+
+    #[test]
+    fn missing_confirmation_and_stale_writer_never_change_the_prior_policy() {
+        let manager = manager();
+        let before = fs::read(manager.policy_store.canonical_path()).expect("policy bytes");
+        let prepared = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("prepare transition");
+        let handle = prepared.handle.expect("opaque handle");
+        let cancelled = manager.commit_policy_transition(&handle, false);
+        assert_eq!(cancelled.outcome, PolicyTransitionOutcome::Cancelled);
+        assert_eq!(
+            fs::read(manager.policy_store.canonical_path()).expect("policy bytes"),
+            before
+        );
+        assert_eq!(
+            manager.commit_policy_transition(&handle, true).outcome,
+            PolicyTransitionOutcome::Denied
+        );
+
+        let shared_root = root("stale-writer");
+        let first = manager_at(&shared_root, SignInMode::WindowsPassword, 0);
+        let second = ApplicationLockManager::new(&shared_root);
+        let first_prepared = first
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("first preparation");
+        let second_prepared = second
+            .prepare_policy_transition_with(SignInMode::WindowsHello, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("second preparation");
+        assert_eq!(
+            second
+                .commit_policy_transition(
+                    second_prepared.handle.as_deref().expect("second handle"),
+                    true,
+                )
+                .outcome,
+            PolicyTransitionOutcome::Committed
+        );
+        assert_eq!(
+            first
+                .commit_policy_transition(
+                    first_prepared.handle.as_deref().expect("first handle"),
+                    true,
+                )
+                .outcome,
+            PolicyTransitionOutcome::Conflict
+        );
+        assert_eq!(
+            ApplicationLockManager::new(&shared_root)
+                .status()
+                .sign_in_mode,
+            SignInMode::WindowsHello
+        );
+    }
+
+    #[test]
+    fn corrupt_policy_requires_explicit_same_sid_password_recovery() {
+        let root = root("corrupt-recovery");
+        let store = PolicyStore::new(&root);
+        fs::create_dir_all(store.canonical_path().parent().expect("security dir"))
+            .expect("create security dir");
+        fs::write(store.canonical_path(), b"{\"schemaVersion\":\"future\"}\n")
+            .expect("corrupt policy");
+        let before = fs::read(store.canonical_path()).expect("corrupt bytes");
+        let manager = ApplicationLockManager::new(&root);
+        assert_eq!(
+            manager.status().configuration_state,
+            LockConfigurationState::Invalid
+        );
+        assert_eq!(manager.status().state, ApplicationLockState::Locked);
+
+        let calls = AtomicUsize::new(0);
+        let ordinary = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                calls.fetch_add(1, Ordering::SeqCst);
+                VerificationOutcome::Succeeded
+            })
+            .expect("ordinary reset denied");
+        assert_eq!(ordinary.outcome, PolicyTransitionOutcome::Denied);
+        assert_eq!(calls.load(Ordering::SeqCst), 0);
+
+        let cancelled = manager
+            .prepare_password_recovery_reset_with(|| VerificationOutcome::Cancelled)
+            .expect("cancelled recovery");
+        assert_eq!(cancelled.outcome, PolicyTransitionOutcome::Cancelled);
+        assert_eq!(
+            fs::read(store.canonical_path()).expect("corrupt bytes"),
+            before
+        );
+
+        let prepared = manager
+            .prepare_password_recovery_reset_with(|| VerificationOutcome::Succeeded)
+            .expect("verified recovery");
+        assert!(prepared.warning_required);
+        let committed = manager
+            .commit_policy_transition(prepared.handle.as_deref().expect("recovery handle"), true);
+        assert_eq!(committed.outcome, PolicyTransitionOutcome::Committed);
+        assert_eq!(committed.reason_code, "RO-SIGN-IN-RECOVERY-COMMITTED");
+        assert_eq!(committed.snapshot.sign_in_mode, SignInMode::None);
+        assert_eq!(committed.snapshot.state, ApplicationLockState::Unlocked);
+        assert_eq!(
+            ApplicationLockManager::new(&root).status().sign_in_mode,
+            SignInMode::None
+        );
+    }
+
+    #[test]
+    fn unavailable_configured_provider_never_downgrades_without_explicit_recovery() {
+        let root = root("unavailable-recovery");
+        let manager = manager_at(&root, SignInMode::WindowsHello, 0);
+        let before = fs::read(manager.policy_store.canonical_path()).expect("policy bytes");
+        let unavailable = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |mode| {
+                assert_eq!(mode, SignInMode::WindowsHello);
+                VerificationOutcome::Unavailable
+            })
+            .expect("unavailable configured provider");
+        assert_eq!(unavailable.outcome, PolicyTransitionOutcome::Unavailable);
+        assert!(unavailable.handle.is_none());
+        assert_eq!(
+            fs::read(manager.policy_store.canonical_path()).expect("policy bytes"),
+            before
+        );
+
+        let recovered = manager
+            .prepare_password_recovery_reset_with(|| VerificationOutcome::Succeeded)
+            .expect("explicit password recovery");
+        assert_eq!(recovered.outcome, PolicyTransitionOutcome::Prepared);
+        let committed = manager
+            .commit_policy_transition(recovered.handle.as_deref().expect("recovery handle"), true);
+        assert_eq!(committed.reason_code, "RO-SIGN-IN-RECOVERY-COMMITTED");
+        assert_eq!(committed.snapshot.sign_in_mode, SignInMode::None);
+    }
+
+    #[test]
+    fn a_pending_transition_uses_the_same_native_verification_admission() {
+        let manager = manager();
+        let prepared = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("prepare transition");
+        let second = manager
+            .prepare_policy_transition_with(SignInMode::WindowsHello, None, 0, |_| {
+                panic!("a second provider must not be invoked")
+            })
+            .expect("busy result");
+        assert_eq!(second.outcome, PolicyTransitionOutcome::Busy);
+        manager.commit_policy_transition(prepared.handle.as_deref().expect("first handle"), false);
+    }
+
+    #[test]
+    fn expired_and_panicking_preparations_release_admission_without_mutation() {
+        let manager = manager();
+        let before = fs::read(manager.policy_store.canonical_path()).expect("policy bytes");
+        let panic_result = std::panic::catch_unwind({
+            let manager = manager.clone();
+            move || {
+                manager.prepare_policy_transition_with(SignInMode::WindowsHello, None, 0, |_| {
+                    panic!("provider panic")
+                })
+            }
+        });
+        assert!(panic_result.is_err());
+        assert!(
+            !manager
+                .shared
+                .lock()
+                .expect("lock mutex")
+                .reauthentication_in_progress
+        );
+
+        let prepared = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("prepare transition");
+        let handle = prepared.handle.expect("opaque handle");
+        manager
+            .shared
+            .lock()
+            .expect("lock mutex")
+            .pending_transition
+            .as_mut()
+            .expect("pending transition")
+            .expires_at = Instant::now() - Duration::from_secs(1);
+        let expired = manager.commit_policy_transition(&handle, true);
+        assert_eq!(expired.outcome, PolicyTransitionOutcome::Expired);
+        assert_eq!(
+            fs::read(manager.policy_store.canonical_path()).expect("policy bytes"),
+            before
+        );
+        assert!(
+            !manager
+                .shared
+                .lock()
+                .expect("lock mutex")
+                .reauthentication_in_progress
+        );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn publication_failure_is_typed_and_preserves_the_committed_bytes() {
+        use std::fs::OpenOptions;
+        use std::os::windows::fs::OpenOptionsExt;
+        use windows_sys::Win32::Storage::FileSystem::FILE_SHARE_READ;
+
+        let manager = manager();
+        let before = fs::read(manager.policy_store.canonical_path()).expect("policy bytes");
+        let prepared = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .expect("prepare transition");
+        let handle = prepared.handle.expect("opaque handle");
+        let _deny_delete = OpenOptions::new()
+            .read(true)
+            .share_mode(FILE_SHARE_READ)
+            .open(manager.policy_store.canonical_path())
+            .expect("exclusive policy reader");
+        let failed = manager.commit_policy_transition(&handle, true);
+        assert_eq!(failed.outcome, PolicyTransitionOutcome::Failed);
+        assert_eq!(failed.reason_code, "RO-SIGN-IN-TRANSITION-WRITE-FAILED");
+        assert_eq!(
+            fs::read(manager.policy_store.canonical_path()).expect("policy bytes"),
+            before
+        );
+        assert_eq!(manager.status().sign_in_mode, SignInMode::WindowsPassword);
     }
 }

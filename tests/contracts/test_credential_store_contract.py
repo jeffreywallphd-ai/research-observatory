@@ -116,5 +116,44 @@ class ApplicationLockContractTests(unittest.TestCase):
         self.assertTrue(list(self.validator.iter_errors(expanded)))
 
 
+class ApplicationSignInPolicyContractTests(unittest.TestCase):
+    policy: ClassVar[dict[str, Any]]
+    validator: ClassVar[Any]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        schema = json.loads((CONTRACT_ROOT / "application-sign-in-policy.schema.json").read_text(encoding="utf-8"))
+        cls.policy = json.loads((CONTRACT_ROOT / "application-sign-in-policy.v1.json").read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        cls.validator = Draft202012Validator(schema)
+
+    def test_exact_default_is_explicit_none_with_native_transition_authority(self) -> None:
+        self.assertEqual([], list(self.validator.iter_errors(self.policy)))
+        self.assertEqual("none", self.policy["mode"])
+        self.assertEqual(0, self.policy["inactivityTimeoutMinutes"])
+        self.assertEqual("native-provider-proof-confirmation-cas", self.policy["transitionAuthority"])
+        self.assertNotIn("path", json.dumps(self.policy).lower())
+
+    def test_policy_closes_modes_and_none_timeout_without_weakening_boundaries(self) -> None:
+        for field, value in (
+            ("mode", "password"),
+            ("mode", "renderer-selected-provider"),
+            ("revision", 0),
+            ("transitionAuthority", "session-confirmation"),
+            ("lockAuthority", "renderer"),
+            ("protectedActionPolicy", "hide-window-only"),
+        ):
+            with self.subTest(field=field, value=value):
+                changed = copy.deepcopy(self.policy)
+                changed[field] = value
+                self.assertTrue(list(self.validator.iter_errors(changed)))
+        none_with_idle_lock = copy.deepcopy(self.policy)
+        none_with_idle_lock["inactivityTimeoutMinutes"] = 15
+        self.assertTrue(list(self.validator.iter_errors(none_with_idle_lock)))
+        expanded = copy.deepcopy(self.policy)
+        expanded["verificationOutcome"] = "succeeded"
+        self.assertTrue(list(self.validator.iter_errors(expanded)))
+
+
 if __name__ == "__main__":
     unittest.main()

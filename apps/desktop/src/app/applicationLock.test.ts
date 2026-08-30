@@ -4,6 +4,7 @@ import {
   applicationUnlockFailureMessage,
   decodeApplicationUnlockAttempt,
   decodeApplicationLockSnapshot,
+  decodePolicyTransitionResult,
   decodeVerificationAvailabilitySnapshot,
   DEFAULT_APPLICATION_LOCK_SNAPSHOT,
   failClosedApplicationLockSnapshot,
@@ -15,6 +16,8 @@ describe("application-lock contract", () => {
   const lockedSnapshot = {
     ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
     state: "locked",
+    signInMode: "windows-password",
+    policyRevision: 2,
     reason: "manual",
     auditSequence: 1,
   } as const;
@@ -268,5 +271,75 @@ describe("application-lock contract", () => {
     });
     expect(() => decodeVerificationAvailabilitySnapshot(accessorSnapshot))
       .toThrow("Invalid verification-availability response");
+  });
+
+  it("decodes opaque transition preparation and committed response-loss receipts", () => {
+    const protectedSnapshot = {
+      ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+      signInMode: "windows-password",
+      policyRevision: 2,
+    } as const;
+    const handle = "ab".repeat(32);
+    expect(decodePolicyTransitionResult({
+      schemaVersion: "1.0",
+      outcome: "prepared",
+      reasonCode: "RO-SIGN-IN-TRANSITION-PREPARED",
+      handle,
+      sourceMode: "windows-password",
+      targetMode: "none",
+      warningRequired: true,
+      snapshot: protectedSnapshot,
+    })).toMatchObject({ outcome: "prepared", handle, warningRequired: true });
+
+    const committed = decodePolicyTransitionResult({
+      schemaVersion: "1.0",
+      outcome: "committed",
+      reasonCode: "RO-SIGN-IN-TRANSITION-COMMITTED",
+      handle: null,
+      sourceMode: "windows-password",
+      targetMode: "none",
+      warningRequired: true,
+      snapshot: { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, policyRevision: 3 },
+    });
+    expect(committed).toMatchObject({
+      outcome: "committed",
+      handle: null,
+      snapshot: { signInMode: "none", policyRevision: 3 },
+    });
+  });
+
+  it("rejects forged transition handles, outcomes, reason codes, and target receipts", () => {
+    const base = {
+      schemaVersion: "1.0",
+      outcome: "prepared",
+      reasonCode: "RO-SIGN-IN-TRANSITION-PREPARED",
+      handle: "ab".repeat(32),
+      sourceMode: "windows-password",
+      targetMode: "none",
+      warningRequired: true,
+      snapshot: {
+        ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+        signInMode: "windows-password",
+        policyRevision: 2,
+      },
+    } as const;
+    for (const changed of [
+      { ...base, handle: "plain-token" },
+      { ...base, outcome: "committed" },
+      { ...base, reasonCode: "renderer-approved" },
+      { ...base, outcome: "denied", reasonCode: "RO-SIGN-IN-TRANSITION-PREPARED", handle: null },
+      { ...base, targetMode: "password" },
+      { ...base, unexpected: true },
+    ]) {
+      expect(() => decodePolicyTransitionResult(changed))
+        .toThrow("Invalid application sign-in transition response");
+    }
+    expect(() => decodePolicyTransitionResult({
+      ...base,
+      outcome: "committed",
+      reasonCode: "RO-SIGN-IN-TRANSITION-COMMITTED",
+      handle: null,
+      targetMode: "windows-hello",
+    })).toThrow("Invalid application sign-in transition response");
   });
 });

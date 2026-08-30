@@ -1,11 +1,12 @@
 pub mod application_lock;
 pub mod application_lock_verification;
+mod application_sign_in_policy;
 pub mod supervisor;
 pub mod support_bundle;
 
 use application_lock::{
     ApplicationLockAuditEvent, ApplicationLockManager, ApplicationLockReason,
-    ApplicationLockSnapshot, ApplicationUnlockAttempt,
+    ApplicationLockSnapshot, ApplicationUnlockAttempt, PolicyTransitionResult, SignInMode,
 };
 use application_lock_verification::{
     VerificationAvailabilitySnapshot, VerificationOutcome, windows_hello_availability_snapshot,
@@ -145,14 +146,11 @@ async fn application_lock_hello_availability() -> VerificationAvailabilitySnapsh
 
 #[tauri::command]
 fn application_lock_configure(
-    app: AppHandle,
-    lock: State<'_, ApplicationLockManager>,
     profile_name: Option<String>,
     inactivity_timeout_minutes: u8,
 ) -> Result<ApplicationLockSnapshot, &'static str> {
-    let snapshot = lock.configure(profile_name, inactivity_timeout_minutes)?;
-    let _ = app.emit("application-lock-changed", &snapshot);
-    Ok(snapshot)
+    let _ = (profile_name, inactivity_timeout_minutes);
+    Err("RO-SIGN-IN-TRANSITION-REQUIRED")
 }
 
 #[tauri::command]
@@ -163,14 +161,16 @@ async fn application_lock_now(
     lock: State<'_, ApplicationLockManager>,
 ) -> Result<ApplicationLockSnapshot, &'static str> {
     let (snapshot, changed) = lock.lock(ApplicationLockReason::Manual);
-    support.clear_pending();
     if changed {
+        support.clear_pending();
         emit_lock_snapshot(&app, lock.inner(), &snapshot);
     }
-    let supervisor = supervisor.inner().clone();
-    tauri::async_runtime::spawn_blocking(move || supervisor.stop_for_application_lock())
-        .await
-        .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")?;
+    if changed {
+        let supervisor = supervisor.inner().clone();
+        tauri::async_runtime::spawn_blocking(move || supervisor.stop_for_application_lock())
+            .await
+            .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")?;
+    }
     Ok(snapshot)
 }
 
@@ -180,33 +180,88 @@ async fn application_lock_unlock(
     supervisor: State<'_, RuntimeSupervisor>,
     lock: State<'_, ApplicationLockManager>,
 ) -> Result<ApplicationUnlockAttempt, &'static str> {
-    perform_application_lock_password_unlock(app, supervisor.inner().clone(), lock.inner().clone())
-        .await
+    perform_application_lock_unlock(app, supervisor.inner().clone(), lock.inner().clone()).await
 }
 
 #[tauri::command]
-async fn application_lock_password_recovery(
+async fn application_sign_in_transition_prepare(
     app: AppHandle,
-    supervisor: State<'_, RuntimeSupervisor>,
     lock: State<'_, ApplicationLockManager>,
-) -> Result<ApplicationUnlockAttempt, &'static str> {
-    perform_application_lock_password_unlock(app, supervisor.inner().clone(), lock.inner().clone())
-        .await
+    target_mode: SignInMode,
+    profile_name: Option<String>,
+    inactivity_timeout_minutes: u8,
+) -> Result<PolicyTransitionResult, &'static str> {
+    let hello_window = main_window_handle(&app);
+    let manager = lock.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        manager.prepare_policy_transition(
+            target_mode,
+            profile_name,
+            inactivity_timeout_minutes,
+            hello_window,
+        )
+    })
+    .await
+    .map_err(|_| "RO-SIGN-IN-TRANSITION-FAILED")?
 }
 
-async fn perform_application_lock_password_unlock(
+#[tauri::command]
+async fn application_sign_in_password_recovery_prepare(
+    lock: State<'_, ApplicationLockManager>,
+) -> Result<PolicyTransitionResult, &'static str> {
+    let manager = lock.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || manager.prepare_password_recovery_reset())
+        .await
+        .map_err(|_| "RO-SIGN-IN-TRANSITION-FAILED")?
+}
+
+#[tauri::command]
+async fn application_sign_in_transition_commit(
+    app: AppHandle,
+    lock: State<'_, ApplicationLockManager>,
+    handle: String,
+    confirmed: bool,
+) -> Result<PolicyTransitionResult, &'static str> {
+    let manager = lock.inner().clone();
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        manager.commit_policy_transition(&handle, confirmed)
+    })
+    .await
+    .map_err(|_| "RO-SIGN-IN-TRANSITION-FAILED")?;
+    if result.outcome == application_lock::PolicyTransitionOutcome::Committed {
+        let _ = app.emit("application-lock-changed", &result.snapshot);
+    }
+    Ok(result)
+}
+
+async fn perform_application_lock_unlock(
     app: AppHandle,
     supervisor: RuntimeSupervisor,
     lock_manager: ApplicationLockManager,
 ) -> Result<ApplicationUnlockAttempt, &'static str> {
-    let result =
-        tauri::async_runtime::spawn_blocking(move || lock_manager.reauthenticate(&supervisor))
-            .await
-            .map_err(|_| "RO-LOCK-AUTH-FAILED")??;
+    let hello_window = main_window_handle(&app);
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        lock_manager.reauthenticate(&supervisor, hello_window)
+    })
+    .await
+    .map_err(|_| "RO-LOCK-AUTH-FAILED")??;
     if result.outcome == VerificationOutcome::Succeeded {
         let _ = app.emit("application-lock-changed", &result.snapshot);
     }
     Ok(result)
+}
+
+#[cfg(windows)]
+fn main_window_handle(app: &AppHandle) -> Option<isize> {
+    app.get_webview_window("main")
+        .and_then(|window| window.hwnd().ok())
+        .map(|handle| handle.0 as isize)
+        .filter(|handle| *handle != 0)
+}
+
+#[cfg(not(windows))]
+fn main_window_handle(_app: &AppHandle) -> Option<isize> {
+    None
 }
 
 pub async fn dispatch_runtime_start(
@@ -253,7 +308,9 @@ pub fn run() {
             application_lock_configure,
             application_lock_now,
             application_lock_unlock,
-            application_lock_password_recovery
+            application_sign_in_transition_prepare,
+            application_sign_in_password_recovery_prepare,
+            application_sign_in_transition_commit
         ])
         .setup(|app| {
             let supervisor = RuntimeSupervisor::new(runtime_config(app));

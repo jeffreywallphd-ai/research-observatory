@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-application-sign-in-policy",
+  "revision": 1,
+  "mode": "none",
+  "profileName": null,
+  "inactivityTimeoutMinutes": 0,
+  "restartPolicy": "lock-when-inactivity-enabled",
+  "lockAuthority": "desktop-native-supervisor",
+  "transitionAuthority": "native-provider-proof-confirmation-cas",
+  "protectedActionPolicy": "invalidate-generation-stop-core-discard-renderer-state",
+  "durableOperationPolicy": "w1-stop-all-future-continuation-requires-explicit-allowlist",
+  "threatBoundary": "application-session-protection-not-windows-account-isolation"
+}

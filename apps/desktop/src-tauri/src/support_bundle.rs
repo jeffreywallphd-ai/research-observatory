@@ -517,6 +517,7 @@ fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
 mod tests {
     use super::{MAX_BUNDLE_BYTES, SupportBundleManager, canonical_hex};
     use crate::application_lock::{ApplicationLockManager, ApplicationLockReason};
+    use crate::application_sign_in_policy::{PolicyStore, SignInMode, SignInPolicy};
     use crate::supervisor::RuntimeSupervisor;
     use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -528,6 +529,20 @@ mod tests {
             std::process::id(),
             TEST_SEQUENCE.fetch_add(1, Ordering::Relaxed)
         ))
+    }
+
+    fn protected_lock(application_data: &std::path::Path) -> ApplicationLockManager {
+        let store = PolicyStore::new(application_data);
+        let loaded = store.initialize();
+        let policy = SignInPolicy::normalized_target(2, SignInMode::WindowsPassword, None, 0)
+            .expect("protected policy");
+        let _guard = store.lock().expect("policy lock");
+        let staged = store.stage(&policy).expect("stage protected policy");
+        store
+            .publish(staged, &loaded.source)
+            .expect("publish protected policy");
+        drop(_guard);
+        ApplicationLockManager::new(application_data)
     }
 
     #[test]
@@ -596,7 +611,7 @@ mod tests {
         let root = test_root("ro-support-lock-test");
         let manager = SupportBundleManager::default();
         let supervisor = RuntimeSupervisor::new(Err("RO-CORE-INTEGRITY-FAILED"));
-        let lock = ApplicationLockManager::new(&root.join("lock-profile"));
+        let lock = protected_lock(&root.join("lock-profile"));
 
         let preview_ticket = lock.begin_protected_action().expect("preview ticket");
         let prepared = manager
@@ -609,7 +624,7 @@ mod tests {
         );
         assert!(!manager.has_pending());
 
-        let unlocked_lock = ApplicationLockManager::new(&root.join("separate-lock-profile"));
+        let unlocked_lock = protected_lock(&root.join("separate-lock-profile"));
         let preview = manager
             .preview(&root, &supervisor)
             .expect("support preview");
