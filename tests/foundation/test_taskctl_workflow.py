@@ -4659,7 +4659,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 errors = validate(*context)
                 self.assertIn(expected, "\n".join(errors))
 
-    def test_consecutive_amendment_hold_has_one_latest_owner_and_allows_only_adopted_predecessors(self) -> None:
+    def test_consecutive_amendment_hold_allows_adopted_or_unexecuted_superseded_predecessors(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="ADOPTED")
         predecessor = data["wave_amendments"][0]
         predecessor["completion"].update(
@@ -4716,10 +4716,56 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertNotIn("W1.A02: terminal lifecycle did not restore ordinary Wave scope", errors)
         self.assertNotIn("W1: amendment-hold scope requires exactly one executable amendment owner", errors)
 
+        for task in predecessor["tasks"]:
+            tasks.pop(task["id"])
+        predecessor.update(
+            lifecycle={
+                "status": "SUPERSEDED",
+                "history": [
+                    {
+                        "id": "E01",
+                        "status": "APPROVED",
+                        "actor": "repository-owner",
+                        "at": "2026-08-20T00:00:00+00:00",
+                        "rationale": "Approved but not executed.",
+                    },
+                    {
+                        "id": "E02",
+                        "status": "SUPERSEDED",
+                        "actor": "governance-migration:test-migration",
+                        "at": "2026-08-21T00:00:00+00:00",
+                        "rationale": "Recorded the unexecuted reservation as terminal history.",
+                    },
+                ],
+            },
+            bootstrap=None,
+            campaign=None,
+            tasks=[],
+            completion={
+                "status": "PENDING",
+                "reviewer": None,
+                "reviewed_at": None,
+                "evidence": [],
+                "notes": "No execution occurred.",
+            },
+        )
+        errors = validate(data, capabilities, slices, tasks, gates)
+        predecessor_error = (
+            "W1.A02: predecessor of the amendment-hold owner is neither ADOPTED "
+            "nor an unexecuted migration-superseded reservation"
+        )
+        self.assertNotIn(predecessor_error, errors)
+        self.assertNotIn("W1.A02: terminal lifecycle did not restore ordinary Wave scope", errors)
+
+        predecessor["bootstrap"] = {"id": "W1.A02.B00", "status": "APPROVED"}
+        errors = validate(data, capabilities, slices, tasks, gates)
+        self.assertIn(predecessor_error, errors)
+        predecessor["bootstrap"] = None
+
         predecessor["lifecycle"]["status"] = "WITHDRAWN"
         predecessor["lifecycle"]["history"][-1]["status"] = "WITHDRAWN"
         errors = validate(data, capabilities, slices, tasks, gates)
-        self.assertIn("W1.A02: predecessor of the amendment-hold owner is not ADOPTED", errors)
+        self.assertIn(predecessor_error, errors)
 
         predecessor["lifecycle"]["status"] = "MATERIALIZED"
         predecessor["lifecycle"]["history"][-1]["status"] = "MATERIALIZED"
