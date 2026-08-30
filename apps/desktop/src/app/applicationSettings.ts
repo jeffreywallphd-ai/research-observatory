@@ -34,6 +34,17 @@ export interface ApplicationSettingsTransport {
   invoke(command: string, arguments_?: Record<string, unknown>): Promise<unknown>;
 }
 
+interface NormalizedTransitionTarget {
+  readonly mode: SignInMode;
+  readonly profileName: string | null;
+  readonly inactivityTimeoutMinutes: 0 | 5 | 15 | 30 | 60;
+}
+
+interface PendingTransition {
+  readonly prepared: PolicyTransitionResult;
+  readonly target: NormalizedTransitionTarget;
+}
+
 export type TransitionControllerResult =
   | {
       readonly kind: "confirmation-required";
@@ -132,9 +143,21 @@ function transitionFailureMessage(result: PolicyTransitionResult): string {
   }
 }
 
+function snapshotMatchesTarget(
+  snapshot: ApplicationLockSnapshot,
+  target: NormalizedTransitionTarget,
+  priorRevision: number,
+): boolean {
+  return snapshot.signInMode === target.mode
+    && snapshot.profileName === target.profileName
+    && snapshot.inactivityTimeoutMinutes === target.inactivityTimeoutMinutes
+    && snapshot.configurationState === "valid"
+    && snapshot.policyRevision === priorRevision + 1;
+}
+
 export class ApplicationSettingsController {
   private operationInProgress = false;
-  private pending: PolicyTransitionResult | null = null;
+  private pending: PendingTransition | null = null;
   private disposed = false;
 
   public constructor(private readonly transport: ApplicationSettingsTransport) {}
@@ -145,10 +168,10 @@ export class ApplicationSettingsController {
 
   public async dispose(): Promise<void> {
     this.disposed = true;
-    if (!this.operationInProgress && this.pending?.handle) {
+    if (!this.operationInProgress && this.pending?.prepared.handle) {
       try {
         await this.transport.invoke("application_sign_in_transition_commit", {
-          handle: this.pending.handle,
+          handle: this.pending.prepared.handle,
           confirmed: false,
         });
         this.pending = null;
@@ -165,16 +188,21 @@ export class ApplicationSettingsController {
       targetMode: draft.mode,
       profileName,
       inactivityTimeoutMinutes,
-    });
+    }, { mode: draft.mode, profileName, inactivityTimeoutMinutes });
   }
 
   public async prepareRecovery(): Promise<TransitionControllerResult> {
-    return this.prepareWith("application_sign_in_password_recovery_prepare");
+    return this.prepareWith(
+      "application_sign_in_password_recovery_prepare",
+      undefined,
+      { mode: "none", profileName: null, inactivityTimeoutMinutes: 0 },
+    );
   }
 
   private async prepareWith(
     command: "application_sign_in_transition_prepare" | "application_sign_in_password_recovery_prepare",
     arguments_?: Record<string, unknown>,
+    target: NormalizedTransitionTarget = { mode: "none", profileName: null, inactivityTimeoutMinutes: 0 },
   ): Promise<TransitionControllerResult> {
     if (this.disposed) {
       return { kind: "rejected", message: "This sign-in settings session has closed." };
@@ -197,7 +225,7 @@ export class ApplicationSettingsController {
     if (result.outcome !== "prepared") {
       return { kind: result.outcome === "cancelled" ? "cancelled" : "rejected", message: transitionFailureMessage(result) };
     }
-    this.pending = result;
+    this.pending = { prepared: result, target };
     if (this.disposed) return this.confirm(false);
     if (result.warningRequired) {
       return {
@@ -213,10 +241,11 @@ export class ApplicationSettingsController {
     if (this.operationInProgress) {
       return { kind: "busy", message: "A sign-in change is already awaiting native completion." };
     }
-    const prepared = this.pending;
-    if (!prepared?.handle) {
+    const pending = this.pending;
+    if (!pending?.prepared.handle) {
       return { kind: "rejected", message: "No verified sign-in change is awaiting confirmation." };
     }
+    const prepared = pending.prepared;
     this.operationInProgress = true;
     try {
       const result = decodePolicyTransitionResult(await this.transport.invoke(
@@ -225,6 +254,13 @@ export class ApplicationSettingsController {
       ));
       if (result.outcome === "committed") {
         this.pending = null;
+        if (!snapshotMatchesTarget(result.snapshot, pending.target, prepared.snapshot.policyRevision)) {
+          return {
+            kind: "rejected",
+            message: "The native receipt does not match the requested sign-in policy. Refresh before making another change.",
+            snapshot: result.snapshot,
+          };
+        }
         return {
           kind: "committed",
           message: "Application sign-in settings were saved by the native policy service.",
@@ -258,28 +294,71 @@ export class ApplicationSettingsController {
         snapshot: result.snapshot,
       };
     } catch {
-      return this.reconcileInterruptedCommit(prepared);
+      return this.reconcileInterruptedCommit(pending, confirmed);
     } finally {
       this.operationInProgress = false;
     }
   }
 
   private async reconcileInterruptedCommit(
-    prepared: PolicyTransitionResult,
+    pending: PendingTransition,
+    confirmed: boolean,
   ): Promise<TransitionControllerResult> {
+    const prepared = pending.prepared;
+    try {
+      const receipt = decodePolicyTransitionResult(await this.transport.invoke(
+        "application_sign_in_transition_commit",
+        { handle: prepared.handle, confirmed },
+      ));
+      this.pending = null;
+      if (confirmed && receipt.outcome === "committed") {
+        if (!snapshotMatchesTarget(receipt.snapshot, pending.target, prepared.snapshot.policyRevision)) {
+          return {
+            kind: "rejected",
+            message: "The recovered native receipt does not match the requested sign-in policy. Refresh before making another change.",
+            snapshot: receipt.snapshot,
+          };
+        }
+        return {
+          kind: "reconciled-committed",
+          message: "The response was interrupted; the native receipt confirms the sign-in change was saved.",
+          snapshot: receipt.snapshot,
+        };
+      }
+      if (!confirmed && receipt.outcome === "cancelled") {
+        return {
+          kind: "cancelled",
+          message: "The response was interrupted; the native receipt confirms the sign-in change was cancelled.",
+          snapshot: receipt.snapshot,
+        };
+      }
+      return {
+        kind: "rejected",
+        message: "The recovered native receipt did not confirm the requested outcome. Refresh before making another change.",
+        snapshot: receipt.snapshot,
+      };
+    } catch {
+      // Fall through to an exact status reconciliation when receipt replay is unavailable.
+    }
     try {
       const snapshot = decodeApplicationLockSnapshot(
         await this.transport.invoke("application_lock_status"),
       );
       if (
-        snapshot.signInMode === prepared.targetMode
-        && snapshot.configurationState === "valid"
-        && snapshot.policyRevision > prepared.snapshot.policyRevision
+        confirmed
+        && snapshotMatchesTarget(snapshot, pending.target, prepared.snapshot.policyRevision)
       ) {
         this.pending = null;
         return {
           kind: "reconciled-committed",
           message: "The response was interrupted; native status confirms the sign-in change was saved.",
+          snapshot,
+        };
+      }
+      if (!confirmed) {
+        return {
+          kind: "rejected",
+          message: "Native sign-in status is unchanged, but cancellation receipt replay was interrupted. Retry cancellation before leaving this page.",
           snapshot,
         };
       }
@@ -290,6 +369,13 @@ export class ApplicationSettingsController {
         ));
         this.pending = null;
         if (cancellation.outcome === "committed") {
+          if (!snapshotMatchesTarget(cancellation.snapshot, pending.target, prepared.snapshot.policyRevision)) {
+            return {
+              kind: "rejected",
+              message: "The recovered native receipt does not match the requested sign-in policy. Refresh before making another change.",
+              snapshot: cancellation.snapshot,
+            };
+          }
           return {
             kind: "reconciled-committed",
             message: "The response was interrupted; the native receipt confirms the sign-in change was saved.",

@@ -197,6 +197,7 @@ describe("native application settings controller", () => {
     const transport = new QueueTransport([
       transition({}),
       new Error("response lost"),
+      new Error("receipt replay unavailable"),
       committedSnapshot,
     ]);
     const controller = new ApplicationSettingsController(transport);
@@ -207,7 +208,65 @@ describe("native application settings controller", () => {
     expect(transport.calls.map(({ command }) => command)).toEqual([
       "application_sign_in_transition_prepare",
       "application_sign_in_transition_commit",
+      "application_sign_in_transition_commit",
       "application_lock_status",
+    ]);
+  });
+
+  it.each([
+    ["profile", { profileName: "Other", inactivityTimeoutMinutes: 60 as const }],
+    ["timeout", { profileName: "Requested", inactivityTimeoutMinutes: 0 as const }],
+  ])("never treats a different same-mode %s policy as the requested commit after response loss", async (
+    _difference,
+    observedTarget,
+  ) => {
+    const preparedSnapshot = {
+      ...PASSWORD_SNAPSHOT,
+      profileName: "Prior",
+      inactivityTimeoutMinutes: 15 as const,
+    };
+    const observedDifferentPolicy = {
+      ...PASSWORD_SNAPSHOT,
+      policyRevision: 3,
+      auditSequence: 3,
+      ...observedTarget,
+    };
+    const transport = new QueueTransport([
+      transition({
+        sourceMode: "windows-password",
+        targetMode: "windows-password",
+        warningRequired: false,
+        snapshot: preparedSnapshot,
+      }),
+      new Error("response lost"),
+      new Error("receipt replay unavailable"),
+      observedDifferentPolicy,
+      transition({
+        outcome: "cancelled",
+        reasonCode: "RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED",
+        handle: null,
+        sourceMode: "windows-password",
+        targetMode: "windows-password",
+        warningRequired: false,
+        snapshot: observedDifferentPolicy,
+      }),
+    ]);
+    const controller = new ApplicationSettingsController(transport);
+
+    const result = await controller.prepare({
+      mode: "windows-password",
+      profileName: "Requested",
+      inactivityTimeoutMinutes: 60,
+    });
+
+    expect(result).toMatchObject({ kind: "unchanged", snapshot: observedDifferentPolicy });
+    expect(result.message).not.toContain("confirms the sign-in change was saved");
+    expect(transport.calls.map(({ command }) => command)).toEqual([
+      "application_sign_in_transition_prepare",
+      "application_sign_in_transition_commit",
+      "application_sign_in_transition_commit",
+      "application_lock_status",
+      "application_sign_in_transition_commit",
     ]);
   });
 
@@ -272,6 +331,7 @@ describe("native application settings controller", () => {
     const transport = new QueueTransport([
       transition({}),
       new Error("commit response lost"),
+      new Error("receipt replay unavailable"),
       new Error("status unavailable"),
       transition({
         outcome: "cancelled",

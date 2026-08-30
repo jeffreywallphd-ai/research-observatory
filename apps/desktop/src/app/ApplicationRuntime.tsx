@@ -167,6 +167,11 @@ export function ApplicationLockedView({
   return (
     <div className="locked-application" data-application-locked="true">
       <main className="locked-card" aria-labelledby="locked-title">
+        <div
+          className="locked-surface-content"
+          aria-hidden={recoveryConfirmation || undefined}
+          inert={recoveryConfirmation || undefined}
+        >
         <span className="brand-mark" aria-hidden="true">RO</span>
         <Typography id="locked-title" as="h1" variant="page-title">Research Observatory is locked</Typography>
         <p>{reason}</p>
@@ -200,6 +205,7 @@ export function ApplicationLockedView({
             ) : null}
           </>
         )}
+        </div>
         {recoveryConfirmation ? (
           <div
             className="locked-recovery-confirmation"
@@ -271,6 +277,7 @@ export function ApplicationRuntime(): ReactNode {
   const shortcutCloseRef = useRef<HTMLButtonElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const applicationSettingsTriggerRef = useRef<HTMLButtonElement>(null);
+  const applicationSettingsRestoreFocusRef = useRef<HTMLElement | null>(null);
   const previousWorkspaceRef = useRef<ApplicationWorkspace>("home");
   const applicationLockRef = useRef(applicationLock);
   const nativeLockSnapshotRef = useRef<ApplicationLockSnapshot | null>(null);
@@ -459,7 +466,7 @@ export function ApplicationRuntime(): ReactNode {
       const commandShortcut = isShortcut(event, "k", "ctrl");
       const helpShortcut = isShortcut(event, "/", "ctrl");
       const homeShortcut = isShortcut(event, "h", "alt");
-      if (applicationSettingsBlocked) {
+      if (applicationSettingsBlocked || lockedRecoveryConfirmation) {
         if (commandShortcut || helpShortcut || homeShortcut) event.preventDefault();
         return;
       }
@@ -488,7 +495,7 @@ export function ApplicationRuntime(): ReactNode {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [applicationSettingsBlocked, closeShortcuts, openShortcuts, shortcutsOpen]);
+  }, [applicationSettingsBlocked, closeShortcuts, lockedRecoveryConfirmation, openShortcuts, shortcutsOpen]);
 
   const lockNow = useCallback(() => {
     const locked: ApplicationLockSnapshot = {
@@ -574,8 +581,12 @@ export function ApplicationRuntime(): ReactNode {
       .finally(() => setUnlockBusy(false));
   }, [applyLockedRecoveryResult]);
 
-  const openApplicationSettings = useCallback(() => {
-    if (workspace !== "application-settings") previousWorkspaceRef.current = workspace;
+  const openApplicationSettings = useCallback((trigger?: HTMLElement | null) => {
+    if (workspace !== "application-settings") {
+      previousWorkspaceRef.current = workspace;
+      applicationSettingsRestoreFocusRef.current = trigger
+        ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    }
     setWorkspace("application-settings");
     announce("Application Security and sign-in settings opened.");
   }, [announce, workspace]);
@@ -583,7 +594,12 @@ export function ApplicationRuntime(): ReactNode {
   const returnFromApplicationSettings = useCallback(() => {
     setWorkspace(previousWorkspaceRef.current === "application-settings" ? "home" : previousWorkspaceRef.current);
     announce("Returned to the previous workspace.");
-    globalThis.window?.requestAnimationFrame(() => applicationSettingsTriggerRef.current?.focus());
+    const restore = applicationSettingsRestoreFocusRef.current;
+    applicationSettingsRestoreFocusRef.current = null;
+    globalThis.window?.requestAnimationFrame(() => {
+      if (restore?.isConnected) restore.focus();
+      else applicationSettingsTriggerRef.current?.focus();
+    });
   }, [announce]);
 
   const commands = useMemo<readonly CommandDefinition[]>(() => [
@@ -618,7 +634,7 @@ export function ApplicationRuntime(): ReactNode {
       id: "open-application-settings",
       label: "Open application settings",
       description: "Review application-wide Security and sign-in controls for this Windows account.",
-      run: openApplicationSettings,
+      run: () => openApplicationSettings(),
     },
     {
       id: "open-audit-lineage",
@@ -682,7 +698,7 @@ export function ApplicationRuntime(): ReactNode {
           <span className="project-context" data-project-context>
             {currentProject ? `${currentProject.displayName} · ${currentProject.accessMode === "read-only" ? "Read-only" : currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
           </span>
-          <Button ref={applicationSettingsTriggerRef} disabled={applicationSettingsBlocked} onClick={openApplicationSettings} data-local-profile data-application-settings-trigger>
+          <Button ref={applicationSettingsTriggerRef} disabled={applicationSettingsBlocked} onClick={(event) => openApplicationSettings(event.currentTarget)} data-local-profile data-application-settings-trigger>
             {applicationLock.profileName ?? "Local profile"}
           </Button>
           {applicationLock.signInMode === "none" ? null : <Button onClick={lockNow} data-application-lock>Lock</Button>}
@@ -703,24 +719,30 @@ export function ApplicationRuntime(): ReactNode {
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "audit" ? "page" : undefined} onClick={() => setWorkspace("audit")}>Audit &amp; lineage</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "application-settings" ? "page" : undefined} onClick={openApplicationSettings}>Application settings</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "application-settings" ? "page" : undefined} onClick={(event) => openApplicationSettings(event.currentTarget)}>Application settings</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
           <p>Only implemented capabilities appear here.</p>
         </aside>
 
         <main id="main-content" ref={homeRef} tabIndex={-1}>
-          {workspace === "projects" ? (
+          <div
+            className="workspace-layer"
+            hidden={workspace === "application-settings"}
+            aria-hidden={workspace === "application-settings" || undefined}
+            inert={workspace === "application-settings" || undefined}
+          >
+          {(workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "projects" ? (
             <ProjectsWorkspace
               announce={announce}
               selectedProject={currentProject}
               onProjectChange={setCurrentProject}
             />
-          ) : workspace === "intent" ? (
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "intent" ? (
             <IntentWorkspace project={currentProject} announce={announce} />
-          ) : workspace === "audit" ? (
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (
             <AuditLineageWorkspace project={currentProject} announce={announce} />
-          ) : workspace === "home" ? <><div className="page-header">
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "home" ? <><div className="page-header">
             <Typography as="h1" variant="page-title">Desktop foundation</Typography>
             <Typography className="page-subtitle">
               A local, offline application shell. Research workspaces appear only when their capability is implemented.
@@ -759,9 +781,13 @@ export function ApplicationRuntime(): ReactNode {
             </Panel>
             <LocalServiceBoundary announce={announce} />
           </div>
-          </> : workspace === "settings" ? (
+          </> : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "settings" ? (
             <ProjectSettingsWorkspace project={currentProject} announce={announce} />
-          ) : workspace === "application-settings" ? (
+          ) : (
+            <DiagnosticsWorkspace announce={announce} />
+          )}
+          </div>
+          {workspace === "application-settings" ? (
             <ApplicationSettingsWorkspace
               snapshot={applicationLock}
               announce={announce}
@@ -772,7 +798,7 @@ export function ApplicationRuntime(): ReactNode {
               onReturn={returnFromApplicationSettings}
               onOperationStateChange={setApplicationSettingsBlocked}
             />
-          ) : <DiagnosticsWorkspace announce={announce} />}
+          ) : null}
         </main>
       </div>
 

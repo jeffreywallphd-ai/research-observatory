@@ -870,6 +870,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationLock": False,
         "applicationLockReconciliation": False,
         "applicationSettingsDraftReconciliation": False,
+        "applicationSettingsPositionPreserved": False,
+        "applicationSettingsFocusRestoration": False,
         "applicationHelloRecovery": False,
         "responsiveCases": 0,
         "criticalViolations": [],
@@ -1534,6 +1536,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                           traceId: '0123456789abcdef0123456789abcdef', etag: null,
                           body: JSON.stringify(projection)};
                       }
+                      if (command === 'core_api_request' && args?.request?.path === '/projects/intent') {
+                        return {status: 200, contentType: 'application/json',
+                          traceId: '0123456789abcdef0123456789abcdef', etag: null,
+                          body: JSON.stringify({schemaVersion: '1.0',
+                            projectId: projection.projectId, current: null, history: []})};
+                      }
                       throw new Error(`unsupported lock reconciliation command: ${command}`);
                     }
                   };
@@ -1547,14 +1555,64 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             lock_reconciliation.locator("#project-display-name").fill("Sensitive Study")
             lock_reconciliation.get_by_role("button", name="Create project", exact=True).click()
             lock_reconciliation.locator("[data-current-project]").wait_for(timeout=5_000)
+            lock_reconciliation.get_by_role("button", name="Research intent", exact=True).click()
+            try:
+                lock_reconciliation.locator("#intent-use-case").wait_for(timeout=5_000)
+            except PlaywrightError:
+                details["applicationSettingsPositionDiagnostics"] = lock_reconciliation.evaluate(
+                    "() => ({body: document.body.innerText, workspace: "
+                    "document.querySelector('[data-intent-workspace]') !== null})"
+                )
+                raise
+            lock_reconciliation.locator("#intent-use-case").select_option("systematic-review")
+            lock_reconciliation.locator("#intent-objective").fill("Unsaved workflow position")
+            topbar_settings = lock_reconciliation.get_by_role("button", name="Private profile", exact=True)
+            topbar_settings.click()
+            lock_reconciliation.locator("[data-application-settings]").wait_for(timeout=5_000)
+            lock_reconciliation.get_by_role("button", name="Return", exact=True).click()
+            lock_reconciliation.wait_for_function(
+                "document.activeElement?.textContent?.trim() === 'Private profile'", timeout=5_000
+            )
+            workflow_round_trip = (
+                lock_reconciliation.locator("#intent-use-case").input_value() == "systematic-review"
+                and lock_reconciliation.locator("#intent-objective").input_value() == "Unsaved workflow position"
+                and "Sensitive Study" in lock_reconciliation.locator("[data-project-context]").inner_text()
+            )
+            sidebar_settings = lock_reconciliation.locator("nav").get_by_role(
+                "button", name="Application settings", exact=True
+            )
+            sidebar_settings.click()
+            lock_reconciliation.get_by_role("button", name="Return", exact=True).click()
+            lock_reconciliation.wait_for_function(
+                "document.activeElement?.textContent?.trim() === 'Application settings'", timeout=5_000
+            )
+            sidebar_focus = sidebar_settings.evaluate("element => document.activeElement === element")
             lock_reconciliation.get_by_role("button", name="Project home", exact=True).click()
+            lock_reconciliation.keyboard.press("Control+K")
+            lock_reconciliation.locator("#shell-command").fill("application settings")
+            command_settings = lock_reconciliation.get_by_role("button", name="Open application settings", exact=True)
+            command_settings.click()
+            lock_reconciliation.get_by_role("button", name="Return", exact=True).click()
+            try:
+                lock_reconciliation.wait_for_function(
+                    "document.activeElement?.getAttribute('data-command-id') === 'open-application-settings'",
+                    timeout=5_000,
+                )
+            except PlaywrightError:
+                details["applicationSettingsFocusDiagnostics"] = lock_reconciliation.evaluate(
+                    "() => ({active: document.activeElement?.outerHTML, commandConnected: "
+                    "document.querySelector('[data-command-id=open-application-settings]')?.isConnected})"
+                )
+                raise
+            command_focus = command_settings.evaluate("element => document.activeElement === element")
+            details["applicationSettingsPositionPreserved"] = workflow_round_trip
+            details["applicationSettingsFocusRestoration"] = sidebar_focus and command_focus
             lock_reconciliation.locator("#shell-command").fill("private query")
             lock_reconciliation.get_by_role("button", name="Private profile", exact=True).click()
             lock_reconciliation.locator("#application-profile-name").fill("Private profile draft")
             lock_reconciliation.wait_for_timeout(1_200)
             details["applicationSettingsDraftReconciliation"] = (
-                lock_reconciliation.locator("#application-profile-name").input_value()
-                == "Private profile draft"
+                lock_reconciliation.locator("#application-profile-name").input_value() == "Private profile draft"
             )
             lock_reconciliation.evaluate("window.__LOCK_EMIT__({malformed: true})")
             lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=5_000)
@@ -1752,18 +1810,16 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             hello_recovery.get_by_text(
                 "Set up Windows Hello in Windows before selecting it here", exact=False
             ).wait_for(timeout=5_000)
-            retry_visible = hello_recovery.get_by_role(
-                "button", name="Unlock with Windows Hello", exact=True
-            ).count() == 1
-            recovery = hello_recovery.get_by_role(
-                "button", name="Use Windows password recovery", exact=True
+            retry_visible = (
+                hello_recovery.get_by_role("button", name="Unlock with Windows Hello", exact=True).count() == 1
             )
+            recovery = hello_recovery.get_by_role("button", name="Use Windows password recovery", exact=True)
             recovery.click()
             dialog = hello_recovery.get_by_role("alertdialog")
             dialog.wait_for(timeout=5_000)
-            hello_recovery.get_by_role(
-                "button", name="Keep application locked", exact=True
-            ).wait_for(state="visible", timeout=5_000)
+            hello_recovery.get_by_role("button", name="Keep application locked", exact=True).wait_for(
+                state="visible", timeout=5_000
+            )
             hello_recovery.wait_for_function(
                 "!Array.from(document.querySelectorAll('button')).find((button) => "
                 "button.textContent?.trim() === 'Keep application locked')?.disabled",
@@ -1776,6 +1832,16 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             modal_focus = hello_recovery.evaluate(
                 "document.activeElement?.textContent?.trim() === 'Keep application locked'"
             )
+            modal_background_inert = hello_recovery.evaluate(
+                "document.querySelector('.locked-surface-content')?.inert === true "
+                "&& document.querySelector('.locked-surface-content')?.getAttribute('aria-hidden') === 'true'"
+            )
+            global_shortcuts_suppressed = True
+            for shortcut in ("Control+K", "Control+/", "Alt+H"):
+                hello_recovery.keyboard.press(shortcut)
+                global_shortcuts_suppressed = global_shortcuts_suppressed and hello_recovery.evaluate(
+                    "document.querySelector('[role=alertdialog]')?.contains(document.activeElement) === true"
+                )
             hello_recovery.keyboard.press("Escape")
             hello_recovery.wait_for_timeout(250)
             escaped = dialog.count() == 0
@@ -1784,9 +1850,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     "() => ({body: document.body.innerText, active: document.activeElement?.textContent?.trim(), "
                     "calls: window.__HELLO_COMMIT_CALLS__})"
                 )
-                hello_recovery.get_by_role(
-                    "button", name="Keep application locked", exact=True
-                ).click()
+                hello_recovery.get_by_role("button", name="Keep application locked", exact=True).click()
                 dialog.wait_for(state="detached", timeout=5_000)
             cancellation_call_safe = hello_recovery.evaluate(
                 "JSON.stringify(window.__HELLO_COMMIT_CALLS__) === '[false]'"
@@ -1798,20 +1862,20 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             recovery.click()
             dialog.wait_for(timeout=5_000)
             hello_recovery.get_by_role("button", name="Confirm recovery", exact=True).click()
-            hello_recovery.wait_for_function(
-                "window.__HELLO_COMMIT_CALLS__.length === 2", timeout=5_000
-            )
+            hello_recovery.wait_for_function("window.__HELLO_COMMIT_CALLS__.length === 2", timeout=5_000)
             busy_safe = (
                 hello_recovery.get_by_role("button", name="Keep application locked", exact=True).is_disabled()
                 and hello_recovery.get_by_role("button", name="Confirm recovery", exact=True).is_disabled()
-                and hello_recovery.get_by_role("button", name="Checking Windows Hello…", exact=True).is_disabled()
-                and recovery.is_disabled()
+                and hello_recovery.locator(".locked-surface-content button")
+                .filter(has_text="Checking Windows Hello…")
+                .is_disabled()
+                and hello_recovery.locator(".locked-surface-content button")
+                .filter(has_text="Use Windows password recovery")
+                .is_disabled()
             )
             dialog.press("Escape")
             hello_recovery.wait_for_timeout(50)
-            single_commit = hello_recovery.evaluate(
-                "JSON.stringify(window.__HELLO_COMMIT_CALLS__) === '[false,true]'"
-            )
+            single_commit = hello_recovery.evaluate("JSON.stringify(window.__HELLO_COMMIT_CALLS__) === '[false,true]'")
             hello_recovery.evaluate("window.__HELLO_RESOLVE_COMMIT__()")
             try:
                 hello_recovery.locator(".application-shell[data-application-ready]").wait_for(timeout=5_000)
@@ -1820,9 +1884,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     "() => ({body: document.body.innerText, calls: window.__HELLO_COMMIT_CALLS__})"
                 )
             unlocked_after_core_ready = hello_recovery.locator("[data-application-locked]").count() == 0
+            no_deferred_shortcut_dialog = hello_recovery.locator('[role="dialog"]').count() == 0
             details["applicationHelloRecoveryCases"] = {
                 "retryVisible": retry_visible,
                 "modalFocus": modal_focus,
+                "modalBackgroundInert": modal_background_inert,
+                "globalShortcutsSuppressed": global_shortcuts_suppressed,
                 "cancellationSafe": cancellation_safe,
                 "escapeClosed": escaped,
                 "cancellationCallSafe": cancellation_call_safe,
@@ -1830,10 +1897,18 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 "busySafe": busy_safe,
                 "singleCommit": single_commit,
                 "unlockedAfterCoreReady": unlocked_after_core_ready,
+                "noDeferredShortcutDialog": no_deferred_shortcut_dialog,
             }
             details["applicationHelloRecovery"] = (
-                retry_visible and modal_focus and cancellation_safe and busy_safe and single_commit
+                retry_visible
+                and modal_focus
+                and modal_background_inert
+                and global_shortcuts_suppressed
+                and cancellation_safe
+                and busy_safe
+                and single_commit
                 and unlocked_after_core_ready
+                and no_deferred_shortcut_dialog
             )
             if hello_recovery_errors:
                 errors.append(f"desktop Hello recovery runtime error: {'; '.join(hello_recovery_errors)}")
@@ -1884,6 +1959,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationLock",
         "applicationLockReconciliation",
         "applicationSettingsDraftReconciliation",
+        "applicationSettingsPositionPreserved",
+        "applicationSettingsFocusRestoration",
         "applicationHelloRecovery",
     ):
         if details[field] is not True:
