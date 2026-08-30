@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -758,10 +759,102 @@ def _migration_reference_errors(root: Path, reference: object) -> list[str]:
         errors.append("ECR v4 migration authority hash mismatch")
     if document.get("migrationId") != item.get("id") or document.get("status") != "adopted":
         errors.append("ECR v4 migration authority identity or adopted status mismatch")
+    if commit != _git_last_path_commit(root, str(relative)):
+        errors.append("ECR v4 migration authority is not bound to its exact adopted file commit")
     if not _git_commit_exists(root, commit) or not _git_is_ancestor(root, commit):
         errors.append("ECR v4 migration authority commit is missing or not ancestral")
     elif _git_blob(root, commit, str(relative)) != payload:
         errors.append("ECR v4 migration authority differs from its immutable Git blob")
+    review = _json_object(document.get("review"))
+    review_relative = review.get("path")
+    review_path = _safe_repository_file(root, review_relative)
+    try:
+        review_payload = review_path.read_bytes() if review_path else b""
+        review_document = json.loads(review_payload)
+    except OSError, UnicodeError, json.JSONDecodeError:
+        review_payload = b""
+        review_document = {}
+    if (
+        not review_payload
+        or hashlib.sha256(review_payload).hexdigest() != review.get("sha256")
+        or review_document.get("migrationId") != item.get("id")
+        or review_document.get("disposition") != "APPROVED"
+        or _git_last_path_commit(root, str(review_relative or "")) != commit
+        or _git_blob(root, commit, str(review_relative or "")) != review_payload
+    ):
+        errors.append("ECR v4 migration independent review is not exact, immutable, and APPROVED")
+    return errors
+
+
+def _v4_packet_review_errors(root: Path, packet: dict[str, Any], record: dict[str, Any]) -> list[str]:
+    review = _json_object(record.get("independentPacketReview"))
+    ledger_reference = _json_object(review.get("ledger"))
+    packet_reference = _json_object(record.get("packet"))
+    attempt_id = str(review.get("attemptId") or "")
+    expected_relative = f"planning/enabler-change-requests/{packet.get('changeRequestId')}.review-{attempt_id}.json"
+    relative = ledger_reference.get("path")
+    path = _safe_repository_file(root, relative)
+    try:
+        payload = path.read_bytes() if path else b""
+        ledger = json.loads(payload)
+    except OSError, UnicodeError, json.JSONDecodeError:
+        payload = b""
+        ledger = {}
+    introduction = str(ledger_reference.get("introductionCommit") or "")
+    candidate = str(packet_reference.get("commit") or "")
+    errors: list[str] = []
+    if relative != expected_relative:
+        errors.append("Wave amendment v4 review ledger path is not exact")
+    if not payload or hashlib.sha256(payload).hexdigest() != ledger_reference.get("sha256"):
+        errors.append("Wave amendment v4 review ledger hash is missing or mismatched")
+    if _approval_introduction_commit(root, str(relative or "")) != introduction:
+        errors.append("Wave amendment v4 review ledger is not bound to its unique introduction commit")
+    if review.get("reviewedStateCommit") != introduction:
+        errors.append("Wave amendment v4 reviewed state does not equal the review-ledger commit")
+    if _git_blob(root, introduction, str(relative or "")) != payload:
+        errors.append("Wave amendment v4 review ledger differs from its immutable Git blob")
+    expected = (
+        (ledger.get("documentType"), "enabler-change-request-packet-review"),
+        (ledger.get("changeRequestId"), packet.get("changeRequestId")),
+        (ledger.get("proposedAmendmentId"), packet.get("proposedAmendmentId")),
+        (ledger.get("attemptId"), attempt_id),
+        (ledger.get("candidateCommit"), candidate),
+        (ledger.get("packetSha256"), packet_reference.get("sha256")),
+        (ledger.get("reviewer"), review.get("reviewer")),
+        (ledger.get("result"), "approved"),
+        (ledger.get("approvalAvailable"), True),
+    )
+    if any(current != wanted for current, wanted in expected):
+        errors.append("Wave amendment v4 review ledger identity or APPROVED disposition is not exact")
+    findings = ledger.get("findings")
+    closures = ledger.get("closures")
+    if not isinstance(findings, list) or findings:
+        errors.append("Wave amendment v4 approved review ledger retains findings")
+    if not isinstance(closures, list):
+        errors.append("Wave amendment v4 review ledger closures are missing")
+        closure_ids: list[str] = []
+    else:
+        closure_ids = [
+            str(_json_object(item).get("findingId") or "")
+            for item in closures
+            if _json_object(item).get("disposition") == "closed"
+        ]
+        if len(closure_ids) != len(closures) or len(closure_ids) != len(set(closure_ids)):
+            errors.append("Wave amendment v4 review ledger closures are invalid or duplicated")
+    if review.get("findingIdsClosed") != closure_ids:
+        errors.append("Wave amendment v4 approval finding closures differ from the immutable ledger")
+    if not _git_is_ancestor(root, candidate, introduction):
+        errors.append("Wave amendment v4 review ledger does not descend from its candidate")
+    changed = subprocess.run(
+        ["git", "diff", "--name-only", candidate, introduction],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    changed_paths = [line.strip() for line in changed.stdout.splitlines() if line.strip()]
+    if changed.returncode != 0 or changed_paths != [relative]:
+        errors.append("Wave amendment v4 reviewed state contains changes outside its review ledger")
     return errors
 
 
@@ -802,6 +895,69 @@ def _approval_introduction_commit(root: Path, relative: str) -> str | None:
     )
     commits = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
     return commits[0] if completed.returncode == 0 and len(commits) == 1 else None
+
+
+def _git_last_path_commit(root: Path, relative: str) -> str | None:
+    completed = subprocess.run(
+        ["git", "log", "-1", "--format=%H", "--", relative],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    commit = completed.stdout.strip()
+    return commit if completed.returncode == 0 and re.fullmatch(r"[0-9a-f]{40}", commit) else None
+
+
+def _amendment_status_at(root: Path, commit: str, amendment_id: str) -> str | None:
+    payload = _git_blob(root, commit, "planning/backlog.yaml")
+    if payload is None:
+        return None
+    try:
+        document = yaml.safe_load(payload.decode("utf-8")) or {}
+        amendment = next(item for item in document.get("wave_amendments", []) if item.get("id") == amendment_id)
+    except UnicodeError, yaml.YAMLError, StopIteration, AttributeError:
+        return None
+    return str(_json_object(amendment.get("lifecycle")).get("status") or "") or None
+
+
+def _adoption_transition_errors(root: Path, amendment_id: str, commit: str) -> list[str]:
+    """Bind the effective state to the commit that first changes this amendment to ADOPTED."""
+    if not _git_commit_exists(root, commit):
+        return [f"ECR v4 {amendment_id} effective-state commit is unavailable"]
+    parent = subprocess.run(
+        ["git", "rev-parse", f"{commit}^"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    ).stdout.strip()
+    if (
+        re.fullmatch(r"[0-9a-f]{40}", parent) is None
+        or _amendment_status_at(root, commit, amendment_id) != "ADOPTED"
+        or _amendment_status_at(root, parent, amendment_id) == "ADOPTED"
+    ):
+        return [f"ECR v4 {amendment_id} effective state is not its exact ADOPTED transition"]
+    return []
+
+
+def _next_global_ecr_id(root: Path, current_id: str) -> str:
+    identities: set[str] = set()
+    ecr_root = root / "planning" / "enabler-change-requests"
+    for path in ecr_root.glob("ECR-*.packet.json"):
+        identity = path.name.removesuffix(".packet.json")
+        if identity != current_id and ECR_ID_PATTERN.fullmatch(identity):
+            identities.add(identity)
+    approval_root = root / "planning" / "wave-amendment-approvals"
+    for path in approval_root.glob("W*.A*.json"):
+        try:
+            identity = json.loads(path.read_text(encoding="utf-8")).get("changeRequestId")
+        except OSError, UnicodeError, json.JSONDecodeError:
+            continue
+        if isinstance(identity, str) and identity != current_id and ECR_ID_PATTERN.fullmatch(identity):
+            identities.add(identity)
+    number = max((int(identity.removeprefix("ECR-")) for identity in identities), default=0) + 1
+    return f"ECR-{number:04d}"
 
 
 def _historical_wave_approval(root: Path, commit: str, wave_id: str) -> dict[str, Any] | None:
@@ -933,6 +1089,8 @@ def _approval_record_errors(
         errors.append("Wave amendment approval requires an APPROVED independent review of the exact packet commit")
     if review.get("reviewer") == record.get("approvedBy"):
         errors.append("Wave amendment packet reviewer must be independent from the human approver")
+    if packet.get("schemaVersion") == "4.0-proposal":
+        errors.extend(_v4_packet_review_errors(root, packet, record))
     packet_commit = packet_reference.get("commit")
     if not isinstance(packet_commit, str) or re.fullmatch(r"[0-9a-f]{40}", packet_commit) is None:
         errors.append("Wave amendment approval packet commit must be a full lowercase Git SHA")
@@ -974,6 +1132,10 @@ def _approval_record_errors(
                 errors.append("Wave amendment approval introduction is not on current history")
             if isinstance(packet_commit, str) and not _git_is_ancestor(root, packet_commit, introduced):
                 errors.append("Wave amendment approval introduction does not descend from its packet commit")
+            if packet.get("schemaVersion") == "4.0-proposal":
+                review_commit = str(_json_object(review.get("ledger")).get("introductionCommit") or "")
+                if not _git_is_ancestor(root, review_commit, introduced):
+                    errors.append("Wave amendment approval introduction does not descend from its review ledger")
     return errors
 
 
@@ -1324,21 +1486,7 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
             errors.append(f"ECR v4 {item.get('id')} packet commit differs from its approval")
         ordered_commits.extend((packet_commit, approval_commit, state_commit))
         ancestry_pairs.extend(((packet_commit, approval_commit), (approval_commit, state_commit)))
-        historical = (
-            _git_blob(root, state_commit, "planning/backlog.yaml") if _git_commit_exists(root, state_commit) else None
-        )
-        if historical is None:
-            errors.append(f"ECR v4 {item.get('id')} effective-state commit is unavailable")
-        else:
-            try:
-                state = yaml.safe_load(historical.decode("utf-8"))
-                historical_item = next(
-                    candidate for candidate in state.get("wave_amendments", []) if candidate.get("id") == item.get("id")
-                )
-            except UnicodeError, yaml.YAMLError, StopIteration, AttributeError:
-                historical_item = None
-            if (historical_item or {}).get("lifecycle", {}).get("status") != "ADOPTED":
-                errors.append(f"ECR v4 {item.get('id')} effective state is not ADOPTED")
+        errors.extend(_adoption_transition_errors(root, str(item.get("id") or ""), state_commit))
 
     migration = _json_object(packet.get("migrationAuthority"))
     errors.extend(_migration_reference_errors(root, migration))
@@ -1376,19 +1524,16 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         migration_commit = str(migration.get("commit") or "")
         ordered_commits.extend((packet_commit, approval_commit, migration_commit))
         ancestry_pairs.extend(((packet_commit, approval_commit), (approval_commit, migration_commit)))
-        if _git_blob(root, approval_commit, str(reference.get("path") or "")) != approval_payload:
+        if (
+            _approval_introduction_commit(root, str(reference.get("path") or "")) != approval_commit
+            or _git_blob(root, approval_commit, str(reference.get("path") or "")) != approval_payload
+        ):
             errors.append(f"ECR v4 {item.get('id')} reserved approval differs from its introduction blob")
 
     if proposed != f"{wave_id}.A{len(frozen) + len(reserved) + 1:02d}":
         errors.append("ECR v4 proposed amendment does not follow adopted and reserved authority")
-    existing_ecr_numbers = [
-        int(str(_json_object(item).get("changeRequestId")).removeprefix("ECR-"))
-        for item in [*frozen, *reserved]
-        if re.fullmatch(r"ECR-[0-9]{4}", str(_json_object(item).get("changeRequestId") or ""))
-    ]
-    next_ecr = max(existing_ecr_numbers, default=0) + 1
-    if packet.get("changeRequestId") != f"ECR-{next_ecr:04d}":
-        errors.append("ECR v4 change-request identity is not consecutive")
+    if packet.get("changeRequestId") != _next_global_ecr_id(root, str(packet.get("changeRequestId") or "")):
+        errors.append("ECR v4 change-request identity is not next in the repository-global namespace")
 
     authorized = [str(item) for item in packet.get("authorizedTaskIds", [])]
     inventory = [str(_json_object(item).get("id")) for item in packet.get("taskInventory", [])]
@@ -1425,12 +1570,66 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     budget = _json_object(packet.get("refactorBudget"))
     if budget.get("refactorTaskIds") != refactor_task_ids:
         errors.append("ECR v4 refactor budget does not match contribution task classification")
-    planned = float(budget.get("plannedWorkPoints") or 0)
-    refactor = float(budget.get("refactorPoints") or 0)
-    declared_share = float(budget.get("refactorSharePercent") or 0)
-    calculated_share = round((refactor / planned) * 100, 1) if planned > 0 else 100.0
-    if declared_share != calculated_share or declared_share > float(budget.get("limitPercent") or 0):
-        errors.append("ECR v4 refactor budget is mathematically inconsistent or exceeds its limit")
+    baseline = _json_object(budget.get("baseline"))
+    scale = {"S": 1, "M": 3, "L": 5}
+    baseline_commit = str(baseline.get("sourceCommit") or "")
+    baseline_payload = _git_blob(root, baseline_commit, "planning/backlog.yaml")
+    try:
+        baseline_backlog = yaml.safe_load(baseline_payload.decode("utf-8")) if baseline_payload else {}
+    except UnicodeError, yaml.YAMLError:
+        baseline_backlog = {}
+    expected_baseline_tasks = [
+        {"id": str(task.get("id")), "estimate": str(task.get("estimate")), "points": scale.get(task.get("estimate"))}
+        for capability in _json_object(baseline_backlog).get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+        if slice_.get("wave") == wave_id
+        for task in slice_.get("tasks", [])
+    ]
+    expected_total = sum(int(item.get("points") or 0) for item in expected_baseline_tasks)
+    if (
+        baseline.get("waveId") != wave_id
+        or baseline_commit != wave_base.get("packetCommit")
+        or baseline.get("sourcePath") != "planning/backlog.yaml"
+        or baseline.get("estimateScale") != scale
+        or baseline.get("tasks") != expected_baseline_tasks
+        or baseline.get("totalPoints") != expected_total
+        or expected_total <= 0
+    ):
+        errors.append("ECR v4 refactor baseline is not the exact itemized approved Wave plan")
+    inventory_by_id = {
+        str(_json_object(item).get("id")): _json_object(item) for item in packet.get("taskInventory", [])
+    }
+    expected_allocations: list[dict[str, object]] = []
+    for task_id in refactor_task_ids:
+        estimate = str(inventory_by_id.get(task_id, {}).get("estimate") or "")
+        expected_allocations.append({"taskId": task_id, "estimate": estimate, "points": scale.get(estimate)})
+    allocations = budget.get("refactorAllocations")
+    numeric_values = [budget.get("refactorPoints"), budget.get("refactorSharePercent"), baseline.get("totalPoints")]
+    finite = all(isinstance(value, (int, float)) and math.isfinite(float(value)) for value in numeric_values)
+    refactor = sum(scale.get(str(item.get("estimate") or ""), 0) for item in expected_allocations)
+    declared_share = float(budget.get("refactorSharePercent") or 0) if finite else math.inf
+    calculated_share = round((refactor / expected_total) * 100, 1) if expected_total > 0 else 100.0
+    limit_policy = _json_object(budget.get("limitPolicy"))
+    limit_mode = limit_policy.get("mode")
+    standard_limit_ok = limit_mode == "standard-15-percent" and declared_share <= 15
+    exception_limit_ok = (
+        limit_mode == "owner-directed-wave-exception"
+        and limit_policy.get("authorizedBy") == "repository-owner"
+        and isinstance(limit_policy.get("authorization"), str)
+        and bool(str(limit_policy.get("authorization")).strip())
+        and limit_policy.get("scopeTaskIds") == refactor_task_ids
+        and isinstance(limit_policy.get("rationale"), str)
+        and bool(str(limit_policy.get("rationale")).strip())
+    )
+    if (
+        allocations != expected_allocations
+        or len(expected_allocations) != len({item["taskId"] for item in expected_allocations})
+        or budget.get("refactorPoints") != refactor
+        or not finite
+        or declared_share != calculated_share
+        or not (standard_limit_ok or exception_limit_ok)
+    ):
+        errors.append("ECR v4 refactor budget is not exact, finite, itemized, or validly limited/excepted")
 
     waves = {str(item.get("id")): item for item in backlog.get("waves", [])}
     campaign = _json_object(_json_object(waves.get(wave_id)).get("campaign"))
@@ -1569,11 +1768,15 @@ def approve_ecr(
         raise ValueError("ECR approval requires a non-empty human approver identity")
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("ECR approval commit must be a full lowercase Git SHA")
+    record, payload = _json_document(record_path)
+    expected_head = commit
+    if packet.get("schemaVersion") == "4.0-proposal":
+        expected_head = str(_json_object(record.get("independentPacketReview")).get("reviewedStateCommit") or "")
     head = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False
     ).stdout.strip()
-    if head != commit:
-        raise ValueError("ECR approval commit must equal the current immutable Git HEAD")
+    if head != expected_head:
+        raise ValueError("ECR approval HEAD must equal the exact packet commit or its v4 review-ledger commit")
     status = subprocess.run(["git", "status", "--porcelain"], cwd=root, capture_output=True, text=True, check=False)
     if status.returncode != 0:
         raise ValueError("ECR approval cannot inspect the worktree")
@@ -1598,7 +1801,6 @@ def approve_ecr(
     preliminary = ecr_validation_errors(root, change_request_id, require_approved=False)
     if preliminary:
         raise ValueError("ECR packet validation failed: " + "; ".join(preliminary))
-    record, payload = _json_document(record_path)
     if record.get("approvedBy") != approver:
         raise ValueError("Approval record approvedBy must equal --by")
     if (record.get("packet") or {}).get("commit") != commit:

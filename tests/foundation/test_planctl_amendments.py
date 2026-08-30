@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
+import yaml
+
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -19,6 +21,7 @@ from planctl import (  # noqa: E402
     _approval_introduction_commit,
     _authority_chain_v4_errors,
     _schema_errors,
+    _v4_packet_review_errors,
     approve_ecr,
     ecr_validation_errors,
 )
@@ -49,6 +52,20 @@ class PlanctlAmendmentTests(unittest.TestCase):
         experience_path = REPO / "design/ui-reference/project-settings.html"
         tasks = [f"W1.A05.T{index:02d}" for index in range(1, 5)]
         bootstrap = "W1.A05.B00"
+        scale = {"S": 1, "M": 3, "L": 5}
+        baseline_commit = predecessor["authorityChain"]["waveBase"]["packetCommit"]
+        baseline_backlog = yaml.safe_load(
+            subprocess.check_output(["git", "show", f"{baseline_commit}:planning/backlog.yaml"], cwd=REPO).decode(
+                "utf-8"
+            )
+        )
+        baseline_tasks = [
+            {"id": task["id"], "estimate": task["estimate"], "points": scale[task["estimate"]]}
+            for capability in baseline_backlog["capabilities"]
+            for slice_ in capability["slices"]
+            if slice_.get("wave") == "W1"
+            for task in slice_["tasks"]
+        ]
         return {
             "$schema": "./enabler-change-request.v4.schema.json",
             "schemaVersion": "4.0-proposal",
@@ -123,17 +140,26 @@ class PlanctlAmendmentTests(unittest.TestCase):
                     "id": task_id,
                     "title": f"Task {position}",
                     "objective": "Bounded implementation objective.",
+                    "estimate": estimate,
                     "dependencies": [bootstrap],
                     "acceptanceCriteria": ["Criterion-linked evidence is required."],
                     "verification": ["Run affected deterministic checks."],
                 }
-                for position, task_id in enumerate(tasks, start=1)
+                for position, (task_id, estimate) in enumerate(zip(tasks, ["L", "L", "M", "L"], strict=True), start=1)
             ],
             "refactorBudget": {
-                "plannedWorkPoints": 194,
+                "baseline": {
+                    "waveId": "W1",
+                    "sourceCommit": baseline_commit,
+                    "sourcePath": "planning/backlog.yaml",
+                    "estimateScale": scale,
+                    "tasks": baseline_tasks,
+                    "totalPoints": sum(item["points"] for item in baseline_tasks),
+                },
+                "refactorAllocations": [{"taskId": tasks[0], "estimate": "L", "points": 5}],
                 "refactorPoints": 5,
                 "refactorSharePercent": 2.6,
-                "limitPercent": 15,
+                "limitPolicy": {"mode": "standard-15-percent", "limitPercent": 15},
                 "refactorTaskIds": [tasks[0]],
                 "method": "Existing W1 estimate points with M=3 and L=5.",
             },
@@ -204,10 +230,104 @@ class PlanctlAmendmentTests(unittest.TestCase):
         tampered["authorityChain"]["reservedAmendments"][0]["approvalReference"]["sha256"] = "0" * 64
         self.assertTrue(any("reserved authority" in error for error in _authority_chain_v4_errors(REPO, tampered)))
 
+        substituted_intro = copy.deepcopy(packet)
+        substituted_intro["authorityChain"]["reservedAmendments"][0]["approvalReference"]["introductionCommit"] = (
+            packet["migrationAuthority"]["commit"]
+        )
+        self.assertTrue(
+            any("introduction blob" in error for error in _authority_chain_v4_errors(REPO, substituted_intro))
+        )
+
+        substituted_migration = copy.deepcopy(packet)
+        substituted_migration["migrationAuthority"]["commit"] = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, text=True
+        ).strip()
+        substituted_migration["authorityChain"]["reservedAmendments"][0]["supersededByMigration"] = copy.deepcopy(
+            substituted_migration["migrationAuthority"]
+        )
+        self.assertTrue(
+            any(
+                "exact adopted file commit" in error
+                for error in _authority_chain_v4_errors(REPO, substituted_migration)
+            )
+        )
+
+        substituted_effective_state = copy.deepcopy(packet)
+        substituted_effective_state["authorityChain"]["orderedAmendments"][0]["effectiveStateCommit"] = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+        )
+        self.assertTrue(
+            any(
+                "exact ADOPTED transition" in error
+                for error in _authority_chain_v4_errors(REPO, substituted_effective_state)
+            )
+        )
+
         over_budget = copy.deepcopy(packet)
         over_budget["refactorBudget"]["refactorPoints"] = 40
         over_budget["refactorBudget"]["refactorSharePercent"] = 20.6
         self.assertTrue(any("refactor budget" in error for error in _authority_chain_v4_errors(REPO, over_budget)))
+
+        inflated = copy.deepcopy(packet)
+        inflated["refactorBudget"]["baseline"]["totalPoints"] = 1_000_000_000
+        inflated["refactorBudget"]["refactorSharePercent"] = 0.0
+        self.assertTrue(any("refactor baseline" in error for error in _authority_chain_v4_errors(REPO, inflated)))
+
+        omitted_allocation = copy.deepcopy(packet)
+        omitted_allocation["refactorBudget"]["refactorAllocations"] = []
+        self.assertTrue(
+            any("refactor budget" in error for error in _authority_chain_v4_errors(REPO, omitted_allocation))
+        )
+
+        non_finite = copy.deepcopy(packet)
+        non_finite["refactorBudget"]["refactorPoints"] = float("inf")
+        self.assertTrue(any("refactor budget" in error for error in _authority_chain_v4_errors(REPO, non_finite)))
+
+        directed_exception = copy.deepcopy(packet)
+        directed_exception["refactorBudget"]["limitPolicy"] = {
+            "mode": "owner-directed-wave-exception",
+            "authorizedBy": "repository-owner",
+            "authorization": "Complete this authentication refactor within W1 without applying the 15% cap.",
+            "scopeTaskIds": ["W1.A05.T01"],
+            "rationale": "The provider boundary is necessary to deliver the requested login modes coherently.",
+        }
+        self.assertEqual([], _authority_chain_v4_errors(REPO, directed_exception))
+
+        overbroad_exception = copy.deepcopy(directed_exception)
+        overbroad_exception["refactorBudget"]["limitPolicy"]["scopeTaskIds"] = ["W1.A05.T02"]
+        self.assertTrue(
+            any("refactor budget" in error for error in _authority_chain_v4_errors(REPO, overbroad_exception))
+        )
+
+    def test_v4_schema_allows_truthful_empty_predecessor_and_reservation_sets(self) -> None:
+        packet = self._post_migration_v4_packet()
+        packet["authorityChain"]["orderedAmendments"] = []
+        packet["authorityChain"]["reservedAmendments"] = []
+        schema = REPO / "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
+        self.assertEqual([], _schema_errors(packet, schema, "empty-history ECR v4 fixture"))
+
+    def test_v4_change_request_identity_is_repository_global(self) -> None:
+        packet = self._post_migration_v4_packet()
+        packet["changeRequestId"] = "ECR-0001"
+        self.assertTrue(
+            any("repository-global namespace" in error for error in _authority_chain_v4_errors(REPO, packet))
+        )
+
+    def test_v4_approval_denies_an_invented_review_projection_without_ledger(self) -> None:
+        packet = self._post_migration_v4_packet()
+        record = {
+            "approvedBy": "repository-owner",
+            "packet": {"commit": "f" * 40, "sha256": "a" * 64},
+            "independentPacketReview": {
+                "reviewer": "invented-independent-reviewer",
+                "candidateCommit": "f" * 40,
+                "result": "APPROVED",
+                "attemptId": "R01",
+                "findingIdsClosed": [],
+            },
+        }
+        errors = _v4_packet_review_errors(REPO, packet, record)
+        self.assertTrue(any("review ledger" in error for error in errors), errors)
 
     def test_committed_approval_rewrite_is_detected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

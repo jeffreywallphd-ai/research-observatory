@@ -35,13 +35,11 @@
         },
         "orderedAmendments": {
           "type": "array",
-          "minItems": 1,
           "uniqueItems": true,
           "items": {"$ref": "#/$defs/adoptedAmendment"}
         },
         "reservedAmendments": {
           "type": "array",
-          "minItems": 1,
           "uniqueItems": true,
           "items": {"$ref": "#/$defs/reservedAmendment"}
         }
@@ -113,11 +111,12 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "title", "objective", "dependencies", "acceptanceCriteria", "verification"],
+        "required": ["id", "title", "objective", "estimate", "dependencies", "acceptanceCriteria", "verification"],
         "properties": {
           "id": {"$ref": "#/$defs/task"},
           "title": {"type": "string", "minLength": 1},
           "objective": {"type": "string", "minLength": 1},
+          "estimate": {"$ref": "#/$defs/estimate"},
           "dependencies": {
             "type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}
           },
@@ -129,12 +128,90 @@
     },
     "refactorBudget": {
       "type": "object",
-      "required": ["plannedWorkPoints", "refactorPoints", "refactorSharePercent", "limitPercent", "refactorTaskIds", "method"],
+      "required": [
+        "baseline", "refactorAllocations", "refactorPoints", "refactorSharePercent", "limitPolicy",
+        "refactorTaskIds", "method"
+      ],
       "properties": {
-        "plannedWorkPoints": {"type": "number", "exclusiveMinimum": 0},
+        "baseline": {
+          "type": "object",
+          "required": ["waveId", "sourceCommit", "sourcePath", "estimateScale", "tasks", "totalPoints"],
+          "properties": {
+            "waveId": {"$ref": "#/$defs/wave"},
+            "sourceCommit": {"$ref": "#/$defs/commit"},
+            "sourcePath": {"const": "planning/backlog.yaml"},
+            "estimateScale": {
+              "type": "object",
+              "required": ["S", "M", "L"],
+              "properties": {
+                "S": {"const": 1},
+                "M": {"const": 3},
+                "L": {"const": 5}
+              },
+              "additionalProperties": false
+            },
+            "tasks": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "required": ["id", "estimate", "points"],
+                "properties": {
+                  "id": {"$ref": "#/$defs/canonicalTask"},
+                  "estimate": {"$ref": "#/$defs/estimate"},
+                  "points": {"enum": [1, 3, 5]}
+                },
+                "additionalProperties": false
+              }
+            },
+            "totalPoints": {"type": "integer", "minimum": 1}
+          },
+          "additionalProperties": false
+        },
+        "refactorAllocations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": ["taskId", "estimate", "points"],
+            "properties": {
+              "taskId": {"$ref": "#/$defs/task"},
+              "estimate": {"$ref": "#/$defs/estimate"},
+              "points": {"enum": [1, 3, 5]}
+            },
+            "additionalProperties": false
+          }
+        },
         "refactorPoints": {"type": "number", "minimum": 0},
         "refactorSharePercent": {"type": "number", "minimum": 0, "maximum": 100},
-        "limitPercent": {"const": 15},
+        "limitPolicy": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["mode", "limitPercent"],
+              "properties": {
+                "mode": {"const": "standard-15-percent"},
+                "limitPercent": {"const": 15}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["mode", "authorizedBy", "authorization", "scopeTaskIds", "rationale"],
+              "properties": {
+                "mode": {"const": "owner-directed-wave-exception"},
+                "authorizedBy": {"const": "repository-owner"},
+                "authorization": {"type": "string", "minLength": 1},
+                "scopeTaskIds": {
+                  "type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/task"}
+                },
+                "rationale": {"type": "string", "minLength": 1}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
         "refactorTaskIds": {
           "type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/task"}
         },
@@ -181,6 +258,8 @@
     "amendment": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
     "slice": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.S[0-9]{2}$"},
     "task": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}$"},
+    "canonicalTask": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}$"},
+    "estimate": {"enum": ["S", "M", "L"]},
     "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "ecrPath": {
