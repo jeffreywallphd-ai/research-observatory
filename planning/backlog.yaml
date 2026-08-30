@@ -31386,14 +31386,17 @@ wave_amendments:
       security/contract review.
     - Obtain independent commit-bound task review before slice approval.
     packet_task_sha256: 2272a51e0d8ed54298b37271060a47aedd2e824ea61f8739fc1a47e02348d1ad
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-08-30T16:30:38+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: d61f3250a701f0aa51d05c68ec69f9833dae683d
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-30T16:35:05+00:00'
+      expires_at: '2026-08-31T00:35:05+00:00'
+    started_at: '2026-08-30T16:35:05+00:00'
+    updated_at: '2026-08-30T16:35:05+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
