@@ -31583,18 +31583,15 @@ wave_amendments:
       to T04, S02 review, and Wave qualification.
     - Obtain independent commit-bound security/migration task review.
     packet_task_sha256: 32cf27efeb770f022e3991167518e0e9cfe44b8897168942fc72ec644035060a
-    status: REVIEW
+    status: DONE
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde
     worktree: C:/workspace/research-observatory
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-30T18:15:49+00:00'
-      expires_at: '2026-08-31T02:15:49+00:00'
+    lease: null
     started_at: '2026-08-30T17:14:11+00:00'
-    updated_at: '2026-08-30T18:23:42+00:00'
-    completed_at: null
+    updated_at: '2026-08-30T18:29:24+00:00'
+    completed_at: '2026-08-30T18:29:24+00:00'
     blocker: null
     implementation_notes: ''
     evidence:
@@ -31611,26 +31608,30 @@ wave_amendments:
     verification_state: passed
     review: &id108
       reviewer: codex-independent-sign-in-policy-security-reviewer
-      result: changes-requested
-      reviewed_at: '2026-08-30T18:15:49+00:00'
-      notes: 'Independent commit-bound security/migration review authenticated the exact base, candidate, submission record,
-        evidence SHA-256 ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b, Git blob b2cc319428ba5f38f04063144e8ee8dc819f3a11,
-        and all 21 declared candidate paths. Base is an ancestor of candidate and candidate is an ancestor of submission;
-        candidate product/test bytes remain unchanged at submission and both ranges pass patch hygiene. Independent replay
-        passed all 53 native library tests, all 13 focused renderer transition tests, all 71 desktop tests, all nine focused
-        Python security/contract tests, Ruff, Rust format and warnings-denied Clippy, the production desktop build, desktop
-        lint, architecture, build-input inventory, and the governed affected selector. Strict parsing/migration, explicit-none
-        materialization, provider ordering, configured-provider and same-SID recovery proof, proof-before-confirmation structure,
-        opaque digest-only handles, expiry/replay behavior, typed native/renderer failures, no-follow file inspection, named-mutex/CAS
-        publication, response-loss receipt replay within the live process, audit redaction, and zero/nonzero lock behavior
-        otherwise match the approved T03 contract. One blocking cross-process authority defect remains: publication updates
-        only the committing manager''s in-memory state, while another already-running manager/process never reloads or fails
-        closed and no single-instance control exists. That stale process can remain none/unlocked and continue protected actions
-        after the durable application-wide policy has become protected. The submitted tests exercise two managers only as
-        stale writers and do not run the task-start-required child-process/abrupt-exit harness, so the claimed process-wide/crash
-        coverage does not detect this behavior. T04 legitimately owns the governed settings/recovery UI and activation-reference
-        correction, and W1 exit legitimately owns accumulated performance/full qualification, but neither later gate owns
-        this native application-wide authority defect.'
+      result: approved
+      reviewed_at: '2026-08-30T18:29:24+00:00'
+      notes: Independent bounded R02 security/migration review found no remaining blocking or nonblocking acceptance-bound
+        defect. Exact candidate c94ab3ef76529f7eee0d2f002423c21aec3e1161 is a strict descendant of adverse candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785,
+        and immutable submission 5ad731f0e52fa29bcba5a04c6270f8d631d6cb2b is a strict descendant of the remediation candidate.
+        The remediation manifest reproduces SHA-256 cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1 and Git
+        blob 939a09fd5cd6795c4c3884158f90a332a0aa8c68; all 12 declared paths exactly match the remediation range and candidate
+        product/test bytes remain exact at submission. W1.A05.T03-R01-F01 is closed. Production now acquires one Global Windows
+        instance object whose name is derived from the same stable canonical application-data root used by the policy store
+        before constructing the manager or starting Core. CreateMutexW uses existence-only semantics with bInitialOwner false,
+        checks GetLastError immediately for ERROR_ALREADY_EXISTS, and retains the handle instead of thread-affine mutex ownership.
+        Every manager clone retains the Arc-held lease, final drop may close it on any thread, and abrupt process termination
+        closes it automatically. ApplicationLockManager::new is test-only; the sole production setup path uses acquire and
+        propagates typed RO-DESKTOP-ALREADY-RUNNING or RO-DESKTOP-INSTANCE-UNAVAILABLE failure before Core launch. Independent
+        real-child replay proved that a child first commits a 15-minute windows-password policy, a duplicate process is denied,
+        abrupt termination releases the lease, and restart reads the exact protected policy, starts locked for application
+        restart, and denies protected actions. A separate child published password across the real process boundary, the stale
+        parent received the expected CAS conflict, abrupt child death while owning the named publication mutex produced recoverable
+        abandoned ownership, and restart retained exact valid canonical bytes. All 56 native tests, 71 desktop tests, nine
+        focused Python checks, Rust format/Clippy, Ruff, production build/lint, architecture, build inventory, affected selection,
+        and both patch-hygiene ranges passed. Prior migration, provider ordering, same-SID recovery, proof/handle/expiry,
+        typed failures, redaction, no-follow persistence, explicit-none, zero/nonzero lock behavior, and renderer contracts
+        remain unchanged and green. T04's governed experience/reference work and W1-exit's accumulated performance/full qualification
+        remain legitimate later duties.
     review_control:
       version: 1
       attempts:
@@ -31735,7 +31736,28 @@ wave_amendments:
           - security-local:supply-chain
           - security-local:unit
           packet_sha256: c2ac12df526e4b4471ae25f472f85efc50cde246fa4781ce5d56ebbe9811d48b
-        review: *id108
+        review:
+          reviewer: codex-independent-sign-in-policy-security-reviewer
+          result: changes-requested
+          reviewed_at: '2026-08-30T18:15:49+00:00'
+          notes: 'Independent commit-bound security/migration review authenticated the exact base, candidate, submission record,
+            evidence SHA-256 ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b, Git blob b2cc319428ba5f38f04063144e8ee8dc819f3a11,
+            and all 21 declared candidate paths. Base is an ancestor of candidate and candidate is an ancestor of submission;
+            candidate product/test bytes remain unchanged at submission and both ranges pass patch hygiene. Independent replay
+            passed all 53 native library tests, all 13 focused renderer transition tests, all 71 desktop tests, all nine focused
+            Python security/contract tests, Ruff, Rust format and warnings-denied Clippy, the production desktop build, desktop
+            lint, architecture, build-input inventory, and the governed affected selector. Strict parsing/migration, explicit-none
+            materialization, provider ordering, configured-provider and same-SID recovery proof, proof-before-confirmation
+            structure, opaque digest-only handles, expiry/replay behavior, typed native/renderer failures, no-follow file
+            inspection, named-mutex/CAS publication, response-loss receipt replay within the live process, audit redaction,
+            and zero/nonzero lock behavior otherwise match the approved T03 contract. One blocking cross-process authority
+            defect remains: publication updates only the committing manager''s in-memory state, while another already-running
+            manager/process never reloads or fails closed and no single-instance control exists. That stale process can remain
+            none/unlocked and continue protected actions after the durable application-wide policy has become protected. The
+            submitted tests exercise two managers only as stale writers and do not run the task-start-required child-process/abrupt-exit
+            harness, so the claimed process-wide/crash coverage does not detect this behavior. T04 legitimately owns the governed
+            settings/recovery UI and activation-reference correction, and W1 exit legitimately owns accumulated performance/full
+            qualification, but neither later gate owns this native application-wide authority defect.'
         ledger:
           path: artifacts/evidence/W1.A05.T03.review-R01.json
           sha256: a879320921246d7417b195dd2258e2b5962e7608c78e377adfac0255247f79a4
@@ -31818,97 +31840,168 @@ wave_amendments:
             prior_attempt_id: null
             replayed_finding_ids: []
             closed_finding_ids: []
-      current_submission:
-        id: R02
-        submitted_by: codex
-        submitted_at: '2026-08-30T18:23:42+00:00'
-        candidate_commit: c94ab3ef76529f7eee0d2f002423c21aec3e1161
-        base_commit: deec1063e6bcd9a17d2a10c574103c10ebdd7785
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A05.T03.remediation-01.json
-          sha256: cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1
-          commit: c94ab3ef76529f7eee0d2f002423c21aec3e1161
-          recorded_at: '2026-08-30T18:23:42+00:00'
-        acceptance_criteria_sha256: 4250e5765a66a110aff54ee25e0d34853cb42fe443c8684f126079931f8bdc96
-        changed_paths:
-        - apps/desktop/src-tauri/src/application_lock.rs
-        - apps/desktop/src-tauri/src/application_sign_in_policy.rs
-        - apps/desktop/src-tauri/src/lib.rs
-        - artifacts/evidence/W1.A05.T03.json
-        - artifacts/evidence/W1.A05.T03.review-R01.json
-        - docs/architecture/application-lock.md
-        - docs/planning-implementation-plan.md
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0004.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        - tests/security/test_application_lock_source.py
-        selected_checks:
-        - cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked
-        - cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml
-          --lib --locked -- -D warnings
-        - npm --prefix apps/desktop test -- --run; npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint
-        - .venv\Scripts\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract
-        - .venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py; .venv\Scripts\ruff.exe format --check
-          tests/security/test_application_lock_source.py; .venv\Scripts\python.exe tools\architecture_check.py --repo .; .venv\Scripts\python.exe
-          tools\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-R02-build-manifest.json; git diff --check deec1063e6bcd9a17d2a10c574103c10ebdd7785..c94ab3ef76529f7eee0d2f002423c21aec3e1161
-        - .venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base
-          deec1063e6bcd9a17d2a10c574103c10ebdd7785 --affected-head c94ab3ef76529f7eee0d2f002423c21aec3e1161 --deferred-gate
-          W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-R02-affected-selection.json
-        deferred_checks:
-        - W1.A05.T04 still owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility,
-          and approved-reference experience, including the disclosed activation-reference mismatch.
-        - desktop:performance remains explicitly gate-bound by the governed selector to W1 exit.
-        - The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix remains
-          due at W1 exit.
-        selection_rationale: 'R02 is bounded to W1.A05.T03-R01-F01. Root cause: R01 implemented cross-process write serialization
-          and CAS but treated the policy as if only one manager process could exist, without enforcing that invariant or reloading
-          stale managers. The remediation makes that implicit assumption executable at the release-authoritative Windows startup
-          boundary: one stable-root-derived kernel object exists for the lifetime of the only process permitted to construct
-          the production manager and start Core. Credible incremental failures are path aliases creating different leases,
-          a second process entering before lease acquisition, thread-affine release, abrupt process exit leaving a permanent
-          lease, stale child publication bypassing CAS, abandoned write mutex deadlock, or restart reading partial/incorrect
-          bytes. Stable path derivation, acquisition before manager/Core construction, existence-only handle lifetime, and
-          real child-process duplicate/publication/termination/abandonment/restart tests directly cover those risks. The full
-          prior native/security/renderer matrix was replayed to preserve every T03 boundary.'
-        selection_sha256: 605cf28ae2db68067a23f55b6de56742e27449d6fdc300dc59b47166e66e4af0
-        prior_attempt_id: R01
-        open_finding_ids:
-        - W1.A05.T03-R01-F01
-        root_cause_analysis: null
-        selected_command_ids:
-        - foundation:repository-structure
-        - foundation:runtime
-        - foundation:architecture
-        - foundation:agent-protocol
-        - foundation:backlog-views
-        - foundation:fixture-corpus
-        - foundation:benchmark-registry
-        - foundation:build-manifest
-        - foundation:ui-reference
-        - foundation:ui-change
-        - foundation:adr
-        - foundation:ci
-        - foundation:quality
-        - foundation:packaging-smoke
-        - foundation:unit
-        - foundation:backlog
-        - desktop:application
-        - desktop:unit
-        - desktop:ui-reference-integrity
-        - desktop:ui-token
-        - desktop:ui-route-page
-        - desktop:ui-workflow
-        - desktop:ui-accessibility
-        - desktop:ui-visual-regression
-        - packaging:unit
-        - service:unit
-        - contracts:unit
-        - security-local:supply-chain
-        - security-local:unit
-        packet_sha256: fce7cc189396d82ff36e51c7974870ef892333659eb912069451079e4b6045ce
+      - submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-08-30T18:23:42+00:00'
+          candidate_commit: c94ab3ef76529f7eee0d2f002423c21aec3e1161
+          base_commit: deec1063e6bcd9a17d2a10c574103c10ebdd7785
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A05.T03.remediation-01.json
+            sha256: cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1
+            commit: c94ab3ef76529f7eee0d2f002423c21aec3e1161
+            recorded_at: '2026-08-30T18:23:42+00:00'
+          acceptance_criteria_sha256: 4250e5765a66a110aff54ee25e0d34853cb42fe443c8684f126079931f8bdc96
+          changed_paths:
+          - apps/desktop/src-tauri/src/application_lock.rs
+          - apps/desktop/src-tauri/src/application_sign_in_policy.rs
+          - apps/desktop/src-tauri/src/lib.rs
+          - artifacts/evidence/W1.A05.T03.json
+          - artifacts/evidence/W1.A05.T03.review-R01.json
+          - docs/architecture/application-lock.md
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0004.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/security/test_application_lock_source.py
+          selected_checks:
+          - cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked
+          - cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml
+            --lib --locked -- -D warnings
+          - npm --prefix apps/desktop test -- --run; npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint
+          - .venv\Scripts\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract
+          - .venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py; .venv\Scripts\ruff.exe format --check
+            tests/security/test_application_lock_source.py; .venv\Scripts\python.exe tools\architecture_check.py --repo .;
+            .venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-R02-build-manifest.json;
+            git diff --check deec1063e6bcd9a17d2a10c574103c10ebdd7785..c94ab3ef76529f7eee0d2f002423c21aec3e1161
+          - .venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --profile service
+            --affected-base deec1063e6bcd9a17d2a10c574103c10ebdd7785 --affected-head c94ab3ef76529f7eee0d2f002423c21aec3e1161
+            --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-R02-affected-selection.json
+          deferred_checks:
+          - W1.A05.T04 still owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility,
+            and approved-reference experience, including the disclosed activation-reference mismatch.
+          - desktop:performance remains explicitly gate-bound by the governed selector to W1 exit.
+          - The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix
+            remains due at W1 exit.
+          selection_rationale: 'R02 is bounded to W1.A05.T03-R01-F01. Root cause: R01 implemented cross-process write serialization
+            and CAS but treated the policy as if only one manager process could exist, without enforcing that invariant or
+            reloading stale managers. The remediation makes that implicit assumption executable at the release-authoritative
+            Windows startup boundary: one stable-root-derived kernel object exists for the lifetime of the only process permitted
+            to construct the production manager and start Core. Credible incremental failures are path aliases creating different
+            leases, a second process entering before lease acquisition, thread-affine release, abrupt process exit leaving
+            a permanent lease, stale child publication bypassing CAS, abandoned write mutex deadlock, or restart reading partial/incorrect
+            bytes. Stable path derivation, acquisition before manager/Core construction, existence-only handle lifetime, and
+            real child-process duplicate/publication/termination/abandonment/restart tests directly cover those risks. The
+            full prior native/security/renderer matrix was replayed to preserve every T03 boundary.'
+          selection_sha256: 605cf28ae2db68067a23f55b6de56742e27449d6fdc300dc59b47166e66e4af0
+          prior_attempt_id: R01
+          open_finding_ids:
+          - W1.A05.T03-R01-F01
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:runtime
+          - foundation:architecture
+          - foundation:agent-protocol
+          - foundation:backlog-views
+          - foundation:fixture-corpus
+          - foundation:benchmark-registry
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:ci
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:unit
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - desktop:ui-visual-regression
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          - security-local:supply-chain
+          - security-local:unit
+          packet_sha256: fce7cc189396d82ff36e51c7974870ef892333659eb912069451079e4b6045ce
+        review: *id108
+        ledger:
+          path: artifacts/evidence/W1.A05.T03.review-R02.json
+          sha256: 4d91b43e1021d25a08f76ce3c06f7e94b060ad6b782cfc2fe4d778ec9af7f3ef
+        findings: []
+        closures:
+        - finding_id: W1.A05.T03-R01-F01
+          disposition: fixed
+          evidence: Production can no longer construct two policy managers for one stable canonical application-data root.
+            ApplicationLockManager::acquire first obtains an existence-only Global Windows object; a duplicate CreateMutexW
+            reports ERROR_ALREADY_EXISTS and returns the typed already-running failure before policy-manager/Core startup.
+            The guard handle is retained by Arc in every manager clone, uses no mutex ownership, can close on the final holder's
+            thread, and is automatically closed on process death. ApplicationLockManager::new is cfg(test) and from_application_data
+            is private. Independent real-child replay first committed protected password policy, denied the duplicate, abruptly
+            terminated the owner, then reacquired and proved locked restart plus protected-action denial. A second child-process
+            replay proved genuine CAS conflict, named-mutex abandonment recovery, and exact valid bytes. These tests directly
+            close the stale none/unlocked process path and the missing child-process/abrupt-exit proof from R01 while retaining
+            all prior passing T03 boundaries.
+        telemetry:
+          task_id: W1.A05.T03
+          amendment_id: W1.A05
+          attempt_id: R02
+          submitted_at: '2026-08-30T18:23:42+00:00'
+          reviewed_at: '2026-08-30T18:29:24+00:00'
+          duration_seconds: 342
+          outcome: approved
+          finding_counts:
+            critical: 0
+            high: 0
+            medium: 0
+            low: 0
+            blocking: 0
+            total: 0
+          command_ids:
+          - foundation:repository-structure
+          - foundation:runtime
+          - foundation:architecture
+          - foundation:agent-protocol
+          - foundation:backlog-views
+          - foundation:fixture-corpus
+          - foundation:benchmark-registry
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:ci
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:unit
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - desktop:ui-visual-regression
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          - security-local:supply-chain
+          - security-local:unit
+          remediation:
+            prior_attempt_id: R01
+            replayed_finding_ids:
+            - W1.A05.T03-R01-F01
+            closed_finding_ids:
+            - W1.A05.T03-R01-F01
+      current_submission: null
   - id: W1.A05.T04
     amendment_id: W1.A05
     title: Implement Application Settings Security & sign-in
@@ -31940,14 +32033,14 @@ wave_amendments:
       matrix.
     - Obtain independent commit-bound task and slice review with all blocking findings closed.
     packet_task_sha256: ff45d72ed01731d320263cb288fe2d82fcede4b71b14be98634a82bf03a65e54
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-08-30T18:29:24+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

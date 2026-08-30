@@ -1,0 +1,88 @@
+{
+  "task_id": "W1.A05.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "c94ab3ef76529f7eee0d2f002423c21aec3e1161",
+  "submission_record_commit": "5ad731f0e52fa29bcba5a04c6270f8d631d6cb2b",
+  "reviewer": "codex-independent-sign-in-policy-security-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent bounded R02 security/migration review found no remaining blocking or nonblocking acceptance-bound defect. Exact candidate c94ab3ef76529f7eee0d2f002423c21aec3e1161 is a strict descendant of adverse candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785, and immutable submission 5ad731f0e52fa29bcba5a04c6270f8d631d6cb2b is a strict descendant of the remediation candidate. The remediation manifest reproduces SHA-256 cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1 and Git blob 939a09fd5cd6795c4c3884158f90a332a0aa8c68; all 12 declared paths exactly match the remediation range and candidate product/test bytes remain exact at submission. W1.A05.T03-R01-F01 is closed. Production now acquires one Global Windows instance object whose name is derived from the same stable canonical application-data root used by the policy store before constructing the manager or starting Core. CreateMutexW uses existence-only semantics with bInitialOwner false, checks GetLastError immediately for ERROR_ALREADY_EXISTS, and retains the handle instead of thread-affine mutex ownership. Every manager clone retains the Arc-held lease, final drop may close it on any thread, and abrupt process termination closes it automatically. ApplicationLockManager::new is test-only; the sole production setup path uses acquire and propagates typed RO-DESKTOP-ALREADY-RUNNING or RO-DESKTOP-INSTANCE-UNAVAILABLE failure before Core launch. Independent real-child replay proved that a child first commits a 15-minute windows-password policy, a duplicate process is denied, abrupt termination releases the lease, and restart reads the exact protected policy, starts locked for application restart, and denies protected actions. A separate child published password across the real process boundary, the stale parent received the expected CAS conflict, abrupt child death while owning the named publication mutex produced recoverable abandoned ownership, and restart retained exact valid canonical bytes. All 56 native tests, 71 desktop tests, nine focused Python checks, Rust format/Clippy, Ruff, production build/lint, architecture, build inventory, affected selection, and both patch-hygiene ranges passed. Prior migration, provider ordering, same-SID recovery, proof/handle/expiry, typed failures, redaction, no-follow persistence, explicit-none, zero/nonzero lock behavior, and renderer contracts remain unchanged and green. T04's governed experience/reference work and W1-exit's accumulated performance/full qualification remain legitimate later duties.",
+  "evidence_reproduction": {
+    "remediation_manifest": {
+      "path": "artifacts/evidence/W1.A05.T03.remediation-01.json",
+      "sha256": "cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1",
+      "git_blob": "939a09fd5cd6795c4c3884158f90a332a0aa8c68",
+      "commit": "c94ab3ef76529f7eee0d2f002423c21aec3e1161",
+      "result": "PASS: frozen remediation evidence at the immutable submission binds the exact base, candidate, branch, superseded evidence, changed paths, criteria, checks, finding replay, and deferrals."
+    },
+    "prior_review": {
+      "path": "artifacts/evidence/W1.A05.T03.review-R01.json",
+      "sha256": "a879320921246d7417b195dd2258e2b5962e7608c78e377adfac0255247f79a4",
+      "git_blob": "46b00433cd73d141601446c59249d60056dded10",
+      "result": "PASS: immutable adverse R01 history contains the sole open finding W1.A05.T03-R01-F01 and is preserved unchanged in the remediation candidate."
+    }
+  },
+  "changed_paths": [
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/application_sign_in_policy.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "artifacts/evidence/W1.A05.T03.json",
+    "artifacts/evidence/W1.A05.T03.review-R01.json",
+    "docs/architecture/application-lock.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/security/test_application_lock_source.py"
+  ],
+  "checks": [
+    {
+      "command": "Resolve full adverse-candidate/remediation-candidate/submission SHAs; verify ordered ancestry; compare declared and actual paths; verify product/test and manifest Git blobs; git diff --check both ranges",
+      "result": "PASS: ordered identities, all 12 paths, candidate/submission byte bindings, and both patch-hygiene ranges are exact."
+    },
+    {
+      "command": "Inspect ApplicationInstanceGuard::acquire/drop, ApplicationLockManager::acquire/new/from_application_data, Tauri setup order, RuntimeSupervisor::new/start, PolicyStore stable path naming, CrossProcessGuard, and all production constructor references",
+      "result": "PASS: one stable-canonical-root-derived Global Windows object is created before policy initialization; CreateMutexW is called with bInitialOwner false and GetLastError is read immediately; ERROR_ALREADY_EXISTS is denied and its extra handle closed; other creation failure is typed unavailable. The handle is an existence lease, Arc-held by every manager clone, CloseHandle is final-drop/thread-independent, and process death releases it. RuntimeSupervisor::new remains stopped and Core start occurs only after acquire. The bypass constructor and from_application_data are unavailable outside the crate's test compilation."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked application_lock::tests::release_runtime_is_single_instance_for_one_canonical_application_root -- --exact --nocapture",
+      "result": "PASS: the real child committed windows-password with a 15-minute timeout before readiness; the parent received RO-DESKTOP-ALREADY-RUNNING; abrupt child termination released the lease; restart loaded windows-password, reported application-restart locked state, and denied begin_protected_action."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked application_lock::tests::child_process_publication_and_abandoned_mutex_preserve_exact_policy -- --exact --nocapture",
+      "result": "PASS: child publication won, the stale parent received RO-SIGN-IN-POLICY-CONFLICT, and the canonical policy reopened as password. Parent wait began while a second child owned the real named publication mutex; killing that child released abandoned ownership, and the reopened policy and exact canonical bytes remained valid and unchanged."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "result": "PASS: 56/56 native library tests passed, including the three real child-process roles/tests and every prior T03 migration, provider, recovery, transition, CAS, no-follow, redaction, lock-state, supervisor, and support regression."
+    },
+    {
+      "command": "npm --prefix apps/desktop test -- --run; npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint",
+      "result": "PASS: 13/13 test files and 71/71 desktop tests passed; the functional product/runtime/reference fixtures built and desktop lint passed. No renderer or governed-experience contract changed in R02."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract; .venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py",
+      "result": "PASS: 9/9 focused security/source and portable-contract tests passed; the changed Python source invariant passed Ruff lint and format."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked -- -D warnings; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-R02-review-build-manifest.json",
+      "result": "PASS: Rust formatting and warnings-denied Clippy, architecture for 13 areas/12 modules/five stable interfaces/three profiles, and exact build inventory passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base deec1063e6bcd9a17d2a10c574103c10ebdd7785 --affected-head c94ab3ef76529f7eee0d2f002423c21aec3e1161 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-R02-review-selection.json",
+      "result": "PASS: the exact remediation range selected the complete safety-sensitive desktop, service, security, contracts, packaging, and foundation inventory; only the existing gate-bound desktop performance check remains deferred to W1 exit."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W1.A05.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Production can no longer construct two policy managers for one stable canonical application-data root. ApplicationLockManager::acquire first obtains an existence-only Global Windows object; a duplicate CreateMutexW reports ERROR_ALREADY_EXISTS and returns the typed already-running failure before policy-manager/Core startup. The guard handle is retained by Arc in every manager clone, uses no mutex ownership, can close on the final holder's thread, and is automatically closed on process death. ApplicationLockManager::new is cfg(test) and from_application_data is private. Independent real-child replay first committed protected password policy, denied the duplicate, abruptly terminated the owner, then reacquired and proved locked restart plus protected-action denial. A second child-process replay proved genuine CAS conflict, named-mutex abandonment recovery, and exact valid bytes. These tests directly close the stale none/unlocked process path and the missing child-process/abrupt-exit proof from R01 while retaining all prior passing T03 boundaries."
+    }
+  ],
+  "prior_findings_replayed": [
+    "W1.A05.T03-R01-F01"
+  ]
+}
