@@ -624,6 +624,43 @@ class UiChangeGateTests(unittest.TestCase):
 
         self.assertTrue(result["ok"], result["errors"])
 
+    def test_independently_reviewed_maintenance_can_repair_the_gate_after_ui(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'UI before reviewed maintenance';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            implemented = self.commit(root, "implement approved UI")
+            self.install_reviewed_maintenance(root, implemented)
+            head = self.git(root, "rev-parse", "HEAD")
+
+            result = validate(root, base, head)
+
+        self.assertTrue(result["ok"], result["errors"])
+
+    def test_postimplementation_maintenance_still_rejects_self_review(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'UI before self-reviewed maintenance';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            implemented = self.commit(root, "implement approved UI")
+            self.install_reviewed_maintenance(root, implemented, reviewer="agent:codex")
+            head = self.git(root, "rev-parse", "HEAD")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("independent" in error for error in result["errors"]))
+
     def test_remediated_preimplementation_maintenance_preserves_adverse_review_history(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, package = self.prepare(temporary)

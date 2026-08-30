@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 from unittest import mock
 
 import yaml
@@ -83,7 +84,8 @@ class UiConformanceTests(unittest.TestCase):
         self.assertTrue(token_result["ok"], token_result["errors"])
         self.assertTrue(route_result["ok"], route_result["errors"])
         self.assertEqual(109, token_result["details"]["tokens"])
-        self.assertEqual(32, route_result["details"]["routes"])
+        approved_routes = json.loads((REPO / "design" / "ui-reference" / "SITE_MANIFEST.json").read_text())["pages"]
+        self.assertEqual(len(approved_routes), route_result["details"]["routes"])
         self.assertEqual("design/ui-reference/assets/tokens.css", token_result["normativeSources"]["tokens"])
         self.assertIn("mock names", route_result["illustrativeExclusions"])
 
@@ -457,6 +459,88 @@ class UiConformanceTests(unittest.TestCase):
                 errors = baseline_history_errors(context, current)
 
         self.assertTrue(any("requires a new approved reference ID" in error for error in errors), errors)
+
+    def test_historical_baselines_use_the_route_inventory_from_their_own_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            root.mkdir()
+            self.git(root, "init", "-b", "main")
+            self.git(root, "config", "user.name", "UI Baseline Test")
+            self.git(root, "config", "user.email", "ui-baseline@example.invalid")
+            schema_path = root / "verification" / "desktop-ui-baseline.schema.json"
+            schema_path.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "verification" / "desktop-ui-baseline.schema.json", schema_path)
+            settings = json.loads(
+                (REPO / "verification" / "extensions" / "desktop-ui.json").read_text(encoding="utf-8")
+            )["visual"]
+            site_path = root / "design" / "ui-reference" / "SITE_MANIFEST.json"
+            self.write_json(site_path, {"pages": [{"file": "index.html"}]})
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "approve first route inventory")
+            approval_one = self.git(root, "rev-parse", "HEAD")
+            baseline_path = root / "verification" / "baselines" / "desktop-ui.json"
+
+            def baseline(reference: str, package: str, approval: str, pages: list[str]) -> dict[str, Any]:
+                return {
+                    "schemaVersion": "1.0",
+                    "documentType": "desktop-ui-visual-baseline",
+                    "referenceId": reference,
+                    "referencePackageSha256": package,
+                    "referenceApprovalCommit": approval,
+                    "platform": settings["platform"],
+                    "playwrightVersion": settings["playwrightVersion"],
+                    "browserVersion": settings["browserVersion"],
+                    "settings": settings,
+                    "entries": {
+                        f"{page}::{theme}": {
+                            "page": page,
+                            "theme": theme,
+                            "width": settings["viewport"]["width"],
+                            "height": settings["viewport"]["height"],
+                            "sha256": package,
+                        }
+                        for page in pages
+                        for theme in ("light", "dark")
+                    },
+                }
+
+            self.write_json(baseline_path, baseline("REF-1", "1" * 64, approval_one, ["index.html"]))
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "record first visual baseline")
+            self.write_json(
+                site_path,
+                {"pages": [{"file": "index.html"}, {"file": "application-settings.html"}]},
+            )
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "approve expanded route inventory")
+            approval_two = self.git(root, "rev-parse", "HEAD")
+            current = baseline(
+                "REF-2",
+                "2" * 64,
+                approval_two,
+                ["index.html", "application-settings.html"],
+            )
+            self.write_json(baseline_path, current)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "record expanded visual baseline")
+            context = Context(
+                root,
+                {
+                    "visual": {"baselinePath": "verification/baselines/desktop-ui.json"},
+                    "normativeSources": {"style": "design/ui-reference/STYLE_GUIDE.md"},
+                },
+                root,
+                root,
+                {},
+                {},
+                {},
+                ["index.html", "application-settings.html"],
+            )
+
+            with mock.patch("ui_conformance.approval_lineage_errors", return_value=[]):
+                errors = baseline_history_errors(context, current)
+
+        self.assertEqual([], errors)
 
     def test_repaired_current_baseline_does_not_hide_a_malformed_historical_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

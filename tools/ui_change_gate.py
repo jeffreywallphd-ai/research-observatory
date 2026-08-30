@@ -576,6 +576,15 @@ def application_activation_errors(
                 activation_errors.extend(maintenance_errors)
     if late_protected:
         for position in late_protected:
+            maintenance_errors = reviewed_preimplementation_maintenance_errors(
+                repo,
+                commits[position],
+                head,
+                paths_by_position[position],
+                [],
+            )
+            if not maintenance_errors:
+                continue
             try:
                 parent = resolve_commit(repo, f"{commits[position]}^")
                 if commit_paths(repo, parent) != REVIEW_RECORD_ENVELOPE:
@@ -596,8 +605,11 @@ def application_activation_errors(
                         str(contract.get("taskId")),
                         paths_by_position[position],
                     )
-                errors.extend(hardening_errors)
+                if hardening_errors:
+                    errors.extend(maintenance_errors)
+                    errors.extend(hardening_errors)
             except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
+                errors.extend(maintenance_errors)
                 errors.append(f"invalid post-implementation gate-hardening provenance: {exc}")
     if set(protected_changes) == APPLICATION_ACTIVATION_PATHS:
         try:

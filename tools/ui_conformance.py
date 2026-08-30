@@ -399,8 +399,8 @@ def load_context(repo: Path) -> Context:
     if not isinstance(page_items, list):
         raise ValueError("SITE_MANIFEST.json pages must be an array")
     pages = [str(item.get("file")) for item in page_items if isinstance(item, dict)]
-    if len(pages) != 32 or len(set(pages)) != 32 or any(not page.endswith(".html") for page in pages):
-        raise ValueError("approved desktop route inventory must contain exactly 32 unique HTML product pages")
+    if not pages or len(set(pages)) != len(pages) or any(not page.endswith(".html") for page in pages):
+        raise ValueError("approved desktop route inventory must contain unique HTML product pages")
     raw_contracts = coverage_document.get("page_contracts")
     if not isinstance(raw_contracts, dict) or set(raw_contracts) != set(pages):
         raise ValueError("CAPABILITY_COVERAGE.json page contracts must exactly match the product route inventory")
@@ -1406,6 +1406,7 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
     valid_snapshots: dict[str, bool] = {}
     identities: dict[tuple[str, str], dict[str, str]] = {}
     package_cache: dict[tuple[str, str, str, bool], list[str]] = {}
+    page_cache: dict[str, list[str] | None] = {}
 
     def snapshot(revision: str) -> tuple[dict[str, Any] | None, bytes | None]:
         if revision not in snapshots:
@@ -1415,20 +1416,55 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
                 errors.append(read_error)
         return snapshots[revision]
 
+    def historical_pages(revision: str) -> list[str] | None:
+        if revision in page_cache:
+            return page_cache[revision]
+        site, _, read_error = git_json_at(context.repo, revision, "design/ui-reference/SITE_MANIFEST.json")
+        if read_error:
+            errors.append(read_error)
+            page_cache[revision] = None
+            return None
+        if site is None:
+            errors.append(f"{revision}: approved route inventory is absent while a visual baseline exists")
+            page_cache[revision] = None
+            return None
+        items = site.get("pages")
+        pages = [str(item.get("file")) for item in items or [] if isinstance(item, dict)]
+        if (
+            not isinstance(items, list)
+            or len(pages) != len(items)
+            or len(pages) != len(set(pages))
+            or not pages
+            or any(not page.endswith(".html") for page in pages)
+        ):
+            errors.append(f"{revision}: approved route inventory is invalid for visual-baseline history")
+            page_cache[revision] = None
+            return None
+        page_cache[revision] = pages
+        return pages
+
+    def baseline_pages(value: dict[str, Any], revision: str) -> list[str] | None:
+        approval = value.get("referenceApprovalCommit")
+        return (
+            historical_pages(str(approval))
+            if isinstance(approval, str) and re.fullmatch(r"[0-9a-f]{40}", approval)
+            else historical_pages(revision)
+        )
+
     ratified_legacy_contracts: set[tuple[str, str, str]] = set()
     ratification_handoff_commits: set[str] = set()
     for commit in commits:
         candidate, _ = snapshot(commit)
         if candidate != baseline:
             continue
-        if baseline_document_errors(candidate, f"{commit}:{relative}", schema, context.pages or None):
+        if baseline_document_errors(candidate, f"{commit}:{relative}", schema, baseline_pages(candidate, commit)):
             continue
         parents = git(context.repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
         for parent in parents:
             previous, _ = snapshot(parent)
             if previous is None or not provenance_only_reference_ratification(previous, candidate):
                 continue
-            if baseline_document_errors(previous, f"{parent}:{relative}", schema, context.pages or None):
+            if baseline_document_errors(previous, f"{parent}:{relative}", schema, baseline_pages(previous, parent)):
                 continue
             if not approval_lineage_errors(context.repo, candidate, commit, package_cache):
                 ratified_legacy_contracts.add(baseline_contract_key(previous))
@@ -1444,7 +1480,9 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
         current, current_payload = snapshot(commit)
         parents = git(context.repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
         if current is not None:
-            document_errors = baseline_document_errors(current, f"{commit}:{relative}", schema, context.pages or None)
+            document_errors = baseline_document_errors(
+                current, f"{commit}:{relative}", schema, baseline_pages(current, commit)
+            )
             errors.extend(document_errors)
             valid_snapshots[commit] = not document_errors
             if not document_errors and commit not in ratification_handoff_commits:
@@ -1483,7 +1521,7 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
                     previous,
                     f"{parent}:{relative}",
                     schema,
-                    context.pages or None,
+                    baseline_pages(previous, parent),
                 )
                 errors.extend(parent_errors)
                 valid_snapshots[parent] = not parent_errors
