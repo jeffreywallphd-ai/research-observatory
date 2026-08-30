@@ -12,6 +12,7 @@ This file is the repository's high-level document router. It delegates detailed 
 | Meaning and origin of waves, gates, capabilities, slices, aliases, and approval scope | `governance/delivery-control-model.md` |
 | Wave campaign, verification, evidence, CI, checkpoints, and stop rules | `automation/project-automation-guide.md` |
 | Coding-agent claims, task flow, and evidence | `automation/codex-tracking-guide.md` |
+| Risk-selected planning immediately after a task claim | `automation/task-start-planning.md` |
 | Static decision-review behavior and feedback format | `automation/planning-review-site.md` |
 | Current work identity and plan lifecycle | `../planning/README.md` |
 | Approved visual/workflow reference (design input only; never the application runtime) | `../design/ui-reference/STYLE_GUIDE.md`, `WORKFLOW_CATALOG.md`, and `prototype-index.html` |
@@ -23,9 +24,11 @@ This file is the repository's high-level document router. It delegates detailed 
 
 1. Root `AGENTS.md`.
 2. `../planning/README.md` and the active capability/slice/task.
-3. Accepted ADRs and affected architecture sections.
-4. Affected UI/workflow contracts when user-facing.
-5. The task-specific verification profile.
+3. `automation/task-start-planning.md`; complete only the dimensions relevant
+   to the claimed task's credible risk.
+4. Accepted ADRs and affected architecture sections.
+5. Affected UI/workflow contracts when user-facing.
+6. The task-specific verification profile.
 
 ### Capability planning or approval
 

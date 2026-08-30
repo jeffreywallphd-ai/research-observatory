@@ -252,6 +252,24 @@ The generated site adds `Other` to every decision without modifying canonical pl
 
 A task claim records agent, branch, worktree, base SHA, lease, and expected scope. A task contract includes goal, non-goals, dependencies, inspect/change scopes, canonical sources, criteria, required checks, security class, human gates, and evidence outputs.
 
+Immediately after claim and before product edits, perform the task-start
+acceptance-closure pass in `task-start-planning.md`. Its purpose is to catch
+translation gaps between an approved slice plan and executable behavior before
+they become review findings. Inspect the current implementation and applicable
+prior findings, identify the small set of state/invariant, identity/authority,
+compatibility, failure/recovery, principal-boundary, and governed-experience
+risks that can actually affect the task, and derive failing or characterization
+tests for the material rows where practical.
+
+This is a risk-selected implementation aid, not another approval gate or a
+requirement for a new committed document. Low-risk tasks may need only a few
+lines; irrelevant dimensions may be marked not applicable with a short reason.
+For migrations, public/cross-process contracts, security/evidence controls, and
+multi-layer UI/export work, a read-only adversarial preflight is recommended
+when an independent agent is available. It does not replace commit-bound task
+review. A material authority or scope conflict discovered here uses the normal
+stop/amendment path; the worksheet cannot authorize it.
+
 At each iteration select only the dependency-eligible `READY` task in the active
 Wave campaign. State its permitted scope from the task deliverables and acceptance
 criteria, use its declared verification commands/profiles and changed-path impact
@@ -311,7 +329,8 @@ available suite at every task:
   modules, contracts, denial/failure boundaries, and directly affected
   integrations. Run affected lint, format, type, schema, planning, architecture,
   UI, security, or platform checks only when the changed paths can plausibly
-  invalidate them.
+  invalidate them. Use the task-start acceptance-closure rows to explain why
+  each selected check can prove a material criterion or failure boundary.
 - **Slice integration and slice review:** run affected end-to-end, contract,
   failure/denial, cancellation/recovery, accessibility, security, and performance
   checks required by credible slice risk. Do not automatically replay the full
@@ -355,6 +374,14 @@ acceptance surface become backlog items unless they expose a material safety,
 data-integrity, security, or production-correctness defect. Escalate recurring
 findings after the second remediation to root-cause/control review instead of
 continuing unbounded patch-and-rereview loops.
+
+When the first adverse review identifies a blocking finding, update the
+acceptance-closure map with the missed invariant, identity, predecessor,
+failure, or principal-boundary row before remediation. Record a brief root-cause
+statement in remediation evidence and add the smallest test that would have
+exposed the defect before implementation. The existing formal escalation after
+the second remediation remains unchanged; this earlier feedback loop adds no
+new approval or state transition.
 
 Performance baselines are reviewed inputs, not output fields that a benchmark may
 rewrite. A benchmark must bind its fixture and methodology, reject non-finite or

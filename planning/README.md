@@ -127,8 +127,10 @@ scope are frozen with it and the normal append-only amendment rules apply.
    together at one immutable commit. Inherited and future decisions remain
    nonbinding context. A partial packet cannot start execution.
 7. Start `WN` as one durable Wave campaign.
-8. Claim only the next dependency-eligible READY task across the Wave. Use
-   risk-selected task checks and commit-bound evidence.
+8. Claim only the next dependency-eligible READY task across the Wave. Before
+   product edits, perform the non-gating task-start acceptance-closure pass in
+   `../docs/automation/task-start-planning.md`; then use risk-selected task
+   checks and commit-bound evidence.
 9. Integrate and independently review each slice. Record accumulated
    affected-profile checkpoints when a shared interface, migration, security
    boundary, or coherent risk cluster closes.
@@ -159,6 +161,26 @@ historical authority only. New transition behavior should be expressed through
 the typed event/projection/receipt contracts in
 `../docs/automation/governance-automation-simplification.md`; compatibility
 adapters may continue to project the backlog during migration.
+
+### Task-start planning without another gate
+
+The approved Wave and slice remain the implementation authority. After a task
+is claimed, translate its criteria into a concise, risk-selected
+acceptance-closure map before production edits. The map should expose the
+specific invariants, identity/authority fields, compatibility fixtures,
+failure/recovery cases, principal boundary, and governed experience states that
+could plausibly invalidate the task. Inspect the existing implementation and
+relevant prior findings, and derive the first failing or characterization tests
+from the material rows. Use
+`../docs/automation/task-start-planning.md` as the worksheet and tailoring rule.
+
+This pass does not reopen the approved plan, change task scope, or add an
+approval/state transition. It may remain in working notes or the evidence draft;
+persist a separate worksheet only when it materially improves implementation or
+review. Irrelevant dimensions may be marked not applicable with brief rationale.
+If the pass reveals new consequential scope or an unmet mandatory gate, follow
+the existing amendment/replanning rule instead of treating the worksheet as
+authority.
 
 ### Historical controlled enabler change requests
 
@@ -312,6 +334,7 @@ Any command that requests decisions or approval must print the Wave page's `file
 - Capability schema: `capability-plans/capability-plan.schema.json`
 - Slice template: `slice-plans/TEMPLATE.md`
 - Slice schema: `slice-plans/slice-plan.schema.json`
+- Task-start planning worksheet: `../docs/automation/task-start-planning.md`
 - Capability validator: `../tools/capability_plan_check.py`
 - Slice validator: `../tools/slice_plan_check.py`
 - Site generator: `../tools/plan_review_site.py`

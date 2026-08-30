@@ -72,7 +72,7 @@ Replace with the required slice-specific implementation contract.
 Replace with the required slice-specific implementation contract.
 ## 9. Task-by-task implementation plan
 
-Replace with the required implementation detail. For Section 9, include every authoritative backlog task with objective, dependencies, ordered implementation, acceptance criteria, evidence and review.
+Replace with the required implementation detail. For Section 9, include every authoritative backlog task with objective, dependencies, ordered implementation, acceptance criteria, evidence and review. Begin each ordered sequence with the non-gating, risk-selected task-start acceptance-closure pass from `docs/automation/task-start-planning.md`: inspect the current implementation and relevant prior findings, identify only the material invariant/authority/compatibility/failure/principal-boundary/experience rows, and derive failing or characterization tests before production code where practical. Do not add a new approval or require exhaustive irrelevant matrices.
 ## 10. Slice-wide verification matrix
 
 Replace with the required slice-specific implementation contract.

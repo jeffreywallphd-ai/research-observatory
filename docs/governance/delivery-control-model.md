@@ -198,6 +198,10 @@ stored event that differs from its exact derived projection fails validation.
 
 ## Review and verification cadence
 
+- **Task start:** after claim and before product edits, perform the concise,
+  risk-selected acceptance-closure pass defined in
+  `../automation/task-start-planning.md`. This is implementation preparation,
+  not a governance gate, plan approval, or new durable state.
 - **Task:** narrow deterministic checks chosen by credible failure likelihood,
   followed by a focused independent disposition of scope, evidence truth, and
   changed risk. High-risk boundaries receive expanded adversarial task review.
