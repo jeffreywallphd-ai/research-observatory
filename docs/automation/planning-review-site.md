@@ -94,6 +94,17 @@ Feedback is never implicit approval.
 
 ## Approval
 
+Before approval, reviewers confirm that the contributing capability plans show
+the applicable initiation assessment: current implementation baseline, Vision
+and best-practice fit, necessary support improvements, and a technical-debt
+refactoring share no greater than 15% at capability and Wave scope. Review the
+itemized atomic-task baseline, allocations, and deduplicated Wave roll-up rather
+than accepting an unexamined percentage. Deterministic validation checks
+structure and arithmetic; reviewers decide whether the baseline, product-fit
+assessment, and adaptations are sound. This is part of reviewing the existing
+packet, not a separate approval. The requirement is prospective and does not
+invalidate earlier immutable Wave approvals.
+
 After all capability feedback has been applied, approve the complete Wave packet:
 
 ```bash
