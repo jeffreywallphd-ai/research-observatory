@@ -307,13 +307,14 @@ class UiChangeGateTests(unittest.TestCase):
         reference_id: str = "REF-1",
         version: str = "1",
         implementation_agent: str = "agent:codex",
+        task_id: str = "CAP-01.S01.T01",
     ) -> dict[str, object]:
         value: dict[str, object] = {
             "schemaVersion": "1.0",
             "documentType": "ui-change-evidence",
-            "taskId": "CAP-01.S01.T01",
+            "taskId": task_id,
             "changeKind": kind,
-            "contractPath": "artifacts/evidence/ui-change/CAP-01.S01.T01.json",
+            "contractPath": f"artifacts/evidence/ui-change/{task_id}.json",
             "implementationAgent": implementation_agent,
             "changedFiles": ["apps/desktop/src/View.tsx"],
             "reference": {
@@ -341,7 +342,8 @@ class UiChangeGateTests(unittest.TestCase):
     ) -> None:
         if base_sha is None:
             base_sha = self.git(root, "rev-parse", "HEAD")
-        path = root / "artifacts" / "evidence" / "ui-change" / "CAP-01.S01.T01.json"
+        task_id = str(contract["taskId"])
+        path = root / "artifacts" / "evidence" / "ui-change" / f"{task_id}.json"
         self.write_json(path, contract)
         reference = contract["reference"]
         assert isinstance(reference, dict)
@@ -355,27 +357,86 @@ class UiChangeGateTests(unittest.TestCase):
             "previous_reference_id": reference["previousReferenceId"],
             "implementation_agent": contract["implementationAgent"],
         }
-        backlog = {
-            "capabilities": [
-                {
-                    "slices": [
-                        {
-                            "tasks": [
-                                {
-                                    "id": "CAP-01.S01.T01",
-                                    "owner": str(contract["implementationAgent"]).split(":", 1)[1],
-                                    "status": "IN_PROGRESS",
-                                    "review_gate": review_gate,
-                                    "base_sha": base_sha,
-                                    "experience_change": experience,
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+        task = {
+            "id": task_id,
+            "owner": str(contract["implementationAgent"]).split(":", 1)[1],
+            "status": "IN_PROGRESS",
+            "review_gate": review_gate,
+            "base_sha": base_sha,
+            "experience_change": experience,
         }
+        backlog = (
+            {"capabilities": [], "wave_amendments": [{"id": "W1.A05", "tasks": [task]}]}
+            if task_id.startswith("W")
+            else {"capabilities": [{"slices": [{"tasks": [task]}]}], "wave_amendments": []}
+        )
         self.write_yaml(root / "planning" / "backlog.yaml", backlog)
+
+    def install_reviewed_maintenance(
+        self,
+        root: Path,
+        predecessor: str,
+        *,
+        reviewer: str = "agent:independent-reviewer",
+    ) -> str:
+        maintenance_id = "GOV-MAINT-0001"
+        record_path = f"planning/governance-migrations/{maintenance_id}.json"
+        review_path = f"planning/governance-migrations/{maintenance_id}.review-R01.json"
+        schema_path = root / "design" / "ui-change.schema.json"
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        schema["$comment"] = "reviewed generic pre-implementation maintenance"
+        self.write_json(schema_path, schema)
+        changed_paths = sorted(["design/ui-change.schema.json", record_path])
+        record: dict[str, Any] = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-control-maintenance",
+            "maintenanceId": maintenance_id,
+            "title": "Fixture pre-implementation gate maintenance",
+            "status": "candidate",
+            "riskTier": 2,
+            "humanApprovalRequired": False,
+            "implementationAgent": "codex",
+            "predecessor": {"commit": predecessor},
+            "trigger": {"diagnosis": "fixture control grammar gap"},
+            "authority": "Preserve the approved reference and task authority.",
+            "intendedDelta": {"changedPaths": changed_paths},
+            "verification": {"results": [{"check": "fixture", "result": "passed"}]},
+            "rollback": "Return to the frozen predecessor.",
+            "reviewAttempts": [],
+            "review": None,
+        }
+        self.write_json(root / record_path, record)
+        candidate = self.commit(root, "candidate gate maintenance")
+        reviewed_at = "2026-08-30T20:00:00+00:00"
+        review_record = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-control-maintenance-review",
+            "maintenanceId": maintenance_id,
+            "reviewId": f"{maintenance_id}.R01",
+            "reviewedCommit": candidate,
+            "reviewer": reviewer,
+            "reviewedAt": reviewed_at,
+            "disposition": "APPROVED",
+            "authorityPreserved": True,
+            "candidateChangedPaths": changed_paths,
+            "findings": [],
+        }
+        self.write_json(root / review_path, review_record)
+        review_sha = hashlib.sha256((root / review_path).read_bytes()).hexdigest()
+        review = {
+            "reviewId": f"{maintenance_id}.R01",
+            "reviewedCommit": candidate,
+            "reviewer": reviewer,
+            "reviewedAt": reviewed_at,
+            "disposition": "APPROVED",
+            "findings": [],
+            "path": review_path,
+            "sha256": review_sha,
+        }
+        record.update(status="adopted", reviewAttempts=[review], review=review)
+        self.write_json(root / record_path, record)
+        self.commit(root, "record independent maintenance review")
+        return candidate
 
     def test_approved_reference_implementation_and_defect_restoration_pass(self) -> None:
         for kind in ("approved-reference-implementation", "defect-restoration"):
@@ -392,6 +453,86 @@ class UiChangeGateTests(unittest.TestCase):
                 result = validate(root, base, head)
 
             self.assertTrue(result["ok"], result["errors"])
+
+    def test_amendment_task_identity_uses_the_same_ui_lineage_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'approved amendment UI';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract(
+                "approved-reference-implementation",
+                package,
+                base,
+                task_id="W1.A05.T04",
+            )
+            self.install_contract(root, contract, base_sha=base)
+            head = self.commit(root, "implement approved amendment UI")
+
+            result = validate(root, base, head)
+            inferred_base = automatic_base(root, head)
+
+        self.assertTrue(result["ok"], result["errors"])
+        self.assertEqual(base, inferred_base)
+
+    def test_amendment_task_identity_rejects_out_of_range_wave(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'unapproved task namespace';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract(
+                "approved-reference-implementation",
+                package,
+                base,
+                task_id="W12.A05.T04",
+            )
+            self.install_contract(root, contract, base_sha=base)
+            head = self.commit(root, "attempt out-of-range amendment UI")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("taskId" in error or "contractPath" in error for error in result["errors"]))
+
+    def test_independently_reviewed_preimplementation_maintenance_can_precede_ui(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            self.install_reviewed_maintenance(root, base)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'UI after reviewed maintenance';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            head = self.commit(root, "implement UI after reviewed maintenance")
+
+            result = validate(root, base, head)
+
+        self.assertTrue(result["ok"], result["errors"])
+
+    def test_preimplementation_maintenance_rejects_self_review(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            self.install_reviewed_maintenance(root, base, reviewer="agent:codex")
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'UI after self review';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            head = self.commit(root, "attempt UI after self-reviewed maintenance")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("independent" in error for error in result["errors"]))
 
     def test_ui_change_requires_exact_contract_task_and_reference(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
