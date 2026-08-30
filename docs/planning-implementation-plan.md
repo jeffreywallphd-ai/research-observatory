@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e0472ca3faaeeecb959823d27796aa5fcfc1b53e38573be12b1f25e12b73d982
+source_sha256: 524e7691b7ab677c398aec9ca661503ecafd9fc5a394b2e859d0109338554b63
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4445,15 +4445,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
+#### - [x] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T02`
 
-**Owner / review:** codex / codex-independent-provenance-lineage-reviewer (`changes-requested`)
+**Owner / review:** codex / codex-independent-provenance-lineage-reviewer (`approved`)
 
 **Objective:** Desktop view from project output to source passages, transformations, models, prompts, decisions, and stale state.
 
@@ -4482,7 +4482,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S03.T03
 
-**Review mode:** `append-only v1` / 3 completed round(s)
+**Review mode:** `append-only v1` / 4 completed round(s)
 
 ###### Round R01
 
@@ -4580,7 +4580,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S03.T03-R02-F01` `fixed` — The exact empty same-cursor reproduction and a backward-cursor variant now fail at the generated-client boundary. A non-null cursor requires at least one returned fact, strict forward progress, and equality to requested cursor plus fact count. An empty terminal continuation with nextCursor=null passes through the generated client, mergeLineagePage retains accumulated facts and terminal null, and the renderer no longer exposes Load more. The generator emits exactly the checked-in guard and generated parity passed.
 - `CAP-03.S03.T03-R02-F02` `fixed` — The exact R02 partial-export and integrity-reopening reproductions now fail closed. Export requires the immutable accepted cursor-zero query, matching revision/direction, terminal pagination, verified integrity, service export permission with no denial, and no denied/unknown item rights; the manifest binds the accepted depth/page bounds and terminal count. mergeLineagePage applies a monotonic join in which integrity-review and rights-restricted denial survive every later verified/allowed page. The newly isolated R03-F01 concerns contradictory missing/legacy authority that neither the client nor readiness predicate currently maps into that otherwise-correct monotonic join; it does not erase closure of the exact R02 reproductions.
 
-**Current immutable submission awaiting review:** `R04` / packet SHA-256 `3ebe396314951dce07057db6b790179c8b3532945fd92d59fe8558e0ba3ce22c`
+###### Round R04
+
+**Immutable submission packet:** `R04` / packet SHA-256 `3ebe396314951dce07057db6b790179c8b3532945fd92d59fe8558e0ba3ce22c`
 
 - Candidate / base / branch: `427deb25291a55cfc7cf7b15327ddcc2f87d2262` / `b4da81e23738d722efe12cf44f760531656690f3` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-30T00:03:41+00:00`
@@ -4594,11 +4596,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R03` / `CAP-03.S03.T03-R03-F01`
 - Root-cause escalation: Earlier rounds treated integrityState and exportAllowed as trusted service conclusions, then hardened cursor and page-merge behavior without defining the semantic implications of the response's own missingRevisionIds and legacyEventCount fields. That left three independently reasonable checks incomplete: Core counted legacy bridges without promoting integrity review, the generated client validated field shapes but not the implication from visible debt to integrity denial, and renderer completeness ignored both content-free debt signals. R04 defines one invariant across all three boundaries: any missing or legacy visibility is integrity-review and non-exportable, and only zero accumulated debt may be complete.
 
-**Current latest-review projection:** `changes-requested` by codex-independent-provenance-lineage-reviewer at `2026-08-29T23:55:51+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent-provenance-lineage-reviewer / `2026-08-30T00:08:59+00:00`
 
-**Latest notes:** Independent focused R03 remediation review authenticated artifacts/evidence/CAP-03.S03.T03.R03.json at SHA-256 24c7fbf42d3d2600a03a37540683105f7f6b53b491d65b0e03a2e79e84e1ea12 and Git blob 19ff1c5d5359523c345d0480e91d655b390c912c in exact submission record 8a7be1ca131a08e01db4a53944ff836eba3c708e. Candidate b4da81e23738d722efe12cf44f760531656690f3 is a strict descendant of R02 candidate 9910ca3ae717ced397830125381e555901fd5abe, the submission record is a strict descendant of the candidate, and all 13 declared incremental paths exactly match that candidate range. The exact R02-F01 reproduction is closed: generated-client fake-transport replay rejects an empty same-cursor continuation and a backward cursor, accepts an empty terminal continuation only with nextCursor=null, and the renderer merge removes the continuation action. The exact R02-F02 reproductions are also closed: partial pagination cannot export, the accepted immutable revision/direction/depth/page-size query is required, and integrity-review or rights denial remains monotonic across later verified/allowed pages. All three immutable R01 closures remain supported by the 18/18 focused generated-client/renderer tests, the 20/20 real SQLite/Core service/repository tests, the actual renderer report, and inspection of the preserved cross-process/type/UI paths. Approval remains unavailable because one new high-severity contradiction is reproducible inside the same export/integrity trust boundary: the generated client accepts a resolved trace with nonempty missingRevisionIds (and analogously a nonzero legacyEventCount) while the response claims verified/export-allowed; lineageManifestReady then returns true and exportLineageManifest emits a manifest labeled complete. The accepted architecture explicitly makes missing revisions and legacy bridges integrity-review states unsuitable for export. Thus R03's progress, terminal completeness, query binding, and monotonic merge corrections are sound, but complete export still trusts a semantically inconsistent initial page. The submitted desktop report at SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad records nine successful commands and no errors, while the exact build manifest at SHA-256 e3fadf911a84344d5327e4e73238ab805733e03b2329cb5385b379ac54e75bd6 binds candidate b4da81e23738d722efe12cf44f760531656690f3 and only the protected witness as dirty. Generated Core client/generator parity, architecture, changed-path truth, patch hygiene, runtime capability alignment, content minimization, closed/read-only authority, and the real typed provenance vertical otherwise remain sound. The previously recorded two stale schema-v6 assertions and historical foundation-controller baseline remain separate W1-exit reconciliation debt rather than T03 regressions. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S03.T03.review-R04.json` / `06c7bfed31be4775e01000999157820be8b144fed5ee80855b69eeab51402141`
 
-**Currently open findings:** `CAP-03.S03.T03-R03-F01`
+**Review notes:** Independent focused R04 remediation review found no blocking or nonblocking acceptance-bound defect. The frozen evidence artifacts/evidence/CAP-03.S03.T03.R04.json reproduces SHA-256 7440517b4d2aa3e5b8310fca2a658968744b7b37e244ae6582a63dca332b4572 and Git blob b0eac8f8d001f3ec4eacb45e66f23bd62c2f4fec in exact submission record 9b62fb2fe107e4fc823e198a3aa77672baf2159b. Candidate 427deb25291a55cfc7cf7b15327ddcc2f87d2262 is a strict descendant of R03 candidate b4da81e23738d722efe12cf44f760531656690f3, the submission record is a strict descendant of the candidate, and all 14 declared incremental paths exactly match that candidate range. Independent replay closes CAP-03.S03.T03-R03-F01 across every required boundary. The generated client rejects both missing-revision and legacy-event contradictions on first and continuation pages; an honest missing/legacy integrity-review response remains readable but non-exportable. The renderer independently derives integrity-review from the accumulated missing identities and maximum legacy count, preserves the denial through later pages, and requires an empty missing set plus zero legacy events before complete query-bound export. A real SQLite compatibility bridge beside a resolved canonical revision returns the canonical facts with legacyEventCount=1, integrity-review, exportAllowed=false, and integrity-review denial. The checked-in client exactly matches its Python generator. All 18 focused generated-client/renderer tests and 21 real service/repository tests passed; the latter retain the synthesis/evidence/alternate/human-decision/output-free-invalidation path, exact pagination order, rights denial, missing-reference behavior, append-only integrity, retry, restart, and v1/v2 history. Inspection and those focused suites confirm R03's closures of both R02 findings remain valid and the three earlier R01 closures remain supported: strict cursor progress and terminal empty pages, immutable request authority, complete query-bound export, monotonic rights/integrity denial, factual typed lineage, and governed Audit and Lineage regions are unchanged. Generated Core parity, architecture, exact path truth, and patch hygiene passed. The submitted desktop report at SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad contains nine successful commands and no errors; the build manifest at SHA-256 1713d8ebc744d6bfd3ef1988e9cd87e1abece99899159f113ad9b08d3f2f85e6 binds exact candidate 427deb25291a55cfc7cf7b15327ddcc2f87d2262 and records only the protected witness as dirty. Content minimization, closed-project denial, read-only inspection, package/runtime alignment, public contract scope, and the unchanged approved UI reference remain sound. The previously disclosed stale schema-v6 assertions, historical foundation-controller baseline, slice integration, and complete W1 qualification remain mandatory later work and are not relabeled as task results. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S03.T03-R03-F01` `fixed` — The generated response boundary now computes visible integrity debt from nonempty missingRevisionIds or legacyEventCount>0 and requires integrityState='integrity-review', exportAllowed=false, and exportDenialReason='integrity-review' on every first or continuation page. Independent fake-transport replay rejected all four missing/legacy contradictions and accepted the honest denied form for read-only inspection. Core now promotes every visible legacy compatibility bridge to integrity-review; the real SQLite test proves a resolved canonical trace remains visible with one legacy event but cannot export. Renderer merge unions missing identities, retains the maximum legacy count, derives integrity-review monotonically from either condition, and manifest readiness independently requires no missing identities and zero legacy events. Direct merge replay remained denied even when a later page falsely claimed verified/exportable. Generated parity and all focused success, denial, boundary, prior-closure, and real persistence checks passed.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-provenance-lineage-reviewer at `2026-08-30T00:08:59+00:00`
+
+**Latest notes:** Independent focused R04 remediation review found no blocking or nonblocking acceptance-bound defect. The frozen evidence artifacts/evidence/CAP-03.S03.T03.R04.json reproduces SHA-256 7440517b4d2aa3e5b8310fca2a658968744b7b37e244ae6582a63dca332b4572 and Git blob b0eac8f8d001f3ec4eacb45e66f23bd62c2f4fec in exact submission record 9b62fb2fe107e4fc823e198a3aa77672baf2159b. Candidate 427deb25291a55cfc7cf7b15327ddcc2f87d2262 is a strict descendant of R03 candidate b4da81e23738d722efe12cf44f760531656690f3, the submission record is a strict descendant of the candidate, and all 14 declared incremental paths exactly match that candidate range. Independent replay closes CAP-03.S03.T03-R03-F01 across every required boundary. The generated client rejects both missing-revision and legacy-event contradictions on first and continuation pages; an honest missing/legacy integrity-review response remains readable but non-exportable. The renderer independently derives integrity-review from the accumulated missing identities and maximum legacy count, preserves the denial through later pages, and requires an empty missing set plus zero legacy events before complete query-bound export. A real SQLite compatibility bridge beside a resolved canonical revision returns the canonical facts with legacyEventCount=1, integrity-review, exportAllowed=false, and integrity-review denial. The checked-in client exactly matches its Python generator. All 18 focused generated-client/renderer tests and 21 real service/repository tests passed; the latter retain the synthesis/evidence/alternate/human-decision/output-free-invalidation path, exact pagination order, rights denial, missing-reference behavior, append-only integrity, retry, restart, and v1/v2 history. Inspection and those focused suites confirm R03's closures of both R02 findings remain valid and the three earlier R01 closures remain supported: strict cursor progress and terminal empty pages, immutable request authority, complete query-bound export, monotonic rights/integrity denial, factual typed lineage, and governed Audit and Lineage regions are unchanged. Generated Core parity, architecture, exact path truth, and patch hygiene passed. The submitted desktop report at SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad contains nine successful commands and no errors; the build manifest at SHA-256 1713d8ebc744d6bfd3ef1988e9cd87e1abece99899159f113ad9b08d3f2f85e6 binds exact candidate 427deb25291a55cfc7cf7b15327ddcc2f87d2262 and records only the protected witness as dirty. Content minimization, closed-project denial, read-only inspection, package/runtime alignment, public contract scope, and the unchanged approved UI reference remain sound. The previously disclosed stale schema-v6 assertions, historical foundation-controller baseline, slice integration, and complete W1 qualification remain mandatory later work and are not relabeled as task results. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.
+
+**Currently open findings:** -
 
 ### SLICE-portable-workflow-model-and-local-worker-fabric (`CAP-03.S04`) - Portable workflow model and local worker fabric
 

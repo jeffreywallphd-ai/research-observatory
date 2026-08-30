@@ -1,0 +1,70 @@
+{
+  "task_id": "CAP-03.S03.T03",
+  "attempt_id": "R04",
+  "candidate_commit": "427deb25291a55cfc7cf7b15327ddcc2f87d2262",
+  "submission_record_commit": "9b62fb2fe107e4fc823e198a3aa77672baf2159b",
+  "reviewer": "codex-independent-provenance-lineage-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent focused R04 remediation review found no blocking or nonblocking acceptance-bound defect. The frozen evidence artifacts/evidence/CAP-03.S03.T03.R04.json reproduces SHA-256 7440517b4d2aa3e5b8310fca2a658968744b7b37e244ae6582a63dca332b4572 and Git blob b0eac8f8d001f3ec4eacb45e66f23bd62c2f4fec in exact submission record 9b62fb2fe107e4fc823e198a3aa77672baf2159b. Candidate 427deb25291a55cfc7cf7b15327ddcc2f87d2262 is a strict descendant of R03 candidate b4da81e23738d722efe12cf44f760531656690f3, the submission record is a strict descendant of the candidate, and all 14 declared incremental paths exactly match that candidate range. Independent replay closes CAP-03.S03.T03-R03-F01 across every required boundary. The generated client rejects both missing-revision and legacy-event contradictions on first and continuation pages; an honest missing/legacy integrity-review response remains readable but non-exportable. The renderer independently derives integrity-review from the accumulated missing identities and maximum legacy count, preserves the denial through later pages, and requires an empty missing set plus zero legacy events before complete query-bound export. A real SQLite compatibility bridge beside a resolved canonical revision returns the canonical facts with legacyEventCount=1, integrity-review, exportAllowed=false, and integrity-review denial. The checked-in client exactly matches its Python generator. All 18 focused generated-client/renderer tests and 21 real service/repository tests passed; the latter retain the synthesis/evidence/alternate/human-decision/output-free-invalidation path, exact pagination order, rights denial, missing-reference behavior, append-only integrity, retry, restart, and v1/v2 history. Inspection and those focused suites confirm R03's closures of both R02 findings remain valid and the three earlier R01 closures remain supported: strict cursor progress and terminal empty pages, immutable request authority, complete query-bound export, monotonic rights/integrity denial, factual typed lineage, and governed Audit and Lineage regions are unchanged. Generated Core parity, architecture, exact path truth, and patch hygiene passed. The submitted desktop report at SHA-256 f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad contains nine successful commands and no errors; the build manifest at SHA-256 1713d8ebc744d6bfd3ef1988e9cd87e1abece99899159f113ad9b08d3f2f85e6 binds exact candidate 427deb25291a55cfc7cf7b15327ddcc2f87d2262 and records only the protected witness as dirty. Content minimization, closed-project denial, read-only inspection, package/runtime alignment, public contract scope, and the unchanged approved UI reference remain sound. The previously disclosed stale schema-v6 assertions, historical foundation-controller baseline, slice integration, and complete W1 qualification remain mandatory later work and are not relabeled as task results. artifacts/evidence/W1.A04.B00.json remains unstaged and byte-identical at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and Git blob 2cb580d7052a24cf9ec29a177c604d49b9eb14a9.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S03.T03.R04.json",
+      "sha256": "7440517b4d2aa3e5b8310fca2a658968744b7b37e244ae6582a63dca332b4572",
+      "git_blob": "b0eac8f8d001f3ec4eacb45e66f23bd62c2f4fec",
+      "commit": "427deb25291a55cfc7cf7b15327ddcc2f87d2262"
+    },
+    {
+      "type": "prior-review-ledger",
+      "path": "artifacts/evidence/CAP-03.S03.T03.review-R03.json",
+      "sha256": "8e001bbc80ee87dbaf9cb62860079b3559c2e4d4d75e3f81ceefb396f14db886",
+      "result": "Authenticated immutable R03 ledger containing the sole open missing/legacy integrity finding and explicit preserved closures of both R02 findings."
+    },
+    {
+      "type": "independent-check",
+      "command": "apps\\desktop\\node_modules\\.bin\\vitest.CMD run apps/desktop/src/app/AuditLineageWorkspace.test.tsx packages/contracts/core-api/generated.test.ts",
+      "result": "PASS: 18/18 focused generated-client and renderer tests passed. Missing and legacy contradictions fail on first and continuation pages; readiness denies either visible debt; merge accumulates missing/legacy integrity denial; strict cursor termination, complete query-bound export, rights/integrity monotonicity, factual regions, and all prior focused closures remain green."
+    },
+    {
+      "type": "independent-check",
+      "command": "PYTHONPATH=services/core-api/src .venv\\Scripts\\python.exe -m unittest -v tests.service.test_provenance tests.data.test_sqlite_repositories",
+      "result": "PASS: 21/21 affected real service and SQLite repository tests passed. The real legacy compatibility bridge retains resolved canonical facts but returns legacyEventCount=1 with integrity-review and export denial; missing-reference, rights, cross-aggregate trace, append-only, corruption, retry/restart, and v1/v2 cases remain green."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Drive the exact generated client through a Vite SSR fake transport with (a) verified/exportable missingRevisionIds on the first page, (b) the same on a continuation, (c) verified/exportable legacyEventCount=1 on the first page, and (d) the same on a continuation",
+      "result": "PASS: all four contradictory responses failed with RO-CORE-RESPONSE-INVALID. A matching missing-revision response carrying integrity-review, exportAllowed=false, and integrity-review denial remained accepted for bounded read-only inspection and lineageManifestReady returned false."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Call mergeLineagePage directly with an initially verified/exportable accumulated trace and a later terminal page claiming verified/exportable while carrying both a missing revision and legacyEventCount=1",
+      "result": "PASS: the merged trace retained the missing identity and legacy count, derived integrity-review, set exportAllowed=false and integrity-review denial, and lineageManifestReady returned false. This independently verifies renderer fail-closed behavior even if its generated-client boundary were bypassed."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe tools\\core_api_contract.py --check; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; exact incremental changed-path comparison; git diff --check",
+      "result": "PASS: generated OpenAPI/TypeScript matches the Python generator; architecture passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles; all 14 declared paths matched; patch hygiene passed."
+    },
+    {
+      "type": "desktop-application-report",
+      "path": "artifacts/tmp/CAP-03.S03.T03-R04-desktop-application.json",
+      "sha256": "f7b424a55d31a0da341c5a3c3d1faa22188b3aec99e6c3ea1402d9994c2c59ad",
+      "result": "PASS: nine UI-component, lint, strict-TypeScript, full-Vitest, production-build, Rust-format, clippy, Rust-test, and Rust-build commands exited zero with no report errors and the task-owned capability included."
+    },
+    {
+      "type": "build-manifest",
+      "path": "artifacts/tmp/CAP-03.S03.T03-R04-build-manifest.json",
+      "sha256": "1713d8ebc744d6bfd3ef1988e9cd87e1abece99899159f113ad9b08d3f2f85e6",
+      "result": "PASS: build identity 0.1.0+g427deb2.dirty binds the exact candidate and lists only the protected untracked witness as dirty."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S03.T03-R03-F01",
+      "disposition": "fixed",
+      "evidence": "The generated response boundary now computes visible integrity debt from nonempty missingRevisionIds or legacyEventCount>0 and requires integrityState='integrity-review', exportAllowed=false, and exportDenialReason='integrity-review' on every first or continuation page. Independent fake-transport replay rejected all four missing/legacy contradictions and accepted the honest denied form for read-only inspection. Core now promotes every visible legacy compatibility bridge to integrity-review; the real SQLite test proves a resolved canonical trace remains visible with one legacy event but cannot export. Renderer merge unions missing identities, retains the maximum legacy count, derives integrity-review monotonically from either condition, and manifest readiness independently requires no missing identities and zero legacy events. Direct merge replay remained denied even when a later page falsely claimed verified/exportable. Generated parity and all focused success, denial, boundary, prior-closure, and real persistence checks passed."
+    }
+  ]
+}
