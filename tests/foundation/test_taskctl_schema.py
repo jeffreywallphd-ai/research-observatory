@@ -91,9 +91,7 @@ class BacklogSchemaTests(unittest.TestCase):
         self.assertEqual([], list(validator.iter_errors(record)))
 
         current = json.loads(
-            (REPO / "planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json").read_text(
-                encoding="utf-8"
-            )
+            (REPO / "planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json").read_text(encoding="utf-8")
         )
         self.assertEqual([], list(validator.iter_errors(current)))
 
