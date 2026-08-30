@@ -84,9 +84,9 @@
     ]
   },
   "remediation": {
-    "priorReviewId": "GOV-MAINT-0007.R02",
-    "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0007.review-R02.json",
-    "priorReviewSha256": "4619cbaa725eb3122b6e0d9f6e74be934a93af09ceef311d0be4e48de1ca4919",
+    "priorReviewId": "GOV-MAINT-0007.R03",
+    "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0007.review-R03.json",
+    "priorReviewSha256": "5306d29877c06ccdba888650f21f1ed9df7a8a055fb6ca890ee13392066b3d61",
     "resolvedFindingIds": [
       "GOV-MAINT-0007-R01-F01",
       "GOV-MAINT-0007-R01-F02",
@@ -126,6 +126,18 @@
       ],
       "path": "planning/governance-migrations/GOV-MAINT-0007.review-R02.json",
       "sha256": "4619cbaa725eb3122b6e0d9f6e74be934a93af09ceef311d0be4e48de1ca4919"
+    },
+    {
+      "reviewId": "GOV-MAINT-0007.R03",
+      "reviewedCommit": "a69493fa3efb718d846d3a3dd5c892ece5947209",
+      "reviewer": "agent:gov-maint-0007-reviewer",
+      "reviewedAt": "2026-08-30T22:08:16.5855943Z",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": [
+        "GOV-MAINT-0007-R03-F01"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0007.review-R03.json",
+      "sha256": "5306d29877c06ccdba888650f21f1ed9df7a8a055fb6ca890ee13392066b3d61"
     }
   ],
   "review": null

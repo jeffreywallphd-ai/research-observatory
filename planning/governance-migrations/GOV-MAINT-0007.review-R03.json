@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0007",
+  "reviewId": "GOV-MAINT-0007.R03",
+  "reviewedCommit": "a69493fa3efb718d846d3a3dd5c892ece5947209",
+  "reviewer": "agent:gov-maint-0007-reviewer",
+  "reviewedAt": "2026-08-30T22:08:16.5855943Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "planning/governance-migrations/GOV-MAINT-0007.json",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0007-R03-F01",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "The control-only maintenance envelope still permits executable launcher and product-build mutations",
+      "reproduction": "At the reviewed commit, is_maintenance_product_path(\"dev.cmd\") and is_maintenance_product_path(\"tools/core_sidecar_build.py\") both return false. In the existing real-Git UiChangeGateTests fixture, perform an approved UI implementation and then call install_reviewed_maintenance with mixed_product_path set independently to each path. validate(root, base, head) returns ok=true with errors=[] for both mutations.",
+      "requiredResolution": "Close GOV-MAINT-0007-R02-F02 across the complete executable product/build/runtime surface. Prefer a fail-closed explicit maintenance-control allowlist, or derive a complete protected inventory that includes root launchers and product-producing tools outside apps, modules, packages, packaging, services, and workers. Require zero net semantic delta for dev.cmd, bootstrap.cmd, tools/core_sidecar_build.py, and any equivalent launch/build/package path, and add real-Git denial regressions for at least one root launcher and one product-build tool while preserving legitimate control-only maintenance."
+    }
+  ]
+}
