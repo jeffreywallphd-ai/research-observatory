@@ -681,6 +681,90 @@ def _safe_ecr_file(root: Path, relative: object) -> Path | None:
     return path
 
 
+def _safe_repository_file(root: Path, relative: object) -> Path | None:
+    if (
+        not isinstance(relative, str)
+        or "\\" in relative
+        or ":" in relative
+        or re.search(r"(?:^|/)\.{1,2}(?:/|$)", relative)
+    ):
+        return None
+    pure = PurePosixPath(relative)
+    if pure.is_absolute() or any(part in {"", ".", ".."} for part in pure.parts):
+        return None
+    candidate = root.joinpath(*pure.parts)
+    current = root
+    junction = getattr(os.path, "isjunction", lambda _path: False)
+    for part in pure.parts:
+        current = current / part
+        if (current.exists() or current.is_symlink()) and (current.is_symlink() or junction(current)):
+            return None
+    resolved = candidate.resolve()
+    try:
+        resolved.relative_to(root.resolve())
+    except ValueError:
+        return None
+    return resolved
+
+
+def _bound_repository_file_errors(
+    root: Path,
+    references: object,
+    *,
+    label: str,
+    packet_commit: str | None = None,
+) -> list[str]:
+    if not isinstance(references, list):
+        return [f"{label}: file inventory is missing"]
+    errors: list[str] = []
+    seen: set[str] = set()
+    for reference in references:
+        item = _json_object(reference)
+        relative = item.get("path")
+        if not isinstance(relative, str) or relative in seen:
+            errors.append(f"{label}: file inventory contains a duplicate or invalid path")
+            continue
+        seen.add(relative)
+        path = _safe_repository_file(root, relative)
+        if path is None:
+            errors.append(f"{label}: unsafe repository path {relative!r}")
+            continue
+        try:
+            payload = path.read_bytes()
+        except OSError as exc:
+            errors.append(f"{label}: unreadable repository file {relative}: {exc}")
+            continue
+        if hashlib.sha256(payload).hexdigest() != item.get("sha256"):
+            errors.append(f"{label}: repository file hash mismatch: {relative}")
+        if packet_commit and _git_blob(root, packet_commit, relative) != payload:
+            errors.append(f"{label}: repository file differs from {packet_commit}: {relative}")
+    return errors
+
+
+def _migration_reference_errors(root: Path, reference: object) -> list[str]:
+    item = _json_object(reference)
+    relative = item.get("path")
+    path = _safe_repository_file(root, relative)
+    if path is None or not str(relative).startswith("planning/governance-migrations/"):
+        return ["ECR v4 migration authority path is unsafe or outside governance migrations"]
+    try:
+        payload = path.read_bytes()
+        document = json.loads(payload)
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        return [f"ECR v4 migration authority is unavailable: {exc}"]
+    commit = str(item.get("commit") or "")
+    errors: list[str] = []
+    if hashlib.sha256(payload).hexdigest() != item.get("sha256"):
+        errors.append("ECR v4 migration authority hash mismatch")
+    if document.get("migrationId") != item.get("id") or document.get("status") != "adopted":
+        errors.append("ECR v4 migration authority identity or adopted status mismatch")
+    if not _git_commit_exists(root, commit) or not _git_is_ancestor(root, commit):
+        errors.append("ECR v4 migration authority commit is missing or not ancestral")
+    elif _git_blob(root, commit, str(relative)) != payload:
+        errors.append("ECR v4 migration authority differs from its immutable Git blob")
+    return errors
+
+
 def _git_blob(root: Path, commit: str, relative: str) -> bytes | None:
     completed = subprocess.run(["git", "show", f"{commit}:{relative}"], cwd=root, capture_output=True, check=False)
     return completed.stdout if completed.returncode == 0 else None
@@ -803,7 +887,7 @@ def _approval_record_errors(
         ("packet.proposalSha256", packet_reference.get("proposalSha256"), proposal.get("sha256")),
     )
     expected: tuple[tuple[str, Any, Any], ...]
-    if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal"}:
+    if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal", "4.0-proposal"}:
         expected = (
             *expected_common,
             ("effectiveBase", effective, authority_chain),
@@ -864,12 +948,21 @@ def _approval_record_errors(
             errors.append("Wave amendment approval packet commit does not exist")
         elif _git_blob(root, packet_commit, packet_relative) != packet_payload:
             errors.append("Wave amendment approval packet differs from its immutable Git blob")
-        if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal"}:
+        if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal", "4.0-proposal"}:
             frozen = _json_object(packet.get("authorityChain")).get("orderedAmendments") or []
             latest_state = str(_json_object(frozen[-1]).get("effectiveStateCommit") or "") if frozen else ""
             if latest_state and not _git_is_ancestor(root, latest_state, packet_commit):
                 errors.append("Wave amendment packet does not descend from the latest predecessor effective state")
         errors.extend(_packet_file_errors(root, packet, packet_commit))
+        if packet.get("schemaVersion") == "4.0-proposal":
+            errors.extend(
+                _bound_repository_file_errors(
+                    root,
+                    _json_object(packet.get("governedExperience")).get("files"),
+                    label="ECR v4 governed experience",
+                    packet_commit=packet_commit,
+                )
+            )
     if require_committed_history:
         introduced = _approval_introduction_commit(root, approval_relative)
         if introduced is None:
@@ -887,6 +980,8 @@ def _approval_record_errors(
 def _authority_history_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal"}:
         return _authority_chain_v2_errors(root, packet)
+    if packet.get("schemaVersion") == "4.0-proposal":
+        return _authority_chain_v4_errors(root, packet)
     errors: list[str] = []
     authority = _json_object(packet.get("authority"))
     wave_id = str(packet.get("targetWave"))
@@ -1154,6 +1249,243 @@ def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     return errors
 
 
+def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
+    """Validate post-migration product authority without reviving a recovery hold."""
+    errors: list[str] = []
+    chain = _json_object(packet.get("authorityChain"))
+    wave_base = _json_object(chain.get("waveBase"))
+    wave_id = str(packet.get("targetWave") or "")
+    proposed = str(packet.get("proposedAmendmentId") or "")
+    try:
+        backlog, _ = load_backlog(root)
+    except (OSError, yaml.YAMLError) as exc:
+        return [f"ECR v4 authority backlog is unavailable: {exc}"]
+
+    bases = {str(item.get("wave_id")): item for item in backlog.get("wave_approval_bases", [])}
+    base = _json_object(bases.get(wave_id))
+    if (
+        wave_base.get("waveId") != wave_id
+        or wave_base.get("packetCommit") != base.get("packet_commit")
+        or wave_base.get("approvalRecordCommit") != base.get("record_commit")
+    ):
+        errors.append("ECR v4 Wave base differs from the immutable backlog authority")
+
+    actual = [item for item in backlog.get("wave_amendments", []) if item.get("target_wave") == wave_id]
+    frozen = chain.get("orderedAmendments")
+    reserved = chain.get("reservedAmendments")
+    if not isinstance(frozen, list) or not isinstance(reserved, list):
+        return [*errors, "ECR v4 ordered or reserved amendment authority is missing"]
+    actual_ids = [str(item.get("id")) for item in actual]
+    frozen_ids = [str(_json_object(item).get("id")) for item in frozen]
+    expected_frozen = [f"{wave_id}.A{index:02d}" for index in range(1, len(actual) + 1)]
+    if actual_ids != expected_frozen or frozen_ids != actual_ids:
+        errors.append("ECR v4 adopted predecessor chain is incomplete, gapped, reordered, or forked")
+
+    ordered_commits: list[str] = [
+        str(wave_base.get("packetCommit") or ""),
+        str(wave_base.get("approvalRecordCommit") or ""),
+    ]
+    ancestry_pairs: list[tuple[str, str]] = [(ordered_commits[0], ordered_commits[1])]
+    for packet_item, backlog_item in zip(frozen, actual, strict=False):
+        item = _json_object(packet_item)
+        reference = _json_object(item.get("approvalReference"))
+        backlog_reference = _json_object(backlog_item.get("approval_reference"))
+        expected = (
+            (item.get("id"), backlog_item.get("id"), "identity"),
+            (item.get("changeRequestId"), backlog_item.get("change_request_id"), "change request"),
+            (item.get("status"), (backlog_item.get("lifecycle") or {}).get("status"), "status"),
+            (reference.get("path"), backlog_reference.get("path"), "approval path"),
+            (reference.get("sha256"), backlog_reference.get("sha256"), "approval hash"),
+            (
+                reference.get("introductionCommit"),
+                backlog_reference.get("introduction_commit"),
+                "approval introduction",
+            ),
+        )
+        for current, wanted, label in expected:
+            if current != wanted:
+                errors.append(f"ECR v4 {item.get('id')} {label} differs from predecessor authority")
+        approval_path = _safe_repository_file(root, reference.get("path"))
+        try:
+            approval_payload = approval_path.read_bytes() if approval_path else b""
+            approval_record = json.loads(approval_payload)
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            errors.append(f"ECR v4 {item.get('id')} approval record is unavailable: {exc}")
+            approval_record = {}
+            approval_payload = b""
+        if approval_payload and hashlib.sha256(approval_payload).hexdigest() != reference.get("sha256"):
+            errors.append(f"ECR v4 {item.get('id')} approval hash mismatch")
+        if approval_record.get("amendmentId") != item.get("id") or approval_record.get("status") != "APPROVED":
+            errors.append(f"ECR v4 {item.get('id')} approval identity/status mismatch")
+        packet_commit = str(item.get("packetCommit") or "")
+        approval_commit = str(reference.get("introductionCommit") or "")
+        state_commit = str(item.get("effectiveStateCommit") or "")
+        if (approval_record.get("packet") or {}).get("commit") != packet_commit:
+            errors.append(f"ECR v4 {item.get('id')} packet commit differs from its approval")
+        ordered_commits.extend((packet_commit, approval_commit, state_commit))
+        ancestry_pairs.extend(((packet_commit, approval_commit), (approval_commit, state_commit)))
+        historical = (
+            _git_blob(root, state_commit, "planning/backlog.yaml") if _git_commit_exists(root, state_commit) else None
+        )
+        if historical is None:
+            errors.append(f"ECR v4 {item.get('id')} effective-state commit is unavailable")
+        else:
+            try:
+                state = yaml.safe_load(historical.decode("utf-8"))
+                historical_item = next(
+                    candidate for candidate in state.get("wave_amendments", []) if candidate.get("id") == item.get("id")
+                )
+            except UnicodeError, yaml.YAMLError, StopIteration, AttributeError:
+                historical_item = None
+            if (historical_item or {}).get("lifecycle", {}).get("status") != "ADOPTED":
+                errors.append(f"ECR v4 {item.get('id')} effective state is not ADOPTED")
+
+    migration = _json_object(packet.get("migrationAuthority"))
+    errors.extend(_migration_reference_errors(root, migration))
+    reserved_ids = [str(_json_object(item).get("id")) for item in reserved]
+    expected_reserved = [f"{wave_id}.A{index:02d}" for index in range(len(frozen) + 1, len(frozen) + len(reserved) + 1)]
+    if reserved_ids != expected_reserved:
+        errors.append("ECR v4 reserved amendment identities are not exact and consecutive")
+    for reservation in reserved:
+        item = _json_object(reservation)
+        reference = _json_object(item.get("approvalReference"))
+        if item.get("supersededByMigration") != migration:
+            errors.append(f"ECR v4 {item.get('id')} reservation uses a different migration authority")
+        if item.get("id") in actual_ids:
+            errors.append(f"ECR v4 {item.get('id')} is both materialized and reserved")
+        approval_path = _safe_repository_file(root, reference.get("path"))
+        try:
+            approval_payload = approval_path.read_bytes() if approval_path else b""
+            approval_record = json.loads(approval_payload)
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            errors.append(f"ECR v4 {item.get('id')} reserved approval is unavailable: {exc}")
+            approval_record = {}
+            approval_payload = b""
+        if (
+            not approval_payload
+            or hashlib.sha256(approval_payload).hexdigest() != reference.get("sha256")
+            or approval_record.get("amendmentId") != item.get("id")
+            or approval_record.get("changeRequestId") != item.get("changeRequestId")
+            or approval_record.get("targetWave") != wave_id
+            or approval_record.get("status") != "APPROVED"
+            or (approval_record.get("packet") or {}).get("commit") != item.get("packetCommit")
+        ):
+            errors.append(f"ECR v4 {item.get('id')} reserved authority is not exact and APPROVED")
+        approval_commit = str(reference.get("introductionCommit") or "")
+        packet_commit = str(item.get("packetCommit") or "")
+        migration_commit = str(migration.get("commit") or "")
+        ordered_commits.extend((packet_commit, approval_commit, migration_commit))
+        ancestry_pairs.extend(((packet_commit, approval_commit), (approval_commit, migration_commit)))
+        if _git_blob(root, approval_commit, str(reference.get("path") or "")) != approval_payload:
+            errors.append(f"ECR v4 {item.get('id')} reserved approval differs from its introduction blob")
+
+    if proposed != f"{wave_id}.A{len(frozen) + len(reserved) + 1:02d}":
+        errors.append("ECR v4 proposed amendment does not follow adopted and reserved authority")
+    existing_ecr_numbers = [
+        int(str(_json_object(item).get("changeRequestId")).removeprefix("ECR-"))
+        for item in [*frozen, *reserved]
+        if re.fullmatch(r"ECR-[0-9]{4}", str(_json_object(item).get("changeRequestId") or ""))
+    ]
+    next_ecr = max(existing_ecr_numbers, default=0) + 1
+    if packet.get("changeRequestId") != f"ECR-{next_ecr:04d}":
+        errors.append("ECR v4 change-request identity is not consecutive")
+
+    authorized = [str(item) for item in packet.get("authorizedTaskIds", [])]
+    inventory = [str(_json_object(item).get("id")) for item in packet.get("taskInventory", [])]
+    expected_tasks = [f"{proposed}.T{index:02d}" for index in range(1, len(inventory) + 1)]
+    if authorized != inventory or inventory != expected_tasks:
+        errors.append("ECR v4 task authority/inventory is not exact, ordered, and amendment-bound")
+    bootstrap_id = str(_json_object(packet.get("bootstrapUnit")).get("id") or "")
+    if bootstrap_id != f"{proposed}.B00":
+        errors.append("ECR v4 bootstrap identity is outside the proposed amendment namespace")
+    for task in packet.get("taskInventory", []):
+        if bootstrap_id not in (_json_object(task).get("dependencies") or []):
+            errors.append(f"ECR v4 task {_json_object(task).get('id')} does not depend on the approved bootstrap")
+
+    contribution_task_ids: list[str] = []
+    refactor_task_ids: list[str] = []
+    capabilities = {str(item.get("id")) for item in backlog.get("capabilities", [])}
+    contributions = packet.get("sliceContributions") or []
+    expected_slices = [f"{proposed}.S{index:02d}" for index in range(1, len(contributions) + 1)]
+    if [str(_json_object(item).get("id")) for item in contributions] != expected_slices:
+        errors.append("ECR v4 slice contribution identities are not exact and ordered")
+    for contribution in contributions:
+        item = _json_object(contribution)
+        if item.get("capabilityId") not in capabilities:
+            errors.append(f"ECR v4 {item.get('id')} names an unknown capability")
+        task_ids = [str(task_id) for task_id in item.get("taskIds", [])]
+        contribution_refactors = [str(task_id) for task_id in item.get("refactorTaskIds", [])]
+        if any(task_id not in task_ids for task_id in contribution_refactors):
+            errors.append(f"ECR v4 {item.get('id')} refactor tasks are outside its task inventory")
+        contribution_task_ids.extend(task_ids)
+        refactor_task_ids.extend(contribution_refactors)
+    if contribution_task_ids != authorized or len(contribution_task_ids) != len(set(contribution_task_ids)):
+        errors.append("ECR v4 slice contributions do not partition the authorized tasks exactly once")
+
+    budget = _json_object(packet.get("refactorBudget"))
+    if budget.get("refactorTaskIds") != refactor_task_ids:
+        errors.append("ECR v4 refactor budget does not match contribution task classification")
+    planned = float(budget.get("plannedWorkPoints") or 0)
+    refactor = float(budget.get("refactorPoints") or 0)
+    declared_share = float(budget.get("refactorSharePercent") or 0)
+    calculated_share = round((refactor / planned) * 100, 1) if planned > 0 else 100.0
+    if declared_share != calculated_share or declared_share > float(budget.get("limitPercent") or 0):
+        errors.append("ECR v4 refactor budget is mathematically inconsistent or exceeds its limit")
+
+    waves = {str(item.get("id")): item for item in backlog.get("waves", [])}
+    campaign = _json_object(_json_object(waves.get(wave_id)).get("campaign"))
+    active_tasks = [
+        str(task.get("id"))
+        for capability in backlog.get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+        if slice_.get("wave") == wave_id
+        for task in slice_.get("tasks", [])
+        if task.get("status") in {"IN_PROGRESS", "REVIEW"}
+    ]
+    active_holds = [
+        hold
+        for hold in _json_object(backlog.get("control_plane")).get("recovery_holds", [])
+        if hold.get("status") == "ACTIVE"
+    ]
+    active_amendments = [
+        amendment
+        for amendment in backlog.get("wave_amendments", [])
+        if _json_object(amendment.get("campaign")).get("status") in {"ACTIVE", "REVIEW"}
+    ]
+    if campaign.get("status") != "PAUSED" or campaign.get("scope") != "wave":
+        errors.append("ECR v4 target Wave is not paused at the ordinary Wave boundary")
+    if active_tasks:
+        errors.append(f"ECR v4 ordinary task work is not quiescent: {active_tasks[0]}")
+    if active_holds:
+        errors.append("ECR v4 cannot reactivate an incident-specific recovery hold")
+    if active_amendments:
+        errors.append("ECR v4 cannot overlap another active amendment campaign")
+
+    experience = _json_object(packet.get("governedExperience"))
+    errors.extend(
+        _bound_repository_file_errors(
+            root,
+            experience.get("files"),
+            label="ECR v4 governed experience",
+        )
+    )
+    for commit in ordered_commits:
+        if (
+            not re.fullmatch(r"[0-9a-f]{40}", commit)
+            or not _git_commit_exists(root, commit)
+            or not _git_is_ancestor(root, commit)
+        ):
+            errors.append(f"ECR v4 authority commit is missing or not on current history: {commit}")
+    for ancestor, descendant in ancestry_pairs:
+        if (
+            _git_commit_exists(root, ancestor)
+            and _git_commit_exists(root, descendant)
+            and not _git_is_ancestor(root, ancestor, descendant)
+        ):
+            errors.append(f"ECR v4 authority chain is forked: {ancestor} is not an ancestor of {descendant}")
+    return errors
+
+
 def ecr_validation_errors(root: Path, change_request_id: str, *, require_approved: bool) -> list[str]:
     packet_path = ecr_packet_path(root, change_request_id)
     try:
@@ -1164,6 +1496,7 @@ def ecr_validation_errors(root: Path, change_request_id: str, *, require_approve
         "1.0-proposal": "enabler-change-request.schema.json",
         "2.0-proposal": "enabler-change-request.v2.schema.json",
         "3.0-proposal": "enabler-change-request.v3.schema.json",
+        "4.0-proposal": "enabler-change-request.v4.schema.json",
     }.get(str(packet.get("schemaVersion")))
     if schema_name is None:
         errors = [f"ECR packet uses an unsupported schema version: {packet.get('schemaVersion')}"]
@@ -1242,8 +1575,26 @@ def approve_ecr(
     if head != commit:
         raise ValueError("ECR approval commit must equal the current immutable Git HEAD")
     status = subprocess.run(["git", "status", "--porcelain"], cwd=root, capture_output=True, text=True, check=False)
-    if status.returncode != 0 or status.stdout.strip():
-        raise ValueError("ECR approval requires a clean worktree so the reviewed packet is exactly commit-bound")
+    if status.returncode != 0:
+        raise ValueError("ECR approval cannot inspect the worktree")
+    dirty = [line for line in status.stdout.splitlines() if line]
+    if dirty:
+        untracked = {line[3:] for line in dirty if line.startswith("?? ")}
+        if len(untracked) != len(dirty):
+            raise ValueError("ECR approval requires tracked files to match the exact reviewed packet commit")
+        try:
+            import taskctl
+
+            backlog, _ = load_backlog(root)
+            allowed_untracked = taskctl.wave_resume_allowed_untracked(
+                backlog,
+                str(packet.get("targetWave") or ""),
+                root,
+            )
+        except (OSError, ValueError, SystemExit, yaml.YAMLError) as exc:
+            raise ValueError(f"ECR approval cannot authenticate retained historical evidence: {exc}") from exc
+        if untracked - allowed_untracked:
+            raise ValueError("ECR approval has untracked source outside authenticated historical evidence")
     preliminary = ecr_validation_errors(root, change_request_id, require_approved=False)
     if preliminary:
         raise ValueError("ECR packet validation failed: " + "; ".join(preliminary))
