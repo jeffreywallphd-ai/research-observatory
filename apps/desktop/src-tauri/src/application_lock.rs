@@ -375,7 +375,10 @@ impl ApplicationLockManager {
         Ok(inner.snapshot())
     }
 
-    pub fn reauthenticate(&self, supervisor: &RuntimeSupervisor) -> ApplicationUnlockAttempt {
+    pub fn reauthenticate(
+        &self,
+        supervisor: &RuntimeSupervisor,
+    ) -> Result<ApplicationUnlockAttempt, &'static str> {
         self.reauthenticate_with(
             &WindowsPasswordVerificationProvider,
             || supervisor.start().state,
@@ -390,14 +393,17 @@ impl ApplicationLockManager {
         provider: &impl NativeVerificationProvider,
         start_core: impl FnOnce() -> RuntimeState,
         stop_core: impl FnOnce(),
-    ) -> ApplicationUnlockAttempt {
+    ) -> Result<ApplicationUnlockAttempt, &'static str> {
         let reservation = match self.reserve_reauthentication() {
             Ok(reservation) => reservation,
-            Err(attempt) => return *attempt,
+            Err(ReauthenticationReservationError::Attempt(attempt)) => return Ok(*attempt),
+            Err(ReauthenticationReservationError::InvalidState(reason_code)) => {
+                return Err(reason_code);
+            }
         };
         let verification = provider.verify();
         if !self.reauthentication_is_current(&reservation) {
-            return self.stale_reauthentication_attempt();
+            return Ok(self.stale_reauthentication_attempt());
         }
         let result = match verification {
             VerificationOutcome::Cancelled => {
@@ -457,7 +463,7 @@ impl ApplicationLockManager {
                     );
                     drop(inner);
                     stop_core();
-                    return attempt;
+                    return Ok(attempt);
                 }
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
                 if inner.state != ApplicationLockState::Locked
@@ -469,7 +475,7 @@ impl ApplicationLockManager {
                         unlock_attempt(&inner, VerificationOutcome::Failed, "RO-LOCK-AUTH-STALE");
                     drop(inner);
                     stop_core();
-                    return attempt;
+                    return Ok(attempt);
                 }
                 inner.reauthentication_in_progress = false;
                 inner.state = ApplicationLockState::Unlocked;
@@ -482,7 +488,7 @@ impl ApplicationLockManager {
             }
         };
         drop(reservation);
-        result
+        Ok(result)
     }
 
     fn reauthentication_is_current(&self, reservation: &ReauthenticationReservation) -> bool {
@@ -501,15 +507,13 @@ impl ApplicationLockManager {
 
     fn reserve_reauthentication(
         &self,
-    ) -> Result<ReauthenticationReservation, Box<ApplicationUnlockAttempt>> {
+    ) -> Result<ReauthenticationReservation, ReauthenticationReservationError> {
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
         if inner.state != ApplicationLockState::Locked {
             inner.record("application-unlock", "failed", "RO-LOCK-AUTH-NOT-LOCKED");
-            return Err(Box::new(unlock_attempt(
-                &inner,
-                VerificationOutcome::Failed,
+            return Err(ReauthenticationReservationError::InvalidState(
                 "RO-LOCK-AUTH-NOT-LOCKED",
-            )));
+            ));
         }
         if inner.reauthentication_in_progress
             || inner
@@ -517,10 +521,8 @@ impl ApplicationLockManager {
                 .is_some_and(|deadline| deadline > Instant::now())
         {
             inner.record("application-unlock", "denied", "RO-LOCK-RATE-LIMITED");
-            return Err(Box::new(unlock_attempt(
-                &inner,
-                VerificationOutcome::Busy,
-                "RO-LOCK-RATE-LIMITED",
+            return Err(ReauthenticationReservationError::Attempt(Box::new(
+                unlock_attempt(&inner, VerificationOutcome::Busy, "RO-LOCK-RATE-LIMITED"),
             )));
         }
         inner.reauthentication_in_progress = true;
@@ -535,7 +537,7 @@ impl ApplicationLockManager {
         &self,
         result: VerificationOutcome,
         core_ready: bool,
-    ) -> ApplicationUnlockAttempt {
+    ) -> Result<ApplicationUnlockAttempt, &'static str> {
         self.reauthenticate_with(
             &|| result,
             || {
@@ -566,6 +568,11 @@ fn unlock_attempt(
 struct ReauthenticationReservation {
     shared: Arc<Mutex<ApplicationLockInner>>,
     generation: u64,
+}
+
+enum ReauthenticationReservationError {
+    Attempt(Box<ApplicationUnlockAttempt>),
+    InvalidState(&'static str),
 }
 
 impl Drop for ReauthenticationReservation {
@@ -778,17 +785,21 @@ mod tests {
     fn denied_cancelled_and_failed_core_paths_remain_locked() {
         let manager = manager();
         manager.lock(ApplicationLockReason::Manual);
-        let cancelled =
-            manager.complete_test_reauthentication(VerificationOutcome::Cancelled, true);
+        let cancelled = manager
+            .complete_test_reauthentication(VerificationOutcome::Cancelled, true)
+            .expect("cancelled attempt");
         assert_eq!(cancelled.outcome, VerificationOutcome::Cancelled);
         assert_eq!(cancelled.reason_code, "RO-LOCK-AUTH-CANCELLED");
-        let denied = manager.complete_test_reauthentication(VerificationOutcome::Denied, true);
+        let denied = manager
+            .complete_test_reauthentication(VerificationOutcome::Denied, true)
+            .expect("denied attempt");
         assert_eq!(denied.outcome, VerificationOutcome::Denied);
         assert_eq!(denied.reason_code, "RO-LOCK-AUTH-DENIED");
         assert!(manager.status().retry_after_seconds > 0);
         manager.shared.lock().expect("lock mutex").retry_at = None;
-        let core_failed =
-            manager.complete_test_reauthentication(VerificationOutcome::Succeeded, false);
+        let core_failed = manager
+            .complete_test_reauthentication(VerificationOutcome::Succeeded, false)
+            .expect("core failure attempt");
         assert_eq!(core_failed.outcome, VerificationOutcome::Failed);
         assert_eq!(core_failed.reason_code, "RO-LOCK-CORE-UNAVAILABLE");
         assert_eq!(manager.status().state, ApplicationLockState::Locked);
@@ -807,14 +818,16 @@ mod tests {
             let manager = manager();
             manager.lock(ApplicationLockReason::Manual);
             let starts = AtomicUsize::new(0);
-            let attempt = manager.reauthenticate_with(
-                &|| outcome,
-                || {
-                    starts.fetch_add(1, Ordering::SeqCst);
-                    RuntimeState::Ready
-                },
-                || {},
-            );
+            let attempt = manager
+                .reauthenticate_with(
+                    &|| outcome,
+                    || {
+                        starts.fetch_add(1, Ordering::SeqCst);
+                        RuntimeState::Ready
+                    },
+                    || {},
+                )
+                .expect("provider attempt");
             let succeeded = outcome == VerificationOutcome::Succeeded;
             assert_eq!(starts.load(Ordering::SeqCst), usize::from(succeeded));
             assert_eq!(
@@ -846,7 +859,9 @@ mod tests {
     fn verified_same_user_unlocks_without_restoring_sensitive_identity_to_audit() {
         let manager = manager();
         manager.lock(ApplicationLockReason::Manual);
-        let attempt = manager.complete_test_reauthentication(VerificationOutcome::Succeeded, true);
+        let attempt = manager
+            .complete_test_reauthentication(VerificationOutcome::Succeeded, true)
+            .expect("successful attempt");
         assert_eq!(attempt.outcome, VerificationOutcome::Succeeded);
         assert_eq!(attempt.snapshot.state, ApplicationLockState::Unlocked);
         let serialized = serde_json::to_string(&manager.audit()).expect("audit json");
@@ -880,18 +895,23 @@ mod tests {
         });
         started_rx.recv().expect("prompt admitted");
         let second_count = Arc::clone(&prompt_count);
-        let busy = manager.reauthenticate_with(
-            &|| {
-                second_count.fetch_add(1, Ordering::SeqCst);
-                VerificationOutcome::Succeeded
-            },
-            || RuntimeState::Ready,
-            || {},
-        );
+        let busy = manager
+            .reauthenticate_with(
+                &|| {
+                    second_count.fetch_add(1, Ordering::SeqCst);
+                    VerificationOutcome::Succeeded
+                },
+                || RuntimeState::Ready,
+                || {},
+            )
+            .expect("busy attempt");
         assert_eq!(busy.outcome, VerificationOutcome::Busy);
         assert_eq!(busy.reason_code, "RO-LOCK-RATE-LIMITED");
         release_tx.send(()).expect("release first prompt");
-        let denied = worker.join().expect("worker result");
+        let denied = worker
+            .join()
+            .expect("worker result")
+            .expect("denied attempt");
         assert_eq!(denied.outcome, VerificationOutcome::Denied);
         assert_eq!(prompt_count.load(Ordering::SeqCst), 1);
         assert!(manager.status().retry_after_seconds > 0);
@@ -901,17 +921,21 @@ mod tests {
     fn cancellation_and_core_failure_release_the_reauthentication_reservation() {
         let manager = manager();
         manager.lock(ApplicationLockReason::Manual);
-        let cancelled = manager.reauthenticate_with(
-            &|| VerificationOutcome::Cancelled,
-            || RuntimeState::Ready,
-            || {},
-        );
+        let cancelled = manager
+            .reauthenticate_with(
+                &|| VerificationOutcome::Cancelled,
+                || RuntimeState::Ready,
+                || {},
+            )
+            .expect("cancelled attempt");
         assert_eq!(cancelled.outcome, VerificationOutcome::Cancelled);
-        let failed = manager.reauthenticate_with(
-            &|| VerificationOutcome::Succeeded,
-            || RuntimeState::RecoveryRequired,
-            || {},
-        );
+        let failed = manager
+            .reauthenticate_with(
+                &|| VerificationOutcome::Succeeded,
+                || RuntimeState::RecoveryRequired,
+                || {},
+            )
+            .expect("core failure attempt");
         assert_eq!(failed.outcome, VerificationOutcome::Failed);
         assert_eq!(failed.reason_code, "RO-LOCK-CORE-UNAVAILABLE");
         assert!(
@@ -940,8 +964,7 @@ mod tests {
             },
             || {},
         );
-        assert_eq!(attempt.outcome, VerificationOutcome::Failed);
-        assert_eq!(attempt.reason_code, "RO-LOCK-AUTH-NOT-LOCKED");
+        assert_eq!(attempt, Err("RO-LOCK-AUTH-NOT-LOCKED"));
         assert_eq!(provider_calls.load(Ordering::SeqCst), 0);
         assert_eq!(core_starts.load(Ordering::SeqCst), 0);
 
@@ -949,16 +972,18 @@ mod tests {
         manager.lock(ApplicationLockReason::Manual);
         let racing_manager = manager.clone();
         let stops = AtomicUsize::new(0);
-        let stale = manager.reauthenticate_with(
-            &|| VerificationOutcome::Succeeded,
-            || {
-                racing_manager.lock(ApplicationLockReason::Manual);
-                RuntimeState::Ready
-            },
-            || {
-                stops.fetch_add(1, Ordering::SeqCst);
-            },
-        );
+        let stale = manager
+            .reauthenticate_with(
+                &|| VerificationOutcome::Succeeded,
+                || {
+                    racing_manager.lock(ApplicationLockReason::Manual);
+                    RuntimeState::Ready
+                },
+                || {
+                    stops.fetch_add(1, Ordering::SeqCst);
+                },
+            )
+            .expect("stale attempt");
         assert_eq!(stale.outcome, VerificationOutcome::Failed);
         assert_eq!(stale.reason_code, "RO-LOCK-AUTH-STALE");
         assert_eq!(stale.snapshot.state, ApplicationLockState::Locked);
