@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0006",
+  "reviewId": "GOV-MAINT-0006.R02",
+  "reviewedCommit": "4d0433e2218a5e7d8b7574a2fac548f345680e7c",
+  "reviewer": "agent:gov-maint-0006-reviewer",
+  "reviewedAt": "2026-08-30T19:13:46.1349997Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0006.json",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0006-R02-F01",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "Approved remediation bytes can be substituted after review",
+      "reproduction": "After a complete candidate, adverse R01, remediation, and approved R02 sequence, a later commit changed only remediation.resolution before UI. The gate checked projection fields but not exact adopted-record bytes and returned ok true.",
+      "requiredResolution": "Construct each review projection from the exact reviewed record with only canonical status, attempt, and review changes; require final adopted bytes to equal the final review-introduction bytes; and add a post-approval substitution regression."
+    }
+  ]
+}

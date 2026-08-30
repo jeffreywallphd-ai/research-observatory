@@ -97,6 +97,18 @@
       ],
       "path": "planning/governance-migrations/GOV-MAINT-0006.review-R01.json",
       "sha256": "8baa34210a1f958a0295d01749457ee0902ecea2289ac1c02ee75baa80d4fda5"
+    },
+    {
+      "reviewId": "GOV-MAINT-0006.R02",
+      "reviewedCommit": "4d0433e2218a5e7d8b7574a2fac548f345680e7c",
+      "reviewer": "agent:gov-maint-0006-reviewer",
+      "reviewedAt": "2026-08-30T19:13:46.1349997Z",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": [
+        "GOV-MAINT-0006-R02-F01"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0006.review-R02.json",
+      "sha256": "4a8d068d83147ae78962c5396a58b38998eacee819bb2953a6bbf84e19cdbf28"
     }
   ],
   "review": null
