@@ -641,6 +641,29 @@ class UiChangeGateTests(unittest.TestCase):
 
         self.assertTrue(result["ok"], result["errors"])
 
+    def test_remediated_preimplementation_maintenance_rejects_post_approval_substitution(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            self.install_remediated_maintenance(root, base)
+            record_path = root / "planning" / "governance-migrations" / "GOV-MAINT-0001.json"
+            record = json.loads(record_path.read_text(encoding="utf-8"))
+            record["remediation"]["resolution"] = "Substituted after approval."
+            self.write_json(record_path, record)
+            self.commit(root, "substitute approved remediation")
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'UI after substituted maintenance';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            head = self.commit(root, "attempt UI after substituted maintenance")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("changed after its final review" in error for error in result["errors"]))
+
     def test_preimplementation_maintenance_rejects_self_review(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, package = self.prepare(temporary)

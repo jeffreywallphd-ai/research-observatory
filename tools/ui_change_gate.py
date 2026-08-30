@@ -426,6 +426,7 @@ def reviewed_preimplementation_maintenance_errors(
             errors.append("pre-UI gate maintenance candidate bytes or changed-path envelope differ from review")
         implementer_identity = canonical_agent_identity(implementer)
         prior_review_commit: str | None = None
+        final_review_introduction: str | None = None
         open_findings: set[str] = set()
         for index, attempt in enumerate(attempts, start=1):
             if not isinstance(attempt, dict):
@@ -492,21 +493,31 @@ def reviewed_preimplementation_maintenance_errors(
                 continue
             introduction = introductions[0]
             projection = json_object(blob(repo, introduction, record_path), "maintenance review projection")
+            reviewed_record = json_object(blob(repo, reviewed_commit, record_path), "reviewed maintenance record")
             expected_status = "adopted" if disposition == "APPROVED" else "changes-requested"
             expected_review = attempt if disposition == "APPROVED" else None
+            expected_projection = {
+                **reviewed_record,
+                "status": expected_status,
+                "reviewAttempts": attempts[:index],
+                "review": expected_review,
+            }
             if (
                 resolve_commit(repo, f"{introduction}^") != reviewed_commit
                 or commit_paths(repo, introduction) != {record_path, review_path}
                 or blob(repo, introduction, review_path) != review_payload
-                or projection.get("status") != expected_status
-                or projection.get("reviewAttempts") != attempts[:index]
-                or projection.get("review") != expected_review
+                or projection != expected_projection
                 or any(not is_ancestor(repo, introduction, item) for item in implementation_commit_ids)
             ):
                 errors.append("pre-UI gate maintenance review projection or ordering is invalid")
             if disposition == "CHANGES_REQUESTED":
                 open_findings.update(str(item) for item in finding_ids)
             prior_review_commit = introduction
+            final_review_introduction = introduction
+        if final_review_introduction is None or blob(repo, head, record_path) != blob(
+            repo, final_review_introduction, record_path
+        ):
+            errors.append("pre-UI gate maintenance adopted record changed after its final review")
         remediation = record.get("remediation")
         if open_findings and (
             not isinstance(remediation, dict)
