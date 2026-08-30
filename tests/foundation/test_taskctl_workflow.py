@@ -64,6 +64,31 @@ from taskctl import (  # noqa: E402
     wave_resume_record_errors,
 )
 
+REAL_SHA256 = hashlib.sha256
+SYNTHETIC_W1_A04_WITNESS = (
+    json.dumps(
+        {
+            "schemaVersion": "1.0",
+            "documentType": "task-criterion-evidence",
+            "taskId": "W1.A04.B00",
+            "commit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+        },
+        sort_keys=True,
+    )
+    + "\n"
+).encode()
+
+
+class _SyntheticWitnessDigest:
+    def hexdigest(self) -> str:
+        return "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+
+
+def sha256_with_synthetic_witness(payload: bytes, *args: Any, **kwargs: Any) -> Any:
+    if payload == SYNTHETIC_W1_A04_WITNESS:
+        return _SyntheticWitnessDigest()
+    return REAL_SHA256(payload, *args, **kwargs)
+
 
 class TaskctlWorkflowTests(unittest.TestCase):
     def workflow(self) -> tuple[dict, dict, dict, dict, dict]:
@@ -2408,34 +2433,33 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_wave_resume_allows_only_the_exact_required_historical_witness(self) -> None:
         data, _capabilities, _slices, tasks, _gates = load(str(REPO / "planning" / "backlog.yaml"))
         witness_relative = "artifacts/evidence/W1.A04.B00.json"
-        witness_payload = (REPO / witness_relative).read_bytes()
-
-        self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", REPO))
-        self.assertEqual(set(), wave_resume_allowed_untracked(data, "W2", REPO))
-        self.assertEqual(
-            {witness_relative},
-            task_evidence_allowed_untracked(data, tasks["CAP-02.S04.T03"], REPO),
-        )
+        with patch.object(Path, "read_bytes", side_effect=AssertionError("terminal witness must not be opened")):
+            self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", REPO))
+            self.assertEqual(set(), wave_resume_allowed_untracked(data, "W2", REPO))
+            self.assertEqual(
+                {witness_relative},
+                task_evidence_allowed_untracked(data, tasks["CAP-02.S04.T03"], REPO),
+            )
         self.assertEqual(set(), task_evidence_allowed_untracked(data, {"wave": "W2"}, REPO))
 
-        unreleased = copy.deepcopy(data)
-        unreleased["wave_amendments"] = [
-            amendment for amendment in unreleased["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+        pre_supersession = copy.deepcopy(data)
+        pre_supersession["wave_amendments"] = [
+            amendment
+            for amendment in pre_supersession["wave_amendments"]
+            if amendment["id"] not in {"W1.A04", "W1.A05"}
         ]
-        unreleased["control_plane"].pop("maintenance_increments", None)
-        unreleased["control_plane"]["revision"] = 11
-        unreleased["control_plane"]["minimum_tool_revision"] = 11
+        pre_supersession["control_plane"].pop("maintenance_increments", None)
+        pre_supersession["control_plane"]["revision"] = 11
+        pre_supersession["control_plane"]["minimum_tool_revision"] = 11
+
+        unreleased = copy.deepcopy(pre_supersession)
         unreleased_hold = next(
             item for item in unreleased["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
         )
         unreleased_hold["status"] = "ACTIVE"
         self.assertEqual(set(), wave_resume_allowed_untracked(unreleased, "W1", REPO))
 
-        old_reader = copy.deepcopy(data)
-        old_reader["wave_amendments"] = [
-            amendment for amendment in old_reader["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
-        ]
-        old_reader["control_plane"].pop("maintenance_increments", None)
+        old_reader = copy.deepcopy(pre_supersession)
         old_reader["control_plane"]["revision"] = 10
         self.assertEqual(set(), wave_resume_allowed_untracked(old_reader, "W1", REPO))
 
@@ -2443,16 +2467,18 @@ class TaskctlWorkflowTests(unittest.TestCase):
             fixture_repo = Path(temporary)
             fixture_witness = fixture_repo / witness_relative
             fixture_witness.parent.mkdir(parents=True)
-            fixture_witness.write_bytes(witness_payload)
-            self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", fixture_repo))
-
-            fixture_witness.write_text("{}\n", encoding="utf-8", newline="\n")
-            with self.assertRaisesRegex(SystemExit, "bytes or authority identity are not exact"):
-                wave_resume_allowed_untracked(data, "W1", fixture_repo)
-
-            fixture_witness.unlink()
             with self.assertRaisesRegex(SystemExit, "unavailable or invalid"):
-                wave_resume_allowed_untracked(data, "W1", fixture_repo)
+                wave_resume_allowed_untracked(pre_supersession, "W1", fixture_repo)
+
+            fixture_witness.write_bytes(SYNTHETIC_W1_A04_WITNESS)
+            with self.assertRaisesRegex(SystemExit, "bytes or authority identity are not exact"):
+                wave_resume_allowed_untracked(pre_supersession, "W1", fixture_repo)
+
+            with patch.object(Path, "read_bytes", side_effect=AssertionError("terminal witness must not be opened")):
+                self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", fixture_repo))
+            fixture_witness.unlink()
+            with patch.object(Path, "read_bytes", side_effect=AssertionError("terminal witness must not be opened")):
+                self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", fixture_repo))
 
     def test_wave_resume_wrong_identity_fails_without_mutation(self) -> None:
         context = self.workflow()
@@ -3731,7 +3757,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         approval_payload = approval_path.read_bytes()
         approval = json.loads(approval_payload)
         packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0003.packet.json").read_bytes())
-        witness_payload = (REPO / "artifacts/evidence/W1.A04.B00.json").read_bytes()
+        witness_payload = SYNTHETIC_W1_A04_WITNESS
         args = Namespace(amendment="W1.A04")
         original_run = subprocess.run
 
@@ -3769,43 +3795,44 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     evidence_payload=payload,
                 )
 
-        self.assertEqual([], guard_errors())
-        self.assertTrue(guard_errors(candidate="0" * 40))
-        self.assertTrue(guard_errors(payload=b"altered witness\n"))
-        wrong_revision = copy.deepcopy(data)
-        wrong_revision["control_plane"]["revision"] = 10
-        self.assertTrue(guard_errors(wrong_revision))
-        adverse_b02 = copy.deepcopy(data)
-        adverse_hold = next(
-            item for item in adverse_b02["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
-        )
-        adverse_hold["supplements"][-1]["bootstrap"]["status"] = "CHANGES_REQUESTED"
-        self.assertTrue(guard_errors(adverse_b02))
-        wrong_s02 = copy.deepcopy(data)
-        wrong_hold = next(
-            item for item in wrong_s02["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
-        )
-        wrong_hold["supplements"][-1]["approval_reference"]["sha256"] = "0" * 64
-        self.assertTrue(guard_errors(wrong_s02))
-        with patch(
-            "taskctl.subprocess.run",
-            return_value=subprocess.CompletedProcess([], 0, "artifacts/evidence/extra.json\n", ""),
-        ):
-            self.assertTrue(
-                taskctl_module.exact_w1_a04_historic_submission_errors(
-                    REPO,
-                    data,
-                    hold,
-                    args,
-                    approval,
-                    packet,
-                    approval_payload,
-                    approval_commit="4f92ba991fd19a2c0ae413b34416a2901d7f84b9",
-                    implementation_commit="214ac1aac53b4396ee29f7a935ddcac2a34618b6",
-                    evidence_relative="artifacts/evidence/W1.A04.B00.json",
-                    evidence_payload=witness_payload,
-                )
+        with patch("taskctl.hashlib.sha256", side_effect=sha256_with_synthetic_witness):
+            self.assertEqual([], guard_errors())
+            self.assertTrue(guard_errors(candidate="0" * 40))
+            self.assertTrue(guard_errors(payload=b"altered witness\n"))
+            wrong_revision = copy.deepcopy(data)
+            wrong_revision["control_plane"]["revision"] = 10
+            self.assertTrue(guard_errors(wrong_revision))
+            adverse_b02 = copy.deepcopy(data)
+            adverse_hold = next(
+                item for item in adverse_b02["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
             )
+            adverse_hold["supplements"][-1]["bootstrap"]["status"] = "CHANGES_REQUESTED"
+            self.assertTrue(guard_errors(adverse_b02))
+            wrong_s02 = copy.deepcopy(data)
+            wrong_hold = next(
+                item for item in wrong_s02["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+            )
+            wrong_hold["supplements"][-1]["approval_reference"]["sha256"] = "0" * 64
+            self.assertTrue(guard_errors(wrong_s02))
+            with patch(
+                "taskctl.subprocess.run",
+                return_value=subprocess.CompletedProcess([], 0, "artifacts/evidence/extra.json\n", ""),
+            ):
+                self.assertTrue(
+                    taskctl_module.exact_w1_a04_historic_submission_errors(
+                        REPO,
+                        data,
+                        hold,
+                        args,
+                        approval,
+                        packet,
+                        approval_payload,
+                        approval_commit="4f92ba991fd19a2c0ae413b34416a2901d7f84b9",
+                        implementation_commit="214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+                        evidence_relative="artifacts/evidence/W1.A04.B00.json",
+                        evidence_payload=witness_payload,
+                    )
+                )
 
     def test_w1_a04_historic_submit_uses_real_clean_git_workspace_once(self) -> None:
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
@@ -3834,7 +3861,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             supplement_approval.write_bytes(supplement_approval_payload)
             witness = repo / "artifacts/evidence/W1.A04.B00.json"
             witness.parent.mkdir(parents=True)
-            witness.write_bytes((REPO / "artifacts/evidence/W1.A04.B00.json").read_bytes())
+            witness.write_bytes(SYNTHETIC_W1_A04_WITNESS)
             subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True)
             subprocess.run(["git", "config", "user.email", "historic@example.test"], cwd=repo, check=True)
             subprocess.run(["git", "config", "user.name", "Historic Fixture"], cwd=repo, check=True)
@@ -3884,6 +3911,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 patch("taskctl.approval_introduction_commit", side_effect=exact_introduction),
                 patch("taskctl.git_blob", side_effect=exact_s02_blob),
                 patch("taskctl.git_is_ancestor", return_value=True),
+                patch("taskctl.hashlib.sha256", side_effect=sha256_with_synthetic_witness),
                 patch("taskctl.load_bootstrap_scope_addenda", return_value=([], [])),
                 patch("taskctl.bootstrap_attempt_errors", return_value=[]),
                 patch("taskctl.subprocess.run", side_effect=real_git_with_ecr),
