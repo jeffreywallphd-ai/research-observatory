@@ -146,6 +146,7 @@ const POLICY_TRANSITION_REASON_CODES: Readonly<
   failed: [
     "RO-SIGN-IN-TRANSITION-AUTH-FAILED",
     "RO-SIGN-IN-TRANSITION-LOCK-FAILED",
+    "RO-SIGN-IN-TRANSITION-CORE-FAILED",
     "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
   ],
   conflict: ["RO-SIGN-IN-TRANSITION-STALE", "RO-SIGN-IN-TRANSITION-CONFLICT"],
@@ -210,7 +211,17 @@ export function normalizeLocalProfileName(value: string): string | null {
 
 export function failClosedApplicationLockSnapshot(
   current: ApplicationLockSnapshot,
+  lastKnownNative: ApplicationLockSnapshot | null = null,
 ): ApplicationLockSnapshot {
+  if (lastKnownNative?.configurationState === "valid") {
+    return {
+      ...lastKnownNative,
+      state: "locked",
+      profileName: null,
+      reason: lastKnownNative.reason ?? "manual",
+      retryAfterSeconds: 0,
+    };
+  }
   return {
     ...current,
     state: "locked",
@@ -235,6 +246,14 @@ function sameNativeRevision(
     && left.reason === right.reason
     && left.threatDisclosure === right.threatDisclosure
     && left.auditSequence === right.auditSequence;
+}
+
+function sameDisplayedSnapshot(
+  left: ApplicationLockSnapshot,
+  right: ApplicationLockSnapshot,
+): boolean {
+  return sameNativeRevision(left, right)
+    && left.retryAfterSeconds === right.retryAfterSeconds;
 }
 
 export function reconcileApplicationLockSnapshot(
@@ -270,6 +289,14 @@ export function reconcileApplicationLockSnapshot(
       nativeSnapshot: incoming,
       failClosed: true,
       applied: displaySnapshot.state !== "locked",
+    };
+  }
+  if (previousNativeSnapshot && sameDisplayedSnapshot(previousNativeSnapshot, incoming) && !failClosed) {
+    return {
+      displaySnapshot,
+      nativeSnapshot: incoming,
+      failClosed: false,
+      applied: false,
     };
   }
   return {

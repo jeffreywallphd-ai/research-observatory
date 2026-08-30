@@ -134,6 +134,8 @@ export function ApplicationLockedView({
 }: ApplicationLockedViewProps): ReactNode {
   const recoveryCancelRef = useRef<HTMLButtonElement>(null);
   const recoveryConfirmRef = useRef<HTMLButtonElement>(null);
+  const recoveryTriggerRef = useRef<HTMLButtonElement>(null);
+  const previousRecoveryConfirmation = useRef(recoveryConfirmation);
   const reason = snapshot.reason === "inactivity"
     ? "The inactivity interval elapsed."
     : snapshot.reason === "application-restart"
@@ -148,6 +150,20 @@ export function ApplicationLockedView({
       : "Windows";
   const hello = helloAvailabilityPresentation(helloAvailability);
   const recoveryRequired = snapshot.configurationState === "invalid";
+  const helloRecoveryOffered = snapshot.signInMode === "windows-hello"
+    && new Set<VerificationAvailability>([
+      "not-present",
+      "not-configured",
+      "policy-disabled",
+      "unavailable",
+      "failed",
+    ]).has(helloAvailability);
+  useEffect(() => {
+    if (busy) return;
+    if (recoveryConfirmation) recoveryCancelRef.current?.focus();
+    else if (previousRecoveryConfirmation.current) recoveryTriggerRef.current?.focus();
+    previousRecoveryConfirmation.current = recoveryConfirmation;
+  }, [busy, recoveryConfirmation]);
   return (
     <div className="locked-application" data-application-locked="true">
       <main className="locked-card" aria-labelledby="locked-title">
@@ -169,13 +185,20 @@ export function ApplicationLockedView({
           <p role="status">Try again in about {snapshot.retryAfterSeconds} seconds.</p>
         ) : null}
         {recoveryRequired ? (
-          <Button tone="primary" autoFocus disabled={busy || !onRecovery} onClick={onRecovery}>
+          <Button ref={recoveryTriggerRef} tone="primary" autoFocus disabled={busy || recoveryConfirmation || !onRecovery} onClick={onRecovery}>
             {busy ? "Preparing Windows recovery…" : "Recover with Windows password"}
           </Button>
         ) : (
-          <Button tone="primary" autoFocus disabled={busy} onClick={onUnlock}>
-            {busy ? `Checking ${provider}…` : `Unlock with ${provider}`}
-          </Button>
+          <>
+            <Button tone="primary" autoFocus disabled={busy || recoveryConfirmation} onClick={onUnlock}>
+              {busy ? `Checking ${provider}…` : `Unlock with ${provider}`}
+            </Button>
+            {helloRecoveryOffered ? (
+              <Button ref={recoveryTriggerRef} disabled={busy || recoveryConfirmation || !onRecovery} onClick={onRecovery}>
+                Use Windows password recovery
+              </Button>
+            ) : null}
+          </>
         )}
         {recoveryConfirmation ? (
           <div
@@ -184,7 +207,7 @@ export function ApplicationLockedView({
             aria-modal="true"
             aria-labelledby="locked-recovery-title"
             onKeyDown={(event) => {
-              if (event.key === "Escape") {
+              if (event.key === "Escape" && !busy) {
                 event.preventDefault();
                 onRecoveryDecision?.(false);
               } else if (event.key === "Tab") {
@@ -202,7 +225,7 @@ export function ApplicationLockedView({
             }}
           >
             <Typography id="locked-recovery-title" as="h2" variant="section-title">Confirm recovery to No login</Typography>
-            <p>Windows verified the same user. This resets only the invalid Research Observatory sign-in policy; project protections remain unchanged.</p>
+            <p>Windows verified the same user. This changes Research Observatory sign-in to No login{recoveryRequired ? " and replaces the invalid app policy" : " after the unavailable Hello provider"}; project protections remain unchanged.</p>
             <div className="dialog-actions">
               <Button ref={recoveryCancelRef} autoFocus disabled={busy} onClick={() => onRecoveryDecision?.(false)}>Keep application locked</Button>
               <Button ref={recoveryConfirmRef} tone="danger" disabled={busy} onClick={() => onRecoveryDecision?.(true)}>Confirm recovery</Button>
@@ -241,6 +264,7 @@ export function ApplicationRuntime(): ReactNode {
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [lockedHelloAvailability, setLockedHelloAvailability] = useState<VerificationAvailability>("checking");
   const [lockedRecoveryConfirmation, setLockedRecoveryConfirmation] = useState(false);
+  const [applicationSettingsBlocked, setApplicationSettingsBlocked] = useState(false);
   const commandRef = useRef<HTMLInputElement>(null);
   const homeRef = useRef<HTMLElement>(null);
   const shortcutTriggerRef = useRef<HTMLButtonElement>(null);
@@ -271,7 +295,10 @@ export function ApplicationRuntime(): ReactNode {
 
   const failClosedApplicationLock = useCallback((message: string) => {
     lockFailClosedRef.current = true;
-    applyLockSnapshot(failClosedApplicationLockSnapshot(applicationLockRef.current));
+    applyLockSnapshot(failClosedApplicationLockSnapshot(
+      applicationLockRef.current,
+      nativeLockSnapshotRef.current,
+    ));
     setUnlockError(message);
   }, [applyLockSnapshot]);
 
@@ -432,6 +459,10 @@ export function ApplicationRuntime(): ReactNode {
       const commandShortcut = isShortcut(event, "k", "ctrl");
       const helpShortcut = isShortcut(event, "/", "ctrl");
       const homeShortcut = isShortcut(event, "h", "alt");
+      if (applicationSettingsBlocked) {
+        if (commandShortcut || helpShortcut || homeShortcut) event.preventDefault();
+        return;
+      }
       if (shortcutsOpen) {
         if (event.key === "Escape") {
           event.preventDefault();
@@ -457,7 +488,7 @@ export function ApplicationRuntime(): ReactNode {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [closeShortcuts, openShortcuts, shortcutsOpen]);
+  }, [applicationSettingsBlocked, closeShortcuts, openShortcuts, shortcutsOpen]);
 
   const lockNow = useCallback(() => {
     const locked: ApplicationLockSnapshot = {
@@ -489,6 +520,9 @@ export function ApplicationRuntime(): ReactNode {
           return;
         }
         applyNativeLockSnapshot(attempt.snapshot, "status");
+        if (applicationLockRef.current.signInMode === "windows-hello" && attempt.outcome === "unavailable") {
+          setLockedHelloAvailability("unavailable");
+        }
         setUnlockError(applicationUnlockFailureMessage(attempt.outcome, attempt.reasonCode));
       })
       .catch(() => {
@@ -507,7 +541,7 @@ export function ApplicationRuntime(): ReactNode {
       setAnnouncement(result.message);
       return;
     }
-    setLockedRecoveryConfirmation(false);
+    if (!lockedRecoveryControllerRef.current?.busy) setLockedRecoveryConfirmation(false);
     if (result.snapshot) {
       applyNativeLockSnapshot(
         result.snapshot,
@@ -648,14 +682,14 @@ export function ApplicationRuntime(): ReactNode {
           <span className="project-context" data-project-context>
             {currentProject ? `${currentProject.displayName} · ${currentProject.accessMode === "read-only" ? "Read-only" : currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
           </span>
-          <Button ref={applicationSettingsTriggerRef} onClick={openApplicationSettings} data-local-profile data-application-settings-trigger>
+          <Button ref={applicationSettingsTriggerRef} disabled={applicationSettingsBlocked} onClick={openApplicationSettings} data-local-profile data-application-settings-trigger>
             {applicationLock.profileName ?? "Local profile"}
           </Button>
           {applicationLock.signInMode === "none" ? null : <Button onClick={lockNow} data-application-lock>Lock</Button>}
-          <Button ref={shortcutTriggerRef} onClick={() => openShortcuts(shortcutTriggerRef.current)} aria-haspopup="dialog" data-shortcut-help>
+          <Button ref={shortcutTriggerRef} disabled={applicationSettingsBlocked} onClick={() => openShortcuts(shortcutTriggerRef.current)} aria-haspopup="dialog" data-shortcut-help>
             Shortcuts
           </Button>
-          <Button onClick={() => applyTheme(nextTheme(theme))} aria-pressed={theme === "dark"} data-theme-toggle>
+          <Button disabled={applicationSettingsBlocked} onClick={() => applyTheme(nextTheme(theme))} aria-pressed={theme === "dark"} data-theme-toggle>
             Dark theme
           </Button>
         </div>
@@ -664,13 +698,13 @@ export function ApplicationRuntime(): ReactNode {
       <div className="shell-body">
         <aside className="sidebar" aria-label="Available workspaces">
           <nav>
-            <button type="button" aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
-            <button type="button" aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
-            <button type="button" aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
-            <button type="button" aria-current={workspace === "audit" ? "page" : undefined} onClick={() => setWorkspace("audit")}>Audit &amp; lineage</button>
-            <button type="button" aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
-            <button type="button" aria-current={workspace === "application-settings" ? "page" : undefined} onClick={openApplicationSettings}>Application settings</button>
-            <button type="button" aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "audit" ? "page" : undefined} onClick={() => setWorkspace("audit")}>Audit &amp; lineage</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "application-settings" ? "page" : undefined} onClick={openApplicationSettings}>Application settings</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
           <p>Only implemented capabilities appear here.</p>
         </aside>
@@ -736,6 +770,7 @@ export function ApplicationRuntime(): ReactNode {
                 recovered ? "explicit-unlock" : "status",
               )}
               onReturn={returnFromApplicationSettings}
+              onOperationStateChange={setApplicationSettingsBlocked}
             />
           ) : <DiagnosticsWorkspace announce={announce} />}
         </main>

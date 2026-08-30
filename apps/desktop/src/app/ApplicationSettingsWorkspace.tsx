@@ -29,6 +29,7 @@ interface ApplicationSettingsWorkspaceProps {
   readonly announce: (message: string) => void;
   readonly onSnapshot: (snapshot: ApplicationLockSnapshot, recovered: boolean) => void;
   readonly onReturn: () => void;
+  readonly onOperationStateChange?: (blocked: boolean) => void;
   readonly transport?: ApplicationSettingsTransport;
 }
 
@@ -49,6 +50,7 @@ export function ApplicationSettingsWorkspace({
   announce,
   onSnapshot,
   onReturn,
+  onOperationStateChange = () => undefined,
   transport = NATIVE_TRANSPORT,
 }: ApplicationSettingsWorkspaceProps): ReactNode {
   const [draft, setDraft] = useState<ApplicationSettingsDraft>(() => applicationSettingsDraft(snapshot));
@@ -58,6 +60,9 @@ export function ApplicationSettingsWorkspace({
   const [confirmation, setConfirmation] = useState<TransitionControllerResult & { kind: "confirmation-required" } | null>(null);
   const saveRef = useRef<HTMLButtonElement>(null);
   const returnRef = useRef<HTMLButtonElement>(null);
+  const recoveryRef = useRef<HTMLButtonElement>(null);
+  const initiatingControlRef = useRef<HTMLButtonElement | null>(null);
+  const restoreFocusWhenIdleRef = useRef<HTMLButtonElement | null>(null);
   const warningCancelRef = useRef<HTMLButtonElement>(null);
   const warningConfirmRef = useRef<HTMLButtonElement>(null);
   const controller = useMemo(() => new ApplicationSettingsController(transport), [transport]);
@@ -76,13 +81,29 @@ export function ApplicationSettingsWorkspace({
     });
     return () => {
       disposed = true;
-      if (controller.busy) void controller.confirm(false);
+      void controller.dispose();
     };
   }, [controller, transport]);
 
   useEffect(() => {
+    onOperationStateChange(busy || confirmation !== null || controller.busy);
+    return () => onOperationStateChange(false);
+  }, [busy, confirmation, controller, onOperationStateChange]);
+
+  useEffect(() => {
     if (!busy && confirmation === null) setDraft(applicationSettingsDraft(snapshot));
   }, [busy, confirmation, snapshot]);
+
+  useEffect(() => {
+    if (busy) return;
+    if (confirmation !== null) {
+      warningCancelRef.current?.focus();
+      return;
+    }
+    const target = restoreFocusWhenIdleRef.current;
+    restoreFocusWhenIdleRef.current = null;
+    target?.focus();
+  }, [busy, confirmation]);
 
   function selectMode(mode: SignInMode): void {
     setFeedback(null);
@@ -94,7 +115,7 @@ export function ApplicationSettingsWorkspace({
     }));
   }
 
-  function applyResult(result: TransitionControllerResult, recovered: boolean): void {
+  function applyResult(result: TransitionControllerResult, recovered: boolean, restoreFocus = true): void {
     if (result.kind === "confirmation-required") {
       setConfirmation(result);
       setFeedback({ tone: "info", message: result.message });
@@ -113,10 +134,15 @@ export function ApplicationSettingsWorkspace({
         : "danger";
     setFeedback({ tone, message: result.message });
     announce(result.message);
-    queueMicrotask(() => saveRef.current?.focus());
+    if (restoreFocus) {
+      const target = initiatingControlRef.current ?? saveRef.current;
+      initiatingControlRef.current = null;
+      restoreFocusWhenIdleRef.current = target;
+    }
   }
 
   async function save(): Promise<void> {
+    initiatingControlRef.current = saveRef.current;
     setBusy(true);
     setFeedback(null);
     try {
@@ -131,6 +157,7 @@ export function ApplicationSettingsWorkspace({
   }
 
   async function recover(): Promise<void> {
+    initiatingControlRef.current = recoveryRef.current;
     setBusy(true);
     setFeedback(null);
     try {
@@ -141,11 +168,17 @@ export function ApplicationSettingsWorkspace({
   }
 
   async function decide(confirmed: boolean): Promise<void> {
+    if (busy) return;
     setBusy(true);
     try {
       const result = await controller.confirm(confirmed);
-      setConfirmation(null);
-      applyResult(result, confirmation?.prepared.reasonCode === "RO-SIGN-IN-RECOVERY-PREPARED");
+      const pendingCleanup = controller.busy;
+      if (!pendingCleanup) setConfirmation(null);
+      applyResult(
+        result,
+        confirmation?.prepared.reasonCode === "RO-SIGN-IN-RECOVERY-PREPARED",
+        !pendingCleanup,
+      );
     } finally {
       setBusy(false);
     }
@@ -167,7 +200,7 @@ export function ApplicationSettingsWorkspace({
           </Typography>
         </div>
         <div className="page-actions">
-          <Button ref={returnRef} disabled={busy} onClick={() => void returnToPreviousWorkspace()}>Return</Button>
+          <Button ref={returnRef} disabled={busy || controller.busy} onClick={() => void returnToPreviousWorkspace()}>Return</Button>
           <Button ref={saveRef} tone="primary" disabled={busy || !changed || (draft.mode === "windows-hello" && !helloSelectable)} onClick={() => void save()}>
             {busy ? "Working…" : "Save change"}
           </Button>
@@ -260,7 +293,7 @@ export function ApplicationSettingsWorkspace({
           <p>Availability comes from Windows and is never inferred. A non-success state never falls back automatically.</p>
           <p><strong>Windows password recovery:</strong> Explicit same-user recovery only; it is never a silent fallback.</p>
           {(snapshot.configurationState === "invalid" || snapshot.signInMode === "windows-hello") ? (
-            <Button disabled={busy} onClick={() => void recover()}>Use Windows password recovery</Button>
+            <Button ref={recoveryRef} disabled={busy || controller.busy} onClick={() => void recover()}>Use Windows password recovery</Button>
           ) : null}
         </section>
       </div>
@@ -285,7 +318,7 @@ export function ApplicationSettingsWorkspace({
             aria-labelledby="protection-warning-title"
             aria-describedby="protection-warning-description"
             onKeyDown={(event) => {
-              if (event.key === "Escape") {
+              if (event.key === "Escape" && !busy) {
                 event.preventDefault();
                 void decide(false);
               } else if (event.key === "Tab") {

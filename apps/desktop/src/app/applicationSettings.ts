@@ -71,13 +71,14 @@ export function lockBehaviorPreview(draft: ApplicationSettingsDraft): LockBehavi
     };
   }
   const provider = draft.mode === "windows-hello" ? "Windows Hello" : "Windows password";
+  const restartProtected = draft.inactivityTimeoutMinutes > 0;
   return {
-    startup: `Require ${provider}`,
+    startup: restartProtected ? `Require ${provider}` : "Open without an app prompt; manual lock remains available",
     manual: `Lock and require ${provider}`,
     inactivity: draft.inactivityTimeoutMinutes === 0
       ? "Disabled; manual lock remains available"
       : `Lock after ${draft.inactivityTimeoutMinutes} minutes`,
-    restart: `Require ${provider}`,
+    restart: restartProtected ? `Require ${provider}` : "Open without an app prompt; manual lock remains available",
     recovery: draft.mode === "windows-hello"
       ? "Explicit same-user Windows password recovery only"
       : "Use Windows password",
@@ -134,11 +135,27 @@ function transitionFailureMessage(result: PolicyTransitionResult): string {
 export class ApplicationSettingsController {
   private operationInProgress = false;
   private pending: PolicyTransitionResult | null = null;
+  private disposed = false;
 
   public constructor(private readonly transport: ApplicationSettingsTransport) {}
 
   public get busy(): boolean {
     return this.operationInProgress || this.pending !== null;
+  }
+
+  public async dispose(): Promise<void> {
+    this.disposed = true;
+    if (!this.operationInProgress && this.pending?.handle) {
+      try {
+        await this.transport.invoke("application_sign_in_transition_commit", {
+          handle: this.pending.handle,
+          confirmed: false,
+        });
+        this.pending = null;
+      } catch {
+        // Native expiry remains fail-safe if teardown interrupts cancellation.
+      }
+    }
   }
 
   public async prepare(draft: ApplicationSettingsDraft): Promise<TransitionControllerResult> {
@@ -159,6 +176,9 @@ export class ApplicationSettingsController {
     command: "application_sign_in_transition_prepare" | "application_sign_in_password_recovery_prepare",
     arguments_?: Record<string, unknown>,
   ): Promise<TransitionControllerResult> {
+    if (this.disposed) {
+      return { kind: "rejected", message: "This sign-in settings session has closed." };
+    }
     if (this.operationInProgress || this.pending !== null) {
       return { kind: "busy", message: "A sign-in change is already awaiting native completion." };
     }
@@ -178,6 +198,7 @@ export class ApplicationSettingsController {
       return { kind: result.outcome === "cancelled" ? "cancelled" : "rejected", message: transitionFailureMessage(result) };
     }
     this.pending = result;
+    if (this.disposed) return this.confirm(false);
     if (result.warningRequired) {
       return {
         kind: "confirmation-required",
@@ -202,14 +223,35 @@ export class ApplicationSettingsController {
         "application_sign_in_transition_commit",
         { handle: prepared.handle, confirmed },
       ));
-      this.pending = null;
       if (result.outcome === "committed") {
+        this.pending = null;
         return {
           kind: "committed",
           message: "Application sign-in settings were saved by the native policy service.",
           snapshot: result.snapshot,
         };
       }
+      if (result.outcome === "failed") {
+        try {
+          const cancellation = decodePolicyTransitionResult(await this.transport.invoke(
+            "application_sign_in_transition_commit",
+            { handle: prepared.handle, confirmed: false },
+          ));
+          this.pending = null;
+          return {
+            kind: "rejected",
+            message: `${transitionFailureMessage(result)} Native transition authority was cleared; retry is safe.`,
+            snapshot: cancellation.snapshot,
+          };
+        } catch {
+          return {
+            kind: "rejected",
+            message: `${transitionFailureMessage(result)} Native cleanup was not confirmed; retry cancellation before leaving this page.`,
+            snapshot: result.snapshot,
+          };
+        }
+      }
+      this.pending = null;
       return {
         kind: result.outcome === "cancelled" ? "cancelled" : "rejected",
         message: transitionFailureMessage(result),
@@ -255,10 +297,9 @@ export class ApplicationSettingsController {
           };
         }
       } catch {
-        this.pending = null;
         return {
           kind: "rejected",
-          message: "Native sign-in status is unchanged, but transition cleanup could not be confirmed. Refresh before retrying.",
+          message: "Native sign-in status is unchanged, but transition cleanup could not be confirmed. Retry cancellation before leaving this page.",
           snapshot,
         };
       }
@@ -268,10 +309,9 @@ export class ApplicationSettingsController {
         snapshot,
       };
     } catch {
-      this.pending = null;
       return {
         kind: "rejected",
-        message: "The native response was interrupted and status could not be reconciled. Refresh before retrying.",
+        message: "The native response was interrupted and status could not be reconciled. Retry cancellation before leaving this page.",
       };
     }
   }

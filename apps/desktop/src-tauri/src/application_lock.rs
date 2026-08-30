@@ -121,6 +121,7 @@ struct PendingTransition {
     target: SignInPolicy,
     target_digest: String,
     generation: u64,
+    source_was_locked: bool,
     proof_class: TransitionProofClass,
     warning_required: bool,
     expires_at: Instant,
@@ -503,6 +504,7 @@ impl ApplicationLockManager {
             target,
             target_digest,
             generation,
+            source_was_locked: false,
             proof_class: TransitionProofClass::ConfiguredProvider,
             warning_required: source_mode.is_protected() && target_mode == SignInMode::None,
             expires_at: Instant::now() + TRANSITION_LIFETIME,
@@ -532,7 +534,7 @@ impl ApplicationLockManager {
         &self,
         verify: impl FnOnce() -> VerificationOutcome,
     ) -> Result<PolicyTransitionResult, &'static str> {
-        let (source_mode, source, generation, target) = {
+        let (source_mode, source, generation, source_was_locked, target) = {
             let mut inner = self.shared.lock().expect("lock mutex poisoned");
             expire_pending_transition(&mut inner);
             if inner.configuration_state != LockConfigurationState::Invalid
@@ -576,6 +578,7 @@ impl ApplicationLockManager {
                     .then_some(inner.policy.mode),
                 inner.policy_source.clone(),
                 inner.generation,
+                inner.state == ApplicationLockState::Locked,
                 target,
             )
         };
@@ -630,6 +633,7 @@ impl ApplicationLockManager {
             target,
             target_digest,
             generation,
+            source_was_locked,
             proof_class: TransitionProofClass::SameSidPasswordRecovery,
             warning_required: true,
             expires_at: Instant::now() + TRANSITION_LIFETIME,
@@ -655,6 +659,16 @@ impl ApplicationLockManager {
         &self,
         handle: &str,
         confirmed: bool,
+    ) -> PolicyTransitionResult {
+        self.commit_policy_transition_with_core(handle, confirmed, || true, || {})
+    }
+
+    pub(crate) fn commit_policy_transition_with_core(
+        &self,
+        handle: &str,
+        confirmed: bool,
+        start_core: impl FnOnce() -> bool,
+        stop_core: impl FnOnce(),
     ) -> PolicyTransitionResult {
         let handle_digest = sha256_hex(handle.as_bytes());
         let pending = {
@@ -749,6 +763,24 @@ impl ApplicationLockManager {
                 );
             }
         };
+        let core_start_required = pending.source_was_locked
+            && pending.proof_class == TransitionProofClass::SameSidPasswordRecovery;
+        let mut core_started = false;
+        let mut stop_core = Some(stop_core);
+        if core_start_required {
+            if !start_core() {
+                let result = self.transition_failure(
+                    &pending,
+                    PolicyTransitionOutcome::Failed,
+                    "RO-SIGN-IN-TRANSITION-CORE-FAILED",
+                );
+                if let Some(stop) = stop_core.take() {
+                    stop();
+                }
+                return result;
+            }
+            core_started = true;
+        }
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
         if inner.generation != pending.generation
             || inner.policy_source != pending.source
@@ -769,7 +801,7 @@ impl ApplicationLockManager {
                 "conflict",
                 "RO-SIGN-IN-TRANSITION-STALE",
             );
-            return transition_result(
+            let result = transition_result(
                 &inner,
                 PolicyTransitionOutcome::Conflict,
                 "RO-SIGN-IN-TRANSITION-STALE",
@@ -778,6 +810,11 @@ impl ApplicationLockManager {
                 pending.target.mode,
                 pending.warning_required,
             );
+            drop(inner);
+            if core_started && let Some(stop) = stop_core.take() {
+                stop();
+            }
+            return result;
         }
         let publish = self.policy_store.publish(staged, &pending.source);
         let source = match publish {
@@ -790,7 +827,7 @@ impl ApplicationLockManager {
                     "conflict",
                     "RO-SIGN-IN-TRANSITION-CONFLICT",
                 );
-                return transition_result(
+                let result = transition_result(
                     &inner,
                     PolicyTransitionOutcome::Conflict,
                     "RO-SIGN-IN-TRANSITION-CONFLICT",
@@ -799,16 +836,23 @@ impl ApplicationLockManager {
                     pending.target.mode,
                     pending.warning_required,
                 );
+                drop(inner);
+                if core_started && let Some(stop) = stop_core.take() {
+                    stop();
+                }
+                return result;
             }
             Err(_) => match self.policy_store.committed_source(&pending.target) {
                 Ok(Some(source)) => source,
                 Ok(None) | Err(_) => {
+                    inner.pending_transition = None;
+                    inner.reauthentication_in_progress = false;
                     inner.record(
                         "application-sign-in-transition-commit",
                         "failed",
                         "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
                     );
-                    return transition_result(
+                    let result = transition_result(
                         &inner,
                         PolicyTransitionOutcome::Failed,
                         "RO-SIGN-IN-TRANSITION-WRITE-FAILED",
@@ -817,6 +861,11 @@ impl ApplicationLockManager {
                         pending.target.mode,
                         pending.warning_required,
                     );
+                    drop(inner);
+                    if core_started && let Some(stop) = stop_core.take() {
+                        stop();
+                    }
+                    return result;
                 }
             },
         };
@@ -865,6 +914,14 @@ impl ApplicationLockManager {
         reason_code: &'static str,
     ) -> PolicyTransitionResult {
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        if inner
+            .pending_transition
+            .as_ref()
+            .is_some_and(|current| current.handle_digest == pending.handle_digest)
+        {
+            inner.pending_transition = None;
+            inner.reauthentication_in_progress = false;
+        }
         inner.record(
             "application-sign-in-transition-commit",
             "failed",
@@ -1257,7 +1314,7 @@ mod tests {
     use std::io::{BufRead, BufReader, Write};
     use std::path::PathBuf;
     use std::process::{Child, Command, Stdio};
-    use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+    use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
     use std::sync::mpsc;
     use std::thread;
 
@@ -2010,6 +2067,76 @@ mod tests {
     }
 
     #[test]
+    fn locked_recovery_starts_core_before_publication_and_stays_locked_on_start_failure() {
+        let root = root("locked-recovery-core");
+        let store = PolicyStore::new(&root);
+        fs::create_dir_all(store.canonical_path().parent().expect("security dir"))
+            .expect("create security dir");
+        fs::write(store.canonical_path(), b"{\"schemaVersion\":\"future\"}\n")
+            .expect("corrupt policy");
+        let before = fs::read(store.canonical_path()).expect("corrupt bytes");
+        let manager = ApplicationLockManager::new(&root);
+
+        let failed_prepared = manager
+            .prepare_password_recovery_reset_with(|| VerificationOutcome::Succeeded)
+            .expect("prepare failed-core recovery");
+        let stopped = AtomicBool::new(false);
+        let failed = manager.commit_policy_transition_with_core(
+            failed_prepared.handle.as_deref().expect("recovery handle"),
+            true,
+            || false,
+            || stopped.store(true, Ordering::SeqCst),
+        );
+        assert_eq!(failed.outcome, PolicyTransitionOutcome::Failed);
+        assert_eq!(failed.reason_code, "RO-SIGN-IN-TRANSITION-CORE-FAILED");
+        assert_eq!(failed.snapshot.state, ApplicationLockState::Locked);
+        assert_eq!(
+            fs::read(store.canonical_path()).expect("prior bytes"),
+            before
+        );
+        assert!(stopped.load(Ordering::SeqCst));
+        assert!(
+            !manager
+                .shared
+                .lock()
+                .expect("lock mutex")
+                .reauthentication_in_progress
+        );
+
+        let prepared = manager
+            .prepare_password_recovery_reset_with(|| VerificationOutcome::Succeeded)
+            .expect("prepare retry");
+        let observed_locked = AtomicBool::new(false);
+        let committed = manager.commit_policy_transition_with_core(
+            prepared.handle.as_deref().expect("retry handle"),
+            true,
+            || {
+                observed_locked.store(
+                    manager.status().state == ApplicationLockState::Locked
+                        && fs::read(store.canonical_path()).expect("pre-publication bytes")
+                            == before,
+                    Ordering::SeqCst,
+                );
+                true
+            },
+            || panic!("successful recovery must not stop Core"),
+        );
+        assert!(observed_locked.load(Ordering::SeqCst));
+        assert_eq!(committed.outcome, PolicyTransitionOutcome::Committed);
+        assert_eq!(committed.snapshot.state, ApplicationLockState::Unlocked);
+        assert_eq!(committed.snapshot.sign_in_mode, SignInMode::None);
+        assert_eq!(
+            manager.commit_policy_transition_with_core(
+                prepared.handle.as_deref().expect("retry handle"),
+                true,
+                || panic!("idempotent receipt must not start Core twice"),
+                || panic!("idempotent receipt must not stop Core"),
+            ),
+            committed
+        );
+    }
+
+    #[test]
     #[ignore = "invoked by the renderer contract integration harness"]
     fn renderer_contract_witness() {
         let output = PathBuf::from(
@@ -2243,5 +2370,21 @@ mod tests {
             before
         );
         assert_eq!(manager.status().sign_in_mode, SignInMode::WindowsPassword);
+        assert!(
+            !manager
+                .shared
+                .lock()
+                .expect("lock mutex")
+                .reauthentication_in_progress
+        );
+        assert_eq!(
+            manager
+                .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                    VerificationOutcome::Succeeded
+                })
+                .expect("fresh proof after terminal failure")
+                .outcome,
+            PolicyTransitionOutcome::Prepared
+        );
     }
 }
