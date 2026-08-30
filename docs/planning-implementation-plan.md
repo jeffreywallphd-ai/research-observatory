@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b88101d10e2474ada69922e70f7012f2e95eabf6ba9a8fcf5b58c9a5a6cab97b
+source_sha256: e0693d003e629c9b0bc1d2cd7f7174900c802ccfef0544db640c4cff49ecd5c1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1203,7 +1203,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`, `W1.A05.T02`
 
@@ -1225,13 +1225,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Run affected application/native integration checks and record broader UI/accessibility and W1-exit coverage as deferred to T04, S02 review, and Wave qualification.
 - Obtain independent commit-bound security/migration task review.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A05.T03.json` at `deec1063e6bcd9a17d2a10c574103c10ebdd7785`
+
 #### Review history — W1.A05.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `c2ac12df526e4b4471ae25f472f85efc50cde246fa4781ce5d56ebbe9811d48b`
+
+- Candidate / base / branch: `deec1063e6bcd9a17d2a10c574103c10ebdd7785` / `10bb2cfd96e89582fdaa5be1fb4c7b9a836decde` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T18:03:17+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T03.json` / `ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b` / `deec1063e6bcd9a17d2a10c574103c10ebdd7785`
+- Acceptance-criteria SHA-256: `4250e5765a66a110aff54ee25e0d34853cb42fe443c8684f126079931f8bdc96`
+- Verification-selection SHA-256: `7c7d0158f4a1b5778d73469431680b6402f539b45d9fbc7dfe2580ba2b0e418a`
+- Changed paths: `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/application_sign_in_policy.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/support_bundle.rs`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `artifacts/evidence/W1.A05.T03.task-start.md`, `docs/architecture/application-lock.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/security/README.md`, `packages/contracts/security/application-sign-in-policy.schema.json`, `packages/contracts/security/application-sign-in-policy.v1.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/contracts/test_credential_store_contract.py`, `tests/security/test_application_lock_source.py`, `tools/desktop_app_check.py`
+- Selected checks: `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib`, `cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings`, `npm --prefix apps/desktop test -- --run`, `npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract`, `.venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py; .venv\Scripts\ruff.exe format --check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py`, `.venv\Scripts\python.exe tools\architecture_check.py --repo .; .venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-build-manifest.json; git diff --check 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde..a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde --affected-head a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-affected-selection.json`
+- Deferred checks: `W1.A05.T04 owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility, and approved-reference experience. Its checks must resolve the currently disclosed activation-reference mismatch.`, `desktop:performance is explicitly gate-bound by the governed selector to W1 exit.`, `The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix remains due at W1 exit.`
+- Selection rationale: W1.A05.T03 changes an authentication and recovery authority boundary, predecessor migration, durable local security configuration, atomic cross-process persistence, native-to-renderer public contracts, and default lock behavior. Credible failures include silent downgrade from corrupt state, wrong-provider or wrong-order verification, session-only protected disablement, cross-process stale publication, path-alias split authority, symlink/reparse redirection, response-loss double commit, reuse or forgery of transition authority, secret leakage, unavailable-Hello fallback, and weakened manual/restart/idle behavior. Native state-machine and persistence tests, portable schema/source assertions, strict renderer tests, Rust/Python/TypeScript quality checks, production build, architecture/build inventory, and governed affected selection directly cover those risks. T04 deliberately owns user-facing settings and recovery conformance, while the complete accumulated matrix and performance threshold remain W1-exit duties.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
