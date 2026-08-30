@@ -1,0 +1,84 @@
+{
+  "task_id": "W1.A05.T03",
+  "attempt_id": "R01",
+  "base_commit": "10bb2cfd96e89582fdaa5be1fb4c7b9a836decde",
+  "candidate_commit": "deec1063e6bcd9a17d2a10c574103c10ebdd7785",
+  "submission_record_commit": "826674bcd8767592ad761edbc7c186efeeeee38a",
+  "reviewer": "codex-independent-sign-in-policy-security-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent commit-bound security/migration review authenticated the exact base, candidate, submission record, evidence SHA-256 ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b, Git blob b2cc319428ba5f38f04063144e8ee8dc819f3a11, and all 21 declared candidate paths. Base is an ancestor of candidate and candidate is an ancestor of submission; candidate product/test bytes remain unchanged at submission and both ranges pass patch hygiene. Independent replay passed all 53 native library tests, all 13 focused renderer transition tests, all 71 desktop tests, all nine focused Python security/contract tests, Ruff, Rust format and warnings-denied Clippy, the production desktop build, desktop lint, architecture, build-input inventory, and the governed affected selector. Strict parsing/migration, explicit-none materialization, provider ordering, configured-provider and same-SID recovery proof, proof-before-confirmation structure, opaque digest-only handles, expiry/replay behavior, typed native/renderer failures, no-follow file inspection, named-mutex/CAS publication, response-loss receipt replay within the live process, audit redaction, and zero/nonzero lock behavior otherwise match the approved T03 contract. One blocking cross-process authority defect remains: publication updates only the committing manager's in-memory state, while another already-running manager/process never reloads or fails closed and no single-instance control exists. That stale process can remain none/unlocked and continue protected actions after the durable application-wide policy has become protected. The submitted tests exercise two managers only as stale writers and do not run the task-start-required child-process/abrupt-exit harness, so the claimed process-wide/crash coverage does not detect this behavior. T04 legitimately owns the governed settings/recovery UI and activation-reference correction, and W1 exit legitimately owns accumulated performance/full qualification, but neither later gate owns this native application-wide authority defect.",
+  "evidence_reproduction": {
+    "manifest_path": "artifacts/evidence/W1.A05.T03.json",
+    "sha256": "ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b",
+    "git_blob": "b2cc319428ba5f38f04063144e8ee8dc819f3a11",
+    "manifest_commit": "deec1063e6bcd9a17d2a10c574103c10ebdd7785",
+    "result": "PASS: the frozen manifest bytes at the immutable submission match the expected digest and bind the exact candidate, base, branch, criteria, paths, checks, and deferrals. Candidate a82d4aa18c0cb8a9f9b99c469317c040b8bbbaec named by two check commands has the same tree as the empty descendant candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785; independent full-candidate selection and patch hygiene also passed."
+  },
+  "changed_paths": [
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/application_sign_in_policy.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/support_bundle.rs",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "artifacts/evidence/W1.A05.T03.task-start.md",
+    "docs/architecture/application-lock.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/security/README.md",
+    "packages/contracts/security/application-sign-in-policy.schema.json",
+    "packages/contracts/security/application-sign-in-policy.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/contracts/test_credential_store_contract.py",
+    "tests/security/test_application_lock_source.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "Resolve full base/candidate/submission SHAs; verify ordered ancestry; compare declared and actual candidate paths; verify candidate product/test bytes at submission; Get-FileHash evidence; git rev-parse evidence blob; git diff --check both ranges",
+      "result": "PASS: identities, ancestry, all 21 paths, evidence SHA-256/blob, byte identity, and both patch-hygiene ranges are exact."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "result": "PASS: 53/53 native library tests passed on Windows x64, including strict canonical/legacy parsing, exact migration, invalid-state denial, provider ordering, recovery, byte-stable adverse outcomes, stale writers, atomic publication, receipt replay, expiry, audit redaction, and no-login/manual/restart/idle behavior."
+    },
+    {
+      "command": "npm --prefix apps/desktop test -- --run src/app/applicationLock.test.ts; npm --prefix apps/desktop test -- --run",
+      "result": "PASS: 13/13 focused strict transition/snapshot decoder tests and 71/71 complete desktop tests passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract; .venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py tests/contracts/test_credential_store_contract.py",
+      "result": "PASS: 9/9 focused security/contract tests passed and both Python files passed Ruff lint/format."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked -- -D warnings; npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint",
+      "result": "PASS: Rust formatting and warnings-denied Clippy, the production desktop build, and desktop lint passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-review-build-manifest.json; .venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde --affected-head deec1063e6bcd9a17d2a10c574103c10ebdd7785 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-review-selection.json",
+      "result": "PASS: architecture, exact build inventory, and the full safety-sensitive affected selection passed; only gate-bound desktop performance remains deferred to W1 exit."
+    },
+    {
+      "command": "Inspect ApplicationLockManager::new/status/is_unlocked/begin_protected_action/commit_policy_transition, PolicyStore named-mutex/CAS code, all two-manager tests, and desktop startup/dependency configuration for live cross-process adoption or single-instance enforcement",
+      "result": "FAIL: PolicyStore is loaded once in ApplicationLockManager::new. Commit mutates only self.shared. status, is_unlocked, and begin_protected_action consult only that process's in-memory state. The named mutex is held only around publication, no policy-change notification/reload exists, and no desktop single-instance guard or dependency exists. The two-manager stale-writer test proves only that a later write conflicts; it never proves the stale manager loses unlocked authority. No child-process or abrupt-termination test exists despite the frozen task-start plan requiring one."
+    }
+  ],
+  "findings": [
+    {
+      "id": "W1.A05.T03-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "A stale desktop process remains unprotected after another process enables the application-wide policy",
+      "reproduction": "At exact candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785, construct two ApplicationLockManager instances A and B for the same absent-state application-data directory before either changes policy. Both load explicit none and remain unlocked. Have A prepare and commit windows-password successfully. The canonical bytes become the protected revision and A updates its own inner policy, but B has no reload, notification, generation invalidation, or source-authority check: B.status() still reports none/unlocked, B.is_unlocked() remains true, and B.begin_protected_action() succeeds because those methods read only B.shared. The desktop has no single-instance enforcement, so the same state is reachable with two ordinary launches. The Windows named mutex and CAS prevent B from overwriting A with a stale transition, but do not revoke B's already-running unprotected Core/session authority. Thus a successfully enabled application-wide mode can silently leave another application process in no-login mode, contrary to criterion 1's application-wide policy and the concurrent/protected-state safety required by criteria 4 and 5. Existing tests create two managers only to assert a stale writer conflict and contain no child-process/abrupt-exit harness, so the frozen evidence's process-wide arbitration and crash-recovery claims do not close this defect.",
+      "required_remediation": "In a strict-descendant candidate, make the policy authority effective across every desktop process that can use the same application-data root. Either enforce one release-authoritative desktop instance before Core or policy-manager startup, or add a native cross-process adoption/invalidation mechanism that revalidates the durable source before protected actions and promptly invalidates generation, locks/stops Core, and adopts a newly protected or invalid policy in every stale process. Do not let a stale none/unlocked manager continue after protected publication. Add a real Windows child-process test that starts from the same canonical root, proves one process enabling protection causes every other process to deny protected actions or exit, proves competing publication remains CAS-safe, and exercises named-mutex abandonment/abrupt termination plus restart with only exact predecessor or valid successor bytes. Retain the passing migration, provider-order, recovery, typed-failure, handle, redaction, no-follow, zero/nonzero, renderer-contract, and T04/W1 deferral boundaries."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e0693d003e629c9b0bc1d2cd7f7174900c802ccfef0544db640c4cff49ecd5c1
+source_sha256: 3a8508a6c2dcf2518be25fbaee3fc68cdd98af6bf458a82c0ca85703df9fceef
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1203,7 +1203,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / codex-independent-sign-in-policy-security-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`, `W1.A05.T02`
 
@@ -1231,9 +1231,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A05.T03
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `c2ac12df526e4b4471ae25f472f85efc50cde246fa4781ce5d56ebbe9811d48b`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `c2ac12df526e4b4471ae25f472f85efc50cde246fa4781ce5d56ebbe9811d48b`
 
 - Candidate / base / branch: `deec1063e6bcd9a17d2a10c574103c10ebdd7785` / `10bb2cfd96e89582fdaa5be1fb4c7b9a836decde` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-30T18:03:17+00:00`
@@ -1247,11 +1249,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / codex-independent-sign-in-policy-security-reviewer / `2026-08-30T18:15:49+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A05.T03.review-R01.json` / `a879320921246d7417b195dd2258e2b5962e7608c78e377adfac0255247f79a4`
 
-**Currently open findings:** -
+**Review notes:** Independent commit-bound security/migration review authenticated the exact base, candidate, submission record, evidence SHA-256 ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b, Git blob b2cc319428ba5f38f04063144e8ee8dc819f3a11, and all 21 declared candidate paths. Base is an ancestor of candidate and candidate is an ancestor of submission; candidate product/test bytes remain unchanged at submission and both ranges pass patch hygiene. Independent replay passed all 53 native library tests, all 13 focused renderer transition tests, all 71 desktop tests, all nine focused Python security/contract tests, Ruff, Rust format and warnings-denied Clippy, the production desktop build, desktop lint, architecture, build-input inventory, and the governed affected selector. Strict parsing/migration, explicit-none materialization, provider ordering, configured-provider and same-SID recovery proof, proof-before-confirmation structure, opaque digest-only handles, expiry/replay behavior, typed native/renderer failures, no-follow file inspection, named-mutex/CAS publication, response-loss receipt replay within the live process, audit redaction, and zero/nonzero lock behavior otherwise match the approved T03 contract. One blocking cross-process authority defect remains: publication updates only the committing manager's in-memory state, while another already-running manager/process never reloads or fails closed and no single-instance control exists. That stale process can remain none/unlocked and continue protected actions after the durable application-wide policy has become protected. The submitted tests exercise two managers only as stale writers and do not run the task-start-required child-process/abrupt-exit harness, so the claimed process-wide/crash coverage does not detect this behavior. T04 legitimately owns the governed settings/recovery UI and activation-reference correction, and W1 exit legitimately owns accumulated performance/full qualification, but neither later gate owns this native application-wide authority defect.
+
+**Findings opened:**
+
+- `W1.A05.T03-R01-F01` `high` blocking=`True` criterion=`1` — A stale desktop process remains unprotected after another process enables the application-wide policy; reproduce: At exact candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785, construct two ApplicationLockManager instances A and B for the same absent-state application-data directory before either changes policy. Both load explicit none and remain unlocked. Have A prepare and commit windows-password successfully. The canonical bytes become the protected revision and A updates its own inner policy, but B has no reload, notification, generation invalidation, or source-authority check: B.status() still reports none/unlocked, B.is_unlocked() remains true, and B.begin_protected_action() succeeds because those methods read only B.shared. The desktop has no single-instance enforcement, so the same state is reachable with two ordinary launches. The Windows named mutex and CAS prevent B from overwriting A with a stale transition, but do not revoke B's already-running unprotected Core/session authority. Thus a successfully enabled application-wide mode can silently leave another application process in no-login mode, contrary to criterion 1's application-wide policy and the concurrent/protected-state safety required by criteria 4 and 5. Existing tests create two managers only to assert a stale writer conflict and contain no child-process/abrupt-exit harness, so the frozen evidence's process-wide arbitration and crash-recovery claims do not close this defect.; remediate: In a strict-descendant candidate, make the policy authority effective across every desktop process that can use the same application-data root. Either enforce one release-authoritative desktop instance before Core or policy-manager startup, or add a native cross-process adoption/invalidation mechanism that revalidates the durable source before protected actions and promptly invalidates generation, locks/stops Core, and adopts a newly protected or invalid policy in every stale process. Do not let a stale none/unlocked manager continue after protected publication. Add a real Windows child-process test that starts from the same canonical root, proves one process enabling protection causes every other process to deny protected actions or exit, proves competing publication remains CAS-safe, and exercises named-mutex abandonment/abrupt termination plus restart with only exact predecessor or valid successor bytes. Retain the passing migration, provider-order, recovery, typed-failure, handle, redaction, no-follow, zero/nonzero, renderer-contract, and T04/W1 deferral boundaries.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by codex-independent-sign-in-policy-security-reviewer at `2026-08-30T18:15:49+00:00`
+
+**Latest notes:** Independent commit-bound security/migration review authenticated the exact base, candidate, submission record, evidence SHA-256 ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b, Git blob b2cc319428ba5f38f04063144e8ee8dc819f3a11, and all 21 declared candidate paths. Base is an ancestor of candidate and candidate is an ancestor of submission; candidate product/test bytes remain unchanged at submission and both ranges pass patch hygiene. Independent replay passed all 53 native library tests, all 13 focused renderer transition tests, all 71 desktop tests, all nine focused Python security/contract tests, Ruff, Rust format and warnings-denied Clippy, the production desktop build, desktop lint, architecture, build-input inventory, and the governed affected selector. Strict parsing/migration, explicit-none materialization, provider ordering, configured-provider and same-SID recovery proof, proof-before-confirmation structure, opaque digest-only handles, expiry/replay behavior, typed native/renderer failures, no-follow file inspection, named-mutex/CAS publication, response-loss receipt replay within the live process, audit redaction, and zero/nonzero lock behavior otherwise match the approved T03 contract. One blocking cross-process authority defect remains: publication updates only the committing manager's in-memory state, while another already-running manager/process never reloads or fails closed and no single-instance control exists. That stale process can remain none/unlocked and continue protected actions after the durable application-wide policy has become protected. The submitted tests exercise two managers only as stale writers and do not run the task-start-required child-process/abrupt-exit harness, so the claimed process-wide/crash coverage does not detect this behavior. T04 legitimately owns the governed settings/recovery UI and activation-reference correction, and W1 exit legitimately owns accumulated performance/full qualification, but neither later gate owns this native application-wide authority defect.
+
+**Currently open findings:** `W1.A05.T03-R01-F01`
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
