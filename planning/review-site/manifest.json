@@ -5028,7 +5028,7 @@
             {
               "task_id": "CAP-03.S03.T03",
               "title": "Create an audit and lineage inspection workspace",
-              "status": "IN_PROGRESS",
+              "status": "REVIEW",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "codex-independent-provenance-lineage-reviewer",
@@ -5544,7 +5544,71 @@
                     }
                   }
                 ],
-                "current_submission": null
+                "current_submission": {
+                  "id": "R04",
+                  "submitted_by": "codex",
+                  "submitted_at": "2026-08-30T00:03:41+00:00",
+                  "candidate_commit": "427deb25291a55cfc7cf7b15327ddcc2f87d2262",
+                  "base_commit": "b4da81e23738d722efe12cf44f760531656690f3",
+                  "branch": "codex/w1-windows-local-runtime",
+                  "evidence_reference": {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/CAP-03.S03.T03.R04.json",
+                    "sha256": "7440517b4d2aa3e5b8310fca2a658968744b7b37e244ae6582a63dca332b4572",
+                    "commit": "427deb25291a55cfc7cf7b15327ddcc2f87d2262",
+                    "recorded_at": "2026-08-30T00:03:41+00:00"
+                  },
+                  "acceptance_criteria_sha256": "c299ad69e411140034547ab16cbabcbffe86e3075a6e1fd43e0cf7718558e384",
+                  "changed_paths": [
+                    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+                    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+                    "artifacts/evidence/CAP-03.S03.T03.R03.json",
+                    "artifacts/evidence/CAP-03.S03.T03.review-R03.json",
+                    "docs/planning-implementation-plan.md",
+                    "packages/contracts/core-api/generated.test.ts",
+                    "packages/contracts/core-api/generated.ts",
+                    "planning/backlog.yaml",
+                    "planning/review-site/CAP-03/CAP-03.S03.html",
+                    "planning/review-site/manifest.json",
+                    "planning/status-summary.md",
+                    "services/core-api/src/research_observatory_core/repositories.py",
+                    "tests/data/test_sqlite_repositories.py",
+                    "tools/core_api_contract.py"
+                  ],
+                  "selected_checks": [
+                    "apps\\desktop\\node_modules\\.bin\\vitest.CMD run apps/desktop/src/app/AuditLineageWorkspace.test.tsx packages/contracts/core-api/generated.test.ts",
+                    "PYTHONPATH=services/core-api/src .venv\\Scripts\\python.exe -m unittest -v tests.service.test_provenance tests.data.test_sqlite_repositories",
+                    "PYTHONPATH=services/core-api/src .venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+                    ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-R04-desktop-application.json",
+                    "core_api_contract.py --check; desktop and contracts TypeScript checks; quality_check.py; architecture_check.py; repository_structure_check.py; agent_protocol_check.py",
+                    "build_manifest.py; git diff --check; protected witness hash"
+                  ],
+                  "deferred_checks": [
+                    "CAP-03.S03 independent slice review will replay the accumulated append-only persistence, migration, retry/restart, lineage, integrity-review, recovery, generated-client, renderer, accessibility, and adversarial integration union after T03 closes.",
+                    "The two stale object-envelope schema-version assertions and the historical foundation controller/recovery baseline remain mandatory W1-exit reconciliation debt and are not attributed to this candidate.",
+                    "Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at W1 exit."
+                  ],
+                  "selection_rationale": "CAP-03.S03.T03-R03-F01 is the sole open finding after R03. Its root cause crosses the honest SQLite projection, generated cross-process response boundary, and renderer export predicate, so R04 corrects and verifies all three rather than adding a renderer-only patch. The selected matrix replays the exact contradictory first-page and continuation cases for missing and legacy visibility, accumulated merge authority, successful complete export, the real SQLite legacy bridge, the existing real missing-reference and full provenance vertical, every prior focused closure, the complete Core service suite, the complete desktop/Rust verifier, generated-contract parity, strict types, quality/architecture/repository controls, exact build provenance, patch hygiene, and witness safety. R03 already refreshed all 64 controlled visual captures, and R04 changes no CSS, user text, layout, approved reference, or normal verified/denied rendering; slice integration will replay the accumulated affected UI union. The stale schema-v6 assertions and historical foundation-controller baseline remain unchanged W1-exit debt.",
+                  "selection_sha256": "11683b8b23d556c1cff470f3872a917d242f97b7847dfb81154323384c2ffb58",
+                  "prior_attempt_id": "R03",
+                  "open_finding_ids": [
+                    "CAP-03.S03.T03-R03-F01"
+                  ],
+                  "root_cause_analysis": "Earlier rounds treated integrityState and exportAllowed as trusted service conclusions, then hardened cursor and page-merge behavior without defining the semantic implications of the response's own missingRevisionIds and legacyEventCount fields. That left three independently reasonable checks incomplete: Core counted legacy bridges without promoting integrity review, the generated client validated field shapes but not the implication from visible debt to integrity denial, and renderer completeness ignored both content-free debt signals. R04 defines one invariant across all three boundaries: any missing or legacy visibility is integrity-review and non-exportable, and only zero accumulated debt may be complete.",
+                  "selected_command_ids": [
+                    "foundation:repository-structure",
+                    "foundation:agent-protocol",
+                    "foundation:quality",
+                    "foundation:architecture",
+                    "foundation:build-manifest",
+                    "desktop:application",
+                    "desktop:unit",
+                    "service:unit",
+                    "contracts:unit",
+                    "data:unit"
+                  ],
+                  "packet_sha256": "3ebe396314951dce07057db6b790179c8b3532945fd92d59fe8558e0ba3ce22c"
+                }
               }
             }
           ]
