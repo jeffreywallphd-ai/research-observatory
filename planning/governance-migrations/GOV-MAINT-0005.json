@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0005",
+  "title": "Allow an unexecuted migration-superseded reservation before the next amendment hold",
+  "status": "review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "predecessor": {
+    "commit": "492e9e6bba52e9c6087f84c1066661fd530bfdf3",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "supersededReservation": "W1.A04",
+    "supersededReservationStatus": "SUPERSEDED",
+    "approvedAmendment": "W1.A05",
+    "approvedAmendmentStatus": "APPROVED",
+    "bootstrapStatus": "APPROVED",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "trigger": {
+    "denial": "taskctl amendment materialize W1.A05 rejected the prospective state with `W1.A04: predecessor of the amendment-hold owner is not ADOPTED` and `W1.A04: terminal lifecycle did not restore ordinary Wave scope`.",
+    "atomicity": "The failed validated save made no backlog mutation. W1.A05 remained APPROVED with no tasks or campaign, W1 remained PAUSED at ordinary Wave scope, and the protected W1.A04 historical witness remained untouched.",
+    "diagnosis": "The controller can authenticate and append a previously approved but never materialized reservation as migration-superseded terminal history, but the shared amendment-hold invariant admitted only ADOPTED predecessors. The producer and consumer state machines therefore disagreed at the exact W1.A05 materialization boundary."
+  },
+  "authority": "This maintenance preserves the approved W1, W1.A04 terminal reservation, W1.A05 packet/bootstrap, task and slice inventory, governed experience, verification, and release-gate authority. It does not materialize or activate W1.A05 by itself, claim product work, expand acceptance criteria, authorize a release or external effect, alter the protected witness, or rewrite any approval, evidence, attempt, finding, closure, lifecycle event, migration, or predecessor history.",
+  "intendedDelta": {
+    "implementationCommit": "882d23c430d515a3c3629de2dfc3ce1d83d9c51c",
+    "implementation": "Recognize one generic non-executable predecessor form in the amendment-hold finite-state table: lifecycle SUPERSEDED after APPROVED, final actor identified as a governance migration, no lifecycle event outside APPROVED/SUPERSEDED, no bootstrap, no campaign, no tasks, and no completion review or evidence. Such a reservation may precede the sole latest executable amendment owner and need not restore ordinary Wave scope while that later owner holds the Wave. ADOPTED predecessors retain their existing behavior.",
+    "failClosed": [
+      "A SUPERSEDED predecessor with any bootstrap, campaign, task, completion review, completion evidence, non-migration supersession actor, or executable lifecycle event remains ineligible and blocks the hold transition.",
+      "WITHDRAWN and DEFERRED predecessors remain ineligible; the correction does not generalize acceptance to all terminal states.",
+      "The hold still requires exactly one latest executable amendment owner, and all other lifecycle, campaign, bootstrap, task-inventory, authority, evidence, compare-and-swap, and atomic-persistence checks still run.",
+      "The authenticated W1.A04 approval, ECR-0004 reservation, GOV-MIG-0001 migration reference, W1.A05 approval/bootstrap, and protected historical witness handling remain unchanged."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0005.json",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tools/taskctl.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The change touches the shared amendment-hold finite-state table and therefore evidence/control authority. Selected checks cover the exact positive predecessor form, bootstrap tampering, withdrawn predecessor denial, the complete taskctl schema/workflow suite, exact v4 ECR/reservation and governed-reference authority, all governed Python quality, canonical backlog semantics, generated backlog views, deterministic planning-site output, ECR-0004 history binding, and patch hygiene. Product, native, renderer, service, packaging, and performance suites are deferred because no product/runtime path changes and their W1.A05 coverage remains assigned to T01-T04, slice review, amendment exit, and W1 exit.",
+    "results": [
+      {
+        "check": "focused amendment-hold predecessor state table",
+        "result": "passed",
+        "detail": "The unexecuted migration-superseded predecessor is admitted; adding a bootstrap rejects it; changing it to WITHDRAWN rejects it; adopted predecessor and sole-latest-owner behavior remain green."
+      },
+      {
+        "check": "complete taskctl schema and workflow suite",
+        "result": "passed",
+        "detail": "All 102 tests passed at exact implementation commit 882d23c430d515a3c3629de2dfc3ce1d83d9c51c in 321.683 seconds."
+      },
+      {
+        "check": "ECR and governed experience authority",
+        "result": "passed",
+        "detail": "All 15 UI-reference and planctl amendment tests passed in 153.301 seconds, including exact v4 reserved-authority binding."
+      },
+      {
+        "check": "governed Python quality",
+        "result": "passed",
+        "detail": "Ruff formatting, Ruff lint, and mypy passed for all 168 governed Python files."
+      },
+      {
+        "check": "canonical authority, generated views, and patch hygiene",
+        "result": "passed",
+        "detail": "The 20-capability, 117-slice, 359-task, 12-gate backlog validates; generated backlog views are current; the 488-page planning site passes; ECR-0004 is approved and history-bound; and git diff --check passes."
+      }
+    ]
+  },
+  "rollback": "Do not use the repaired materialization boundary or integrate this candidate if independent review finds a blocking defect. Preserve predecessor 492e9e6bba52e9c6087f84c1066661fd530bfdf3 as the last approved-bootstrap state: W1 remains PAUSED at ordinary Wave scope, W1.A05 remains APPROVED without tasks or a campaign, and no product execution begins.",
+  "reviewAttempts": [],
+  "review": null
+}
