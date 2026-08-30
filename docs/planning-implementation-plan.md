@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6c479cee9f6aec90399726655bda6485951e95a89e0ffd92a413dae9e093fdee
+source_sha256: bf14a7b984f50e136ddd068db212507afa206fdc8a6cd15f9cc8a0f98a95627c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1030,9 +1030,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W1.A05.T01 - Refactor native verification behind a provider-neutral contract
+### - [x] W1.A05.T01 - Refactor native verification behind a provider-neutral contract
 
-**Status / owner / review:** `REVIEW` / codex / codex-independent-application-lock-security-reviewer (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / codex-independent-application-lock-security-reviewer (`approved`)
 
 **Dependencies:** `W1.A05.B00`, `CAP-02.S04.T02`
 
@@ -1061,7 +1061,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A05.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -1093,7 +1093,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `3d5c43eba52747a6a19a07ca9b9e4111b150f56dd47b76a15fbf420d6c4c2f00`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `3d5c43eba52747a6a19a07ca9b9e4111b150f56dd47b76a15fbf420d6c4c2f00`
 
 - Candidate / base / branch: `6111293f8d534e79aa8a509dfa8d37e43b218037` / `31e7f7e2b06ba469c59094fc3b50933c7ba85d9a` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-30T16:23:17+00:00`
@@ -1107,15 +1109,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A05.T01-R01-F01`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by codex-independent-application-lock-security-reviewer at `2026-08-30T16:14:05+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent-application-lock-security-reviewer / `2026-08-30T16:30:38+00:00`
 
-**Latest notes:** Independent security/contract review authenticated the exact base, candidate, submission record, frozen evidence SHA-256 63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063, and all 13 declared changed paths. The native boundary otherwise preserves the approved authority: application_lock_unlock is argument-free; only WindowsPasswordVerificationProvider is constructed in production; the renderer cannot select a provider or outcome; the Windows adapter retains the non-persisting generic CredUI flags, NameSamCompatible prefill, UPN/down-level mapping, LogonUserW, submitted-token/current-process-token EqualSid comparison, volatile credential-buffer clearing, and RAII handle closure. The manager reserves one attempt, admits backoff as busy, invokes the provider once, starts Core only after succeeded, checks the lock generation before and after Core start, stops a failed or raced Core, and releases the reservation after cancellation, failure, stale completion, and provider panic. Focused replay passed all 30 Rust library tests, all 12 renderer/runtime tests, all four focused security/profile tests, Rust formatting and warnings-denied Clippy, and the architecture contract. One blocking typed-contract finding remains: the new unlock decoder relies on a snapshot decoder that coerces enum fields and returns the untrusted object, and its outcome/state matrix excludes a valid native NOT-LOCKED response. No native unlock-authority bypass was reproduced, but the submitted claim of a strict six-outcome renderer/native contract is false until this boundary is exact. The manifest's disclosed broad Python syntax deferral did not reproduce under the reviewer's current Python 3.14.6 environment: tests.security.test_windows_credentials passed 10 tests with one platform skip; that toolchain-dependent baseline statement is not relied on for disposition and is not an acceptance finding against T01. No Windows Hello, provider configuration, settings UI, profile-schema migration, dependency, or broader supervision redesign appeared in the candidate. T02-T04, slice integration, and complete W1 qualification remain correctly deferred.
+**Immutable review ledger:** `artifacts/evidence/W1.A05.T01.review-R02.json` / `0dd2a40eeb4a4b30d26f302c96165ca544d72f4c0b9badea1e7fcb31c2407428`
 
-**Currently open findings:** `W1.A05.T01-R01-F01`
+**Review notes:** Independent bounded R02 security/contract review found no remaining blocking or nonblocking acceptance-bound defect. Exact candidate 6111293f8d534e79aa8a509dfa8d37e43b218037 is a strict descendant of adverse candidate 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a, and frozen submission record 4e91caebbd5bdffba8e1cbec29e6ea9ac9a56f11 is a strict descendant of the remediation candidate. The remediation manifest reproduces SHA-256 64a164628e4cee2956f5b9288c5e58fbfe8f41dfa27d662366f2c6322e016973 and Git blob a4b1f459ae9db453516b50e5032e533fbf9b20f7. Its 11 changed paths exactly match the prior-to-remediation range: four bounded product/test paths, append-only R01 evidence/review history, and mechanically updated planning projections. W1.A05.T01-R01-F01 is closed. The renderer now obtains exact own property descriptors, rejects symbol/extra/missing/accessor fields without invoking accessors, requires primitive exact values, and reconstructs a fresh trusted snapshot. Direct replay rejected the prior coercible-object payload, an accessor payload with zero getter calls, and the removed NOT-LOCKED attempt; it accepted the exact succeeded/unlocked and five adverse/locked provider tuples. The native manager now treats an invocation while already unlocked as a command-state Err before provider invocation or Core start, so it cannot become a provider outcome or explicit-unlock authority. Only succeeded/RO-LOCK-UNLOCKED/unlocked can clear fail-closed reconciliation. All 30 native library tests, 14 focused renderer/runtime tests, four focused security/profile tests, and 10 broad Windows-credential tests passed, with one expected Windows-token symlink skip. Rust format/Clippy, desktop TypeScript/lint, architecture, exact path truth, and patch hygiene passed. Inspection confirms the WindowsPasswordVerificationProvider, CredUI/LogonUser/current-process EqualSid authority, secret and handle cleanup, one-attempt reservation/backoff, pre/post-Core generation checks, raced/failed Core stop, provider-panic cleanup, startup/manual/inactivity/restart behavior, fixed redacted messages, and argument-free native bridge are unchanged. No Hello, provider configuration, settings UI, profile migration, dependency, governed experience, project-security, privacy/encryption/identity, or broader supervision authority entered. T02-T04, both slice reviews, and complete W1 qualification remain mandatory later work.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A05.T01-R01-F01` `fixed` — The snapshot and unlock decoders now inspect exact own data-property descriptors, reject symbol/extra/missing/accessor properties, compare primitive enum values without coercion, and return newly constructed typed objects. Independent replay rejected the original object-toString coercion while preserving the object's type and invoked no accessor; the submitted tests cover state, configurationState, reason, and outcome coercion/accessors. The native manager no longer emits the internally contradictory failed/NOT-LOCKED/unlocked attempt: an already-unlocked request exits as RO-LOCK-AUTH-NOT-LOCKED at the command Result boundary before provider invocation or Core start, and that code is absent from the provider-attempt decoder. Direct replay accepted exactly succeeded/UNLOCKED/unlocked and all five adverse/locked provider outcomes. Existing reconciliation still permits only the explicit succeeded native tuple to clear fail-closed state. All focused native, renderer/runtime, security/profile, type/lint, Clippy/format, architecture, path, and hygiene checks passed, with the prior Windows password, SID, reservation, generation, Core-stop, panic, restart, and redaction boundaries unchanged.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-application-lock-security-reviewer at `2026-08-30T16:30:38+00:00`
+
+**Latest notes:** Independent bounded R02 security/contract review found no remaining blocking or nonblocking acceptance-bound defect. Exact candidate 6111293f8d534e79aa8a509dfa8d37e43b218037 is a strict descendant of adverse candidate 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a, and frozen submission record 4e91caebbd5bdffba8e1cbec29e6ea9ac9a56f11 is a strict descendant of the remediation candidate. The remediation manifest reproduces SHA-256 64a164628e4cee2956f5b9288c5e58fbfe8f41dfa27d662366f2c6322e016973 and Git blob a4b1f459ae9db453516b50e5032e533fbf9b20f7. Its 11 changed paths exactly match the prior-to-remediation range: four bounded product/test paths, append-only R01 evidence/review history, and mechanically updated planning projections. W1.A05.T01-R01-F01 is closed. The renderer now obtains exact own property descriptors, rejects symbol/extra/missing/accessor fields without invoking accessors, requires primitive exact values, and reconstructs a fresh trusted snapshot. Direct replay rejected the prior coercible-object payload, an accessor payload with zero getter calls, and the removed NOT-LOCKED attempt; it accepted the exact succeeded/unlocked and five adverse/locked provider tuples. The native manager now treats an invocation while already unlocked as a command-state Err before provider invocation or Core start, so it cannot become a provider outcome or explicit-unlock authority. Only succeeded/RO-LOCK-UNLOCKED/unlocked can clear fail-closed reconciliation. All 30 native library tests, 14 focused renderer/runtime tests, four focused security/profile tests, and 10 broad Windows-credential tests passed, with one expected Windows-token symlink skip. Rust format/Clippy, desktop TypeScript/lint, architecture, exact path truth, and patch hygiene passed. Inspection confirms the WindowsPasswordVerificationProvider, CredUI/LogonUser/current-process EqualSid authority, secret and handle cleanup, one-attempt reservation/backoff, pre/post-Core generation checks, raced/failed Core stop, provider-panic cleanup, startup/manual/inactivity/restart behavior, fixed redacted messages, and argument-free native bridge are unchanged. No Hello, provider configuration, settings UI, profile migration, dependency, governed experience, project-security, privacy/encryption/identity, or broader supervision authority entered. T02-T04, both slice reviews, and complete W1 qualification remain mandatory later work.
+
+**Currently open findings:** -
 
 ### - [ ] W1.A05.T02 - Implement the Windows Hello native verifier
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`
 
