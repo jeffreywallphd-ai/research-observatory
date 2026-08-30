@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-control-review",
+  "reviewId": "W1.A05.B00.R05",
+  "taskId": "W1.A05.B00",
+  "reviewer": "w1-a05-b00-independent-reviewer",
+  "implementationCommit": "658ef77fad6e657921c7cfe0bdce3fe096c7f9f7",
+  "submittedStateCommit": "79951ce2bf5bd2bf90caf9e531fa5b5427cdf271",
+  "result": "approved",
+  "findings": [],
+  "closedFindings": [
+    "W1-A05-B00-R01-F01",
+    "W1-A05-B00-R02-F01",
+    "W1-A05-B00-R03-F01",
+    "W1-A05-B00-R04-F01"
+  ],
+  "verification": {
+    "priorFindingReplay": "W1-A05-B00-R04-F01 is closed at the frozen submitted state. The compatibility assertion now classifies immutable attempts by Git ancestry against BOOTSTRAP_SCOPE_CONTROL_CUTOVER: pre-cutover R01/R02 omit scope_base_commit, cutover-era R03 retains cf8a2568a29766c27a0f73cfb9036d86f91b62ac, R04 retains e886dd196e767b52ec253ce5286a0064d5a59c2f, and current R05 retains 4469adedd4b3fae0e64044ab1f8004d2553f0091. Existing omission, wrong-value, review-entry, and hidden-prefix denial tests remain present and pass. R01-R03 remain closed. The protected W1.A04.B00 witness was not opened, read, hashed, staged, edited, deleted, or otherwise accessed.",
+    "ancestryAndEvidence": "Candidate 658ef77fad6e657921c7cfe0bdce3fe096c7f9f7 is a strict descendant of R04 candidate 4469adedd4b3fae0e64044ab1f8004d2553f0091; submitted state 79951ce2bf5bd2bf90caf9e531fa5b5427cdf271 is its sole child. Candidate changedFiles is exactly tests/foundation/test_taskctl_workflow.py relative to base eb9cbb799060d9dd3f1d32b3dda003a0db4bc5ba, matching artifacts/evidence/W1.A05.B00.remediation-04.json. The prior R04 ledger SHA-256 is f1f28bc431574531c6d61ee5c61c267ce4278c6f101c2b0121fddb341ed50d01 and the remediation evidence SHA-256 is 6d8e185b82b984423ad44909983458664b9806506b01da2f6f6bbb87ee41a28d.",
+    "focusedTests": "At exact frozen submission state 79951ce2bf5bd2bf90caf9e531fa5b5427cdf271, tests.foundation.test_taskctl_schema plus tests.foundation.test_taskctl_workflow passed 102/102 in 327.004 seconds. tests.foundation.test_ui_reference_check plus tests.foundation.test_planctl_amendments passed 15/15 in 159.582 seconds.",
+    "authorityAndViews": "Ruff format and lint passed for the only candidate-changed file. ECR-0004 validates as approved and history-bound. Generated backlog views are current, and the deterministic 488-page planning review site validates with 19 capabilities, 111 slices, and 337 tasks.",
+    "stateBoundary": "The exact submission remains quiescent and authority-preserving: W1 is PAUSED at Wave scope with no lease; W1.A05 bootstrap is in REVIEW; no amendment campaign or tasks exist. The candidate changes only a focused foundation test and does not change product/runtime code, product authority, governed experience, amendment scope, or ordinary task/campaign state.",
+    "evidenceTruth": "The remediation manifest truthfully binds candidate, base, branch, superseded evidence, prior ledger, root cause, and the exact one-file test correction. The post-submission state now demonstrates the intended historical compatibility and current fail-closed controls without weakening the Git-authenticated cutover."
+  },
+  "disposition": "APPROVED. W1.A05.B00 R05 independently closes W1-A05-B00-R04-F01 with R01-R03 remaining closed. This disposition authorizes only the repository workflow's next bootstrap review transition; it does not itself approve or materialize the amendment, resume W1, claim product work, or authorize any release or gate action."
+}
