@@ -97,9 +97,6 @@ MAINTENANCE_CONTROL_PATHS = GATE_CONTROL_PATHS | frozenset(
         "tests/foundation/test_ui_change_gate.py",
     }
 )
-MAINTENANCE_RECORD_PATH = re.compile(
-    r"^planning/governance-migrations/GOV-MAINT-[0-9]{4}(?:\.review-R[0-9]{2})?\.json$"
-)
 APPLICATION_ACTIVATION_PATHS = frozenset(
     {
         "quality-scope.json",
@@ -162,8 +159,8 @@ def canonical_agent_identity(value: object, *, reviewer: bool = False) -> str | 
     return canonical or None
 
 
-def is_maintenance_control_path(path: str) -> bool:
-    return path in MAINTENANCE_CONTROL_PATHS or MAINTENANCE_RECORD_PATH.fullmatch(path) is not None
+def is_maintenance_control_path(path: str, maintenance_evidence_paths: set[str]) -> bool:
+    return path in MAINTENANCE_CONTROL_PATHS or path in maintenance_evidence_paths
 
 
 def maintenance_path_semantics_changed(repo: Path, predecessor: str, candidate: str, path: str) -> bool:
@@ -544,10 +541,13 @@ def reviewed_preimplementation_maintenance_errors(
             prior_review_commit = introduction
             final_review_introduction = introduction
         final_candidate = resolve_commit(repo, str(attempts[-1].get("reviewedCommit")))
+        maintenance_evidence_paths = {record_path} | {
+            f"{root}/{maintenance_id}.review-R{index:02d}.json" for index in range(1, len(attempts) + 1)
+        }
         net_non_control_paths = sorted(
             path
             for path in changed_paths(repo, predecessor, final_candidate)
-            if not is_maintenance_control_path(path)
+            if not is_maintenance_control_path(path, maintenance_evidence_paths)
             and maintenance_path_semantics_changed(repo, predecessor, final_candidate, path)
         )
         if net_non_control_paths:
