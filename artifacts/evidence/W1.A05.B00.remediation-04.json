@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.B00",
+  "commit": "658ef77fad6e657921c7cfe0bdce3fe096c7f9f7",
+  "baseCommit": "eb9cbb799060d9dd3f1d32b3dda003a0db4bc5ba",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A05.B00.remediation-03.json",
+    "sha256": "fbfc34a7ff8bbae7b3ccc456a67c27dd99a2aea33582b5350764a62553189300",
+    "commit": "4469adedd4b3fae0e64044ab1f8004d2553f0091"
+  },
+  "priorReview": {
+    "path": "artifacts/evidence/W1.A05.B00.review-04.json",
+    "sha256": "f1f28bc431574531c6d61ee5c61c267ce4278c6f101c2b0121fddb341ed50d01",
+    "implementationCommit": "4469adedd4b3fae0e64044ab1f8004d2553f0091",
+    "submittedStateCommit": "4ff20d8706eeeee698ccdde0ff8a562ef265c056",
+    "result": "changes-requested"
+  },
+  "changedFiles": [
+    "tests/foundation/test_taskctl_workflow.py"
+  ],
+  "rootCauseAnalysis": {
+    "cause": "The R03 compatibility assertion inferred the composition of archived attempts from the pre-submission backlog. A lawful resubmission then archived the cutover-era R03 candidate, whose exact scope_base_commit is required, so the assertion rejected the valid post-submission projection.",
+    "correction": "The assertion now walks immutable attempts in order and classifies each candidate by ancestry against BOOTSTRAP_SCOPE_CONTROL_CUTOVER. Pre-cutover attempts must omit the field; cutover and later remediations must retain the exact preceding candidate; the current remediation must begin at the latest archived candidate.",
+    "recurrenceControl": "The complete suite is run once before submission and again after the new submission projection is frozen. This preserves the controller denials from R01-R03 while proving that the test remains valid as lawful attempts move from current to archived history."
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_current_bootstrap_remediation_requires_its_persisted_authority_scope",
+      "exitCode": 0,
+      "result": "The exact R04 regression test passed on candidate 658ef77fad6e657921c7cfe0bdce3fe096c7f9f7."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 102 taskctl schema and workflow tests passed on the exact candidate in 319.161 seconds, including current omission, wrong-value, hidden-prefix, historical compatibility, and cutover-era archival coverage."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tests/foundation/test_taskctl_workflow.py; .venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tests/foundation/test_taskctl_workflow.py",
+      "exitCode": 0,
+      "result": "The only changed Python file is formatted and lint-clean."
+    },
+    {
+      "command": "git diff --check eb9cbb799060d9dd3f1d32b3dda003a0db4bc5ba 658ef77fad6e657921c7cfe0bdce3fe096c7f9f7 --; git diff --name-only eb9cbb799060d9dd3f1d32b3dda003a0db4bc5ba 658ef77fad6e657921c7cfe0bdce3fe096c7f9f7 --",
+      "exitCode": 0,
+      "result": "Patch hygiene passed and the remediation delta contains exactly tests/foundation/test_taskctl_workflow.py."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R01-R03 remain closed: witness handling, complete authority-lineage validation, and mandatory current scope persistence are unchanged and remain covered by passing adversarial tests.",
+        "R04-F01 is corrected by testing each archived attempt against the authenticated Git cutover and its exact preceding candidate."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The strict-descendant candidate changes one compatibility assertion only; it does not alter taskctl, schemas, approved scope, task inventory, dependencies, estimates, or Wave projections.",
+        "The assertion preserves pre-cutover readability without fabricating scope while requiring exact scope on R03 and every later remediation."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "RO-UI-ACADEMIC-MINIMAL-1.4 and all governed experience bytes remain unchanged.",
+        "The previously verified 15-test UI-reference/planctl result at production candidate 4469adedd4b3fae0e64044ab1f8004d2553f0091 remains applicable because this candidate changes only a foundation test."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "W1 remains PAUSED at Wave scope; W1.A05 remains CHANGES_REQUESTED before resubmission; no amendment task or campaign exists; and no product/runtime path changed.",
+        "R01-R04 and their candidates, evidence, ledgers, findings, and dispositions remain append-only."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The exact candidate passes the focused regression, the complete 102-test taskctl/schema suite, changed-file format/lint, and exact diff-scope checks.",
+        "After resubmission freezes R05, the complete 102-test suite must be replayed before independent review to prove the lawful archival projection stays green."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R04 found a state-dependent false failure in a security-control compatibility test, not a production-controller defect. The smallest sufficient correction is test-only, but its credibility depends on the complete taskctl/schema suite in both pre-submission and post-submission states. Changed-file format/lint and exact Git scope establish evidence hygiene; broader product, UI, and platform suites have no credible new failure path from this assertion-only delta.",
+    "deferred": "Windows-password parity, Windows Hello OS behavior, versioned sign-in configuration, renderer settings, accessibility interaction, and end-to-end lock/restart/recovery behavior remain assigned to W1.A05.T01-T04 and their independent slice and W1-exit reviews."
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-control-security-experience-remediation-review",
+    "openFindingIds": [
+      "W1-A05-B00-R04-F01"
+    ],
+    "note": "Replay R04 against candidate 658ef77fad6e657921c7cfe0bdce3fe096c7f9f7 and its frozen R05 submission. Confirm pre-cutover R01/R02 omit scope, cutover-era R03 and later remediations retain the exact preceding candidate, all 102 tests pass after submission, and R01-R03 controller findings remain closed."
+  }
+}
