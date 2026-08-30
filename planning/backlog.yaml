@@ -30909,7 +30909,7 @@ wave_amendments:
         until amendment adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A05.B00
-    status: REVIEW
+    status: CHANGES_REQUESTED
     implementer: codex
     implementation_commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
     submission_branch: codex/w1-windows-local-runtime
@@ -30924,10 +30924,12 @@ wave_amendments:
       commit: e886dd196e767b52ec253ce5286a0064d5a59c2f
       recorded_at: '2026-08-30T13:25:30+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: w1-a05-b00-independent-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-30T13:36:04+00:00'
+      notes: 'R03 ledger artifacts/evidence/W1.A05.B00.review-03.json (sha256 45cfa8ac8832ad30d8f69ea54ebb20d3bb708be5823ea7ae2181387a7f7614b0):
+        W1-A05-B00-R03-F01 requires current and future remediation projections to retain the exact frozen scope_base_commit
+        while preserving immutable historical attempts.'
     attempts:
     - id: R01
       implementer: codex
