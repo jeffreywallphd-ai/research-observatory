@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import re
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -106,6 +109,55 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
                     self.assertIn(f'data-task-base-sha="{expected_claim["base_sha"] or "none"}"', text, task_id)
 
         self.assertEqual(337, len(plan_hashes))
+
+    def test_validator_rejects_falsified_visible_task_evidence_with_intact_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            tampered = Path(temporary) / "review-site"
+            shutil.copytree(self.site, tampered)
+
+            plan_page = tampered / "CAP-19" / "CAP-19.S01.T01.html"
+            plan_text = plan_page.read_text(encoding="utf-8")
+            plan_text, plan_replacements = re.subn(
+                r'(<article class="plan-article compact-article">).*?(</article>)',
+                r"\1<p>FABRICATED APPROVED PLAN</p>\2",
+                plan_text,
+                count=1,
+                flags=re.DOTALL,
+            )
+            self.assertEqual(1, plan_replacements)
+            self.assertIn('data-task-plan="CAP-19.S01.T01"', plan_text)
+            plan_text = plan_text.replace(
+                ">CAP-18.S01.T03</code>",
+                ">CAP-00.S00.T00</code>",
+                1,
+            )
+            self.assertIn('data-task-dependency="CAP-18.S01.T03"', plan_text)
+            plan_page.write_text(plan_text, encoding="utf-8")
+
+            claim_page = tampered / "CAP-03" / "CAP-03.S04.T01.html"
+            claim_text = claim_page.read_text(encoding="utf-8").replace(
+                ">codex/w1-windows-local-runtime</code>",
+                ">fake/branch</code>",
+                1,
+            )
+            self.assertIn('data-task-branch="codex/w1-windows-local-runtime"', claim_text)
+            claim_page.write_text(claim_text, encoding="utf-8")
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(REPO / "tools" / "plan_review_check.py"),
+                    "--repo",
+                    str(REPO),
+                    "--site",
+                    str(tampered),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertNotEqual(0, completed.returncode)
+            self.assertIn("visible content differs from deterministic regeneration", completed.stderr)
 
     def test_wave_pages_render_nested_collapsible_cards_from_exact_wave_inventory(self) -> None:
         waves = {str(wave["wave_id"]): wave for wave in self.manifest["waves"]}

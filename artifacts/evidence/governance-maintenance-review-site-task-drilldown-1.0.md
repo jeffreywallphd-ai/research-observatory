@@ -55,3 +55,15 @@ the governed Python quality boundary, and `git diff --check`. Broader visual,
 keyboard, and assistive-technology confirmation remains a disclosed manual
 check because the in-app browser policy denied control of the local `file://`
 surface. Product runtime and the protected W1.A04 witness remain outside scope.
+
+## R02 remediation
+
+The exact R02 review closed `PRTD-R01-F01` through `PRTD-R01-F04` and recorded
+one new blocking validator finding, `PRTD-R02-F01`: parallel metadata markers
+could remain truthful while reviewer-visible plan, dependency, or claim text was
+falsified. The remediation adds one generic deterministic byte comparison of
+the complete generated site, seeded only with the retained `generated_at`
+value, and an adverse regression that alters all three visible surfaces while
+leaving manifest values and `data-*` markers intact. The validator must reject
+that tampered copy. This strengthens an existing check; it creates no new
+controller, approval, task, or mandatory review step.
