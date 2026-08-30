@@ -729,6 +729,46 @@ class UiChangeGateTests(unittest.TestCase):
         self.assertFalse(result["ok"])
         self.assertTrue(any("control-only" in error and path in error for error in result["errors"]), result)
 
+    def test_postimplementation_maintenance_rejects_root_launcher_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'approved UI';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            implemented = self.commit(root, "implement approved UI")
+            path = "dev.cmd"
+            self.install_reviewed_maintenance(root, implemented, mixed_product_path=path)
+            head = self.git(root, "rev-parse", "HEAD")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("control-only" in error and path in error for error in result["errors"]), result)
+
+    def test_postimplementation_maintenance_rejects_product_build_tool_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'approved UI';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            implemented = self.commit(root, "implement approved UI")
+            path = "tools/core_sidecar_build.py"
+            self.install_reviewed_maintenance(root, implemented, mixed_product_path=path)
+            head = self.git(root, "rev-parse", "HEAD")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("control-only" in error and path in error for error in result["errors"]), result)
+
     def test_remediated_preimplementation_maintenance_preserves_adverse_review_history(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, package = self.prepare(temporary)
