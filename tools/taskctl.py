@@ -689,6 +689,28 @@ def blocking_wave_amendments(data: dict[str, Any], wave_id: str) -> list[dict[st
     ]
 
 
+def is_unexecuted_superseded_reservation(amendment: dict[str, Any]) -> bool:
+    """Recognize a terminal reservation that never acquired execution authority."""
+    lifecycle = amendment.get("lifecycle") or {}
+    history = lifecycle.get("history") or []
+    completion = amendment.get("completion") or {}
+    return (
+        lifecycle.get("status") == "SUPERSEDED"
+        and len(history) >= 2
+        and history[0].get("status") == "APPROVED"
+        and history[-1].get("status") == "SUPERSEDED"
+        and all(event.get("status") in {"APPROVED", "SUPERSEDED"} for event in history)
+        and str(history[-1].get("actor") or "").startswith("governance-migration:")
+        and amendment.get("bootstrap") is None
+        and amendment.get("campaign") is None
+        and amendment.get("tasks") == []
+        and completion.get("status") == "PENDING"
+        and completion.get("reviewer") is None
+        and completion.get("reviewed_at") is None
+        and completion.get("evidence") == []
+    )
+
+
 def approved_unbootstrapped_amendment(backlog_path: str, data: dict[str, Any], wave_id: str) -> dict[str, Any] | None:
     """Project an approved interrupt before B00 can represent it in the backlog."""
     if data.get("wave_amendments"):
@@ -5232,9 +5254,11 @@ def validate(
                     if (
                         predecessor.get("kind") != "migrated-replanning"
                         and ((predecessor.get("lifecycle") or {}).get("status")) != "ADOPTED"
+                        and not is_unexecuted_superseded_reservation(predecessor)
                     ):
                         errors.append(
-                            f"{predecessor.get('id')}: predecessor of the amendment-hold owner is not ADOPTED"
+                            f"{predecessor.get('id')}: predecessor of the amendment-hold owner is neither ADOPTED "
+                            "nor an unexecuted migration-superseded reservation"
                         )
         elif owners:
             errors.append(f"{wave_id}: executable amendment owner requires the shared amendment-hold scope")
@@ -5293,7 +5317,10 @@ def validate(
                 later_owner = False
                 owners = hold_owners.get(target_wave, [])
                 ordered = ordered_amendments.get(target_wave, [])
-                if lifecycle.get("status") == "ADOPTED" and len(owners) == 1 and amendment in ordered:
+                valid_hold_predecessor = lifecycle.get("status") == "ADOPTED" or is_unexecuted_superseded_reservation(
+                    amendment
+                )
+                if valid_hold_predecessor and len(owners) == 1 and amendment in ordered:
                     later_owner = ordered.index(owners[0]) > ordered.index(amendment)
                 if wave_campaign.get("scope") != "wave" and not later_owner:
                     errors.append(f"{amendment_id}: terminal lifecycle did not restore ordinary Wave scope")
