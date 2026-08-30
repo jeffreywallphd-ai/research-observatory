@@ -413,15 +413,28 @@ def validate(reference: Path, implementation_manifest: Path | None = None) -> di
         for page in pages
         if isinstance(page, dict) and isinstance(file_name := page.get("file"), str) and file_name
     }
-    if site.get("product_page_count") != 32 or len(page_files) != 32 or len(pages) != 32:
+    declared_product_pages = site.get("product_page_count")
+    if (
+        not isinstance(declared_product_pages, int)
+        or isinstance(declared_product_pages, bool)
+        or declared_product_pages < 1
+        or declared_product_pages != len(page_files)
+        or declared_product_pages != len(pages)
+    ):
         errors.append(
-            "approved reference must contain 32 unique product pages; "
-            f"manifest={site.get('product_page_count')!r}, entries={len(pages)}, unique={len(page_files)}"
+            "approved reference product-page inventory is inconsistent; "
+            f"manifest={declared_product_pages!r}, entries={len(pages)}, unique={len(page_files)}"
         )
     html_files = {relative for relative in governed if relative.endswith(".html")}
-    if site.get("html_document_count") != 34 or len(html_files) != 34:
+    declared_html_documents = site.get("html_document_count")
+    if (
+        not isinstance(declared_html_documents, int)
+        or isinstance(declared_html_documents, bool)
+        or declared_html_documents < 1
+        or declared_html_documents != len(html_files)
+    ):
         errors.append(
-            f"approved reference must contain 34 HTML documents; manifest={site.get('html_document_count')!r}, "
+            f"approved reference HTML inventory is inconsistent; manifest={declared_html_documents!r}, "
             f"governed={len(html_files)}"
         )
     for file_name in sorted(page_files):

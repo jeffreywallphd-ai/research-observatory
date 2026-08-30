@@ -1,0 +1,24 @@
+{
+  "$schema": "./bootstrap-scope-addendum.schema.json",
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-scope-addendum",
+  "amendmentId": "W1.A05",
+  "bootstrapUnit": "W1.A05.B00",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-30T07:00:42.2388116-04:00",
+  "decision": "Approved in Codex as a narrow append-only B00 scope addendum at immutable candidate 9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b after the canonical UI-reference validator proved that legacy fixed inventory counts reject the approved RO-UI-ACADEMIC-MINIMAL-1.4 reference.",
+  "baseApprovalCommit": "1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b",
+  "candidateAtDecision": "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b",
+  "authorizedAdditionalPaths": [
+    "tools/ui_reference_check.py",
+    "tests/foundation/test_ui_reference_check.py",
+    "docs/automation/ui-reference-validation.md"
+  ],
+  "constraints": [
+    "Authorization is limited to replacing superseded fixed page-count assumptions with deterministic manifest-to-inventory consistency validation and its exact tests and documentation.",
+    "The generic scope-addendum schema repair is non-product governance maintenance under GOV-MIG-0001 and may not expand this record's authorizedAdditionalPaths.",
+    "No product code, task inventory, security authority, verification threshold, release gate, or other B00 path is added.",
+    "The final B00 candidate must descend from candidateAtDecision and receive the already-required independent control, security, and experience review."
+  ]
+}

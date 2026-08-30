@@ -105,6 +105,9 @@ HISTORICAL_W1_A04_WITNESS = {
     "task_id": "W1.A04.B00",
     "commit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
 }
+BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH = (
+    "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json"
+)
 TASK_RECOVERY_CONTRACT_FIELDS = (
     "id",
     "capability_id",
@@ -2172,7 +2175,10 @@ def bootstrap_authorized_patterns(
     bootstrap: dict[str, Any],
 ) -> list[str]:
     patterns = [str(item) for item in (packet.get("bootstrapUnit") or {}).get("authorizedPaths", [])]
-    for reference in bootstrap.get("scope_addenda", []):
+    scope_addenda = bootstrap.get("scope_addenda", [])
+    if scope_addenda:
+        patterns.append(BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH)
+    for reference in scope_addenda:
         relative = str(reference.get("path") or "")
         if relative:
             patterns.append(relative)
@@ -7308,6 +7314,7 @@ def command_amendment_v4_bootstrap_submit(
             *map(str, bootstrap_unit.get("authorizedPaths", [])),
             *scope_addenda,
             *(str(reference.get("path") or "") for reference in addendum_references),
+            *([BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH] if addendum_references else []),
         ],
         require_current_branch=True,
     )

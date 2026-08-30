@@ -21,19 +21,24 @@
     "$schema": {"const": "./bootstrap-scope-addendum.schema.json"},
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "wave-amendment-bootstrap-scope-addendum"},
-    "amendmentId": {"const": "W1.A02"},
-    "bootstrapUnit": {"const": "W1.A02.B00"},
+    "amendmentId": {"type": "string", "pattern": "^W[0-9]+\\.A[0-9]{2}$"},
+    "bootstrapUnit": {"type": "string", "pattern": "^W[0-9]+\\.A[0-9]{2}\\.B00$"},
     "status": {"const": "APPROVED"},
     "approvedBy": {"type": "string", "minLength": 1},
     "approvedAt": {"type": "string", "format": "date-time"},
     "decision": {"type": "string", "minLength": 1},
-    "baseApprovalCommit": {"const": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"},
-    "candidateAtDecision": {"const": "a20685b90532c60e0286e5e05f68b46c613e935d"},
+    "baseApprovalCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "candidateAtDecision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "authorizedAdditionalPaths": {
       "type": "array",
-      "prefixItems": [{"const": "docs/planning-implementation-plan.md"}],
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+      },
       "minItems": 1,
-      "maxItems": 1
+      "maxItems": 16,
+      "uniqueItems": true
     },
     "constraints": {
       "type": "array",
