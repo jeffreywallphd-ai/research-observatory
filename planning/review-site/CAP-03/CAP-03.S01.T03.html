@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>CAP-03.S01.T03 Publish versioning and compatibility policy for domain APIs - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="task" data-capability-id="CAP-03">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="capabilities">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities">
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item active" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves" hidden>
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item active" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item active" href="CAP-03.S01.html"><b>1</b><span><strong>SLICE-canonical-identifiers-and-domain-contracts</strong><small>CAP-03.S01 · Canonical identifiers and domain contracts</small></span></a><a class="slice-nav-item" href="CAP-03.S02.html"><b>2</b><span><strong>SLICE-research-intent-contract-and-mode-governance</strong><small>CAP-03.S02 · Research intent contract and mode governance</small></span></a><a class="slice-nav-item" href="CAP-03.S03.html"><b>3</b><span><strong>SLICE-append-only-provenance-and-audit-ledger</strong><small>CAP-03.S03 · Append-only provenance and audit ledger</small></span></a><a class="slice-nav-item" href="CAP-03.S04.html"><b>4</b><span><strong>SLICE-portable-workflow-model-and-local-worker-fabric</strong><small>CAP-03.S04 · Portable workflow model and local worker fabric</small></span></a><a class="slice-nav-item" href="CAP-03.S05.html"><b>5</b><span><strong>SLICE-dependency-graph-staleness-and-controlled-recalculation</strong><small>CAP-03.S05 · Dependency graph, staleness, and controlled recalculation</small></span></a><a class="slice-nav-item" href="CAP-03.S06.html"><b>6</b><span><strong>SLICE-use-case-profiles-and-adaptive-guided-navigation</strong><small>CAP-03.S06 · Use-case profiles and adaptive guided navigation</small></span></a></nav><h2>Slice tasks</h2><nav class='slice-nav task-nav'><a class="slice-nav-item" href="CAP-03.S01.T01.html"><b>1</b><span><strong>CAP-03.S01.T01</strong><small>Define core aggregate and value-object contracts</small></span></a><a class="slice-nav-item" href="CAP-03.S01.T02.html"><b>2</b><span><strong>CAP-03.S01.T02</strong><small>Define aggregate state machines and invariants</small></span></a><a class="slice-nav-item active" href="CAP-03.S01.T03.html"><b>3</b><span><strong>CAP-03.S01.T03</strong><small>Publish versioning and compatibility policy for domain APIs</small></span></a></nav></aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-research-domain-workflows</a><span>/</span><a href="CAP-03.S01.html">SLICE-canonical-identifiers-and-domain-contracts</a><span>/</span><span aria-current="page">CAP-03.S01.T03</span></nav>
+
+<section class="hero compact" data-task-page="CAP-03.S01.T03">
+  <div class="hero-top"><div><span class="eyebrow">CAP-03.S01.T03 · task 3 of 3</span><h1>Publish versioning and compatibility policy for domain APIs</h1><p>Semantic rules for additive/breaking schema change, deprecation, migration, event compatibility, and desktop-sidecar-server negotiation.</p></div><span class="status status-done">Done</span></div>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W1</dd></div><div><dt>Slice</dt><dd><a href="CAP-03.S01.html">SLICE-canonical-identifiers-and-domain-contracts</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>approved</dd></div></dl>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
+  <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Semantic rules for additive/breaking schema change, deprecation, migration, event compatibility, and desktop-sidecar-server negotiation.</li></ul>
+  <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>A compatibility test suite covers current and one prior contract version; breaking changes require ADR and migration path.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
+  <h3>Dependencies</h3><p>None</p>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
+  <h3>Verification profiles</h3><ul class="gate-criteria"><li>foundation</li><li>service</li></ul>
+  <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile foundation</li><li>python tools/taskctl.py validate</li><li>python tools/verify.py --profile service</li></ul>
+  <p><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>none</code> · base <code>none</code></p>
+</section>
+<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-03.S01.T03` - Publish versioning and compatibility policy for domain APIs
+**Objective:** Semantic rules for additive/breaking schema change, deprecation, migration, event compatibility, and desktop-sidecar-server negotiation.
+
+**Dependencies:** `CAP-03.S01.T02`
+**Risk / review gate:** `high` / `agent-review`
+**Verification profiles:** `foundation`, `service`
+
+**Expected deliverables**
+- Semantic rules for additive/breaking schema change, deprecation, migration, event compatibility, and desktop-sidecar-server negotiation.
+
+**Ordered implementation sequence**
+1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-03.S01.T03`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
+2. Author the versioned schema/interface/state-machine definitions first, including unknown/not-applicable states, compatibility metadata, validation rules, and negative fixtures. Keep framework and persistence types outside the portable contract.
+3. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
+4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
+5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+
+**Acceptance criteria from the authoritative backlog**
+- A compatibility test suite covers current and one prior contract version; breaking changes require ADR and migration path.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Required criterion-linked evidence**
+- Reviewed commit SHA, changed-file inventory, and scope-deviation explanation if any.
+- Named automated tests and report paths mapped to each acceptance criterion.
+- Failure/boundary/restart evidence appropriate to the task risk and verification profiles.
+- Security, rights, accessibility, migration, or design-reference review evidence when relevant.
+- Updated schema/API/client/migration/fixture/documentation hashes where applicable.
+- Independent reviewer result; the implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile foundation
+python tools/taskctl.py validate
+python tools/verify.py --profile service
+```
+
+## 10. Slice-wide verification matrix
+| Verification area | Required evidence |
+|---|---|
+| Backlog profiles | `foundation`, `service` |
+| Unit and invariant | Domain/value/state-machine, adapter, normalization, and negative tests for every task-owned rule. |
+| Contract and compatibility | Schema/OpenAPI/generated-client or manifest validation, prior-version fixtures, unknown-field behavior, and drift checks. |
+| Integration | Real local adapters against the miniature fixture project; no mocked success at the principal slice boundary. |
+| End to end | Representative researcher path from the upstream dependency through the slice outcome and downstream handoff fixture. |
+| Failure and denial | At least the material cases in Section 8, including canonical state and user-visible recovery assertions. |
+| Cancellation and restart | Cancel during a material operation, restart desktop/Core/worker, reconcile authoritative state, and resume or clean up safely. |
+| Security/privacy/rights | Required threat-boundary, permission, redaction, egress, restricted-content, and malicious-fixture tests. |
+| Accessibility and UI | Keyboard, focus, screen reader semantics, theme parity, approved page/workflow contract, and visual regression when user-facing. |
+| Migration/recovery | Prior compatible fixtures, interrupted migration/upgrade where applicable, rollback or repair, and retained historical state. |
+| Performance | Representative dataset/hardware benchmark with budgets from Section 11 and regression threshold. |
+| Architecture | Dependency/port checks, no direct renderer database/filesystem/secret access, and no hosted infrastructure introduced prematurely. |
+| Independent review | Reviewer verifies that tests exercise the stated outcome rather than merely matching implementation details. |
+
+**Commands inherited from the backlog**
+
+```text
+python tools/taskctl.py validate
+python tools/verify.py --profile foundation
+python tools/verify.py --profile service
+```
+
+## 11. Performance and resource budgets
+- UUID and value-object operations must be negligible relative to persistence; avoid reflection-heavy validation in hot query paths.
+- Schema validation is required at boundaries, not repeated indiscriminately in trusted internal loops.
+
+The implementation must record the hardware/OS, fixture version, warm/cold state, repetitions, percentile or distribution used, and a regression threshold. A budget may be refined by benchmark evidence, but relaxation requires review and must not conceal algorithmic or resource regressions.
+
+## 12. Observability and provenance
+- Every command carries actor, project, trace, causation, and correlation identifiers.
+- Contract/version mismatch metrics identify producer and consumer versions.
+
+Runtime telemetry and support diagnostics are distinct from durable scholarly provenance. Both use trace/correlation identifiers, but default diagnostics must exclude research content, secrets, raw documents, manuscript text, and sensitive query terms.
+
+## 13. Adjacent-slice handoffs
+- CAP-02 repositories persist these contracts.
+- CAP-03.S02-S06 specialize intent, provenance, workflow, dependency, and profile aggregates.
+- CAP-04/05 extend scholarly entities without redefining identity/version semantics.
+- Hosted adapters reuse the same contracts.
+
+**Handoff acceptance rule:** A downstream slice must be able to consume the documented contract and fixture without importing private implementation modules or reconstructing hidden state.
+
+## 14. Migration and backward compatibility
+- Contract evolution tests include prior serialized fixtures and generated client/server compatibility.
+- Enum additions are tolerated only where consumers implement unknown-state behavior.
+
+Every compatibility-sensitive artifact records its format/schema/protocol/parser/component version. Breaking evolution requires an accepted ADR, tested migration or bridge path, and explicit behavior for older projects/clients.
+
+## 15. Required slice evidence bundle
+- Approved slice-plan identifier and approval record.
+- All task criterion-to-evidence records on the reviewed commit.
+- Slice-wide verification report and commands.
+- Unit, contract, integration, end-to-end, failure, cancellation, restart, migration/recovery, security/rights/privacy, accessibility/UI, and performance reports as applicable.
+- Architecture dependency and approved-reference conformance reports.
+- Updated contracts, generated artifacts, migrations, fixtures, threat model, ADRs, operational/recovery documentation, and source acknowledgments.
+- Independent slice review confirming production-ready vertical behavior and downstream handoff quality.
+- No concealed TODO/FIXME, disabled failing test, manual-only production step, or untracked follow-up required for the slice outcome.
+
+## 16. Definition of Ready
+- The containing capability campaign is eligible or explicitly selected, and all predecessor capabilities required by its first active slice are complete or gated.
+- Status is READY and all dependency task IDs are DONE.
+- The task wave has no activation gate or its activation gate is approved.
+- The objective, deliverable, acceptance criteria, verification profiles, platform targets, and review gate are understandable without hidden context.
+- Required architecture, experience, template, or scholarly-method decisions exist or the task explicitly creates them.
+- Required credentials, fixtures, models, reports, and platforms are available or intentionally stubbed.
+- No unresolved blocker or active conflicting lease is recorded.
+- For intentional user-facing change, the proposed style-guide/workflow/page-reference revision is validated and approved, and its reference ID is recorded on the task.
+
+**Slice-specific readiness additions**
+- This plan is approved and its approval metadata identifies the reviewed commit/reference.
+- All blocking ADRs in Section 19 are accepted.
+- Required official-source constraints, licenses, fixtures, platform resources, and test credentials are available or safely stubbed.
+- The first task is READY under `taskctl` and no prior slice in the active capability remains incomplete.
+
+## 17. Definition of Done
+- Deliverables and all task acceptance criteria are satisfied.
+- Verification commands pass on the reviewed commit and criterion-to-evidence records are attached.
+- Security, privacy, rights, accessibility, scholarly-method, platform, migration, or release gates are completed when specified.
+- Documentation, tests, migrations, fixtures, provenance, and stale-dependency behavior are updated as relevant.
+- An independent reviewer sets review.result to approved and status to DONE.
+- Newly discovered work is recorded as explicit backlog tasks rather than hidden TODOs.
+- The task lease is released and branch/worktree disposition is recorded.
+- User-facing implementation conforms to the approved reference ID through token, route/page-contract, workflow-navigation, accessibility, and visual-regression evidence.
+- Task completion does not by itself complete the slice or capability; slice and capability end-to-end reviews must also pass.
+
+**Slice-specific completion additions**
+- The promised outcome is demonstrable end to end: A small stable core model defines records, documents, evidence, decisions, workflows, ontologies, graphs, opportunities, and monitoring events.
+- All task implementations operate together from a clean project/install state, not only in isolated tests.
+- The slice evidence bundle passes independent review and the downstream handoff fixtures/contracts are usable.
+- Capability campaign state advances only after the slice completion record is approved.
+
+## 18. Risks and mitigations
+| Risk | Required mitigation |
+|---|---|
+| Architecture drift | Enforce ports/contracts/dependency checks and compare against this plan and accepted ADRs. |
+| Procedural completion without semantic completion | Reviewer maps each acceptance criterion to an actual behavioral test and end-to-end evidence. |
+| Vendor or technology lock-in | Keep durable state/contracts independent and require migration/export tests. |
+| Hidden security or rights bypass | Test service-level denial through alternate UI/API paths and inspect audit evidence. |
+| Recovery only works on the happy path | Fault-inject interruption/restart/corruption at material boundaries and verify canonical state. |
+| UX fragmentation | Validate workflow placement, next-step guidance, support-tool return, and approved reference conformance. |
+| Performance overfitting | Use representative fixtures and minimum hardware, publish methodology, and retain regression baselines. |
+| Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
+
+## 19. Required ADRs and human decisions
+- ADR: UUIDv7 representation and generator.
+- ADR: Aggregate/revision identity conventions.
+- ADR: Contract code-generation and compatibility tooling.
+
+A listed item beginning with `ADR REQUIRED` blocks the relevant implementation choice. Other ADRs may be completed within the first task only when that task explicitly owns the decision and the capability campaign approval permits it.
+
+## 20. Research and standards basis
+| Key | Primary or official source | Applied decision |
+|---|---|---|
+| `UUIDV7` | [RFC 9562 - UUIDs](https://www.rfc-editor.org/rfc/rfc9562.html) - IETF | Sortable globally unique UUIDv7 identifiers. |
+| `JSON_SCHEMA` | [JSON Schema Draft 2020-12 Core](https://json-schema.org/draft/2020-12/json-schema-core.html) - JSON Schema | Portable contract validation. |
+| `JCS` | [RFC 8785 - JSON Canonicalization Scheme](https://www.rfc-editor.org/rfc/rfc8785.html) - IETF | Deterministic hashing/signing of JSON payloads. |
+
+These sources constrain implementation choices but do not replace repository-specific benchmarks, threat analysis, licensing review, accessibility testing, or ADR approval. Source access should be rechecked when implementation begins because APIs, libraries, platform guidance, and license terms can change.
+
+## 21. AI implementation runbook
+
+**Long-running campaign rule.** Continue through dependency-ready tasks and slices without repeatedly requesting decisions already settled by the approved capability packet. Use only classified pause categories and attach exact evidence/next action.
+1. Run the repository validators and confirm this plan is approved, matches the current backlog slice/task IDs, and has no unresolved blocking ADR.
+2. Confirm `CAP-03` is the active capability campaign and `CAP-03.S01` is the next eligible slice.
+3. Claim the first READY task in order: `CAP-03.S01.T01`. Do not globally select work outside the capability.
+4. Load only the governing documents, accepted ADRs, approved UI reference sections, this plan, task contract, and affected code/tests.
+5. Implement one task at a time. Preserve unrelated working changes; do not weaken tests, delete evidence, or make hidden architectural decisions.
+6. After each task, run focused verification, attach criterion-linked evidence, obtain the required independent task review, and transition state through `taskctl`.
+7. After all tasks are DONE, execute the complete Section 10 slice matrix from a clean state and assemble the Section 15 evidence bundle.
+8. Request an independent slice review. Address findings through tracked tasks or reopen the affected task; never self-approve or mark the slice complete based on narrative evidence alone.
+9. Record the approved slice completion and handoff artifacts, then allow the capability campaign to select the next dependent slice.
+
+---
+**Generated for Research Observatory baseline 1.3, supplemental planning release 1.3.4.**
+**Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
+**Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
+<section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
+<p class="decision-meta" data-task-worksheet-absent="CAP-03.S01.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
+
+<section data-task-review-id="CAP-03.S01.T03" data-review-mode="append-only">
+  <div class="section-heading"><span class="eyebrow">Immutable task review history</span><h3>CAP-03.S01.T03 — Publish versioning and compatibility policy for domain APIs</h3><p>Completed rounds remain append-only. The latest legacy review object below is a labeled current projection, not a replacement for this history.</p></div>
+
+<article class="review-toolbar" data-review-round="CAP-03.S01.T03:R01">
+  <h3>Review round R01</h3>
+
+<section class="plan-details" data-review-attempt="CAP-03.S01.T03:R01" data-packet-sha256="2ded47b0291885a365f823ad5fb01bbe2f1cdc3ce1069bba6ced14b9a268ac9b">
+  <h4>Immutable submission packet <code>R01</code></h4>
+  <dl class="summary-grid"><div><dt>Packet SHA-256</dt><dd><code>2ded47b0291885a365f823ad5fb01bbe2f1cdc3ce1069bba6ced14b9a268ac9b</code></dd></div><div><dt>Candidate / base</dt><dd><code>f9b97b50cb3b4fa42db4aa415ea2bb82544de285</code> / <code>bf7ddc41c48ea5db259d7868de6fb15d7797ac1e</code></dd></div><div><dt>Submitted</dt><dd>codex at <code>2026-08-28T15:46:03+00:00</code></dd></div><div><dt>Branch</dt><dd><code>codex/w1-windows-local-runtime</code></dd></div></dl>
+  <p><strong>Evidence:</strong> <code>artifacts/evidence/CAP-03.S01.T03.json</code> · SHA-256 <code>e664dde57fde1fd4ed6ad979015ea606e94ff91042a015da4d8b5457828c634e</code> · commit <code>f9b97b50cb3b4fa42db4aa415ea2bb82544de285</code></p>
+  <p><strong>Frozen criteria / selection:</strong> <code>364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1</code> / <code>05a48c33165076cbb2307eddf2a65de0695e8851e1ddaf8e576cff5c8592ced0</code></p>
+  <p><strong>Changed paths:</strong> <code>docs/architecture/README.md</code>, <code>docs/architecture/domain-compatibility.md</code>, <code>docs/architecture/domain-contracts.md</code>, <code>docs/architecture/domain-lifecycles.md</code>, <code>docs/planning-implementation-plan.md</code>, <code>packages/contracts/README.md</code>, <code>packages/contracts/domain/compatibility.generated.ts</code>, <code>packages/contracts/domain/compatibility.template.py.txt</code>, <code>packages/contracts/domain/compatibility.template.ts.txt</code>, <code>packages/contracts/domain/compatibility.test.ts</code>, <code>packages/contracts/domain/domain-compatibility.schema.json</code>, <code>packages/contracts/domain/domain-compatibility.v1.json</code>, <code>packages/contracts/domain/fixtures/domain-contract-release.current.v1.json</code>, <code>packages/contracts/domain/fixtures/domain-contract-release.prior.v0.1.json</code>, <code>packages/contracts/domain/generate-compatibility.mjs</code>, <code>packages/contracts/package.json</code>, <code>packaging/build-inputs.json</code>, <code>planning/backlog.yaml</code>, <code>planning/review-site/CAP-03/CAP-03.S01.html</code>, <code>planning/review-site/manifest.json</code>, <code>planning/review-site/waves/W1.html</code>, <code>planning/status-summary.md</code>, <code>quality-scope.json</code>, <code>services/core-api/README.md</code>, <code>services/core-api/packaging/sidecar-build.json</code>, <code>services/core-api/src/research_observatory_core/domain_compatibility.py</code>, <code>tests/contracts/test_domain_compatibility.py</code>, <code>tests/packaging/test_core_sidecar_package.py</code>, <code>tests/service/test_domain_compatibility_service.py</code>, <code>tools/core_sidecar_build.py</code></p>
+  <p><strong>Selected checks:</strong> <code>.local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate-lifecycle.mjs --check; .local\toolchains\node-v24.19.0-win-x64\node.exe packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run</code>, <code>.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py</code>, <code>.venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py</code>, <code>.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package</code>, <code>.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-f9b97b5.json</code>, <code>.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base bf7ddc41c48ea5db259d7868de6fb15d7797ac1e --head f9b97b50cb3b4fa42db4aa415ea2bb82544de285</code>, <code>.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-f9b97b5.json</code>, <code>.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved</code>, <code>$env:UV_CACHE_DIR=&#x27;artifacts/tmp/uv-cache&#x27;; uv lock --check; git diff --check</code></p>
+  <p><strong>Deferred checks:</strong> <code>The governed affected foundation/service attempt reproduced the historical 72-failure/16-error governance fixture baseline unchanged from independently approved CAP-02.S04.T04 evidence. It remains mandatory reconciliation work before W1 exit qualification and is not represented as passing or deleted to make this task pass. Exact failed-run report SHA-256: 6c8d120feed8a7d9d1c369d18e2da9fd1f38138f0a033c9384cad3443bf541e2.</code>, <code>Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval, when the complete T01-T03 contract boundary is available.</code>, <code>Cross-capability end-to-end, performance, security, accessibility, cancellation, migration, restart, recovery, and release qualification remain mandatory at the applicable checkpoint and W1 exit.</code></p>
+  <p><strong>Selection rationale:</strong> This high-risk task changes shared cross-language contract generation, compatibility interpretation, process-boundary negotiation, build-schema provenance, and frozen-sidecar inputs. The selected task-owned matrix therefore covers exact generation, schema/source hashing, strict type checking, current/prior behavior, breaking-change authority, hostile inputs, deterministic restart, all contract and service tests, a real frozen Windows sidecar, quality, architecture/ADR, build provenance, dependency locks, planning integrity, and the governed affected profile. The affected profile&#x27;s unchanged 72/16 historical governance baseline is disclosed rather than represented as passing.</p>
+  <p><strong>Prior round / replayed open findings:</strong> <code>None</code> / None</p>
+  <p><strong>Root-cause escalation:</strong> Not required</p>
+</section>
+  <dl class="summary-grid"><div><dt>Disposition</dt><dd>changes-requested</dd></div><div><dt>Reviewer</dt><dd>nash-independent-domain-compatibility-reviewer</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-28T15:49:39+00:00</code></dd></div><div data-review-ledger="CAP-03.S01.T03:R01" data-ledger-sha256="5fd63b0fa9ec8c9f963490a9c58420a641ab208fdf12e3d682732555ca27f5c0"><dt>Immutable ledger</dt><dd><code>artifacts/evidence/CAP-03.S01.T03.review-R01.json</code><br><code>5fd63b0fa9ec8c9f963490a9c58420a641ab208fdf12e3d682732555ca27f5c0</code></dd></div></dl>
+  <p><strong>Review notes:</strong> The frozen schema, policy and release-fixture hashes are exact; the current schema-set is derived from domain-core and domain-lifecycle bytes, the prior set is derived from the UUIDv4 project-manifest schema, and ADR-0013&#x27;s read-only bridge fixture is present and generator-verified. Cross-runtime generation, deterministic exact-common desktop/sidecar/optional-server negotiation, strict advertisements, immutable outputs, stable content-free diagnostics, and sidecar/build integration are otherwise supported. Focused replay passed all 32 TypeScript contract tests and nine Python compatibility contract/service tests. The disclosed 72 failures and 16 errors reproduce the already reviewed historical governance/live-boundary fixture drift and reveal no T03 implementation failure, so they remain mandatory W1-exit remediation rather than a separate task finding. Two task-owned compatibility controls are nevertheless incomplete.</p>
+  <h4>Findings opened in this round</h4><ul class="gate-criteria"><li data-review-finding="CAP-03.S01.T03:R01:CAP-03.S01.T03-R01-F01"><strong>CAP-03.S01.T03-R01-F01 · high · criterion 1</strong> — Breaking-change approval trusts unverified ADR and migration assertions<br><small>Reproduce: At exact candidate f9b97b50cb3b4fa42db4aa415ea2bb82544de285, call assess_domain_change with a remove-field proposal from 1.0.0 to 2.0.0, adrId ADR-9999, and a migration whose id is invented-migration and testFixture is fixtures/does-not-exist.json but whose syntactic fields, endpoints, strategy and sourceRetention are valid. Python returns classification breaking, allowed true, errors empty, diagnosticCode compatibility-change-accepted; the generated TypeScript applies the same checks. The implementation validates only ADR syntax and a relative fixture string. It does not bind the ADR to an accepted repository decision or bind the migration/bridge to an existing, tested, source-retaining fixture. This contradicts the acceptance rule that breaking changes require an accepted ADR and migration path and makes the evidence claim of authority enforcement false.<br>Required remediation: In a strict-descendant candidate, make breaking assessment consume or embed a deterministic hash-bound catalog of accepted ADR authority and reviewed migration/reader-bridge evidence, and reject unknown, unaccepted, mismatched, missing, or substituted authority in both runtimes with stable content-free parity codes. At minimum, prove ADR identity/status/scope, exact from/to versions, strategy/source-retention, fixture existence and immutable digest, and a bound passing compatibility test. Add Python and TypeScript denial tests using ADR-9999, nonexistent/substituted fixtures, wrong evidence hash/status/scope, and valid exact authority. Preserve pure deterministic runtime behavior by generating the authenticated catalog rather than performing ambient filesystem reads during assessment.<br>Blocking: True</small></li><li data-review-finding="CAP-03.S01.T03:R01:CAP-03.S01.T03-R01-F02"><strong>CAP-03.S01.T03-R01-F02 · medium · criterion 3</strong> — Unknown-event deny-and-audit behavior is declared but not executable<br><small>Reproduce: Search the exact candidate&#x27;s generator and generated Python/TypeScript modules for unknownEvent, deny-and-audit, audit, event payload validation, or an event assessment API. The only runtime occurrence is the frozen policy literal; there is no event envelope schema, supported-event catalog, validator, denial function, or audit callback/result. The tests only assert that the policy object contains unknownEvent=deny-and-audit and exercise version overlap during component negotiation. Therefore an unknown event or payload with unknown fields cannot be submitted to this contract boundary and proven rejected or audited, despite the plan placing event compatibility in T03 scope and the evidence claiming that unknown events deny and audit while unknown payload fields reject.<br>Required remediation: Add a minimal language-neutral versioned event-envelope/assessment contract and generated Python/TypeScript validation boundary that accepts an exact supported-event catalog, rejects unknown versions/types and unknown payload fields before dispatch, and produces or invokes one bounded content-free audit fact for every unknown-event denial. Bind the supported catalog and schemas by hashes, preserve immutable results, and add parity tests for known event, unknown event with exactly one audit, unknown field, unsupported version, hostile content redaction, and audit publication failure semantics. If durable audit publication belongs to a later slice, expose and test the mandatory typed audit fact/callback here without claiming persistence.<br>Blocking: True</small></li></ul>
+  <h4>Prior findings closed in this round</h4><ul class="gate-criteria"><li>None</li></ul>
+</article>
+<article class="review-toolbar" data-review-round="CAP-03.S01.T03:R02">
+  <h3>Review round R02</h3>
+
+<section class="plan-details" data-review-attempt="CAP-03.S01.T03:R02" data-packet-sha256="69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830">
+  <h4>Immutable submission packet <code>R02</code></h4>
+  <dl class="summary-grid"><div><dt>Packet SHA-256</dt><dd><code>69e6366632f4589fae44b5f005d5c30406eb0e50e5f2de3ffbc8cb0bc84af830</code></dd></div><div><dt>Candidate / base</dt><dd><code>abdc90764519dc931a17aba550d60c40dcdcea15</code> / <code>f9b97b50cb3b4fa42db4aa415ea2bb82544de285</code></dd></div><div><dt>Submitted</dt><dd>codex at <code>2026-08-28T16:04:19+00:00</code></dd></div><div><dt>Branch</dt><dd><code>codex/w1-windows-local-runtime</code></dd></div></dl>
+  <p><strong>Evidence:</strong> <code>artifacts/evidence/CAP-03.S01.T03.review-fix.json</code> · SHA-256 <code>a3fd90778bd09a43830a26039eec45992060c254aa1a8db6b7a2d1b98847d7db</code> · commit <code>abdc90764519dc931a17aba550d60c40dcdcea15</code></p>
+  <p><strong>Frozen criteria / selection:</strong> <code>364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1</code> / <code>d31c57a6ab2ccddb8e0c9b86f901fe6d4254f416c99902259f58f2a50c6eabe8</code></p>
+  <p><strong>Changed paths:</strong> <code>artifacts/evidence/CAP-03.S01.T03.json</code>, <code>artifacts/evidence/CAP-03.S01.T03.review-R01.json</code>, <code>docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md</code>, <code>docs/adr/index.json</code>, <code>docs/architecture/domain-compatibility.md</code>, <code>docs/planning-implementation-plan.md</code>, <code>packages/contracts/README.md</code>, <code>packages/contracts/domain/compatibility.generated.ts</code>, <code>packages/contracts/domain/compatibility.template.py.txt</code>, <code>packages/contracts/domain/compatibility.template.ts.txt</code>, <code>packages/contracts/domain/compatibility.test.ts</code>, <code>packages/contracts/domain/domain-compatibility-authorities.v1.json</code>, <code>packages/contracts/domain/domain-compatibility.schema.json</code>, <code>packages/contracts/domain/domain-event-catalog.v1.json</code>, <code>packages/contracts/domain/generate-compatibility.mjs</code>, <code>planning/backlog.yaml</code>, <code>planning/review-site/CAP-03/CAP-03.S01.html</code>, <code>planning/review-site/manifest.json</code>, <code>planning/status-summary.md</code>, <code>services/core-api/src/research_observatory_core/domain_compatibility.py</code>, <code>tests/contracts/test_domain_compatibility.py</code></p>
+  <p><strong>Selected checks:</strong> <code>node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run</code>, <code>.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py</code>, <code>.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package</code>, <code>.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-quality-remediation-adr.json</code>, <code>.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base bb823509f5dc8f482f17729a8d81aebdd493839d --head abdc90764519dc931a17aba550d60c40dcdcea15</code>, <code>.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-build-manifest-final.json</code>, <code>.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check</code></p>
+  <p><strong>Deferred checks:</strong> <code>The governed affected foundation/service attempt from R01 reproduced the independently reviewed historical 72-failure/16-error governance/live-boundary fixture baseline. The remediation does not touch those controls; reconciliation remains mandatory at W1 exit and is not represented as passing.</code>, <code>Durable audit persistence belongs to CAP-03.S03. T03 provides and proves the mandatory typed content-free audit fact/callback boundary without claiming storage.</code>, <code>Integrated CAP-03.S01 end-to-end qualification and independent slice review follow T03 approval; cross-capability full qualification remains mandatory at the applicable checkpoint and W1 exit.</code></p>
+  <p><strong>Selection rationale:</strong> R01 isolated two blocking trust-boundary defects in shared generated compatibility controls. The remediation therefore replays both exact findings and their hostile variants in TypeScript and Python, all contract/service tests, generation/hash integrity, protected architecture/ADR controls, Python quality, a real frozen Windows sidecar, build provenance, backlog/review projections, and W1 approval readiness. It does not expand into later durable audit persistence or the historical W1-exit foundation baseline.</p>
+  <p><strong>Prior round / replayed open findings:</strong> <code>R01</code> / <code>CAP-03.S01.T03-R01-F01</code>, <code>CAP-03.S01.T03-R01-F02</code></p>
+  <p><strong>Root-cause escalation:</strong> Not required</p>
+</section>
+  <dl class="summary-grid"><div><dt>Disposition</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>nash-independent-domain-compatibility-reviewer</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-28T16:06:38+00:00</code></dd></div><div data-review-ledger="CAP-03.S01.T03:R02" data-ledger-sha256="26747b39e47772e997573e47460745b630bc35b15a7cf89eafcb41e39798975a"><dt>Immutable ledger</dt><dd><code>artifacts/evidence/CAP-03.S01.T03.review-R02.json</code><br><code>26747b39e47772e997573e47460745b630bc35b15a7cf89eafcb41e39798975a</code></dd></div></dl>
+  <p><strong>Review notes:</strong> Focused R02 replay closes both R01 findings. Generation now authenticates the sole breaking-change authority against the accepted ADR-0013 document and index, exact decision/task scope, raw ADR/UUIDv4 bridge fixture/compatibility-test hashes, version endpoints, strategy, and source-retention semantics before embedding the immutable authority catalog. Python and TypeScript reject fabricated ADRs, unknown authority IDs, absent or substituted fixtures, and altered status/scope/evidence. The new schema-bound event catalog and envelope assessment accept the known lifecycle event, reject unknown fields before dispatch, and publish exactly one immutable content-free audit fact for unknown type or unsupported version; audit callback failure raises only compatibility-audit-publication-failed. Generator currency, 34 TypeScript tests, 11 focused Python compatibility contract/service tests, and ADR validation pass. R01 evidence and ledger remain append-only and the strict-descendant supersession is exact. Durable audit storage remains correctly deferred to CAP-03.S03; no blocking finding remains.</p>
+  <h4>Findings opened in this round</h4><ul class="gate-criteria"><li>None</li></ul>
+  <h4>Prior findings closed in this round</h4><ul class="gate-criteria"><li data-review-closure="CAP-03.S01.T03:R02:CAP-03.S01.T03-R01-F01"><strong>CAP-03.S01.T03-R01-F01 · fixed</strong> — artifacts/evidence/CAP-03.S01.T03.review-fix.json</li><li data-review-closure="CAP-03.S01.T03:R02:CAP-03.S01.T03-R01-F02"><strong>CAP-03.S01.T03-R01-F02 · fixed</strong> — artifacts/evidence/CAP-03.S01.T03.review-fix.json</li></ul>
+</article>
+<article class="review-toolbar" data-review-round="CAP-03.S01.T03:R03">
+  <h3>Review round R03</h3>
+
+<section class="plan-details" data-review-attempt="CAP-03.S01.T03:R03" data-packet-sha256="201a77f7c2c9ff3a983a44689ee0ca37ecc721049bd09e888c8259943f5db43c">
+  <h4>Immutable submission packet <code>R03</code></h4>
+  <dl class="summary-grid"><div><dt>Packet SHA-256</dt><dd><code>201a77f7c2c9ff3a983a44689ee0ca37ecc721049bd09e888c8259943f5db43c</code></dd></div><div><dt>Candidate / base</dt><dd><code>9a464e4c190dce1ec328644e15ece192f865e4a3</code> / <code>abdc90764519dc931a17aba550d60c40dcdcea15</code></dd></div><div><dt>Submitted</dt><dd>codex at <code>2026-08-28T16:22:21+00:00</code></dd></div><div><dt>Branch</dt><dd><code>codex/w1-windows-local-runtime</code></dd></div></dl>
+  <p><strong>Evidence:</strong> <code>artifacts/evidence/CAP-03.S01.T03.newline-fix.json</code> · SHA-256 <code>fd3981c6b7d74c02889653fd395c56dcf841af822d346985619c0aabe9b93768</code> · commit <code>9a464e4c190dce1ec328644e15ece192f865e4a3</code></p>
+  <p><strong>Frozen criteria / selection:</strong> <code>364853cd5ece20f3171ca64dab5df7edcc16cb193c0a59a8d97e5636a266e9f1</code> / <code>80133d1cb1dd7a70d212ce73ebbb9e356697230e7a01fc5c00edb10fa6d72c79</code></p>
+  <p><strong>Changed paths:</strong> <code>artifacts/evidence/CAP-03.S01.T03.review-R02.json</code>, <code>artifacts/evidence/CAP-03.S01.T03.review-fix.json</code>, <code>docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md</code>, <code>docs/architecture/domain-compatibility.md</code>, <code>docs/planning-implementation-plan.md</code>, <code>packages/contracts/domain/compatibility.generated.ts</code>, <code>packages/contracts/domain/compatibility.test.ts</code>, <code>packages/contracts/domain/domain-compatibility-authorities.v1.json</code>, <code>packages/contracts/domain/generate-compatibility.mjs</code>, <code>planning/backlog.yaml</code>, <code>planning/review-site/CAP-03/CAP-03.S01.html</code>, <code>planning/review-site/CAP-07/CAP-07.S01.html</code>, <code>planning/review-site/CAP-07/index.html</code>, <code>planning/review-site/index.html</code>, <code>planning/review-site/manifest.json</code>, <code>planning/review-site/waves/W1.html</code>, <code>planning/status-summary.md</code>, <code>services/core-api/src/research_observatory_core/domain_compatibility.py</code></p>
+  <p><strong>Selected checks:</strong> <code>git switch main; git switch codex/w1-windows-local-runtime; node packages/contracts/domain/generate-compatibility.mjs --check</code>, <code>node packages/contracts/domain/generate.mjs --check; node packages/contracts/domain/generate-lifecycle.mjs --check; node packages/contracts/domain/generate-compatibility.mjs --check; packages\contracts\node_modules\.bin\tsc.cmd --noEmit -p packages/contracts/tsconfig.json --pretty false; npm test --prefix packages/contracts -- --run</code>, <code>.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py</code>, <code>.venv\Scripts\python.exe -m unittest tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_repository_structure tests.packaging.test_core_sidecar_package</code>, <code>.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T03-newline-final-quality.json</code>, <code>.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/adr_check.py --repo . --base abdc90764519dc931a17aba550d60c40dcdcea15 --head 9a464e4c190dce1ec328644e15ece192f865e4a3</code>, <code>.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T03-newline-final-build.json</code>, <code>.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check</code></p>
+  <p><strong>Deferred checks:</strong> <code>The independently reviewed historical 72-failure/16-error governance and live-boundary fixture baseline is outside this newline remediation. Its W1-exit reconciliation remains mandatory and is not represented as passing.</code>, <code>Durable audit persistence remains assigned to CAP-03.S03; this change preserves the already-approved typed content-free audit boundary without claiming storage.</code>, <code>CAP-03.S01 integrated qualification and independent slice review immediately follow R03 approval; cross-capability full qualification remains mandatory at the applicable checkpoint and W1 exit.</code></p>
+  <p><strong>Selection rationale:</strong> Slice integration exposed a portability failure in shared generated compatibility controls: raw text bytes and exact generated-module bytes changed under Windows Git newline conversion even though governed semantics did not. The focused remediation changes hashing and generator comparison behavior, so verification covers clean-checkout reproduction, canonicalization regression, all contract/service tests, a real frozen sidecar, Python quality, architecture/ADR consistency, provenance, planning controls, and patch hygiene. Existing authority and audit findings were already closed in R02 and are preserved rather than re-audited wholesale.</p>
+  <p><strong>Prior round / replayed open findings:</strong> <code>R02</code> / None</p>
+  <p><strong>Root-cause escalation:</strong> The original authority catalog treated raw filesystem bytes as the identity of governed textual evidence and compared generated textual output byte-for-byte. On Windows, Git may materialize the same committed text with CRLF instead of LF, so a branch checkout changed the local byte representation, invalidated the compatibility-test digest, and made generated output appear stale without any semantic change. Earlier task checks ran before a branch round trip and therefore did not exercise this platform boundary. R03 defines canonical UTF-8 LF hashing for governed text, retains raw hashing for binary fixtures, normalizes generated-text comparison, adds an LF/CRLF regression, and proves the fix after a clean branch round trip.</p>
+</section>
+  <dl class="summary-grid"><div><dt>Disposition</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>nash-independent-domain-compatibility-reviewer</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-28T16:24:34+00:00</code></dd></div><div data-review-ledger="CAP-03.S01.T03:R03" data-ledger-sha256="c71312875ae86df09996841ce8dfe8a3e87e458f325cda38c8a935278607ebca"><dt>Immutable ledger</dt><dd><code>artifacts/evidence/CAP-03.S01.T03.review-R03.json</code><br><code>c71312875ae86df09996841ce8dfe8a3e87e458f325cda38c8a935278607ebca</code></dd></div></dl>
+  <p><strong>Review notes:</strong> Focused R03 review approves the newline-portability increment with no findings. The compatibility generator is current after the Windows checkout boundary. Governed textual ADR and compatibility-test evidence is hashed after narrowly scoped UTF-8 LF normalization: LF and simulated CRLF representations produce the same catalog digest, while semantic modification produces a different digest. The migration fixture remains raw-byte-bound and rejects any byte addition. Generated output comparison is newline-normalized without weakening source semantics or authority checks. All 34 TypeScript contract tests and 11 focused Python compatibility contract/service tests pass, including the already-approved hash-bound breaking authority, forged/substituted authority denials, executable event catalog, exactly-one content-free audit callback, audit-failure denial, and immutable parity behavior. The append-only ADR and architecture clarifications accurately describe canonical text hashing and raw fixture identity. R02&#x27;s closures of CAP-03.S01.T03-R01-F01 and CAP-03.S01.T03-R01-F02 remain valid.</p>
+  <h4>Findings opened in this round</h4><ul class="gate-criteria"><li>None</li></ul>
+  <h4>Prior findings closed in this round</h4><ul class="gate-criteria"><li>None</li></ul>
+</article>
+
+  <section class="review-toolbar" data-current-review-projection="CAP-03.S01.T03" data-current-review-result="approved" data-current-reviewer="nash-independent-domain-compatibility-reviewer" data-current-reviewed-at="2026-08-28T16:24:34+00:00"><h4>Current latest-review projection</h4><dl class="summary-grid"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>nash-independent-domain-compatibility-reviewer</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-28T16:24:34+00:00</code></dd></div></dl><p><strong>Latest notes:</strong> Focused R03 review approves the newline-portability increment with no findings. The compatibility generator is current after the Windows checkout boundary. Governed textual ADR and compatibility-test evidence is hashed after narrowly scoped UTF-8 LF normalization: LF and simulated CRLF representations produce the same catalog digest, while semantic modification produces a different digest. The migration fixture remains raw-byte-bound and rejects any byte addition. Generated output comparison is newline-normalized without weakening source semantics or authority checks. All 34 TypeScript contract tests and 11 focused Python compatibility contract/service tests pass, including the already-approved hash-bound breaking authority, forged/substituted authority denials, executable event catalog, exactly-one content-free audit callback, audit-failure denial, and immutable parity behavior. The append-only ADR and architecture clarifications accurately describe canonical text hashing and raw fixture identity. R02&#x27;s closures of CAP-03.S01.T03-R01-F01 and CAP-03.S01.T03-R01-F02 remain valid.</p><p><strong>Currently open findings:</strong> None</p></section>
+</section>
+<nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-03.S01.T02.html">Previous</a><a class="button button-primary" href="CAP-03.S01.html">Next</a></nav>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>

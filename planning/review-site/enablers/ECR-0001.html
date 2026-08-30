@@ -379,8 +379,7 @@ Required human statement:
 
 &gt; Approve ECR-0001 as W1.A02 at packet commit `&lt;40-character SHA&gt;`, authorizing only bootstrap unit W1.A02.B00 and task inventory W1.A02.T01 and W1.A02.T02 as hashed in that packet.
 
-After that statement, the next action is to append a new immutable `planning/wave-amendment-approvals/W1.A02.json` record bound to the approved packet. Do **not** run `planctl wave approve W1`. B00 may then be implemented and independently reviewed; a passing activation command starts only the amendment tasks. Ordinary W1 remains paused until T01 and T02 are both DONE and independently approved and a W1 control/security checkpoint records the amendment as adopted. The only alternative resume path is an explicit append-only defer/withdraw disposition with a safe resume condition.
-</pre></article></details>
+After that statement, the next action is to append a new immutable `planning/wave-amendment-approvals/W1.A02.json` record bound to the approved packet. Do **not** run `planctl wave approve W1`. B00 may then be implemented and independently reviewed; a passing activation command starts only the amendment tasks. Ordinary W1 remains paused until T01 and T02 are both DONE and independently approved and a W1 control/security checkpoint records the amendment as adopted. The only alternative resume path is an explicit append-only defer/withdraw disposition with a safe resume condition.</pre></article></details>
 
     </main>
   </div>

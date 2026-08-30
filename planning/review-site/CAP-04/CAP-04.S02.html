@@ -33,7 +33,7 @@
     <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item active" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
   </section>
 </div>
-<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-04.S01.html"><b>1</b><span><strong>SLICE-reference-library-and-file-imports</strong><small>CAP-04.S01 · Reference-library and file imports</small></span></a><a class="slice-nav-item active" href="CAP-04.S02.html"><b>2</b><span><strong>SLICE-open-scholarly-source-adapters</strong><small>CAP-04.S02 · Open scholarly source adapters</small></span></a><a class="slice-nav-item" href="CAP-04.S03.html"><b>3</b><span><strong>SLICE-canonical-work-version-and-identity-reconciliation</strong><small>CAP-04.S03 · Canonical work, version, and identity reconciliation</small></span></a><a class="slice-nav-item" href="CAP-04.S04.html"><b>4</b><span><strong>SLICE-corpus-membership-discovery-path-and-rights-governance</strong><small>CAP-04.S04 · Corpus membership, discovery path, and rights governance</small></span></a><a class="slice-nav-item" href="CAP-04.S05.html"><b>5</b><span><strong>SLICE-connector-sdk-and-controlled-extensibility</strong><small>CAP-04.S05 · Connector SDK and controlled extensibility</small></span></a></nav></aside>
+<h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-04.S01.html"><b>1</b><span><strong>SLICE-reference-library-and-file-imports</strong><small>CAP-04.S01 · Reference-library and file imports</small></span></a><a class="slice-nav-item active" href="CAP-04.S02.html"><b>2</b><span><strong>SLICE-open-scholarly-source-adapters</strong><small>CAP-04.S02 · Open scholarly source adapters</small></span></a><a class="slice-nav-item" href="CAP-04.S03.html"><b>3</b><span><strong>SLICE-canonical-work-version-and-identity-reconciliation</strong><small>CAP-04.S03 · Canonical work, version, and identity reconciliation</small></span></a><a class="slice-nav-item" href="CAP-04.S04.html"><b>4</b><span><strong>SLICE-corpus-membership-discovery-path-and-rights-governance</strong><small>CAP-04.S04 · Corpus membership, discovery path, and rights governance</small></span></a><a class="slice-nav-item" href="CAP-04.S05.html"><b>5</b><span><strong>SLICE-connector-sdk-and-controlled-extensibility</strong><small>CAP-04.S05 · Connector SDK and controlled extensibility</small></span></a></nav><h2>Slice tasks</h2><nav class='slice-nav task-nav'><a class="slice-nav-item" href="CAP-04.S02.T01.html"><b>1</b><span><strong>CAP-04.S02.T01</strong><small>Define connector request, result, cursor, rate-limit, and provenance contracts</small></span></a><a class="slice-nav-item" href="CAP-04.S02.T02.html"><b>2</b><span><strong>CAP-04.S02.T02</strong><small>Implement OpenAlex and Crossref adapters</small></span></a><a class="slice-nav-item" href="CAP-04.S02.T03.html"><b>3</b><span><strong>CAP-04.S02.T03</strong><small>Implement Unpaywall and Semantic Scholar adapters</small></span></a></nav></aside>
     <main id="main-content" class="main-panel">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><span aria-current="page">SLICE-open-scholarly-source-adapters (CAP-04.S02)</span></nav>
 
@@ -61,15 +61,34 @@ The following decisions are the default implementation direction for this slice.
 
 ### 4.1 Replaceability rule
 External products and infrastructure remain behind ports. Domain identities, provenance, workflow state, rights decisions, accepted human judgments, source anchors, and portable contracts must survive replacement of any UI framework detail, parser, vector engine, model, API provider, cryptographic envelope version, or deployment adapter.
-
 </pre></article></section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Authoritative task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>## 9. Task-by-task implementation plan
+<section class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Tasks</h2><p>Open a task for its objective, acceptance criteria, implementation plan, verification inventory, optional worksheet, and immutable review history.</p></section>
+<div class="task-list">
+<a class="task-card" href="CAP-04.S02.T01.html" data-slice-task="CAP-04.S02.T01">
+  <div class="slice-card-index">1</div>
+  <div><span class="eyebrow">CAP-04.S02.T01</span><h3>Define connector request, result, cursor, rate-limit, and provenance contracts</h3>
+  <p>Provider-neutral interfaces for search, lookup, citation traversal, recommendations, OA resolution, retries, cache, and raw-response retention policy.</p><small>Review: not reviewed · Risk: high</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a>
+<a class="task-card" href="CAP-04.S02.T02.html" data-slice-task="CAP-04.S02.T02">
+  <div class="slice-card-index">2</div>
+  <div><span class="eyebrow">CAP-04.S02.T02</span><h3>Implement OpenAlex and Crossref adapters</h3>
+  <p>Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.</p><small>Review: not reviewed · Risk: medium</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a>
+<a class="task-card" href="CAP-04.S02.T03.html" data-slice-task="CAP-04.S02.T03">
+  <div class="slice-card-index">3</div>
+  <div><span class="eyebrow">CAP-04.S02.T03</span><h3>Implement Unpaywall and Semantic Scholar adapters</h3>
+  <p>Open-access location resolution, academic graph lookup, citations/references, and related-paper recommendations with policy controls.</p><small>Review: not reviewed · Risk: medium</small></div>
+  <span class="status status-not-started">Not_Started</span>
+</a></div>
+<details class="plan-details"><summary>Read the complete task-by-task implementation plan</summary><article class="plan-article"><pre class='markdown-fallback'>## 9. Task-by-task implementation plan
 
 ### 9.1 `CAP-04.S02.T01` - Define connector request, result, cursor, rate-limit, and provenance contracts
 **Objective:** Provider-neutral interfaces for search, lookup, citation traversal, recommendations, OA resolution, retries, cache, and raw-response retention policy.
 
-**Dependencies:** `CAP-04.S01.T01`, `CAP-07.S01.T01`  
-**Risk / review gate:** `high` / `agent-review`  
+**Dependencies:** `CAP-04.S01.T01`, `CAP-07.S01.T01`
+**Risk / review gate:** `high` / `agent-review`
 **Verification profiles:** `service`
 
 **Expected deliverables**
@@ -104,8 +123,8 @@ python tools/verify.py --profile service
 ### 9.2 `CAP-04.S02.T02` - Implement OpenAlex and Crossref adapters
 **Objective:** Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.
 
-**Dependencies:** `CAP-04.S02.T01`  
-**Risk / review gate:** `medium` / `agent-review`  
+**Dependencies:** `CAP-04.S02.T01`
+**Risk / review gate:** `medium` / `agent-review`
 **Verification profiles:** `service`, `search`
 
 **Expected deliverables**
@@ -140,8 +159,8 @@ python tools/verify.py --profile search
 ### 9.3 `CAP-04.S02.T03` - Implement Unpaywall and Semantic Scholar adapters
 **Objective:** Open-access location resolution, academic graph lookup, citations/references, and related-paper recommendations with policy controls.
 
-**Dependencies:** `CAP-04.S02.T02`  
-**Risk / review gate:** `medium` / `agent-review`  
+**Dependencies:** `CAP-04.S02.T02`
+**Risk / review gate:** `medium` / `agent-review`
 **Verification profiles:** `service`, `search`
 
 **Expected deliverables**
@@ -172,28 +191,7 @@ python tools/verify.py --profile search
 python tools/verify.py --profile service
 python tools/verify.py --profile search
 ```
-
-</pre></article></section>
-<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
-
-<section class="review-toolbar" data-task-review-id="CAP-04.S02.T01" data-review-mode="latest-review-only">
-  <h3>CAP-04.S02.T01 — Define connector request, result, cursor, rate-limit, and provenance contracts</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
-<section class="review-toolbar" data-task-review-id="CAP-04.S02.T02" data-review-mode="latest-review-only">
-  <h3>CAP-04.S02.T02 — Implement OpenAlex and Crossref adapters</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
-<section class="review-toolbar" data-task-review-id="CAP-04.S02.T03" data-review-mode="latest-review-only">
-  <h3>CAP-04.S02.T03 — Implement Unpaywall and Semantic Scholar adapters</h3>
-  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
-</section>
+</pre></article></details>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-04.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-04 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
 ## 0. Plan control
 | Field | Value |
@@ -367,8 +365,8 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 ### 9.1 `CAP-04.S02.T01` - Define connector request, result, cursor, rate-limit, and provenance contracts
 **Objective:** Provider-neutral interfaces for search, lookup, citation traversal, recommendations, OA resolution, retries, cache, and raw-response retention policy.
 
-**Dependencies:** `CAP-04.S01.T01`, `CAP-07.S01.T01`  
-**Risk / review gate:** `high` / `agent-review`  
+**Dependencies:** `CAP-04.S01.T01`, `CAP-07.S01.T01`
+**Risk / review gate:** `high` / `agent-review`
 **Verification profiles:** `service`
 
 **Expected deliverables**
@@ -403,8 +401,8 @@ python tools/verify.py --profile service
 ### 9.2 `CAP-04.S02.T02` - Implement OpenAlex and Crossref adapters
 **Objective:** Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.
 
-**Dependencies:** `CAP-04.S02.T01`  
-**Risk / review gate:** `medium` / `agent-review`  
+**Dependencies:** `CAP-04.S02.T01`
+**Risk / review gate:** `medium` / `agent-review`
 **Verification profiles:** `service`, `search`
 
 **Expected deliverables**
@@ -439,8 +437,8 @@ python tools/verify.py --profile search
 ### 9.3 `CAP-04.S02.T03` - Implement Unpaywall and Semantic Scholar adapters
 **Objective:** Open-access location resolution, academic graph lookup, citations/references, and related-paper recommendations with policy controls.
 
-**Dependencies:** `CAP-04.S02.T02`  
-**Risk / review gate:** `medium` / `agent-review`  
+**Dependencies:** `CAP-04.S02.T02`
+**Risk / review gate:** `medium` / `agent-review`
 **Verification profiles:** `service`, `search`
 
 **Expected deliverables**
@@ -611,10 +609,9 @@ These sources constrain implementation choices but do not replace repository-spe
 9. Record the approved slice completion and handoff artifacts, then allow the capability campaign to select the next dependent slice.
 
 ---
-**Generated for Research Observatory baseline 1.3, supplemental planning release 1.3.4.**  
-**Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.  
-**Authoritative work state remains:** `planning/backlog.yaml`.
-</pre></article></details>
+**Generated for Research Observatory baseline 1.3, supplemental planning release 1.3.4.**
+**Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
+**Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></details>
 <nav class="page-turn" aria-label="Slice navigation"><a class="button button-quiet" href="CAP-04.S01.html">Previous</a><a class="button button-primary" href="CAP-04.S03.html">Next</a></nav>
 
     </main>

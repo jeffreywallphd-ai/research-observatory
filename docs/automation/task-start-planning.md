@@ -28,6 +28,13 @@ evidence-control, or multi-layer experience change may need the full table.
   improvements remain backlog candidates unless they expose a material safety
   or correctness defect.
 
+When a worksheet should be retained and displayed with the generated planning
+review surface, use the task-keyed path
+`artifacts/evidence/<TASK-ID>.task-start.md`. The review-site generator discovers
+that exact path from the authoritative backlog task identity, records its hash,
+and displays it only on the matching task page. Worksheet absence is
+non-blocking; ad hoc notes elsewhere are not implicitly assigned to a task.
+
 ## Step 1: Freeze the task authority
 
 Record or link the task ID, claim base, objective, acceptance criteria,

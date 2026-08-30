@@ -1,9 +1,9 @@
 {
-  "schema_version": "1.3",
+  "schema_version": "1.4",
   "document_type": "planning-review-site-manifest",
   "baseline": "1.3",
   "supplemental_release": "1.3.4",
-  "review_interface_release": "1.3.10",
+  "review_interface_release": "1.4.0",
   "generated_at": "2026-08-29T18:59:51.061283+00:00",
   "entry_point": "index.html",
   "feedback_schema_version": "1.1",
@@ -24,6 +24,27 @@
         "CAP-00.S04",
         "CAP-00.S05",
         "CAP-00.S06"
+      ],
+      "task_ids": [
+        "CAP-00.S01.T01",
+        "CAP-00.S01.T02",
+        "CAP-00.S01.T03",
+        "CAP-00.S02.T01",
+        "CAP-00.S02.T02",
+        "CAP-00.S02.T03",
+        "CAP-00.S03.T01",
+        "CAP-00.S03.T02",
+        "CAP-00.S03.T03",
+        "CAP-00.S04.T01",
+        "CAP-00.S04.T02",
+        "CAP-00.S04.T03",
+        "CAP-00.S05.T01",
+        "CAP-00.S05.T02",
+        "CAP-00.S05.T03",
+        "CAP-00.S06.T01",
+        "CAP-00.S06.T02",
+        "CAP-00.S06.T03",
+        "CAP-00.S06.T04"
       ],
       "slice_count": 6,
       "task_count": 19,
@@ -81,6 +102,56 @@
         "CAP-03.S06",
         "CAP-07.S01"
       ],
+      "task_ids": [
+        "CAP-01.S01.T01",
+        "CAP-01.S01.T02",
+        "CAP-01.S01.T03",
+        "CAP-01.S02.T01",
+        "CAP-01.S02.T02",
+        "CAP-01.S02.T03",
+        "CAP-01.S03.T01",
+        "CAP-01.S03.T02",
+        "CAP-01.S03.T03",
+        "CAP-01.S04.T01",
+        "CAP-01.S04.T02",
+        "CAP-01.S04.T03",
+        "CAP-02.S01.T01",
+        "CAP-02.S01.T02",
+        "CAP-02.S01.T03",
+        "CAP-02.S02.T01",
+        "CAP-02.S02.T02",
+        "CAP-02.S02.T03",
+        "CAP-02.S03.T01",
+        "CAP-02.S03.T02",
+        "CAP-02.S03.T03",
+        "CAP-02.S04.T01",
+        "CAP-02.S04.T02",
+        "CAP-02.S04.T03",
+        "CAP-02.S04.T04",
+        "CAP-03.S01.T01",
+        "CAP-03.S01.T02",
+        "CAP-03.S01.T03",
+        "CAP-03.S02.T01",
+        "CAP-03.S02.T02",
+        "CAP-03.S02.T03",
+        "CAP-03.S03.T01",
+        "CAP-03.S03.T02",
+        "CAP-03.S03.T03",
+        "CAP-03.S04.T01",
+        "CAP-03.S04.T02",
+        "CAP-03.S04.T03",
+        "CAP-03.S05.T01",
+        "CAP-03.S05.T02",
+        "CAP-03.S05.T03",
+        "CAP-03.S06.T01",
+        "CAP-03.S06.T02",
+        "CAP-03.S06.T03",
+        "CAP-03.S06.T04",
+        "CAP-03.S06.T05",
+        "CAP-07.S01.T01",
+        "CAP-07.S01.T02",
+        "CAP-07.S01.T03"
+      ],
       "slice_count": 15,
       "task_count": 48,
       "exit_gate_id": "G1",
@@ -115,6 +186,41 @@
         "CAP-05.S04",
         "CAP-05.S05",
         "CAP-05.S06"
+      ],
+      "task_ids": [
+        "CAP-04.S01.T01",
+        "CAP-04.S01.T02",
+        "CAP-04.S01.T03",
+        "CAP-04.S02.T01",
+        "CAP-04.S02.T02",
+        "CAP-04.S02.T03",
+        "CAP-04.S03.T01",
+        "CAP-04.S03.T02",
+        "CAP-04.S03.T03",
+        "CAP-04.S04.T01",
+        "CAP-04.S04.T02",
+        "CAP-04.S04.T03",
+        "CAP-04.S05.T01",
+        "CAP-04.S05.T02",
+        "CAP-04.S05.T03",
+        "CAP-05.S01.T01",
+        "CAP-05.S01.T02",
+        "CAP-05.S01.T03",
+        "CAP-05.S02.T01",
+        "CAP-05.S02.T02",
+        "CAP-05.S02.T03",
+        "CAP-05.S03.T01",
+        "CAP-05.S03.T02",
+        "CAP-05.S03.T03",
+        "CAP-05.S04.T01",
+        "CAP-05.S04.T02",
+        "CAP-05.S04.T03",
+        "CAP-05.S05.T01",
+        "CAP-05.S05.T02",
+        "CAP-05.S05.T03",
+        "CAP-05.S06.T01",
+        "CAP-05.S06.T02",
+        "CAP-05.S06.T03"
       ],
       "slice_count": 11,
       "task_count": 33,
@@ -174,6 +280,56 @@
         "CAP-08.S05",
         "CAP-08.S06"
       ],
+      "task_ids": [
+        "CAP-06.S01.T01",
+        "CAP-06.S01.T02",
+        "CAP-06.S01.T03",
+        "CAP-06.S02.T01",
+        "CAP-06.S02.T02",
+        "CAP-06.S02.T03",
+        "CAP-06.S03.T01",
+        "CAP-06.S03.T02",
+        "CAP-06.S03.T03",
+        "CAP-06.S04.T01",
+        "CAP-06.S04.T02",
+        "CAP-06.S04.T03",
+        "CAP-06.S05.T01",
+        "CAP-06.S05.T02",
+        "CAP-06.S05.T03",
+        "CAP-06.S06.T01",
+        "CAP-06.S06.T02",
+        "CAP-06.S06.T03",
+        "CAP-07.S02.T01",
+        "CAP-07.S02.T02",
+        "CAP-07.S02.T03",
+        "CAP-07.S03.T01",
+        "CAP-07.S03.T02",
+        "CAP-07.S03.T03",
+        "CAP-07.S04.T01",
+        "CAP-07.S04.T02",
+        "CAP-07.S04.T03",
+        "CAP-07.S05.T01",
+        "CAP-07.S05.T02",
+        "CAP-07.S05.T03",
+        "CAP-08.S01.T01",
+        "CAP-08.S01.T02",
+        "CAP-08.S01.T03",
+        "CAP-08.S02.T01",
+        "CAP-08.S02.T02",
+        "CAP-08.S02.T03",
+        "CAP-08.S03.T01",
+        "CAP-08.S03.T02",
+        "CAP-08.S03.T03",
+        "CAP-08.S04.T01",
+        "CAP-08.S04.T02",
+        "CAP-08.S04.T03",
+        "CAP-08.S05.T01",
+        "CAP-08.S05.T02",
+        "CAP-08.S05.T03",
+        "CAP-08.S06.T01",
+        "CAP-08.S06.T02",
+        "CAP-08.S06.T03"
+      ],
       "slice_count": 16,
       "task_count": 48,
       "exit_gate_id": "G3",
@@ -206,6 +362,35 @@
         "CAP-10.S01",
         "CAP-10.S02",
         "CAP-10.S03"
+      ],
+      "task_ids": [
+        "CAP-09.S01.T01",
+        "CAP-09.S01.T02",
+        "CAP-09.S01.T03",
+        "CAP-09.S02.T01",
+        "CAP-09.S02.T02",
+        "CAP-09.S02.T03",
+        "CAP-09.S03.T01",
+        "CAP-09.S03.T02",
+        "CAP-09.S03.T03",
+        "CAP-09.S04.T01",
+        "CAP-09.S04.T02",
+        "CAP-09.S04.T03",
+        "CAP-09.S05.T01",
+        "CAP-09.S05.T02",
+        "CAP-09.S05.T03",
+        "CAP-09.S06.T01",
+        "CAP-09.S06.T02",
+        "CAP-09.S06.T03",
+        "CAP-10.S01.T01",
+        "CAP-10.S01.T02",
+        "CAP-10.S01.T03",
+        "CAP-10.S02.T01",
+        "CAP-10.S02.T02",
+        "CAP-10.S02.T03",
+        "CAP-10.S03.T01",
+        "CAP-10.S03.T02",
+        "CAP-10.S03.T03"
       ],
       "slice_count": 9,
       "task_count": 27,
@@ -243,6 +428,33 @@
         "CAP-11.S05",
         "CAP-11.S06"
       ],
+      "task_ids": [
+        "CAP-01.S05.T01",
+        "CAP-01.S05.T02",
+        "CAP-01.S05.T03",
+        "CAP-02.S05.T01",
+        "CAP-02.S05.T02",
+        "CAP-02.S05.T03",
+        "CAP-11.S01.T01",
+        "CAP-11.S01.T02",
+        "CAP-11.S01.T03",
+        "CAP-11.S02.T01",
+        "CAP-11.S02.T02",
+        "CAP-11.S02.T03",
+        "CAP-11.S03.T01",
+        "CAP-11.S03.T02",
+        "CAP-11.S03.T03",
+        "CAP-11.S04.T01",
+        "CAP-11.S04.T02",
+        "CAP-11.S04.T03",
+        "CAP-11.S04.T04",
+        "CAP-11.S05.T01",
+        "CAP-11.S05.T02",
+        "CAP-11.S05.T03",
+        "CAP-11.S06.T01",
+        "CAP-11.S06.T02",
+        "CAP-11.S06.T03"
+      ],
       "slice_count": 8,
       "task_count": 25,
       "exit_gate_id": "G5",
@@ -271,6 +483,26 @@
         "CAP-14.S04",
         "CAP-14.S05",
         "CAP-14.S06"
+      ],
+      "task_ids": [
+        "CAP-14.S01.T01",
+        "CAP-14.S01.T02",
+        "CAP-14.S01.T03",
+        "CAP-14.S02.T01",
+        "CAP-14.S02.T02",
+        "CAP-14.S02.T03",
+        "CAP-14.S03.T01",
+        "CAP-14.S03.T02",
+        "CAP-14.S03.T03",
+        "CAP-14.S04.T01",
+        "CAP-14.S04.T02",
+        "CAP-14.S04.T03",
+        "CAP-14.S05.T01",
+        "CAP-14.S05.T02",
+        "CAP-14.S05.T03",
+        "CAP-14.S06.T01",
+        "CAP-14.S06.T02",
+        "CAP-14.S06.T03"
       ],
       "slice_count": 6,
       "task_count": 18,
@@ -309,6 +541,47 @@
         "CAP-16.S04",
         "CAP-16.S05",
         "CAP-16.S06"
+      ],
+      "task_ids": [
+        "CAP-10.S05.T01",
+        "CAP-10.S05.T02",
+        "CAP-10.S05.T03",
+        "CAP-15.S01.T01",
+        "CAP-15.S01.T02",
+        "CAP-15.S01.T03",
+        "CAP-15.S02.T01",
+        "CAP-15.S02.T02",
+        "CAP-15.S02.T03",
+        "CAP-15.S03.T01",
+        "CAP-15.S03.T02",
+        "CAP-15.S03.T03",
+        "CAP-15.S04.T01",
+        "CAP-15.S04.T02",
+        "CAP-15.S04.T03",
+        "CAP-15.S05.T01",
+        "CAP-15.S05.T02",
+        "CAP-15.S05.T03",
+        "CAP-15.S06.T01",
+        "CAP-15.S06.T02",
+        "CAP-15.S06.T03",
+        "CAP-16.S01.T01",
+        "CAP-16.S01.T02",
+        "CAP-16.S01.T03",
+        "CAP-16.S02.T01",
+        "CAP-16.S02.T02",
+        "CAP-16.S02.T03",
+        "CAP-16.S03.T01",
+        "CAP-16.S03.T02",
+        "CAP-16.S03.T03",
+        "CAP-16.S04.T01",
+        "CAP-16.S04.T02",
+        "CAP-16.S04.T03",
+        "CAP-16.S05.T01",
+        "CAP-16.S05.T02",
+        "CAP-16.S05.T03",
+        "CAP-16.S06.T01",
+        "CAP-16.S06.T02",
+        "CAP-16.S06.T03"
       ],
       "slice_count": 13,
       "task_count": 39,
@@ -353,6 +626,62 @@
         "CAP-19.S05",
         "CAP-19.S06"
       ],
+      "task_ids": [
+        "CAP-17.S01.T01",
+        "CAP-17.S01.T02",
+        "CAP-17.S01.T03",
+        "CAP-17.S02.T01",
+        "CAP-17.S02.T02",
+        "CAP-17.S02.T03",
+        "CAP-17.S03.T01",
+        "CAP-17.S03.T02",
+        "CAP-17.S03.T03",
+        "CAP-17.S04.T01",
+        "CAP-17.S04.T02",
+        "CAP-17.S04.T03",
+        "CAP-17.S05.T01",
+        "CAP-17.S05.T02",
+        "CAP-17.S05.T03",
+        "CAP-17.S06.T01",
+        "CAP-17.S06.T02",
+        "CAP-17.S06.T03",
+        "CAP-18.S01.T01",
+        "CAP-18.S01.T02",
+        "CAP-18.S01.T03",
+        "CAP-18.S02.T01",
+        "CAP-18.S02.T02",
+        "CAP-18.S02.T03",
+        "CAP-18.S03.T01",
+        "CAP-18.S03.T02",
+        "CAP-18.S03.T03",
+        "CAP-18.S04.T01",
+        "CAP-18.S04.T02",
+        "CAP-18.S04.T03",
+        "CAP-18.S05.T01",
+        "CAP-18.S05.T02",
+        "CAP-18.S05.T03",
+        "CAP-18.S06.T01",
+        "CAP-18.S06.T02",
+        "CAP-18.S06.T03",
+        "CAP-19.S01.T01",
+        "CAP-19.S01.T02",
+        "CAP-19.S01.T03",
+        "CAP-19.S02.T01",
+        "CAP-19.S02.T02",
+        "CAP-19.S02.T03",
+        "CAP-19.S03.T01",
+        "CAP-19.S03.T02",
+        "CAP-19.S03.T03",
+        "CAP-19.S04.T01",
+        "CAP-19.S04.T02",
+        "CAP-19.S04.T03",
+        "CAP-19.S05.T01",
+        "CAP-19.S05.T02",
+        "CAP-19.S05.T03",
+        "CAP-19.S06.T01",
+        "CAP-19.S06.T02",
+        "CAP-19.S06.T03"
+      ],
       "slice_count": 18,
       "task_count": 54,
       "exit_gate_id": "G8",
@@ -380,6 +709,17 @@
         "CAP-10.S06",
         "CAP-10.S07"
       ],
+      "task_ids": [
+        "CAP-10.S04.T01",
+        "CAP-10.S04.T02",
+        "CAP-10.S04.T03",
+        "CAP-10.S06.T01",
+        "CAP-10.S06.T02",
+        "CAP-10.S06.T03",
+        "CAP-10.S07.T01",
+        "CAP-10.S07.T02",
+        "CAP-10.S07.T03"
+      ],
       "slice_count": 3,
       "task_count": 9,
       "exit_gate_id": "G9",
@@ -406,6 +746,26 @@
         "CAP-12.S04",
         "CAP-12.S05",
         "CAP-12.S06"
+      ],
+      "task_ids": [
+        "CAP-12.S01.T01",
+        "CAP-12.S01.T02",
+        "CAP-12.S01.T03",
+        "CAP-12.S02.T01",
+        "CAP-12.S02.T02",
+        "CAP-12.S02.T03",
+        "CAP-12.S03.T01",
+        "CAP-12.S03.T02",
+        "CAP-12.S03.T03",
+        "CAP-12.S04.T01",
+        "CAP-12.S04.T02",
+        "CAP-12.S04.T03",
+        "CAP-12.S05.T01",
+        "CAP-12.S05.T02",
+        "CAP-12.S05.T03",
+        "CAP-12.S06.T01",
+        "CAP-12.S06.T02",
+        "CAP-12.S06.T03"
       ],
       "slice_count": 6,
       "task_count": 18,
@@ -435,6 +795,26 @@
         "CAP-13.S04",
         "CAP-13.S05",
         "CAP-13.S06"
+      ],
+      "task_ids": [
+        "CAP-13.S01.T01",
+        "CAP-13.S01.T02",
+        "CAP-13.S01.T03",
+        "CAP-13.S02.T01",
+        "CAP-13.S02.T02",
+        "CAP-13.S02.T03",
+        "CAP-13.S03.T01",
+        "CAP-13.S03.T02",
+        "CAP-13.S03.T03",
+        "CAP-13.S04.T01",
+        "CAP-13.S04.T02",
+        "CAP-13.S04.T03",
+        "CAP-13.S05.T01",
+        "CAP-13.S05.T02",
+        "CAP-13.S05.T03",
+        "CAP-13.S06.T01",
+        "CAP-13.S06.T02",
+        "CAP-13.S06.T03"
       ],
       "slice_count": 6,
       "task_count": 18,
@@ -507,6 +887,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-01.S01.T01",
+              "title": "Bootstrap the Tauri 2 and React/TypeScript desktop application",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S01.T02",
+              "title": "Implement the primary application frame and workspace routing",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S01.T03",
+              "title": "Add project switcher, recent projects, and empty-state flows",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -557,6 +960,29 @@
                 "notes": "Independent review confirmed canonical hashing is limited to the two governed UTF-8 benchmark fixtures, normalizes CRLF to LF, rejects bare CR, preserves content-drift detection, changes no baseline/fixture, and passes exact six-file scope, 12 hostile tests, clean performance, UI gate, and carried-forward browser/product checks."
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-01.S02.T01",
+              "title": "Implement design tokens and core components",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S02.T02",
+              "title": "Establish keyboard, focus, and screen-reader behavior",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S02.T03",
+              "title": "Create consistent loading, error, offline, and recovery states",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -609,6 +1035,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-01.S03.T01",
+              "title": "Create the modular FastAPI service skeleton",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S03.T02",
+              "title": "Package the Python service as a Windows sidecar artifact",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S03.T03",
+              "title": "Implement sidecar lifecycle supervision in Tauri",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -660,6 +1109,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-01.S04.T01",
+              "title": "Implement loopback authentication and endpoint binding controls",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S04.T02",
+              "title": "Generate and consume versioned API contracts",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S04.T03",
+              "title": "Build desktop diagnostics and support-bundle collection",
+              "status": "DONE",
+              "page": "CAP-01/CAP-01.S04.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -710,6 +1182,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-01.S05.T01",
+              "title": "Create per-user and per-machine Windows installers",
+              "status": "NOT_STARTED",
+              "page": "CAP-01/CAP-01.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S05.T02",
+              "title": "Implement signed update manifests and release channels",
+              "status": "NOT_STARTED",
+              "page": "CAP-01/CAP-01.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-01.S05.T03",
+              "title": "Support silent lab deployment and policy configuration",
+              "status": "NOT_STARTED",
+              "page": "CAP-01/CAP-01.S05.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -774,6 +1269,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-02.S01.T01",
+              "title": "Define the local project package and directory layout",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S01.T02",
+              "title": "Implement create, open, close, archive, and delete workflows",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S01.T03",
+              "title": "Add project compatibility and safe-open checks",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -825,6 +1343,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-02.S02.T01",
+              "title": "Create the initial normalized SQLite schema in WAL mode",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S02.T02",
+              "title": "Implement forward migrations and backup-before-migrate policy",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S02.T03",
+              "title": "Build typed repositories and transaction boundaries",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S02.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -875,6 +1416,29 @@
                 "notes": "Focused remediation APPROVED exact e2eda29: README source-fixture range now v1-v4 and matches runner/recovery/architecture; no executable or machine-contract delta; strict contracts, 107-file quality, generated views, backlog, and diff hygiene pass. Prior independent executable review and first-only performance pass retained; marginal performance remains a W1-exit replay risk."
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-02.S03.T01",
+              "title": "Implement content-addressed object storage abstraction",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S03.T02",
+              "title": "Add encryption-at-rest and key-version metadata",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S03.T03",
+              "title": "Implement storage accounting, quotas, garbage collection, and cache eviction",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S03.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -1773,6 +2337,36 @@
                 "current_submission": null
               }
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-02.S04.T01",
+              "title": "Integrate Windows credential storage for secrets",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S04.T02",
+              "title": "Implement local user profile and application-lock behavior",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S04.T03",
+              "title": "Create privacy, telemetry, retention, and secure-deletion settings",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S04.T03.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S04.T04",
+              "title": "Select and implement the protected local project-database profile",
+              "status": "DONE",
+              "page": "CAP-02/CAP-02.S04.T04.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -1823,6 +2417,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-02.S05.T01",
+              "title": "Implement consistent project snapshot and backup creation",
+              "status": "NOT_STARTED",
+              "page": "CAP-02/CAP-02.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S05.T02",
+              "title": "Implement verified restore, clone, and relocation",
+              "status": "NOT_STARTED",
+              "page": "CAP-02/CAP-02.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-02.S05.T03",
+              "title": "Create portable lab project and shared-cache conventions",
+              "status": "NOT_STARTED",
+              "page": "CAP-02/CAP-02.S05.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -2537,6 +3154,29 @@
                 ],
                 "current_submission": null
               }
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-03.S01.T01",
+              "title": "Define core aggregate and value-object contracts",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S01.T02",
+              "title": "Define aggregate state machines and invariants",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S01.T03",
+              "title": "Publish versioning and compatibility policy for domain APIs",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S01.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -4112,6 +4752,29 @@
                 "current_submission": null
               }
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-03.S02.T01",
+              "title": "Model the versioned research intent contract",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S02.T02",
+              "title": "Implement guided intent creation and revision UI",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S02.T03",
+              "title": "Enforce mode and autonomy policy at service boundaries",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S02.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -5670,6 +6333,29 @@
                 "current_submission": null
               }
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-03.S03.T01",
+              "title": "Define provenance event, activity, entity, and agent model",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S03.T02",
+              "title": "Implement atomic provenance recording and lineage queries",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S03.T03",
+              "title": "Create an audit and lineage inspection workspace",
+              "status": "DONE",
+              "page": "CAP-03/CAP-03.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -5721,6 +6407,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-03.S04.T01",
+              "title": "Define workflow, step, job, attempt, artifact, and human-task contracts",
+              "status": "IN_PROGRESS",
+              "page": "CAP-03/CAP-03.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S04.T02",
+              "title": "Implement the local durable queue and worker supervisor",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S04.T03",
+              "title": "Build task center, progress, cancellation, and human-gate UI",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S04.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -5771,6 +6480,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-03.S05.T01",
+              "title": "Implement material dependency registration",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S05.T02",
+              "title": "Implement stale-state propagation and impact preview",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S05.T03",
+              "title": "Implement selective recomputation and historical retention",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S05.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -5849,6 +6581,43 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-03.S06.T01",
+              "title": "Define the versioned use-case and workflow-profile contracts",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S06.T02",
+              "title": "Implement primary-use-case selection at project creation and intent revision",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S06.T03",
+              "title": "Implement adaptive ordered navigation and workflow context",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S06.T03.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S06.T04",
+              "title": "Implement workflow progress, checkpoints, handoffs, and recalculation impact",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S06.T04.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-03.S06.T05",
+              "title": "Verify all approved use-case workflows end to end",
+              "status": "NOT_STARTED",
+              "page": "CAP-03/CAP-03.S06.T05.html",
+              "worksheet": null
+            }
           ]
         }
       ]
@@ -5912,6 +6681,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-04.S01.T01",
+              "title": "Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S01.T02",
+              "title": "Create import preview, mapping, and conflict UI",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S01.T03",
+              "title": "Implement idempotent import commits and import manifests",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -5962,6 +6754,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-04.S02.T01",
+              "title": "Define connector request, result, cursor, rate-limit, and provenance contracts",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S02.T02",
+              "title": "Implement OpenAlex and Crossref adapters",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S02.T03",
+              "title": "Implement Unpaywall and Semantic Scholar adapters",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -6014,6 +6829,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-04.S03.T01",
+              "title": "Implement identifier normalization and exact reconciliation",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S03.T02",
+              "title": "Implement probabilistic duplicate candidate generation and review",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S03.T03",
+              "title": "Implement work-version, correction, and retraction relationships",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6065,6 +6903,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-04.S04.T01",
+              "title": "Model corpus item states, reasons, and discovery paths",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S04.T02",
+              "title": "Implement rights, license, entitlement, and permitted-use metadata",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S04.T03",
+              "title": "Build corpus provenance and source-overlap reports",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S04.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6115,6 +6976,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-04.S05.T01",
+              "title": "Publish connector plugin manifest and capability API",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S05.T02",
+              "title": "Implement plugin isolation, configuration, and secret access controls",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-04.S05.T03",
+              "title": "Deliver a sample repository connector and conformance suite",
+              "status": "NOT_STARTED",
+              "page": "CAP-04/CAP-04.S05.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -6179,6 +7063,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-05.S01.T01",
+              "title": "Implement local document attachment and version association",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S01.T02",
+              "title": "Implement open-access location selection and download",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S01.T03",
+              "title": "Create acquisition queue, conflict, and entitlement placeholders",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6229,6 +7136,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-05.S02.T01",
+              "title": "Define parser interface, document IR, and parser-selection policy",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S02.T02",
+              "title": "Implement native JATS/TEI/XML/HTML parsing",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S02.T03",
+              "title": "Integrate the local Docling-based PDF parser with fallback",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -6281,6 +7211,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-05.S03.T01",
+              "title": "Persist normalized sections, blocks, sentences, and references",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S03.T02",
+              "title": "Implement page, bounding-box, and text-span anchors",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S03.T03",
+              "title": "Implement anchor resolution and citation-link APIs",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6331,6 +7284,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-05.S04.T01",
+              "title": "Build secure local PDF/page and structured-text viewer",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S04.T02",
+              "title": "Implement deep links, highlights, and context panels",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S04.T03",
+              "title": "Enforce rights-aware viewer actions and export",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -6383,6 +7359,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-05.S05.T01",
+              "title": "Extract and reconcile reference-list entries",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S05.T02",
+              "title": "Extract in-text citation contexts and targets",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S05.T03",
+              "title": "Represent tables and figures with captions and page anchors",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6433,6 +7432,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-05.S06.T01",
+              "title": "Implement parsing quality metrics and triage rules",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S06.T02",
+              "title": "Build manual structural correction and annotation tools",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-05.S06.T03",
+              "title": "Implement parser upgrade comparison and stale propagation",
+              "status": "NOT_STARTED",
+              "page": "CAP-05/CAP-05.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -6497,6 +7519,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-06.S01.T01",
+              "title": "Define searchable fields, analyzers, and query grammar",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S01.T02",
+              "title": "Implement incremental FTS5 indexing and rebuild",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S01.T03",
+              "title": "Implement fielded search, filters, snippets, and ranking explanation",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6547,6 +7592,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-06.S02.T01",
+              "title": "Define embedding, chunking, vector-index, and compatibility contracts",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S02.T02",
+              "title": "Integrate a local scientific embedding baseline",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S02.T03",
+              "title": "Implement local vector indexing, filtered similarity search, and rebuild",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -6599,6 +7667,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-06.S03.T01",
+              "title": "Implement lexical-semantic result fusion",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S03.T02",
+              "title": "Implement optional local or approved reranking",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S03.T03",
+              "title": "Persist complete search-run manifests and replay",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6649,6 +7740,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-06.S04.T01",
+              "title": "Build query editor, source selection, preview, and saved-run UI",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S04.T02",
+              "title": "Implement versioned search-tree branches and query translation",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S04.T03",
+              "title": "Implement citation, bibliographic-coupling, and semantic expansion actions",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -6701,6 +7815,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-06.S05.T01",
+              "title": "Build corpus table/canvas with clusters and discovery overlays",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S05.T02",
+              "title": "Implement coverage, overlap, missingness, and concentration metrics",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S05.T03",
+              "title": "Implement corpus-boundary sensitivity comparisons",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -6751,6 +7888,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-06.S06.T01",
+              "title": "Implement screening protocol, queue, decisions, and conflicts",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S06.T02",
+              "title": "Implement active-learning prioritization and model versioning",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-06.S06.T03",
+              "title": "Implement random audits, citation-neighbor checks, and stopping diagnostics",
+              "status": "NOT_STARTED",
+              "page": "CAP-06/CAP-06.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -7103,6 +8263,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-07.S01.T01",
+              "title": "Define model task interfaces and result envelopes",
+              "status": "DONE",
+              "page": "CAP-07/CAP-07.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S01.T02",
+              "title": "Implement model registry and capability discovery",
+              "status": "READY",
+              "page": "CAP-07/CAP-07.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S01.T03",
+              "title": "Implement routing, fallback, timeout, and circuit-breaker policy",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7153,6 +8336,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-07.S02.T01",
+              "title": "Integrate a supervised local inference runtime",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S02.T02",
+              "title": "Implement model catalog, download/import, integrity, and license consent",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S02.T03",
+              "title": "Implement hardware profiles and adaptive resource limits",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -7205,6 +8411,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-07.S03.T01",
+              "title": "Implement the first two external provider adapters behind the gateway",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S03.T02",
+              "title": "Implement egress preview, minimization, and consent",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S03.T03",
+              "title": "Implement offline/network-disabled enforcement and remote fallback behavior",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7256,6 +8485,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-07.S04.T01",
+              "title": "Create versioned prompt and tool-template registry",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S04.T02",
+              "title": "Implement schema-constrained generation and deterministic validation",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S04.T03",
+              "title": "Implement prompt/schema regression tests and approval states",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S04.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7306,6 +8558,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-07.S05.T01",
+              "title": "Instrument model calls with redacted traces and usage accounting",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S05.T02",
+              "title": "Implement project budgets, quotas, cache policy, and cancellation",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-07.S05.T03",
+              "title": "Create model evaluation dashboard and upgrade workflow",
+              "status": "NOT_STARTED",
+              "page": "CAP-07/CAP-07.S05.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -7370,6 +8645,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-08.S01.T01",
+              "title": "Implement the stable core ontology and relation vocabulary",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S01.T02",
+              "title": "Implement extraction-schema authoring and validation",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S01.T03",
+              "title": "Implement ontology/schema import, export, fork, and version comparison",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7420,6 +8718,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-08.S02.T01",
+              "title": "Implement section/passages selection for extraction",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S02.T02",
+              "title": "Implement field and relation extraction workflows",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S02.T03",
+              "title": "Implement normalization and entity-link candidate generation",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -7472,6 +8793,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-08.S03.T01",
+              "title": "Implement evidence-record persistence and lineage",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S03.T02",
+              "title": "Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S03.T03",
+              "title": "Implement decomposed confidence and missingness",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7522,6 +8866,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-08.S04.T01",
+              "title": "Implement verifier workflow and decision contract",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S04.T02",
+              "title": "Implement entailment, anchor, and schema-fit checks",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S04.T03",
+              "title": "Implement calibrated sampling and human-verification queues",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -7574,6 +8941,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-08.S05.T01",
+              "title": "Build scalable evidence matrix with saved views",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S05.T02",
+              "title": "Implement source inspection and alternative-candidate interaction",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S05.T03",
+              "title": "Implement bulk review, correction, and recomputation actions",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7624,6 +9014,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-08.S06.T01",
+              "title": "Implement independent coder assignments and agreement metrics",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S06.T02",
+              "title": "Implement adjudication workspace and rationale records",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-08.S06.T03",
+              "title": "Implement evidence table and audit exports",
+              "status": "NOT_STARTED",
+              "page": "CAP-08/CAP-08.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -7688,6 +9101,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-09.S01.T01",
+              "title": "Define graph node, edge, assertion, evidence, and dispute contracts",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S01.T02",
+              "title": "Implement the local graph projection and query adapter",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S01.T03",
+              "title": "Implement projection updates, versioning, and consistency checks",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7738,6 +9174,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-09.S02.T01",
+              "title": "Implement entity linking for theories, constructs, methods, measures, datasets, and contexts",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S02.T02",
+              "title": "Implement claim and argument relation candidate extraction",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S02.T03",
+              "title": "Implement relation review, dispute, and adjudication",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -7790,6 +9249,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-09.S03.T01",
+              "title": "Define mode-specific comparability dimensions and rules",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S03.T02",
+              "title": "Implement comparability clustering and pair explanation",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S03.T03",
+              "title": "Implement support, contradiction, qualification, and boundary candidate detection",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7840,6 +9322,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-09.S04.T01",
+              "title": "Build scalable claim and argument graph explorer",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S04.T02",
+              "title": "Build theory, construct-definition, and operationalization maps",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S04.T03",
+              "title": "Build citation, semantic, method, and temporal map presets",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -7892,6 +9397,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-09.S05.T01",
+              "title": "Implement synthesis plan and evidence-packet assembly",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S05.T02",
+              "title": "Implement source-grounded synthesis with claim-level citations",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S05.T03",
+              "title": "Implement citation support, completeness, and mismatch audit",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -7942,6 +9470,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-09.S06.T01",
+              "title": "Define reproducibility manifest and snapshot boundary",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S06.T02",
+              "title": "Implement PRISMA-compatible flow and review appendices",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-09.S06.T03",
+              "title": "Implement DOCX/Markdown/CSV/JSON-LD/graph export bundle",
+              "status": "NOT_STARTED",
+              "page": "CAP-09/CAP-09.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -8006,6 +9557,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-10.S01.T01",
+              "title": "Implement research-concept and facet schema",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S01.T02",
+              "title": "Implement multi-route nearest-prior retrieval",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S01.T03",
+              "title": "Build facet comparison grid and threat review",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8056,6 +9630,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-10.S02.T01",
+              "title": "Implement terminology, historical-vocabulary, and adjacent-field expansion",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S02.T02",
+              "title": "Implement challenger orchestration and threat ranking",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S02.T03",
+              "title": "Implement bounded novelty statement and approval gate",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -8108,56 +9705,28 @@
               },
               "review_control": null
             }
-          ]
-        },
-        {
-          "slice_id": "CAP-10.S04",
-          "slice_alias": "SLICE-plural-opportunity-detector-ensemble",
-          "wave": "W9",
-          "title": "Plural opportunity detector ensemble",
-          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S04-plural-opportunity-detector-ensemble.md",
-          "plan_sha256": "1921403107bbb9b00a12f424da2f3c5aa6c8535c348faadd648ee21efb0aeee2",
-          "page": "CAP-10/CAP-10.S04.html",
-          "task_count": 3,
-          "task_reviews": [
+          ],
+          "tasks": [
             {
-              "task_id": "CAP-10.S04.T01",
-              "title": "Implement explicit, coverage, and future-work detectors",
+              "task_id": "CAP-10.S03.T01",
+              "title": "Implement the complete opportunity dossier schema",
               "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
+              "page": "CAP-10/CAP-10.S03.T01.html",
+              "worksheet": null
             },
             {
-              "task_id": "CAP-10.S04.T02",
-              "title": "Implement contradiction, boundary, measurement, and robustness detectors",
+              "task_id": "CAP-10.S03.T02",
+              "title": "Build dossier assembly, review, and export workspace",
               "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
+              "page": "CAP-10/CAP-10.S03.T02.html",
+              "worksheet": null
             },
             {
-              "task_id": "CAP-10.S04.T03",
-              "title": "Implement bridge, structural, temporal, method, data, and theory-integration detectors",
+              "task_id": "CAP-10.S03.T03",
+              "title": "Implement opportunity decision and outcome memory",
               "status": "NOT_STARTED",
-              "mode": "latest-review-only",
-              "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
-              },
-              "review_control": null
+              "page": "CAP-10/CAP-10.S03.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -8210,6 +9779,103 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-10.S05.T01",
+              "title": "Implement critical research ontology pack and candidate extraction",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S05.T02",
+              "title": "Build competing-reading and problematization workspace",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S05.T03",
+              "title": "Implement hermeneutic search-read-interpret cycles and memo lineage",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S05.T03.html",
+              "worksheet": null
+            }
+          ]
+        },
+        {
+          "slice_id": "CAP-10.S04",
+          "slice_alias": "SLICE-plural-opportunity-detector-ensemble",
+          "wave": "W9",
+          "title": "Plural opportunity detector ensemble",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S04-plural-opportunity-detector-ensemble.md",
+          "plan_sha256": "1921403107bbb9b00a12f424da2f3c5aa6c8535c348faadd648ee21efb0aeee2",
+          "page": "CAP-10/CAP-10.S04.html",
+          "task_count": 3,
+          "task_reviews": [
+            {
+              "task_id": "CAP-10.S04.T01",
+              "title": "Implement explicit, coverage, and future-work detectors",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-10.S04.T02",
+              "title": "Implement contradiction, boundary, measurement, and robustness detectors",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            },
+            {
+              "task_id": "CAP-10.S04.T03",
+              "title": "Implement bridge, structural, temporal, method, data, and theory-integration detectors",
+              "status": "NOT_STARTED",
+              "mode": "latest-review-only",
+              "latest_review": {
+                "reviewer": null,
+                "result": null,
+                "reviewed_at": null,
+                "notes": null
+              },
+              "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-10.S04.T01",
+              "title": "Implement explicit, coverage, and future-work detectors",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S04.T02",
+              "title": "Implement contradiction, boundary, measurement, and robustness detectors",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S04.T03",
+              "title": "Implement bridge, structural, temporal, method, data, and theory-integration detectors",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S04.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8261,6 +9927,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-10.S06.T01",
+              "title": "Implement multi-objective opportunity scoring vectors",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S06.T02",
+              "title": "Build Pareto radar and candidate comparison workspace",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S06.T03",
+              "title": "Implement portfolio links, duplication checks, and convergence monitoring",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S06.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8311,6 +10000,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-10.S07.T01",
+              "title": "Implement saved monitors and differential source retrieval",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S07.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S07.T02",
+              "title": "Implement new-paper triage and impact analysis",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S07.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-10.S07.T03",
+              "title": "Build living-review change report and reassessment workflow",
+              "status": "NOT_STARTED",
+              "page": "CAP-10/CAP-10.S07.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -8375,6 +10087,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-11.S01.T01",
+              "title": "Define supported PC and lab hardware profiles and target workloads",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S01.T02",
+              "title": "Build representative local performance and endurance benchmarks",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S01.T03",
+              "title": "Implement adaptive concurrency, throttling, and low-resource modes",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8426,6 +10161,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-11.S02.T01",
+              "title": "Implement fault-injection test suite for local workflows",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S02.T02",
+              "title": "Implement startup recovery and project health repair",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S02.T03",
+              "title": "Validate application/project upgrade and application rollback matrix",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S02.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8476,6 +10234,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-11.S03.T01",
+              "title": "Execute offline and air-gapped workflow acceptance",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S03.T02",
+              "title": "Complete local threat model and security test plan",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S03.T03",
+              "title": "Complete privacy, rights, deletion, and disclosure review",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S03.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -8541,6 +10322,36 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-11.S04.T01",
+              "title": "Complete WCAG-oriented desktop accessibility audit and remediation",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S04.T02",
+              "title": "Conduct task-based usability studies on core local workflows",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S04.T03",
+              "title": "Implement onboarding, contextual help, tutorials, and sample project",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S04.T03.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S04.T04",
+              "title": "Validate objective-specific guided workflows with researchers",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S04.T04.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8592,6 +10403,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-11.S05.T01",
+              "title": "Create laboratory deployment and machine-policy package",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S05.T02",
+              "title": "Implement lab-safe model and parser cache seeding",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S05.T03",
+              "title": "Create redacted support, diagnostics, and maintenance runbooks",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8642,6 +10476,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-11.S06.T01",
+              "title": "Assemble the release-candidate build and signed manifest",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S06.T02",
+              "title": "Run complete local end-to-end acceptance and regression suite",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-11.S06.T03",
+              "title": "Approve G5 and publish PC/lab version 1.0 documentation",
+              "status": "NOT_STARTED",
+              "page": "CAP-11/CAP-11.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -8706,6 +10563,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-12.S01.T01",
+              "title": "Extract local/remote service interfaces behind a client gateway",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S01.T02",
+              "title": "Implement university connection profiles and secure onboarding",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S01.T03",
+              "title": "Implement bounded local cache and disconnected-read behavior",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8756,6 +10636,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-12.S02.T01",
+              "title": "Containerize service and worker roles and define institutional deployment profiles",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S02.T02",
+              "title": "Implement PostgreSQL, S3-compatible object, and Qdrant adapters",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S02.T03",
+              "title": "Implement Temporal-based durable workflow executor",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -8808,6 +10711,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-12.S03.T01",
+              "title": "Implement OIDC authorization-code with PKCE and session management",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S03.T02",
+              "title": "Implement RBAC/ABAC and policy enforcement points",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S03.T03",
+              "title": "Implement project and tenant isolation tests",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8858,6 +10784,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-12.S04.T01",
+              "title": "Implement team membership, roles, invitations, and project sharing",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S04.T02",
+              "title": "Implement collaborative screening, coding, verification, and task assignment",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S04.T03",
+              "title": "Implement team adjudication, memos, and unresolved-plurality support",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -8910,6 +10859,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-12.S05.T01",
+              "title": "Implement licensed-source adapter and entitlement framework",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S05.T02",
+              "title": "Implement institutional data classification, retention, and legal-hold policies",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S05.T03",
+              "title": "Implement institutional model/provider and research-compute routing",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -8960,6 +10932,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-12.S06.T01",
+              "title": "Implement centralized observability, audit, and administration",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S06.T02",
+              "title": "Implement backup, restore, disaster recovery, and upgrade procedures",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-12.S06.T03",
+              "title": "Deploy and evaluate a university pilot; approve G7",
+              "status": "DEFERRED",
+              "page": "CAP-12/CAP-12.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -9024,6 +11019,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-13.S01.T01",
+              "title": "Define organization, tenant, region, plan, and environment contracts",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S01.T02",
+              "title": "Implement tenant provisioning and deprovisioning workflows",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S01.T03",
+              "title": "Build cloud administration and support control surface",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9074,6 +11092,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-13.S02.T01",
+              "title": "Implement multi-tenant service routing and mandatory tenant context",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S02.T02",
+              "title": "Implement regional data-plane templates and dedicated options",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S02.T03",
+              "title": "Implement tenant-aware migration, backup, restore, and relocation controls",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -9126,6 +11167,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-13.S03.T01",
+              "title": "Implement cloud identity, organization membership, and federation",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S03.T02",
+              "title": "Implement feature entitlements, quotas, and usage metering",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S03.T03",
+              "title": "Implement billing-provider integration and account lifecycle",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9176,6 +11240,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-13.S04.T01",
+              "title": "Implement autoscaled worker pools and scheduling classes",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S04.T02",
+              "title": "Implement cloud model-provider and private-endpoint routing",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S04.T03",
+              "title": "Implement cost allocation, anomaly detection, and protective controls",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -9228,6 +11315,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-13.S05.T01",
+              "title": "Implement managed key hierarchy, rotation, and tenant-key options",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S05.T02",
+              "title": "Implement residency, retention, data-subject, and deletion workflows",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S05.T03",
+              "title": "Implement incident detection, response, audit evidence, and security testing",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9278,6 +11388,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-13.S06.T01",
+              "title": "Complete cloud connection, project, cache, and conflict experience",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S06.T02",
+              "title": "Establish SLOs, monitoring, support, maintenance, and disaster recovery",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-13.S06.T03",
+              "title": "Run limited-availability validation and approve G8",
+              "status": "DEFERRED",
+              "page": "CAP-13/CAP-13.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -9342,6 +11475,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-14.S01.T01",
+              "title": "Define desktop platform ports and eliminate hidden Windows assumptions",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S01.T02",
+              "title": "Establish macOS/Linux build and continuous-integration matrix",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S01.T03",
+              "title": "Implement platform capability detection and diagnostics",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9392,6 +11548,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-14.S02.T01",
+              "title": "Package and supervise the Apple Silicon macOS desktop and sidecars",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S02.T02",
+              "title": "Integrate macOS Keychain, signing, notarization, and updates",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S02.T03",
+              "title": "Qualify macOS install, upgrade, offline, backup, accessibility, and recovery",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -9444,6 +11623,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-14.S03.T01",
+              "title": "Package and supervise Linux x86_64 and ARM64 desktop sidecars",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S03.T02",
+              "title": "Integrate Linux Secret Service, XDG paths, package formats, and updates",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S03.T03",
+              "title": "Qualify Linux install, upgrade, offline, backup, accessibility, and recovery",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9494,6 +11696,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-14.S04.T01",
+              "title": "Implement hardware-aware local acceleration ports",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S04.T02",
+              "title": "Qualify NVIDIA CUDA execution on Linux including DGX Spark-class ARM64",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S04.T03",
+              "title": "Qualify parser, vector, and local-model portability and fallback",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -9546,6 +11771,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-14.S05.T01",
+              "title": "Guarantee cross-platform project and bundle compatibility",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S05.T02",
+              "title": "Implement platform-safe path, filename, permission, and migration handling",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S05.T03",
+              "title": "Run cross-platform transfer, recovery, and semantic-equivalence tests",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9596,6 +11844,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-14.S06.T01",
+              "title": "Assemble cross-platform release artifacts and provenance",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S06.T02",
+              "title": "Run complete cross-platform end-to-end acceptance",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-14.S06.T03",
+              "title": "Approve G6 and publish cross-platform desktop documentation",
+              "status": "NOT_STARTED",
+              "page": "CAP-14/CAP-14.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -9660,6 +11931,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-15.S01.T01",
+              "title": "Define empirical study-design domain contracts",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S01.T02",
+              "title": "Link study-design elements to literature and opportunity evidence",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S01.T03",
+              "title": "Implement study-design versioning, comparison, and staleness",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9710,6 +12004,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-15.S02.T01",
+              "title": "Generate and compare empirical research questions and design logics",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S02.T02",
+              "title": "Compare quantitative, qualitative, mixed, computational, and field design families",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S02.T03",
+              "title": "Implement human design selection and rationale adjudication",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -9762,6 +12079,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-15.S03.T01",
+              "title": "Design population, sampling, recruitment, and case-selection plans",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S03.T02",
+              "title": "Design construct operationalization and measurement plans",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S03.T03",
+              "title": "Design data collection, intervention, procedure, and artifact plans",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9812,6 +12152,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-15.S04.T01",
+              "title": "Design quantitative, qualitative, mixed, or computational analysis plans",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S04.T02",
+              "title": "Model validity threats, boundary conditions, sensitivity, and null-result value",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S04.T03",
+              "title": "Create ethics, data-management, preregistration, and reproducibility plans",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -9864,6 +12227,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-15.S05.T01",
+              "title": "Build the Study Design Studio workspace",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S05.T02",
+              "title": "Implement protocol, analysis-plan, and preregistration-ready exports",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S05.T03",
+              "title": "Implement study-design completeness, contradiction, and integrity audit",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -9914,6 +12300,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-15.S06.T01",
+              "title": "Run opportunity-to-protocol end-to-end acceptance",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S06.T02",
+              "title": "Evaluate study-design quality with domain and methods experts",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-15.S06.T03",
+              "title": "Approve study-design portion of G7",
+              "status": "NOT_STARTED",
+              "page": "CAP-15/CAP-15.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -9978,6 +12387,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-16.S01.T01",
+              "title": "Define manuscript, venue, template, section, and claim-plan contracts",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S01.T02",
+              "title": "Implement governed generic and venue-profile registry",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S01.T03",
+              "title": "Implement template versioning, compatibility, and staleness",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10028,6 +12460,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-16.S02.T01",
+              "title": "Create empirical journal-article skeletons",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S02.T02",
+              "title": "Create empirical conference-paper skeletons",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S02.T03",
+              "title": "Map study-design and result requirements to empirical sections",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -10080,6 +12535,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-16.S03.T01",
+              "title": "Create theory-article architecture patterns",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S03.T02",
+              "title": "Model conceptual contribution and argument requirements",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S03.T03",
+              "title": "Create theory conference and journal variants",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10130,6 +12608,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-16.S04.T01",
+              "title": "Create critical-scholarship article architecture patterns",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S04.T02",
+              "title": "Model standpoint, reflexivity, evidence, and counter-reading requirements",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S04.T03",
+              "title": "Create critical conference and journal variants",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -10182,6 +12683,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-16.S05.T01",
+              "title": "Build the Manuscript Blueprint workspace",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S05.T02",
+              "title": "Implement verified venue-guideline adaptation",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S05.T03",
+              "title": "Export editable article skeletons and structured manifests",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10232,6 +12756,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-16.S06.T01",
+              "title": "Validate skeleton completeness across empirical, theory, and critical work",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S06.T02",
+              "title": "Conduct author and journal-methodologist usability review",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-16.S06.T03",
+              "title": "Approve manuscript-blueprint portion of G7",
+              "status": "NOT_STARTED",
+              "page": "CAP-16/CAP-16.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -10296,6 +12843,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-17.S01.T01",
+              "title": "Implement private technical-report acquisition and study association",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S01.T02",
+              "title": "Implement technical-report rights, confidentiality, and egress controls",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S01.T03",
+              "title": "Implement report version, correction, and supersession lineage",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10346,6 +12916,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-17.S02.T01",
+              "title": "Extract report structure, study metadata, methods, results, tables, and figures",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S02.T02",
+              "title": "Extract quantitative result records with exact evidence anchors",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S02.T03",
+              "title": "Extract qualitative, mixed-method, and technical findings",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -10398,6 +12991,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-17.S03.T01",
+              "title": "Compare actual study execution with the approved study design",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S03.T02",
+              "title": "Detect missing, inconsistent, duplicated, or unsupported report claims",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S03.T03",
+              "title": "Implement human verification and deviation adjudication",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10448,6 +13064,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-17.S04.T01",
+              "title": "Add study-run, result, table, figure, and finding entities to the evidence graph",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S04.T02",
+              "title": "Represent supported, null, mixed, contradictory, and robustness outcomes",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S04.T03",
+              "title": "Propagate technical-report changes to manuscripts and reviews",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -10500,6 +13139,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-17.S05.T01",
+              "title": "Build the Technical Reports & Results workspace",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S05.T02",
+              "title": "Build result evidence matrix and manuscript-claim mapping",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S05.T03",
+              "title": "Export a verified study-results evidence package",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10550,6 +13212,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-17.S06.T01",
+              "title": "Validate report ingestion against quantitative, qualitative, mixed, and technical fixtures",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S06.T02",
+              "title": "Prove no-result-invention and private-egress controls",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-17.S06.T03",
+              "title": "Approve results-integration readiness for G8",
+              "status": "NOT_STARTED",
+              "page": "CAP-17/CAP-17.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -10614,6 +13299,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-18.S01.T01",
+              "title": "Implement versioned manuscript projects, sections, blocks, and author ownership",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S01.T02",
+              "title": "Implement section workflow, readiness, locks, and human gates",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S01.T03",
+              "title": "Implement manuscript dependency and selective-redrafting model",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10664,6 +13372,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-18.S02.T01",
+              "title": "Assemble section-specific literature, result, memo, and design evidence packets",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S02.T02",
+              "title": "Generate paragraph-level source-grounded draft candidates",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S02.T03",
+              "title": "Enforce unsupported-content and result-integrity controls",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -10716,6 +13447,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-18.S03.T01",
+              "title": "Draft empirical methods from approved design and verified actual conduct",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S03.T02",
+              "title": "Draft empirical results from verified reports, tables, and figures",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S03.T03",
+              "title": "Draft empirical discussion integrated with literature and alternative outcomes",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10766,6 +13520,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-18.S04.T01",
+              "title": "Draft theory manuscripts from approved argument architecture",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S04.T02",
+              "title": "Draft critical manuscripts from approved problematization architecture",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S04.T03",
+              "title": "Preserve author voice, competing interpretations, and nonconsensus",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -10818,6 +13595,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-18.S05.T01",
+              "title": "Build the Manuscript Studio workspace",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S05.T02",
+              "title": "Implement citation/reference, figure/table, disclosure, and authorship management",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S05.T03",
+              "title": "Export publication artifacts with reproducibility and lineage",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10868,6 +13668,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-18.S06.T01",
+              "title": "Run full-draft acceptance for empirical, theory, and critical articles",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S06.T02",
+              "title": "Run citation, plagiarism-risk, result-integrity, and authorship audits",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-18.S06.T03",
+              "title": "Approve manuscript-drafting readiness for G8",
+              "status": "NOT_STARTED",
+              "page": "CAP-18/CAP-18.S06.T03.html",
+              "worksheet": null
             }
           ]
         }
@@ -10932,6 +13755,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-19.S01.T01",
+              "title": "Define reviewer role, criterion, comment, decision, and review-round contracts",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S01.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S01.T02",
+              "title": "Create governed reviewer-panel profiles by research type and venue",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S01.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S01.T03",
+              "title": "Implement independent reviewer-context isolation and reproducible prompts",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S01.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -10982,6 +13828,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-19.S02.T01",
+              "title": "Implement editorial, contribution, scope, and positioning review",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S02.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S02.T02",
+              "title": "Implement methods, statistics/analysis, validity, ethics, and reproducibility review",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S02.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S02.T03",
+              "title": "Implement theory, critical, domain, citation, and evidence-integrity review",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S02.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -11034,6 +13903,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-19.S03.T01",
+              "title": "Ingest generated or externally uploaded manuscript drafts",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S03.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S03.T02",
+              "title": "Audit draft against blueprint, venue profile, evidence, and technical reports",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S03.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S03.T03",
+              "title": "Freeze review snapshot and record allowed reviewer context",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S03.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -11084,6 +13976,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-19.S04.T01",
+              "title": "Generate independent reviewer reports with evidence and uncertainty",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S04.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S04.T02",
+              "title": "Implement editorial synthesis preserving reviewer disagreement",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S04.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S04.T03",
+              "title": "Implement reviewer quality, calibration, and overreach audits",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S04.T03.html",
+              "worksheet": null
             }
           ]
         },
@@ -11136,6 +14051,29 @@
               },
               "review_control": null
             }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-19.S05.T01",
+              "title": "Map review comments to a governed revision plan",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S05.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S05.T02",
+              "title": "Draft and manage response-to-reviewers or rebuttal documents",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S05.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S05.T03",
+              "title": "Implement selective revision, diff, resolution, and follow-up round",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S05.T03.html",
+              "worksheet": null
+            }
           ]
         },
         {
@@ -11186,6 +14124,29 @@
                 "notes": null
               },
               "review_control": null
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "CAP-19.S06.T01",
+              "title": "Build Reviewer Simulation and Revision & Response workspaces",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S06.T01.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S06.T02",
+              "title": "Evaluate generated and uploaded drafts with expert reviewers",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S06.T02.html",
+              "worksheet": null
+            },
+            {
+              "task_id": "CAP-19.S06.T03",
+              "title": "Approve G8 end-to-end research-production release",
+              "status": "NOT_STARTED",
+              "page": "CAP-19/CAP-19.S06.T03.html",
+              "worksheet": null
             }
           ]
         }

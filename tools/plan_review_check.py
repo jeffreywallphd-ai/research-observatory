@@ -51,6 +51,10 @@ class PageParser(HTMLParser):
         self.planning_nav_count = 0
         self.planning_tab_names: list[str] = []
         self.planning_panel_names: list[str] = []
+        self.page_type: str | None = None
+        self.wave_capability_ids: list[str] = []
+        self.wave_slice_ids: list[str] = []
+        self.wave_task_ids: list[str] = []
         self.html_lang: str | None = None
         self.text_parts: list[str] = []
 
@@ -58,6 +62,8 @@ class PageParser(HTMLParser):
         values = {key: value for key, value in attrs}
         if tag == "html":
             self.html_lang = values.get("lang")
+        if tag == "body":
+            self.page_type = values.get("data-page-type")
         if tag == "a" and values.get("href"):
             self.hrefs.append(values["href"] or "")
         if tag == "script" and values.get("src"):
@@ -80,6 +86,12 @@ class PageParser(HTMLParser):
             self.planning_tab_names.append(values["data-nav-tab"] or "")
         if values.get("data-nav-panel"):
             self.planning_panel_names.append(values["data-nav-panel"] or "")
+        if values.get("data-wave-capability"):
+            self.wave_capability_ids.append(values["data-wave-capability"] or "")
+        if values.get("data-wave-slice"):
+            self.wave_slice_ids.append(values["data-wave-slice"] or "")
+        if values.get("data-wave-task"):
+            self.wave_task_ids.append(values["data-wave-task"] or "")
         if tag == "title":
             self.title_count += 1
         if tag == "h1":
@@ -464,6 +476,12 @@ def main() -> int:
         for capability in backlog.get("capabilities", [])
         for slice_ in capability.get("slices", [])
     }
+    backlog_tasks = {
+        str(task["id"]): task
+        for slice_id, slice_ in backlog_slices.items()
+        if slice_id in slice_plans and slice_id.split(".")[0] in cap_plans
+        for task in slice_.get("tasks", [])
+    }
     amendments_by_change = {
         str(amendment.get("change_request_id")): amendment
         for amendment in backlog.get("wave_amendments", [])
@@ -652,6 +670,7 @@ def main() -> int:
         )
 
     manifest_slices: dict[str, dict[str, Any]] = {}
+    manifest_tasks: dict[str, dict[str, Any]] = {}
     for cap_entry in manifest.get("capabilities", []):
         cid = cap_entry["capability_id"]
         plan_path = repo / cap_entry["plan_path"]
@@ -678,14 +697,65 @@ def main() -> int:
                 errors.append(f"{sid}: missing slice page {page}")
                 continue
             source_tasks = (backlog_slices.get(str(sid)) or {}).get("tasks", [])
-            expected_task_reviews = [task_review_projection(task) for task in source_tasks]
             errors.extend(task_review_manifest_errors(str(sid), slice_entry.get("task_reviews"), source_tasks))
-            page_text = page.read_text(encoding="utf-8")
-            for projection in expected_task_reviews:
-                errors.extend(f"{sid}: {error}" for error in task_review_render_errors(page_text, projection))
+            expected_task_ids = [str(task["id"]) for task in source_tasks]
+            task_entries = slice_entry.get("tasks", [])
+            actual_task_ids = [str(task_entry.get("task_id")) for task_entry in task_entries]
+            if actual_task_ids != expected_task_ids:
+                errors.append(f"{sid}: task-page inventory differs from authoritative backlog order")
+            source_by_id = {str(task["id"]): task for task in source_tasks}
+            for task_entry in task_entries:
+                task_id = str(task_entry.get("task_id"))
+                if task_id in manifest_tasks:
+                    errors.append(f"Duplicate task in manifest: {task_id}")
+                    continue
+                manifest_tasks[task_id] = task_entry
+                source_task = source_by_id.get(task_id)
+                if source_task is None:
+                    errors.append(f"{sid}: unknown task page inventory entry {task_id}")
+                    continue
+                expected_page = f"{cid}/{task_id}.html"
+                if task_entry.get("page") != expected_page:
+                    errors.append(f"{task_id}: task page path is not the canonical task-keyed path")
+                if task_entry.get("title") != source_task.get("title") or task_entry.get("status") != source_task.get(
+                    "status"
+                ):
+                    errors.append(f"{task_id}: task page projection differs from authoritative backlog")
+                task_page = site / str(task_entry.get("page") or "")
+                if not task_page.exists():
+                    errors.append(f"{task_id}: missing task page {task_page}")
+                    continue
+                worksheet_path = repo / "artifacts" / "evidence" / f"{task_id}.task-start.md"
+                expected_worksheet = (
+                    {
+                        "path": worksheet_path.relative_to(repo).as_posix(),
+                        "sha256": sha256(worksheet_path),
+                    }
+                    if worksheet_path.is_file()
+                    else None
+                )
+                if task_entry.get("worksheet") != expected_worksheet:
+                    errors.append(f"{task_id}: optional worksheet projection differs from task-keyed source")
+                task_text = task_page.read_text(encoding="utf-8")
+                if f'data-task-page="{html.escape(task_id, quote=True)}"' not in task_text:
+                    errors.append(f"{task_id}: task page is missing its task identity marker")
+                worksheet_marker = f'data-task-worksheet="{html.escape(task_id, quote=True)}"'
+                absent_marker = f'data-task-worksheet-absent="{html.escape(task_id, quote=True)}"'
+                if expected_worksheet and worksheet_marker not in task_text:
+                    errors.append(f"{task_id}: assigned worksheet is not rendered on the task page")
+                if expected_worksheet is None and absent_marker not in task_text:
+                    errors.append(f"{task_id}: task page does not truthfully report worksheet absence")
+                errors.extend(
+                    f"{task_id}: {error}"
+                    for error in task_review_render_errors(task_text, task_review_projection(source_task))
+                )
 
     if set(manifest_slices) != set(slice_plans):
         errors.append(f"Manifest slice set differs from plans: {len(manifest_slices)} vs {len(slice_plans)}")
+    if set(manifest_tasks) != set(backlog_tasks):
+        errors.append(
+            f"Manifest task set differs from backlog: manifest={len(manifest_tasks)} backlog={len(backlog_tasks)}"
+        )
 
     backlog_waves = {str(wave["id"]): wave for wave in backlog.get("waves", [])}
     backlog_capabilities = {str(capability["id"]): capability for capability in backlog.get("capabilities", [])}
@@ -700,6 +770,12 @@ def main() -> int:
         if entry is None:
             continue
         expected_slice_ids = [slice_id for slice_id, slice_ in backlog_slices.items() if slice_.get("wave") == wave_id]
+        expected_task_ids = [
+            str(task["id"])
+            for slice_ in backlog_slices.values()
+            if slice_.get("wave") == wave_id
+            for task in slice_.get("tasks", [])
+        ]
         expected_capability_ids = [
             capability_id
             for capability_id, capability in backlog_capabilities.items()
@@ -720,6 +796,8 @@ def main() -> int:
             errors.append(f"{wave_id}: wave binding-decision inventory differs from capability plans")
         if actual_slice_ids != expected_slice_ids:
             errors.append(f"{wave_id}: wave slice inventory differs from authoritative backlog order")
+        if [str(task_id) for task_id in entry.get("task_ids", [])] != expected_task_ids:
+            errors.append(f"{wave_id}: wave task inventory differs from authoritative backlog order")
         if entry.get("slice_count") != len(expected_slice_ids):
             errors.append(f"{wave_id}: wave slice count mismatch")
         page = site / str(entry.get("page"))
@@ -763,7 +841,15 @@ def main() -> int:
         errors.append(f"Every backlog slice must appear in exactly one wave page; duplicates={duplicate_assignments}")
 
     html_pages = sorted(site.rglob("*.html"))
-    expected_html = 3 + len(ecr_packets) + len(recovery_holds) + len(backlog_waves) + len(cap_plans) + len(slice_plans)
+    expected_html = (
+        3
+        + len(ecr_packets)
+        + len(recovery_holds)
+        + len(backlog_waves)
+        + len(cap_plans)
+        + len(slice_plans)
+        + len(backlog_tasks)
+    )
     if len(html_pages) != expected_html:
         errors.append(f"Expected {expected_html} HTML pages, found {len(html_pages)}")
 
@@ -812,6 +898,13 @@ def main() -> int:
                 errors.append(f"{rel}: missing Wave review/testing cadence")
             if "Wave exit / successor activation" not in content:
                 errors.append(f"{rel}: missing wave gate-decision breakdown")
+            wave_manifest = manifest_waves.get(wave_id) or {}
+            if parsed.wave_capability_ids != [str(value) for value in wave_manifest.get("capability_ids", [])]:
+                errors.append(f"{rel}: collapsible capability cards differ from Wave inventory")
+            if parsed.wave_slice_ids != [str(value) for value in wave_manifest.get("slice_ids", [])]:
+                errors.append(f"{rel}: collapsible slice cards differ from Wave inventory")
+            if parsed.wave_task_ids != [str(value) for value in wave_manifest.get("task_ids", [])]:
+                errors.append(f"{rel}: collapsible task cards differ from Wave inventory")
             approval_status = (backlog_waves.get(wave_id, {}).get("approval") or {}).get("status")
             approval_command = f"wave approve {wave_id}"
             if approval_status == "APPROVED":
@@ -892,14 +985,25 @@ def main() -> int:
                     f"{rel}: expected {decision_count} detailed-rationale fields, found {parsed.rationale_count}"
                 )
         elif page.parent.name in cap_plans:
-            sid = page.stem
-            if sid not in slice_plans:
-                errors.append(f"{rel}: slice page has no matching source plan")
+            page_id = page.stem
             content = " ".join(parsed.text_parts)
-            if "Capability decision gate" not in content:
-                errors.append(f"{rel}: missing capability decision gate near top")
-            if "Recommended implementation selections" not in content:
-                warnings.append(f"{rel}: slice decision summary heading not found")
+            if page_id in slice_plans:
+                if parsed.page_type != "slice":
+                    errors.append(f"{rel}: slice page has the wrong page type")
+                if "Capability decision gate" not in content:
+                    errors.append(f"{rel}: missing capability decision gate near top")
+                if "Recommended implementation selections" not in content:
+                    warnings.append(f"{rel}: slice decision summary heading not found")
+                if "Open a task for its objective" not in content:
+                    errors.append(f"{rel}: missing slice-to-task drill-down guidance")
+            elif page_id in manifest_tasks:
+                if parsed.page_type != "task":
+                    errors.append(f"{rel}: task page has the wrong page type")
+                for marker in ("Scope and acceptance", "Profiles and commands", "Assigned worksheet", "Review packets"):
+                    if marker not in content:
+                        errors.append(f"{rel}: missing task detail marker {marker}")
+            else:
+                errors.append(f"{rel}: capability child page has no matching slice or task")
 
     for required in [
         site / "assets/review.css",
@@ -929,6 +1033,7 @@ def main() -> int:
         "site": str(site),
         "capability_count": len(cap_plans),
         "slice_count": len(slice_plans),
+        "task_count": len(backlog_tasks),
         "html_page_count": len(html_pages),
         "errors": errors,
         "warnings": warnings,
@@ -948,7 +1053,7 @@ def main() -> int:
         print(f"WARNING: {warning}", file=sys.stderr)
     print(
         f"Planning review site: {result['status']} - {len(cap_plans)} capabilities, "
-        f"{len(slice_plans)} slices, {len(html_pages)} HTML pages"
+        f"{len(slice_plans)} slices, {len(backlog_tasks)} tasks, {len(html_pages)} HTML pages"
     )
     return 1 if errors else 0
 
