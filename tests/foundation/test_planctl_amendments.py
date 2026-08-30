@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import copy
+import hashlib
 import json
 import shutil
 import subprocess
@@ -7,15 +9,167 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from planctl import approve_ecr, ecr_validation_errors  # noqa: E402
+from planctl import (  # noqa: E402
+    _approval_introduction_commit,
+    _authority_chain_v4_errors,
+    _schema_errors,
+    approve_ecr,
+    ecr_validation_errors,
+)
 
 
 class PlanctlAmendmentTests(unittest.TestCase):
+    def _post_migration_v4_packet(self) -> dict[str, Any]:
+        predecessor = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0003.packet.json").read_text(encoding="utf-8")
+        )
+        reserved_approval_path = REPO / "planning/wave-amendment-approvals/W1.A04.json"
+        reserved_approval = json.loads(reserved_approval_path.read_text(encoding="utf-8"))
+        migration_path = REPO / "planning/governance-migrations/GOV-MIG-0001.json"
+        migration_relative = migration_path.relative_to(REPO).as_posix()
+        migration_commit = subprocess.run(
+            ["git", "log", "-1", "--format=%H", "--", migration_relative],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        migration = {
+            "id": "GOV-MIG-0001",
+            "path": migration_relative,
+            "sha256": hashlib.sha256(migration_path.read_bytes()).hexdigest(),
+            "commit": migration_commit,
+        }
+        experience_path = REPO / "design/ui-reference/project-settings.html"
+        tasks = [f"W1.A05.T{index:02d}" for index in range(1, 5)]
+        bootstrap = "W1.A05.B00"
+        return {
+            "$schema": "./enabler-change-request.v4.schema.json",
+            "schemaVersion": "4.0-proposal",
+            "documentType": "enabler-change-request-packet",
+            "changeRequestId": "ECR-0004",
+            "proposedAmendmentId": "W1.A05",
+            "targetWave": "W1",
+            "status": "pending-approval",
+            "executionState": "non-executable",
+            "classification": "product-scope-security-experience",
+            "authorityChain": {
+                "waveBase": predecessor["authorityChain"]["waveBase"],
+                "orderedAmendments": predecessor["authorityChain"]["orderedAmendments"],
+                "reservedAmendments": [
+                    {
+                        "id": "W1.A04",
+                        "changeRequestId": "ECR-0003",
+                        "status": "APPROVED_UNMATERIALIZED_SUPERSEDED",
+                        "packetCommit": reserved_approval["packet"]["commit"],
+                        "approvalReference": {
+                            "path": reserved_approval_path.relative_to(REPO).as_posix(),
+                            "sha256": hashlib.sha256(reserved_approval_path.read_bytes()).hexdigest(),
+                            "introductionCommit": _approval_introduction_commit(
+                                REPO, reserved_approval_path.relative_to(REPO).as_posix()
+                            ),
+                        },
+                        "supersededByMigration": migration,
+                    }
+                ],
+            },
+            "migrationAuthority": migration,
+            "activationBoundary": {
+                "waveStatus": "PAUSED",
+                "ordinaryTaskStatesDenied": ["IN_PROGRESS", "REVIEW"],
+                "reviewCandidateMutationDenied": True,
+                "otherEnablerCampaignDenied": True,
+                "activeRecoveryHolds": [],
+            },
+            "bootstrapUnit": {
+                "id": bootstrap,
+                "kind": "append-only-amendment-bootstrap",
+                "exceptionReason": "Install generic post-migration materialization support after approval.",
+                "authorizedPaths": ["tools/taskctl.py"],
+                "requiredOutcomes": ["Preserve predecessor authority and materialize only the exact packet."],
+                "prohibitedOutcomes": ["No product implementation or Wave resume."],
+            },
+            "sliceContributions": [
+                {
+                    "id": "W1.A05.S01",
+                    "capabilityId": "CAP-02",
+                    "title": "Authentication-provider refactor",
+                    "objective": "Separate provider-neutral lock state from native verification adapters.",
+                    "workType": "mixed-refactor-and-new",
+                    "refactorTaskIds": [tasks[0]],
+                    "taskIds": tasks[:2],
+                    "acceptanceCriteria": ["Existing behavior remains available behind a provider boundary."],
+                },
+                {
+                    "id": "W1.A05.S02",
+                    "capabilityId": "CAP-02",
+                    "title": "Configurable local sign-in",
+                    "objective": "Offer no login, password, and Windows Hello modes.",
+                    "workType": "new-product-work",
+                    "refactorTaskIds": [],
+                    "taskIds": tasks[2:],
+                    "acceptanceCriteria": ["No login is the explicit default."],
+                },
+            ],
+            "authorizedTaskIds": tasks,
+            "taskInventory": [
+                {
+                    "id": task_id,
+                    "title": f"Task {position}",
+                    "objective": "Bounded implementation objective.",
+                    "dependencies": [bootstrap],
+                    "acceptanceCriteria": ["Criterion-linked evidence is required."],
+                    "verification": ["Run affected deterministic checks."],
+                }
+                for position, task_id in enumerate(tasks, start=1)
+            ],
+            "refactorBudget": {
+                "plannedWorkPoints": 194,
+                "refactorPoints": 5,
+                "refactorSharePercent": 2.6,
+                "limitPercent": 15,
+                "refactorTaskIds": [tasks[0]],
+                "method": "Existing W1 estimate points with M=3 and L=5.",
+            },
+            "governedExperience": {
+                "referenceId": "fixture-reference",
+                "approvalRequired": True,
+                "files": [
+                    {
+                        "path": experience_path.relative_to(REPO).as_posix(),
+                        "sha256": hashlib.sha256(experience_path.read_bytes()).hexdigest(),
+                    }
+                ],
+            },
+            "acceptanceCriteria": ["Exact product authority remains non-executable before approval."],
+            "verificationObligations": ["Independently review the exact packet commit."],
+            "rollback": ["Reject or withdraw the inert packet before approval."],
+            "nonGoals": ["No release gate, remote action, or product implementation."],
+            "files": [
+                {
+                    "path": "planning/enabler-change-requests/ECR-0004.md",
+                    "sha256": "a" * 64,
+                    "role": "canonical-proposal",
+                },
+                {
+                    "path": "planning/enabler-change-requests/enabler-change-request.v4.schema.json",
+                    "sha256": "b" * 64,
+                    "role": "proposal-schema",
+                },
+                {
+                    "path": "planning/enabler-change-requests/ECR-0004-review.html",
+                    "sha256": "c" * 64,
+                    "role": "human-review",
+                },
+            ],
+        }
+
     def _copy_ecr_fixture(self, root: Path, *, include_approval: bool) -> Path:
         shutil.copytree(
             REPO / "planning" / "enabler-change-requests",
@@ -39,6 +193,21 @@ class PlanctlAmendmentTests(unittest.TestCase):
 
     def test_repository_ecr_approval_is_exact_commit_and_history_bound(self) -> None:
         self.assertEqual([], ecr_validation_errors(REPO, "ECR-0001", require_approved=True))
+
+    def test_post_migration_v4_packet_preserves_reserved_authority_and_slice_budget(self) -> None:
+        packet = self._post_migration_v4_packet()
+        schema = REPO / "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
+        self.assertEqual([], _schema_errors(packet, schema, "ECR v4 fixture"))
+        self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+
+        tampered = copy.deepcopy(packet)
+        tampered["authorityChain"]["reservedAmendments"][0]["approvalReference"]["sha256"] = "0" * 64
+        self.assertTrue(any("reserved authority" in error for error in _authority_chain_v4_errors(REPO, tampered)))
+
+        over_budget = copy.deepcopy(packet)
+        over_budget["refactorBudget"]["refactorPoints"] = 40
+        over_budget["refactorBudget"]["refactorSharePercent"] = 20.6
+        self.assertTrue(any("refactor budget" in error for error in _authority_chain_v4_errors(REPO, over_budget)))
 
     def test_committed_approval_rewrite_is_detected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
