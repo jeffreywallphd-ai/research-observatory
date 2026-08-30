@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0007",
   "title": "Activate the approved v1.4 experience through reviewed generic maintenance",
-  "status": "changes-requested",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -152,7 +152,26 @@
       ],
       "path": "planning/governance-migrations/GOV-MAINT-0007.review-R04.json",
       "sha256": "c3954945c81d03bb0ddfa2201dcd3875380c19d8e0f644617c3b903f83887a6a"
+    },
+    {
+      "reviewId": "GOV-MAINT-0007.R05",
+      "reviewedCommit": "033df11e6536657a994504d5fdabca82fb663e56",
+      "reviewer": "agent:gov-maint-0007-reviewer",
+      "reviewedAt": "2026-08-30T22:26:52.8766822Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0007.review-R05.json",
+      "sha256": "29a436989550b3140adfce97b083205e214cba85a47c3fd7abeb40567fa3211e"
     }
   ],
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0007.R05",
+    "reviewedCommit": "033df11e6536657a994504d5fdabca82fb663e56",
+    "reviewer": "agent:gov-maint-0007-reviewer",
+    "reviewedAt": "2026-08-30T22:26:52.8766822Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0007.review-R05.json",
+    "sha256": "29a436989550b3140adfce97b083205e214cba85a47c3fd7abeb40567fa3211e"
+  }
 }
