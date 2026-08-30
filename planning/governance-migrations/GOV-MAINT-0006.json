@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0006",
+  "title": "Admit approved Wave-amendment tasks to the governed UI lineage contract",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "212108b0dc01b3b96536bad47efbf1ae6e8f6974",
+    "backlogSha256": "6b6799c41b4ef1a8aef4c70b3d69ebe6f177c8f9af25e2638f1850b4e89a06be",
+    "activeTask": "W1.A05.T04",
+    "taskStatus": "IN_PROGRESS",
+    "taskBaseSha": "bd8d752a0fcec1f40b1a8abe59b793c783946e4e",
+    "approvedReference": "RO-UI-ACADEMIC-MINIMAL-1.4",
+    "approvedReferenceCommit": "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b"
+  },
+  "trigger": {
+    "denial": "The UI evidence and backlog schemas accept only CAP-NN.SNN.TNN task identities, while the exact approved renderer task is the Wave-amendment task W1.A05.T04. The materialized task therefore also lacks the experience_change projection required by ui_change_gate.",
+    "atomicity": "No product UI file has changed. The task-start acceptance worksheet is committed, W1.A05.T04 remains IN_PROGRESS at its original claim base, and the unrelated W1.A04.B00 witness remains untracked and untouched.",
+    "diagnosis": "The governed UI lineage contract was built before post-migration product amendments became executable. Its identity grammar and bootstrap projection cover ordinary capability tasks but cannot represent an already approved amendment task even when the human-approved reference, immutable task, owner, and claim base are all present."
+  },
+  "authority": "This maintenance preserves the exact approved W1.A05 task, acceptance criteria, T03 security authority, RO-UI-ACADEMIC-MINIMAL-1.4 package, human approval, task owner, claim base, Wave state, release gate, and protected history. It does not approve implementation, add a sign-in mode, change the governed experience, expand product or security authority, complete a task or slice, approve G1, authorize an external effect, or rewrite any prior approval, submission, review, finding, closure, or evidence.",
+  "intendedDelta": {
+    "implementation": "Extend the existing UI evidence identity and contract-path grammar, enabler-task property allowlist, active-task discovery, and exact task lookup generically so ordinary CAP-NN.SNN.TNN tasks and Wave-amendment WN.ANN.TNN tasks use the same experience_change contract. Project onto W1.A05.T04 only the exact approved-reference-implementation lineage already fixed by the v1.4 package. Add one generic, fail-closed pre-implementation maintenance attestation: a Tier-2 candidate must be the direct child of its frozen predecessor, enumerate its exact changed paths, receive an immutable no-finding independent review in the direct child commit, preserve every authority field byte-for-byte, and have that review precede every UI implementation commit. Keep ui_change_gate's active state, owner, exact base, reference hash, approval ancestry, changed-file inventory, and one-contract equality checks unchanged.",
+    "failClosed": [
+      "No other task namespace, free-form identifier, malformed segment width, missing task, inactive task, wrong owner, wrong base, wrong reference, wrong approval commit, or mismatched contract path becomes admissible.",
+      "The amendment task remains bound to its original bd8d752 claim base and exact approved W1.A05 definition; this maintenance does not alter packet_task_sha256 or immutable packet fields.",
+      "Product UI remains blocked until the separately committed T04 implementation adds its exact evidence contract and passes the unchanged full ui_change_gate lineage checks.",
+      "The CAP task grammar and every existing UI lineage invariant remain accepted unchanged."
+    ],
+    "changedPaths": [
+      "design/ui-change.schema.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/governance-migrations/GOV-MAINT-0006.json",
+      "planning/status-summary.md",
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "This changes evidence/control identity grammar but no product runtime. Selected checks must prove the same exact lineage contract for one amendment task, preserve the ordinary CAP path, reject malformed identities through both schemas, validate the canonical backlog and approved amendment authority, regenerate deterministic views, pass the complete focused UI gate suite and governed Python quality, and leave the product/reference trees unchanged. Product, native, renderer, packaging, performance, and W1-exit checks remain assigned to T04, S02 review, amendment exit, and Wave exit after this control gate is independently approved.",
+    "results": [
+      {
+        "check": "complete focused UI lineage gate suite",
+        "result": "passed",
+        "detail": "All 19 unittest cases passed, including real amendment-task lookup and automatic-base selection, exact v1.4-style approved-reference implementation, out-of-range Wave denial, independently reviewed pre-implementation maintenance admission, self-review denial, unchanged CAP behavior, task/base/reference equality, regular-blob enforcement, and existing hardening invariants."
+      },
+      {
+        "check": "canonical backlog schema and workflow validation",
+        "result": "passed",
+        "detail": "All 18 taskctl schema tests passed and taskctl validate accepted the exact live backlog with W1.A05.T04 still IN_PROGRESS at its original bd8d752 claim base."
+      },
+      {
+        "check": "approved W1 and amendment authority",
+        "result": "passed",
+        "detail": "planctl wave ready W1 --require-approved accepted all W1 capability/slice plans and regenerated the planning site without changing product or reference files."
+      },
+      {
+        "check": "approved UI reference integrity",
+        "result": "passed",
+        "detail": "The exact RO-UI-ACADEMIC-MINIMAL-1.4 package remained approved and reproducible across 55 governed files and 33 product pages at package SHA-256 034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e."
+      },
+      {
+        "check": "generated views and governed Python quality",
+        "result": "passed",
+        "detail": "backlog_views and plan_review_site completed deterministically; Ruff formatting and lint passed for the changed gate tool and regression suite; exact changed-path patch hygiene passed."
+      }
+    ]
+  },
+  "rollback": "Do not begin product UI work or integrate this candidate if independent review finds a blocking defect. Revert only the strict-descendant maintenance candidate to predecessor 212108b; W1.A05.T04 remains claimed but product-unmodified, the approved v1.4 package remains unchanged, and no task/release authority changes.",
+  "reviewAttempts": [],
+  "review": null
+}

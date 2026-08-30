@@ -17,13 +17,16 @@
   "properties": {
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "ui-change-evidence"},
-    "taskId": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}$"},
+    "taskId": {
+      "type": "string",
+      "pattern": "^(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2})$"
+    },
     "changeKind": {
       "enum": ["intentional-design-change", "approved-reference-implementation", "defect-restoration"]
     },
     "contractPath": {
       "type": "string",
-      "pattern": "^artifacts/evidence/ui-change/CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}\\.json$"
+      "pattern": "^artifacts/evidence/ui-change/(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2})\\.json$"
     },
     "implementationAgent": {
       "type": "string",

@@ -538,7 +538,7 @@
         },
         "contract_path": {
           "type": "string",
-          "pattern": "^artifacts/evidence/ui-change/CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}\\.json$"
+          "pattern": "^artifacts/evidence/ui-change/(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2})\\.json$"
         },
         "reference_id": {"type": "string", "minLength": 1},
         "reference_version": {"type": "string", "minLength": 1},
@@ -1078,6 +1078,7 @@
         "blocker": {"$ref": "#/$defs/nullableBlocker"},
         "implementation_notes": {"type": "string"},
         "evidence": {"$ref": "#/$defs/taskEvidence"},
+        "experience_change": {"$ref": "#/$defs/experienceChange"},
         "verification_state": {"type": ["string", "null"]},
         "review": {"$ref": "#/$defs/review"},
         "review_control": {"$ref": "#/$defs/taskReviewControl"}
