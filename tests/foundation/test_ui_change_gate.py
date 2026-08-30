@@ -26,6 +26,15 @@ from ui_change_gate import (  # noqa: E402
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance(self) -> None:
+        result = validate(
+            REPO,
+            "bd8d752a0fcec1f40b1a8abe59b793c783946e4e",
+            "6c5757659ecbca11f1469e1ab3dfec330fe0d74f",
+        )
+
+        self.assertTrue(result["ok"], result["errors"])
+
     def test_cumulative_additive_pre_ui_inventory_then_ui_implementation_passes(self) -> None:
         result = validate(
             REPO,

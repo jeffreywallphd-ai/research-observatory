@@ -97,6 +97,7 @@ MAINTENANCE_CONTROL_PATHS = GATE_CONTROL_PATHS | frozenset(
         "tests/foundation/test_ui_change_gate.py",
     }
 )
+MAINTENANCE_CONTROL_ENVELOPE_CUTOVER = "07cecd999e84e1e6096df5fbbefe044c4789893f"
 APPLICATION_ACTIVATION_PATHS = frozenset(
     {
         "quality-scope.json",
@@ -157,10 +158,6 @@ def canonical_agent_identity(value: object, *, reviewer: bool = False) -> str | 
     local_name = value.removeprefix("agent:")
     canonical = re.sub(r"[^a-z0-9]", "", local_name)
     return canonical or None
-
-
-def is_maintenance_control_path(path: str, maintenance_evidence_paths: set[str]) -> bool:
-    return path in MAINTENANCE_CONTROL_PATHS or path in maintenance_evidence_paths
 
 
 def maintenance_path_semantics_changed(repo: Path, predecessor: str, candidate: str, path: str) -> bool:
@@ -528,11 +525,25 @@ def reviewed_preimplementation_maintenance_errors(
                 "reviewAttempts": attempts[:index],
                 "review": expected_review,
             }
+            allowed_projections = [expected_projection]
+            reviewed_remediation = reviewed_record.get("remediation")
+            if disposition == "CHANGES_REQUESTED" and isinstance(reviewed_remediation, dict):
+                allowed_projections.append(
+                    {
+                        **expected_projection,
+                        "remediation": {
+                            **reviewed_remediation,
+                            "priorReviewId": review_id,
+                            "priorReviewPath": review_path,
+                            "priorReviewSha256": attempt.get("sha256"),
+                        },
+                    }
+                )
             if (
                 resolve_commit(repo, f"{introduction}^") != reviewed_commit
                 or commit_paths(repo, introduction) != {record_path, review_path}
                 or blob(repo, introduction, review_path) != review_payload
-                or projection != expected_projection
+                or projection not in allowed_projections
                 or any(not is_ancestor(repo, introduction, item) for item in implementation_commit_ids)
             ):
                 errors.append("pre-UI gate maintenance review projection or ordering is invalid")
@@ -544,10 +555,22 @@ def reviewed_preimplementation_maintenance_errors(
         maintenance_evidence_paths = {record_path} | {
             f"{root}/{maintenance_id}.review-R{index:02d}.json" for index in range(1, len(attempts) + 1)
         }
+        historical_control_paths: set[str] = set()
+        try:
+            cutover = resolve_commit(repo, MAINTENANCE_CONTROL_ENVELOPE_CUTOVER)
+            if (
+                final_review_introduction is not None
+                and final_review_introduction != cutover
+                and is_ancestor(repo, final_review_introduction, cutover)
+            ):
+                historical_control_paths = set(str(path) for path in initial_changed_paths)
+        except ValueError:
+            pass
+        maintenance_control_paths = MAINTENANCE_CONTROL_PATHS | historical_control_paths | maintenance_evidence_paths
         net_non_control_paths = sorted(
             path
             for path in changed_paths(repo, predecessor, final_candidate)
-            if not is_maintenance_control_path(path, maintenance_evidence_paths)
+            if path not in maintenance_control_paths
             and maintenance_path_semantics_changed(repo, predecessor, final_candidate, path)
         )
         if net_non_control_paths:

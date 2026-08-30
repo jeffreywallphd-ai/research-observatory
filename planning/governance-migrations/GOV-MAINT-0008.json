@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0008",
+  "title": "Preserve reviewed maintenance history across UI control-envelope upgrades",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "6c5757659ecbca11f1469e1ab3dfec330fe0d74f",
+    "activeTask": "W1.A05.T04",
+    "taskStatus": "IN_PROGRESS",
+    "taskBaseSha": "bd8d752a0fcec1f40b1a8abe59b793c783946e4e",
+    "productCandidateCommit": "6c5757659ecbca11f1469e1ab3dfec330fe0d74f"
+  },
+  "trigger": {
+    "denial": "The exact T04 range reaches the approved UI contract but the current gate retroactively applies the GOV-MAINT-0007 control allowlist to GOV-MAINT-0006 and rejects exact adverse-review projections that advanced only their authenticated prior-review pointer.",
+    "atomicity": "The T04 v1.4 product activation and exact changed-file evidence are committed at the frozen predecessor. The task remains IN_PROGRESS, the desktop build is valid, and the unrelated W1.A04.B00 witness remains untracked and untouched.",
+    "diagnosis": "The stricter allowlist is correct for current and future maintenance, but evidence rules need a generic temporal compatibility boundary. A maintenance sequence completed before that boundary must retain its exact reviewed initial envelope, while later sequences use the strict positive control allowlist. An adverse review introduction may also either preserve its existing remediation pointer or advance only the three exact pointer fields to the review it introduces."
+  },
+  "authority": "This maintenance preserves the exact approved W1.A05.T04 product scope, v1.4 reference and human approval, T04 claim base and product candidate, all GOV-MAINT-0006 and GOV-MAINT-0007 candidates, reviews, findings, closures, and adoption commits, W1 state, and the release gate. It does not approve T04, change product or security behavior, expand a maintenance envelope, rewrite history, complete a task or slice, approve G1, or authorize an external effect.",
+  "intendedDelta": {
+    "implementation": "Authenticate 07cecd999e84e1e6096df5fbbefe044c4789893f as the strict control-envelope adoption cutover. A maintenance whose final immutable review introduction strictly predates that cutover may retain only the initial candidate's already authenticated changedPaths plus its selected record and exact review ledgers; the cutover maintenance and every later sequence remain restricted to the positive UI-control allowlist and their selected evidence paths. Accept an adverse review projection only when it is the exact canonical status/attempt/review projection or differs solely by advancing remediation.priorReviewId, priorReviewPath, and priorReviewSha256 to that same authenticated review. Exercise the complete real W1.A05.T04 range as a regression.",
+    "failClosed": [
+      "A repository without the exact cutover commit defaults to the current strict allowlist.",
+      "A maintenance at or after the cutover cannot claim the historical initial-envelope rule.",
+      "Historical compatibility is limited to the immutable first candidate's exact changedPaths and that selected maintenance's authenticated record/review paths.",
+      "An adverse projection cannot change remediation findings, closures, root cause, resolution, recurrence control, authority, intended delta, or any field other than the exact current-review pointer triple.",
+      "The complete T04 range must resolve to exactly one v1.4 evidence contract whose changedFiles equal the governed implementation set."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0008.json",
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "This changes only historical evidence-control interpretation. Selected checks replay the exact failing W1 range, all synthetic maintenance provenance and substitution fixtures, current strict allowlist denials, schema/backlog integrity, Python quality, exact candidate ancestry, and the already rebuilt desktop product. The 26 UI conformance/history checks and 66 controlled visual captures were independently verified in GOV-MAINT-0007 and remain unchanged; exact visual replay resumes after this candidate is adopted.",
+    "results": [
+      {
+        "check": "complete UI gate regression suite",
+        "result": "passed",
+        "detail": "All 34 focused UI-gate tests pass, including the complete bd8d752-to-6c57576 W1.A05.T04 range, historical maintenance compatibility, current allowlist denials, unrelated-maintenance substitution denial, exact projection and review ordering, and every prior task/reference invariant."
+      },
+      {
+        "check": "desktop product predecessor",
+        "result": "passed",
+        "detail": "The exact v1.4 desktop product rebuild and built-frame validation pass at predecessor 6c5757659ecbca11f1469e1ab3dfec330fe0d74f; all 89 ordinary desktop tests, TypeScript, lint, the native renderer witness, and 32 applicable Rust lock tests passed before this control-only candidate."
+      },
+      {
+        "check": "workflow schemas and quality",
+        "result": "passed",
+        "detail": "All 27 taskctl schema tests, canonical backlog validation, Ruff, JSON parsing, and Git diff hygiene pass."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocking defect, do not adopt this maintenance or submit T04. Return only to predecessor 6c5757659ecbca11f1469e1ab3dfec330fe0d74f; the complete T04 product candidate and build remain intact, the task remains IN_PROGRESS, and every prior maintenance/review record remains immutable.",
+  "reviewAttempts": [],
+  "review": null
+}
