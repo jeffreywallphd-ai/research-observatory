@@ -47,7 +47,7 @@
       {
         "check": "complete focused UI lineage gate suite",
         "result": "passed",
-        "detail": "All 24 unittest cases passed, including real amendment-task lookup and automatic-base selection, exact v1.4-style approved-reference implementation, out-of-range Wave denial, independently reviewed and remediated pre-implementation maintenance admission, plain and namespaced self-review denial, unchanged CAP behavior, task/base/reference equality, regular-blob enforcement, and existing hardening invariants."
+        "detail": "All 25 unittest cases passed, including real amendment-task lookup and automatic-base selection, exact v1.4-style approved-reference implementation, out-of-range Wave denial, independently reviewed and remediated pre-implementation maintenance admission, plain and namespaced self-review denial, post-approval record-substitution denial, unchanged CAP behavior, task/base/reference equality, regular-blob enforcement, and existing hardening invariants."
       },
       {
         "check": "canonical backlog schema and workflow validation",
@@ -77,11 +77,12 @@
     "priorReviewSha256": "8baa34210a1f958a0295d01749457ee0902ecea2289ac1c02ee75baa80d4fda5",
     "resolvedFindingIds": [
       "GOV-MAINT-0006-R01-F01",
-      "GOV-MAINT-0006-R01-F02"
+      "GOV-MAINT-0006-R01-F02",
+      "GOV-MAINT-0006-R02-F01"
     ],
-    "rootCause": "The first candidate normalized only the reviewer namespace before comparing identities and modeled only a one-round approval path. That made equivalent namespaced implementer and reviewer identities compare differently and could not truthfully retain an adverse round before an approved remediation. The evidence narrative also retained pre-expansion suite counts.",
-    "resolution": "Use one validated canonical agent-identity function for both roles, reject equal canonical identities, and authenticate an append-only sequence in which the first candidate is the direct child of the frozen predecessor, each adverse review is introduced in the reviewed commit's direct child, each remediation is the next direct child, and the final independent attempt is approved with no findings. Correct the complete-suite counts to the executed 24 UI-gate and 27 taskctl-schema tests.",
-    "recurrenceControl": "Real-Git regressions now reject self-review for both plain and agent:-namespaced implementers and prove that an adverse R01 ledger, strict-descendant remediation, and independent R02 approval all remain immutable and precede UI implementation."
+    "rootCause": "The first candidate normalized only the reviewer namespace before comparing identities and modeled only a one-round approval path. The first remediation then compared only selected projection fields, leaving other approved remediation and closure bytes substitutable after review. The evidence narrative also retained pre-expansion suite counts.",
+    "resolution": "Use one validated canonical agent-identity function for both roles, reject equal canonical identities, and authenticate an append-only sequence in which the first candidate is the direct child of the frozen predecessor, each adverse review is the exact reviewed record plus only the canonical status/attempt/review projection in the reviewed commit's direct child, each remediation is the next direct child, and the final adopted record is byte-identical to the final review-introduction commit. Correct the complete-suite counts to the executed 25 UI-gate and 27 taskctl-schema tests.",
+    "recurrenceControl": "Real-Git regressions now reject self-review for both plain and agent:-namespaced implementers, prove adverse-ledger/remediation/approval ordering, and reject post-approval substitution of remediation or closure bytes before UI implementation."
   },
   "rollback": "Do not begin product UI work or integrate this candidate if independent review finds a blocking defect. Revert only the strict-descendant maintenance candidate to predecessor 212108b; W1.A05.T04 remains claimed but product-unmodified, the approved v1.4 package remains unchanged, and no task/release authority changes.",
   "reviewAttempts": [
