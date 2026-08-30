@@ -379,8 +379,16 @@ impl ApplicationLockManager {
         &self,
         supervisor: &RuntimeSupervisor,
     ) -> Result<ApplicationUnlockAttempt, &'static str> {
+        self.reauthenticate_with_native_provider(supervisor, &WindowsPasswordVerificationProvider)
+    }
+
+    pub(crate) fn reauthenticate_with_native_provider(
+        &self,
+        supervisor: &RuntimeSupervisor,
+        provider: &impl NativeVerificationProvider,
+    ) -> Result<ApplicationUnlockAttempt, &'static str> {
         self.reauthenticate_with(
-            &WindowsPasswordVerificationProvider,
+            provider,
             || supervisor.start().state,
             || {
                 supervisor.stop_for_application_lock();

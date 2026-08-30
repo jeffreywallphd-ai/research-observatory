@@ -27,6 +27,22 @@ export type VerificationOutcome =
   | "busy"
   | "failed";
 
+export type VerificationAvailability =
+  | "checking"
+  | "available"
+  | "not-present"
+  | "not-configured"
+  | "policy-disabled"
+  | "busy"
+  | "unavailable"
+  | "failed";
+
+export interface VerificationAvailabilitySnapshot {
+  readonly schemaVersion: "1.0";
+  readonly provider: "windows-hello";
+  readonly availability: VerificationAvailability;
+}
+
 export interface ApplicationUnlockAttempt {
   readonly schemaVersion: "1.0";
   readonly outcome: VerificationOutcome;
@@ -72,6 +88,7 @@ const SNAPSHOT_KEYS = [
 ] as const;
 
 const UNLOCK_ATTEMPT_KEYS = ["outcome", "reasonCode", "schemaVersion", "snapshot"] as const;
+const VERIFICATION_AVAILABILITY_KEYS = ["availability", "provider", "schemaVersion"] as const;
 const UNLOCK_REASON_CODES: Readonly<Record<VerificationOutcome, readonly string[]>> = Object.freeze({
   succeeded: ["RO-LOCK-UNLOCKED"],
   cancelled: ["RO-LOCK-AUTH-CANCELLED"],
@@ -258,6 +275,36 @@ export function decodeApplicationUnlockAttempt(value: unknown): ApplicationUnloc
     throw new Error("Invalid application-unlock response.");
   }
   return { schemaVersion: "1.0", outcome, reasonCode: data.reasonCode, snapshot };
+}
+
+function decodeVerificationAvailability(value: unknown): VerificationAvailability {
+  if (
+    value !== "checking"
+    && value !== "available"
+    && value !== "not-present"
+    && value !== "not-configured"
+    && value !== "policy-disabled"
+    && value !== "busy"
+    && value !== "unavailable"
+    && value !== "failed"
+  ) {
+    throw new Error("Invalid verification-availability response.");
+  }
+  return value;
+}
+
+export function decodeVerificationAvailabilitySnapshot(
+  value: unknown,
+): VerificationAvailabilitySnapshot {
+  const data = readExactDataRecord(value, VERIFICATION_AVAILABILITY_KEYS);
+  if (!data || data.schemaVersion !== "1.0" || data.provider !== "windows-hello") {
+    throw new Error("Invalid verification-availability response.");
+  }
+  return {
+    schemaVersion: "1.0",
+    provider: "windows-hello",
+    availability: decodeVerificationAvailability(data.availability),
+  };
 }
 
 export function applicationUnlockFailureMessage(

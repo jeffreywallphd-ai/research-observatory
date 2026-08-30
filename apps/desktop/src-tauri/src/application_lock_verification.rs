@@ -9,7 +9,32 @@ pub enum VerificationOutcome {
     Failed,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum VerificationAvailability {
+    Checking,
+    Available,
+    NotPresent,
+    NotConfigured,
+    PolicyDisabled,
+    Busy,
+    Unavailable,
+    Failed,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct VerificationAvailabilitySnapshot {
+    pub schema_version: &'static str,
+    pub provider: &'static str,
+    pub availability: VerificationAvailability,
+}
+
 pub trait NativeVerificationProvider: Send + Sync {
+    fn availability(&self) -> VerificationAvailability {
+        VerificationAvailability::Available
+    }
+
     fn verify(&self) -> VerificationOutcome;
 }
 
@@ -26,8 +51,242 @@ where
 pub struct WindowsPasswordVerificationProvider;
 
 impl NativeVerificationProvider for WindowsPasswordVerificationProvider {
+    fn availability(&self) -> VerificationAvailability {
+        if cfg!(windows) {
+            VerificationAvailability::Available
+        } else {
+            VerificationAvailability::Unavailable
+        }
+    }
+
     fn verify(&self) -> VerificationOutcome {
         verify_current_windows_user()
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct WindowsHelloVerificationProvider {
+    window_handle: isize,
+}
+
+impl WindowsHelloVerificationProvider {
+    pub fn for_window(window_handle: isize) -> Result<Self, &'static str> {
+        if window_handle == 0 {
+            return Err("RO-LOCK-HELLO-WINDOW-UNAVAILABLE");
+        }
+        Ok(Self { window_handle })
+    }
+}
+
+impl NativeVerificationProvider for WindowsHelloVerificationProvider {
+    fn availability(&self) -> VerificationAvailability {
+        windows_hello_availability()
+    }
+
+    fn verify(&self) -> VerificationOutcome {
+        verify_windows_hello_for_window(self.window_handle)
+    }
+}
+
+pub fn windows_hello_availability() -> VerificationAvailability {
+    hello_availability_with(&SystemWindowsHelloBoundary)
+}
+
+pub fn windows_hello_availability_snapshot() -> VerificationAvailabilitySnapshot {
+    VerificationAvailabilitySnapshot {
+        schema_version: "1.0",
+        provider: "windows-hello",
+        availability: windows_hello_availability(),
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum HelloBoundaryError {
+    Unavailable,
+    Failed,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum HelloOsAvailability {
+    Available,
+    NotPresent,
+    NotConfigured,
+    PolicyDisabled,
+    Busy,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum HelloOsVerification {
+    Verified,
+    NotPresent,
+    NotConfigured,
+    PolicyDisabled,
+    Busy,
+    RetriesExhausted,
+    Cancelled,
+}
+
+trait WindowsHelloBoundary {
+    fn availability(&self) -> Result<HelloOsAvailability, HelloBoundaryError>;
+
+    fn verify_for_window(
+        &self,
+        window_handle: isize,
+    ) -> Result<HelloOsVerification, HelloBoundaryError>;
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+struct SystemWindowsHelloBoundary;
+
+#[cfg(windows)]
+struct WindowsRuntimeApartment;
+
+#[cfg(windows)]
+impl WindowsRuntimeApartment {
+    fn initialize() -> Result<Self, HelloBoundaryError> {
+        use windows::Win32::System::WinRT::{RO_INIT_MULTITHREADED, RoInitialize};
+
+        unsafe { RoInitialize(RO_INIT_MULTITHREADED) }
+            .map(|()| Self)
+            .map_err(|_| HelloBoundaryError::Failed)
+    }
+}
+
+#[cfg(windows)]
+impl Drop for WindowsRuntimeApartment {
+    fn drop(&mut self) {
+        unsafe { windows::Win32::System::WinRT::RoUninitialize() };
+    }
+}
+
+fn hello_availability_with(boundary: &impl WindowsHelloBoundary) -> VerificationAvailability {
+    match boundary.availability() {
+        Ok(HelloOsAvailability::Available) => VerificationAvailability::Available,
+        Ok(HelloOsAvailability::NotPresent) => VerificationAvailability::NotPresent,
+        Ok(HelloOsAvailability::NotConfigured) => VerificationAvailability::NotConfigured,
+        Ok(HelloOsAvailability::PolicyDisabled) => VerificationAvailability::PolicyDisabled,
+        Ok(HelloOsAvailability::Busy) => VerificationAvailability::Busy,
+        Err(HelloBoundaryError::Unavailable) => VerificationAvailability::Unavailable,
+        Err(HelloBoundaryError::Failed) => VerificationAvailability::Failed,
+    }
+}
+
+fn verify_windows_hello_for_window(window_handle: isize) -> VerificationOutcome {
+    verify_windows_hello_with(&SystemWindowsHelloBoundary, window_handle)
+}
+
+fn verify_windows_hello_with(
+    boundary: &impl WindowsHelloBoundary,
+    window_handle: isize,
+) -> VerificationOutcome {
+    if window_handle == 0 {
+        return VerificationOutcome::Failed;
+    }
+    match hello_availability_with(boundary) {
+        VerificationAvailability::Available => {}
+        VerificationAvailability::Busy => return VerificationOutcome::Busy,
+        VerificationAvailability::Failed => return VerificationOutcome::Failed,
+        VerificationAvailability::Checking
+        | VerificationAvailability::NotPresent
+        | VerificationAvailability::NotConfigured
+        | VerificationAvailability::PolicyDisabled
+        | VerificationAvailability::Unavailable => return VerificationOutcome::Unavailable,
+    }
+    match boundary.verify_for_window(window_handle) {
+        Ok(HelloOsVerification::Verified) => VerificationOutcome::Succeeded,
+        Ok(HelloOsVerification::Busy) => VerificationOutcome::Busy,
+        Ok(HelloOsVerification::RetriesExhausted) => VerificationOutcome::Denied,
+        Ok(HelloOsVerification::Cancelled) => VerificationOutcome::Cancelled,
+        Ok(HelloOsVerification::NotPresent)
+        | Ok(HelloOsVerification::NotConfigured)
+        | Ok(HelloOsVerification::PolicyDisabled)
+        | Err(HelloBoundaryError::Unavailable) => VerificationOutcome::Unavailable,
+        Err(HelloBoundaryError::Failed) => VerificationOutcome::Failed,
+    }
+}
+
+#[cfg(windows)]
+impl WindowsHelloBoundary for SystemWindowsHelloBoundary {
+    fn availability(&self) -> Result<HelloOsAvailability, HelloBoundaryError> {
+        use windows::Security::Credentials::UI::{
+            UserConsentVerifier, UserConsentVerifierAvailability,
+        };
+        use windows::Win32::System::WinRT::IUserConsentVerifierInterop;
+
+        let _apartment = WindowsRuntimeApartment::initialize()?;
+        let result = UserConsentVerifier::CheckAvailabilityAsync()
+            .and_then(|operation| operation.get())
+            .map_err(|_| HelloBoundaryError::Failed)?;
+        if result == UserConsentVerifierAvailability::Available {
+            let _: IUserConsentVerifierInterop =
+                windows::core::factory::<UserConsentVerifier, IUserConsentVerifierInterop>()
+                    .map_err(|_| HelloBoundaryError::Unavailable)?;
+            Ok(HelloOsAvailability::Available)
+        } else if result == UserConsentVerifierAvailability::DeviceNotPresent {
+            Ok(HelloOsAvailability::NotPresent)
+        } else if result == UserConsentVerifierAvailability::NotConfiguredForUser {
+            Ok(HelloOsAvailability::NotConfigured)
+        } else if result == UserConsentVerifierAvailability::DisabledByPolicy {
+            Ok(HelloOsAvailability::PolicyDisabled)
+        } else if result == UserConsentVerifierAvailability::DeviceBusy {
+            Ok(HelloOsAvailability::Busy)
+        } else {
+            Err(HelloBoundaryError::Failed)
+        }
+    }
+
+    fn verify_for_window(
+        &self,
+        window_handle: isize,
+    ) -> Result<HelloOsVerification, HelloBoundaryError> {
+        use windows::Security::Credentials::UI::{
+            UserConsentVerificationResult, UserConsentVerifier,
+        };
+        use windows::Win32::Foundation::HWND;
+        use windows::Win32::System::WinRT::IUserConsentVerifierInterop;
+
+        let _apartment = WindowsRuntimeApartment::initialize()?;
+        let interop = windows::core::factory::<UserConsentVerifier, IUserConsentVerifierInterop>()
+            .map_err(|_| HelloBoundaryError::Unavailable)?;
+        let message = windows::core::HSTRING::from("Unlock Research Observatory");
+        let operation = unsafe {
+            interop.RequestVerificationForWindowAsync::<
+                windows_future::IAsyncOperation<UserConsentVerificationResult>,
+            >(HWND(window_handle as *mut std::ffi::c_void), &message)
+        }
+        .map_err(|_| HelloBoundaryError::Failed)?;
+        let result = operation.get().map_err(|_| HelloBoundaryError::Failed)?;
+        if result == UserConsentVerificationResult::Verified {
+            Ok(HelloOsVerification::Verified)
+        } else if result == UserConsentVerificationResult::DeviceNotPresent {
+            Ok(HelloOsVerification::NotPresent)
+        } else if result == UserConsentVerificationResult::NotConfiguredForUser {
+            Ok(HelloOsVerification::NotConfigured)
+        } else if result == UserConsentVerificationResult::DisabledByPolicy {
+            Ok(HelloOsVerification::PolicyDisabled)
+        } else if result == UserConsentVerificationResult::DeviceBusy {
+            Ok(HelloOsVerification::Busy)
+        } else if result == UserConsentVerificationResult::RetriesExhausted {
+            Ok(HelloOsVerification::RetriesExhausted)
+        } else if result == UserConsentVerificationResult::Canceled {
+            Ok(HelloOsVerification::Cancelled)
+        } else {
+            Err(HelloBoundaryError::Failed)
+        }
+    }
+}
+
+#[cfg(not(windows))]
+impl WindowsHelloBoundary for SystemWindowsHelloBoundary {
+    fn availability(&self) -> Result<HelloOsAvailability, HelloBoundaryError> {
+        Err(HelloBoundaryError::Unavailable)
+    }
+
+    fn verify_for_window(
+        &self,
+        _window_handle: isize,
+    ) -> Result<HelloOsVerification, HelloBoundaryError> {
+        Err(HelloBoundaryError::Unavailable)
     }
 }
 
@@ -227,6 +486,40 @@ fn verify_current_windows_user() -> VerificationOutcome {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    struct FakeHelloBoundary {
+        availability: Result<HelloOsAvailability, HelloBoundaryError>,
+        verification: Result<HelloOsVerification, HelloBoundaryError>,
+        verification_calls: AtomicUsize,
+    }
+
+    impl FakeHelloBoundary {
+        fn new(
+            availability: Result<HelloOsAvailability, HelloBoundaryError>,
+            verification: Result<HelloOsVerification, HelloBoundaryError>,
+        ) -> Self {
+            Self {
+                availability,
+                verification,
+                verification_calls: AtomicUsize::new(0),
+            }
+        }
+    }
+
+    impl WindowsHelloBoundary for FakeHelloBoundary {
+        fn availability(&self) -> Result<HelloOsAvailability, HelloBoundaryError> {
+            self.availability
+        }
+
+        fn verify_for_window(
+            &self,
+            _window_handle: isize,
+        ) -> Result<HelloOsVerification, HelloBoundaryError> {
+            self.verification_calls.fetch_add(1, Ordering::SeqCst);
+            self.verification
+        }
+    }
 
     #[test]
     fn provider_neutral_outcomes_have_stable_contract_values() {
@@ -245,6 +538,179 @@ mod tests {
         }
     }
 
+    #[test]
+    fn windows_hello_availability_contract_has_every_approved_state() {
+        for (availability, serialized) in [
+            (VerificationAvailability::Checking, "\"checking\""),
+            (VerificationAvailability::Available, "\"available\""),
+            (VerificationAvailability::NotPresent, "\"not-present\""),
+            (
+                VerificationAvailability::NotConfigured,
+                "\"not-configured\"",
+            ),
+            (
+                VerificationAvailability::PolicyDisabled,
+                "\"policy-disabled\"",
+            ),
+            (VerificationAvailability::Busy, "\"busy\""),
+            (VerificationAvailability::Unavailable, "\"unavailable\""),
+            (VerificationAvailability::Failed, "\"failed\""),
+        ] {
+            assert_eq!(
+                serde_json::to_string(&availability).expect("serialize"),
+                serialized
+            );
+        }
+        assert_eq!(
+            serde_json::to_value(VerificationAvailabilitySnapshot {
+                schema_version: "1.0",
+                provider: "windows-hello",
+                availability: VerificationAvailability::Available,
+            })
+            .expect("serialize snapshot"),
+            serde_json::json!({
+                "schemaVersion": "1.0",
+                "provider": "windows-hello",
+                "availability": "available"
+            })
+        );
+    }
+
+    #[test]
+    fn windows_hello_availability_maps_every_os_state_without_prompting() {
+        for (os_state, expected) in [
+            (
+                Ok(HelloOsAvailability::Available),
+                VerificationAvailability::Available,
+            ),
+            (
+                Ok(HelloOsAvailability::NotPresent),
+                VerificationAvailability::NotPresent,
+            ),
+            (
+                Ok(HelloOsAvailability::NotConfigured),
+                VerificationAvailability::NotConfigured,
+            ),
+            (
+                Ok(HelloOsAvailability::PolicyDisabled),
+                VerificationAvailability::PolicyDisabled,
+            ),
+            (
+                Ok(HelloOsAvailability::Busy),
+                VerificationAvailability::Busy,
+            ),
+            (
+                Err(HelloBoundaryError::Unavailable),
+                VerificationAvailability::Unavailable,
+            ),
+            (
+                Err(HelloBoundaryError::Failed),
+                VerificationAvailability::Failed,
+            ),
+        ] {
+            let boundary = FakeHelloBoundary::new(os_state, Ok(HelloOsVerification::Verified));
+            assert_eq!(hello_availability_with(&boundary), expected);
+            assert_eq!(boundary.verification_calls.load(Ordering::SeqCst), 0);
+        }
+    }
+
+    #[test]
+    fn windows_hello_verification_maps_every_result_and_never_falls_back() {
+        for (os_result, expected) in [
+            (
+                Ok(HelloOsVerification::Verified),
+                VerificationOutcome::Succeeded,
+            ),
+            (
+                Ok(HelloOsVerification::NotPresent),
+                VerificationOutcome::Unavailable,
+            ),
+            (
+                Ok(HelloOsVerification::NotConfigured),
+                VerificationOutcome::Unavailable,
+            ),
+            (
+                Ok(HelloOsVerification::PolicyDisabled),
+                VerificationOutcome::Unavailable,
+            ),
+            (Ok(HelloOsVerification::Busy), VerificationOutcome::Busy),
+            (
+                Ok(HelloOsVerification::RetriesExhausted),
+                VerificationOutcome::Denied,
+            ),
+            (
+                Ok(HelloOsVerification::Cancelled),
+                VerificationOutcome::Cancelled,
+            ),
+            (
+                Err(HelloBoundaryError::Unavailable),
+                VerificationOutcome::Unavailable,
+            ),
+            (Err(HelloBoundaryError::Failed), VerificationOutcome::Failed),
+        ] {
+            let boundary = FakeHelloBoundary::new(Ok(HelloOsAvailability::Available), os_result);
+            assert_eq!(verify_windows_hello_with(&boundary, 1), expected);
+            assert_eq!(boundary.verification_calls.load(Ordering::SeqCst), 1);
+        }
+    }
+
+    #[test]
+    fn windows_hello_never_prompts_when_unavailable_or_missing_a_window() {
+        for (availability, expected) in [
+            (
+                Ok(HelloOsAvailability::NotPresent),
+                VerificationOutcome::Unavailable,
+            ),
+            (
+                Ok(HelloOsAvailability::NotConfigured),
+                VerificationOutcome::Unavailable,
+            ),
+            (
+                Ok(HelloOsAvailability::PolicyDisabled),
+                VerificationOutcome::Unavailable,
+            ),
+            (Ok(HelloOsAvailability::Busy), VerificationOutcome::Busy),
+            (
+                Err(HelloBoundaryError::Unavailable),
+                VerificationOutcome::Unavailable,
+            ),
+            (Err(HelloBoundaryError::Failed), VerificationOutcome::Failed),
+        ] {
+            let boundary = FakeHelloBoundary::new(availability, Ok(HelloOsVerification::Verified));
+            assert_eq!(verify_windows_hello_with(&boundary, 1), expected);
+            assert_eq!(boundary.verification_calls.load(Ordering::SeqCst), 0);
+        }
+        let boundary = FakeHelloBoundary::new(
+            Ok(HelloOsAvailability::Available),
+            Ok(HelloOsVerification::Verified),
+        );
+        assert_eq!(
+            verify_windows_hello_with(&boundary, 0),
+            VerificationOutcome::Failed
+        );
+        assert_eq!(boundary.verification_calls.load(Ordering::SeqCst), 0);
+        assert_eq!(
+            WindowsHelloVerificationProvider::for_window(0),
+            Err("RO-LOCK-HELLO-WINDOW-UNAVAILABLE")
+        );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn windows_hello_availability_is_truthful_on_release_platform() {
+        let availability = windows_hello_availability();
+        assert!(matches!(
+            availability,
+            VerificationAvailability::Available
+                | VerificationAvailability::NotPresent
+                | VerificationAvailability::NotConfigured
+                | VerificationAvailability::PolicyDisabled
+                | VerificationAvailability::Busy
+                | VerificationAvailability::Unavailable
+                | VerificationAvailability::Failed
+        ));
+    }
+
     #[cfg(not(windows))]
     #[test]
     fn password_provider_is_truthfully_unavailable_off_windows() {
@@ -252,6 +718,9 @@ mod tests {
             WindowsPasswordVerificationProvider.verify(),
             VerificationOutcome::Unavailable
         );
+        let hello = WindowsHelloVerificationProvider::for_window(1).expect("nonzero window");
+        assert_eq!(hello.availability(), VerificationAvailability::Unavailable);
+        assert_eq!(hello.verify(), VerificationOutcome::Unavailable);
     }
 
     #[cfg(windows)]
