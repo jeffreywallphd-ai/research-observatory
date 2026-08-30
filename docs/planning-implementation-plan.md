@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8de6ae39bc378257543776e08a5168ae638d7cdf36058a0b0a6d3bb127ee52b2
+source_sha256: 6a5dd385bd9be02d8309376e76198828f1622a6a38bc9e4f9b8a2e0f72084308
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1201,9 +1201,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
+### - [x] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
 
-**Status / owner / review:** `REVIEW` / codex / codex-independent-sign-in-policy-security-reviewer (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / codex-independent-sign-in-policy-security-reviewer (`approved`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`, `W1.A05.T02`
 
@@ -1232,7 +1232,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A05.T03
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -1264,7 +1264,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `fce7cc189396d82ff36e51c7974870ef892333659eb912069451079e4b6045ce`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `fce7cc189396d82ff36e51c7974870ef892333659eb912069451079e4b6045ce`
 
 - Candidate / base / branch: `c94ab3ef76529f7eee0d2f002423c21aec3e1161` / `deec1063e6bcd9a17d2a10c574103c10ebdd7785` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-30T18:23:42+00:00`
@@ -1278,15 +1280,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A05.T03-R01-F01`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by codex-independent-sign-in-policy-security-reviewer at `2026-08-30T18:15:49+00:00`
+**Disposition / reviewer / time:** `approved` / codex-independent-sign-in-policy-security-reviewer / `2026-08-30T18:29:24+00:00`
 
-**Latest notes:** Independent commit-bound security/migration review authenticated the exact base, candidate, submission record, evidence SHA-256 ce4900008685d27ffdb8f06a74cfb57d44c7d99e63cddce89962d5557e39de9b, Git blob b2cc319428ba5f38f04063144e8ee8dc819f3a11, and all 21 declared candidate paths. Base is an ancestor of candidate and candidate is an ancestor of submission; candidate product/test bytes remain unchanged at submission and both ranges pass patch hygiene. Independent replay passed all 53 native library tests, all 13 focused renderer transition tests, all 71 desktop tests, all nine focused Python security/contract tests, Ruff, Rust format and warnings-denied Clippy, the production desktop build, desktop lint, architecture, build-input inventory, and the governed affected selector. Strict parsing/migration, explicit-none materialization, provider ordering, configured-provider and same-SID recovery proof, proof-before-confirmation structure, opaque digest-only handles, expiry/replay behavior, typed native/renderer failures, no-follow file inspection, named-mutex/CAS publication, response-loss receipt replay within the live process, audit redaction, and zero/nonzero lock behavior otherwise match the approved T03 contract. One blocking cross-process authority defect remains: publication updates only the committing manager's in-memory state, while another already-running manager/process never reloads or fails closed and no single-instance control exists. That stale process can remain none/unlocked and continue protected actions after the durable application-wide policy has become protected. The submitted tests exercise two managers only as stale writers and do not run the task-start-required child-process/abrupt-exit harness, so the claimed process-wide/crash coverage does not detect this behavior. T04 legitimately owns the governed settings/recovery UI and activation-reference correction, and W1 exit legitimately owns accumulated performance/full qualification, but neither later gate owns this native application-wide authority defect.
+**Immutable review ledger:** `artifacts/evidence/W1.A05.T03.review-R02.json` / `4d91b43e1021d25a08f76ce3c06f7e94b060ad6b782cfc2fe4d778ec9af7f3ef`
 
-**Currently open findings:** `W1.A05.T03-R01-F01`
+**Review notes:** Independent bounded R02 security/migration review found no remaining blocking or nonblocking acceptance-bound defect. Exact candidate c94ab3ef76529f7eee0d2f002423c21aec3e1161 is a strict descendant of adverse candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785, and immutable submission 5ad731f0e52fa29bcba5a04c6270f8d631d6cb2b is a strict descendant of the remediation candidate. The remediation manifest reproduces SHA-256 cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1 and Git blob 939a09fd5cd6795c4c3884158f90a332a0aa8c68; all 12 declared paths exactly match the remediation range and candidate product/test bytes remain exact at submission. W1.A05.T03-R01-F01 is closed. Production now acquires one Global Windows instance object whose name is derived from the same stable canonical application-data root used by the policy store before constructing the manager or starting Core. CreateMutexW uses existence-only semantics with bInitialOwner false, checks GetLastError immediately for ERROR_ALREADY_EXISTS, and retains the handle instead of thread-affine mutex ownership. Every manager clone retains the Arc-held lease, final drop may close it on any thread, and abrupt process termination closes it automatically. ApplicationLockManager::new is test-only; the sole production setup path uses acquire and propagates typed RO-DESKTOP-ALREADY-RUNNING or RO-DESKTOP-INSTANCE-UNAVAILABLE failure before Core launch. Independent real-child replay proved that a child first commits a 15-minute windows-password policy, a duplicate process is denied, abrupt termination releases the lease, and restart reads the exact protected policy, starts locked for application restart, and denies protected actions. A separate child published password across the real process boundary, the stale parent received the expected CAS conflict, abrupt child death while owning the named publication mutex produced recoverable abandoned ownership, and restart retained exact valid canonical bytes. All 56 native tests, 71 desktop tests, nine focused Python checks, Rust format/Clippy, Ruff, production build/lint, architecture, build inventory, affected selection, and both patch-hygiene ranges passed. Prior migration, provider ordering, same-SID recovery, proof/handle/expiry, typed failures, redaction, no-follow persistence, explicit-none, zero/nonzero lock behavior, and renderer contracts remain unchanged and green. T04's governed experience/reference work and W1-exit's accumulated performance/full qualification remain legitimate later duties.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A05.T03-R01-F01` `fixed` — Production can no longer construct two policy managers for one stable canonical application-data root. ApplicationLockManager::acquire first obtains an existence-only Global Windows object; a duplicate CreateMutexW reports ERROR_ALREADY_EXISTS and returns the typed already-running failure before policy-manager/Core startup. The guard handle is retained by Arc in every manager clone, uses no mutex ownership, can close on the final holder's thread, and is automatically closed on process death. ApplicationLockManager::new is cfg(test) and from_application_data is private. Independent real-child replay first committed protected password policy, denied the duplicate, abruptly terminated the owner, then reacquired and proved locked restart plus protected-action denial. A second child-process replay proved genuine CAS conflict, named-mutex abandonment recovery, and exact valid bytes. These tests directly close the stale none/unlocked process path and the missing child-process/abrupt-exit proof from R01 while retaining all prior passing T03 boundaries.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-sign-in-policy-security-reviewer at `2026-08-30T18:29:24+00:00`
+
+**Latest notes:** Independent bounded R02 security/migration review found no remaining blocking or nonblocking acceptance-bound defect. Exact candidate c94ab3ef76529f7eee0d2f002423c21aec3e1161 is a strict descendant of adverse candidate deec1063e6bcd9a17d2a10c574103c10ebdd7785, and immutable submission 5ad731f0e52fa29bcba5a04c6270f8d631d6cb2b is a strict descendant of the remediation candidate. The remediation manifest reproduces SHA-256 cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1 and Git blob 939a09fd5cd6795c4c3884158f90a332a0aa8c68; all 12 declared paths exactly match the remediation range and candidate product/test bytes remain exact at submission. W1.A05.T03-R01-F01 is closed. Production now acquires one Global Windows instance object whose name is derived from the same stable canonical application-data root used by the policy store before constructing the manager or starting Core. CreateMutexW uses existence-only semantics with bInitialOwner false, checks GetLastError immediately for ERROR_ALREADY_EXISTS, and retains the handle instead of thread-affine mutex ownership. Every manager clone retains the Arc-held lease, final drop may close it on any thread, and abrupt process termination closes it automatically. ApplicationLockManager::new is test-only; the sole production setup path uses acquire and propagates typed RO-DESKTOP-ALREADY-RUNNING or RO-DESKTOP-INSTANCE-UNAVAILABLE failure before Core launch. Independent real-child replay proved that a child first commits a 15-minute windows-password policy, a duplicate process is denied, abrupt termination releases the lease, and restart reads the exact protected policy, starts locked for application restart, and denies protected actions. A separate child published password across the real process boundary, the stale parent received the expected CAS conflict, abrupt child death while owning the named publication mutex produced recoverable abandoned ownership, and restart retained exact valid canonical bytes. All 56 native tests, 71 desktop tests, nine focused Python checks, Rust format/Clippy, Ruff, production build/lint, architecture, build inventory, affected selection, and both patch-hygiene ranges passed. Prior migration, provider ordering, same-SID recovery, proof/handle/expiry, typed failures, redaction, no-follow persistence, explicit-none, zero/nonzero lock behavior, and renderer contracts remain unchanged and green. T04's governed experience/reference work and W1-exit's accumulated performance/full qualification remain legitimate later duties.
+
+**Currently open findings:** -
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T03`
 

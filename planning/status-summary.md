@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8de6ae39bc378257543776e08a5168ae638d7cdf36058a0b0a6d3bb127ee52b2
+source_sha256: 6a5dd385bd9be02d8309376e76198828f1622a6a38bc9e4f9b8a2e0f72084308
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,9 +69,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 1 |
-| `REVIEW` | 1 |
-| `DONE` | 5 |
+| `READY` | 1 |
+| `DONE` | 6 |
 
 ## Wave authority and append-only amendments
 
@@ -402,7 +401,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A05.T01` | `append-only v1` | 2 | `-` | approved / codex-independent-application-lock-security-reviewer | - |
 | `W1.A05.T02` | `append-only v1` | 1 | `-` | approved / codex-independent-windows-hello-security-reviewer | - |
-| `W1.A05.T03` | `append-only v1` | 1 | `R02` | changes-requested / codex-independent-sign-in-policy-security-reviewer | `W1.A05.T03-R01-F01` |
+| `W1.A05.T03` | `append-only v1` | 2 | `-` | approved / codex-independent-sign-in-policy-security-reviewer | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -467,4 +466,3 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-03.S04.T01` Define workflow, step, job, attempt, artifact, and human-task contracts | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A05.T03` Add versioned application sign-in configuration and safe transitions | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
