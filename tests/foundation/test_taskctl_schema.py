@@ -110,6 +110,19 @@ class BacklogSchemaTests(unittest.TestCase):
         record["authorizedAdditionalPaths"].append("../product/runtime.py")
         self.assertTrue(list(validator.iter_errors(record)))
 
+    def test_bootstrap_authority_scope_commit_is_optional_and_exact(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A05")
+        bootstrap = amendment["bootstrap"]
+        bootstrap["scope_base_commit"] = "a" * 40
+        bootstrap["attempts"][0]["scope_base_commit"] = "b" * 40
+
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+
+        bootstrap["scope_base_commit"] = "not-a-commit"
+        errors = backlog_schema_errors(data, schema_path=self.schema)
+        self.assertTrue(any("scope_base_commit" in error for error in errors))
+
     def test_duplicate_task_id_has_precise_diagnostic(self) -> None:
         data = copy.deepcopy(self.canonical)
         tasks = data["capabilities"][0]["slices"][0]["tasks"]
