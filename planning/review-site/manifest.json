@@ -18816,9 +18816,9 @@
       "proposal_sha256": "0513c51eedf04ddfcceb5db8ad9745f89840f5857884da323829889bc800a683",
       "review_path": "planning/enabler-change-requests/ECR-0004-review.html",
       "review_sha256": "d66eb5adcbe6b6aff1b169b2b35af342d477459eb66eda177ac4a1e1a2e2efcd",
-      "approval_path": null,
-      "approval_sha256": null,
-      "approval_status": "PENDING",
+      "approval_path": "planning/wave-amendment-approvals/W1.A05.json",
+      "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
+      "approval_status": "APPROVED",
       "lifecycle_status": "NOT_MATERIALIZED",
       "bootstrap_status": "NOT_SUBMITTED",
       "campaign_status": "NONE",
@@ -19162,7 +19162,19 @@
           }
         ]
       },
-      "scope_addenda": [],
+      "scope_addenda": [
+        {
+          "path": "planning/wave-amendment-approvals/W1.A05.B00.addendum-01.json",
+          "sha256": "64cfafd59f6d4be0317ff88d538375a64b92be0b42f78bcd0ec5fe9e0c85326e",
+          "approved_by": "repository-owner",
+          "approved_at": "2026-08-30T07:00:42.2388116-04:00",
+          "authorized_additional_paths": [
+            "tools/ui_reference_check.py",
+            "tests/foundation/test_ui_reference_check.py",
+            "docs/automation/ui-reference-validation.md"
+          ]
+        }
+      ],
       "task_reviews": [],
       "exit_review": {
         "amendment_id": "W1.A05",
