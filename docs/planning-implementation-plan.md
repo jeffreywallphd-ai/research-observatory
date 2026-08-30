@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 044a7bcc49af5c0e6b57ac6ff0c35e2ad587526aad836eb295cce1992a7fdabc
+source_sha256: f4e1fd3f057a2c5a5af64649f01ea16d8a1e427e35fd363bffd2b3714714ccf3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4159,7 +4159,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The system can reconstruct how every material object and claim was produced and changed.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4622,7 +4622,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4630,7 +4630,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S04.T01 - Define workflow, step, job, attempt, artifact, and human-task contracts
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

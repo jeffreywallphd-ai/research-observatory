@@ -8706,7 +8706,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T02
     - CAP-02.S02.T01
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-03.S03.T01
       capability_id: CAP-03
@@ -10953,15 +10953,21 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: codex-independent-provenance-slice-reviewer
-      reviewed_at: '2026-08-30T00:27:13+00:00'
+      reviewed_at: '2026-08-30T01:18:19+00:00'
       evidence:
       - artifacts/evidence/CAP-03.S03.integration-R02.json
-      notes: R02 strict-descendant remediation closes CAP-03.S03-INTEGRATION-R01-F01 with explicit fail-closed cursor/scan
-        truncation authority, bounded batched traversal, >10,100-fact restart-stable SQLite evidence, generated-client/renderer
-        denial tests, and a 7.163-second p95 Section 11 benchmark. All 15 task findings remain closed; independent slice approval
-        remains required.
+      notes: 'APPROVED exact CAP-03.S03 R02 submission ba3b48969ec8683b54e6ed88bddb613c3d5c2111 with evidence SHA-256 06c7a7f71050af942cd5688d3eba8a25138d859abebea043ba3598e40c652cc9
+        at state db559efb15afb886de57e4a8a2f2f36758690a51 and product candidate 807c052e6450c94920afae0f91641c72de6af8d0.
+        HIGH CAP-03.S03-INTEGRATION-R01-F01 is FIXED: cursor and scan limits are explicit integrity-review/non-exportable
+        authority across real SQLite, authenticated Core/Pydantic, OpenAPI/generated client, renderer merge/readiness, and
+        the visible workspace; no hidden accepted-bound fact can produce a terminal verified/exportable manifest. Independent
+        replay passed 18 client/renderer, 23 repository/service, 17 contract/schema cases, strict TypeScript/generated parity,
+        quality/architecture, and a real 4,161-revision/16,642-fact Windows benchmark with 7.164-second p95 under the 18-second
+        regression limit. LineageNode construction is page-bounded in 256-revision traversal batches. All 15 task findings
+        remain closed; no blocking or nonblocking finding remains. Extremely large trace export remains truthfully denied,
+        and full cross-capability W1 qualification remains due.'
   - id: CAP-03.S04
     title: Portable workflow model and local worker fabric
     outcome: Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.
@@ -10974,7 +10980,7 @@ capabilities:
     depends_on:
     - CAP-03.S03.T02
     - CAP-02.S02.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-03.S04.T01
       capability_id: CAP-03
@@ -11002,11 +11008,11 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-30T01:18:19+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
