@@ -4,6 +4,7 @@ import {
   applicationUnlockFailureMessage,
   decodeApplicationUnlockAttempt,
   decodeApplicationLockSnapshot,
+  decodeVerificationAvailabilitySnapshot,
   DEFAULT_APPLICATION_LOCK_SNAPSHOT,
   failClosedApplicationLockSnapshot,
   normalizeLocalProfileName,
@@ -221,5 +222,51 @@ describe("application-lock contract", () => {
       expect(applicationUnlockFailureMessage(outcome, "RO-LOCK-AUTH-FAILED"))
         .toBe("Windows could not verify the current user. The application remains locked.");
     }
+  });
+
+  it("decodes every approved Hello availability state without coercion", () => {
+    for (const state of [
+      "checking",
+      "available",
+      "not-present",
+      "not-configured",
+      "policy-disabled",
+      "busy",
+      "unavailable",
+      "failed",
+    ] as const) {
+      expect(decodeVerificationAvailabilitySnapshot({
+        schemaVersion: "1.0",
+        provider: "windows-hello",
+        availability: state,
+      })).toEqual({
+        schemaVersion: "1.0",
+        provider: "windows-hello",
+        availability: state,
+      });
+    }
+    expect(() => decodeVerificationAvailabilitySnapshot({
+      schemaVersion: "1.0",
+      provider: "windows-hello",
+      availability: { toString: () => "available" },
+    }))
+      .toThrow("Invalid verification-availability response");
+    expect(() => decodeVerificationAvailabilitySnapshot({
+      schemaVersion: "1.0",
+      provider: "windows-hello",
+      availability: "cancelled",
+    }))
+      .toThrow("Invalid verification-availability response");
+    const accessorSnapshot = {
+      schemaVersion: "1.0",
+      provider: "windows-hello",
+      availability: "available",
+    } as Record<string, unknown>;
+    Object.defineProperty(accessorSnapshot, "availability", {
+      enumerable: true,
+      get: () => "available",
+    });
+    expect(() => decodeVerificationAvailabilitySnapshot(accessorSnapshot))
+      .toThrow("Invalid verification-availability response");
   });
 });

@@ -7,7 +7,9 @@ use application_lock::{
     ApplicationLockAuditEvent, ApplicationLockManager, ApplicationLockReason,
     ApplicationLockSnapshot, ApplicationUnlockAttempt,
 };
-use application_lock_verification::VerificationOutcome;
+use application_lock_verification::{
+    VerificationAvailabilitySnapshot, VerificationOutcome, windows_hello_availability_snapshot,
+};
 use supervisor::{
     CoreApiRequest, CoreApiResponse, RuntimeDiagnostic, RuntimeSnapshot, RuntimeSupervisor,
     SupervisorConfig,
@@ -131,6 +133,17 @@ fn application_lock_audit(
 }
 
 #[tauri::command]
+async fn application_lock_hello_availability() -> VerificationAvailabilitySnapshot {
+    tauri::async_runtime::spawn_blocking(windows_hello_availability_snapshot)
+        .await
+        .unwrap_or(VerificationAvailabilitySnapshot {
+            schema_version: "1.0",
+            provider: "windows-hello",
+            availability: application_lock_verification::VerificationAvailability::Failed,
+        })
+}
+
+#[tauri::command]
 fn application_lock_configure(
     app: AppHandle,
     lock: State<'_, ApplicationLockManager>,
@@ -167,8 +180,25 @@ async fn application_lock_unlock(
     supervisor: State<'_, RuntimeSupervisor>,
     lock: State<'_, ApplicationLockManager>,
 ) -> Result<ApplicationUnlockAttempt, &'static str> {
-    let supervisor = supervisor.inner().clone();
-    let lock_manager = lock.inner().clone();
+    perform_application_lock_password_unlock(app, supervisor.inner().clone(), lock.inner().clone())
+        .await
+}
+
+#[tauri::command]
+async fn application_lock_password_recovery(
+    app: AppHandle,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+) -> Result<ApplicationUnlockAttempt, &'static str> {
+    perform_application_lock_password_unlock(app, supervisor.inner().clone(), lock.inner().clone())
+        .await
+}
+
+async fn perform_application_lock_password_unlock(
+    app: AppHandle,
+    supervisor: RuntimeSupervisor,
+    lock_manager: ApplicationLockManager,
+) -> Result<ApplicationUnlockAttempt, &'static str> {
     let result =
         tauri::async_runtime::spawn_blocking(move || lock_manager.reauthenticate(&supervisor))
             .await
@@ -219,9 +249,11 @@ pub fn run() {
             application_lock_status,
             application_lock_activity,
             application_lock_audit,
+            application_lock_hello_availability,
             application_lock_configure,
             application_lock_now,
-            application_lock_unlock
+            application_lock_unlock,
+            application_lock_password_recovery
         ])
         .setup(|app| {
             let supervisor = RuntimeSupervisor::new(runtime_config(app));

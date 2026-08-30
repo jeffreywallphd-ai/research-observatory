@@ -27,18 +27,40 @@ native supervisor stops every Core operation. A later checkpointed worker may
 continue only after an explicit compatible policy and allowlist are approved and
 tested. UI labels or operation names never grant continuation.
 
-## Unlock sequence
+## Verification providers
 
-Unlock reserves one native attempt and opens a generic, always-shown,
-non-persisting Windows credential prompt prefilled from the current
+The lock manager owns a provider-neutral verification seam. Every provider is
+admitted through the same one-attempt reservation, backoff, lock-generation,
+Core-start, stale-result, and Core-stop boundary. Provider availability and
+verification results are closed typed contracts; the renderer cannot submit a
+provider result or turn an adverse result into success.
+
+The Windows-password provider opens a generic, always-shown, non-persisting
+Windows credential prompt prefilled from the current
 `NameSamCompatible` identity. Parsed local/down-level names retain their domain;
 UPNs pass a null domain to `LogonUserW` as required by Windows. The returned token
 SID must match the desktop process token SID. Password, username, and domain
-buffers are cleared, and all token handles are closed. Concurrent attempts,
-cancellation, a different Windows account, invalid credentials, API failure, and
-Core restart failure leave the application locked. Denied attempts receive
-bounded exponential backoff without revealing whether an account or project
-exists.
+buffers are cleared, and all token handles are closed.
+
+The Windows Hello adapter checks `UserConsentVerifier` availability and uses
+`IUserConsentVerifierInterop::RequestVerificationForWindowAsync` with the native
+desktop window handle. Windows owns the PIN/face/fingerprint prompt and returns
+only an availability or verification enum; Research Observatory receives no PIN
+or biometric material. Not-present, not-configured, policy-disabled, busy,
+cancelled, retry-exhausted/denied, unsupported, and failed paths never call the
+password provider and never unlock. A separate argument-free native password
+recovery command retains the same-SID proof and must be invoked deliberately; it
+is not a Hello fallback. T02 supplies this adapter and recovery boundary. T03
+owns persisted provider selection and transition authorization, and T04 owns the
+approved user-facing selection and recovery experience.
+
+## Unlock sequence
+
+Unlock reserves one native attempt before invoking the natively selected
+provider. Concurrent attempts, cancellation, a different Windows account,
+invalid credentials, provider unavailability, API failure, and Core restart
+failure leave the application locked. Denied attempts receive bounded
+exponential backoff without revealing whether an account or project exists.
 
 Successful reauthentication starts a fresh supervised Core process with a new
 capability. It does not reopen a project or restore discarded renderer input.

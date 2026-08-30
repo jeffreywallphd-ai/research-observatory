@@ -8,6 +8,52 @@ REPO = Path(__file__).resolve().parents[2]
 
 
 class ApplicationLockSourceBoundaryTests(unittest.TestCase):
+    def test_windows_hello_uses_window_bound_os_consent_without_secret_capture_or_fallback(self) -> None:
+        source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_lock_verification.rs").read_text(
+            encoding="utf-8"
+        )
+        hello_start = source.index("pub struct WindowsHelloVerificationProvider")
+        hello_end = source.index("const CREDENTIAL_PROMPT_FLAGS", hello_start)
+        hello_source = source[hello_start:hello_end]
+        for required in (
+            "UserConsentVerifier",
+            "IUserConsentVerifierInterop",
+            "RequestVerificationForWindowAsync",
+            "CheckAvailabilityAsync",
+            "HWND(window_handle",
+            "UserConsentVerificationResult::Verified",
+            "UserConsentVerificationResult::Canceled",
+            "UserConsentVerificationResult::RetriesExhausted",
+            "VerificationAvailability::PolicyDisabled",
+        ):
+            self.assertIn(required, hello_source)
+        for forbidden in (
+            "CredUIPromptForCredentialsW",
+            "LogonUserW",
+            "WindowsPasswordVerificationProvider",
+            "password.0",
+            "UserConsentVerifier::RequestVerificationAsync",
+        ):
+            self.assertNotIn(forbidden, hello_source)
+
+        bridge_source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "lib.rs").read_text(encoding="utf-8")
+        status_start = bridge_source.index("fn application_lock_hello_availability(")
+        status_end = bridge_source.index("#[tauri::command]", status_start + 1)
+        status_bridge = bridge_source[status_start:status_end]
+        status_signature = status_bridge[: status_bridge.index(") ->")]
+        self.assertNotIn("provider:", status_signature)
+        self.assertNotIn("outcome:", status_signature)
+        self.assertIn("windows_hello_availability", status_bridge)
+        primary_start = bridge_source.index("fn application_lock_unlock(")
+        recovery_marker = "fn application_lock_password_recovery("
+        recovery_start = bridge_source.index(recovery_marker, primary_start)
+        primary_bridge = bridge_source[primary_start:recovery_start]
+        self.assertNotIn("application_lock_password_recovery", primary_bridge)
+        recovery_end = bridge_source.index("async fn perform_application_lock_password_unlock", recovery_start)
+        recovery_bridge = bridge_source[recovery_start:recovery_end]
+        self.assertIn("perform_application_lock_password_unlock", recovery_bridge)
+        self.assertNotIn("WindowsHelloVerificationProvider", recovery_bridge)
+
     def test_native_lock_uses_non_persisting_same_sid_windows_reauthentication(self) -> None:
         source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_lock_verification.rs").read_text(
             encoding="utf-8"
