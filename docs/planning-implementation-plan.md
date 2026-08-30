@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dc576e75b85f8acb539c6dbbd4e4bd25a808cb59e8f048e472332eaa25359b14
+source_sha256: 1e3449472570fdcfd49df7c794ae2b8592ee12208e0bfacfe8a285694ff69766
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1032,7 +1032,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T01 - Refactor native verification behind a provider-neutral contract
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `CAP-02.S04.T02`
 

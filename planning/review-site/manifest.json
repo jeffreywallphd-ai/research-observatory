@@ -19288,7 +19288,7 @@
         {
           "task_id": "W1.A05.T01",
           "title": "Refactor native verification behind a provider-neutral contract",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

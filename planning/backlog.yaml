@@ -31058,14 +31058,17 @@ wave_amendments:
       W1-exit qualification.
     - Obtain independent commit-bound security/contract task review.
     packet_task_sha256: 8964dcfd6d08ef7109faa5d6dd7e1fec9187f6f4a597bcd551c40de59af5d622
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-08-30T15:37:08+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: fb06c39b051b8db253fb62a20d69e09cfc2b2b5b
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-30T15:40:22+00:00'
+      expires_at: '2026-08-30T23:40:22+00:00'
+    started_at: '2026-08-30T15:40:22+00:00'
+    updated_at: '2026-08-30T15:40:22+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

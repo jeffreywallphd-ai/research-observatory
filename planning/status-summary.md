@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dc576e75b85f8acb539c6dbbd4e4bd25a808cb59e8f048e472332eaa25359b14
+source_sha256: 1e3449472570fdcfd49df7c794ae2b8592ee12208e0bfacfe8a285694ff69766
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,7 +70,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 3 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 3 |
 
 ## Wave authority and append-only amendments
@@ -464,3 +464,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-03.S04.T01` Define workflow, step, job, attempt, artifact, and human-task contracts | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A05.T01` Refactor native verification behind a provider-neutral contract | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
