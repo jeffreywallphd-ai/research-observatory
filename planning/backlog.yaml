@@ -30909,7 +30909,7 @@ wave_amendments:
         until amendment adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A05.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex
     implementation_commit: 658ef77fad6e657921c7cfe0bdce3fe096c7f9f7
     submission_branch: codex/w1-windows-local-runtime
@@ -30924,10 +30924,12 @@ wave_amendments:
       commit: 658ef77fad6e657921c7cfe0bdce3fe096c7f9f7
       recorded_at: '2026-08-30T14:16:55+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: w1-a05-b00-independent-reviewer
+      result: approved
+      reviewed_at: '2026-08-30T14:34:15+00:00'
+      notes: 'R05 ledger artifacts/evidence/W1.A05.B00.review-05.json (sha256 c0641f00d7bab8ea97b6329dd27e6beb5feb357ac3fa44ebe3ca6da766701467):
+        R04-F01 is closed at frozen submission 79951ce2bf5bd2bf90caf9e531fa5b5427cdf271; all 102 taskctl/schema and 15 UI-reference/planctl
+        checks pass; R01-R03 remain closed.'
     attempts:
     - id: R01
       implementer: codex

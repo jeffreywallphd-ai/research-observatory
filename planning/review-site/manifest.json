@@ -18821,7 +18821,7 @@
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -18924,12 +18924,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "w1-a05-b00-independent-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-08-30T14:34:15+00:00",
+            "notes": "R05 ledger artifacts/evidence/W1.A05.B00.review-05.json (sha256 c0641f00d7bab8ea97b6329dd27e6beb5feb357ac3fa44ebe3ca6da766701467): R04-F01 is closed at frozen submission 79951ce2bf5bd2bf90caf9e531fa5b5427cdf271; all 102 taskctl/schema and 15 UI-reference/planctl checks pass; R01-R03 remain closed."
           },
-          "current_status": "REVIEW"
+          "current_status": "APPROVED"
         }
       ],
       "slice_contributions": [
