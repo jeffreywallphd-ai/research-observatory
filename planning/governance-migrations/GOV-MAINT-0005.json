@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0005",
   "title": "Allow an unexecuted migration-superseded reservation before the next amendment hold",
-  "status": "review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "predecessor": {
@@ -37,6 +37,7 @@
     "changedPaths": [
       "planning/governance-migrations/GOV-MAINT-0005.json",
       "planning/governance-migrations/GOV-MAINT-0005.review-R01.json",
+      "planning/governance-migrations/GOV-MAINT-0005.review-R02.json",
       "tests/foundation/test_taskctl_workflow.py",
       "tools/taskctl.py"
     ]
@@ -91,7 +92,28 @@
       "disposition": "CHANGES_REQUESTED",
       "path": "planning/governance-migrations/GOV-MAINT-0005.review-R01.json",
       "sha256": "11ca253bf3fad3a776ab0e0ad0d90727cb13cee6560921d6b6780816ac455be3"
+    },
+    {
+      "reviewId": "GOV-MAINT-0005.R02",
+      "reviewedCommit": "7a47e1acb4902e70dcbf52c328a7516a49b60f02",
+      "submissionRecordCommit": "2e577ae6021c6ba67dedce5ef93b60a961ffd533",
+      "disposition": "APPROVED",
+      "path": "planning/governance-migrations/GOV-MAINT-0005.review-R02.json",
+      "sha256": "7773ded4682a68d04c0a7045d4cb91c35d2bc34a35dffef8183d4d9945b2d3f6"
     }
   ],
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0005.R02",
+    "reviewedCommit": "7a47e1acb4902e70dcbf52c328a7516a49b60f02",
+    "submissionRecordCommit": "2e577ae6021c6ba67dedce5ef93b60a961ffd533",
+    "reviewer": "codex-independent-governance-control-maintenance-reviewer",
+    "reviewedAt": "2026-08-30T11:32:00-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "closedFindings": [
+      "GOV-MAINT-0005-R01-F01"
+    ],
+    "path": "planning/governance-migrations/GOV-MAINT-0005.review-R02.json",
+    "sha256": "7773ded4682a68d04c0a7045d4cb91c35d2bc34a35dffef8183d4d9945b2d3f6"
+  }
 }
