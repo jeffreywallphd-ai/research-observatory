@@ -1,0 +1,71 @@
+{
+  "task_id": "W1.A05.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "3f91f7721e293b72d8367e1036c5875dc1f14ff2",
+  "submission_record_commit": "52c6830324275a65a315814009172a16a9918940",
+  "reviewer": "codex-independent-windows-hello-security-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent commit-bound security/contract review found no blocking or nonblocking acceptance-bound defect. Base d61f3250a701f0aa51d05c68ec69f9833dae683d is a strict ancestor of candidate 3f91f7721e293b72d8367e1036c5875dc1f14ff2, and immutable submission 52c6830324275a65a315814009172a16a9918940 is a strict descendant of the candidate. Frozen evidence artifacts/evidence/W1.A05.T02.json reproduces SHA-256 ee06f5c37e5d9261404a178da905a3e0a2e8c0e299e0255553d8d9989ed86f60 and Git blob b4a530b52077580807a039637e0b95ae6e6d129b. All 15 declared candidate paths and the six submission-only evidence/projection paths are exact, and both ranges pass patch hygiene. The Windows adapter uses UserConsentVerifier only through the desktop IUserConsentVerifierInterop RequestVerificationForWindowAsync call with an HWND and a fixed content-free message. Its WinRT MTA guard remains alive until the asynchronous availability or verification operation completes, balances every successful RoInitialize with RoUninitialize, reacquires the agile activation factory per bounded call, and maps activation/operation/unknown failures closed. The Hello boundary never references the password prompt, LogonUserW, password buffers, or the password provider. Verified alone maps to succeeded; not-present, not-configured, policy-disabled, busy, retry exhaustion, cancellation, unsupported activation, operation failure, and unknown future enum values remain distinct or fail closed and never fall back. The production Tauri surface accepts no renderer HWND, provider, outcome, or credential data. Hello availability is argument-free, and the provider remains a native-only seam for T03's later persisted selection. Password recovery is a separate argument-free command, is never called by the Hello adapter or primary unlock operation, and delegates to the unchanged non-persisting LogonUserW/current-process EqualSid path. Generic manager admission still reserves exactly one locked generation before provider invocation, blocks replay/backoff, starts Core only after native succeeded, rechecks the generation after Core start, stops raced or failed Core, and cleans reservations after cancellation/failure/panic. The strict availability decoder rejects accessors without invocation, coercible objects, symbol/extra fields, unknown values, and malformed provider/schema values while reconstructing the approved eight availability values. All 35 Rust library tests, 15 frontend/runtime tests, and 15 security/profile/credential tests passed with one expected Windows-token symlink skip. Rust format/Clippy and locked bin/example checks, desktop TypeScript/lint, architecture, dependency resolution, exact path truth, and patch hygiene passed. The real Windows x64 availability harness independently returned not-present. Accordingly, a configured interactive success prompt is unavailable on this host and is truthfully assigned to the conditional S01/W1 hardware gate; no success is inferred from fakes. T03 retains persisted mode selection and transition/recovery authority; T04 retains the approved settings, deliberate recovery UI, and accessibility experience; full cross-capability/platform qualification remains due at W1 exit.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/W1.A05.T02.json",
+      "sha256": "ee06f5c37e5d9261404a178da905a3e0a2e8c0e299e0255553d8d9989ed86f60",
+      "git_blob": "b4a530b52077580807a039637e0b95ae6e6d129b",
+      "commit": "3f91f7721e293b72d8367e1036c5875dc1f14ff2"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base/candidate/submission; verify ordered ancestry; compare base-to-candidate and candidate-to-submission paths; verify implementation/manifest bytes; git diff --check",
+      "result": "PASS: all full SHAs and both ancestry checks passed; the 15 candidate paths and six submission-only evidence/projection paths were exact; directly tested product bytes matched the candidate; manifest bytes matched the submission; both ranges passed whitespace hygiene."
+    },
+    {
+      "type": "platform-contract-inspection",
+      "reference": "https://learn.microsoft.com/en-us/windows/win32/api/userconsentverifierinterop/nf-userconsentverifierinterop-iuserconsentverifierinterop-requestverificationforwindowasync",
+      "result": "PASS: the compiled windows 0.61.3 binding and candidate use the documented desktop RequestVerificationForWindowAsync(HWND, HSTRING, IID, IAsyncOperation) shape rather than the UWP CoreWindow API. The handle is retained through the blocking result, and every API or unknown-result failure maps closed."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "result": "PASS: 35/35 native library tests passed. Coverage includes all eight availability states, all seven WinRT verification results and boundary errors, no prompt when unavailable/busy/windowless, success-only Core start, one reservation, backoff, stale generation and Core stop, provider panic, restart/manual/idle behavior, Windows password/SID parity, redacted audit, and protected supervisor/support boundaries."
+    },
+    {
+      "type": "independent-live-platform-check",
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline",
+      "result": "PASS: the real release-authoritative Windows x64 call returned exactly {schemaVersion:'1.0', provider:'windows-hello', availability:'not-present'}. No interactive configured-success claim is made on this hardware."
+    },
+    {
+      "type": "independent-check",
+      "command": "bundled Node vitest run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "result": "PASS: 15/15 focused renderer/runtime tests passed, retaining native-success-only unlock reconciliation and strict availability decoding."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Drive decodeVerificationAvailabilitySnapshot with an accessor, coercible object, unknown future success-like string, symbol-bearing envelope, and every approved availability value",
+      "result": "PASS: all four malformed/unknown inputs were rejected, the accessor getter was never invoked, and exactly checking, available, not-present, not-configured, policy-disabled, busy, unavailable, and failed were reconstructed."
+    },
+    {
+      "type": "independent-source-and-authority-inspection",
+      "command": "Inspect the exact Hello adapter, Tauri commands, manager seam, and source-boundary assertions for credential capture, fallback, window/provider/outcome arguments, and recovery authority",
+      "result": "PASS: the Hello block contains HWND interop but no password prompt, LogonUserW, password provider, password buffer, or UWP request. No renderer command accepts a provider, outcome, window handle, PIN, biometric, username, password, or token. The separate recovery command is not called from Hello/primary unlock and retains the exact same-SID password manager path."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests tests.security.test_windows_credentials",
+      "result": "PASS: 15 security/source/profile/credential tests passed; one redirected-vault symlink case was skipped because directory symlinks are unavailable to the current Windows token."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo fmt --check; cargo clippy --lib --locked --offline -- -D warnings; cargo check --bins --examples --locked --offline; desktop TypeScript --noEmit; desktop lint; architecture_check.py --repo .",
+      "result": "PASS: Rust formatting, warnings-denied Clippy, all binary/example compilation, desktop TypeScript/lint, and architecture validation passed. Architecture reports 13 areas, 12 modules, five stable interfaces, and three deployment profiles."
+    },
+    {
+      "type": "dependency-scope-check",
+      "command": "cargo metadata --locked --offline --no-deps; cargo tree --locked --offline for windows@0.61.3 and windows-future@0.2.1 on x86_64-pc-windows-msvc",
+      "result": "PASS: both direct dependencies are Windows-only, exact-pinned, and already present transitively through Tauri/WebView. The root package enables only Foundation, Security_Credentials_UI, Win32_Foundation, and Win32_System_WinRT for this adapter; no additional package version entered the lockfile."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}

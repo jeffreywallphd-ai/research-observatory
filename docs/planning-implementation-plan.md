@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d208b0a3180247679b608b5765baefc90e7fc20780a2d5ba7095e1c6cc3ecff5
+source_sha256: 2bb6c9ccd774c27961d42aabc77f2ff9265f00e8e248bfec1873208b52381246
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1131,9 +1131,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A05.T02 - Implement the Windows Hello native verifier
+### - [x] W1.A05.T02 - Implement the Windows Hello native verifier
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `DONE` / codex / codex-independent-windows-hello-security-reviewer (`approved`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`
 
@@ -1161,9 +1161,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A05.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `90829877b916cb5569a1fb8cf7abb9ee5dfd1a539248a4ac96b08c2f8689bedd`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `90829877b916cb5569a1fb8cf7abb9ee5dfd1a539248a4ac96b08c2f8689bedd`
 
 - Candidate / base / branch: `3f91f7721e293b72d8367e1036c5875dc1f14ff2` / `d61f3250a701f0aa51d05c68ec69f9833dae683d` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-30T16:57:01+00:00`
@@ -1177,15 +1179,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / codex-independent-windows-hello-security-reviewer / `2026-08-30T17:05:36+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A05.T02.review-R01.json` / `7653b00135129ac61a055355fbaae31fe80b0083b39a26ca714111045f1d869b`
+
+**Review notes:** Independent commit-bound security/contract review found no blocking or nonblocking acceptance-bound defect. Base d61f3250a701f0aa51d05c68ec69f9833dae683d is a strict ancestor of candidate 3f91f7721e293b72d8367e1036c5875dc1f14ff2, and immutable submission 52c6830324275a65a315814009172a16a9918940 is a strict descendant of the candidate. Frozen evidence artifacts/evidence/W1.A05.T02.json reproduces SHA-256 ee06f5c37e5d9261404a178da905a3e0a2e8c0e299e0255553d8d9989ed86f60 and Git blob b4a530b52077580807a039637e0b95ae6e6d129b. All 15 declared candidate paths and the six submission-only evidence/projection paths are exact, and both ranges pass patch hygiene. The Windows adapter uses UserConsentVerifier only through the desktop IUserConsentVerifierInterop RequestVerificationForWindowAsync call with an HWND and a fixed content-free message. Its WinRT MTA guard remains alive until the asynchronous availability or verification operation completes, balances every successful RoInitialize with RoUninitialize, reacquires the agile activation factory per bounded call, and maps activation/operation/unknown failures closed. The Hello boundary never references the password prompt, LogonUserW, password buffers, or the password provider. Verified alone maps to succeeded; not-present, not-configured, policy-disabled, busy, retry exhaustion, cancellation, unsupported activation, operation failure, and unknown future enum values remain distinct or fail closed and never fall back. The production Tauri surface accepts no renderer HWND, provider, outcome, or credential data. Hello availability is argument-free, and the provider remains a native-only seam for T03's later persisted selection. Password recovery is a separate argument-free command, is never called by the Hello adapter or primary unlock operation, and delegates to the unchanged non-persisting LogonUserW/current-process EqualSid path. Generic manager admission still reserves exactly one locked generation before provider invocation, blocks replay/backoff, starts Core only after native succeeded, rechecks the generation after Core start, stops raced or failed Core, and cleans reservations after cancellation/failure/panic. The strict availability decoder rejects accessors without invocation, coercible objects, symbol/extra fields, unknown values, and malformed provider/schema values while reconstructing the approved eight availability values. All 35 Rust library tests, 15 frontend/runtime tests, and 15 security/profile/credential tests passed with one expected Windows-token symlink skip. Rust format/Clippy and locked bin/example checks, desktop TypeScript/lint, architecture, dependency resolution, exact path truth, and patch hygiene passed. The real Windows x64 availability harness independently returned not-present. Accordingly, a configured interactive success prompt is unavailable on this host and is truthfully assigned to the conditional S01/W1 hardware gate; no success is inferred from fakes. T03 retains persisted mode selection and transition/recovery authority; T04 retains the approved settings, deliberate recovery UI, and accessibility experience; full cross-capability/platform qualification remains due at W1 exit.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by codex-independent-windows-hello-security-reviewer at `2026-08-30T17:05:36+00:00`
+
+**Latest notes:** Independent commit-bound security/contract review found no blocking or nonblocking acceptance-bound defect. Base d61f3250a701f0aa51d05c68ec69f9833dae683d is a strict ancestor of candidate 3f91f7721e293b72d8367e1036c5875dc1f14ff2, and immutable submission 52c6830324275a65a315814009172a16a9918940 is a strict descendant of the candidate. Frozen evidence artifacts/evidence/W1.A05.T02.json reproduces SHA-256 ee06f5c37e5d9261404a178da905a3e0a2e8c0e299e0255553d8d9989ed86f60 and Git blob b4a530b52077580807a039637e0b95ae6e6d129b. All 15 declared candidate paths and the six submission-only evidence/projection paths are exact, and both ranges pass patch hygiene. The Windows adapter uses UserConsentVerifier only through the desktop IUserConsentVerifierInterop RequestVerificationForWindowAsync call with an HWND and a fixed content-free message. Its WinRT MTA guard remains alive until the asynchronous availability or verification operation completes, balances every successful RoInitialize with RoUninitialize, reacquires the agile activation factory per bounded call, and maps activation/operation/unknown failures closed. The Hello boundary never references the password prompt, LogonUserW, password buffers, or the password provider. Verified alone maps to succeeded; not-present, not-configured, policy-disabled, busy, retry exhaustion, cancellation, unsupported activation, operation failure, and unknown future enum values remain distinct or fail closed and never fall back. The production Tauri surface accepts no renderer HWND, provider, outcome, or credential data. Hello availability is argument-free, and the provider remains a native-only seam for T03's later persisted selection. Password recovery is a separate argument-free command, is never called by the Hello adapter or primary unlock operation, and delegates to the unchanged non-persisting LogonUserW/current-process EqualSid path. Generic manager admission still reserves exactly one locked generation before provider invocation, blocks replay/backoff, starts Core only after native succeeded, rechecks the generation after Core start, stops raced or failed Core, and cleans reservations after cancellation/failure/panic. The strict availability decoder rejects accessors without invocation, coercible objects, symbol/extra fields, unknown values, and malformed provider/schema values while reconstructing the approved eight availability values. All 35 Rust library tests, 15 frontend/runtime tests, and 15 security/profile/credential tests passed with one expected Windows-token symlink skip. Rust format/Clippy and locked bin/example checks, desktop TypeScript/lint, architecture, dependency resolution, exact path truth, and patch hygiene passed. The real Windows x64 availability harness independently returned not-present. Accordingly, a configured interactive success prompt is unavailable on this host and is truthfully assigned to the conditional S01/W1 hardware gate; no success is inferred from fakes. T03 retains persisted mode selection and transition/recovery authority; T04 retains the approved settings, deliberate recovery UI, and accessibility experience; full cross-capability/platform qualification remains due at W1 exit.
 
 **Currently open findings:** -
 
 ### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`, `W1.A05.T02`
 
