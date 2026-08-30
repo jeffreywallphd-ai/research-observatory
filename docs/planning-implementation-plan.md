@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b1465a05ab719d3ae0b55072fb68cce027837378380eccd9648fe75af9b7a065
+source_sha256: e949f52cab809bed3691422ab61e52dde783d9b75e034a1e0e6b3910270e4033
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1304,7 +1304,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / agent:t04-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T03`
 
@@ -1332,9 +1332,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A05.T04
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `25059ddb0f725107c5c479e7521d95e2d89c0bc85c95d758e8693cd0311da94d`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `25059ddb0f725107c5c479e7521d95e2d89c0bc85c95d758e8693cd0311da94d`
 
 - Candidate / base / branch: `50ea2c5200e67b8416ba00a36c140ae6a5cda00c` / `bd8d752a0fcec1f40b1a8abe59b793c783946e4e` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-30T23:05:01+00:00`
@@ -1348,11 +1350,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / agent:t04-independent-reviewer / `2026-08-30T23:18:23+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A05.T04.review-R01.json` / `2139f5c996d74721d3d049643f7acf54d8b22605e70e793361544c1e4b781626`
 
-**Currently open findings:** -
+**Review notes:** Independent commit-bound review authenticated frozen submission 426767c3a0f7e6e68c1dedf937225b8e6f7818ef, exact candidate/base ancestry, branch, all declared changed paths, criterion-manifest SHA-256 f4486b7f9fee3f91f1d8de672536fb0e5f4618de2f85a3ab74b0792be65f354d, and UI-contract SHA-256 801adc47ce3901bc207328c8ddc84e15dcc7083734bdec98ec4787ca7dfb246f. Exact base..candidate patch hygiene and ui_change_gate passed. Independent replay passed 35 focused renderer/model tests, 25 applicable native application-lock tests (one explicit witness intentionally ignored in this filtered run), and the built-product browser check, including polling-draft retention, locked secrecy, explicit Hello recovery, cancellation/focus, single commit, and unlock only after the mocked native committed receipt. The adopted GOV-MAINT-0006 through GOV-MAINT-0008 records and independent-review chains remain bounded to identity, activation, historical-baseline, and maintenance-envelope evidence controls; the exact gate still requires one v1.4 contract, exact task/base/owner/reference equality, approval ancestry, reviewed maintenance provenance, and governed changed-file equality, so no authority weakening was found. Three blocking acceptance defects remain. A configured Windows Hello success prompt is legitimately hardware-conditional on this not-present host; full packaging, performance, accumulated security/accessibility, and cross-capability qualification remain legitimate S02/amendment/W1-exit duties rather than T04 defects. The authenticated 66-capture v1.4 visual baseline was not automatically rewritten or replayed in full during this review because its approval/package/history/control boundary authenticated and no changed visual bytes exist after the recorded candidate.
+
+**Findings opened:**
+
+- `W1.A05.T04-R01-F01` `high` blocking=`True` criterion=`3` — Response-loss reconciliation can claim that a different same-mode policy was the requested commit; reproduce: At exact candidate, ApplicationSettingsController.reconcileInterruptedCommit in apps/desktop/src/app/applicationSettings.ts:275-277 accepts success when status has only the requested signInMode, valid configuration, and a higher revision. The controller does not retain or compare the requested normalized profileName or inactivityTimeoutMinutes. Reproduce with the existing QueueTransport pattern: prepare from a windows-password revision-2 snapshot for target windows-password/profile 'Requested'/timeout 60; make commit throw; return a valid revision-3 windows-password status with profile 'Other' and timeout 0. The controller returns reconciled-committed and the workspace announces success although the requested target was not published. Timeout 0 materially removes restart/inactivity prompting, so this is not merely cosmetic. The current response-loss test covers only matching mode/revision and misses this substitution.; remediate: Bind the controller's pending state to the complete normalized requested target and do not claim reconciliation from mode/revision alone. Prefer replaying the same opaque handle/confirmation to obtain the native idempotent committed receipt; if status is used, require exact target mode, profile, timeout, valid configuration, and the expected revision/receipt semantics, otherwise report conflict/uncertain state without success. Add same-mode wrong-profile and wrong-timeout concurrent/status fixtures, including requested nonzero versus observed zero, and prove no success announcement or authority projection occurs.
+- `W1.A05.T04-R01-F02` `high` blocking=`True` criterion=`1` — Opening Application Settings destroys the current guided-workflow position; reproduce: IntentWorkspace owns its active form and workflow position in component-local state (apps/desktop/src/app/IntentWorkspace.tsx:245-252). ApplicationRuntime changes workspace to application-settings at line 579 and conditionally mounts IntentWorkspace only while workspace === 'intent' at line 719, replacing it with ApplicationSettingsWorkspace at line 764. Return restores only the workspace enum, so IntentWorkspace remounts and reinitializes its unsaved primary-use-case/form/history/acceptance state. Reproduce with an open compatible project: enter Research intent, change Primary use case or another unsaved intent field, open Application Settings from the top bar, then Return; the guided-workflow draft/position resets to initialWorkspace. currentProject survives, but the separately required workflow position does not. No submitted interaction test performs this round trip despite the criterion-manifest claim.; remediate: Preserve the previous guided workspace instance/state across the Application Settings detour (for example, keep it mounted but inaccessible/inert while the application-level destination is active, or hoist its navigation/form position into a stable project-keyed owner). Add a real browser interaction test from an open-project Research Intent state that changes an unsaved workflow position, opens and returns from Application Settings, and proves the exact project, workspace, field values, and intended focus are retained.
+- `W1.A05.T04-R01-F03` `medium` blocking=`True` criterion=`5` — Locked recovery is not a complete modal boundary and Application Settings return does not restore the initiating focus; reproduce: The document shortcut handler guards only applicationSettingsBlocked (ApplicationRuntime.tsx:458-491); lockedRecoveryConfirmation is not included. ApplicationLockedView's alertdialog key handler at lines 203-226 handles only Escape and Tab. Reproduce from valid locked Hello with recovery offered: open the recovery alertdialog, press Ctrl+/, then confirm recovery. The hidden shortcutsOpen state is changed behind the modal and the Shortcuts dialog appears immediately when the unlocked shell mounts, stealing the post-recovery focus path. Separately, Application Settings can be opened from the top-bar profile control, sidebar, or command result, but returnFromApplicationSettings always focuses applicationSettingsTriggerRef at line 586, so sidebar/command entry does not restore the initiating control. The built-frame replay covers Escape and recovery-trigger focus but not these shortcut/origin cases.; remediate: Treat lockedRecoveryConfirmation as a global interaction guard: suppress Ctrl+K, Ctrl+/, and Alt+H and keep all content outside the alertdialog inert until a terminal recovery result. Capture the actual Application Settings initiating element for top-bar, sidebar, and command entry and restore that connected element on Return/cancel, with a stable fallback only when it no longer exists. Add built-browser keyboard tests for all global shortcuts during locked confirmation and exact Return focus from each entry path.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:t04-independent-reviewer at `2026-08-30T23:18:23+00:00`
+
+**Latest notes:** Independent commit-bound review authenticated frozen submission 426767c3a0f7e6e68c1dedf937225b8e6f7818ef, exact candidate/base ancestry, branch, all declared changed paths, criterion-manifest SHA-256 f4486b7f9fee3f91f1d8de672536fb0e5f4618de2f85a3ab74b0792be65f354d, and UI-contract SHA-256 801adc47ce3901bc207328c8ddc84e15dcc7083734bdec98ec4787ca7dfb246f. Exact base..candidate patch hygiene and ui_change_gate passed. Independent replay passed 35 focused renderer/model tests, 25 applicable native application-lock tests (one explicit witness intentionally ignored in this filtered run), and the built-product browser check, including polling-draft retention, locked secrecy, explicit Hello recovery, cancellation/focus, single commit, and unlock only after the mocked native committed receipt. The adopted GOV-MAINT-0006 through GOV-MAINT-0008 records and independent-review chains remain bounded to identity, activation, historical-baseline, and maintenance-envelope evidence controls; the exact gate still requires one v1.4 contract, exact task/base/owner/reference equality, approval ancestry, reviewed maintenance provenance, and governed changed-file equality, so no authority weakening was found. Three blocking acceptance defects remain. A configured Windows Hello success prompt is legitimately hardware-conditional on this not-present host; full packaging, performance, accumulated security/accessibility, and cross-capability qualification remain legitimate S02/amendment/W1-exit duties rather than T04 defects. The authenticated 66-capture v1.4 visual baseline was not automatically rewritten or replayed in full during this review because its approval/package/history/control boundary authenticated and no changed visual bytes exist after the recorded candidate.
+
+**Currently open findings:** `W1.A05.T04-R01-F01`, `W1.A05.T04-R01-F02`, `W1.A05.T04-R01-F03`
 
 
 # Capability contributions, slices, and tasks
