@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3a8508a6c2dcf2518be25fbaee3fc68cdd98af6bf458a82c0ca85703df9fceef
+source_sha256: 8de6ae39bc378257543776e08a5168ae638d7cdf36058a0b0a6d3bb127ee52b2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1203,7 +1203,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
 
-**Status / owner / review:** `IN_PROGRESS` / codex / codex-independent-sign-in-policy-security-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / codex-independent-sign-in-policy-security-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`, `W1.A05.T02`
 
@@ -1228,6 +1228,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A05.T03.json` at `deec1063e6bcd9a17d2a10c574103c10ebdd7785`
+- `artifacts/evidence/W1.A05.T03.remediation-01.json` at `c94ab3ef76529f7eee0d2f002423c21aec3e1161`
 
 #### Review history — W1.A05.T03
 
@@ -1263,7 +1264,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `fce7cc189396d82ff36e51c7974870ef892333659eb912069451079e4b6045ce`
+
+- Candidate / base / branch: `c94ab3ef76529f7eee0d2f002423c21aec3e1161` / `deec1063e6bcd9a17d2a10c574103c10ebdd7785` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T18:23:42+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T03.remediation-01.json` / `cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1` / `c94ab3ef76529f7eee0d2f002423c21aec3e1161`
+- Acceptance-criteria SHA-256: `4250e5765a66a110aff54ee25e0d34853cb42fe443c8684f126079931f8bdc96`
+- Verification-selection SHA-256: `605cf28ae2db68067a23f55b6de56742e27449d6fdc300dc59b47166e66e4af0`
+- Changed paths: `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/application_sign_in_policy.rs`, `apps/desktop/src-tauri/src/lib.rs`, `artifacts/evidence/W1.A05.T03.json`, `artifacts/evidence/W1.A05.T03.review-R01.json`, `docs/architecture/application-lock.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/security/test_application_lock_source.py`
+- Selected checks: `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked`, `cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked -- -D warnings`, `npm --prefix apps/desktop test -- --run; npm --prefix apps/desktop run build; npm --prefix apps/desktop run lint`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract`, `.venv\Scripts\ruff.exe check tests/security/test_application_lock_source.py; .venv\Scripts\ruff.exe format --check tests/security/test_application_lock_source.py; .venv\Scripts\python.exe tools\architecture_check.py --repo .; .venv\Scripts\python.exe tools\build_manifest.py --repo . --output artifacts/tmp/W1.A05.T03-R02-build-manifest.json; git diff --check deec1063e6bcd9a17d2a10c574103c10ebdd7785..c94ab3ef76529f7eee0d2f002423c21aec3e1161`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base deec1063e6bcd9a17d2a10c574103c10ebdd7785 --affected-head c94ab3ef76529f7eee0d2f002423c21aec3e1161 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T03-R02-affected-selection.json`
+- Deferred checks: `W1.A05.T04 still owns the governed settings, confirmation/warning, recovery guidance, keyboard/focus, accessibility, and approved-reference experience, including the disclosed activation-reference mismatch.`, `desktop:performance remains explicitly gate-bound by the governed selector to W1 exit.`, `The complete accumulated repository, release-authoritative Windows x64, packaging, and cross-capability matrix remains due at W1 exit.`
+- Selection rationale: R02 is bounded to W1.A05.T03-R01-F01. Root cause: R01 implemented cross-process write serialization and CAS but treated the policy as if only one manager process could exist, without enforcing that invariant or reloading stale managers. The remediation makes that implicit assumption executable at the release-authoritative Windows startup boundary: one stable-root-derived kernel object exists for the lifetime of the only process permitted to construct the production manager and start Core. Credible incremental failures are path aliases creating different leases, a second process entering before lease acquisition, thread-affine release, abrupt process exit leaving a permanent lease, stale child publication bypassing CAS, abandoned write mutex deadlock, or restart reading partial/incorrect bytes. Stable path derivation, acquisition before manager/Core construction, existence-only handle lifetime, and real child-process duplicate/publication/termination/abandonment/restart tests directly cover those risks. The full prior native/security/renderer matrix was replayed to preserve every T03 boundary.
+- Prior round / replayed open findings: `R01` / `W1.A05.T03-R01-F01`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by codex-independent-sign-in-policy-security-reviewer at `2026-08-30T18:15:49+00:00`
 
