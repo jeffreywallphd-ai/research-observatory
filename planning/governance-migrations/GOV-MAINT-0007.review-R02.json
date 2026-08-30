@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0007",
+  "reviewId": "GOV-MAINT-0007.R02",
+  "reviewedCommit": "7be903f350a7b38901ef96154f5cb85f64475533",
+  "reviewer": "agent:gov-maint-0007-reviewer",
+  "reviewedAt": "2026-08-30T21:26:36.4591347Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "apps/desktop/src/app/audit-lineage.conformance.json",
+    "packages/ui-tokens/src/index.ts",
+    "packages/ui-tokens/token-contract.json",
+    "planning/governance-migrations/GOV-MAINT-0007.json",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0007-R02-F01",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "Authority-bound reference approval can be fabricated to launder a newer package",
+      "reproduction": "In a real-Git fixture, mutate the newer reference package and APPROVAL.yaml while retaining an unresolvable prior W1.A05 authority pointer; approval_lineage_errors returns no errors.",
+      "requiredResolution": "Resolve and authenticate the exact authority-record introduction commit, blob hash, amendment/change-request identities, approval status, ancestry, and uniqueness relative to the preceding reference approval. Add actual-authority and fabricated-reapproval regressions."
+    },
+    {
+      "id": "GOV-MAINT-0007-R02-F02",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "The maintenance control-only invariant excludes product build and non-UI runtime paths",
+      "reproduction": "In a real-Git fixture, add a throwing apps/desktop/scripts/assemble-application.mjs to an otherwise exact reviewed maintenance sequence; ui_change_gate.validate returns ok=true.",
+      "requiredResolution": "Enforce an explicit control-only maintenance envelope across product, build, and runtime paths; restore the assembly scripts to predecessor semantics for maintenance and move their v1.4 activation into T04-authorized work. Add build-script and non-UI-runtime denial regressions."
+    }
+  ]
+}
