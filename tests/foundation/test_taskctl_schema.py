@@ -769,7 +769,7 @@ class BacklogSchemaTests(unittest.TestCase):
         missing["control_plane"]["control_generations"].pop()
         self.assertTrue(taskctl.governance_control_generation_errors(missing, None))
 
-    def test_revision_twelve_headroom_requires_neutral_gcr7_and_bounded_maintenance(self) -> None:
+    def test_revision_twelve_accepts_bounded_maintenance_with_or_without_neutral_gcr7(self) -> None:
         data = copy.deepcopy(self.canonical)
         generation = {
             "id": "GCR-0007",
@@ -913,6 +913,34 @@ class BacklogSchemaTests(unittest.TestCase):
         self.assertEqual([], backlog_schema_errors(revision_twelve, schema_path=self.schema))
         self.assertEqual([], taskctl.governance_control_generation_errors(revision_twelve, None))
         self.assertEqual([], taskctl.recovery_hold_errors(revision_twelve, None))
+
+        post_migration = copy.deepcopy(revision_twelve)
+        post_migration["control_plane"]["control_generations"].pop()
+        self.assertEqual([], backlog_schema_errors(post_migration, schema_path=self.schema))
+        self.assertEqual([], taskctl.governance_control_generation_errors(post_migration, None))
+        self.assertEqual([], taskctl.recovery_hold_errors(post_migration, None))
+
+    def test_exact_migrated_w1_a04_terminal_reservation_is_not_fabricated(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0004.packet.json").read_text(encoding="utf-8")
+        )
+        reservation = packet["authorityChain"]["reservedAmendments"][0]
+        data["wave_amendments"].append(
+            taskctl.materialized_superseded_reservation(
+                REPO,
+                "W1",
+                reservation,
+                packet["migrationAuthority"],
+            )
+        )
+        hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
+        for supplement in hold["supplements"]:
+            errors, _packet = taskctl.recovery_supplement_authority_errors(data, REPO, hold, supplement)
+            self.assertFalse(
+                any("pre-append target amendment was fabricated" in error for error in errors),
+                errors,
+            )
 
     def test_neutral_gcr7_does_not_change_the_w1_a04_postappend_denial(self) -> None:
         before = copy.deepcopy(self.canonical)
