@@ -19,7 +19,7 @@ describe("functional desktop application", () => {
     expect(html).toContain('id="shell-command"');
     expect(html).toContain('data-theme-toggle="true"');
     expect(html).toContain('data-local-profile="true"');
-    expect(html).toContain('data-application-lock="true"');
+    expect(html).not.toContain('data-application-lock="true"');
     expect(html).toContain('aria-pressed="false"');
     expect(html).toContain(">Dark theme</button>");
     expect(html).not.toContain("Use dark theme");
@@ -34,10 +34,12 @@ describe("functional desktop application", () => {
     expect(html).toContain("Only implemented capabilities appear here.");
     expect(html).toContain("Local projects");
     expect(html).toContain("Project settings");
+    expect(html).toContain("Application settings");
     expect(html).toContain("Audit &amp; lineage");
     expect(html).toContain("Diagnostics &amp; support");
     expect(html).toContain("Open local projects");
     expect(html).toContain("Open project settings");
+    expect(html).toContain("Open application settings");
     expect(html).toContain("Open audit &amp; lineage");
     expect(html).toContain("Open diagnostics &amp; support");
     expect(html).not.toContain("prototype-index.html");
@@ -51,6 +53,8 @@ describe("functional desktop application", () => {
         snapshot={{
           ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
           state: "locked",
+          signInMode: "windows-password",
+          policyRevision: 2,
           profileName: null,
           reason: "manual",
         }}
@@ -61,7 +65,8 @@ describe("functional desktop application", () => {
     );
 
     expect(html).toContain('data-application-locked="true"');
-    expect(html).toContain("Unlock with Windows");
+    expect(html).toContain("Configured provider:</strong> Windows password");
+    expect(html).toContain("Unlock with Windows password");
     expect(html).toContain("not Windows-account isolation");
     expect(html).toContain("No Research Observatory or cloud account is required");
     expect(html).not.toContain("Sensitive project");
@@ -69,6 +74,32 @@ describe("functional desktop application", () => {
     expect(html).not.toContain("Diagnostics &amp; support");
     expect(html).not.toContain('id="shell-command"');
     expect(html).not.toContain("data-local-service-boundary");
+  });
+
+  it("renders explicit same-user recovery without exposing protected application content", () => {
+    const html = renderToStaticMarkup(
+      <ApplicationLockedView
+        snapshot={{
+          ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+          state: "locked",
+          signInMode: "windows-password",
+          policyRevision: 2,
+          profileName: null,
+          configurationState: "invalid",
+          reason: "configuration-invalid",
+        }}
+        busy={false}
+        error={null}
+        onUnlock={() => undefined}
+        onRecovery={() => undefined}
+      />,
+    );
+
+    expect(html).toContain("Recovery required");
+    expect(html).toContain("Recover with Windows password");
+    expect(html).not.toContain("Local projects");
+    expect(html).not.toContain("Application settings");
+    expect(html).not.toContain("Local researcher");
   });
 
   it("publishes a unique bounded shortcut registry and deterministic theme behavior", () => {

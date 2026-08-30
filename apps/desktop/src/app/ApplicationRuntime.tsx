@@ -6,22 +6,28 @@ import { Button, Field, Panel, StatusBadge, Typography } from "@research-observa
 import type { ProjectProjection } from "@research-observatory/contracts/core-api";
 
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
+import { ApplicationSettingsWorkspace } from "./ApplicationSettingsWorkspace";
+import {
+  ApplicationSettingsController,
+  helloAvailabilityPresentation,
+  type TransitionControllerResult,
+} from "./applicationSettings";
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 import { AuditLineageWorkspace } from "./AuditLineageWorkspace";
 import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
 import { ProjectsWorkspace } from "./ProjectsWorkspace";
 import { IntentWorkspace } from "./IntentWorkspace";
 import {
-  APPLICATION_LOCK_TIMEOUTS,
   applicationUnlockFailureMessage,
   decodeApplicationUnlockAttempt,
   decodeApplicationLockSnapshot,
+  decodeVerificationAvailabilitySnapshot,
   DEFAULT_APPLICATION_LOCK_SNAPSHOT,
   failClosedApplicationLockSnapshot,
-  normalizeLocalProfileName,
   reconcileApplicationLockSnapshot,
   type ApplicationLockSnapshot,
   type ApplicationLockSnapshotSource,
+  type VerificationAvailability,
 } from "./applicationLock";
 
 export type ApplicationTheme = "light" | "dark";
@@ -110,6 +116,10 @@ interface ApplicationLockedViewProps {
   readonly busy: boolean;
   readonly error: string | null;
   readonly onUnlock: () => void;
+  readonly helloAvailability?: VerificationAvailability;
+  readonly recoveryConfirmation?: boolean;
+  readonly onRecovery?: () => void;
+  readonly onRecoveryDecision?: (confirmed: boolean) => void;
 }
 
 export function ApplicationLockedView({
@@ -117,7 +127,13 @@ export function ApplicationLockedView({
   busy,
   error,
   onUnlock,
+  helloAvailability = "checking",
+  recoveryConfirmation = false,
+  onRecovery,
+  onRecoveryDecision,
 }: ApplicationLockedViewProps): ReactNode {
+  const recoveryCancelRef = useRef<HTMLButtonElement>(null);
+  const recoveryConfirmRef = useRef<HTMLButtonElement>(null);
   const reason = snapshot.reason === "inactivity"
     ? "The inactivity interval elapsed."
     : snapshot.reason === "application-restart"
@@ -125,6 +141,13 @@ export function ApplicationLockedView({
       : snapshot.reason === "configuration-invalid"
         ? "The local lock configuration could not be validated."
         : "The application was locked manually.";
+  const provider = snapshot.signInMode === "windows-hello"
+    ? "Windows Hello"
+    : snapshot.signInMode === "windows-password"
+      ? "Windows password"
+      : "Windows";
+  const hello = helloAvailabilityPresentation(helloAvailability);
+  const recoveryRequired = snapshot.configurationState === "invalid";
   return (
     <div className="locked-application" data-application-locked="true">
       <main className="locked-card" aria-labelledby="locked-title">
@@ -139,13 +162,53 @@ export function ApplicationLockedView({
           <p>{snapshot.threatDisclosure}</p>
           <p>Use the current Windows user credentials. No Research Observatory or cloud account is required.</p>
         </Panel>
+        <p><strong>Configured provider:</strong> {recoveryRequired ? "Recovery required" : provider}</p>
+        {snapshot.signInMode === "windows-hello" ? <p role="status"><strong>Windows Hello:</strong> {hello.detail}</p> : null}
         {error ? <p className="locked-error" role="alert">{error}</p> : null}
         {snapshot.retryAfterSeconds > 0 ? (
           <p role="status">Try again in about {snapshot.retryAfterSeconds} seconds.</p>
         ) : null}
-        <Button tone="primary" autoFocus disabled={busy} onClick={onUnlock}>
-          {busy ? "Checking Windows credentials…" : "Unlock with Windows"}
-        </Button>
+        {recoveryRequired ? (
+          <Button tone="primary" autoFocus disabled={busy || !onRecovery} onClick={onRecovery}>
+            {busy ? "Preparing Windows recovery…" : "Recover with Windows password"}
+          </Button>
+        ) : (
+          <Button tone="primary" autoFocus disabled={busy} onClick={onUnlock}>
+            {busy ? `Checking ${provider}…` : `Unlock with ${provider}`}
+          </Button>
+        )}
+        {recoveryConfirmation ? (
+          <div
+            className="locked-recovery-confirmation"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="locked-recovery-title"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.preventDefault();
+                onRecoveryDecision?.(false);
+              } else if (event.key === "Tab") {
+                const first = recoveryCancelRef.current;
+                const last = recoveryConfirmRef.current;
+                if (!first || !last) return;
+                if (event.shiftKey && document.activeElement === first) {
+                  event.preventDefault();
+                  last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                  event.preventDefault();
+                  first.focus();
+                }
+              }
+            }}
+          >
+            <Typography id="locked-recovery-title" as="h2" variant="section-title">Confirm recovery to No login</Typography>
+            <p>Windows verified the same user. This resets only the invalid Research Observatory sign-in policy; project protections remain unchanged.</p>
+            <div className="dialog-actions">
+              <Button ref={recoveryCancelRef} autoFocus disabled={busy} onClick={() => onRecoveryDecision?.(false)}>Keep application locked</Button>
+              <Button ref={recoveryConfirmRef} tone="danger" disabled={busy} onClick={() => onRecoveryDecision?.(true)}>Confirm recovery</Button>
+            </div>
+          </div>
+        ) : null}
       </main>
     </div>
   );
@@ -158,12 +221,14 @@ interface CommandDefinition {
   readonly run: () => void;
 }
 
+type ApplicationWorkspace = "projects" | "home" | "intent" | "audit" | "settings" | "application-settings" | "diagnostics";
+
 export function ApplicationRuntime(): ReactNode {
   const [theme, setTheme] = useState<ApplicationTheme>(() => storedTheme(globalThis.window?.localStorage ?? null));
   const [query, setQuery] = useState("");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
-  const [workspace, setWorkspace] = useState<"projects" | "home" | "intent" | "audit" | "settings" | "diagnostics">("home");
+  const [workspace, setWorkspace] = useState<ApplicationWorkspace>("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
   const [applicationLock, setApplicationLock] = useState<ApplicationLockSnapshot>(() => hasNativeRuntime()
     ? {
@@ -174,21 +239,24 @@ export function ApplicationRuntime(): ReactNode {
     : DEFAULT_APPLICATION_LOCK_SNAPSHOT);
   const [unlockBusy, setUnlockBusy] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [profileNameDraft, setProfileNameDraft] = useState("");
-  const [timeoutDraft, setTimeoutDraft] = useState<number>(0);
-  const [profileError, setProfileError] = useState<string | null>(null);
-  const [profileBusy, setProfileBusy] = useState(false);
+  const [lockedHelloAvailability, setLockedHelloAvailability] = useState<VerificationAvailability>("checking");
+  const [lockedRecoveryConfirmation, setLockedRecoveryConfirmation] = useState(false);
   const commandRef = useRef<HTMLInputElement>(null);
   const homeRef = useRef<HTMLElement>(null);
   const shortcutTriggerRef = useRef<HTMLButtonElement>(null);
   const shortcutCloseRef = useRef<HTMLButtonElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
-  const profileTriggerRef = useRef<HTMLButtonElement>(null);
-  const profileNameRef = useRef<HTMLInputElement>(null);
+  const applicationSettingsTriggerRef = useRef<HTMLButtonElement>(null);
+  const previousWorkspaceRef = useRef<ApplicationWorkspace>("home");
   const applicationLockRef = useRef(applicationLock);
   const nativeLockSnapshotRef = useRef<ApplicationLockSnapshot | null>(null);
   const lockFailClosedRef = useRef(false);
+  const lockedRecoveryControllerRef = useRef<ApplicationSettingsController | null>(null);
+  if (lockedRecoveryControllerRef.current === null) {
+    lockedRecoveryControllerRef.current = new ApplicationSettingsController({
+      invoke: (command, arguments_) => invoke(command, arguments_),
+    });
+  }
 
   const applyLockSnapshot = useCallback((snapshot: ApplicationLockSnapshot) => {
     applicationLockRef.current = snapshot;
@@ -198,7 +266,6 @@ export function ApplicationRuntime(): ReactNode {
       setQuery("");
       setWorkspace("home");
       setShortcutsOpen(false);
-      setProfileOpen(false);
     }
   }, []);
 
@@ -278,6 +345,21 @@ export function ApplicationRuntime(): ReactNode {
   }, [applyNativeLockSnapshot, failClosedApplicationLock]);
 
   useEffect(() => {
+    if (!hasNativeRuntime() || applicationLock.state !== "locked" || applicationLock.signInMode !== "windows-hello") {
+      setLockedHelloAvailability("checking");
+      return;
+    }
+    let disposed = false;
+    setLockedHelloAvailability("checking");
+    void invoke<unknown>("application_lock_hello_availability").then((value) => {
+      if (!disposed) setLockedHelloAvailability(decodeVerificationAvailabilitySnapshot(value).availability);
+    }).catch(() => {
+      if (!disposed) setLockedHelloAvailability("failed");
+    });
+    return () => { disposed = true; };
+  }, [applicationLock.signInMode, applicationLock.state]);
+
+  useEffect(() => {
     if (!hasNativeRuntime() || applicationLock.state === "locked") return;
     let lastForwarded = 0;
     const activity = (): void => {
@@ -343,22 +425,13 @@ export function ApplicationRuntime(): ReactNode {
 
   useEffect(() => {
     if (shortcutsOpen) shortcutCloseRef.current?.focus();
-    if (profileOpen) profileNameRef.current?.focus();
-  }, [profileOpen, shortcutsOpen]);
+  }, [shortcutsOpen]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
       const commandShortcut = isShortcut(event, "k", "ctrl");
       const helpShortcut = isShortcut(event, "/", "ctrl");
       const homeShortcut = isShortcut(event, "h", "alt");
-      if (profileOpen) {
-        if (event.key === "Escape") {
-          event.preventDefault();
-          setProfileOpen(false);
-          profileTriggerRef.current?.focus();
-        }
-        return;
-      }
       if (shortcutsOpen) {
         if (event.key === "Escape") {
           event.preventDefault();
@@ -384,7 +457,7 @@ export function ApplicationRuntime(): ReactNode {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [closeShortcuts, openShortcuts, profileOpen, shortcutsOpen]);
+  }, [closeShortcuts, openShortcuts, shortcutsOpen]);
 
   const lockNow = useCallback(() => {
     const locked: ApplicationLockSnapshot = {
@@ -427,39 +500,57 @@ export function ApplicationRuntime(): ReactNode {
       .finally(() => setUnlockBusy(false));
   }, [applyNativeLockSnapshot, failClosedApplicationLock]);
 
-  const openProfile = useCallback(() => {
-    setProfileNameDraft(applicationLock.profileName ?? "");
-    setTimeoutDraft(applicationLock.inactivityTimeoutMinutes);
-    setProfileError(null);
-    setProfileOpen(true);
-  }, [applicationLock]);
+  const applyLockedRecoveryResult = useCallback((result: TransitionControllerResult) => {
+    if (result.kind === "confirmation-required") {
+      setLockedRecoveryConfirmation(true);
+      setUnlockError(null);
+      setAnnouncement(result.message);
+      return;
+    }
+    setLockedRecoveryConfirmation(false);
+    if (result.snapshot) {
+      applyNativeLockSnapshot(
+        result.snapshot,
+        result.kind === "committed" || result.kind === "reconciled-committed"
+          ? "explicit-unlock"
+          : "status",
+      );
+    }
+    if (result.kind === "committed" || result.kind === "reconciled-committed") {
+      setUnlockError(null);
+      setAnnouncement(result.message);
+    } else {
+      setUnlockError(result.message);
+    }
+  }, [applyNativeLockSnapshot]);
 
-  const saveProfile = useCallback(() => {
-    if (!hasNativeRuntime()) {
-      setProfileError("Profile settings require the installed desktop application.");
-      return;
-    }
-    let profileName: string | null;
-    try {
-      profileName = normalizeLocalProfileName(profileNameDraft);
-    } catch (error) {
-      setProfileError(error instanceof Error ? error.message : "Invalid profile name.");
-      return;
-    }
-    setProfileBusy(true);
-    setProfileError(null);
-    void invoke<unknown>("application_lock_configure", {
-      profileName,
-      inactivityTimeoutMinutes: timeoutDraft,
-    }).then((value) => {
-      applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "status");
-      setProfileOpen(false);
-      profileTriggerRef.current?.focus();
-      setAnnouncement("Local profile and application-lock settings saved.");
-    }).catch(() => {
-      setProfileError("The local profile could not be saved. Existing protection remains unchanged.");
-    }).finally(() => setProfileBusy(false));
-  }, [applyNativeLockSnapshot, profileNameDraft, timeoutDraft]);
+  const prepareLockedRecovery = useCallback(() => {
+    if (!hasNativeRuntime()) return;
+    setUnlockBusy(true);
+    setUnlockError(null);
+    void lockedRecoveryControllerRef.current?.prepareRecovery()
+      .then(applyLockedRecoveryResult)
+      .finally(() => setUnlockBusy(false));
+  }, [applyLockedRecoveryResult]);
+
+  const decideLockedRecovery = useCallback((confirmed: boolean) => {
+    setUnlockBusy(true);
+    void lockedRecoveryControllerRef.current?.confirm(confirmed)
+      .then(applyLockedRecoveryResult)
+      .finally(() => setUnlockBusy(false));
+  }, [applyLockedRecoveryResult]);
+
+  const openApplicationSettings = useCallback(() => {
+    if (workspace !== "application-settings") previousWorkspaceRef.current = workspace;
+    setWorkspace("application-settings");
+    announce("Application Security and sign-in settings opened.");
+  }, [announce, workspace]);
+
+  const returnFromApplicationSettings = useCallback(() => {
+    setWorkspace(previousWorkspaceRef.current === "application-settings" ? "home" : previousWorkspaceRef.current);
+    announce("Returned to the previous workspace.");
+    globalThis.window?.requestAnimationFrame(() => applicationSettingsTriggerRef.current?.focus());
+  }, [announce]);
 
   const commands = useMemo<readonly CommandDefinition[]>(() => [
     {
@@ -488,6 +579,12 @@ export function ApplicationRuntime(): ReactNode {
         setWorkspace("settings");
         announce("Project privacy and retention settings opened.");
       },
+    },
+    {
+      id: "open-application-settings",
+      label: "Open application settings",
+      description: "Review application-wide Security and sign-in controls for this Windows account.",
+      run: openApplicationSettings,
     },
     {
       id: "open-audit-lineage",
@@ -519,13 +616,24 @@ export function ApplicationRuntime(): ReactNode {
       description: "Open the keyboard command reference.",
       run: () => openShortcuts(commandRef.current),
     },
-  ], [announce, applyTheme, openShortcuts, theme]);
+  ], [announce, applyTheme, openApplicationSettings, openShortcuts, theme]);
   const normalizedQuery = query.trim().toLowerCase();
   const visibleCommands = commands.filter(({ label, description }) =>
     !normalizedQuery || `${label} ${description}`.toLowerCase().includes(normalizedQuery));
 
   if (applicationLock.state === "locked") {
-    return <ApplicationLockedView snapshot={applicationLock} busy={unlockBusy} error={unlockError} onUnlock={unlock} />;
+    return (
+      <ApplicationLockedView
+        snapshot={applicationLock}
+        busy={unlockBusy}
+        error={unlockError}
+        onUnlock={unlock}
+        helloAvailability={lockedHelloAvailability}
+        recoveryConfirmation={lockedRecoveryConfirmation}
+        onRecovery={prepareLockedRecovery}
+        onRecoveryDecision={decideLockedRecovery}
+      />
+    );
   }
 
   return (
@@ -540,10 +648,10 @@ export function ApplicationRuntime(): ReactNode {
           <span className="project-context" data-project-context>
             {currentProject ? `${currentProject.displayName} · ${currentProject.accessMode === "read-only" ? "Read-only" : currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
           </span>
-          <Button ref={profileTriggerRef} onClick={openProfile} aria-haspopup="dialog" data-local-profile>
+          <Button ref={applicationSettingsTriggerRef} onClick={openApplicationSettings} data-local-profile data-application-settings-trigger>
             {applicationLock.profileName ?? "Local profile"}
           </Button>
-          <Button onClick={lockNow} data-application-lock>Lock</Button>
+          {applicationLock.signInMode === "none" ? null : <Button onClick={lockNow} data-application-lock>Lock</Button>}
           <Button ref={shortcutTriggerRef} onClick={() => openShortcuts(shortcutTriggerRef.current)} aria-haspopup="dialog" data-shortcut-help>
             Shortcuts
           </Button>
@@ -561,6 +669,7 @@ export function ApplicationRuntime(): ReactNode {
             <button type="button" aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
             <button type="button" aria-current={workspace === "audit" ? "page" : undefined} onClick={() => setWorkspace("audit")}>Audit &amp; lineage</button>
             <button type="button" aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
+            <button type="button" aria-current={workspace === "application-settings" ? "page" : undefined} onClick={openApplicationSettings}>Application settings</button>
             <button type="button" aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
           <p>Only implemented capabilities appear here.</p>
@@ -618,6 +727,16 @@ export function ApplicationRuntime(): ReactNode {
           </div>
           </> : workspace === "settings" ? (
             <ProjectSettingsWorkspace project={currentProject} announce={announce} />
+          ) : workspace === "application-settings" ? (
+            <ApplicationSettingsWorkspace
+              snapshot={applicationLock}
+              announce={announce}
+              onSnapshot={(snapshot, recovered) => applyNativeLockSnapshot(
+                snapshot,
+                recovered ? "explicit-unlock" : "status",
+              )}
+              onReturn={returnFromApplicationSettings}
+            />
           ) : <DiagnosticsWorkspace announce={announce} />}
         </main>
       </div>
@@ -648,43 +767,6 @@ export function ApplicationRuntime(): ReactNode {
         </div>
       ) : null}
 
-      {profileOpen ? (
-        <div className="dialog-backdrop" role="presentation">
-          <section className="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profile-title">
-            <Typography id="profile-title" as="h2" variant="section-title">Local profile &amp; application lock</Typography>
-            <p>The optional name stays on this Windows device and is hidden whenever the application is locked.</p>
-            <label htmlFor="local-profile-name">Local profile name (optional)</label>
-            <input
-              ref={profileNameRef}
-              id="local-profile-name"
-              value={profileNameDraft}
-              maxLength={80}
-              autoComplete="off"
-              onChange={(event) => setProfileNameDraft(event.currentTarget.value)}
-            />
-            <label htmlFor="application-lock-timeout">Lock after inactivity</label>
-            <select
-              id="application-lock-timeout"
-              value={timeoutDraft}
-              onChange={(event) => setTimeoutDraft(Number(event.currentTarget.value))}
-            >
-              {APPLICATION_LOCK_TIMEOUTS.map((minutes) => (
-                <option key={minutes} value={minutes}>{minutes === 0 ? "Disabled" : `${minutes} minutes`}</option>
-              ))}
-            </select>
-            <p className="field-help">Manual lock remains available when inactivity lock is disabled.</p>
-            <Panel title="Protection boundary">
-              <p>{applicationLock.threatDisclosure}</p>
-              <p>Unlock uses the current Windows credentials and does not require a cloud account.</p>
-            </Panel>
-            {profileError ? <p role="alert" className="locked-error">{profileError}</p> : null}
-            <div className="dialog-actions">
-              <Button disabled={profileBusy} onClick={() => { setProfileOpen(false); profileTriggerRef.current?.focus(); }}>Cancel</Button>
-              <Button tone="primary" disabled={profileBusy} onClick={saveProfile}>{profileBusy ? "Saving…" : "Save settings"}</Button>
-            </div>
-          </section>
-        </div>
-      ) : null}
     </div>
   );
 }

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "W1.A05.T04",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/W1.A05.T04.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+    "apps/desktop/src/app/applicationLock.ts",
+    "apps/desktop/src/app/applicationSettings.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+    "version": "1.4",
+    "packageSha256": "034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e",
+    "approvalCommit": "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.3"
+  },
+  "focusedEvidence": [
+    {
+      "command": "npm test --prefix apps/desktop && apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false && node apps/desktop/scripts/lint.mjs",
+      "result": "passed",
+      "scope": "All 83 ordinary desktop tests passed with three native-fixture tests deliberately skipped outside their harness; strict TypeScript and desktop lint passed. The focused sign-in surface covers modes, provider states, native proof-before-warning, cancellation, overlap denial, response-loss reconciliation, locked secrecy, and explicit recovery."
+    },
+    {
+      "command": "node apps/desktop/scripts/application-lock-renderer-integration.mjs",
+      "result": "passed",
+      "scope": "An ignored, explicitly invoked Rust witness exercised the real ApplicationLockManager and PolicyStore for enable, commit, cancel, unavailable Hello, invalid-policy denial, and explicit recovery. Its production serde JSON passed all three production TypeScript decoder/controller integration tests."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests && npm run build --prefix apps/desktop",
+      "result": "passed",
+      "scope": "All 24 ordinary native application-lock tests passed with the renderer witness separately invoked, and the assembled product/reference desktop build completed with the distinct Application Settings implementation."
+    }
+  ],
+  "implementationScope": "Implement the already approved Academic Minimal v1.4 Application Settings Security & sign-in destination. The renderer presents native policy state, provider availability, preview, explicit recovery, proof-gated warning, deliberate commit, bounded locked output, and status reconciliation without receiving credentials, inventing authority, falling back between providers, or changing Project Settings and project/workflow protection."
+}

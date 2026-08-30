@@ -195,6 +195,10 @@ function isNonNegativeInteger(value: unknown): value is number {
   return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
 }
 
+function isProtectedSignInMode(value: SignInMode | null): value is Exclude<SignInMode, "none"> {
+  return value === "windows-password" || value === "windows-hello";
+}
+
 export function normalizeLocalProfileName(value: string): string | null {
   const normalized = value.trim();
   if (normalized.length === 0) return null;
@@ -361,15 +365,32 @@ export function decodePolicyTransitionResult(value: unknown): PolicyTransitionRe
     throw new Error("Invalid application sign-in transition response.");
   }
   const targetMode = data.targetMode;
+  const sourceMode = data.sourceMode;
+  const warningRequired = data.warningRequired;
   const snapshot = decodeApplicationLockSnapshot(data.snapshot);
+  const recoveryPrepared = outcome === "prepared" && data.reasonCode === "RO-SIGN-IN-RECOVERY-PREPARED";
+  const recoveryCommitted = outcome === "committed" && data.reasonCode === "RO-SIGN-IN-RECOVERY-COMMITTED";
+  const configuredPrepared = outcome === "prepared" && data.reasonCode === "RO-SIGN-IN-TRANSITION-PREPARED";
+  const configuredCommitted = outcome === "committed" && data.reasonCode === "RO-SIGN-IN-TRANSITION-COMMITTED";
+  const configuredWarning = isProtectedSignInMode(sourceMode) && targetMode === "none";
   if (
     (outcome === "committed" && (
       snapshot.signInMode !== targetMode
       || snapshot.configurationState !== "valid"
     ))
     || (outcome === "prepared"
-      && data.sourceMode !== null
-      && snapshot.signInMode !== data.sourceMode)
+      && sourceMode !== null
+      && snapshot.signInMode !== sourceMode)
+    || (warningRequired && targetMode !== "none")
+    || (sourceMode === null
+      && outcome === "prepared"
+      && snapshot.configurationState !== "invalid")
+    || ((recoveryPrepared || recoveryCommitted)
+      && (targetMode !== "none" || !warningRequired))
+    || ((configuredPrepared || configuredCommitted)
+      && (sourceMode === null || warningRequired !== configuredWarning))
+    || (outcome === "prepared" && !recoveryPrepared && !configuredPrepared)
+    || (outcome === "committed" && !recoveryCommitted && !configuredCommitted)
   ) {
     throw new Error("Invalid application sign-in transition response.");
   }
@@ -378,9 +399,9 @@ export function decodePolicyTransitionResult(value: unknown): PolicyTransitionRe
     outcome,
     reasonCode: data.reasonCode,
     handle: data.handle,
-    sourceMode: data.sourceMode,
+    sourceMode,
     targetMode,
-    warningRequired: data.warningRequired,
+    warningRequired,
     snapshot,
   };
 }

@@ -342,4 +342,58 @@ describe("application-lock contract", () => {
       targetMode: "windows-hello",
     })).toThrow("Invalid application sign-in transition response");
   });
+
+  it("rejects illegal source, target, warning, and recovery combinations", () => {
+    const protectedToNone = {
+      schemaVersion: "1.0",
+      outcome: "prepared",
+      reasonCode: "RO-SIGN-IN-TRANSITION-PREPARED",
+      handle: "ab".repeat(32),
+      sourceMode: "windows-password",
+      targetMode: "none",
+      warningRequired: true,
+      snapshot: {
+        ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+        signInMode: "windows-password",
+        policyRevision: 2,
+      },
+    } as const;
+    const invalidSnapshot = {
+      ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+      state: "locked",
+      signInMode: "windows-password",
+      policyRevision: 2,
+      configurationState: "invalid",
+      reason: "configuration-invalid",
+    } as const;
+    for (const forged of [
+      { ...protectedToNone, warningRequired: false },
+      { ...protectedToNone, sourceMode: null },
+      { ...protectedToNone, targetMode: "windows-hello", warningRequired: true },
+      {
+        ...protectedToNone,
+        reasonCode: "RO-SIGN-IN-RECOVERY-PREPARED",
+        sourceMode: null,
+        warningRequired: false,
+        snapshot: invalidSnapshot,
+      },
+      {
+        ...protectedToNone,
+        reasonCode: "RO-SIGN-IN-RECOVERY-PREPARED",
+        sourceMode: null,
+        snapshot: DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+      },
+      {
+        ...protectedToNone,
+        outcome: "committed",
+        reasonCode: "RO-SIGN-IN-TRANSITION-COMMITTED",
+        handle: null,
+        sourceMode: null,
+        snapshot: { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, policyRevision: 3 },
+      },
+    ]) {
+      expect(() => decodePolicyTransitionResult(forged))
+        .toThrow("Invalid application sign-in transition response");
+    }
+  });
 });
