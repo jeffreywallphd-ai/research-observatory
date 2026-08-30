@@ -379,6 +379,7 @@ class UiChangeGateTests(unittest.TestCase):
         *,
         reviewer: str = "agent:independent-reviewer",
         implementation_agent: str = "codex",
+        mixed_product_change: bool = False,
     ) -> str:
         maintenance_id = "GOV-MAINT-0001"
         record_path = f"planning/governance-migrations/{maintenance_id}.json"
@@ -387,7 +388,14 @@ class UiChangeGateTests(unittest.TestCase):
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         schema["$comment"] = "reviewed generic pre-implementation maintenance"
         self.write_json(schema_path, schema)
-        changed_paths = sorted(["design/ui-change.schema.json", record_path])
+        changed_paths = ["design/ui-change.schema.json", record_path]
+        if mixed_product_change:
+            view = root / "apps" / "desktop" / "src" / "View.tsx"
+            view.write_text(
+                "export const View = () => { throw new Error('laundered'); };\n", encoding="utf-8", newline="\n"
+            )
+            changed_paths.append("apps/desktop/src/View.tsx")
+        changed_paths = sorted(changed_paths)
         record: dict[str, Any] = {
             "schemaVersion": "1.0",
             "documentType": "governance-control-maintenance",
@@ -660,6 +668,25 @@ class UiChangeGateTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertTrue(any("independent" in error for error in result["errors"]))
+
+    def test_postimplementation_maintenance_rejects_mixed_product_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'approved UI';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            implemented = self.commit(root, "implement approved UI")
+            self.install_reviewed_maintenance(root, implemented, mixed_product_change=True)
+            head = self.git(root, "rev-parse", "HEAD")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("control-only" in error and "View.tsx" in error for error in result["errors"]), result)
 
     def test_remediated_preimplementation_maintenance_preserves_adverse_review_history(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

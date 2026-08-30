@@ -66,6 +66,12 @@ EXPECTED_IGNORED_SUFFIXES = {
     ".test.ts",
     ".test.tsx",
 }
+MAINTENANCE_PRODUCT_ROOTS = (
+    "apps/desktop/src/",
+    "modules/ui/",
+    "packages/ui-components/",
+    "packages/ui-tokens/",
+)
 GATE_CONTROL_PATHS = frozenset(
     {
         ".github/pull_request_template.md",
@@ -151,6 +157,26 @@ def canonical_agent_identity(value: object, *, reviewer: bool = False) -> str | 
     local_name = value.removeprefix("agent:")
     canonical = re.sub(r"[^a-z0-9]", "", local_name)
     return canonical or None
+
+
+def is_maintenance_product_path(path: str) -> bool:
+    return path.startswith(MAINTENANCE_PRODUCT_ROOTS)
+
+
+def maintenance_product_semantics_changed(repo: Path, predecessor: str, candidate: str, path: str) -> bool:
+    try:
+        before = blob(repo, predecessor, path)
+        after = blob(repo, candidate, path)
+    except ValueError:
+        return True
+    if before == after:
+        return False
+    if PurePosixPath(path).suffix == ".json":
+        try:
+            return json.loads(before.decode("utf-8")) != json.loads(after.decode("utf-8"))
+        except UnicodeDecodeError, json.JSONDecodeError:
+            return True
+    return True
 
 
 def backlog_tasks(backlog: dict[str, Any]) -> list[dict[str, Any]]:
@@ -514,6 +540,17 @@ def reviewed_preimplementation_maintenance_errors(
                 open_findings.update(str(item) for item in finding_ids)
             prior_review_commit = introduction
             final_review_introduction = introduction
+        final_candidate = resolve_commit(repo, str(attempts[-1].get("reviewedCommit")))
+        net_product_paths = sorted(
+            path
+            for path in changed_paths(repo, predecessor, final_candidate)
+            if is_maintenance_product_path(path)
+            and maintenance_product_semantics_changed(repo, predecessor, final_candidate, path)
+        )
+        if net_product_paths:
+            errors.append(
+                "pre-UI gate maintenance must be control-only and cannot retain product paths: " + net_product_paths[0]
+            )
         if final_review_introduction is None or blob(repo, head, record_path) != blob(
             repo, final_review_introduction, record_path
         ):
