@@ -3846,6 +3846,16 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "immutable pre-control attempts must remain readable without a fabricated boundary",
         )
 
+        adopted = copy.deepcopy(next(item for item in data["wave_amendments"] if item["id"] == "W1.A02"))
+        adopted_approval = json.loads(
+            (REPO / "planning/wave-amendment-approvals/W1.A02.json").read_text(encoding="utf-8")
+        )
+        adopted_packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
+        )
+        adopted_errors = taskctl_module.bootstrap_packet_errors(REPO, adopted, adopted_approval, adopted_packet)
+        self.assertNotIn("lacks its frozen prior-candidate authority scope", "\n".join(adopted_errors))
+
         amendment["bootstrap"].pop("scope_base_commit")
         errors = taskctl_module.bootstrap_packet_errors(REPO, amendment, approval, packet)
         self.assertIn(
