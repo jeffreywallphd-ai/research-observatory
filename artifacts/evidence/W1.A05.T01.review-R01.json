@@ -1,0 +1,71 @@
+{
+  "task_id": "W1.A05.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+  "submission_record_commit": "6aa68e2d767a1e44e50c7439f07bfec7411d7631",
+  "reviewer": "codex-independent-application-lock-security-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent security/contract review authenticated the exact base, candidate, submission record, frozen evidence SHA-256 63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063, and all 13 declared changed paths. The native boundary otherwise preserves the approved authority: application_lock_unlock is argument-free; only WindowsPasswordVerificationProvider is constructed in production; the renderer cannot select a provider or outcome; the Windows adapter retains the non-persisting generic CredUI flags, NameSamCompatible prefill, UPN/down-level mapping, LogonUserW, submitted-token/current-process-token EqualSid comparison, volatile credential-buffer clearing, and RAII handle closure. The manager reserves one attempt, admits backoff as busy, invokes the provider once, starts Core only after succeeded, checks the lock generation before and after Core start, stops a failed or raced Core, and releases the reservation after cancellation, failure, stale completion, and provider panic. Focused replay passed all 30 Rust library tests, all 12 renderer/runtime tests, all four focused security/profile tests, Rust formatting and warnings-denied Clippy, and the architecture contract. One blocking typed-contract finding remains: the new unlock decoder relies on a snapshot decoder that coerces enum fields and returns the untrusted object, and its outcome/state matrix excludes a valid native NOT-LOCKED response. No native unlock-authority bypass was reproduced, but the submitted claim of a strict six-outcome renderer/native contract is false until this boundary is exact. The manifest's disclosed broad Python syntax deferral did not reproduce under the reviewer's current Python 3.14.6 environment: tests.security.test_windows_credentials passed 10 tests with one platform skip; that toolchain-dependent baseline statement is not relied on for disposition and is not an acceptance finding against T01. No Windows Hello, provider configuration, settings UI, profile-schema migration, dependency, or broader supervision redesign appeared in the candidate. T02-T04, slice integration, and complete W1 qualification remain correctly deferred.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/W1.A05.T01.json",
+      "sha256": "63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063",
+      "git_blob": "63800e190330ac2283adf0420bcd8f985a2c271d",
+      "commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base/candidate/submission; verify base is ancestor of candidate and candidate is ancestor of submission; compare exact base-to-candidate and candidate-to-submission paths; git diff --check",
+      "result": "PASS: all three full SHAs resolve; both ancestry checks passed; the exact candidate range contains the 13 declared paths and no undeclared path; the submission adds the frozen evidence/backlog projection; both ranges pass whitespace hygiene. The directly tested implementation files were byte-identical to the exact candidate."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "result": "PASS: 30/30 native library tests passed, including all six provider outcomes, success-only Core start, denial/backoff, cancellation, failed Core start, single concurrent reservation, unlocked denial, pre/post-Core generation staleness and Core stop, provider panic cleanup, profile publication race, manual/idle/restart state, Windows prompt flags/domain mapping, and protected supervisor/support boundaries."
+    },
+    {
+      "type": "independent-check",
+      "command": "bundled Node vitest run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "result": "PASS: 12/12 submitted frontend tests passed. These cover the ordinary six outcomes, top-level outcome/state mismatch, reconciliation, redacted messages, and runtime integration, but do not cover the reproduced nested enum coercion or the native NOT-LOCKED/unlocked response."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Use Node 24 experimental TypeScript stripping to call decodeApplicationUnlockAttempt with outcome='succeeded', reasonCode='RO-LOCK-UNLOCKED', an otherwise valid unlocked snapshot, and configurationState={toString:()=> 'valid'}",
+      "result": "FAIL: the decoder accepted the payload and returned configurationState as the same object (typeof object) while returning state='unlocked'. The boundary uses String(value.configurationState) and casts/returns the original untrusted snapshot instead of requiring and reconstructing exact primitive fields."
+    },
+    {
+      "type": "independent-contract-inspection",
+      "command": "Compare ApplicationLockManager::reserve_reauthentication and unlock_attempt with decodeApplicationUnlockAttempt's allowed reason-code and outcome/state matrix",
+      "result": "FAIL: a native unlock request while the manager is already unlocked lawfully returns outcome='failed', reasonCode='RO-LOCK-AUTH-NOT-LOCKED', and an unlocked snapshot. The renderer allowlists that reason code under failed but then rejects every non-succeeded unlocked snapshot, so this production response cannot satisfy its own decoder."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests",
+      "result": "PASS: 4/4 focused source/profile checks passed, retaining argument-free production authority, native generation guards, provider/SID primitives, non-persisting credential flags, secret cleanup markers, and exact portable profile boundaries."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_windows_credentials",
+      "result": "PASS under Python 3.14.6: 10 tests passed and one Windows-token symlink case skipped. The frozen manifest's unrelated syntax deferral is therefore not reproducible in this review toolchain and does not reduce T01 coverage or affect the finding."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .",
+      "result": "PASS: Rust formatting and warnings-denied Clippy passed; architecture passed 13 areas, 12 modules, five stable interfaces, and three deployment profiles."
+    }
+  ],
+  "findings": [
+    {
+      "id": "W1.A05.T01-R01-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Renderer unlock decoder is not an exact closed contract for native lock state",
+      "reproduction": "At exact candidate 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a, call decodeApplicationUnlockAttempt with schemaVersion='1.0', outcome='succeeded', reasonCode='RO-LOCK-UNLOCKED', DEFAULT_APPLICATION_LOCK_SNAPSHOT, and configurationState set to an object whose toString returns 'valid'. decodeApplicationLockSnapshot accepts it because it compares String(value.configurationState), then returns the original object through a type cast; the decoded result is accepted as unlocked while configurationState remains an object. The same coercion exists for reason. Separately, ApplicationLockManager::reserve_reauthentication emits failed/RO-LOCK-AUTH-NOT-LOCKED with its current unlocked snapshot when invoked while unlocked. decodeApplicationUnlockAttempt explicitly allowlists RO-LOCK-AUTH-NOT-LOCKED under failed but rejects the response because it requires every non-succeeded outcome to carry a locked snapshot. Thus invalid typed state is accepted while one valid production response is rejected, contradicting the submitted strict six-outcome renderer/native contract and its claimed forged-state coverage.",
+      "required_remediation": "In a strict-descendant candidate, define and enforce one exact semantic matrix for every native ApplicationUnlockAttempt reason code and snapshot state, including the legitimate NOT-LOCKED/unlocked response without treating it as an explicit successful unlock. Require primitive exact enum values (at minimum typeof configurationState and reason), validate the relevant snapshot state invariants, and return a newly reconstructed typed snapshot rather than the untrusted object. Add adversarial frontend tests for object/accessor/toString coercion in every nested enum, valid and invalid NOT-LOCKED pairings, succeeded/unlocked and all adverse/locked pairings, and verify malformed responses remain fail-closed while native-only success remains the sole path that clears fail-closed reconciliation. Re-run the focused native and renderer/runtime suites and preserve the already passing Windows password, reservation, generation, Core-stop, panic-cleanup, restart, and redaction boundaries."
+    }
+  ],
+  "closures": []
+}
