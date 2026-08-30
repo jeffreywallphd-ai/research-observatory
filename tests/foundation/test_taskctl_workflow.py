@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from argparse import Namespace
 from contextlib import chdir, redirect_stderr, redirect_stdout
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 from unittest.mock import patch
 
@@ -3651,6 +3651,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
             self.assertEqual("REVIEW", bootstrap["status"])
             self.assertEqual("d" * 40, bootstrap["implementation_commit"])
+            self.assertEqual(prior_projection["implementation_commit"], bootstrap["scope_base_commit"])
             self.assertEqual(
                 {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
                 bootstrap["review"],
@@ -3747,6 +3748,86 @@ class TaskctlWorkflowTests(unittest.TestCase):
             self.assertEqual(
                 ["git", "diff", "--name-only", base, candidate, "--"],
                 commands[-1],
+            )
+
+    def test_bootstrap_remediation_scope_rejects_unauthorized_intervening_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+
+            def git(*arguments: str) -> str:
+                result = subprocess.run(
+                    ["git", *arguments],
+                    cwd=repo,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(0, result.returncode, result.stderr)
+                return result.stdout.strip()
+
+            git("init")
+            git("config", "user.email", "taskctl-test@example.invalid")
+            git("config", "user.name", "Taskctl Test")
+            (repo / "README.md").write_text("initial\n", encoding="utf-8")
+            git("add", "README.md")
+            git("commit", "-m", "initial")
+            prior_candidate = git("rev-parse", "HEAD")
+
+            unauthorized_path = repo / "product/outside-approved-bootstrap-scope.py"
+            unauthorized_path.parent.mkdir(parents=True)
+            unauthorized_path.write_text("unauthorized = True\n", encoding="utf-8")
+            git("add", unauthorized_path.relative_to(repo).as_posix())
+            git("commit", "-m", "unauthorized intervening change")
+            evidence_base = git("rev-parse", "HEAD")
+
+            authorized_relative = "tests/foundation/test_taskctl_workflow.py"
+            authorized_path = repo.joinpath(*PurePosixPath(authorized_relative).parts)
+            authorized_path.parent.mkdir(parents=True)
+            authorized_path.write_text("authorized = True\n", encoding="utf-8")
+            git("add", authorized_relative)
+            git("commit", "-m", "authorized remediation")
+            candidate = git("rev-parse", "HEAD")
+
+            evidence_path = repo / "artifacts/evidence/W1.A05.B00.remediation.json"
+            evidence_path.parent.mkdir(parents=True)
+            manifest = {
+                "commit": candidate,
+                "baseCommit": evidence_base,
+                "branch": "codex/w1-windows-local-runtime",
+                "changedFiles": [authorized_relative],
+            }
+            evidence_path.write_text(json.dumps(manifest), encoding="utf-8")
+            payload = evidence_path.read_bytes()
+            attempt = {
+                "implementer": "codex",
+                "implementation_commit": candidate,
+                "submission_branch": manifest["branch"],
+                "scope_base_commit": prior_candidate,
+                "evidence": [
+                    {
+                        "path": evidence_path.relative_to(repo).as_posix(),
+                        "sha256": evidence_sha256(payload),
+                        "commit": candidate,
+                    }
+                ],
+            }
+
+            with patch("taskctl.validate_task_evidence", return_value=[]):
+                errors = taskctl_module.bootstrap_attempt_errors(
+                    repo,
+                    "W1.A05",
+                    "W1.A05.B00",
+                    ["Preserve the approved boundary."],
+                    attempt,
+                    expected_base=None,
+                    lineage_base=prior_candidate,
+                    allowed_patterns=[authorized_relative],
+                )
+
+            self.assertIn(
+                "W1.A05.B00: bootstrap changed path is outside approved scope: "
+                "product/outside-approved-bootstrap-scope.py",
+                errors,
             )
 
     def test_b00_r04_historical_bootstrap_validation_does_not_depend_on_live_branch(self) -> None:
