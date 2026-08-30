@@ -2323,6 +2323,8 @@ def bootstrap_packet_errors(
     expected_attempt_ids = [f"R{index:02d}" for index in range(1, len(attempts) + 1)]
     if [str(item.get("id")) for item in attempts] != expected_attempt_ids:
         errors.append(f"{bootstrap_id}: bootstrap attempt IDs are not sequential")
+    if attempts and bootstrap.get("scope_base_commit") is None:
+        errors.append(f"{bootstrap_id}: current bootstrap remediation lacks its frozen prior-candidate authority scope")
     allowed_patterns = bootstrap_authorized_patterns(repo, packet, bootstrap)
     approval_commit = str(amendment.get("approval_reference", {}).get("introduction_commit") or "")
     lineage_base = approval_commit
