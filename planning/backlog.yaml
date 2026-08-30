@@ -30876,8 +30876,8 @@ wave_amendments:
       status: SUPERSEDED
       actor: governance-migration:GOV-MIG-0001
       at: '2026-08-27T16:03:47-04:00'
-      rationale: Recorded the approved but unmaterialized reservation as terminal superseded history under GOV-MIG-0001; no bootstrap,
-        task, campaign, or product authority was executed.
+      rationale: Recorded the approved but unmaterialized reservation as terminal superseded history under GOV-MIG-0001; no
+        bootstrap, task, campaign, or product authority was executed.
   bootstrap: null
   campaign: null
   tasks: []
@@ -30909,7 +30909,7 @@ wave_amendments:
         until amendment adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A05.B00
-    status: REVIEW
+    status: CHANGES_REQUESTED
     implementer: codex
     implementation_commit: b47c5e81860df04cce886ede9e614d68c22c7119
     submission_branch: codex/w1-windows-local-runtime
@@ -30924,10 +30924,11 @@ wave_amendments:
       commit: b47c5e81860df04cce886ede9e614d68c22c7119
       recorded_at: '2026-08-30T11:46:15+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: w1-a05-b00-independent-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-30T12:18:50+00:00'
+      notes: 'R01 ledger artifacts/evidence/W1.A05.B00.review-01.json (sha256 ec71791a7bebea388f8b75af15622201cd4e959c709605f18a472dafeda1cb83):
+        W1-A05-B00-R01-F01 requires synthetic pre-supersession witness coverage and post-supersession no-read assertions.'
   campaign: null
   tasks: []
   completion:
