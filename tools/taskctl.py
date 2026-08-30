@@ -2273,8 +2273,15 @@ def bootstrap_attempt_errors(
         )
         if current_branch.returncode != 0 or current_branch.stdout.strip() != submission_branch:
             errors.append(f"{bootstrap_id}: bootstrap submission branch does not match the current codex branch")
+    frozen_scope_base = attempt.get("scope_base_commit")
+    scope_base = evidence_base
+    if frozen_scope_base is not None:
+        if not isinstance(frozen_scope_base, str) or frozen_scope_base != lineage_base:
+            errors.append(f"{bootstrap_id}: bootstrap authority scope does not start at its prior candidate")
+        else:
+            scope_base = frozen_scope_base
     scope = subprocess.run(
-        ["git", "diff", "--name-only", evidence_base, candidate, "--"],
+        ["git", "diff", "--name-only", scope_base, candidate, "--"],
         cwd=repo,
         capture_output=True,
         text=True,
@@ -7913,6 +7920,7 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         "implementer": agent,
         "implementation_commit": implementation_commit,
         "submission_branch": str(_manifest.get("branch") or ""),
+        "scope_base_commit": previous_candidate,
         "evidence": [evidence_reference],
         "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     }
@@ -7931,21 +7939,23 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         raise SystemExit("Invalid bootstrap remediation evidence:\n- " + "\n- ".join(errors))
     prior_review = copy.deepcopy(bootstrap.get("review") or {})
     attempt_id = f"R{len(bootstrap.get('attempts') or []) + 1:02d}"
-    bootstrap.setdefault("attempts", []).append(
-        {
-            "id": attempt_id,
-            "implementer": bootstrap.get("implementer"),
-            "implementation_commit": previous_candidate,
-            "submission_branch": bootstrap.get("submission_branch"),
-            "evidence": copy.deepcopy(bootstrap.get("evidence") or []),
-            "review": prior_review,
-        }
-    )
+    prior_attempt = {
+        "id": attempt_id,
+        "implementer": bootstrap.get("implementer"),
+        "implementation_commit": previous_candidate,
+        "submission_branch": bootstrap.get("submission_branch"),
+        "evidence": copy.deepcopy(bootstrap.get("evidence") or []),
+        "review": prior_review,
+    }
+    if bootstrap.get("scope_base_commit") is not None:
+        prior_attempt["scope_base_commit"] = bootstrap.get("scope_base_commit")
+    bootstrap.setdefault("attempts", []).append(prior_attempt)
     bootstrap.update(
         status="REVIEW",
         implementer=agent,
         implementation_commit=implementation_commit,
         submission_branch=str(_manifest.get("branch") or ""),
+        scope_base_commit=previous_candidate,
         evidence=[evidence_reference],
         review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     )
