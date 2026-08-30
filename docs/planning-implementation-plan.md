@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8410f5beaa0de3ce4d7452576d9a28b759be0b449439bb83ee6d4765727269d8
+source_sha256: b1465a05ab719d3ae0b55072fb68cce027837378380eccd9648fe75af9b7a065
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1304,7 +1304,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T03`
 
@@ -1326,13 +1326,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Complete W1.A05.S02 security/experience integration review and the amendment-exit affected build/smoke/security/accessibility matrix.
 - Obtain independent commit-bound task and slice review with all blocking findings closed.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A05.T04.json` at `50ea2c5200e67b8416ba00a36c140ae6a5cda00c`
+
 #### Review history — W1.A05.T04
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `25059ddb0f725107c5c479e7521d95e2d89c0bc85c95d758e8693cd0311da94d`
+
+- Candidate / base / branch: `50ea2c5200e67b8416ba00a36c140ae6a5cda00c` / `bd8d752a0fcec1f40b1a8abe59b793c783946e4e` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T23:05:01+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T04.json` / `f4486b7f9fee3f91f1d8de672536fb0e5f4618de2f85a3ab74b0792be65f354d` / `50ea2c5200e67b8416ba00a36c140ae6a5cda00c`
+- Acceptance-criteria SHA-256: `9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896`
+- Verification-selection SHA-256: `4492d8c08fb74f6c2ab994ffa9b9fd53e6224ae1b1f8b69ed8956c922282861f`
+- Changed paths: `apps/desktop/package.json`, `apps/desktop/scripts/application-lock-renderer-integration.mjs`, `apps/desktop/scripts/assemble-application.mjs`, `apps/desktop/scripts/assemble-reference.mjs`, `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.test.tsx`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/ApplicationSettingsWorkspace.test.tsx`, `apps/desktop/src/app/ApplicationSettingsWorkspace.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.test.tsx`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `apps/desktop/src/app/applicationSettings.native.integration.test.ts`, `apps/desktop/src/app/applicationSettings.test.ts`, `apps/desktop/src/app/applicationSettings.ts`, `apps/desktop/src/app/audit-lineage.conformance.json`, `artifacts/evidence/W1.A05.T04.task-start.md`, `artifacts/evidence/ui-change/W1.A05.T04.json`, `design/ui-change.schema.json`, `docs/planning-implementation-plan.md`, `packages/ui-tokens/src/index.ts`, `packages/ui-tokens/token-contract.json`, `planning/backlog.schema.json`, `planning/backlog.yaml`, `planning/governance-migrations/GOV-MAINT-0006.json`, `planning/governance-migrations/GOV-MAINT-0006.review-R01.json`, `planning/governance-migrations/GOV-MAINT-0006.review-R02.json`, `planning/governance-migrations/GOV-MAINT-0006.review-R03.json`, `planning/governance-migrations/GOV-MAINT-0007.json`, `planning/governance-migrations/GOV-MAINT-0007.review-R01.json`, `planning/governance-migrations/GOV-MAINT-0007.review-R02.json`, `planning/governance-migrations/GOV-MAINT-0007.review-R03.json`, `planning/governance-migrations/GOV-MAINT-0007.review-R04.json`, `planning/governance-migrations/GOV-MAINT-0007.review-R05.json`, `planning/governance-migrations/GOV-MAINT-0008.json`, `planning/governance-migrations/GOV-MAINT-0008.review-R01.json`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/desktop/test_ui_conformance.py`, `tests/foundation/test_ui_change_gate.py`, `tools/desktop_app_check.py`, `tools/ui_change_gate.py`, `tools/ui_conformance.py`, `verification/baselines/desktop-ui.json`, `verification/extensions/desktop-ui.json`
+- Selected checks: `npm --prefix apps/desktop test -- --run; node apps/desktop/node_modules/typescript/bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm --prefix apps/desktop run build; .venv\Scripts\python.exe tools/desktop_app_check.py --repo . --built-frame-only`, `node apps/desktop/scripts/application-lock-renderer-integration.mjs; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests --locked`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 50ea2c5200e67b8416ba00a36c140ae6a5cda00c`, `.venv\Scripts\python.exe tools/ui_conformance.py --repo . --check tokens\|routes\|workflows\|accessibility\|visual`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_ui_change_gate tests.foundation.test_taskctl_schema; .venv\Scripts\ruff.exe check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py; .venv\Scripts\ruff.exe format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py; python tools/taskctl.py --file planning/backlog.yaml validate; git diff --check`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --affected-head 50ea2c5200e67b8416ba00a36c140ae6a5cda00c --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-affected-selection.json`
+- Deferred checks: `A real configured Windows Hello success prompt remains hardware-conditional; the release-authoritative host reports not-present. T02 already proves the typed OS mapping and this task proves every renderer availability state without fabricating hardware evidence.`, `W1.A05.S02 owns the independent security/experience slice integration review and amendment-exit affected build, smoke, security, and accessibility union after T04 task approval.`, `The complete W1 Windows-x64 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit.`
+- Selection rationale: T04 crosses the governed desktop experience, renderer/native security contract, and UI evidence-control boundary. Credible failures are confusing application and project authority; treating a draft or malformed payload as committed policy; warning before native proof; silent Hello fallback; ambiguous commit-response loss; overlap, cancellation, conflict, or recovery changing policy; locked-surface disclosure; lost workflow/focus position; accessibility or responsive regressions; incomplete v1.4 activation; or evidence that cannot authenticate the exact approved reference and task range. The selected strict model/interaction tests, real Rust-to-TypeScript witness, focused native replay, fresh product build and built-frame check, exact UI gate, complete approved-reference conformance matrix, and independently reviewed governance-control tests directly cover those risks.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
