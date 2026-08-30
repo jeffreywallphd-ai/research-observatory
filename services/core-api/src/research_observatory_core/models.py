@@ -208,10 +208,24 @@ class ProvenanceLineagePage(ContractModel):
     items: tuple[ProvenanceLineageNode, ...] = Field(max_length=100)
     missing_revision_ids: tuple[str, ...] = Field(max_length=256)
     next_cursor: int | None = Field(default=None, ge=0, le=10_000)
+    truncated: bool
+    truncation_reason: Literal["cursor-limit", "scan-limit"] | None
     integrity_state: Literal["verified", "integrity-review"]
     legacy_event_count: int = Field(ge=0, le=9_007_199_254_740_991)
     export_allowed: bool
     export_denial_reason: Literal["integrity-review", "rights-restricted"] | None
+
+    @model_validator(mode="after")
+    def validate_truncation_authority(self) -> ProvenanceLineagePage:
+        if self.truncated != (self.truncation_reason is not None):
+            raise ValueError("lineage truncation state is inconsistent")
+        if self.truncated and (
+            self.integrity_state != "integrity-review"
+            or self.export_allowed
+            or self.export_denial_reason != "integrity-review"
+        ):
+            raise ValueError("truncated lineage must fail closed")
+        return self
 
 
 class ProjectDeleteRequest(ProjectRootRequest):

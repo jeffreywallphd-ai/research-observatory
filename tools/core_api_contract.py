@@ -592,13 +592,18 @@ export function decodeProvenanceLineagePage(value: unknown): ProvenanceLineagePa
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
     "schemaVersion", "revisionId", "direction", "items", "missingRevisionIds",
-    "nextCursor", "integrityState", "legacyEventCount", "exportAllowed", "exportDenialReason",
+    "nextCursor", "truncated", "truncationReason", "integrityState", "legacyEventCount",
+    "exportAllowed", "exportDenialReason",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.revisionId)
     || !member(candidate.direction, ["ancestors", "descendants"] as const)
     || !Array.isArray(candidate.items) || candidate.items.length > 100
     || !Array.isArray(candidate.missingRevisionIds) || candidate.missingRevisionIds.length > 256
     || (candidate.nextCursor !== null && !integer(candidate.nextCursor, 0, 10_000))
+    || typeof candidate.truncated !== "boolean"
+    || (candidate.truncationReason !== null
+      && !member(candidate.truncationReason, ["cursor-limit", "scan-limit"] as const))
+    || candidate.truncated !== (candidate.truncationReason !== null)
     || !member(candidate.integrityState, ["verified", "integrity-review"] as const)
     || !integer(candidate.legacyEventCount, 0, Number.MAX_SAFE_INTEGER)
     || typeof candidate.exportAllowed !== "boolean"
@@ -616,6 +621,8 @@ export function decodeProvenanceLineagePage(value: unknown): ProvenanceLineagePa
     items: items as ProvenanceLineageNode[],
     missingRevisionIds: candidate.missingRevisionIds as string[],
     nextCursor: candidate.nextCursor as number | null,
+    truncated: candidate.truncated,
+    truncationReason: candidate.truncationReason as "cursor-limit" | "scan-limit" | null,
     integrityState: candidate.integrityState,
     legacyEventCount: candidate.legacyEventCount,
     exportAllowed: candidate.exportAllowed,
@@ -949,7 +956,9 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         && result.missingRevisionIds.includes(command.revisionId)
         && !result.exportAllowed
         && result.exportDenialReason === "integrity-review";
-      const visibleIntegrityDebt = result.missingRevisionIds.length > 0 || result.legacyEventCount > 0;
+      const visibleIntegrityDebt = result.missingRevisionIds.length > 0
+        || result.legacyEventCount > 0
+        || result.truncated;
       if (result.revisionId !== command.revisionId || result.direction !== command.direction
         || result.items.length > command.pageSize
         || result.items.some((item) => item.depth > command.maxDepth)
@@ -965,6 +974,11 @@ export function createCoreApiClient(transport: CoreApiTransport) {
           result.exportAllowed || result.exportDenialReason !== "integrity-review"
         ))
         || (result.integrityState === "verified" && result.exportDenialReason === "integrity-review")
+        || (result.truncated && (
+          result.integrityState !== "integrity-review"
+          || result.exportAllowed
+          || result.exportDenialReason !== "integrity-review"
+        ))
         || (result.nextCursor !== null && (
           result.items.length === 0
           || result.nextCursor <= command.cursor

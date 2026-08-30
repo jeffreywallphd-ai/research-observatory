@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.config import CoreSettings
+from research_observatory_core.models import ProvenanceLineagePage
 from research_observatory_core.ports.repositories import (
     ActorType,
     AggregateKind,
@@ -20,6 +21,7 @@ from research_observatory_core.ports.repositories import (
 from research_observatory_core.projects import ProjectLifecycleService
 from research_observatory_core.provenance import ProvenanceService
 from research_observatory_core.repositories import (
+    _SqliteProvenanceLedgerRepository,
     create_sqlite_unit_of_work_factory,
     sqlite_provenance_ledger_repository,
 )
@@ -305,6 +307,53 @@ class ProvenanceApiTests(unittest.TestCase):
         self.assertEqual(200, response.status_code, response.text)
         self.assertFalse(response.json()["exportAllowed"])
         self.assertEqual("rights-restricted", response.json()["exportDenialReason"])
+
+    def test_core_exposes_scan_truncation_as_incomplete_and_nonexportable(self) -> None:
+        limited = ProvenanceService(
+            self.projects,
+            lambda path, project_id: _SqliteProvenanceLedgerRepository(
+                path / "state" / "project.sqlite3",
+                project_id,
+                absolute_scan_limit=1,
+            ),
+        )
+        limited_app = create_app(
+            settings=CoreSettings(),
+            capability_digest=capability_token_digest(TOKEN),
+            expected_authority=AUTHORITY,
+            projects=self.projects,
+            provenance=limited,
+        )
+        request = {
+            "root": self.root,
+            "revisionId": self.second.revision_id,
+            "direction": "ancestors",
+            "pageSize": 10,
+            "maxDepth": 4,
+        }
+        bodies = []
+        with TestClient(
+            limited_app,
+            base_url=f"http://{AUTHORITY}",
+            headers=AUTH_HEADERS,
+            client=("127.0.0.1", 50000),
+        ) as client:
+            for _ in range(2):
+                response = client.post("/projects/provenance/lineage", json=request)
+                self.assertEqual(200, response.status_code, response.text)
+                bodies.append(response.json())
+
+        self.assertEqual(bodies[0], bodies[1])
+        self.assertTrue(bodies[0]["items"])
+        self.assertTrue(bodies[0]["truncated"])
+        self.assertEqual("scan-limit", bodies[0]["truncationReason"])
+        self.assertEqual("integrity-review", bodies[0]["integrityState"])
+        self.assertFalse(bodies[0]["exportAllowed"])
+        self.assertEqual("integrity-review", bodies[0]["exportDenialReason"])
+        with self.assertRaisesRegex(ValueError, "lineage truncation state is inconsistent"):
+            ProvenanceLineagePage.model_validate({**bodies[0], "truncated": False})
+        with self.assertRaisesRegex(ValueError, "truncated lineage must fail closed"):
+            ProvenanceLineagePage.model_validate({**bodies[0], "exportAllowed": True})
 
 
 if __name__ == "__main__":

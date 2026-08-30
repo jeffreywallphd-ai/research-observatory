@@ -2371,6 +2371,25 @@
             "default": "1.0",
             "title": "Schemaversion",
             "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "truncationReason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "cursor-limit",
+                  "scan-limit"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Truncationreason"
           }
         },
         "required": [
@@ -2378,6 +2397,8 @@
           "direction",
           "items",
           "missingRevisionIds",
+          "truncated",
+          "truncationReason",
           "integrityState",
           "legacyEventCount",
           "exportAllowed",

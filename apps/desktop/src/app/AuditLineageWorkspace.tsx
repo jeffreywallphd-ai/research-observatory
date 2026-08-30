@@ -144,7 +144,9 @@ export function mergeLineagePage(
       || next.nextCursor !== requestedCursor + next.items.length
     ))
     || current.exportAllowed !== (current.exportDenialReason === null)
-    || next.exportAllowed !== (next.exportDenialReason === null)) {
+    || next.exportAllowed !== (next.exportDenialReason === null)
+    || current.truncated !== (current.truncationReason !== null)
+    || next.truncated !== (next.truncationReason !== null)) {
     throw new Error("RO-CORE-RESPONSE-INVALID");
   }
   const identities = new Set(current.items.map((item) => item.factId));
@@ -154,10 +156,13 @@ export function mergeLineagePage(
   const items = [...current.items, ...next.items];
   const missingRevisionIds = [...new Set([...current.missingRevisionIds, ...next.missingRevisionIds])];
   const legacyEventCount = Math.max(current.legacyEventCount, next.legacyEventCount);
+  const truncationReason = current.truncationReason ?? next.truncationReason;
+  const truncated = current.truncated || next.truncated;
   const integrityReview = current.integrityState === "integrity-review"
     || next.integrityState === "integrity-review"
     || current.exportDenialReason === "integrity-review"
     || next.exportDenialReason === "integrity-review"
+    || truncated
     || missingRevisionIds.length > 0
     || legacyEventCount > 0;
   const rightsRestricted = current.exportDenialReason === "rights-restricted"
@@ -172,6 +177,8 @@ export function mergeLineagePage(
     ...next,
     items,
     missingRevisionIds,
+    truncated,
+    truncationReason,
     integrityState: integrityReview ? "integrity-review" : "verified",
     legacyEventCount,
     exportAllowed: exportDenialReason === null,
@@ -188,6 +195,8 @@ export function lineageManifestReady(
     && acceptedQuery.revisionId === trace.revisionId
     && acceptedQuery.direction === trace.direction
     && trace.nextCursor === null
+    && !trace.truncated
+    && trace.truncationReason === null
     && trace.integrityState === "verified"
     && trace.missingRevisionIds.length === 0
     && trace.legacyEventCount === 0
@@ -375,6 +384,16 @@ export function AuditLineageWorkspace({
             <div className="lineage-notice" role="alert">
               <strong>Integrity review required</strong>
               <span>Keep this trace available for inspection, but do not rely on it for export or claim use until repaired.</span>
+            </div>
+          ) : null}
+
+          {trace.truncated ? (
+            <div className="lineage-notice" role="alert" data-lineage-truncated>
+              <strong>Lineage trace is incomplete</strong>
+              <span>
+                The bounded local query reached its {trace.truncationReason === "scan-limit" ? "scan" : "continuation"} limit.
+                Returned facts remain available for inspection, but complete manifest export is denied.
+              </span>
             </div>
           ) : null}
 

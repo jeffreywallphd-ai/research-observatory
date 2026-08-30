@@ -127,6 +127,8 @@ describe("generated Core API client", () => {
       ],
       missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c07398f"],
       nextCursor: null,
+      truncated: false,
+      truncationReason: null,
       integrityState: "integrity-review",
       legacyEventCount: 1,
       exportAllowed: false,
@@ -294,6 +296,17 @@ describe("generated Core API client", () => {
         exportAllowed: true,
         exportDenialReason: null,
       },
+      {
+        ...lineage,
+        missingRevisionIds: [],
+        legacyEventCount: 0,
+        truncated: true,
+        truncationReason: "cursor-limit" as const,
+        nextCursor: null,
+        integrityState: "verified" as const,
+        exportAllowed: true,
+        exportDenialReason: null,
+      },
     ]) {
       const firstPageAdversary = createCoreApiClient(async () => response(200, contradictory));
       await expect(firstPageAdversary.lineage(request)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
@@ -304,6 +317,24 @@ describe("generated Core API client", () => {
       await expect(continuationAdversary.lineage(continuationRequest))
         .rejects.toThrow("RO-CORE-RESPONSE-INVALID");
     }
+
+    const boundedTruncation = {
+      ...lineage,
+      missingRevisionIds: [],
+      legacyEventCount: 0,
+      truncated: true,
+      truncationReason: "scan-limit" as const,
+      nextCursor: null,
+      integrityState: "integrity-review" as const,
+      exportAllowed: false,
+      exportDenialReason: "integrity-review" as const,
+    };
+    const bounded = createCoreApiClient(async () => response(200, boundedTruncation));
+    await expect(bounded.lineage(request)).resolves.toEqual(boundedTruncation);
+    expect(decodeProvenanceLineagePage({
+      ...boundedTruncation,
+      truncated: false,
+    })).toBeNull();
   });
 
   it("decodes and evaluates only the exact compatible version envelope", async () => {

@@ -211,6 +211,8 @@ class LineagePage:
     items: tuple[LineageNode, ...]
     missing_revision_ids: tuple[str, ...]
     next_cursor: int | None
+    truncated: bool
+    truncation_reason: Literal["cursor-limit", "scan-limit"] | None
     integrity_state: Literal["verified", "integrity-review"]
     legacy_event_count: int
     export_allowed: bool
