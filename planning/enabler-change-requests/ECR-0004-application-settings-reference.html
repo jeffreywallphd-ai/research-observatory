@@ -81,12 +81,16 @@
           <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">Provider status &amp; recovery</h2><div class="card-subtitle">Availability comes from Windows and is never inferred.</div></div><span class="badge badge-success">Hello ready</span></div>
             <div class="list"><div class="list-item"><span class="list-content"><span class="list-title">Windows Hello</span><span class="list-meta">Available for this Windows account</span></span><span class="badge badge-success">Ready</span></div>
             <div class="list-item"><span class="list-content"><span class="list-title">Windows password recovery</span><span class="list-meta">Shown only after explicit selection; never a silent fallback</span></span><span class="badge badge-info">Available</span></div></div>
-            <p class="small muted">If Hello later becomes unavailable, retry it, choose explicit password recovery, or deliberately reset app sign-in to No login. Cancellation and denial change nothing.</p>
+            <p class="small muted">If Hello later becomes unavailable, retry it or choose explicit Windows-password recovery. Reset to No login appears only after the native password prompt proves this same Windows user; without that proof the app stays locked and points to Windows recovery.</p>
           </article>
         </section>
 
         <section class="card card-lg section"><div class="card-header"><div><h2 class="card-title">Before this change is applied</h2><div class="card-subtitle">Protection changes are previewed and atomically persisted.</div></div></div>
-          <ol class="small"><li>The destination provider is checked and, when enabling protection, verified.</li><li>Reducing protection to No login requires an explicit warning and confirmation.</li><li>The setting is written only after all required checks succeed.</li><li>Cancellation, denial, failure, or a busy provider leaves the existing mode unchanged.</li></ol>
+          <ol class="small"><li>The destination provider is checked and, when enabling protection, verified.</li><li>Reducing protection to No login requires verification by the current provider or an explicit same-user Windows-password recovery prompt before the warning and confirmation.</li><li>The signed-in session, confirmation, or audit record alone cannot remove protection.</li><li>The setting is written only after all required checks succeed.</li><li>Cancellation, denial, failure, or a busy provider leaves the existing mode unchanged.</li></ol>
+        </section>
+
+        <section class="card card-lg section"><div class="card-header"><div><h2 class="card-title">Existing installations</h2><div class="card-subtitle">Migration preserves user-selected protection.</div></div><span class="badge badge-info">Versioned</span></div>
+          <dl class="key-value"><dt>No saved profile</dt><dd>Set No login explicitly</dd><dt>Valid v1 profile</dt><dd>Set Windows password and preserve profile name plus inactivity timeout</dd><dt>v1 timeout: 0</dt><dd>Keep password/manual lock; inactivity lock remains disabled</dd><dt>Invalid or unknown profile</dt><dd>Stay locked until native same-user recovery succeeds</dd></dl>
         </section>
 
         <footer class="trust-footer"><div class="trust-points"><span class="trust-point">App-wide setting</span><span class="trust-point">OS-owned credentials</span><span class="trust-point">No silent downgrade</span></div><span>Proposed reference · Academic Minimal 1.4</span></footer>

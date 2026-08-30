@@ -64,11 +64,19 @@
       <li>Windows owns password, Hello PIN, and biometric collection.</li>
       <li>Cancellation, denial, unavailability, busy, or failure never changes mode or unlocks the app.</li>
       <li>There is no silent fallback or downgrade; explicit recovery is user-selected.</li>
+      <li>Every protected-to-no-login transition or protected-profile reset requires successful current-provider verification or an explicit native Windows-password token for the same process-user SID before confirmation; the signed-in session alone is insufficient.</li>
       <li>Enabling/changing protected modes verifies providers before atomic publication.</li>
-      <li>Malformed enabled-mode configuration fails locked; missing legacy config becomes explicit no login.</li>
+      <li>Missing legacy state becomes explicit no login; every valid v1 profile becomes Windows password while preserving its profile name, zero/nonzero inactivity timeout, restart, and manual-lock semantics.</li>
+      <li>Malformed, unreadable, corrupt, or unknown protected state stays locked until native same-user recovery succeeds; otherwise the user is directed to Windows/provider recovery.</li>
       <li>The canonical Academic Minimal 1.4 reference is created only after approval and before renderer implementation.</li>
       <li>Task, slice, and amendment-exit review remain independent and commit-bound.</li>
     </ul>
+  </section>
+
+  <section class="security">
+    <h2>R01 security correction</h2>
+    <p>Independent R01 at <code>69d0acf2ac58c60254e955376c99f58f4deb373d</code> returned <strong>changes requested</strong>. <code>ECR-0004-R01-F01</code> found two connected authority ambiguities: confirmation/current-session presence could remove a protected mode without same-user proof, and valid persisted v1 lock profiles had no exact migration mapping.</p>
+    <p>The strict-descendant revision requires configured-provider or same-SID Windows-password proof before every protection reduction/reset, remains locked when proof fails, maps absent state to no login, and maps every valid v1 profile to Windows password with its name and timeout semantics intact. The R01 ledger remains append-only; R02 must close the finding before human approval is available.</p>
   </section>
 
   <section class="pending">
@@ -82,7 +90,7 @@
     <h2>Decision</h2>
     <p><strong>Recommended:</strong> approve only after exact-commit independent security/architecture/experience review reports no open blocker. The selected plan is the smallest coherent way to provide all three requested modes while retaining the strong native boundary and truthful design-first ordering.</p>
     <p>Alternatives are to keep password-only behavior, replace password outright, misplace the control in Project Settings, build an app-owned PIN, silently fall back, or defer the outcome. Section 9 of the proposal explains why those are not selected.</p>
-    <p>The exact human approval wording and its limits are in section 10 of the canonical proposal.</p>
+    <p>The exact human approval wording, R01 history, and limits are in section 10 of the canonical proposal.</p>
   </section>
 </body>
 </html>

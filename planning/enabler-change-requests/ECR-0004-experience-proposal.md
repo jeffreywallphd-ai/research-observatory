@@ -55,18 +55,28 @@ menu and makes its app-wide scope explicit. The page requires:
   the new versioned configuration.
 - Changing between enabled providers authenticates the current mode and verifies
   the destination provider before atomic publication.
-- Changing an enabled mode to `No login` requires an explicit warning and a
-  deliberate confirmation. It never occurs as fallback or migration default.
+- Changing an enabled mode to `No login` first requires successful verification
+  by the currently configured provider. If that provider is unavailable or its
+  configuration is unreadable, the only recovery proof is an explicit native
+  Windows-password prompt whose returned token matches the desktop process user
+  SID. The protection-reduction warning and deliberate confirmation follow that
+  same-user proof. Possession of the signed-in session alone is insufficient.
 - If Hello is unavailable after it was configured, the locked view stays
-  locked and explains the OS-reported availability class. The user may retry,
-  choose an explicit same-user Windows-password recovery prompt, or explicitly
-  reset app sign-in to `No login` from the current interactive Windows session.
-  Recovery does not silently change the stored mode; any reset is confirmed,
-  atomically persisted, and locally audited.
+  locked and explains the OS-reported availability class. The user may retry or
+  choose an explicit same-user Windows-password recovery prompt. Resetting app
+  sign-in to `No login` is offered only after that prompt proves the same SID,
+  followed by explicit confirmation, atomic persistence, and local audit. If no
+  approved same-user proof is available, the app remains locked and directs the
+  user to Windows/provider recovery; it does not reset policy.
 - Cancellation and denial leave the application and configuration unchanged.
-- A malformed or unreadable enabled-mode configuration fails locked. A missing
-  legacy configuration migrates to explicit `No login`, matching current
-  first-run behavior.
+- A missing legacy profile migrates to explicit `No login`, matching current
+  first-run behavior. Every valid persisted
+  `application-lock-profile.v1.json` migrates to `Windows password`, preserving
+  its profile name and inactivity timeout. A zero-minute timeout remains a
+  password/manual-lock profile with inactivity locking disabled; a nonzero
+  timeout preserves restart and inactivity locking. A malformed, unreadable,
+  corrupt, or unknown-version protected profile fails locked and can be
+  reconfigured only after the same native same-user recovery proof above.
 
 ## Style-guide delta
 
