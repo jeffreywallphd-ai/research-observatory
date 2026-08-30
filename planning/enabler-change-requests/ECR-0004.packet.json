@@ -1,0 +1,425 @@
+{
+  "$schema": "./enabler-change-request.v4.schema.json",
+  "schemaVersion": "4.0-proposal",
+  "documentType": "enabler-change-request-packet",
+  "changeRequestId": "ECR-0004",
+  "proposedAmendmentId": "W1.A05",
+  "targetWave": "W1",
+  "status": "pending-approval",
+  "executionState": "non-executable",
+  "classification": "product-scope-security-experience",
+  "authorityChain": {
+    "waveBase": {
+      "waveId": "W1",
+      "packetCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+      "approvalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W1.A01",
+        "changeRequestId": null,
+        "status": "ADOPTED",
+        "packetCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A01.json",
+          "sha256": "2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde",
+          "introductionCommit": "a20685b90532c60e0286e5e05f68b46c613e935d"
+        },
+        "effectiveStateCommit": "305e7444d632800c16cd9e0a7c41ae7b5f8abf93"
+      },
+      {
+        "id": "W1.A02",
+        "changeRequestId": "ECR-0001",
+        "status": "ADOPTED",
+        "packetCommit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A02.json",
+          "sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
+          "introductionCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"
+        },
+        "effectiveStateCommit": "24277ae5552930de558290f7c51255a73119ee1a"
+      },
+      {
+        "id": "W1.A03",
+        "changeRequestId": "ECR-0002",
+        "status": "ADOPTED",
+        "packetCommit": "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A03.json",
+          "sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd",
+          "introductionCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082"
+        },
+        "effectiveStateCommit": "673c6d30e83a77b922c40fc00f6aec13bedb26a9"
+      }
+    ],
+    "reservedAmendments": [
+      {
+        "id": "W1.A04",
+        "changeRequestId": "ECR-0003",
+        "status": "APPROVED_UNMATERIALIZED_SUPERSEDED",
+        "packetCommit": "77896d26ddac0569e286fe8481c0676408c716b1",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A04.json",
+          "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+          "introductionCommit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+        },
+        "supersededByMigration": {
+          "id": "GOV-MIG-0001",
+          "path": "planning/governance-migrations/GOV-MIG-0001.json",
+          "sha256": "4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d",
+          "commit": "d8adf48e9c2e0319e4ece573a9381f6ec305310e"
+        }
+      }
+    ]
+  },
+  "migrationAuthority": {
+    "id": "GOV-MIG-0001",
+    "path": "planning/governance-migrations/GOV-MIG-0001.json",
+    "sha256": "4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d",
+    "commit": "d8adf48e9c2e0319e4ece573a9381f6ec305310e"
+  },
+  "activationBoundary": {
+    "waveStatus": "PAUSED",
+    "ordinaryTaskStatesDenied": [
+      "IN_PROGRESS",
+      "REVIEW"
+    ],
+    "reviewCandidateMutationDenied": true,
+    "otherEnablerCampaignDenied": true,
+    "activeRecoveryHolds": []
+  },
+  "bootstrapUnit": {
+    "id": "W1.A05.B00",
+    "kind": "append-only-amendment-bootstrap",
+    "exceptionReason": "The immutable approved W1 packet does not contain the requested authentication-provider refactor, Windows Hello adapter, explicit local sign-in policy, or governed application-level settings experience. Post-migration W1.A05 must append that product authority and materialize its approved reference while preserving the paused Wave and the superseded W1.A04 reservation.",
+    "authorizedPaths": [
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "tools/taskctl.py",
+      "tools/plan_review_site.py",
+      "tools/plan_review_check.py",
+      "tests/foundation/test_taskctl_schema.py",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tests/foundation/test_plan_review_amendments.py",
+      "design/ui-reference/*",
+      "planning/review-site/*",
+      "docs/planning-implementation-plan.md",
+      "planning/status-summary.md"
+    ],
+    "requiredOutcomes": [
+      "Preserve the exact W1 base and adopted W1.A01 through W1.A03 authority while materializing the approved-but-unmaterialized W1.A04 reservation as terminal superseded history governed by GOV-MIG-0001.",
+      "Append exactly W1.A05, its two CAP-02 slice contributions, four ordered tasks, dependencies, estimates, acceptance criteria, verification duties, owner-directed refactor exception, and paused campaign projection without changing any ordinary task state.",
+      "Materialize RO-UI-ACADEMIC-MINIMAL-1.4 from the exact approved ECR-0004 experience proposal, with a canonical human approval record that cites the immutable W1.A05 approval and predates renderer implementation.",
+      "Keep W1 PAUSED at Wave scope with no lease, no ordinary task in progress or review, no active recovery hold, and no product implementation.",
+      "Regenerate affected planning and design-reference views from authoritative data and receive independent control, security, and experience review before W1.A05.T01 can be claimed."
+    ],
+    "prohibitedOutcomes": [
+      "No native, application, persistence, renderer, packaging, or other product implementation and no task claim, task submission, task review, slice approval, amendment adoption, Wave resume, Wave approval, G1 approval, local-main merge, remote push, external action, or destructive action.",
+      "No execution, materialization, adoption, reapproval, or rewrite of W1.A04/ECR-0003 and no revival of an incident-specific recovery hold or controller.",
+      "No weakening of the native supervisor unlock boundary, same-user verification, project encryption, Windows isolation, privacy or egress policy, Core capability isolation, audit or lineage, independent review, or exact-commit evidence.",
+      "No canonical reference may claim approval before the immutable W1.A05 approval exists, and no renderer implementation may precede the canonical reference approval commit.",
+      "No predecessor Wave, amendment, approval, migration, finding, review, evidence, checkpoint, or Git-history rewrite."
+    ]
+  },
+  "sliceContributions": [
+    {
+      "id": "W1.A05.S01",
+      "capabilityId": "CAP-02",
+      "title": "Provider-neutral application lock and Windows Hello",
+      "objective": "Preserve the native supervisor and same-user password guarantee behind a provider-neutral verification contract, then add an OS-owned Windows Hello adapter with explicit availability and failure semantics.",
+      "workType": "mixed-refactor-and-new",
+      "refactorTaskIds": [
+        "W1.A05.T01"
+      ],
+      "taskIds": [
+        "W1.A05.T01",
+        "W1.A05.T02"
+      ],
+      "acceptanceCriteria": [
+        "Existing Windows-password behavior and same-process-user SID proof remain available through the native supervisor with no renderer unlock authority.",
+        "Windows Hello uses an OS-owned user-presence prompt and the application never receives or stores a PIN or biometric.",
+        "Success, cancellation, denial, checking, unavailable, not configured, policy-disabled, busy, and failed outcomes are typed and cannot silently fall back or unlock.",
+        "Startup, manual lock, inactivity, restart, redaction, and explicit same-user recovery paths are proven across the native/application boundary.",
+        "The slice receives independent security and cross-process contract review with no open blocking finding before S02 begins."
+      ]
+    },
+    {
+      "id": "W1.A05.S02",
+      "capabilityId": "CAP-02",
+      "title": "Configurable local sign-in and application security settings",
+      "objective": "Add versioned application-wide sign-in policy and the governed Application Settings Security & sign-in experience with no login as the explicit default and password or Hello as optional protected modes.",
+      "workType": "new-product-work",
+      "refactorTaskIds": [],
+      "taskIds": [
+        "W1.A05.T03",
+        "W1.A05.T04"
+      ],
+      "acceptanceCriteria": [
+        "The configuration accepts exactly none, windows-password, or windows-hello; missing legacy configuration becomes explicit none and malformed enabled configuration fails locked.",
+        "Protected-mode enablement and changes verify required providers before atomic publication; cancellation, denial, unavailability, write failure, or concurrency leave the prior setting unchanged.",
+        "Reducing protection to no login requires explicit confirmation and is never an automatic migration, fallback, or recovery side effect.",
+        "Application Settings is app-wide, distinct from Project Settings, conforms to RO-UI-ACADEMIC-MINIMAL-1.4, and provides accessible status, preview, confirmation, recovery, and error behavior.",
+        "End-to-end restart, migration, failure, denial, cancellation, recovery, accessibility, and no-silent-downgrade evidence receives independent security and experience review."
+      ]
+    }
+  ],
+  "authorizedTaskIds": [
+    "W1.A05.T01",
+    "W1.A05.T02",
+    "W1.A05.T03",
+    "W1.A05.T04"
+  ],
+  "taskInventory": [
+    {
+      "id": "W1.A05.T01",
+      "title": "Refactor native verification behind a provider-neutral contract",
+      "objective": "Separate lock lifecycle and state from provider invocation while preserving native-supervisor unlock authority, the current Windows-password path, the same-user SID guarantee, restart behavior, and redacted failures.",
+      "estimate": "L",
+      "dependencies": [
+        "W1.A05.B00",
+        "CAP-02.S04.T02"
+      ],
+      "acceptanceCriteria": [
+        "The native supervisor remains the sole unlock authority and the renderer cannot manufacture or bypass a successful verification result.",
+        "The current Windows credential flow is represented by a provider adapter and a successful returned token must still identify the desktop process user SID.",
+        "Provider-neutral contracts distinguish success, cancellation, denial, unavailability, busy, and failure without collapsing them into success or fallback.",
+        "Existing startup, manual-lock, inactivity, restart, lock-state, and redacted-error behavior remains parity-tested for the password provider.",
+        "The change is confined to the provider seam and directly affected contracts/tests; it does not redesign project security, encryption, privacy, identity, or desktop supervision."
+      ],
+      "verification": [
+        "Run affected Rust native unit and integration tests for application-lock state, password verification, same-user SID denial, cancellation, failure, restart, and lock persistence.",
+        "Run desktop/application contract tests proving typed provider outcomes and that renderer messages cannot unlock without a native success result.",
+        "Run architecture/dependency checks for the supervisor, application, and renderer boundaries plus changed-path formatting, lint, and type checks.",
+        "Record password parity and explicit deferred coverage for Hello, configuration, settings UI, slice integration, and W1-exit qualification.",
+        "Obtain independent commit-bound security/contract task review."
+      ]
+    },
+    {
+      "id": "W1.A05.T02",
+      "title": "Implement the Windows Hello native verifier",
+      "objective": "Add an OS-owned Windows Hello current-user presence adapter with truthful availability, denial, cancellation, failure, and explicit password-recovery behavior and no app access to PIN or biometric material.",
+      "estimate": "L",
+      "dependencies": [
+        "W1.A05.B00",
+        "W1.A05.T01"
+      ],
+      "acceptanceCriteria": [
+        "Windows Hello verification is initiated and adjudicated through an OS-owned API for the current interactive Windows user; the application never receives or stores a PIN or biometric template.",
+        "The adapter exposes checking, available, not present, not configured, policy-disabled, busy, cancelled, denied, and failed states through the approved typed contract.",
+        "Cancellation, denial, unavailability, policy disablement, busy, and failure keep the application locked and never silently invoke password or no-login behavior.",
+        "Explicit Windows-password recovery is available only after deliberate user selection and retains the same-user SID guarantee.",
+        "Unsupported or non-Windows test environments report unavailable and cannot fabricate a successful Hello assertion; release-authoritative behavior is verified on Windows x64."
+      ],
+      "verification": [
+        "Run native adapter unit/contract tests with injectable OS boundaries for every availability and verification result.",
+        "Run Windows-x64 integration tests for configured success where the platform permits and deterministic denial/cancellation/unavailable/restart behavior otherwise.",
+        "Run security checks for credential/PIN/biometric non-capture, redacted logs, same-user recovery, replay resistance, and fail-closed cross-process messages.",
+        "Complete W1.A05.S01 end-to-end lock/unlock, failure, restart, and adversarial verification and obtain independent slice security/contract review.",
+        "Obtain independent commit-bound task review before slice approval."
+      ]
+    },
+    {
+      "id": "W1.A05.T03",
+      "title": "Add versioned application sign-in configuration and safe transitions",
+      "objective": "Persist exactly no login, Windows password, or Windows Hello as an application-wide versioned policy with no login as the explicit default, verified atomic transitions, fail-locked corruption handling, and deliberate audited recovery.",
+      "estimate": "M",
+      "dependencies": [
+        "W1.A05.B00",
+        "W1.A05.T01",
+        "W1.A05.T02"
+      ],
+      "acceptanceCriteria": [
+        "The versioned configuration stores exactly none, windows-password, or windows-hello; new installs and missing legacy configuration resolve to explicit none.",
+        "Enabling a protected mode verifies the destination provider before atomic publication, and switching protected modes authenticates the current mode and verifies the destination before publication.",
+        "Changing an enabled mode to none requires explicit confirmed intent; no migration, fallback, error, cancellation, denial, or recovery implicitly reduces protection.",
+        "Cancellation, denial, unavailable destination, write failure, crash, or concurrent update preserves the prior configuration byte-stably and returns a typed failure.",
+        "Malformed or unreadable protected-mode configuration fails locked; an explicit reset from the current interactive Windows session is confirmed, atomic, and locally audited."
+      ],
+      "verification": [
+        "Run configuration schema, migration, default, corruption, unknown-version, and fail-locked tests.",
+        "Run transactional persistence, crash/restart, rollback, stale-writer, concurrent-update, cancellation, denial, unavailable-provider, and write-failure tests.",
+        "Run security contract tests proving provider verification ordering, no silent downgrade, explicit recovery, audit redaction, and unchanged project/privacy/encryption settings.",
+        "Run affected application/native integration checks and record broader UI/accessibility and W1-exit coverage as deferred to T04, S02 review, and Wave qualification.",
+        "Obtain independent commit-bound security/migration task review."
+      ]
+    },
+    {
+      "id": "W1.A05.T04",
+      "title": "Implement Application Settings Security & sign-in",
+      "objective": "Implement the approved application-wide settings destination and Security & sign-in experience for the three modes, truthful provider status, lock preview, confirmation, and recovery while preserving project/workflow position and credential secrecy.",
+      "estimate": "L",
+      "dependencies": [
+        "W1.A05.B00",
+        "W1.A05.T03"
+      ],
+      "acceptanceCriteria": [
+        "The application shell exposes Application Settings separately from Project Settings and labels the Security & sign-in scope as this application on the current Windows account.",
+        "The page displays current and default mode, prerequisites, Hello availability, startup/manual/idle/restart preview, provider-specific recovery, and the unchanged protection boundaries in plain language.",
+        "Enabling/changing protected modes and reducing protection use the approved verification and confirmation flows; cancellation, denial, busy, unavailable, or failure restores focus and changes nothing.",
+        "Locked and recovery views disclose no project name, path, command, research content, credential, PIN, or biometric and never offer a silent provider fallback.",
+        "The experience conforms to RO-UI-ACADEMIC-MINIMAL-1.4 for keyboard, focus, announcements, zoom/reflow, responsive layout, themes, reduced motion, WCAG AA, and preserved project/workflow position."
+      ],
+      "verification": [
+        "Run renderer unit and interaction tests for all three modes, provider status classes, confirmations, recovery choices, cancellation/denial/failure, and focus restoration.",
+        "Run design-reference conformance, accessibility, keyboard, screen-reader announcement, zoom/reflow, theme, reduced-motion, and responsive checks against RO-UI-ACADEMIC-MINIMAL-1.4.",
+        "Run desktop/native end-to-end tests for first run, mode enable/switch/disable, manual and idle lock, restart, Hello unavailable, explicit password recovery, deliberate reset, corruption, and no-silent-downgrade behavior.",
+        "Complete W1.A05.S02 security/experience integration review and the amendment-exit affected build/smoke/security/accessibility matrix.",
+        "Obtain independent commit-bound task and slice review with all blocking findings closed."
+      ]
+    }
+  ],
+  "refactorBudget": {
+    "baseline": {
+      "waveId": "W1",
+      "sourceCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+      "sourcePath": "planning/backlog.yaml",
+      "estimateScale": {
+        "S": 1,
+        "M": 3,
+        "L": 5
+      },
+      "tasks": [
+        {"id": "CAP-01.S01.T01", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S01.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S01.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S02.T01", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S02.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S02.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S03.T01", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S03.T02", "estimate": "L", "points": 5},
+        {"id": "CAP-01.S03.T03", "estimate": "L", "points": 5},
+        {"id": "CAP-01.S04.T01", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S04.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-01.S04.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S01.T01", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S01.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S01.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S02.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-02.S02.T02", "estimate": "L", "points": 5},
+        {"id": "CAP-02.S02.T03", "estimate": "L", "points": 5},
+        {"id": "CAP-02.S03.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-02.S03.T02", "estimate": "L", "points": 5},
+        {"id": "CAP-02.S03.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S04.T01", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S04.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S04.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-02.S04.T04", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S01.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S01.T02", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S01.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-03.S02.T01", "estimate": "M", "points": 3},
+        {"id": "CAP-03.S02.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-03.S02.T03", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S03.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S03.T02", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S03.T03", "estimate": "M", "points": 3},
+        {"id": "CAP-03.S04.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S04.T02", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S04.T03", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S05.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S05.T02", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S05.T03", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S06.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S06.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-03.S06.T03", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S06.T04", "estimate": "L", "points": 5},
+        {"id": "CAP-03.S06.T05", "estimate": "L", "points": 5},
+        {"id": "CAP-07.S01.T01", "estimate": "L", "points": 5},
+        {"id": "CAP-07.S01.T02", "estimate": "M", "points": 3},
+        {"id": "CAP-07.S01.T03", "estimate": "L", "points": 5}
+      ],
+      "totalPoints": 194
+    },
+    "refactorAllocations": [
+      {
+        "taskId": "W1.A05.T01",
+        "estimate": "L",
+        "points": 5
+      }
+    ],
+    "refactorPoints": 5,
+    "refactorSharePercent": 2.6,
+    "limitPolicy": {
+      "mode": "owner-directed-wave-exception",
+      "authorizedBy": "repository-owner",
+      "authorization": "For this refactor, don't worry about the 15% rule. Just get the work done within this wave.",
+      "scopeTaskIds": [
+        "W1.A05.T01"
+      ],
+      "rationale": "The repository owner explicitly directed completion of the authentication-provider refactor within W1. The exception is limited to T01 and does not waive any authority, security, evidence, or review control; the exact itemized allocation is 5 of 194 approved-W1 points (2.6%) and is independently below the normal cap."
+    },
+    "refactorTaskIds": [
+      "W1.A05.T01"
+    ],
+    "method": "Freeze every W1 task and estimate from planning/backlog.yaml at the immutable approved Wave packet commit, convert S=1, M=3, and L=5, and divide the exact points of tasks classified as refactoring by the 194-point baseline. T02 through T04 are new product work."
+  },
+  "governedExperience": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+    "approvalRequired": true,
+    "files": [
+      {
+        "path": "planning/enabler-change-requests/ECR-0004-experience-proposal.md",
+        "sha256": "b54901056db89dcdbbf67eaf9be8c3067b33cd94ebcb170639dd42fb7229eb62"
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0004-application-settings-reference.html",
+        "sha256": "7044f311db1b42cc69318e1052021816c784017b5e4d3d14603c1f1c831f84c0"
+      }
+    ]
+  },
+  "acceptanceCriteria": [
+    "The exact W1 base, adopted W1.A01 through W1.A03 chain, approved-but-unmaterialized W1.A04 reservation, and GOV-MIG-0001 supersession remain complete, hash-bound, ordered, ancestral, and unchanged.",
+    "W1.A05 remains non-executable before exact human approval, and B00 remains the sole lawful first mutation after approval while W1 stays paused and ordinary tasks remain unchanged.",
+    "B00 truthfully materializes the W1.A04 terminal reservation, appends only the exact W1.A05 inventory, and creates the canonical RO-UI-ACADEMIC-MINIMAL-1.4 reference and human approval record before product implementation.",
+    "The native supervisor remains the sole unlock authority; password same-user SID verification is preserved and Windows Hello is OS-owned with no PIN or biometric capture.",
+    "The exact sign-in modes are no login, Windows password, and Windows Hello; no login is the explicit default and missing legacy configuration migrates to it without weakening any other security or privacy boundary.",
+    "Protected-mode transitions verify providers before atomic publication, protection reduction is explicit and confirmed, malformed enabled configuration fails locked, and no failure, cancellation, denial, unavailability, recovery, or migration silently downgrades protection.",
+    "The application-wide settings experience is distinct from Project Settings, conforms to the approved reference, preserves project/workflow position, and satisfies accessibility, redaction, restart, recovery, and truthful availability contracts.",
+    "The only refactor task is W1.A05.T01 at 5 of 194 approved-W1 estimate points; the owner-directed exception is scoped only to T01 and no major refactor or unrelated debt work is introduced.",
+    "B00, every task, both slices, and amendment exit receive independent commit-bound review; all blocking findings close append-only and adoption records a security/experience checkpoint while W1 remains paused.",
+    "No release gate, remote push, external effect, destructive action, university/cloud identity, project encryption/privacy weakening, predecessor history rewrite, or W1 qualification claim occurs within packet approval."
+  ],
+  "verificationObligations": [
+    "Validate the packet against the exact Draft 2020-12 v4 schema, recompute every declared file hash, and verify the complete base/adopted/reserved/migration authority chain and current quiescent boundary.",
+    "At B00, validate generic post-migration materialization, immutable reservation handling, exact task/slice projection, canonical reference approval ordering, generated planning/reference views, backlog schema, and no product-source or ordinary-task change.",
+    "At T01 and T02, run risk-selected native/application/cross-process tests for password parity, same-user denial, Hello availability and outcomes, credential non-capture, cancellation, denial, failure, recovery, restart, redaction, and renderer-bypass resistance.",
+    "At T03, run configuration schema/migration, default, corruption, fail-locked, atomic publication, rollback, stale-writer, concurrency, crash/restart, provider-ordering, explicit reset, audit-redaction, and no-silent-downgrade tests.",
+    "At T04, run approved-reference conformance, renderer interactions, keyboard, focus, announcements, zoom/reflow, responsive layout, themes, reduced motion, WCAG AA, locked-surface redaction, project/workflow-position, recovery, and desktop end-to-end tests.",
+    "At S01 and S02 review, run accumulated integration and adversarial checks for their credible security/contract/migration/experience risk surfaces; record a security/experience integration checkpoint at amendment exit.",
+    "Run the complete affected/full repository and Windows-x64 deployment-profile matrix at W1 exit, not automatically at each ordinary task unless a task criterion or shared-infrastructure risk requires it.",
+    "Obtain independent exact-commit packet, bootstrap, task, slice, and amendment-exit dispositions with severity-ranked reproducible findings and append-only closures."
+  ],
+  "rollback": [
+    "Before approval, reject, defer, or withdraw the inert packet; W1 remains paused at its current recoverable boundary and no product or reference authority changes.",
+    "A failed B00 review preserves its immutable attempt and uses strict-descendant bootstrap resubmission; no task materializes and no canonical reference is represented as approved unless its approval binding is valid.",
+    "A failed task, slice, or exit review preserves prior packets, findings, evidence, and closures and uses bounded remediation that replays the open risk boundary without restarting unrelated review.",
+    "Authentication configuration publication is atomic; any verification, persistence, crash, or concurrency failure keeps the prior bytes and mode, while malformed protected-mode state fails locked.",
+    "Hello unavailability never changes stored policy. Retry, explicit same-user password recovery, or a deliberate confirmed and audited reset from the current interactive Windows session are the only recovery choices.",
+    "Before adoption, withhold the checkpoint if authority, experience ordering, security, migration, evidence, or review validation fails; never rewrite predecessor Wave, amendment, approval, migration, finding, evidence, or Git history."
+  ],
+  "nonGoals": [
+    "No custom Research Observatory PIN, password store, biometric store, Windows-account replacement, or claim that app lock creates a second operating-system security boundary.",
+    "No remote, university, cloud, OIDC, multi-user, role, tenant, or institutional identity work and no change to later identity capability authority.",
+    "No project encryption, filesystem-permission, Core isolation, privacy/egress, audit/lineage, backup, storage, or Project Settings redesign.",
+    "No major refactor, general authentication framework, cross-platform Hello substitute, unrelated technical-debt cleanup, or work outside the exact four tasks.",
+    "No silent fallback, automatic protection downgrade, fabricated Hello availability, weak test substitution, or deletion/weakening of a valid security or experience test.",
+    "No W1 repeat approval, Wave resume before adoption, W1 qualification, G1 approval, local-main integration before completion, remote push, external effect, destructive action, or substantial spend."
+  ],
+  "files": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0004.md",
+      "sha256": "bba01963f86432a10ed7163876c33d472895b1cf62eb74a4c1d38843a68743b7",
+      "role": "canonical-proposal"
+    },
+    {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.schema.json",
+      "sha256": "69b378e5958e460354ec523fe23bfcdae11b1e321388e41bd101ce1d9f20f347",
+      "role": "proposal-schema"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0004-review.html",
+      "sha256": "aee3bdfa9c9c9b3c96858a6c2287fbcd32a224b9579e21da69e1a9a38c63c863",
+      "role": "human-review"
+    }
+  ]
+}

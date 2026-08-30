@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECR-0004 review — Research Observatory</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 78rem; margin: 0 auto; padding: 2rem; line-height: 1.55; }
+    header, section { border: 1px solid #7b8493; border-radius: .75rem; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .pending { border-left: .5rem solid #c57b00; }
+    .security { border-left: .5rem solid #4966b1; }
+    .good { border-left: .5rem solid #2b7b56; }
+    code { overflow-wrap: anywhere; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #7b8493; padding: .55rem; text-align: left; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <header class="pending">
+    <p><strong>Pending independent review and exact-commit human approval · non-executable</strong></p>
+    <h1>ECR-0004 / proposed W1.A05</h1>
+    <p>Add configurable local sign-in and Windows Hello to the W1 Windows local runtime.</p>
+    <p><a href="ECR-0004.md">Complete canonical proposal</a> · <a href="ECR-0004.packet.json">Machine packet</a> · <a href="ECR-0004-application-settings-reference.html">Application Settings mock-up</a> · <a href="ECR-0004-experience-proposal.md">Experience contract</a></p>
+  </header>
+
+  <section>
+    <h2>Decision at a glance</h2>
+    <table>
+      <thead><tr><th>Mode</th><th>Behavior</th><th>Protection boundary</th></tr></thead>
+      <tbody>
+        <tr><td><strong>No login</strong> · default</td><td>Open without an additional Research Observatory prompt.</td><td>The signed-in Windows account remains the local access boundary.</td></tr>
+        <tr><td><strong>Windows password</strong></td><td>Preserve the existing native same-user credential prompt.</td><td>The returned token must match the desktop process user SID.</td></tr>
+        <tr><td><strong>Windows Hello</strong></td><td>Use an OS-owned PIN, face, or fingerprint presence prompt.</td><td>The app never receives or stores the PIN or biometric.</td></tr>
+      </tbody>
+    </table>
+    <p>No login disables only app reauthentication. Windows isolation, encrypted storage, local permissions, privacy/egress policy, Core process protection, and audit/lineage remain active.</p>
+  </section>
+
+  <section class="security">
+    <h2>Current implementation assessment</h2>
+    <p>The native supervisor and same-user SID check are strong and are preserved. The gaps are a provider-neutral verifier seam, a Windows Hello adapter, explicit versioned mode configuration, and an application-level settings surface. The plan adds those prerequisites without moving unlock authority into the renderer or redesigning project security.</p>
+    <p>Only <code>W1.A05.T01</code> is refactoring: 5 of 194 approved-W1 estimate points (2.6%). The owner-directed exception is limited to T01 and does not waive any security, evidence, or review gate.</p>
+  </section>
+
+  <section>
+    <h2>Ordered bounded work</h2>
+    <table>
+      <thead><tr><th>Slice / task</th><th>Outcome</th><th>Key limit</th></tr></thead>
+      <tbody>
+        <tr><td><code>W1.A05.S01</code><br><code>T01</code> · L</td><td>Provider-neutral native verification contract with password parity.</td><td>Refactor only the verifier seam; preserve native supervisor lock authority and same-user SID proof.</td></tr>
+        <tr><td><code>W1.A05.S01</code><br><code>T02</code> · L</td><td>Windows Hello native adapter with typed availability and failure outcomes.</td><td>No app-owned PIN/biometric and no silent fallback.</td></tr>
+        <tr><td><code>W1.A05.S02</code><br><code>T03</code> · M</td><td>Versioned, atomic app-wide mode configuration; explicit no-login default.</td><td>Protected-mode corruption fails locked; protection reduction is confirmed and audited.</td></tr>
+        <tr><td><code>W1.A05.S02</code><br><code>T04</code> · L</td><td>Approved Application Settings → Security &amp; sign-in experience.</td><td>Typed contracts, accessible interactions, redacted lock surface, no project-settings conflation.</td></tr>
+      </tbody>
+    </table>
+    <p>Dependencies force implementation in that order. S01 receives independent security/contract review before S02.</p>
+  </section>
+
+  <section class="good">
+    <h2>Security and experience invariants</h2>
+    <ul>
+      <li>The native supervisor remains the sole application-unlock authority.</li>
+      <li>Windows owns password, Hello PIN, and biometric collection.</li>
+      <li>Cancellation, denial, unavailability, busy, or failure never changes mode or unlocks the app.</li>
+      <li>There is no silent fallback or downgrade; explicit recovery is user-selected.</li>
+      <li>Enabling/changing protected modes verifies providers before atomic publication.</li>
+      <li>Malformed enabled-mode configuration fails locked; missing legacy config becomes explicit no login.</li>
+      <li>The canonical Academic Minimal 1.4 reference is created only after approval and before renderer implementation.</li>
+      <li>Task, slice, and amendment-exit review remain independent and commit-bound.</li>
+    </ul>
+  </section>
+
+  <section class="pending">
+    <h2>Stopped boundary and approval effect</h2>
+    <p>W1 is paused, no ordinary task is in progress or review, no recovery hold is active, and no amendment campaign overlaps this proposal. W1.A04 remains immutable approved-but-unmaterialized history superseded by GOV-MIG-0001; W1.A05 does not execute it.</p>
+    <p>Approval authorizes only the exact bootstrap, two slices, four tasks, and proposed experience decision. Bootstrap must independently materialize the backlog and canonical reference while W1 stays paused. Product work cannot start before bootstrap approval.</p>
+    <p><a href="../review-site/waves/W1.html">Current W1 page</a> · <a href="../review-site/CAP-02/index.html">CAP-02 page</a></p>
+  </section>
+
+  <section>
+    <h2>Decision</h2>
+    <p><strong>Recommended:</strong> approve only after exact-commit independent security/architecture/experience review reports no open blocker. The selected plan is the smallest coherent way to provide all three requested modes while retaining the strong native boundary and truthful design-first ordering.</p>
+    <p>Alternatives are to keep password-only behavior, replace password outright, misplace the control in Project Settings, build an app-owned PIN, silently fall back, or defer the outcome. Section 9 of the proposal explains why those are not selected.</p>
+    <p>The exact human approval wording and its limits are in section 10 of the canonical proposal.</p>
+  </section>
+</body>
+</html>

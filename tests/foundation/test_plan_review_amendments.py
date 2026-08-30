@@ -407,6 +407,50 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         approval_section = proposal.split(approval_heading, 1)[1]
         self.assertIn("Approve ECR-0002 as W1.A03 at packet commit", approval_section)
 
+    def test_pending_v4_product_amendment_renders_dynamic_slices_budget_and_experience(self) -> None:
+        entry = next(
+            item for item in self.manifest["enabler_change_requests"] if item["change_request_id"] == "ECR-0004"
+        )
+        detail = (self.site / "enablers/ECR-0004.html").read_text(encoding="utf-8")
+
+        self.assertEqual("PENDING", entry["approval_status"])
+        self.assertEqual(
+            ["W1.A05.S01", "W1.A05.S02"],
+            [item["id"] for item in entry["slice_contributions"]],
+        )
+        self.assertEqual(194, entry["refactor_budget"]["baseline"]["totalPoints"])
+        self.assertEqual(["W1.A05.T01"], entry["refactor_budget"]["refactorTaskIds"])
+        self.assertEqual(
+            "owner-directed-wave-exception",
+            entry["refactor_budget"]["limitPolicy"]["mode"],
+        )
+        self.assertEqual(
+            "RO-UI-ACADEMIC-MINIMAL-1.4",
+            entry["governed_experience"]["referenceId"],
+        )
+        self.assertEqual(2, len(entry["governed_experience"]["files"]))
+
+        for marker in (
+            "W1.A04 · reserved",
+            "Approved but unmaterialized; superseded by GOV-MIG-0001",
+            "Post-migration governance authority; does not grant product execution",
+            "Proposed slice contributions",
+            "Provider-neutral application lock and Windows Hello",
+            "Configurable local sign-in and application security settings",
+            "Refactor allocation and planning exception",
+            "5 points / 2.6%",
+            "owner-directed-wave-exception",
+            "Governed experience proposal",
+            "RO-UI-ACADEMIC-MINIMAL-1.4",
+            "ECR-0004-experience-proposal.md",
+            "ECR-0004-application-settings-reference.html",
+            "Estimate L · dependencies: W1.A05.B00, CAP-02.S04.T02",
+            "Pending, non-executable proposal; no bootstrap/task authority",
+        ):
+            self.assertIn(marker, detail)
+
+        self.assertFalse([line for line in detail.splitlines() if line.rstrip() != line])
+
     def test_interrupted_approved_wave_suppresses_repeat_commands_but_future_wave_keeps_approval(self) -> None:
         wave_one = (self.site / "waves/W1.html").read_text(encoding="utf-8")
         backlog = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))

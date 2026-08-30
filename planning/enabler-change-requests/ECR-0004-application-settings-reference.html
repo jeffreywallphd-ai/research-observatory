@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application Settings proposal · Research Observatory</title>
+  <link rel="stylesheet" href="../../design/ui-reference/assets/tokens.css">
+  <link rel="stylesheet" href="../../design/ui-reference/assets/app.css">
+  <link rel="stylesheet" href="../../design/ui-reference/assets/print.css" media="print">
+  <script defer src="../../design/ui-reference/assets/app.js"></script>
+  <style>
+    .proposal-banner { margin: 1rem 0; }
+    .mode-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .mode-card { display: block; border: 1px solid var(--border); border-radius: .75rem; padding: 1rem; cursor: pointer; }
+    .mode-card:has(input:checked) { border-color: var(--brand-500); box-shadow: 0 0 0 2px var(--brand-100); }
+    .mode-card input { margin-right: .5rem; }
+    .mode-card strong { display: inline-block; margin-bottom: .35rem; }
+    .mode-card p { margin: .5rem 0 0; }
+    .settings-nav a { text-decoration: none; }
+    @media (max-width: 900px) { .mode-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body data-page="application-settings">
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="../../design/ui-reference/index.html" aria-label="Research Observatory project home">
+        <span class="brand-mark" aria-hidden="true">◉</span><span class="brand-name">Research Observatory</span>
+      </a>
+      <div class="topbar-center"><strong>Application Settings</strong></div>
+      <div class="topbar-actions">
+        <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">◐</button>
+        <span class="avatar" aria-label="Local profile">JW</span>
+      </div>
+    </header>
+    <aside class="sidebar" aria-label="Application navigation">
+      <nav class="nav-scroll settings-nav">
+        <a class="nav-item" href="../../design/ui-reference/index.html"><span>←</span><span>Back to project</span></a>
+        <div class="nav-group-label">Application</div>
+        <a class="nav-item active" href="#security-sign-in" aria-current="page"><span>◆</span><span>Security &amp; sign-in</span></a>
+        <a class="nav-item" href="#appearance"><span>◐</span><span>Appearance</span></a>
+        <a class="nav-item" href="#diagnostics"><span>?</span><span>Diagnostics</span></a>
+        <div class="nav-group-label">Project</div>
+        <a class="nav-item" href="../../design/ui-reference/project-settings.html"><span>▣</span><span>Project Settings</span></a>
+      </nav>
+    </aside>
+    <div class="main-shell">
+      <main class="page-content" id="main-content">
+        <header class="page-header">
+          <div><div class="eyebrow">Application-wide · This Windows account</div><h1 class="page-title">Security &amp; sign-in</h1>
+          <p class="page-subtitle">Choose whether Research Observatory adds an app-level prompt after Windows sign-in.</p></div>
+          <div class="page-actions"><button class="btn">Cancel</button><button class="btn btn-primary" data-toast="Proposed setting saved in this reference only.">Save change</button></div>
+        </header>
+        <div class="notice proposal-banner"><span aria-hidden="true">ℹ</span><div><div class="notice-title">Proposed Academic Minimal 1.4 reference</div>
+          <div class="notice-text">This page is for W1.A05 approval. It is not executable product behavior yet.</div></div></div>
+
+        <section class="card card-lg" id="security-sign-in" aria-labelledby="mode-heading">
+          <div class="card-header"><div><h2 class="card-title" id="mode-heading">App sign-in mode</h2>
+            <div class="card-subtitle">No login is the default. Windows remains responsible for account access.</div></div><span class="badge badge-info">Current: No login</span></div>
+          <fieldset style="border:0;padding:0;margin:1rem 0"><legend class="sr-only">Choose app sign-in mode</legend>
+            <div class="mode-grid">
+              <label class="mode-card"><span><input type="radio" name="signin" checked><strong>No login</strong> <span class="badge badge-success">Default</span></span>
+                <p class="small muted">Open directly after Windows sign-in. No Research Observatory startup, manual, or inactivity reauthentication.</p>
+                <p class="tiny">Best for a typical single-user PC protected by Windows.</p></label>
+              <label class="mode-card"><span><input type="radio" name="signin"><strong>Windows password</strong> <span class="badge badge-info">Available</span></span>
+                <p class="small muted">Use the existing native Windows credential prompt and require the same Windows account.</p>
+                <p class="tiny">Research Observatory does not store the password.</p></label>
+              <label class="mode-card"><span><input type="radio" name="signin"><strong>Windows Hello</strong> <span class="badge badge-success">Available</span></span>
+                <p class="small muted">Ask Windows Hello for user presence with a PIN, face, or fingerprint configured by Windows.</p>
+                <p class="tiny">The app never receives or stores the PIN or biometric.</p></label>
+            </div>
+          </fieldset>
+          <div class="notice warning"><span aria-hidden="true">!</span><div><div class="notice-title">What No login changes</div>
+            <div class="notice-text">It removes only the additional app prompt. Windows account isolation, encrypted project storage, local permissions, privacy and egress rules, and Core process protection stay active.</div></div></div>
+        </section>
+
+        <section class="grid grid-2 section">
+          <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">Lock behavior</h2><div class="card-subtitle">Available when Windows password or Windows Hello is selected.</div></div><span class="badge">Disabled in No login</span></div>
+            <div class="field"><label class="field-label" for="idle">Lock after inactivity</label><select class="select" id="idle" disabled><option>Disabled</option><option>5 minutes</option><option>15 minutes</option><option>30 minutes</option><option>60 minutes</option></select></div>
+            <dl class="key-value" style="margin-top:1rem"><dt>Startup</dt><dd>Open without an app prompt</dd><dt>Manual lock</dt><dd>Unavailable in No login</dd><dt>Idle lock</dt><dd>Unavailable in No login</dd><dt>Project protection</dt><dd>Unchanged</dd></dl>
+          </article>
+          <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">Provider status &amp; recovery</h2><div class="card-subtitle">Availability comes from Windows and is never inferred.</div></div><span class="badge badge-success">Hello ready</span></div>
+            <div class="list"><div class="list-item"><span class="list-content"><span class="list-title">Windows Hello</span><span class="list-meta">Available for this Windows account</span></span><span class="badge badge-success">Ready</span></div>
+            <div class="list-item"><span class="list-content"><span class="list-title">Windows password recovery</span><span class="list-meta">Shown only after explicit selection; never a silent fallback</span></span><span class="badge badge-info">Available</span></div></div>
+            <p class="small muted">If Hello later becomes unavailable, retry it, choose explicit password recovery, or deliberately reset app sign-in to No login. Cancellation and denial change nothing.</p>
+          </article>
+        </section>
+
+        <section class="card card-lg section"><div class="card-header"><div><h2 class="card-title">Before this change is applied</h2><div class="card-subtitle">Protection changes are previewed and atomically persisted.</div></div></div>
+          <ol class="small"><li>The destination provider is checked and, when enabling protection, verified.</li><li>Reducing protection to No login requires an explicit warning and confirmation.</li><li>The setting is written only after all required checks succeed.</li><li>Cancellation, denial, failure, or a busy provider leaves the existing mode unchanged.</li></ol>
+        </section>
+
+        <footer class="trust-footer"><div class="trust-points"><span class="trust-point">App-wide setting</span><span class="trust-point">OS-owned credentials</span><span class="trust-point">No silent downgrade</span></div><span>Proposed reference · Academic Minimal 1.4</span></footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
