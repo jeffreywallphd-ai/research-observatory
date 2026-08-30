@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2bb6c9ccd774c27961d42aabc77f2ff9265f00e8e248bfec1873208b52381246
+source_sha256: b88101d10e2474ada69922e70f7012f2e95eabf6ba9a8fcf5b58c9a5a6cab97b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1203,7 +1203,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T03 - Add versioned application sign-in configuration and safe transitions
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T01`, `W1.A05.T02`
 
