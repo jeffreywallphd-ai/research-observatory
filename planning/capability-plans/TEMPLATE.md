@@ -3,6 +3,25 @@ plan_schema_version: "1.1"
 document_type: capability-decision-plan
 baseline: "1.3"
 supplemental_release: "1.3.4"
+planning_policy_version: "initiation-assessment-1.0"
+initiation_assessment:
+  policy_version: "1.0"
+  assessed_at: "YYYY-MM-DDTHH:MM:SSZ"
+  estimation_unit: "one consistent effort unit"
+  implementation_baseline: "Tested strengths, weaknesses, debt, and reusable boundaries"
+  vision_architecture_best_practice_fit: "Whether the proposed outcome and plan remain the best fit"
+  planned_items:
+    - work_id: "CAP-XX.SYY.TZZ"
+      effort: 10
+  refactoring_items: [] # each allocation names one task; slice IDs are not effort units
+  major_refactor_disposition: "None identified"
+  wave_refreshes:
+    - wave: "W?"
+      assessed_at: "YYYY-MM-DDTHH:MM:SSZ"
+      material_changes: "What changed since the capability assessment, or None"
+      plan_adaptations: "How the proposed plan changed, or None"
+      support_improvements: "Bounded implementation improvements added, or None"
+      major_refactor_disposition: "None identified"
 capability_id: "CAP-XX"
 title: "Replace with capability title"
 status: proposed
@@ -44,9 +63,29 @@ All slices in `CAP-01` through `CAP-19` have individual implementation plans. If
 
 > **Wave-scoped planning gate.** Inspect the complete capability and resolve capability-wide material decisions once. Classify each decision by the Wave where it becomes binding. Create every missing slice plan, but approve only the decisions and ordered slices in the Wave being activated. Inherited and future decisions remain visible as nonbinding context until their own Wave approval.
 
+> **Initiation assessment.** While this plan is proposed, compare the tested
+> current implementation with the Vision, accepted architecture, current
+> best-practice sources, and the proposed outcome. Record a capability baseline
+> and each applicable Wave refresh in Section 0A. Identify assessment-added
+> technical-debt refactoring and prove that it is no more than 15% of the
+> pre-assessment planned implementation effort at both capability and Wave scope.
+> Route major refactoring outside initiation planning. Approval freezes the
+> adapted plan; this requirement does not reopen an earlier approved Wave.
+
 <div class="visual-flow"><span>Inventory every slice</span><b>→</b><span>Compare and classify decisions</span><b>→</b><span>Confirm Wave-binding decisions</span><b>→</b><span>Approve the complete Wave</span><b>→</b><span>Execute the Wave continuously</span></div>
 
 ## 0. Control and authority
+## 0A. Initiation assessment and planning adaptation
+
+Record the tested implementation baseline, Vision/architecture/best-practice
+fit, plan adaptations, and necessary support improvements. The front matter
+records one common estimation unit, the itemized pre-assessment planned-work
+denominator, itemized refactoring allocations, and the major-refactor
+disposition. Existing validation recomputes `R <= 0.15 * P` at capability and
+Wave scope and deduplicates the Wave roll-up; reviewers assess whether the
+baseline and planning judgments are truthful. The approved Wave commit freezes
+the resulting packet without adding a separate planning controller.
+
 ## 1. Capability outcome and production-ready exit
 ## 2. Slice map and end-to-end dependency logic
 ## 3. Decision-making protocol

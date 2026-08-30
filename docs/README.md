@@ -31,9 +31,12 @@ This file is the repository's high-level document router. It delegates detailed 
 
 1. Root `AGENTS.md`.
 2. `../planning/README.md`.
-3. Complete capability decision packet and every ordered slice plan in the active wave.
-4. `automation/planning-review-site.md`.
-5. The generated capability review page.
+3. Vision, relevant accepted ADRs and Systems Design, and the tested current
+   implementation affected by the planned work.
+4. Current primary best-practice sources relevant to the core planned work.
+5. Complete capability decision packet and every ordered slice plan in the active wave.
+6. `automation/planning-review-site.md`.
+7. The generated capability review page.
 
 ### Architecture change
 

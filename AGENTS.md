@@ -36,6 +36,61 @@ Wave exit gate**. The Wave is the approval, durable execution, integration,
 qualification, and handoff unit. A capability is a cross-Wave product-outcome
 map; it does not own an execution lease.
 
+### Wave and capability initiation assessment
+
+Before preparing a new Wave for approval, and when a capability is first
+planned, assess the tested current implementation against the product Vision,
+accepted architecture, relevant current best practices, and the proposed plan.
+For a capability that contributes to a later Wave, refresh only the facts that
+materially changed since its initial assessment. Record:
+
+- the relevant implemented baseline, strengths, weaknesses, technical debt,
+  and reusable boundaries;
+- whether the proposed outcome, decomposition, interfaces, and verification
+  remain the best fit for the Vision and the core work's current best practices;
+- any adaptation required because the plan is no longer the best product
+  direction; and
+- any bounded implementation improvement that is necessary to support the new
+  work safely and sustainably.
+
+Current behavior establishes facts; it does not make implementation convenience
+the desired architecture. Within the space allowed by accepted ADRs and other
+higher authority, Vision and current best practice take precedence over
+preserving a weak implementation or bending new plans around it. A material
+conflict with accepted architecture still follows repository mismatch and ADR
+governance rather than being silently resolved during planning.
+
+Initiation assessment is not authority for a major refactor of completed work.
+Any assessment-added item that changes a previously implemented structure or
+behavior is technical-debt refactoring. At both the
+capability and Wave levels, its forecast effort must be no more than 15% of the
+pre-assessment forecast effort of the already planned implementation work. Use
+one recorded estimation basis, do not use raw task counts unless tasks are
+deliberately size-normalized, and do not relabel refactoring as new work to evade
+the limit. Record the itemized pre-assessment work and estimates using atomic
+task IDs, and never count both a slice and its child task. Mixed items allocate
+their refactoring effort explicitly. Existing planning validation recomputes the
+capability and deduplicated Wave arithmetic from those items; reviewers remain
+responsible for assessing whether the baseline and planning judgment are
+truthful. The immutable approved Wave commit preserves the resulting record
+without a second controller or approval. The remaining plan must be
+predominantly new or previously planned product work.
+
+For this rule, a major refactor includes changing an accepted architectural
+decision, replacing a foundational runtime or data boundary, or restructuring
+multiple completed capability outcomes. If required support work would exceed
+15% or requires such a refactor, record
+the finding and route it to a separate future enabler/capability or an explicit
+roadmap/architecture decision; do not embed the decision in Wave or capability
+initiation. If the approved outcome cannot be delivered safely without that
+work, the plan is not ready for approval.
+
+Before approval, Wave and capability plans are intentionally changeable and
+should incorporate this assessment. The assessment is part of the existing
+planning packet, not a separate approval gate. After the complete Wave packet is
+approved, its scope is strict and immutable; later changes follow the existing
+append-only amendment rules.
+
 - inspect every capability contribution and ordered slice assigned to the Wave;
 - resolve all material capability, interface, security, migration, experience,
   recovery, performance, and verification decisions before execution;
