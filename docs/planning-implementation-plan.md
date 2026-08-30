@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 13f2aa041f5402bf9bddc4bfde5cc13e490eaf3d978ecdd9691c189ec67524ce
+source_sha256: e0472ca3faaeeecb959823d27796aa5fcfc1b53e38573be12b1f25e12b73d982
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4447,7 +4447,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -4478,6 +4478,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-03.S03.T03.R01.json` at `08e81290382d208f10c5f460dcd32296b8e6da53`
 - `artifacts/evidence/CAP-03.S03.T03.R02.json` at `9910ca3ae717ced397830125381e555901fd5abe`
 - `artifacts/evidence/CAP-03.S03.T03.R03.json` at `b4da81e23738d722efe12cf44f760531656690f3`
+- `artifacts/evidence/CAP-03.S03.T03.R04.json` at `427deb25291a55cfc7cf7b15327ddcc2f87d2262`
 
 ##### Review history — CAP-03.S03.T03
 
@@ -4579,7 +4580,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S03.T03-R02-F01` `fixed` — The exact empty same-cursor reproduction and a backward-cursor variant now fail at the generated-client boundary. A non-null cursor requires at least one returned fact, strict forward progress, and equality to requested cursor plus fact count. An empty terminal continuation with nextCursor=null passes through the generated client, mergeLineagePage retains accumulated facts and terminal null, and the renderer no longer exposes Load more. The generator emits exactly the checked-in guard and generated parity passed.
 - `CAP-03.S03.T03-R02-F02` `fixed` — The exact R02 partial-export and integrity-reopening reproductions now fail closed. Export requires the immutable accepted cursor-zero query, matching revision/direction, terminal pagination, verified integrity, service export permission with no denial, and no denied/unknown item rights; the manifest binds the accepted depth/page bounds and terminal count. mergeLineagePage applies a monotonic join in which integrity-review and rights-restricted denial survive every later verified/allowed page. The newly isolated R03-F01 concerns contradictory missing/legacy authority that neither the client nor readiness predicate currently maps into that otherwise-correct monotonic join; it does not erase closure of the exact R02 reproductions.
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R04` / packet SHA-256 `3ebe396314951dce07057db6b790179c8b3532945fd92d59fe8558e0ba3ce22c`
+
+- Candidate / base / branch: `427deb25291a55cfc7cf7b15327ddcc2f87d2262` / `b4da81e23738d722efe12cf44f760531656690f3` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-30T00:03:41+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S03.T03.R04.json` / `7440517b4d2aa3e5b8310fca2a658968744b7b37e244ae6582a63dca332b4572` / `427deb25291a55cfc7cf7b15327ddcc2f87d2262`
+- Acceptance-criteria SHA-256: `c299ad69e411140034547ab16cbabcbffe86e3075a6e1fd43e0cf7718558e384`
+- Verification-selection SHA-256: `11683b8b23d556c1cff470f3872a917d242f97b7847dfb81154323384c2ffb58`
+- Changed paths: `apps/desktop/src/app/AuditLineageWorkspace.test.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.tsx`, `artifacts/evidence/CAP-03.S03.T03.R03.json`, `artifacts/evidence/CAP-03.S03.T03.review-R03.json`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/repositories.py`, `tests/data/test_sqlite_repositories.py`, `tools/core_api_contract.py`
+- Selected checks: `apps\desktop\node_modules\.bin\vitest.CMD run apps/desktop/src/app/AuditLineageWorkspace.test.tsx packages/contracts/core-api/generated.test.ts`, `PYTHONPATH=services/core-api/src .venv\Scripts\python.exe -m unittest -v tests.service.test_provenance tests.data.test_sqlite_repositories`, `PYTHONPATH=services/core-api/src .venv\Scripts\python.exe -m unittest discover -s tests/service -p test_*.py`, `.venv\Scripts\python.exe tools\desktop_app_check.py --repo . --report artifacts/tmp/CAP-03.S03.T03-R04-desktop-application.json`, `core_api_contract.py --check; desktop and contracts TypeScript checks; quality_check.py; architecture_check.py; repository_structure_check.py; agent_protocol_check.py`, `build_manifest.py; git diff --check; protected witness hash`
+- Deferred checks: `CAP-03.S03 independent slice review will replay the accumulated append-only persistence, migration, retry/restart, lineage, integrity-review, recovery, generated-client, renderer, accessibility, and adversarial integration union after T03 closes.`, `The two stale object-envelope schema-version assertions and the historical foundation controller/recovery baseline remain mandatory W1-exit reconciliation debt and are not attributed to this candidate.`, `Complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification remains mandatory once at W1 exit.`
+- Selection rationale: CAP-03.S03.T03-R03-F01 is the sole open finding after R03. Its root cause crosses the honest SQLite projection, generated cross-process response boundary, and renderer export predicate, so R04 corrects and verifies all three rather than adding a renderer-only patch. The selected matrix replays the exact contradictory first-page and continuation cases for missing and legacy visibility, accumulated merge authority, successful complete export, the real SQLite legacy bridge, the existing real missing-reference and full provenance vertical, every prior focused closure, the complete Core service suite, the complete desktop/Rust verifier, generated-contract parity, strict types, quality/architecture/repository controls, exact build provenance, patch hygiene, and witness safety. R03 already refreshed all 64 controlled visual captures, and R04 changes no CSS, user text, layout, approved reference, or normal verified/denied rendering; slice integration will replay the accumulated affected UI union. The stale schema-v6 assertions and historical foundation-controller baseline remain unchanged W1-exit debt.
+- Prior round / replayed open findings: `R03` / `CAP-03.S03.T03-R03-F01`
+- Root-cause escalation: Earlier rounds treated integrityState and exportAllowed as trusted service conclusions, then hardened cursor and page-merge behavior without defining the semantic implications of the response's own missingRevisionIds and legacyEventCount fields. That left three independently reasonable checks incomplete: Core counted legacy bridges without promoting integrity review, the generated client validated field shapes but not the implication from visible debt to integrity denial, and renderer completeness ignored both content-free debt signals. R04 defines one invariant across all three boundaries: any missing or legacy visibility is integrity-review and non-exportable, and only zero accumulated debt may be complete.
 
 **Current latest-review projection:** `changes-requested` by codex-independent-provenance-lineage-reviewer at `2026-08-29T23:55:51+00:00`
 
