@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Version graph for preprint, accepted manuscript, version of record, erratum, correction, expression of concern, and retraction.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Users can identify the preferred citable version and see status warnings; a retraction or correction marks dependent outputs for review rather than deleting history.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-04.S03.T02"><li data-task-dependency="CAP-04.S03.T02"><a href="CAP-04.S03.T02.html"><code>CAP-04.S03.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>data</li><li>graph</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li><li>python tools/verify.py --profile graph</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S03.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S03.T03` - Implement work-version, correction, and retraction relationships
+<section class="task-summary" data-task-plan="CAP-04.S03.T03" data-task-plan-sha256="dfda6ef4906b545a77acedbf4f65ea0b5df5c77b9f7100cda1c8d951af4ea52e"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S03.T03` - Implement work-version, correction, and retraction relationships
 **Objective:** Version graph for preprint, accepted manuscript, version of record, erratum, correction, expression of concern, and retraction.
 
 **Dependencies:** `CAP-04.S03.T02`

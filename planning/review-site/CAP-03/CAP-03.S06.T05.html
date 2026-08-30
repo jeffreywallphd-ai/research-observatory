@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Deterministic workflow contract tests and Playwright end-to-end scenarios for all fourteen profiles.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Each approved profile starts at project creation, renders the exact approved sequence, preserves access to all tools, and resumes correctly after restart.</li><li>Hermeneutic, critical, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.</li><li>Automated evidence identifies the approved UI reference and workflow-catalog version used by every test.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-03.S06.T04"><li data-task-dependency="CAP-03.S06.T04"><a href="CAP-03.S06.T04.html"><code>CAP-03.S06.T04</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li><li>python tools/taskctl.py validate</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-03.S06.T05" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.5 `CAP-03.S06.T05` - Verify all approved use-case workflows end to end
+<section class="task-summary" data-task-plan="CAP-03.S06.T05" data-task-plan-sha256="80c11ac0f4b0b7db86c26231cfdfd752a1b7ec6c839d77e9273304e87ee2d6a0"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.5 `CAP-03.S06.T05` - Verify all approved use-case workflows end to end
 **Objective:** Test profile selection, navigation order, supporting-tool access, state persistence, profile revision, accessibility, and expected output handoffs across all fourteen use cases.
 
 **Dependencies:** `CAP-03.S06.T04`

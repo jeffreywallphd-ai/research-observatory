@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>MSI/MSIX or approved Tauri installer variants with prerequisites, file associations, protocol registration, and uninstall behavior.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Clean install, repair, and uninstall pass on supported Windows versions; user data is preserved by default and removable only through an explicit action.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-01.S04.T03|CAP-00.S05.T03"><li data-task-dependency="CAP-01.S04.T03"><a href="CAP-01.S04.T03.html"><code>CAP-01.S04.T03</code></a></li><li data-task-dependency="CAP-00.S05.T03"><code>CAP-00.S05.T03</code></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-01.S05.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-01.S05.T01` - Create per-user and per-machine Windows installers
+<section class="task-summary" data-task-plan="CAP-01.S05.T01" data-task-plan-sha256="145513bd735648833461f7f355b857829e2674e3d56e9cba5edccc27e8ab4292"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-01.S05.T01` - Create per-user and per-machine Windows installers
 **Objective:** MSI/MSIX or approved Tauri installer variants with prerequisites, file associations, protocol registration, and uninstall behavior.
 
 **Dependencies:** `CAP-01.S04.T03`, `CAP-00.S05.T03`
@@ -86,8 +86,7 @@
 ```text
 python tools/verify.py --profile desktop
 python tools/verify.py --profile e2e-local
-```
-</pre></article></section>
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-01.S05.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

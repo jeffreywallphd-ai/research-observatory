@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues, disciplines, languages, and discovery routes.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable or unknown data rather than imputing it.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-04.S04.T02"><li data-task-dependency="CAP-04.S04.T02"><a href="CAP-04.S04.T02.html"><code>CAP-04.S04.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>search</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile search</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S04.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S04.T03` - Build corpus provenance and source-overlap reports
+<section class="task-summary" data-task-plan="CAP-04.S04.T03" data-task-plan-sha256="9e0655dd6eaf362a08f7ff23809fd4c371b1897a9459aab9534791bd17616e3d"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S04.T03` - Build corpus provenance and source-overlap reports
 **Objective:** Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues, disciplines, languages, and discovery routes.
 
 **Dependencies:** `CAP-04.S04.T02`

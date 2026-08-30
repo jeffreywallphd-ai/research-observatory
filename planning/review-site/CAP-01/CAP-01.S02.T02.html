@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Global focus management, skip links, shortcut registry, accessible names, live-region policy, and automated accessibility checks.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>All shell functions operate without a pointer; focus is visible and restored after dialogs; automated checks report no critical violations on core routes.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-01.S02.T01"><li data-task-dependency="CAP-01.S02.T01"><a href="CAP-01.S02.T01.html"><code>CAP-01.S02.T01</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-01.S02.T02" data-task-owner="codex" data-task-branch="codex/cap-01-desktop-shell" data-task-base-sha="c1e46fad79fbfaa4f8cbb2efedff3c1a6ec5dedb"><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>codex/cap-01-desktop-shell</code> · base <code>c1e46fad79fbfaa4f8cbb2efedff3c1a6ec5dedb</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-01.S02.T02` - Establish keyboard, focus, and screen-reader behavior
+<section class="task-summary" data-task-plan="CAP-01.S02.T02" data-task-plan-sha256="8919475c17eacf04733e1a7bed51602d173ed2ea1dd3d090d8571ae91e96e758"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-01.S02.T02` - Establish keyboard, focus, and screen-reader behavior
 **Objective:** Global focus management, skip links, shortcut registry, accessible names, live-region policy, and automated accessibility checks.
 
 **Dependencies:** `CAP-01.S02.T01`
@@ -85,8 +85,7 @@
 
 ```text
 python tools/verify.py --profile desktop
-```
-</pre></article></section>
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-01.S02.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>

@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output invalidation.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks only affected evidence and outputs stale.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-05.S06.T02"><li data-task-dependency="CAP-05.S06.T02"><a href="CAP-05.S06.T02.html"><code>CAP-05.S06.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li><li>service</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S06.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S06.T03` - Implement parser upgrade comparison and stale propagation
+<section class="task-summary" data-task-plan="CAP-05.S06.T03" data-task-plan-sha256="d371b2bbb2a0f7297d0de753d9088ad0bec5511bb78c60108250cd81b800f581"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S06.T03` - Implement parser upgrade comparison and stale propagation
 **Objective:** Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output invalidation.
 
 **Dependencies:** `CAP-05.S06.T02`

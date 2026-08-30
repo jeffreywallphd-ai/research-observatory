@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Desktop-controlled start, health polling, graceful stop, crash detection, bounded restart, and log collection.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Only one compatible sidecar serves an app instance; crashes produce diagnostic UI and safe retry; app shutdown does not orphan processes or lock projects.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-01.S03.T02"><li data-task-dependency="CAP-01.S03.T02"><a href="CAP-01.S03.T02.html"><code>CAP-01.S03.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-01.S03.T03" data-task-owner="codex" data-task-branch="codex/cap-01-desktop-shell" data-task-base-sha="6743b5451a715d0585dd17798c27d23ff4dc2ba8"><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>codex/cap-01-desktop-shell</code> · base <code>6743b5451a715d0585dd17798c27d23ff4dc2ba8</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-01.S03.T03` - Implement sidecar lifecycle supervision in Tauri
+<section class="task-summary" data-task-plan="CAP-01.S03.T03" data-task-plan-sha256="37eafcee25568619969cee93cc8600cd6880efe286e3cf43197bd6dbe83ced59"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-01.S03.T03` - Implement sidecar lifecycle supervision in Tauri
 **Objective:** Desktop-controlled start, health polling, graceful stop, crash detection, bounded restart, and log collection.
 
 **Dependencies:** `CAP-01.S03.T02`

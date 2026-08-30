@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Admin-configurable project roots, read/write checks, optional removable-media package, and a separately governed shared model/cache directory.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>A project moved between approved lab PCs opens with intact evidence anchors; machine policy controls shared paths; simultaneous write on unsupported shared filesystems is blocked.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-02.S05.T02"><li data-task-dependency="CAP-02.S05.T02"><a href="CAP-02.S05.T02.html"><code>CAP-02.S05.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>data</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile data</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-02.S05.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-02.S05.T03` - Create portable lab project and shared-cache conventions
+<section class="task-summary" data-task-plan="CAP-02.S05.T03" data-task-plan-sha256="1ceef43565518c4fab111489a0c6ceb9f0903ec3ffee46225ee0331eed95e6e9"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-02.S05.T03` - Create portable lab project and shared-cache conventions
 **Objective:** Admin-configurable project roots, read/write checks, optional removable-media package, and a separately governed shared model/cache directory.
 
 **Dependencies:** `CAP-02.S05.T02`

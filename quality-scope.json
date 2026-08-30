@@ -126,6 +126,7 @@
     "tests/foundation/test_governancectl.py",
     "tests/foundation/test_packaging_smoke_check.py",
     "tests/foundation/test_plan_review_amendments.py",
+    "tests/foundation/test_plan_review_task_drilldown.py",
     "tests/foundation/test_planctl_amendments.py",
     "tests/foundation/test_planctl_wave_approval.py",
     "tests/foundation/test_quality_check.py",

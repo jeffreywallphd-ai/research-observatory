@@ -31,3 +31,27 @@
   validation, and leave visual confirmation as an explicit manual check rather
   than bypassing the browser policy.
 - Because this changes an evidence/control surface, an independent reviewer must approve the exact candidate commit before integration or W1 product work resumes.
+
+## R01 remediation
+
+Independent review at `df41ee045a4816e53a92180f1df58fa6196e36f1`
+returned `CHANGES_REQUESTED` in
+`artifacts/evidence/governance-maintenance-review-site-task-drilldown-1.0.review.md`.
+The remediation preserves the approved projection boundary and closes only the
+four recorded findings:
+
+1. support both repository-authored task-heading forms, reject duplicates, and
+   require every one of the 337 authored tasks to have a non-empty,
+   hash-bound plan projection;
+2. project and validate the authoritative ordered `dependencies` inventory;
+3. project and validate top-level task owner, branch, and base-commit claim
+   fields; and
+4. place the focused regression suite inside the existing governed Python
+   quality scope.
+
+The selected checks are the focused task-drill-down regression suite, the
+affected planning-review regression suite, deterministic full-site validation,
+the governed Python quality boundary, and `git diff --check`. Broader visual,
+keyboard, and assistive-technology confirmation remains a disclosed manual
+check because the in-app browser policy denied control of the local `file://`
+surface. Product runtime and the protected W1.A04 witness remain outside scope.

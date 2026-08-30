@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Desktop view from project output to source passages, transformations, models, prompts, decisions, and stale state.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>A sampled synthesis sentence and evidence field can be traced to exact sources and processing events in two interactions; alternate and superseded records remain visible.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-03.S03.T02"><li data-task-dependency="CAP-03.S03.T02"><a href="CAP-03.S03.T02.html"><code>CAP-03.S03.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-03.S03.T03" data-task-owner="codex" data-task-branch="codex/w1-windows-local-runtime" data-task-base-sha="c31bd843b85568e0bb51fdbd7247bf5fe9b64568"><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>codex/w1-windows-local-runtime</code> · base <code>c31bd843b85568e0bb51fdbd7247bf5fe9b64568</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-03.S03.T03` - Create an audit and lineage inspection workspace
+<section class="task-summary" data-task-plan="CAP-03.S03.T03" data-task-plan-sha256="16e37e9045ce76704a3f2e2658472f103c50b23457dfcc6286b3817f48b430e1"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-03.S03.T03` - Create an audit and lineage inspection workspace
 **Objective:** Desktop view from project output to source passages, transformations, models, prompts, decisions, and stale state.
 
 **Dependencies:** `CAP-03.S03.T02`

@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any, ClassVar
 
 import yaml
 
@@ -20,12 +21,24 @@ from plan_review_site import (  # noqa: E402
 
 
 class PlanReviewTaskDrilldownTests(unittest.TestCase):
+    temporary: ClassVar[tempfile.TemporaryDirectory[str]]
+    site: ClassVar[Path]
+    manifest: ClassVar[dict[str, Any]]
+    backlog: ClassVar[dict[str, Any]]
+    tasks: ClassVar[dict[str, dict[str, Any]]]
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.temporary = tempfile.TemporaryDirectory()
         cls.site = Path(cls.temporary.name) / "review-site"
         cls.manifest = build_site(REPO, cls.site)
         cls.backlog = yaml.safe_load((REPO / "planning" / "backlog.yaml").read_text(encoding="utf-8"))
+        cls.tasks = {
+            str(task["id"]): task
+            for capability in cls.backlog.get("capabilities", [])
+            for slice_ in capability.get("slices", [])
+            for task in slice_.get("tasks", [])
+        }
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -33,9 +46,7 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
 
     def test_manifest_and_pages_cover_every_backlog_task_without_hard_coded_inventory(self) -> None:
         authored_slices = {
-            str(slice_["slice_id"])
-            for capability in self.manifest["capabilities"]
-            for slice_ in capability["slices"]
+            str(slice_["slice_id"]) for capability in self.manifest["capabilities"] for slice_ in capability["slices"]
         }
         expected = [
             str(task["id"])
@@ -60,6 +71,41 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
                     self.assertIn(f'data-task-page="{task["task_id"]}"', text)
                     self.assertIn("Scope and acceptance", text)
                     self.assertIn("Profiles and commands", text)
+                    self.assertNotIn("No task-specific Section 9 plan was found", text)
+                    self.assertIn(f'data-task-plan="{task["task_id"]}"', text)
+                    self.assertIn(f'data-task-plan-sha256="{task["plan_section_sha256"]}"', text)
+
+    def test_task_pages_project_exact_dependencies_claims_and_authored_plan_hashes(self) -> None:
+        plan_hashes: list[str] = []
+        for capability in self.manifest["capabilities"]:
+            for slice_ in capability["slices"]:
+                for task_entry in slice_["tasks"]:
+                    task_id = str(task_entry["task_id"])
+                    task = self.tasks[task_id]
+                    expected_dependencies = list(task.get("dependencies", []))
+                    expected_claim = {
+                        "owner": task.get("owner") or (task.get("claim") or {}).get("agent"),
+                        "branch": task.get("branch") or (task.get("claim") or {}).get("branch"),
+                        "base_sha": task.get("base_sha") or (task.get("claim") or {}).get("base_sha"),
+                    }
+                    self.assertEqual(expected_dependencies, task_entry["dependencies"], task_id)
+                    self.assertEqual(expected_claim, task_entry["claim"], task_id)
+                    self.assertRegex(task_entry["plan_section_sha256"], r"^[0-9a-f]{64}$", task_id)
+                    plan_hashes.append(str(task_entry["plan_section_sha256"]))
+
+                    text = (self.site / task_entry["page"]).read_text(encoding="utf-8")
+                    self.assertIn(
+                        f'data-task-dependencies="{"|".join(expected_dependencies)}"',
+                        text,
+                        task_id,
+                    )
+                    for dependency in expected_dependencies:
+                        self.assertIn(f'data-task-dependency="{dependency}"', text, task_id)
+                    self.assertIn(f'data-task-owner="{expected_claim["owner"] or "unclaimed"}"', text, task_id)
+                    self.assertIn(f'data-task-branch="{expected_claim["branch"] or "none"}"', text, task_id)
+                    self.assertIn(f'data-task-base-sha="{expected_claim["base_sha"] or "none"}"', text, task_id)
+
+        self.assertEqual(337, len(plan_hashes))
 
     def test_wave_pages_render_nested_collapsible_cards_from_exact_wave_inventory(self) -> None:
         waves = {str(wave["wave_id"]): wave for wave in self.manifest["waves"]}
@@ -103,6 +149,15 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
         section = extract_task_section(markdown, task_id)
         self.assertIn("First body", section)
         self.assertNotIn("Second body", section)
+
+        legacy = (
+            "## 9. Task-by-task implementation plan\n\n"
+            "### CAP-99.S01.T01 — First\nLegacy first body.\n\n"
+            "### CAP-99.S01.T02 — Second\nLegacy second body.\n"
+        )
+        legacy_section = extract_task_section(legacy, task_id)
+        self.assertIn("Legacy first body", legacy_section)
+        self.assertNotIn("Legacy second body", legacy_section)
 
         with tempfile.TemporaryDirectory() as temporary:
             repo = Path(temporary)

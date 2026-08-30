@@ -44,14 +44,14 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
   <h3>Expected deliverables</h3><ul class="gate-criteria"><li>New-project and intent-revision application flows backed by the workflow-profile contracts.</li></ul>
   <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Project creation requires one primary use case before completion and displays purpose, output, process form, and ordered steps.</li><li>Changing use case previews affected schemas, checkpoints, outputs, autonomy defaults, stopping logic, and stale artifacts before confirmation.</li><li>All tools remain available and the selected use case does not change evidence/provenance requirements silently.</li></ul>
-  <h3>Dependencies</h3><p>None</p>
+  <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-03.S06.T01|CAP-03.S02.T02|CAP-01.S01.T02"><li data-task-dependency="CAP-03.S06.T01"><a href="CAP-03.S06.T01.html"><code>CAP-03.S06.T01</code></a></li><li data-task-dependency="CAP-03.S02.T02"><a href="CAP-03.S02.T02.html"><code>CAP-03.S02.T02</code></a></li><li data-task-dependency="CAP-01.S01.T02"><a href="../CAP-01/CAP-01.S01.T02.html"><code>CAP-01.S01.T02</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li><li>python tools/taskctl.py validate</li></ul>
-  <p><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-03.S06.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-03.S06.T02` - Implement primary-use-case selection at project creation and intent revision
+<section class="task-summary" data-task-plan="CAP-03.S06.T02" data-task-plan-sha256="a3edd85196245da9d2e6a87d53b6d8cdc127604dd95736199afcc9f6a26c0a49"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-03.S06.T02` - Implement primary-use-case selection at project creation and intent revision
 **Objective:** Ask the user what scholarly objective they are pursuing, preview the ordered path and output, save it in the versioned intent contract, and permit later revision through explicit impact review.
 
 **Dependencies:** `CAP-03.S06.T01`, `CAP-03.S02.T02`, `CAP-01.S01.T02`
@@ -89,8 +89,7 @@ python tools/verify.py --profile desktop
 python tools/verify.py --profile service
 python tools/verify.py --profile data
 python tools/taskctl.py validate
-```
-</pre></article></section>
+```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 <p class="decision-meta" data-task-worksheet-absent="CAP-03.S06.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
