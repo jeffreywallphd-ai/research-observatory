@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-slice-integration-review",
+  "sliceId": "W1.A05.S01",
+  "attemptId": "R01",
+  "submissionCommit": "0b011eebfd2d060e981301c5d1ad0c2e0a467bd5",
+  "integrationEvidence": {
+    "path": "artifacts/evidence/W1.A05.S01.integration-R01.json",
+    "sha256": "b4091a067fc1d0b4c17a871acfd23f7d77d4339e94639b5d9631db2ad98a0e03",
+    "gitBlob": "d62920a28c4891099c2ef9d357dc1f7824cdbfb8",
+    "stateCommit": "568742a1b4deecb6a630a3d218f5d624d95b7278",
+    "productCandidateCommit": "3f91f7721e293b72d8367e1036c5875dc1f14ff2"
+  },
+  "reviewer": "codex-independent-w1-a05-s01-security-integration-reviewer",
+  "reviewedAt": "2026-08-30T13:11:58.5841930-04:00",
+  "disposition": "approved",
+  "notes": "The exact W1.A05.S01 R01 integration submission is approved with no blocking or nonblocking acceptance-bound finding. Product candidate 3f91f7721e293b72d8367e1036c5875dc1f14ff2 is a strict ancestor of all-task-approved state 568742a1b4deecb6a630a3d218f5d624d95b7278, which is a strict ancestor of submission 0b011eebfd2d060e981301c5d1ad0c2e0a467bd5. The submission adds only the immutable integration packet to the approved state. The packet reproduces SHA-256 b4091a067fc1d0b4c17a871acfd23f7d77d4339e94639b5d9631db2ad98a0e03 and Git blob d62920a28c4891099c2ef9d357dc1f7824cdbfb8. Both tasks are DONE with approved final ledgers, and their four final evidence/review files reproduce the packet's hashes. Independent union replay confirms the native supervisor remains the only unlock authority. The password adapter retains its non-persisting CredUI prompt, LogonUserW proof, submitted-token/current-process EqualSid comparison, volatile secret clearing, and handle cleanup. The Hello adapter uses the desktop HWND-bound IUserConsentVerifierInterop operation under a balanced WinRT apartment, retains the operation until completion, and maps only Verified to succeeded. No Hello path accepts or captures a renderer provider/outcome/window, PIN, biometric, username, password, or token, and no Hello failure invokes password or no-login fallback. The common manager reserves one current locked generation before provider invocation, admits only one attempt, applies denial backoff, rejects stale/replayed success, starts Core only after native success, rechecks generation after Core start, stops a raced or failed Core, and clears reservations after cancellation, failure, and panic. Renderer decoders require exact own data properties and primitive closed values, invoke no accessors, reconstruct trusted snapshots, and allow only the exact native succeeded/unlocked tuple to clear fail-closed reconciliation. Availability, unlock, recovery, and lock commands remain argument-free across the authority boundary; same-SID password recovery is separate and is not invoked by Hello. The direct Windows dependency versions are exact, Windows-only, and already present through the Tauri/WebView graph. The real release-authoritative Windows probe independently returned not-present, so this review does not infer configured interactive success from injected tests. That conditional hardware proof remains explicit, while T03 retains persisted provider selection and transition authority, T04 retains the governed deliberate recovery/settings/accessibility experience, and complete cross-capability qualification remains due at W1 exit.",
+  "checks": [
+    {
+      "check": "exact submission, integration evidence, task evidence, reviews, and ancestry",
+      "result": "passed",
+      "details": "The ordered product-candidate -> all-task-approved-state -> submission ancestry passed. Candidate-to-approved adds only T02 evidence/review plus generated approval projections; approved-to-submission adds only W1.A05.S01.integration-R01.json. The integration packet hash/blob is exact. T01 remediation evidence/review reproduce SHA-256 64a164628e4cee2956f5b9288c5e58fbfe8f41dfa27d662366f2c6322e016973 and 0dd2a40eeb4a4b30d26f302c96165ca544d72f4c0b9badea1e7fcb31c2407428; T02 evidence/review reproduce ee06f5c37e5d9261404a178da905a3e0a2e8c0e299e0255553d8d9989ed86f60 and 7653b00135129ac61a055355fbaae31fe80b0083b39a26ca714111045f1d869b. Backlog state at 568742a1 records both tasks DONE and approved. Reviewed ranges pass git diff --check."
+    },
+    {
+      "check": "combined native provider, supervisor, reservation, generation, and recovery boundary",
+      "result": "passed",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked --offline",
+      "details": "All 35 native library tests passed. The union covers exact password SID authority, all Hello availability and verification mappings, no prompt when unavailable/windowless, no fallback, success-only Core start/unlock, one concurrent reservation, denial backoff, already-unlocked command denial, stale-generation replay and Core stop, provider panic cleanup, restart/manual/inactivity behavior, redacted audit, profile races, and protected supervisor/support operations. Source inspection confirms WindowsHelloVerificationProvider implements the same native-only provider seam consumed by ApplicationLockManager; no renderer-selectable provider or outcome exists."
+    },
+    {
+      "check": "Windows desktop Hello interop, WinRT lifetime, result closure, and secret minimization",
+      "result": "passed",
+      "details": "The exact candidate initializes a multithreaded WinRT apartment for each bounded call, keeps its guard alive through IAsyncOperation::get, and balances successful initialization on drop. It obtains the agile UserConsentVerifier activation factory and calls only IUserConsentVerifierInterop::RequestVerificationForWindowAsync with an HWND and fixed content-free message. All documented availability/result values are mapped explicitly; unknown enum values, activation errors, operation errors, and zero windows fail closed. The Hello section contains no CredUI, LogonUserW, password provider/buffer, username/domain, token, PIN, or biometric surface."
+    },
+    {
+      "check": "strict renderer/native cross-process contract and native-success-only recovery",
+      "result": "passed",
+      "command": "bundled Node vitest run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "details": "All 15 focused renderer/runtime tests passed. An independent direct replay additionally rejected an availability accessor without invoking it, a coercible availability object, an unknown future success-like availability value, and the prior coercible unlock snapshot. The exact six unlock outcomes remained accepted only with their approved reason/state pairs. No status, adverse attempt, or malformed envelope can clear fail-closed state; that remains reserved for explicit native succeeded/RO-LOCK-UNLOCKED/unlocked authority."
+    },
+    {
+      "check": "security source boundary, same-SID recovery, portable profile, and broad Windows credential behavior",
+      "result": "passed",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests tests.security.test_windows_credentials",
+      "details": "All 15 selected tests passed; one redirected-vault symlink case was skipped because directory symlinks are unavailable to the current Windows token. The passing union pins HWND interop/no-secret/no-fallback, argument-free authority, same-SID password recovery, credential zeroing and closure, protected generation checks, strict v1 profile behavior, corruption failure, and bounded redacted audit."
+    },
+    {
+      "check": "real release-platform availability without fabricated success",
+      "result": "passed with conditional residual",
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline",
+      "details": "The real Windows x64 OS boundary returned exactly {schemaVersion:'1.0', provider:'windows-hello', availability:'not-present'}. The review records only that observation. Configured interactive success is not available on this host and is neither inferred from the injected Verified mapping nor represented as complete platform evidence."
+    },
+    {
+      "check": "quality, compilation, architecture, dependency scope, and evidence truth",
+      "result": "passed",
+      "command": "cargo fmt --check; cargo clippy --lib --locked --offline -- -D warnings; cargo check --bins --examples --locked --offline; desktop TypeScript --noEmit; desktop lint; architecture_check.py --repo .",
+      "details": "Rust formatting, warnings-denied Clippy, locked binaries/examples, strict desktop TypeScript, desktop lint, and architecture validation passed. Architecture reports 13 areas, 12 modules, five stable interfaces, and three deployment profiles. Cargo metadata/tree confirms windows 0.61.3 and windows-future 0.2.1 are Windows-only exact direct dependencies already present transitively; no unrelated dependency or product authority entered."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingIds": [
+        "W1.A05.T01-R01-F01"
+      ],
+      "severity": "medium",
+      "disposition": "remain-fixed",
+      "details": "The final approved T01 R02 ledger remains immutable and exact. Independent union replay again rejects coercible/accessor nested state, reconstructs trusted snapshots, keeps already-unlocked invocation outside the provider-attempt contract, and reserves fail-closed recovery for the exact explicit native-success tuple. T02 does not reopen that decoder or authority defect."
+    }
+  ],
+  "residuals": [
+    {
+      "id": "W1.A05.S01-RESIDUAL-CONFIGURED-HELLO-HARDWARE",
+      "disposition": "conditional-release-platform-obligation",
+      "details": "The live OS reports not-present on this Windows x64 host. Injected boundaries prove the deterministic Verified and every adverse mapping, but a real configured interactive Hello prompt must be consumed at S01/W1 qualification when release-authoritative hardware reports available. Until then no real success claim is available."
+    },
+    {
+      "id": "W1.A05.S01-RESIDUAL-T03-T04",
+      "disposition": "mandatory-downstream-work",
+      "details": "W1.A05.T03 still owns persisted none/password/Hello selection, migration, transactional transitions, authenticated protection reduction, and corruption recovery. W1.A05.T04 still owns the approved application-settings route, deliberate password-recovery interaction, focus, accessibility, cancellation/denial/failure communication, and no-silent-downgrade experience. This slice approval does not implement or approve either task."
+    },
+    {
+      "id": "W1.A05.S01-RESIDUAL-W1-EXIT",
+      "disposition": "mandatory-wave-obligation",
+      "details": "The complete cross-capability W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification matrix remains due at Wave exit. This integration approval is not W1 qualification or release approval."
+    }
+  ],
+  "downstreamHandoff": {
+    "ready": true,
+    "nextConsumer": "W1.A05.T03",
+    "contracts": [
+      "Use only the native provider seam and exact typed availability/outcome contracts; the renderer must not select or fabricate a provider, HWND, or result.",
+      "Bind persisted provider selection and every transition to the current native lock generation; only native succeeded may unlock or authorize a protected transition.",
+      "Retain separate explicit Windows-password recovery with the unchanged current-process EqualSid proof and no automatic Hello fallback."
+    ],
+    "constraints": "Configured interactive Hello success remains conditional on suitable Windows hardware; T03/T04 must not represent injected success as live platform proof, and complete W1 qualification remains pending."
+  }
+}
