@@ -1,11 +1,13 @@
 pub mod application_lock;
+pub mod application_lock_verification;
 pub mod supervisor;
 pub mod support_bundle;
 
 use application_lock::{
     ApplicationLockAuditEvent, ApplicationLockManager, ApplicationLockReason,
-    ApplicationLockSnapshot,
+    ApplicationLockSnapshot, ApplicationUnlockAttempt,
 };
+use application_lock_verification::VerificationOutcome;
 use supervisor::{
     CoreApiRequest, CoreApiResponse, RuntimeDiagnostic, RuntimeSnapshot, RuntimeSupervisor,
     SupervisorConfig,
@@ -164,17 +166,17 @@ async fn application_lock_unlock(
     app: AppHandle,
     supervisor: State<'_, RuntimeSupervisor>,
     lock: State<'_, ApplicationLockManager>,
-) -> Result<ApplicationLockSnapshot, &'static str> {
+) -> Result<ApplicationUnlockAttempt, &'static str> {
     let supervisor = supervisor.inner().clone();
     let lock_manager = lock.inner().clone();
     let result =
         tauri::async_runtime::spawn_blocking(move || lock_manager.reauthenticate(&supervisor))
             .await
-            .map_err(|_| "RO-LOCK-AUTH-DENIED")?;
-    if let Ok(snapshot) = &result {
-        let _ = app.emit("application-lock-changed", snapshot);
+            .map_err(|_| "RO-LOCK-AUTH-FAILED")?;
+    if result.outcome == VerificationOutcome::Succeeded {
+        let _ = app.emit("application-lock-changed", &result.snapshot);
     }
-    result
+    Ok(result)
 }
 
 pub async fn dispatch_runtime_start(

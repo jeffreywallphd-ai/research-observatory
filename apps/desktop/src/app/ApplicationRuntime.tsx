@@ -13,6 +13,8 @@ import { ProjectsWorkspace } from "./ProjectsWorkspace";
 import { IntentWorkspace } from "./IntentWorkspace";
 import {
   APPLICATION_LOCK_TIMEOUTS,
+  applicationUnlockFailureMessage,
+  decodeApplicationUnlockAttempt,
   decodeApplicationLockSnapshot,
   DEFAULT_APPLICATION_LOCK_SNAPSHOT,
   failClosedApplicationLockSnapshot,
@@ -407,18 +409,17 @@ export function ApplicationRuntime(): ReactNode {
     setUnlockError(null);
     void invoke<unknown>("application_lock_unlock")
       .then((value) => {
-        applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "explicit-unlock");
-        setAnnouncement("Application unlocked. No project is open.");
+        const attempt = decodeApplicationUnlockAttempt(value);
+        if (attempt.outcome === "succeeded") {
+          applyNativeLockSnapshot(attempt.snapshot, "explicit-unlock");
+          setAnnouncement("Application unlocked. No project is open.");
+          return;
+        }
+        applyNativeLockSnapshot(attempt.snapshot, "status");
+        setUnlockError(applicationUnlockFailureMessage(attempt.outcome, attempt.reasonCode));
       })
-      .catch((error: unknown) => {
-        const code = String(error);
-        setUnlockError(code.includes("CANCELLED")
-          ? "Unlock cancelled. The application remains locked."
-          : code.includes("RATE-LIMITED")
-            ? "Unlock is temporarily limited after a denied attempt."
-            : code.includes("CORE-UNAVAILABLE")
-              ? "Credentials were accepted, but the local service could not start. The application remains locked."
-              : "Windows could not verify the current user. The application remains locked.");
+      .catch(() => {
+        setUnlockError("Windows could not verify the current user. The application remains locked.");
         void invokeApplicationLockStatus()
           .then((value) => applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "status"))
           .catch(() => failClosedApplicationLock("Application-lock status is unavailable. The application remains locked."));

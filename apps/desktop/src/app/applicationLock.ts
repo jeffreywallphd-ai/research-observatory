@@ -19,6 +19,21 @@ export interface ApplicationLockSnapshot {
   readonly auditSequence: number;
 }
 
+export type VerificationOutcome =
+  | "succeeded"
+  | "cancelled"
+  | "denied"
+  | "unavailable"
+  | "busy"
+  | "failed";
+
+export interface ApplicationUnlockAttempt {
+  readonly schemaVersion: "1.0";
+  readonly outcome: VerificationOutcome;
+  readonly reasonCode: string;
+  readonly snapshot: ApplicationLockSnapshot;
+}
+
 export const APPLICATION_LOCK_TIMEOUTS = [0, 5, 15, 30, 60] as const;
 
 export const DEFAULT_APPLICATION_LOCK_SNAPSHOT: ApplicationLockSnapshot = Object.freeze({
@@ -55,6 +70,21 @@ const SNAPSHOT_KEYS = [
   "state",
   "threatDisclosure",
 ] as const;
+
+const UNLOCK_ATTEMPT_KEYS = ["outcome", "reasonCode", "schemaVersion", "snapshot"] as const;
+const UNLOCK_REASON_CODES: Readonly<Record<VerificationOutcome, readonly string[]>> = Object.freeze({
+  succeeded: ["RO-LOCK-UNLOCKED"],
+  cancelled: ["RO-LOCK-AUTH-CANCELLED"],
+  denied: ["RO-LOCK-AUTH-DENIED"],
+  unavailable: ["RO-LOCK-AUTH-UNAVAILABLE"],
+  busy: ["RO-LOCK-AUTH-BUSY", "RO-LOCK-RATE-LIMITED"],
+  failed: [
+    "RO-LOCK-AUTH-FAILED",
+    "RO-LOCK-AUTH-NOT-LOCKED",
+    "RO-LOCK-AUTH-STALE",
+    "RO-LOCK-CORE-UNAVAILABLE",
+  ],
+});
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -168,4 +198,45 @@ export function decodeApplicationLockSnapshot(value: unknown): ApplicationLockSn
     throw new Error("Invalid application-lock response.");
   }
   return value as unknown as ApplicationLockSnapshot;
+}
+
+export function decodeApplicationUnlockAttempt(value: unknown): ApplicationUnlockAttempt {
+  if (
+    !isRecord(value)
+    || Object.keys(value).sort().join("|") !== [...UNLOCK_ATTEMPT_KEYS].sort().join("|")
+    || value.schemaVersion !== "1.0"
+    || typeof value.outcome !== "string"
+    || !Object.prototype.hasOwnProperty.call(UNLOCK_REASON_CODES, value.outcome)
+    || typeof value.reasonCode !== "string"
+  ) {
+    throw new Error("Invalid application-unlock response.");
+  }
+  const outcome = value.outcome as VerificationOutcome;
+  if (!UNLOCK_REASON_CODES[outcome].includes(value.reasonCode)) {
+    throw new Error("Invalid application-unlock response.");
+  }
+  const snapshot = decodeApplicationLockSnapshot(value.snapshot);
+  if (
+    (outcome === "succeeded" && snapshot.state !== "unlocked")
+    || (outcome !== "succeeded" && snapshot.state !== "locked")
+  ) {
+    throw new Error("Invalid application-unlock response.");
+  }
+  return { schemaVersion: "1.0", outcome, reasonCode: value.reasonCode, snapshot };
+}
+
+export function applicationUnlockFailureMessage(
+  outcome: Exclude<VerificationOutcome, "succeeded">,
+  reasonCode: string,
+): string {
+  if (outcome === "cancelled") {
+    return "Unlock cancelled. The application remains locked.";
+  }
+  if (outcome === "busy") {
+    return "Unlock is temporarily limited after a denied attempt.";
+  }
+  if (reasonCode === "RO-LOCK-CORE-UNAVAILABLE") {
+    return "Credentials were accepted, but the local service could not start. The application remains locked.";
+  }
+  return "Windows could not verify the current user. The application remains locked.";
 }
