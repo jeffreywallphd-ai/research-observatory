@@ -31,6 +31,7 @@ from research_observatory_core.ports.repositories import (  # noqa: E402
 )
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
 from research_observatory_core.repositories import (  # noqa: E402
+    _SqliteProvenanceLedgerRepository,
     create_sqlite_unit_of_work_factory,
     sqlite_provenance_ledger_repository,
 )
@@ -260,6 +261,74 @@ class SqliteRepositoryTests(unittest.TestCase):
         self.assertEqual("integrity-review", lineage.integrity_state)
         self.assertFalse(lineage.export_allowed)
         self.assertEqual("integrity-review", lineage.export_denial_reason)
+
+    def test_lineage_limits_are_explicit_stable_and_nonexportable(self) -> None:
+        leaves = []
+        for index in range(1, 4):
+            with self.factory() as unit:
+                leaves.append(
+                    unit.aggregates.append(
+                        draft(index, aggregate_id=f"01890f6e-6a40-7cc5-98b7-{index + 700:012x}"),
+                        event(index - 1),
+                        expected_revision=None,
+                    )
+                )
+                unit.commit()
+        root_draft = replace(
+            draft(4, aggregate_id="01890f6e-6a40-7cc5-98b7-000000000799"),
+            provenance_inputs=tuple(leaves),
+        )
+        with self.factory() as unit:
+            root = unit.aggregates.append(root_draft, event(3), expected_revision=None)
+            unit.commit()
+
+        scan_limited = _SqliteProvenanceLedgerRepository(
+            self.database,
+            PROJECT_ID,
+            absolute_scan_limit=2,
+        ).lineage(
+            revision_id=root.revision_id,
+            direction="ancestors",
+            cursor=0,
+            page_size=100,
+            max_depth=4,
+        )
+        self.assertTrue(scan_limited.truncated)
+        self.assertEqual("scan-limit", scan_limited.truncation_reason)
+        self.assertEqual("integrity-review", scan_limited.integrity_state)
+        self.assertFalse(scan_limited.export_allowed)
+        self.assertEqual("integrity-review", scan_limited.export_denial_reason)
+        restarted_scan = _SqliteProvenanceLedgerRepository(
+            self.database,
+            PROJECT_ID,
+            absolute_scan_limit=2,
+        ).lineage(
+            revision_id=root.revision_id,
+            direction="ancestors",
+            cursor=0,
+            page_size=100,
+            max_depth=4,
+        )
+        self.assertEqual(scan_limited, restarted_scan)
+
+        cursor_limited = _SqliteProvenanceLedgerRepository(
+            self.database,
+            PROJECT_ID,
+            cursor_limit=1,
+        ).lineage(
+            revision_id=root.revision_id,
+            direction="ancestors",
+            cursor=0,
+            page_size=2,
+            max_depth=4,
+        )
+        self.assertEqual(2, len(cursor_limited.items))
+        self.assertTrue(cursor_limited.truncated)
+        self.assertEqual("cursor-limit", cursor_limited.truncation_reason)
+        self.assertIsNone(cursor_limited.next_cursor)
+        self.assertEqual("integrity-review", cursor_limited.integrity_state)
+        self.assertFalse(cursor_limited.export_allowed)
+        self.assertEqual("integrity-review", cursor_limited.export_denial_reason)
 
     def test_authority_projection_corruption_enters_integrity_review(self) -> None:
         cases = (

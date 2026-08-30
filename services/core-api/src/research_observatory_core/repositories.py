@@ -10,7 +10,7 @@ import threading
 from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, select
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
@@ -2002,11 +2002,27 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
 class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
     """Read-only bounded lineage adapter over canonical ledger projections."""
 
-    def __init__(self, database: Path, project_id: str) -> None:
-        if not database.is_absolute() or not project_id:
+    def __init__(
+        self,
+        database: Path,
+        project_id: str,
+        *,
+        absolute_scan_limit: int = 20_000,
+        cursor_limit: int = 10_000,
+    ) -> None:
+        if (
+            not database.is_absolute()
+            or not project_id
+            or isinstance(absolute_scan_limit, bool)
+            or absolute_scan_limit < 1
+            or isinstance(cursor_limit, bool)
+            or cursor_limit < 1
+        ):
             raise ValueError("provenance repository authority is invalid")
         self._database = database
         self._project_id = project_id
+        self._absolute_scan_limit = absolute_scan_limit
+        self._cursor_limit = cursor_limit
 
     def lineage(
         self,
@@ -2029,143 +2045,178 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                 )
                 if legacy_event_count:
                     integrity_state = "integrity-review"
-                frontier = [(revision_id, 0)]
+                frontier = [revision_id]
                 queued = {revision_id}
                 visited: set[str] = set()
-                ordered: list[tuple[str, int]] = []
                 missing: set[str] = set()
-                absolute_scan_limit = 20_000
-                while frontier and len(visited) < absolute_scan_limit:
-                    current_revision, depth = frontier.pop(0)
-                    queued.discard(current_revision)
-                    if current_revision in visited:
-                        continue
-                    visited.add(current_revision)
-                    exists = connection.execute(
-                        "SELECT 1 FROM aggregate_revisions WHERE project_id=? AND revision_id=?",
-                        (self._project_id, current_revision),
-                    ).fetchone()
-                    if exists is None:
-                        missing.add(current_revision)
-                        continue
-                    ordered.append((current_revision, depth))
-                    if depth >= max_depth:
-                        continue
-                    if direction == "ancestors":
+                page: list[LineageNode] = []
+                fact_count = 0
+                rights_restricted = False
+                truncation_reason: Literal["cursor-limit", "scan-limit"] | None = None
+                depth = 0
+                while frontier and len(visited) < self._absolute_scan_limit:
+                    remaining_capacity = self._absolute_scan_limit - len(visited)
+                    current_frontier = frontier[:remaining_capacity]
+                    if len(current_frontier) != len(frontier):
+                        truncation_reason = "scan-limit"
+                    for current_revision in current_frontier:
+                        queued.discard(current_revision)
+                    visited.update(current_frontier)
+                    next_frontier: list[str] = []
+                    for chunk_start in range(0, len(current_frontier), 256):
+                        chunk = current_frontier[chunk_start : chunk_start + 256]
+                        placeholders = ",".join("?" for _ in chunk)
                         rows = connection.execute(
-                            """
-                            SELECT related_revision_id
-                              FROM provenance_ledger_relations
-                             WHERE project_id=? AND relation_type='wasDerivedFrom'
-                               AND entity_revision_id=? AND related_revision_id IS NOT NULL
-                             ORDER BY occurred_at, relation_id
-                            """,
-                            (self._project_id, current_revision),
-                        ).fetchall()
-                    else:
-                        rows = connection.execute(
-                            """
-                            SELECT entity_revision_id
-                              FROM provenance_ledger_relations
-                             WHERE project_id=? AND relation_type='wasDerivedFrom'
-                               AND related_revision_id=? AND entity_revision_id IS NOT NULL
-                             ORDER BY occurred_at, relation_id
-                            """,
-                            (self._project_id, current_revision),
-                        ).fetchall()
-                    for row in rows:
-                        candidate = str(row[0])
-                        if candidate in visited or candidate in queued:
-                            continue
-                        if len(visited) + len(frontier) >= absolute_scan_limit:
-                            break
-                        frontier.append((candidate, depth + 1))
-                        queued.add(candidate)
-
-                nodes: list[LineageNode] = []
-                for current_revision, depth in ordered:
-                    rows = connection.execute(
-                        """
-                        SELECT entity.direction, entity.revision_id, entity.entity_id, entity.entity_kind,
-                               event.event_id, event.event_type, event.activity_id,
-                               event.activity_type, event.activity_status, event.agent_id,
-                               event.occurred_at, event.record_json,
-                               revision.knowledge_status, revision.rights_status
-                          FROM provenance_ledger_entities AS entity
-                          JOIN provenance_ledger_events AS event
-                            ON event.event_id=entity.event_id AND event.project_id=entity.project_id
-                          JOIN aggregate_revisions AS revision
-                            ON revision.revision_id=entity.revision_id AND revision.project_id=entity.project_id
-                         WHERE entity.project_id=? AND entity.revision_id=?
-                         ORDER BY event.occurred_at, event.event_id, entity.direction DESC
-                        """,
-                        (self._project_id, current_revision),
-                    ).fetchall()
-                    if not rows:
-                        missing.add(current_revision)
-                        continue
-                    for row in rows:
-                        relations = connection.execute(
-                            """
-                            SELECT relation_id, relation_type, related_revision_id
-                              FROM provenance_ledger_relations
-                             WHERE project_id=? AND event_id=? AND entity_revision_id=?
-                               AND relation_type IN (
-                                   'wasInvalidatedBy', 'wasDerivedFrom', 'wasGeneratedBy', 'used', 'wasAttributedTo'
+                            f"""
+                            SELECT revision.revision_id, revision.rights_status,
+                                   revision.knowledge_status, entity.direction,
+                                   entity.entity_id, entity.entity_kind,
+                                   event.event_id, event.event_type, event.activity_id,
+                                   event.activity_type, event.activity_status, event.agent_id,
+                                   event.occurred_at, event.record_json,
+                                   relation.relation_id, relation.relation_type,
+                                   relation.related_revision_id
+                              FROM aggregate_revisions AS revision
+                              LEFT JOIN provenance_ledger_entities AS entity
+                                ON entity.project_id=revision.project_id
+                               AND entity.revision_id=revision.revision_id
+                              LEFT JOIN provenance_ledger_events AS event
+                                ON event.event_id=entity.event_id
+                               AND event.project_id=entity.project_id
+                              LEFT JOIN provenance_ledger_relations AS relation
+                                ON relation.project_id=entity.project_id
+                               AND relation.event_id=entity.event_id
+                               AND relation.entity_revision_id=entity.revision_id
+                               AND relation.relation_type IN (
+                                   'wasInvalidatedBy', 'wasDerivedFrom', 'wasGeneratedBy',
+                                   'used', 'wasAttributedTo'
                                )
-                             ORDER BY CASE relation_type
-                                   WHEN 'wasInvalidatedBy' THEN 0
-                                   WHEN 'wasDerivedFrom' THEN 1
-                                   WHEN 'wasGeneratedBy' THEN 2
-                                   WHEN 'used' THEN 3
-                                   ELSE 4 END,
-                                   relation_id
+                             WHERE revision.project_id=?
+                               AND revision.revision_id IN ({placeholders})
+                             ORDER BY revision.revision_id, event.occurred_at, event.event_id,
+                                      entity.direction DESC,
+                                      CASE relation.relation_type
+                                      WHEN 'wasInvalidatedBy' THEN 0
+                                      WHEN 'wasDerivedFrom' THEN 1
+                                      WHEN 'wasGeneratedBy' THEN 2
+                                      WHEN 'used' THEN 3
+                                      ELSE 4 END,
+                                      relation.relation_id
                             """,
-                            (self._project_id, str(row[4]), current_revision),
+                            (self._project_id, *chunk),
                         ).fetchall()
-                        if not relations:
-                            integrity_state = "integrity-review"
+                        rows_by_revision: dict[str, list[Any]] = {}
+                        for row in rows:
+                            rows_by_revision.setdefault(str(row[0]), []).append(row)
+                        traversable: list[str] = []
+                        decoded_events: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+                        for current_revision in chunk:
+                            revision_rows = rows_by_revision.get(current_revision)
+                            if not revision_rows:
+                                missing.add(current_revision)
+                                continue
+                            rights_restricted = rights_restricted or str(revision_rows[0][1]) in {
+                                "denied",
+                                "unknown",
+                            }
+                            if revision_rows[0][6] is None:
+                                missing.add(current_revision)
+                                integrity_state = "integrity-review"
+                                continue
+                            traversable.append(current_revision)
+                            for row in revision_rows:
+                                if row[14] is None:
+                                    integrity_state = "integrity-review"
+                                    continue
+                                event_id = str(row[6])
+                                decoded_parts = decoded_events.get(event_id)
+                                if decoded_parts is None:
+                                    decoded = decode_provenance_event(json.loads(str(row[13])))
+                                    if decoded is None:
+                                        raise ValueError("lineage canonical provenance is invalid")
+                                    data = cast(dict[str, Any], decoded["data"])
+                                    activity = cast(dict[str, Any], data["activity"])
+                                    configuration = cast(dict[str, Any], activity["configuration"])
+                                    agent = cast(dict[str, Any], data["agent"])
+                                    decoded_parts = (configuration, agent)
+                                    decoded_events[event_id] = decoded_parts
+                                configuration, agent = decoded_parts
+                                if fact_count >= cursor and len(page) < page_size:
+                                    page.append(
+                                        LineageNode(
+                                            fact_id=str(row[14]),
+                                            relation_type=cast(Any, str(row[15])),
+                                            entity_direction=cast(Any, str(row[3])),
+                                            revision_id=current_revision,
+                                            entity_id=str(row[4]),
+                                            entity_kind=str(row[5]),
+                                            related_revision_id=None if row[16] is None else str(row[16]),
+                                            knowledge_status=cast(KnowledgeStatus, str(row[2])),
+                                            rights_status=cast(RightsStatus, str(row[1])),
+                                            depth=depth,
+                                            event_id=event_id,
+                                            event_type=str(row[7]),
+                                            activity_id=str(row[8]),
+                                            activity_type=str(row[9]),
+                                            activity_status=cast(Any, str(row[10])),
+                                            configuration_id=str(configuration["configurationId"]),
+                                            configuration_version=str(configuration["configurationVersion"]),
+                                            configuration_hash=str(configuration["configurationHash"]),
+                                            agent_id=str(row[11]),
+                                            agent_type=cast(Any, str(agent["agentType"])),
+                                            agent_role=str(agent["role"]),
+                                            occurred_at=str(row[12]),
+                                        )
+                                    )
+                                fact_count += 1
+                        if depth >= max_depth or not traversable:
                             continue
-                        decoded = decode_provenance_event(json.loads(str(row[11])))
-                        if decoded is None:
-                            raise ValueError("lineage canonical provenance is invalid")
-                        data = cast(dict[str, Any], decoded["data"])
-                        activity = cast(dict[str, Any], data["activity"])
-                        configuration = cast(dict[str, Any], activity["configuration"])
-                        agent = cast(dict[str, Any], data["agent"])
-                        for relation in relations:
-                            nodes.append(
-                                LineageNode(
-                                    fact_id=str(relation[0]),
-                                    relation_type=cast(Any, str(relation[1])),
-                                    entity_direction=cast(Any, str(row[0])),
-                                    revision_id=str(row[1]),
-                                    entity_id=str(row[2]),
-                                    entity_kind=str(row[3]),
-                                    related_revision_id=None if relation[2] is None else str(relation[2]),
-                                    knowledge_status=cast(KnowledgeStatus, str(row[12])),
-                                    rights_status=cast(RightsStatus, str(row[13])),
-                                    depth=depth,
-                                    event_id=str(row[4]),
-                                    event_type=str(row[5]),
-                                    activity_id=str(row[6]),
-                                    activity_type=str(row[7]),
-                                    activity_status=cast(Any, str(row[8])),
-                                    configuration_id=str(configuration["configurationId"]),
-                                    configuration_version=str(configuration["configurationVersion"]),
-                                    configuration_hash=str(configuration["configurationHash"]),
-                                    agent_id=str(row[9]),
-                                    agent_type=cast(Any, str(agent["agentType"])),
-                                    agent_role=str(agent["role"]),
-                                    occurred_at=str(row[10]),
-                                )
-                            )
+                        traversal_placeholders = ",".join("?" for _ in traversable)
+                        if direction == "ancestors":
+                            source_column = "entity_revision_id"
+                            candidate_column = "related_revision_id"
+                        else:
+                            source_column = "related_revision_id"
+                            candidate_column = "entity_revision_id"
+                        traversal_rows = connection.execute(
+                            f"""
+                            SELECT {source_column}, {candidate_column}
+                              FROM provenance_ledger_relations
+                             WHERE project_id=? AND relation_type='wasDerivedFrom'
+                               AND {source_column} IN ({traversal_placeholders})
+                               AND {candidate_column} IS NOT NULL
+                             ORDER BY {source_column}, occurred_at, relation_id
+                            """,
+                            (self._project_id, *traversable),
+                        ).fetchall()
+                        candidates_by_revision: dict[str, list[str]] = {}
+                        for traversal_row in traversal_rows:
+                            candidates_by_revision.setdefault(str(traversal_row[0]), []).append(str(traversal_row[1]))
+                        for current_revision in traversable:
+                            for candidate in candidates_by_revision.get(current_revision, []):
+                                if candidate in visited or candidate in queued:
+                                    continue
+                                if len(visited) + len(next_frontier) >= self._absolute_scan_limit:
+                                    truncation_reason = "scan-limit"
+                                    continue
+                                next_frontier.append(candidate)
+                                queued.add(candidate)
+                    frontier = next_frontier
+                    depth += 1
+
+                if frontier:
+                    truncation_reason = "scan-limit"
                 if missing:
                     integrity_state = "integrity-review"
-                page = nodes[cursor : cursor + page_size]
-                has_more = cursor + len(page) < len(nodes)
-                next_cursor = cursor + len(page) if has_more and page and cursor + len(page) <= 10_000 else None
-                rights_restricted = any(item.rights_status in {"denied", "unknown"} for item in nodes)
+                has_more = cursor + len(page) < fact_count
+                candidate_cursor = cursor + len(page) if has_more and page else None
+                if candidate_cursor is not None and candidate_cursor > self._cursor_limit:
+                    truncation_reason = truncation_reason or "cursor-limit"
+                    next_cursor = None
+                else:
+                    next_cursor = candidate_cursor
+                if truncation_reason is not None:
+                    integrity_state = "integrity-review"
                 export_allowed = integrity_state == "verified" and not rights_restricted
                 return LineagePage(
                     revision_id=revision_id,
@@ -2173,6 +2224,8 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
                     items=tuple(page),
                     missing_revision_ids=tuple(sorted(missing)),
                     next_cursor=next_cursor,
+                    truncated=truncation_reason is not None,
+                    truncation_reason=truncation_reason,
                     integrity_state=cast(Any, integrity_state),
                     legacy_event_count=legacy_event_count,
                     export_allowed=export_allowed,

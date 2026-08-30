@@ -143,6 +143,8 @@ const lineage: ProvenanceLineagePage = {
   ],
   missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c07398f"],
   nextCursor: 4,
+  truncated: false,
+  truncationReason: null,
   integrityState: "integrity-review",
   legacyEventCount: 1,
   exportAllowed: false,
@@ -313,6 +315,14 @@ describe("audit and lineage workspace", () => {
       missingRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c0739aa"],
     }, acceptedQuery)).toBe(false);
     expect(lineageManifestReady({ ...exportable, legacyEventCount: 1 }, acceptedQuery)).toBe(false);
+    expect(lineageManifestReady({
+      ...exportable,
+      truncated: true,
+      truncationReason: "cursor-limit",
+      integrityState: "integrity-review",
+      exportAllowed: false,
+      exportDenialReason: "integrity-review",
+    }, acceptedQuery)).toBe(false);
     expect(() => mergeLineagePage(
       { ...exportable, nextCursor: 3 },
       { ...exportable, items: [exportable.items[0]!], nextCursor: null },
@@ -379,6 +389,33 @@ describe("audit and lineage workspace", () => {
       exportDenialReason: "integrity-review",
     });
     expect(() => exportLineageManifest(legacyMerged, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
+
+    const truncatedMerged = mergeLineagePage(
+      { ...exportable, items: [exportable.items[0]!], nextCursor: 1 },
+      {
+        ...verifiedFinal,
+        truncated: true,
+        truncationReason: "scan-limit",
+        integrityState: "integrity-review",
+        exportAllowed: false,
+        exportDenialReason: "integrity-review",
+      },
+      1,
+    );
+    expect(truncatedMerged).toMatchObject({
+      truncated: true,
+      truncationReason: "scan-limit",
+      integrityState: "integrity-review",
+      exportAllowed: false,
+      exportDenialReason: "integrity-review",
+    });
+    expect(() => exportLineageManifest(truncatedMerged, acceptedQuery)).toThrow("RO-CORE-EXPORT-DENIED");
+    const truncatedHtml = renderToStaticMarkup(
+      <AuditLineageWorkspace project={project} announce={() => undefined} initialTrace={truncatedMerged} />,
+    );
+    expect(truncatedHtml).toContain("Lineage trace is incomplete");
+    expect(truncatedHtml).toContain("scan limit");
+    expect(truncatedHtml).toContain("Export denied: integrity review is required");
 
     const terminal = mergeLineagePage(
       { ...exportable, items: [exportable.items[0]!], nextCursor: 1 },

@@ -387,6 +387,8 @@ def create_app(
             ),
             missing_revision_ids=page.missing_revision_ids,
             next_cursor=page.next_cursor,
+            truncated=page.truncated,
+            truncation_reason=page.truncation_reason,
             integrity_state=page.integrity_state,
             legacy_event_count=page.legacy_event_count,
             export_allowed=page.export_allowed,
