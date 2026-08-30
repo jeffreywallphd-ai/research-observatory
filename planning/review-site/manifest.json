@@ -19288,74 +19288,127 @@
         {
           "task_id": "W1.A05.T01",
           "title": "Refactor native verification behind a provider-neutral contract",
-          "status": "REVIEW",
+          "status": "IN_PROGRESS",
           "mode": "append-only",
           "latest_review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "codex-independent-application-lock-security-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-30T16:14:05+00:00",
+            "notes": "Independent security/contract review authenticated the exact base, candidate, submission record, frozen evidence SHA-256 63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063, and all 13 declared changed paths. The native boundary otherwise preserves the approved authority: application_lock_unlock is argument-free; only WindowsPasswordVerificationProvider is constructed in production; the renderer cannot select a provider or outcome; the Windows adapter retains the non-persisting generic CredUI flags, NameSamCompatible prefill, UPN/down-level mapping, LogonUserW, submitted-token/current-process-token EqualSid comparison, volatile credential-buffer clearing, and RAII handle closure. The manager reserves one attempt, admits backoff as busy, invokes the provider once, starts Core only after succeeded, checks the lock generation before and after Core start, stops a failed or raced Core, and releases the reservation after cancellation, failure, stale completion, and provider panic. Focused replay passed all 30 Rust library tests, all 12 renderer/runtime tests, all four focused security/profile tests, Rust formatting and warnings-denied Clippy, and the architecture contract. One blocking typed-contract finding remains: the new unlock decoder relies on a snapshot decoder that coerces enum fields and returns the untrusted object, and its outcome/state matrix excludes a valid native NOT-LOCKED response. No native unlock-authority bypass was reproduced, but the submitted claim of a strict six-outcome renderer/native contract is false until this boundary is exact. The manifest's disclosed broad Python syntax deferral did not reproduce under the reviewer's current Python 3.14.6 environment: tests.security.test_windows_credentials passed 10 tests with one platform skip; that toolchain-dependent baseline statement is not relied on for disposition and is not an acceptance finding against T01. No Windows Hello, provider configuration, settings UI, profile-schema migration, dependency, or broader supervision redesign appeared in the candidate. T02-T04, slice integration, and complete W1 qualification remain correctly deferred."
           },
           "review_control": {
             "version": 1,
-            "attempts": [],
-            "current_submission": {
-              "id": "R01",
-              "submitted_by": "codex",
-              "submitted_at": "2026-08-30T16:01:24+00:00",
-              "candidate_commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
-              "base_commit": "fb06c39b051b8db253fb62a20d69e09cfc2b2b5b",
-              "branch": "codex/w1-windows-local-runtime",
-              "evidence_reference": {
-                "type": "criterion-manifest",
-                "path": "artifacts/evidence/W1.A05.T01.json",
-                "sha256": "63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063",
-                "commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
-                "recorded_at": "2026-08-30T16:01:24+00:00"
-              },
-              "acceptance_criteria_sha256": "834b342f697d8ee1d633785bf2604786309ebf57f06b7ac37c0bcdfe5b1668ae",
-              "changed_paths": [
-                "apps/desktop/src-tauri/src/application_lock.rs",
-                "apps/desktop/src-tauri/src/application_lock_verification.rs",
-                "apps/desktop/src-tauri/src/lib.rs",
-                "apps/desktop/src/app/ApplicationRuntime.tsx",
-                "apps/desktop/src/app/applicationLock.test.ts",
-                "apps/desktop/src/app/applicationLock.ts",
-                "docs/planning-implementation-plan.md",
-                "planning/backlog.yaml",
-                "planning/review-site/enablers/ECR-0004.html",
-                "planning/review-site/manifest.json",
-                "planning/status-summary.md",
-                "tests/security/test_application_lock_source.py",
-                "tests/security/test_windows_credentials.py"
-              ],
-              "selected_checks": [
-                "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
-                "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
-                "bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
-                "bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit; bundled-node apps/desktop/scripts/lint.mjs",
-                ".venv\\Scripts\\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests",
-                ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .",
-                ".venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; git diff --check",
-                ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --affected-base fb06c39b051b8db253fb62a20d69e09cfc2b2b5b --affected-head 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T01-affected-selection.json"
-              ],
-              "deferred_checks": [
-                "Windows Hello availability and verification, provider selection/configuration, application settings UI and accessibility, and W1.A05.S01/S02 end-to-end integration remain owned by T02 through T04 and their slice reviews.",
-                "Desktop performance and the complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and cross-capability matrix remain due once at W1 exit.",
-                "The broad legacy tests.security.test_windows_credentials module cannot currently import because tracked Core baseline commit 300a1a42 contains an unrelated invalid multi-exception clause in domain_contracts.py. T01 moved its two application-lock source assertions into an independently runnable focused module, where they pass; repairing the unrelated Core defect is not included in this bounded provider refactor."
-              ],
-              "selection_rationale": "W1.A05.T01 changes a native Windows authentication boundary, the success-to-Core-restart authority transition, and the typed renderer/native contract. Credible failures are renderer/provider substitution, collapsed adverse outcomes, stale or concurrent success, Core creation after invalidation, same-SID regression, credential persistence or leakage, reservation/backoff corruption, unlocked invocation, and user-visible error disclosure. Full native library tests, warnings-denied compilation, strict renderer contract tests, desktop lint/type checking, focused Windows credential and portable profile assertions, architecture checks, changed-test quality, and Git hygiene cover those risks. The task does not change dependencies, persistence schemas, project data, UI structure, or approved experience references.",
-              "selection_sha256": "7b4b5a00949a5fa92977b4a7805fb674f6e40588450035273d0077d54e341283",
-              "prior_attempt_id": null,
-              "open_finding_ids": [],
-              "root_cause_analysis": null,
-              "selected_command_ids": [
-                "foundation:architecture",
-                "desktop:unit",
-                "security-local:unit"
-              ],
-              "packet_sha256": "029283890ff92e39628fe94d82ed1ba3c8fec437046a7f1dff0fd86affe74e8a"
-            }
+            "attempts": [
+              {
+                "submission": {
+                  "id": "R01",
+                  "submitted_by": "codex",
+                  "submitted_at": "2026-08-30T16:01:24+00:00",
+                  "candidate_commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+                  "base_commit": "fb06c39b051b8db253fb62a20d69e09cfc2b2b5b",
+                  "branch": "codex/w1-windows-local-runtime",
+                  "evidence_reference": {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/W1.A05.T01.json",
+                    "sha256": "63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063",
+                    "commit": "31e7f7e2b06ba469c59094fc3b50933c7ba85d9a",
+                    "recorded_at": "2026-08-30T16:01:24+00:00"
+                  },
+                  "acceptance_criteria_sha256": "834b342f697d8ee1d633785bf2604786309ebf57f06b7ac37c0bcdfe5b1668ae",
+                  "changed_paths": [
+                    "apps/desktop/src-tauri/src/application_lock.rs",
+                    "apps/desktop/src-tauri/src/application_lock_verification.rs",
+                    "apps/desktop/src-tauri/src/lib.rs",
+                    "apps/desktop/src/app/ApplicationRuntime.tsx",
+                    "apps/desktop/src/app/applicationLock.test.ts",
+                    "apps/desktop/src/app/applicationLock.ts",
+                    "docs/planning-implementation-plan.md",
+                    "planning/backlog.yaml",
+                    "planning/review-site/enablers/ECR-0004.html",
+                    "planning/review-site/manifest.json",
+                    "planning/status-summary.md",
+                    "tests/security/test_application_lock_source.py",
+                    "tests/security/test_windows_credentials.py"
+                  ],
+                  "selected_checks": [
+                    "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+                    "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
+                    "bundled-node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx",
+                    "bundled-node apps/desktop/node_modules/typescript/bin/tsc --noEmit; bundled-node apps/desktop/scripts/lint.mjs",
+                    ".venv\\Scripts\\python.exe -m unittest tests.security.test_application_lock_source tests.contracts.test_credential_store_contract.ApplicationLockContractTests",
+                    ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .",
+                    ".venv\\Scripts\\ruff.exe check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; .venv\\Scripts\\ruff.exe format --check tests/security/test_application_lock_source.py tests/security/test_windows_credentials.py; git diff --check",
+                    ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --affected-base fb06c39b051b8db253fb62a20d69e09cfc2b2b5b --affected-head 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T01-affected-selection.json"
+                  ],
+                  "deferred_checks": [
+                    "Windows Hello availability and verification, provider selection/configuration, application settings UI and accessibility, and W1.A05.S01/S02 end-to-end integration remain owned by T02 through T04 and their slice reviews.",
+                    "Desktop performance and the complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and cross-capability matrix remain due once at W1 exit.",
+                    "The broad legacy tests.security.test_windows_credentials module cannot currently import because tracked Core baseline commit 300a1a42 contains an unrelated invalid multi-exception clause in domain_contracts.py. T01 moved its two application-lock source assertions into an independently runnable focused module, where they pass; repairing the unrelated Core defect is not included in this bounded provider refactor."
+                  ],
+                  "selection_rationale": "W1.A05.T01 changes a native Windows authentication boundary, the success-to-Core-restart authority transition, and the typed renderer/native contract. Credible failures are renderer/provider substitution, collapsed adverse outcomes, stale or concurrent success, Core creation after invalidation, same-SID regression, credential persistence or leakage, reservation/backoff corruption, unlocked invocation, and user-visible error disclosure. Full native library tests, warnings-denied compilation, strict renderer contract tests, desktop lint/type checking, focused Windows credential and portable profile assertions, architecture checks, changed-test quality, and Git hygiene cover those risks. The task does not change dependencies, persistence schemas, project data, UI structure, or approved experience references.",
+                  "selection_sha256": "7b4b5a00949a5fa92977b4a7805fb674f6e40588450035273d0077d54e341283",
+                  "prior_attempt_id": null,
+                  "open_finding_ids": [],
+                  "root_cause_analysis": null,
+                  "selected_command_ids": [
+                    "foundation:architecture",
+                    "desktop:unit",
+                    "security-local:unit"
+                  ],
+                  "packet_sha256": "029283890ff92e39628fe94d82ed1ba3c8fec437046a7f1dff0fd86affe74e8a"
+                },
+                "review": {
+                  "reviewer": "codex-independent-application-lock-security-reviewer",
+                  "result": "changes-requested",
+                  "reviewed_at": "2026-08-30T16:14:05+00:00",
+                  "notes": "Independent security/contract review authenticated the exact base, candidate, submission record, frozen evidence SHA-256 63e33655b05f51718c39d720755b304dd8c82e036cdac4ea4f1eb29686cbf063, and all 13 declared changed paths. The native boundary otherwise preserves the approved authority: application_lock_unlock is argument-free; only WindowsPasswordVerificationProvider is constructed in production; the renderer cannot select a provider or outcome; the Windows adapter retains the non-persisting generic CredUI flags, NameSamCompatible prefill, UPN/down-level mapping, LogonUserW, submitted-token/current-process-token EqualSid comparison, volatile credential-buffer clearing, and RAII handle closure. The manager reserves one attempt, admits backoff as busy, invokes the provider once, starts Core only after succeeded, checks the lock generation before and after Core start, stops a failed or raced Core, and releases the reservation after cancellation, failure, stale completion, and provider panic. Focused replay passed all 30 Rust library tests, all 12 renderer/runtime tests, all four focused security/profile tests, Rust formatting and warnings-denied Clippy, and the architecture contract. One blocking typed-contract finding remains: the new unlock decoder relies on a snapshot decoder that coerces enum fields and returns the untrusted object, and its outcome/state matrix excludes a valid native NOT-LOCKED response. No native unlock-authority bypass was reproduced, but the submitted claim of a strict six-outcome renderer/native contract is false until this boundary is exact. The manifest's disclosed broad Python syntax deferral did not reproduce under the reviewer's current Python 3.14.6 environment: tests.security.test_windows_credentials passed 10 tests with one platform skip; that toolchain-dependent baseline statement is not relied on for disposition and is not an acceptance finding against T01. No Windows Hello, provider configuration, settings UI, profile-schema migration, dependency, or broader supervision redesign appeared in the candidate. T02-T04, slice integration, and complete W1 qualification remain correctly deferred."
+                },
+                "ledger": {
+                  "path": "artifacts/evidence/W1.A05.T01.review-R01.json",
+                  "sha256": "867f5660eacc32e63e155ec969cf12ad3b605033fc8dae35fed33bfbcdf320ca"
+                },
+                "findings": [
+                  {
+                    "id": "W1.A05.T01-R01-F01",
+                    "severity": "medium",
+                    "blocking": true,
+                    "criterion_index": 3,
+                    "title": "Renderer unlock decoder is not an exact closed contract for native lock state",
+                    "reproduction": "At exact candidate 31e7f7e2b06ba469c59094fc3b50933c7ba85d9a, call decodeApplicationUnlockAttempt with schemaVersion='1.0', outcome='succeeded', reasonCode='RO-LOCK-UNLOCKED', DEFAULT_APPLICATION_LOCK_SNAPSHOT, and configurationState set to an object whose toString returns 'valid'. decodeApplicationLockSnapshot accepts it because it compares String(value.configurationState), then returns the original object through a type cast; the decoded result is accepted as unlocked while configurationState remains an object. The same coercion exists for reason. Separately, ApplicationLockManager::reserve_reauthentication emits failed/RO-LOCK-AUTH-NOT-LOCKED with its current unlocked snapshot when invoked while unlocked. decodeApplicationUnlockAttempt explicitly allowlists RO-LOCK-AUTH-NOT-LOCKED under failed but rejects the response because it requires every non-succeeded outcome to carry a locked snapshot. Thus invalid typed state is accepted while one valid production response is rejected, contradicting the submitted strict six-outcome renderer/native contract and its claimed forged-state coverage.",
+                    "required_remediation": "In a strict-descendant candidate, define and enforce one exact semantic matrix for every native ApplicationUnlockAttempt reason code and snapshot state, including the legitimate NOT-LOCKED/unlocked response without treating it as an explicit successful unlock. Require primitive exact enum values (at minimum typeof configurationState and reason), validate the relevant snapshot state invariants, and return a newly reconstructed typed snapshot rather than the untrusted object. Add adversarial frontend tests for object/accessor/toString coercion in every nested enum, valid and invalid NOT-LOCKED pairings, succeeded/unlocked and all adverse/locked pairings, and verify malformed responses remain fail-closed while native-only success remains the sole path that clears fail-closed reconciliation. Re-run the focused native and renderer/runtime suites and preserve the already passing Windows password, reservation, generation, Core-stop, panic-cleanup, restart, and redaction boundaries."
+                  }
+                ],
+                "closures": [],
+                "telemetry": {
+                  "task_id": "W1.A05.T01",
+                  "amendment_id": "W1.A05",
+                  "attempt_id": "R01",
+                  "submitted_at": "2026-08-30T16:01:24+00:00",
+                  "reviewed_at": "2026-08-30T16:14:05+00:00",
+                  "duration_seconds": 761,
+                  "outcome": "changes-requested",
+                  "finding_counts": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 1,
+                    "low": 0,
+                    "blocking": 1,
+                    "total": 1
+                  },
+                  "command_ids": [
+                    "foundation:architecture",
+                    "desktop:unit",
+                    "security-local:unit"
+                  ],
+                  "remediation": {
+                    "prior_attempt_id": null,
+                    "replayed_finding_ids": [],
+                    "closed_finding_ids": []
+                  }
+                }
+              }
+            ],
+            "current_submission": null
           }
         },
         {

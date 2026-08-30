@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3111e878946010b5e37a131b90b56a1890676503a771772b2310155a07bb09a5
+source_sha256: b4a1227e8cded7f9d04fa8b2aa378b56127edd9ef8350a0fba256f7b67246975
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,7 +70,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 3 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 3 |
 
 ## Wave authority and append-only amendments
@@ -400,7 +400,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
-| `W1.A05.T01` | `append-only v1` | 0 | `R01` | - / - | - |
+| `W1.A05.T01` | `append-only v1` | 1 | `-` | changes-requested / codex-independent-application-lock-security-reviewer | `W1.A05.T01-R01-F01` |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -465,4 +465,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-03.S04.T01` Define workflow, step, job, attempt, artifact, and human-task contracts | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A05.T01` Refactor native verification behind a provider-neutral contract | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A05.T01` Refactor native verification behind a provider-neutral contract | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
