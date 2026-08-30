@@ -84,6 +84,15 @@ committed receipt after response loss, while cancellation, denial,
 unavailability, expiry, a stale writer, or write failure leaves the committed
 policy byte-stable.
 
+Before the policy manager or Core starts, the Windows desktop acquires one
+kernel-owned instance lease derived from the stable canonical LocalAppData root.
+Only that process can use the root; a second launch exits with a typed
+already-running result and cannot retain stale `none` authority while the first
+process publishes protection. Windows releases the lease if the process exits
+or is terminated. Real child-process tests cover duplicate launch denial,
+cross-process compare-and-swap, abrupt named-mutex abandonment, and restart from
+the exact committed policy bytes.
+
 ## Unlock sequence
 
 Unlock reserves one native attempt before invoking the natively selected

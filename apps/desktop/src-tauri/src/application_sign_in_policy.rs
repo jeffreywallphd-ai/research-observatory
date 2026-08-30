@@ -212,6 +212,65 @@ pub(crate) struct PolicyStore {
     mutex_name: String,
 }
 
+#[cfg(windows)]
+pub(crate) struct ApplicationInstanceGuard {
+    handle: isize,
+}
+
+#[cfg(windows)]
+impl ApplicationInstanceGuard {
+    pub(crate) fn acquire(application_data: &Path) -> Result<Self, &'static str> {
+        use std::os::windows::ffi::OsStrExt;
+        use windows_sys::Win32::Foundation::{CloseHandle, ERROR_ALREADY_EXISTS, GetLastError};
+        use windows_sys::Win32::System::Threading::CreateMutexW;
+
+        let stable_root = stable_application_data_path(application_data);
+        let normalized = stable_root.to_string_lossy().to_lowercase();
+        let name = format!(
+            "Global\\ResearchObservatory.DesktopInstance.{}",
+            sha256_hex(normalized.as_bytes())
+        );
+        let name: Vec<u16> = std::ffi::OsStr::new(&name)
+            .encode_wide()
+            .chain(Some(0))
+            .collect();
+        // Object lifetime, not thread-affine mutex ownership, is the lease. Holding
+        // the only handle keeps the name occupied and lets any final Arc holder close
+        // it safely; process termination closes it automatically.
+        let handle = unsafe { CreateMutexW(std::ptr::null(), 0, name.as_ptr()) };
+        if handle.is_null() {
+            return Err("RO-DESKTOP-INSTANCE-UNAVAILABLE");
+        }
+        if unsafe { GetLastError() } == ERROR_ALREADY_EXISTS {
+            unsafe { CloseHandle(handle) };
+            return Err("RO-DESKTOP-ALREADY-RUNNING");
+        }
+        Ok(Self {
+            handle: handle as isize,
+        })
+    }
+}
+
+#[cfg(windows)]
+impl Drop for ApplicationInstanceGuard {
+    fn drop(&mut self) {
+        unsafe {
+            let handle = self.handle as windows_sys::Win32::Foundation::HANDLE;
+            windows_sys::Win32::Foundation::CloseHandle(handle);
+        }
+    }
+}
+
+#[cfg(not(windows))]
+pub(crate) struct ApplicationInstanceGuard;
+
+#[cfg(not(windows))]
+impl ApplicationInstanceGuard {
+    pub(crate) fn acquire(_application_data: &Path) -> Result<Self, &'static str> {
+        Ok(Self)
+    }
+}
+
 impl PolicyStore {
     pub(crate) fn new(application_data: &Path) -> Self {
         let application_data = stable_application_data_path(application_data);

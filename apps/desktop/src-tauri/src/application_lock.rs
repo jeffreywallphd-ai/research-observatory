@@ -12,7 +12,8 @@ use crate::application_lock_verification::{
 };
 pub use crate::application_sign_in_policy::SignInMode;
 use crate::application_sign_in_policy::{
-    PolicyLoadState, PolicySourceAuthority, PolicyStore, SignInPolicy, secure_random_hex,
+    ApplicationInstanceGuard, PolicyLoadState, PolicySourceAuthority, PolicyStore, SignInPolicy,
+    secure_random_hex,
 };
 use crate::supervisor::{RuntimeState, RuntimeSupervisor};
 
@@ -211,10 +212,24 @@ impl ApplicationLockInner {
 pub struct ApplicationLockManager {
     policy_store: PolicyStore,
     shared: Arc<Mutex<ApplicationLockInner>>,
+    _instance_guard: Option<Arc<ApplicationInstanceGuard>>,
 }
 
 impl ApplicationLockManager {
-    pub fn new(application_data: &Path) -> Self {
+    pub fn acquire(application_data: &Path) -> Result<Self, &'static str> {
+        let guard = Arc::new(ApplicationInstanceGuard::acquire(application_data)?);
+        Ok(Self::from_application_data(application_data, Some(guard)))
+    }
+
+    #[cfg(test)]
+    pub(crate) fn new(application_data: &Path) -> Self {
+        Self::from_application_data(application_data, None)
+    }
+
+    fn from_application_data(
+        application_data: &Path,
+        instance_guard: Option<Arc<ApplicationInstanceGuard>>,
+    ) -> Self {
         let policy_store = PolicyStore::new(application_data);
         let loaded = policy_store.initialize();
         let configuration_state = match loaded.state {
@@ -262,6 +277,7 @@ impl ApplicationLockManager {
         Self {
             policy_store,
             shared: Arc::new(Mutex::new(inner)),
+            _instance_guard: instance_guard,
         }
     }
 
@@ -1238,9 +1254,12 @@ fn reason_code(reason: ApplicationLockReason) -> &'static str {
 mod tests {
     use super::*;
     use std::fs;
+    use std::io::{BufRead, BufReader, Write};
     use std::path::PathBuf;
+    use std::process::{Child, Command, Stdio};
     use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
     use std::sync::mpsc;
+    use std::thread;
 
     static TEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
 
@@ -1276,6 +1295,169 @@ mod tests {
 
     fn default_manager() -> ApplicationLockManager {
         ApplicationLockManager::new(&root("default"))
+    }
+
+    #[cfg(windows)]
+    fn spawn_policy_child(application_data: &Path, action: &str) -> Child {
+        let mut child = Command::new(std::env::current_exe().expect("current test executable"))
+            .args([
+                "--exact",
+                "application_lock::tests::application_lock_policy_child_process",
+                "--nocapture",
+            ])
+            .env("RO_APPLICATION_LOCK_TEST_CHILD_ACTION", action)
+            .env("RO_APPLICATION_LOCK_TEST_CHILD_ROOT", application_data)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("spawn policy child");
+        let stdout = child.stdout.take().expect("child stdout");
+        let mut reader = BufReader::new(stdout);
+        let mut line = String::new();
+        loop {
+            line.clear();
+            let read = reader.read_line(&mut line).expect("read child marker");
+            assert!(read > 0, "policy child exited before readiness marker");
+            if line.contains("RO-POLICY-CHILD-READY") {
+                break;
+            }
+        }
+        child.stdout = Some(reader.into_inner());
+        child
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn application_lock_policy_child_process() {
+        let Ok(action) = std::env::var("RO_APPLICATION_LOCK_TEST_CHILD_ACTION") else {
+            return;
+        };
+        let application_data = PathBuf::from(
+            std::env::var_os("RO_APPLICATION_LOCK_TEST_CHILD_ROOT")
+                .expect("child application data root"),
+        );
+        match action.as_str() {
+            "hold-instance" => {
+                let manager = ApplicationLockManager::acquire(&application_data)
+                    .expect("child owns desktop instance");
+                let prepared = manager
+                    .prepare_policy_transition_with(SignInMode::WindowsPassword, None, 15, |_| {
+                        VerificationOutcome::Succeeded
+                    })
+                    .expect("child prepares protected mode");
+                let committed = manager.commit_policy_transition(
+                    prepared.handle.as_deref().expect("child transition handle"),
+                    true,
+                );
+                assert_eq!(committed.outcome, PolicyTransitionOutcome::Committed);
+                println!("RO-POLICY-CHILD-READY");
+                std::io::stdout().flush().expect("flush child marker");
+                thread::sleep(Duration::from_secs(60));
+            }
+            "publish-password" => {
+                let store = PolicyStore::new(&application_data);
+                let loaded = store.initialize();
+                let target = SignInPolicy::normalized_target(
+                    loaded.policy.revision() + 1,
+                    SignInMode::WindowsPassword,
+                    None,
+                    0,
+                )
+                .expect("child target policy");
+                let _guard = store.lock().expect("child policy lock");
+                let staged = store.stage(&target).expect("child stage policy");
+                store
+                    .publish(staged, &loaded.source)
+                    .expect("child publish policy");
+                println!("RO-POLICY-CHILD-READY");
+                std::io::stdout().flush().expect("flush child marker");
+            }
+            "hold-policy-mutex" => {
+                let store = PolicyStore::new(&application_data);
+                store.initialize();
+                let _guard = store.lock().expect("child policy lock");
+                println!("RO-POLICY-CHILD-READY");
+                std::io::stdout().flush().expect("flush child marker");
+                thread::sleep(Duration::from_secs(60));
+            }
+            _ => panic!("unknown child action"),
+        }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn release_runtime_is_single_instance_for_one_canonical_application_root() {
+        let application_data = root("single-instance-process");
+        let mut child = spawn_policy_child(&application_data, "hold-instance");
+        assert!(matches!(
+            ApplicationLockManager::acquire(&application_data),
+            Err("RO-DESKTOP-ALREADY-RUNNING")
+        ));
+        assert_eq!(
+            PolicyStore::new(&application_data).initialize().policy.mode,
+            SignInMode::WindowsPassword
+        );
+        child.kill().expect("terminate first desktop process");
+        child.wait().expect("wait for first desktop process");
+
+        let restarted = ApplicationLockManager::acquire(&application_data)
+            .expect("instance authority released after abrupt process exit");
+        assert_eq!(restarted.status().sign_in_mode, SignInMode::WindowsPassword);
+        assert_eq!(restarted.status().state, ApplicationLockState::Locked);
+        assert_eq!(
+            restarted.begin_protected_action(),
+            Err("RO-APPLICATION-LOCKED")
+        );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn child_process_publication_and_abandoned_mutex_preserve_exact_policy() {
+        let application_data = root("child-process-publication");
+        let parent_store = PolicyStore::new(&application_data);
+        let predecessor = parent_store.initialize();
+        let stale_target = SignInPolicy::normalized_target(
+            predecessor.policy.revision() + 1,
+            SignInMode::WindowsHello,
+            None,
+            0,
+        )
+        .expect("stale parent target");
+
+        let mut publisher = spawn_policy_child(&application_data, "publish-password");
+        assert!(publisher.wait().expect("wait for publisher").success());
+        let _guard = parent_store.lock().expect("parent policy lock");
+        let staged = parent_store
+            .stage(&stale_target)
+            .expect("stage stale target");
+        assert_eq!(
+            parent_store.publish(staged, &predecessor.source),
+            Err("RO-SIGN-IN-POLICY-CONFLICT")
+        );
+        drop(_guard);
+        let committed = parent_store.initialize();
+        assert_eq!(committed.state, PolicyLoadState::Valid);
+        assert_eq!(committed.policy.mode, SignInMode::WindowsPassword);
+
+        let mut lock_holder = spawn_policy_child(&application_data, "hold-policy-mutex");
+        let killer = thread::spawn(move || {
+            thread::sleep(Duration::from_millis(100));
+            lock_holder.kill().expect("terminate policy lock holder");
+            lock_holder.wait().expect("wait for policy lock holder");
+        });
+        let recovered_guard = parent_store
+            .lock()
+            .expect("abandoned named mutex remains recoverable");
+        drop(recovered_guard);
+        killer.join().expect("join lock-holder terminator");
+
+        let reopened = parent_store.initialize();
+        assert_eq!(reopened.state, PolicyLoadState::Valid);
+        assert_eq!(reopened.policy, committed.policy);
+        assert_eq!(
+            fs::read(parent_store.canonical_path()).expect("canonical policy bytes"),
+            committed.policy.canonical_bytes().expect("canonical bytes")
+        );
     }
 
     #[test]
