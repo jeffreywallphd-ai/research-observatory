@@ -41,6 +41,35 @@ describe("application-lock contract", () => {
     })).toThrow("Invalid application-lock response");
   });
 
+  it("rejects coercible objects and accessors for every snapshot enum", () => {
+    for (const [field, primitive] of [
+      ["state", "unlocked"],
+      ["configurationState", "default"],
+      ["reason", "manual"],
+    ] as const) {
+      expect(() => decodeApplicationLockSnapshot({
+        ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+        [field]: { toString: () => primitive },
+      })).toThrow("Invalid application-lock response");
+
+      const accessorSnapshot = { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT } as Record<string, unknown>;
+      Object.defineProperty(accessorSnapshot, field, {
+        enumerable: true,
+        get: () => primitive,
+      });
+      expect(() => decodeApplicationLockSnapshot(accessorSnapshot))
+        .toThrow("Invalid application-lock response");
+    }
+  });
+
+  it("reconstructs a trusted snapshot instead of returning the bridge object", () => {
+    const bridgeSnapshot = { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT };
+    const decoded = decodeApplicationLockSnapshot(bridgeSnapshot);
+
+    expect(decoded).not.toBe(bridgeSnapshot);
+    expect(decoded).toEqual(bridgeSnapshot);
+  });
+
   it("normalizes optional local profile names and rejects unsafe boundaries", () => {
     expect(normalizeLocalProfileName("  Local researcher  ")).toBe("Local researcher");
     expect(normalizeLocalProfileName("   ")).toBeNull();
@@ -160,6 +189,25 @@ describe("application-lock contract", () => {
       reasonCode: "RO-LOCK-UNLOCKED",
       snapshot: lockedSnapshot,
     })).toThrow("Invalid application-unlock response");
+    expect(() => decodeApplicationUnlockAttempt({
+      schemaVersion: "1.0",
+      outcome: "failed",
+      reasonCode: "RO-LOCK-AUTH-NOT-LOCKED",
+      snapshot: DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+    })).toThrow("Invalid application-unlock response");
+
+    const accessorAttempt = {
+      schemaVersion: "1.0",
+      outcome: "failed",
+      reasonCode: "RO-LOCK-AUTH-FAILED",
+      snapshot: lockedSnapshot,
+    } as Record<string, unknown>;
+    Object.defineProperty(accessorAttempt, "outcome", {
+      enumerable: true,
+      get: () => "failed",
+    });
+    expect(() => decodeApplicationUnlockAttempt(accessorAttempt))
+      .toThrow("Invalid application-unlock response");
   });
 
   it("preserves redacted password-provider failure messages", () => {

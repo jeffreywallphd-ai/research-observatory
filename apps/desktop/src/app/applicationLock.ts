@@ -80,7 +80,6 @@ const UNLOCK_REASON_CODES: Readonly<Record<VerificationOutcome, readonly string[
   busy: ["RO-LOCK-AUTH-BUSY", "RO-LOCK-RATE-LIMITED"],
   failed: [
     "RO-LOCK-AUTH-FAILED",
-    "RO-LOCK-AUTH-NOT-LOCKED",
     "RO-LOCK-AUTH-STALE",
     "RO-LOCK-CORE-UNAVAILABLE",
   ],
@@ -88,6 +87,29 @@ const UNLOCK_REASON_CODES: Readonly<Record<VerificationOutcome, readonly string[
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readExactDataRecord(
+  value: unknown,
+  expectedKeys: readonly string[],
+): Record<string, unknown> | null {
+  if (!isRecord(value)) return null;
+  const ownKeys = Reflect.ownKeys(value);
+  if (
+    ownKeys.some((key) => typeof key !== "string")
+    || ownKeys.length !== expectedKeys.length
+    || !expectedKeys.every((key) => ownKeys.includes(key))
+  ) {
+    return null;
+  }
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  const result: Record<string, unknown> = {};
+  for (const key of expectedKeys) {
+    const descriptor = descriptors[key];
+    if (!descriptor || !("value" in descriptor)) return null;
+    result[key] = descriptor.value;
+  }
+  return result;
 }
 
 function isNonNegativeInteger(value: unknown): value is number {
@@ -175,54 +197,67 @@ export function reconcileApplicationLockSnapshot(
 }
 
 export function decodeApplicationLockSnapshot(value: unknown): ApplicationLockSnapshot {
-  if (!isRecord(value) || Object.keys(value).sort().join("|") !== [...SNAPSHOT_KEYS].sort().join("|")) {
+  const data = readExactDataRecord(value, SNAPSHOT_KEYS);
+  if (!data) {
     throw new Error("Invalid application-lock response.");
   }
-  const timeout = value.inactivityTimeoutMinutes;
-  const state = value.state;
-  const profileName = value.profileName;
-  const reason = value.reason;
+  const timeout = data.inactivityTimeoutMinutes;
+  const state = data.state;
+  const profileName = data.profileName;
+  const configurationState = data.configurationState;
+  const reason = data.reason;
   if (
-    value.schemaVersion !== "1.0"
+    data.schemaVersion !== "1.0"
     || (state !== "locked" && state !== "unlocked")
     || (profileName !== null && typeof profileName !== "string")
     || !APPLICATION_LOCK_TIMEOUTS.some((candidate) => candidate === timeout)
-    || !["default", "valid", "invalid"].includes(String(value.configurationState))
-    || (reason !== null && !["manual", "inactivity", "application-restart", "configuration-invalid"].includes(String(reason)))
-    || value.reauthentication !== "windows-current-user-credentials-same-sid"
-    || value.threatDisclosure !== "Application-session protection only; this is not Windows-account isolation."
-    || !isNonNegativeInteger(value.retryAfterSeconds)
-    || !isNonNegativeInteger(value.auditSequence)
+    || (configurationState !== "default" && configurationState !== "valid" && configurationState !== "invalid")
+    || (reason !== null && reason !== "manual" && reason !== "inactivity" && reason !== "application-restart" && reason !== "configuration-invalid")
+    || data.reauthentication !== "windows-current-user-credentials-same-sid"
+    || data.threatDisclosure !== "Application-session protection only; this is not Windows-account isolation."
+    || !isNonNegativeInteger(data.retryAfterSeconds)
+    || !isNonNegativeInteger(data.auditSequence)
     || (state === "locked" && profileName !== null)
   ) {
     throw new Error("Invalid application-lock response.");
   }
-  return value as unknown as ApplicationLockSnapshot;
+  return {
+    schemaVersion: "1.0",
+    state,
+    profileName,
+    inactivityTimeoutMinutes: timeout as ApplicationLockSnapshot["inactivityTimeoutMinutes"],
+    configurationState,
+    reason,
+    reauthentication: "windows-current-user-credentials-same-sid",
+    threatDisclosure: "Application-session protection only; this is not Windows-account isolation.",
+    retryAfterSeconds: data.retryAfterSeconds,
+    auditSequence: data.auditSequence,
+  };
 }
 
 export function decodeApplicationUnlockAttempt(value: unknown): ApplicationUnlockAttempt {
+  const data = readExactDataRecord(value, UNLOCK_ATTEMPT_KEYS);
   if (
-    !isRecord(value)
-    || Object.keys(value).sort().join("|") !== [...UNLOCK_ATTEMPT_KEYS].sort().join("|")
-    || value.schemaVersion !== "1.0"
-    || typeof value.outcome !== "string"
-    || !Object.prototype.hasOwnProperty.call(UNLOCK_REASON_CODES, value.outcome)
-    || typeof value.reasonCode !== "string"
+    !data
+    || data.schemaVersion !== "1.0"
+    || typeof data.outcome !== "string"
+    || !Object.prototype.hasOwnProperty.call(UNLOCK_REASON_CODES, data.outcome)
+    || typeof data.reasonCode !== "string"
   ) {
     throw new Error("Invalid application-unlock response.");
   }
-  const outcome = value.outcome as VerificationOutcome;
-  if (!UNLOCK_REASON_CODES[outcome].includes(value.reasonCode)) {
+  const outcome = data.outcome as VerificationOutcome;
+  if (!UNLOCK_REASON_CODES[outcome].includes(data.reasonCode)) {
     throw new Error("Invalid application-unlock response.");
   }
-  const snapshot = decodeApplicationLockSnapshot(value.snapshot);
+  const snapshot = decodeApplicationLockSnapshot(data.snapshot);
   if (
     (outcome === "succeeded" && snapshot.state !== "unlocked")
     || (outcome !== "succeeded" && snapshot.state !== "locked")
   ) {
     throw new Error("Invalid application-unlock response.");
   }
-  return { schemaVersion: "1.0", outcome, reasonCode: value.reasonCode, snapshot };
+  return { schemaVersion: "1.0", outcome, reasonCode: data.reasonCode, snapshot };
 }
 
 export function applicationUnlockFailureMessage(

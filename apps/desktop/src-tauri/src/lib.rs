@@ -172,7 +172,7 @@ async fn application_lock_unlock(
     let result =
         tauri::async_runtime::spawn_blocking(move || lock_manager.reauthenticate(&supervisor))
             .await
-            .map_err(|_| "RO-LOCK-AUTH-FAILED")?;
+            .map_err(|_| "RO-LOCK-AUTH-FAILED")??;
     if result.outcome == VerificationOutcome::Succeeded {
         let _ = app.emit("application-lock-changed", &result.snapshot);
     }
