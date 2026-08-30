@@ -5685,7 +5685,7 @@
             {
               "task_id": "CAP-03.S04.T01",
               "title": "Define workflow, step, job, attempt, artifact, and human-task contracts",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
