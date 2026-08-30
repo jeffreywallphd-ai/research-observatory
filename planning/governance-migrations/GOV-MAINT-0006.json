@@ -47,12 +47,12 @@
       {
         "check": "complete focused UI lineage gate suite",
         "result": "passed",
-        "detail": "All 19 unittest cases passed, including real amendment-task lookup and automatic-base selection, exact v1.4-style approved-reference implementation, out-of-range Wave denial, independently reviewed pre-implementation maintenance admission, self-review denial, unchanged CAP behavior, task/base/reference equality, regular-blob enforcement, and existing hardening invariants."
+        "detail": "All 24 unittest cases passed, including real amendment-task lookup and automatic-base selection, exact v1.4-style approved-reference implementation, out-of-range Wave denial, independently reviewed and remediated pre-implementation maintenance admission, plain and namespaced self-review denial, unchanged CAP behavior, task/base/reference equality, regular-blob enforcement, and existing hardening invariants."
       },
       {
         "check": "canonical backlog schema and workflow validation",
         "result": "passed",
-        "detail": "All 18 taskctl schema tests passed and taskctl validate accepted the exact live backlog with W1.A05.T04 still IN_PROGRESS at its original bd8d752 claim base."
+        "detail": "All 27 taskctl schema tests passed and taskctl validate accepted the exact live backlog with W1.A05.T04 still IN_PROGRESS at its original bd8d752 claim base."
       },
       {
         "check": "approved W1 and amendment authority",
@@ -70,6 +70,18 @@
         "detail": "backlog_views and plan_review_site completed deterministically; Ruff formatting and lint passed for the changed gate tool and regression suite; exact changed-path patch hygiene passed."
       }
     ]
+  },
+  "remediation": {
+    "priorReviewId": "GOV-MAINT-0006.R01",
+    "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0006.review-R01.json",
+    "priorReviewSha256": "8baa34210a1f958a0295d01749457ee0902ecea2289ac1c02ee75baa80d4fda5",
+    "resolvedFindingIds": [
+      "GOV-MAINT-0006-R01-F01",
+      "GOV-MAINT-0006-R01-F02"
+    ],
+    "rootCause": "The first candidate normalized only the reviewer namespace before comparing identities and modeled only a one-round approval path. That made equivalent namespaced implementer and reviewer identities compare differently and could not truthfully retain an adverse round before an approved remediation. The evidence narrative also retained pre-expansion suite counts.",
+    "resolution": "Use one validated canonical agent-identity function for both roles, reject equal canonical identities, and authenticate an append-only sequence in which the first candidate is the direct child of the frozen predecessor, each adverse review is introduced in the reviewed commit's direct child, each remediation is the next direct child, and the final independent attempt is approved with no findings. Correct the complete-suite counts to the executed 24 UI-gate and 27 taskctl-schema tests.",
+    "recurrenceControl": "Real-Git regressions now reject self-review for both plain and agent:-namespaced implementers and prove that an adverse R01 ledger, strict-descendant remediation, and independent R02 approval all remain immutable and precede UI implementation."
   },
   "rollback": "Do not begin product UI work or integrate this candidate if independent review finds a blocking defect. Revert only the strict-descendant maintenance candidate to predecessor 212108b; W1.A05.T04 remains claimed but product-unmodified, the approved v1.4 package remains unchanged, and no task/release authority changes.",
   "reviewAttempts": [

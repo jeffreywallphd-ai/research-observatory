@@ -378,6 +378,7 @@ class UiChangeGateTests(unittest.TestCase):
         predecessor: str,
         *,
         reviewer: str = "agent:independent-reviewer",
+        implementation_agent: str = "codex",
     ) -> str:
         maintenance_id = "GOV-MAINT-0001"
         record_path = f"planning/governance-migrations/{maintenance_id}.json"
@@ -395,7 +396,7 @@ class UiChangeGateTests(unittest.TestCase):
             "status": "candidate",
             "riskTier": 2,
             "humanApprovalRequired": False,
-            "implementationAgent": "codex",
+            "implementationAgent": implementation_agent,
             "predecessor": {"commit": predecessor},
             "trigger": {"diagnosis": "fixture control grammar gap"},
             "authority": "Preserve the approved reference and task authority.",
@@ -437,6 +438,113 @@ class UiChangeGateTests(unittest.TestCase):
         self.write_json(root / record_path, record)
         self.commit(root, "record independent maintenance review")
         return candidate
+
+    def install_remediated_maintenance(self, root: Path, predecessor: str) -> None:
+        maintenance_id = "GOV-MAINT-0001"
+        record_path = f"planning/governance-migrations/{maintenance_id}.json"
+        schema_path = root / "design" / "ui-change.schema.json"
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        schema["$comment"] = "candidate generic pre-implementation maintenance"
+        self.write_json(schema_path, schema)
+        changed_paths = sorted(["design/ui-change.schema.json", record_path])
+        record: dict[str, Any] = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-control-maintenance",
+            "maintenanceId": maintenance_id,
+            "title": "Fixture remediated gate maintenance",
+            "status": "candidate",
+            "riskTier": 2,
+            "humanApprovalRequired": False,
+            "implementationAgent": "agent:codex",
+            "predecessor": {"commit": predecessor},
+            "trigger": {"diagnosis": "fixture control grammar gap"},
+            "authority": "Preserve the approved reference and task authority.",
+            "intendedDelta": {"changedPaths": changed_paths},
+            "verification": {"results": [{"check": "fixture", "result": "passed"}]},
+            "rollback": "Return to the frozen predecessor.",
+            "reviewAttempts": [],
+            "review": None,
+        }
+        self.write_json(root / record_path, record)
+        candidate = self.commit(root, "candidate gate maintenance")
+
+        first_review_path = f"planning/governance-migrations/{maintenance_id}.review-R01.json"
+        first_finding = {
+            "id": f"{maintenance_id}-R01-F01",
+            "severity": "HIGH",
+            "blocking": True,
+            "title": "Fixture defect",
+            "reproduction": "The candidate permits a forbidden identity.",
+            "requiredResolution": "Normalize both identities symmetrically.",
+        }
+        first_review = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-control-maintenance-review",
+            "maintenanceId": maintenance_id,
+            "reviewId": f"{maintenance_id}.R01",
+            "reviewedCommit": candidate,
+            "reviewer": "agent:independent-reviewer",
+            "reviewedAt": "2026-08-30T20:00:00+00:00",
+            "disposition": "CHANGES_REQUESTED",
+            "authorityPreserved": False,
+            "candidateChangedPaths": changed_paths,
+            "findings": [first_finding],
+        }
+        self.write_json(root / first_review_path, first_review)
+        first_attempt = {
+            "reviewId": f"{maintenance_id}.R01",
+            "reviewedCommit": candidate,
+            "reviewer": "agent:independent-reviewer",
+            "reviewedAt": "2026-08-30T20:00:00+00:00",
+            "disposition": "CHANGES_REQUESTED",
+            "findings": [f"{maintenance_id}-R01-F01"],
+            "path": first_review_path,
+            "sha256": hashlib.sha256((root / first_review_path).read_bytes()).hexdigest(),
+        }
+        record.update(status="changes-requested", reviewAttempts=[first_attempt])
+        self.write_json(root / record_path, record)
+        self.commit(root, "record adverse maintenance review")
+
+        schema["$comment"] = "remediated generic pre-implementation maintenance"
+        self.write_json(schema_path, schema)
+        record["remediation"] = {
+            "resolvedFindingIds": [f"{maintenance_id}-R01-F01"],
+            "rootCause": "The candidate normalized only one identity form.",
+            "resolution": "Both identity forms now use one canonicalizer.",
+            "recurrenceControl": "The real-Git fixture replays the adverse identity.",
+        }
+        self.write_json(root / record_path, record)
+        remediation = self.commit(root, "remediate gate maintenance")
+
+        second_review_path = f"planning/governance-migrations/{maintenance_id}.review-R02.json"
+        remediation_paths = sorted(["design/ui-change.schema.json", record_path])
+        second_review = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-control-maintenance-review",
+            "maintenanceId": maintenance_id,
+            "reviewId": f"{maintenance_id}.R02",
+            "reviewedCommit": remediation,
+            "reviewer": "agent:second-independent-reviewer",
+            "reviewedAt": "2026-08-30T20:05:00+00:00",
+            "disposition": "APPROVED",
+            "authorityPreserved": True,
+            "candidateChangedPaths": remediation_paths,
+            "findings": [],
+        }
+        self.write_json(root / second_review_path, second_review)
+        second_attempt = {
+            "reviewId": f"{maintenance_id}.R02",
+            "reviewedCommit": remediation,
+            "reviewer": "agent:second-independent-reviewer",
+            "reviewedAt": "2026-08-30T20:05:00+00:00",
+            "disposition": "APPROVED",
+            "findings": [],
+            "path": second_review_path,
+            "sha256": hashlib.sha256((root / second_review_path).read_bytes()).hexdigest(),
+        }
+        record.update(status="adopted", reviewAttempts=[first_attempt, second_attempt], review=second_attempt)
+        self.write_json(root / record_path, record)
+        self.commit(root, "adopt remediated maintenance")
 
     def test_approved_reference_implementation_and_defect_restoration_pass(self) -> None:
         for kind in ("approved-reference-implementation", "defect-restoration"):
@@ -516,6 +624,23 @@ class UiChangeGateTests(unittest.TestCase):
 
         self.assertTrue(result["ok"], result["errors"])
 
+    def test_remediated_preimplementation_maintenance_preserves_adverse_review_history(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            self.install_remediated_maintenance(root, base)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'UI after remediated maintenance';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            head = self.commit(root, "implement UI after remediated maintenance")
+
+            result = validate(root, base, head)
+
+        self.assertTrue(result["ok"], result["errors"])
+
     def test_preimplementation_maintenance_rejects_self_review(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, package = self.prepare(temporary)
@@ -528,6 +653,29 @@ class UiChangeGateTests(unittest.TestCase):
             contract = self.contract("approved-reference-implementation", package, base)
             self.install_contract(root, contract, base_sha=base)
             head = self.commit(root, "attempt UI after self-reviewed maintenance")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("independent" in error for error in result["errors"]))
+
+    def test_preimplementation_maintenance_rejects_namespaced_implementer_self_review(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            self.install_reviewed_maintenance(
+                root,
+                base,
+                reviewer="agent:codex",
+                implementation_agent="agent:codex",
+            )
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'UI after namespaced self review';\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            head = self.commit(root, "attempt UI after namespaced self-reviewed maintenance")
 
             result = validate(root, base, head)
 

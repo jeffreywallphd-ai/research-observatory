@@ -129,6 +129,7 @@ REVIEW_RECORD_ENVELOPE = frozenset(
     {"docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/status-summary.md"}
 )
 AGENT_REVIEWER = re.compile(r"^agent:[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$")
+IMPLEMENTATION_AGENT = re.compile(r"^(?:agent:)?[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$")
 REVIEWED_HISTORICAL_HARDENING = {
     "1cd9deebe94fa2b667ad6b0030bd07ec45d1c6bb": {
         "taskId": "CAP-01.S04.T03",
@@ -139,6 +140,17 @@ REVIEWED_HISTORICAL_HARDENING = {
         "reviewer": "agent:curie",
     }
 }
+
+
+def canonical_agent_identity(value: object, *, reviewer: bool = False) -> str | None:
+    if not isinstance(value, str):
+        return None
+    pattern = AGENT_REVIEWER if reviewer else IMPLEMENTATION_AGENT
+    if pattern.fullmatch(value) is None:
+        return None
+    local_name = value.removeprefix("agent:")
+    canonical = re.sub(r"[^a-z0-9]", "", local_name)
+    return canonical or None
 
 
 def backlog_tasks(backlog: dict[str, Any]) -> list[dict[str, Any]]:
@@ -352,44 +364,42 @@ def reviewed_preimplementation_maintenance_errors(
             record = json_object(blob(repo, head, record_path), record_path)
         except UnicodeDecodeError, ValueError, json.JSONDecodeError:
             continue
-        review = record.get("review")
-        if isinstance(review, dict) and review.get("reviewedCommit") == commit:
+        attempts = record.get("reviewAttempts")
+        if isinstance(attempts, list) and any(
+            isinstance(attempt, dict) and attempt.get("reviewedCommit") == commit for attempt in attempts
+        ):
             matches.append((record_path, record))
     if len(matches) != 1:
         return ["pre-UI gate maintenance lacks one exact adopted independent-review attestation"]
     record_path, record = matches[0]
     maintenance_id = PurePosixPath(record_path).stem
-    review = record.get("review") or {}
-    review_id = review.get("reviewId")
-    reviewer = review.get("reviewer")
+    attempts = record.get("reviewAttempts")
+    review = record.get("review")
     implementer = record.get("implementationAgent")
-    changed_paths = (record.get("intendedDelta") or {}).get("changedPaths")
-    expected_review_path = (
-        f"{root}/{maintenance_id}.review-{str(review_id).rsplit('.', 1)[-1]}.json" if isinstance(review_id, str) else ""
-    )
     errors: list[str] = []
     if (
         record.get("maintenanceId") != maintenance_id
         or record.get("status") != "adopted"
         or record.get("riskTier") != 2
         or record.get("humanApprovalRequired") is not False
-        or not isinstance(implementer, str)
-        or not implementer
-        or not isinstance(reviewer, str)
-        or AGENT_REVIEWER.fullmatch(reviewer) is None
-        or re.sub(r"[^a-z0-9]", "", reviewer.removeprefix("agent:")) == re.sub(r"[^a-z0-9]", "", implementer.lower())
+        or canonical_agent_identity(implementer) is None
+        or not isinstance(attempts, list)
+        or not attempts
+        or not isinstance(review, dict)
+        or review != attempts[-1]
         or review.get("disposition") != "APPROVED"
         or review.get("findings") != []
-        or review.get("path") != expected_review_path
-        or not isinstance(review.get("sha256"), str)
-        or changed_paths != sorted(paths)
     ):
         errors.append("pre-UI gate maintenance record is not an exact authority-preserving independent approval")
         return errors
     try:
-        candidate_record = json_object(blob(repo, commit, record_path), "candidate maintenance record")
+        first_attempt = attempts[0]
+        if not isinstance(first_attempt, dict):
+            raise ValueError("first review attempt is not an object")
+        first_candidate = resolve_commit(repo, str(first_attempt.get("reviewedCommit")))
+        candidate_record = json_object(blob(repo, first_candidate, record_path), "candidate maintenance record")
         predecessor = resolve_commit(repo, str((record.get("predecessor") or {}).get("commit")))
-        if resolve_commit(repo, f"{commit}^") != predecessor:
+        if resolve_commit(repo, f"{first_candidate}^") != predecessor:
             errors.append("pre-UI gate maintenance candidate is not the direct child of its frozen predecessor")
         immutable_fields = {
             "schemaVersion",
@@ -403,62 +413,107 @@ def reviewed_preimplementation_maintenance_errors(
             "trigger",
             "authority",
             "intendedDelta",
-            "verification",
             "rollback",
         }
+        initial_changed_paths = (candidate_record.get("intendedDelta") or {}).get("changedPaths")
         if (
             candidate_record.get("status") != "candidate"
             or candidate_record.get("reviewAttempts") != []
             or candidate_record.get("review") is not None
             or any(candidate_record.get(field) != record.get(field) for field in immutable_fields)
-            or commit_paths(repo, commit) != set(changed_paths)
+            or initial_changed_paths != sorted(commit_paths(repo, first_candidate))
         ):
             errors.append("pre-UI gate maintenance candidate bytes or changed-path envelope differ from review")
-        review_path = str(review["path"])
-        review_payload = blob(repo, head, review_path)
-        if hashlib.sha256(review_payload).hexdigest() != review["sha256"]:
-            errors.append("pre-UI gate maintenance review hash differs from its adopted record")
-        review_record = json_object(review_payload, "pre-UI gate maintenance review")
-        expected_review_record = {
-            "schemaVersion": "1.0",
-            "documentType": "governance-control-maintenance-review",
-            "maintenanceId": maintenance_id,
-            "reviewId": review_id,
-            "reviewedCommit": commit,
-            "reviewer": reviewer,
-            "reviewedAt": review.get("reviewedAt"),
-            "disposition": "APPROVED",
-            "authorityPreserved": True,
-            "candidateChangedPaths": sorted(paths),
-            "findings": [],
-        }
-        if review_record != expected_review_record or not review.get("reviewedAt"):
-            errors.append("pre-UI gate maintenance review is not the exact approved no-finding disposition")
-        introductions = (
-            git(
-                repo,
-                "log",
-                "--format=%H",
-                "--diff-filter=A",
-                head,
-                "--",
-                review_path,
-            )
-            .decode("ascii")
-            .splitlines()
-        )
-        if len(introductions) != 1:
-            errors.append("pre-UI gate maintenance review lacks one immutable introduction commit")
-        else:
-            introduction = introductions[0]
+        implementer_identity = canonical_agent_identity(implementer)
+        prior_review_commit: str | None = None
+        open_findings: set[str] = set()
+        for index, attempt in enumerate(attempts, start=1):
+            if not isinstance(attempt, dict):
+                errors.append("pre-UI gate maintenance review attempt is not an object")
+                continue
+            review_id = f"{maintenance_id}.R{index:02d}"
+            reviewed_commit = resolve_commit(repo, str(attempt.get("reviewedCommit")))
+            reviewer = attempt.get("reviewer")
+            reviewer_identity = canonical_agent_identity(reviewer, reviewer=True)
+            disposition = attempt.get("disposition")
+            finding_ids = attempt.get("findings")
+            review_path = f"{root}/{maintenance_id}.review-R{index:02d}.json"
             if (
-                resolve_commit(repo, f"{introduction}^") != commit
+                attempt.get("reviewId") != review_id
+                or attempt.get("path") != review_path
+                or not isinstance(attempt.get("reviewedAt"), str)
+                or not attempt.get("reviewedAt")
+                or not isinstance(attempt.get("sha256"), str)
+                or reviewer_identity is None
+                or reviewer_identity == implementer_identity
+                or disposition not in {"APPROVED", "CHANGES_REQUESTED"}
+                or not isinstance(finding_ids, list)
+                or not all(isinstance(item, str) and item for item in finding_ids)
+                or len(finding_ids) != len(set(finding_ids))
+                or (disposition == "APPROVED" and finding_ids)
+                or (disposition == "CHANGES_REQUESTED" and not finding_ids)
+                or (index < len(attempts) and disposition != "CHANGES_REQUESTED")
+                or (index == len(attempts) and disposition != "APPROVED")
+            ):
+                errors.append("pre-UI gate maintenance review sequence is not canonical and independent")
+                continue
+            if prior_review_commit is not None and resolve_commit(repo, f"{reviewed_commit}^") != prior_review_commit:
+                errors.append("pre-UI gate maintenance remediation is not the direct child of its adverse review")
+            review_payload = blob(repo, head, review_path)
+            if hashlib.sha256(review_payload).hexdigest() != attempt["sha256"]:
+                errors.append("pre-UI gate maintenance review hash differs from its adopted record")
+            review_record = json_object(review_payload, "pre-UI gate maintenance review")
+            review_findings = review_record.get("findings")
+            observed_finding_ids = [finding.get("id") for finding in review_findings or [] if isinstance(finding, dict)]
+            expected_review_record = {
+                "schemaVersion": "1.0",
+                "documentType": "governance-control-maintenance-review",
+                "maintenanceId": maintenance_id,
+                "reviewId": review_id,
+                "reviewedCommit": reviewed_commit,
+                "reviewer": reviewer,
+                "reviewedAt": attempt.get("reviewedAt"),
+                "disposition": disposition,
+                "authorityPreserved": disposition == "APPROVED",
+                "candidateChangedPaths": sorted(commit_paths(repo, reviewed_commit)),
+                "findings": review_findings,
+            }
+            if (
+                review_record != expected_review_record
+                or observed_finding_ids != finding_ids
+                or len(observed_finding_ids) != len(set(observed_finding_ids))
+            ):
+                errors.append("pre-UI gate maintenance review is not the exact commit-bound disposition")
+            introductions = (
+                git(repo, "log", "--format=%H", "--diff-filter=A", head, "--", review_path).decode("ascii").splitlines()
+            )
+            if len(introductions) != 1:
+                errors.append("pre-UI gate maintenance review lacks one immutable introduction commit")
+                continue
+            introduction = introductions[0]
+            projection = json_object(blob(repo, introduction, record_path), "maintenance review projection")
+            expected_status = "adopted" if disposition == "APPROVED" else "changes-requested"
+            expected_review = attempt if disposition == "APPROVED" else None
+            if (
+                resolve_commit(repo, f"{introduction}^") != reviewed_commit
                 or commit_paths(repo, introduction) != {record_path, review_path}
-                or blob(repo, introduction, record_path) != blob(repo, head, record_path)
                 or blob(repo, introduction, review_path) != review_payload
+                or projection.get("status") != expected_status
+                or projection.get("reviewAttempts") != attempts[:index]
+                or projection.get("review") != expected_review
                 or any(not is_ancestor(repo, introduction, item) for item in implementation_commit_ids)
             ):
-                errors.append("pre-UI gate maintenance approval does not strictly precede every UI implementation")
+                errors.append("pre-UI gate maintenance review projection or ordering is invalid")
+            if disposition == "CHANGES_REQUESTED":
+                open_findings.update(str(item) for item in finding_ids)
+            prior_review_commit = introduction
+        remediation = record.get("remediation")
+        if open_findings and (
+            not isinstance(remediation, dict)
+            or set(remediation.get("resolvedFindingIds") or []) != open_findings
+            or not all(remediation.get(field) for field in ("rootCause", "resolution", "recurrenceControl"))
+        ):
+            errors.append("pre-UI gate maintenance remediation does not close every adverse finding")
     except (KeyError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
         errors.append(f"invalid pre-UI gate maintenance provenance: {exc}")
     return errors
