@@ -18821,7 +18821,7 @@
       "approval_sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -18859,12 +18859,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "w1-a05-b00-independent-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-30T12:58:25+00:00",
+            "notes": "R02 ledger artifacts/evidence/W1.A05.B00.review-02.json (sha256 41d228df518fb21f6609dabce85962e36f9add46ff08199444d8dd3cbf3434f8): W1-A05-B00-R02-F01 requires fail-closed coverage of unauthorized intervening commits before an implementer-selected remediation base."
           },
-          "current_status": "REVIEW"
+          "current_status": "CHANGES_REQUESTED"
         }
       ],
       "slice_contributions": [
