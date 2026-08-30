@@ -1,8 +1,8 @@
 # Research Observatory Capability-to-Page Coverage
 
-**Version:** 1.3  
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.3`  
-**Product pages:** 32  
+**Version:** 1.4
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.4`
+**Product pages:** 33
 **Capabilities:** 20
 
 ## Capability coverage
@@ -594,8 +594,34 @@ Local/remote model routing, egress preview, budgets, evaluation, and offline pol
 - budgets
 - evaluation and offline policy
 
+### `application-settings.html` — Application Settings
+Application-wide Security & sign-in, provider status and recovery, appearance, and diagnostics for this Windows account.
+
+**Capabilities:** CAP-02
+
+**Required regions:**
+- application top bar
+- project home access
+- primary-use-case selector
+- ordered guided-workflow navigation
+- secondary all-tools inventory
+- page title and purpose
+- workflow context with previous/next or return action
+- theme toggle
+- trust/provenance footer
+- application-wide scope
+- no-login default
+- Windows password option
+- Windows Hello option
+- provider availability states
+- lock behavior preview
+- same-user proof before protection reduction
+- explicit recovery without silent fallback
+- versioned migration behavior
+- Application Settings and Project Settings separation
+
 ### `project-settings.html` — Project Settings
-Storage, protection, privacy, backup, accessibility, app lock, and Windows/macOS/Linux project portability.
+Project storage, protection, privacy, backup, accessibility, and Windows/macOS/Linux project portability.
 
 **Capabilities:** CAP-02, CAP-11, CAP-14
 
@@ -614,7 +640,7 @@ Storage, protection, privacy, backup, accessibility, app lock, and Windows/macOS
 - privacy/egress
 - backup/restore
 - appearance/accessibility
-- app lock
+- Application Settings link for app-wide sign-in
 - local/deferred project-home profile
 
 ### `study-design.html` — Study Design Studio

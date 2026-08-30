@@ -1,7 +1,7 @@
 # Research Observatory Page Inventory
 
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.3`  
-**Product pages:** 32  
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.4`
+**Product pages:** 33
 **Additional reference pages:** `style-guide.html`, `prototype-index.html`
 
 | File | Page | Purpose |
@@ -37,4 +37,5 @@
 | `task-center.html` | Task Center | Durable analytical and research-production workflows, resources, failures, cancellation, and gates. |
 | `audit-lineage.html` | Audit & Lineage | Source-to-output lineage across literature, designs, reports, manuscripts, reviews, and decisions. |
 | `model-center.html` | Model & Privacy Center | Local/remote routing, egress, budgets, evaluation, privacy, and offline policy. |
-| `project-settings.html` | Project Settings | Storage, protection, privacy, backup, accessibility, app lock, and cross-platform portability. |
+| `application-settings.html` | Application Settings | Application-wide Security & sign-in, provider status and recovery, appearance, and diagnostics for this Windows account. |
+| `project-settings.html` | Project Settings | Project storage, protection, privacy, backup, accessibility, and cross-platform portability. |

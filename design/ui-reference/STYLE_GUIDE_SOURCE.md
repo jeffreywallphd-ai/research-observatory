@@ -1,7 +1,7 @@
 # Research Observatory — Academic Minimal Style and Experience Guide
 
-**Version:** 1.3  
-**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.3`  
+**Version:** 1.4
+**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.4`
 **Purpose:** Approved implementation specification for the crisp light / deep-navy Research Observatory interface on Windows, macOS, and Linux desktops.
 
 ## 1. Authority and design-first change order
@@ -9,6 +9,10 @@
 This guide, `assets/tokens.css`, `WORKFLOW_CATALOG.*`, `CAPABILITY_COVERAGE.*`, `SITE_MANIFEST.json`, and the linked HTML pages form the approved experience reference. Tokens, semantic states, page regions, workflow order, accessibility behavior, and approved visual baselines are normative. Mock names, values, studies, vendors, prose, and inactive controls are illustrative.
 
 Intentional experience changes are design-first: update the guide, workflow/page contracts, and affected HTML; run reference validation; obtain explicit human approval and a new reference ID; only then implement application code. Defect fixes may restore the current approved reference without redesign.
+
+### 1.1 Application-wide security governance form
+
+Application Settings is distinct from Project Settings and preserves the current project and guided-workflow position. Security & sign-in is scoped to the local application on the current Windows account. Consequential choices use keyboard-selectable radio cards that state protection, prerequisites, availability, and recovery effects; the default is labeled in text. Reducing protection requires successful same-user proof before warning and confirmation. Provider cancellation, denial, busy, unavailable, or failure states restore focus, announce the outcome, change nothing, and never trigger a silent fallback. Locked and recovery surfaces disclose no project name, path, command, research content, credential, PIN, or biometric.
 
 ## 2. Design character
 

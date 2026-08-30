@@ -763,7 +763,7 @@ class BacklogSchemaTests(unittest.TestCase):
         missing["control_plane"]["control_generations"].pop()
         self.assertTrue(taskctl.governance_control_generation_errors(missing, None))
 
-    def test_revision_twelve_headroom_requires_exact_neutral_gcr7_and_s03(self) -> None:
+    def test_revision_twelve_headroom_requires_neutral_gcr7_and_bounded_maintenance(self) -> None:
         data = copy.deepcopy(self.canonical)
         generation = {
             "id": "GCR-0007",
@@ -810,20 +810,100 @@ class BacklogSchemaTests(unittest.TestCase):
         revision_twelve["control_plane"]["revision"] = 12
         revision_twelve["control_plane"]["minimum_tool_revision"] = 12
         self.assertIn(
-            "control revision differs from the latest explicit generation transition",
+            "control revision 12 requires exactly one bounded maintenance increment",
             taskctl.governance_control_generation_errors(revision_twelve, None),
         )
-        hold = next(
-            item for item in revision_twelve["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+        superseded_reference = {
+            "path": "planning/wave-amendment-approvals/W1.A04.json",
+            "sha256": "a" * 64,
+            "introduction_commit": "b" * 40,
+        }
+        revision_twelve["wave_amendments"].append(
+            {
+                "id": "W1.A04",
+                "change_request_id": "ECR-0003",
+                "target_wave": "W1",
+                "kind": "gate-integrity-safety-defect",
+                "approval_reference": superseded_reference,
+                "lifecycle": {
+                    "status": "SUPERSEDED",
+                    "history": [
+                        {
+                            "id": "E01",
+                            "status": "SUPERSEDED",
+                            "actor": "governance-migration:GOV-MIG-0001",
+                            "at": "2026-08-27T16:03:47-04:00",
+                            "rationale": "Approved reservation was never materialized and is terminally superseded.",
+                        }
+                    ],
+                },
+                "bootstrap": None,
+                "campaign": None,
+                "tasks": [],
+                "completion": {
+                    "status": "PENDING",
+                    "reviewer": None,
+                    "reviewed_at": None,
+                    "evidence": [],
+                    "notes": "No execution occurred.",
+                },
+            }
         )
-        supplement = copy.deepcopy(hold["supplements"][-1])
-        supplement["id"] = "GRR-0002.S03"
-        supplement["predecessor_control_revision"] = 11
-        supplement["successor_control_revision"] = 12
-        supplement["packet_reference"]["path"] = "planning/governance-recovery-requests/GRR-0002.S03.packet.json"
-        supplement["approval_reference"]["path"] = "planning/governance-recovery-approvals/GRR-0002.S03.json"
-        supplement["bootstrap"]["id"] = "GRR-0002.B03"
-        hold["supplements"].append(supplement)
+        amendment_reference = {
+            "path": "planning/wave-amendment-approvals/W1.A05.json",
+            "sha256": "c" * 64,
+            "introduction_commit": "d" * 40,
+        }
+        revision_twelve["wave_amendments"].append(
+            {
+                "id": "W1.A05",
+                "change_request_id": "ECR-0004",
+                "target_wave": "W1",
+                "kind": "product-scope-security-experience",
+                "approval_reference": amendment_reference,
+                "lifecycle": {
+                    "status": "APPROVED",
+                    "history": [
+                        {
+                            "id": "E01",
+                            "status": "APPROVED",
+                            "actor": "repository-owner",
+                            "at": "2026-08-30T06:03:51-04:00",
+                            "rationale": "Approved exact v4 amendment authority.",
+                        }
+                    ],
+                },
+                "bootstrap": None,
+                "campaign": None,
+                "tasks": [],
+                "completion": {
+                    "status": "PENDING",
+                    "reviewer": None,
+                    "reviewed_at": None,
+                    "evidence": [],
+                    "notes": None,
+                },
+            }
+        )
+        revision_twelve["control_plane"]["maintenance_increments"] = [
+            {
+                "id": "MI-0001",
+                "kind": "post-migration-amendment-bootstrap",
+                "predecessor_revision": 11,
+                "successor_revision": 12,
+                "change_request_id": "ECR-0004",
+                "amendment_id": "W1.A05",
+                "approval_reference": amendment_reference,
+                "migration_reference": {
+                    "id": "GOV-MIG-0001",
+                    "path": "planning/governance-migrations/GOV-MIG-0001.json",
+                    "sha256": "e" * 64,
+                    "commit": "f" * 40,
+                },
+                "applied_by": "codex",
+                "applied_at": "2026-08-30T06:30:00-04:00",
+            }
+        ]
         self.assertEqual([], backlog_schema_errors(revision_twelve, schema_path=self.schema))
         self.assertEqual([], taskctl.governance_control_generation_errors(revision_twelve, None))
         self.assertEqual([], taskctl.recovery_hold_errors(revision_twelve, None))

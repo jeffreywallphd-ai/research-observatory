@@ -1,7 +1,7 @@
 {
   "name": "Research Observatory Academic Minimal UI Reference",
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.3",
-  "version": "1.3",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.4",
+  "version": "1.4",
   "generated_at": "2026-08-07",
   "approval": "APPROVAL.yaml",
   "capability_coverage": "CAPABILITY_COVERAGE.json",
@@ -23,8 +23,8 @@
     "style_guide_markdown": "STYLE_GUIDE.md",
     "workflow_catalog": "WORKFLOW_CATALOG.md"
   },
-  "product_page_count": 32,
-  "html_document_count": 34,
+  "product_page_count": 33,
+  "html_document_count": 35,
   "pages": [
     {
       "file": "index.html",
@@ -276,9 +276,17 @@
       ]
     },
     {
+      "file": "application-settings.html",
+      "page": "Application Settings",
+      "purpose": "Application-wide Security & sign-in, provider status and recovery, appearance, and diagnostics for this Windows account.",
+      "capabilities": [
+        "CAP-02"
+      ]
+    },
+    {
       "file": "project-settings.html",
       "page": "Project Settings",
-      "purpose": "Storage, protection, privacy, backup, accessibility, app lock, and Windows/macOS/Linux project portability.",
+      "purpose": "Project storage, protection, privacy, backup, accessibility, and Windows/macOS/Linux project portability.",
       "capabilities": [
         "CAP-02",
         "CAP-11",
