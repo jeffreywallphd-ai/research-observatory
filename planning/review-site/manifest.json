@@ -19521,7 +19521,7 @@
         {
           "task_id": "W1.A05.T02",
           "title": "Implement the Windows Hello native verifier",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,
