@@ -3846,10 +3846,24 @@ class TaskctlWorkflowTests(unittest.TestCase):
         exact_errors = taskctl_module.bootstrap_packet_errors(REPO, amendment, approval, packet)
         self.assertNotIn("lacks its frozen prior-candidate authority scope", "\n".join(exact_errors))
         self.assertTrue(amendment["bootstrap"]["attempts"])
-        self.assertTrue(
-            all("scope_base_commit" not in attempt for attempt in amendment["bootstrap"]["attempts"]),
-            "immutable pre-control attempts must remain readable without a fabricated boundary",
-        )
+        prior_candidate = amendment["approval_reference"]["introduction_commit"]
+        for position, attempt in enumerate(amendment["bootstrap"]["attempts"]):
+            candidate = attempt["implementation_commit"]
+            scope_required = position > 0 and taskctl_module.git_is_ancestor(
+                REPO,
+                taskctl_module.BOOTSTRAP_SCOPE_CONTROL_CUTOVER,
+                candidate,
+            )
+            if scope_required:
+                self.assertEqual(prior_candidate, attempt.get("scope_base_commit"))
+            else:
+                self.assertNotIn(
+                    "scope_base_commit",
+                    attempt,
+                    "immutable pre-control attempts must remain readable without a fabricated boundary",
+                )
+            prior_candidate = candidate
+        self.assertEqual(prior_candidate, amendment["bootstrap"]["scope_base_commit"])
 
         adopted = copy.deepcopy(next(item for item in data["wave_amendments"] if item["id"] == "W1.A02"))
         adopted_approval = json.loads(
