@@ -7273,7 +7273,10 @@ def command_amendment_v4_bootstrap_submit(
         prefix="artifacts/evidence",
         label="Post-migration amendment bootstrap evidence",
     )
-    require_clean_repository(repo, allowed_untracked={HISTORICAL_W1_A04_WITNESS["path"]})
+    require_clean_repository(
+        repo,
+        allowed_untracked={HISTORICAL_W1_A04_WITNESS["path"], evidence_relative},
+    )
     try:
         evidence_payload = evidence_path.read_bytes()
         parse_evidence_payload(evidence_payload, evidence_path.suffix)
