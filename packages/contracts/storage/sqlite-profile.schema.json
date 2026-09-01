@@ -30,7 +30,7 @@
     "profileId": {"const": "sqlite-wal-v1"},
     "databaseSchemaVersion": {"const": 10},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "1fbfe20bc1f822558264c53c8a032e7de35661e8ef9dd9b0d0f7d47a3803769e"},
+    "schemaFingerprintSha256": {"const": "14806bb190c892b15a2f7804765c8e8617c47e5369eb3c2744da4d73ed0fdbd9"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -73,6 +73,7 @@
         "material_dependencies",
         "material_dependency_diagnostics",
         "dependency_impact_runs",
+        "dependency_impact_decisions",
         "dependency_impact_items",
         "dependency_stale_causes",
         "dependency_impact_audit_events",
@@ -148,6 +149,7 @@
         "material_dependencies",
         "material_dependency_diagnostics",
         "dependency_impact_runs",
+        "dependency_impact_decisions",
         "dependency_impact_items",
         "dependency_stale_causes",
         "dependency_impact_audit_events",

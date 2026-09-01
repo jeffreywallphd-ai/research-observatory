@@ -1470,6 +1470,7 @@ class SqliteMigrationTests(unittest.TestCase):
             self.assertEqual(0, current.execute("SELECT count(*) FROM material_dependencies").fetchone()[0])
             for table in (
                 "dependency_impact_runs",
+                "dependency_impact_decisions",
                 "dependency_impact_items",
                 "dependency_stale_causes",
                 "dependency_impact_audit_events",

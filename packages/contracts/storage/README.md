@@ -40,11 +40,15 @@ edges. New recalculable outputs must register a nonempty canonical edge set in
 the same transaction as revision, provenance, and outbox authority before a
 workflow can commit them.
 
-Version 10 adds durable dependency-impact runs, their immutable graph-bound
-items, append-only stale causes, bounded compare-and-swap checkpoints, and
-content-free impact audit facts. The v9-to-v10 migration creates no run or stale
-state for historical outputs, so missing recalculation knowledge remains
-explicit rather than invented.
+Version 10 adds durable dependency-impact runs, immutable content-free
+conditional-decision authority, graph-bound items, append-only stale causes,
+bounded compare-and-swap checkpoints, and content-free impact audit facts. The
+preview digest binds the complete change, policy, actor, exact endpoint,
+conditional decisions, graph, and bounded traversal configuration. Each
+checkpoint revalidates that authority and the current graph before writing. The
+v9-to-v10 migration creates no run, decision, or stale state for historical
+outputs, so missing recalculation knowledge remains explicit rather than
+invented.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and

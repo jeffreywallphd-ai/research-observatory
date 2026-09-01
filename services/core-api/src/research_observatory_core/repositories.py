@@ -20,7 +20,13 @@ from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, s
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
 from sqlalchemy.sql import ClauseElement
 
-from .dependency_impacts import DependencyGraphEdge, plan_dependency_impact
+from .dependency_impacts import (
+    DependencyGraphEdge,
+    conditional_decision_authority_document,
+    dependency_change_authority_document,
+    plan_dependency_impact,
+    validate_dependency_impact_limits,
+)
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ports.repositories import (
     DEFAULT_DEPENDENCY_IMPACT_LIMITS,
@@ -2336,27 +2342,6 @@ def _impact_sha256(document: object) -> str:
     return "sha256:" + hashlib.sha256(payload).hexdigest()
 
 
-def _dependency_change_document(change: DependencyChange) -> dict[str, object]:
-    return {
-        "actorId": change.actor_id,
-        "changeId": change.change_id,
-        "configurationId": change.configuration_id,
-        "dependencyKind": change.dependency_kind,
-        "idempotencyKey": change.idempotency_key,
-        "occurredAt": change.occurred_at,
-        "previousConfigurationVersion": change.previous_configuration_version,
-        "previousFingerprint": change.previous_fingerprint,
-        "previousRevisionId": change.previous_revision_id,
-        "propagationPolicyId": change.propagation_policy_id,
-        "propagationPolicyVersion": change.propagation_policy_version,
-        "reason": change.reason,
-        "replacementConfigurationVersion": change.replacement_configuration_version,
-        "replacementFingerprint": change.replacement_fingerprint,
-        "replacementRevisionId": change.replacement_revision_id,
-        "traceId": change.trace_id,
-    }
-
-
 def _impact_item_document(item: Any) -> dict[str, object]:
     return {
         "confidence": item.confidence,
@@ -2471,13 +2456,16 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         decisions: tuple[ConditionalDependencyDecision, ...],
         limits: DependencyImpactLimits,
     ) -> DependencyImpactPreview:
+        validate_dependency_impact_limits(limits)
+        self._validate_change_authority(connection, change)
         rows = connection.execute(
             """
             SELECT dependency.dependency_id, dependency.dependency_revision_id,
                    dependency.output_revision_id, revision.aggregate_kind,
                    dependency.relation_type, dependency.fingerprint,
                    dependency.governing_policy_id, dependency.governing_policy_version,
-                   dependency.configuration_id, dependency.configuration_version
+                   dependency.configuration_id, dependency.configuration_version,
+                   dependency.dependency_kind
               FROM material_dependencies AS dependency
               JOIN aggregate_revisions AS revision
                 ON revision.project_id=dependency.project_id
@@ -2500,6 +2488,7 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                 governing_policy_version=str(row[7]),
                 configuration_id=None if row[8] is None else str(row[8]),
                 configuration_version=None if row[9] is None else str(row[9]),
+                dependency_kind=cast(Any, row[10]),
             )
             for row in rows
         )
@@ -2524,6 +2513,41 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
             legacy_unreported_output_ids=legacy,
             limits=limits,
         )
+
+    def _validate_change_authority(
+        self,
+        connection: CanonicalConnection,
+        change: DependencyChange,
+    ) -> None:
+        if change.previous_revision_id is None or change.replacement_revision_id is None:
+            return
+        rows = connection.execute(
+            """
+            SELECT revision_id, aggregate_id, aggregate_kind, revision
+              FROM aggregate_revisions
+             WHERE project_id=? AND revision_id IN (?, ?)
+             ORDER BY revision_id
+            """,
+            (self._project_id, change.previous_revision_id, change.replacement_revision_id),
+        ).fetchall()
+        by_revision = {str(row[0]): row for row in rows}
+        previous = by_revision.get(change.previous_revision_id)
+        replacement = by_revision.get(change.replacement_revision_id)
+        if previous is None or replacement is None:
+            raise RepositoryConflict("dependency change revision authority is unavailable")
+        if (
+            str(previous[1]) != str(replacement[1])
+            or str(previous[2]) != str(replacement[2])
+            or int(replacement[3]) <= int(previous[3])
+        ):
+            raise RepositoryConflict("dependency change replacement is not a later revision of the same aggregate")
+        required_kind = {
+            "evidence-record": "evidence",
+            "ontology-version": "ontology",
+            "human-decision": "decision",
+        }.get(change.dependency_kind)
+        if required_kind is not None and str(previous[2]) != required_kind:
+            raise RepositoryConflict("dependency change endpoint kind differs from its authority")
 
     def preview(
         self,
@@ -2568,17 +2592,9 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
             authority_sha256 = _impact_sha256(
                 {
                     "batchSize": batch_size,
-                    "change": _dependency_change_document(change),
+                    "change": dependency_change_authority_document(change),
                     "decisions": [
-                        {
-                            "actorId": item.actor_id,
-                            "decidedAt": item.decided_at,
-                            "decisionId": item.decision_id,
-                            "dependencyId": item.dependency_id,
-                            "disposition": item.disposition,
-                            "governingPolicyId": item.governing_policy_id,
-                            "governingPolicyVersion": item.governing_policy_version,
-                        }
+                        conditional_decision_authority_document(item)
                         for item in sorted(decisions, key=lambda value: value.dependency_id)
                     ],
                     "items": [_impact_item_document(item) for item in affected],
@@ -2590,10 +2606,10 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                 """
                 SELECT run_id, authority_sha256
                   FROM dependency_impact_runs
-                 WHERE project_id=? AND (run_id=? OR idempotency_key=?)
+                 WHERE project_id=? AND (run_id=? OR change_id=? OR idempotency_key=?)
                  ORDER BY run_id
                 """,
-                (self._project_id, run_id, change.idempotency_key),
+                (self._project_id, run_id, change.change_id, change.idempotency_key),
             ).fetchall()
             if existing:
                 if len(existing) != 1 or str(existing[0][0]) != run_id or str(existing[0][1]) != authority_sha256:
@@ -2611,8 +2627,9 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                     replacement_fingerprint, propagation_policy_id,
                     propagation_policy_version, actor_id, trace_id, occurred_at,
                     graph_sha256, preview_sha256, authority_sha256, batch_size,
-                    total_items, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    total_items, max_nodes, max_edges, max_depth,
+                    max_path_samples, max_legacy_samples, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     run_id,
@@ -2638,9 +2655,35 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                     authority_sha256,
                     batch_size,
                     len(affected),
+                    limits.max_nodes,
+                    limits.max_edges,
+                    limits.max_depth,
+                    limits.max_path_samples,
+                    limits.max_legacy_samples,
                     change.occurred_at,
                 ),
             )
+            for decision in sorted(decisions, key=lambda value: value.dependency_id):
+                connection.execute(
+                    """
+                    INSERT INTO dependency_impact_decisions (
+                        run_id, project_id, dependency_id, decision_id,
+                        disposition, governing_policy_id, governing_policy_version,
+                        actor_id, decided_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        run_id,
+                        self._project_id,
+                        decision.dependency_id,
+                        decision.decision_id,
+                        decision.disposition,
+                        decision.governing_policy_id,
+                        decision.governing_policy_version,
+                        decision.actor_id,
+                        decision.decided_at,
+                    ),
+                )
             for sequence, item in enumerate(affected, start=1):
                 path_json = json.dumps(item.path_revision_ids, ensure_ascii=True, separators=(",", ":"))
                 connection.execute(
@@ -2808,6 +2851,7 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                 raise RepositoryConflict("dependency propagation checkpoint is stale or substituted")
             if current.state != "running":
                 raise RepositoryConflict("dependency propagation run is terminal")
+            self._verify_run_snapshot(connection, run_id)
             batch_size = int(
                 connection.execute(
                     "SELECT batch_size FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
@@ -2901,6 +2945,86 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         finally:
             if connection is not None:
                 connection.close()
+
+    def _decisions_with_connection(
+        self,
+        connection: CanonicalConnection,
+        run_id: str,
+    ) -> tuple[ConditionalDependencyDecision, ...]:
+        return tuple(
+            ConditionalDependencyDecision(
+                dependency_id=str(row[0]),
+                decision_id=str(row[1]),
+                disposition=cast(Any, row[2]),
+                governing_policy_id=str(row[3]),
+                governing_policy_version=str(row[4]),
+                actor_id=str(row[5]),
+                decided_at=str(row[6]),
+            )
+            for row in connection.execute(
+                """
+                SELECT dependency_id, decision_id, disposition,
+                       governing_policy_id, governing_policy_version,
+                       actor_id, decided_at
+                  FROM dependency_impact_decisions
+                 WHERE project_id=? AND run_id=?
+                 ORDER BY dependency_id
+                """,
+                (self._project_id, run_id),
+            ).fetchall()
+        )
+
+    def _verify_run_snapshot(self, connection: CanonicalConnection, run_id: str) -> None:
+        row = connection.execute(
+            """
+            SELECT change_id, idempotency_key, reason, dependency_kind,
+                   previous_revision_id, replacement_revision_id,
+                   configuration_id, previous_configuration_version,
+                   replacement_configuration_version, previous_fingerprint,
+                   replacement_fingerprint, propagation_policy_id,
+                   propagation_policy_version, actor_id, trace_id, occurred_at,
+                   graph_sha256, preview_sha256, max_nodes, max_edges, max_depth,
+                   max_path_samples, max_legacy_samples
+              FROM dependency_impact_runs
+             WHERE project_id=? AND run_id=?
+            """,
+            (self._project_id, run_id),
+        ).fetchone()
+        if row is None:
+            raise RepositoryNotFound("dependency propagation run was not found")
+        change = DependencyChange(
+            change_id=str(row[0]),
+            idempotency_key=str(row[1]),
+            reason=cast(StalenessReason, row[2]),
+            dependency_kind=cast(Any, row[3]),
+            previous_revision_id=None if row[4] is None else str(row[4]),
+            replacement_revision_id=None if row[5] is None else str(row[5]),
+            configuration_id=None if row[6] is None else str(row[6]),
+            previous_configuration_version=None if row[7] is None else str(row[7]),
+            replacement_configuration_version=None if row[8] is None else str(row[8]),
+            previous_fingerprint=str(row[9]),
+            replacement_fingerprint=None if row[10] is None else str(row[10]),
+            propagation_policy_id=str(row[11]),
+            propagation_policy_version=str(row[12]),
+            actor_id=str(row[13]),
+            trace_id=str(row[14]),
+            occurred_at=str(row[15]),
+        )
+        limits = DependencyImpactLimits(
+            max_nodes=int(row[18]),
+            max_edges=int(row[19]),
+            max_depth=int(row[20]),
+            max_path_samples=int(row[21]),
+            max_legacy_samples=int(row[22]),
+        )
+        current = self._preview_with_connection(
+            connection,
+            change,
+            decisions=self._decisions_with_connection(connection, run_id),
+            limits=limits,
+        )
+        if current.graph_sha256 != str(row[16]) or current.preview_sha256 != str(row[17]):
+            raise RepositoryConflict("dependency propagation graph or authority changed; a fresh preview is required")
 
     def _record_failed_attempt(self, run_id: str, *, expected_checkpoint_sha256: str) -> None:
         """Append a content-free failed-attempt fact after the failed batch rolls back."""
@@ -3020,6 +3144,19 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
             raise
         except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
             raise RepositoryProblem("dependency propagation run query failed") from error
+
+    def decisions(self, run_id: str) -> tuple[ConditionalDependencyDecision, ...]:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                self._run_with_connection(connection, run_id)
+                return self._decisions_with_connection(connection, run_id)
+            finally:
+                connection.close()
+        except RepositoryProblem:
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("dependency impact decision query failed") from error
 
     def stale_states(self, *, output_revision_id: str | None = None) -> tuple[DependencyStaleState, ...]:
         try:
