@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5f0f6c2391e56f211b6826bd5ba4b5519d69737f0457d9ffb18887ba4f4235ed
+source_sha256: 2788ea53726c05b8e8eed85307a00c88e992a37e4fc34f91d8c69dbe870a5596
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1006,7 +1006,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A05.json` (`a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -1017,9 +1017,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### Amendment-exit review and adoption — W1.A05
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `50037902df9cea50754189ddfa52fb546a44c757691a85dad85d1690efae77fe`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `50037902df9cea50754189ddfa52fb546a44c757691a85dad85d1690efae77fe`
 
 - Candidate / declared candidate / branch: `063dfa1da01054e92b33981244fae872e9167051` / `e9bc0af81c44947bbc1e22f5c7a00f9a19b95140` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-01T13:03:59+00:00`
@@ -1029,11 +1031,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Selected checks: `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked`, `npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop`, `.venv\Scripts\python.exe tools\security_check.py --repo . --live --report artifacts/tmp/W1.A05.exit-security.json`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_security_check; .venv\Scripts\ruff.exe check tools/security_check.py tests/security/test_security_check.py; .venv\Scripts\ruff.exe format --check tools/security_check.py tests/security/test_security_check.py`, `.venv\Scripts\python.exe tools\desktop_app_check.py --repo . --built-frame-only; .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; .venv\Scripts\python.exe tools\ui_conformance.py --repo . --check workflows; .venv\Scripts\python.exe tools\ui_conformance.py --repo . --check accessibility`, `.venv\Scripts\python.exe tools\packaging_smoke_check.py --repo .; .venv\Scripts\python.exe tools\architecture_check.py --repo .`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_active_amendment_lease_can_be_renewed_only_by_its_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_active_task_mutations_require_the_lease_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_task_lease_can_be_renewed_only_by_its_owner`, `.venv\Scripts\python.exe tools\taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline`, `git diff --check`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:w1-a05-exit-reviewer / `2026-09-01T13:12:55+00:00`
+
+**Reviewed state commit:** `5f2f229bc7bfec244d6c77d83ff03763f50e84ea`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W1.A05.exit-review-R01.json` / `d4750a433e2269c47a525ba0fea9fbaf04fb44cc978ca6a467e78165d70e0d39`
+
+**Review notes:** APPROVED at exact frozen REVIEW-state commit 5f2f229bc7bfec244d6c77d83ff03763f50e84ea on codex/w1-windows-local-runtime with no blocking or nonblocking acceptance-bound finding. Exit evidence artifacts/evidence/W1.A05.exit.json is Git-bound at 063dfa1da01054e92b33981244fae872e9167051 and reproduces SHA-256 488dc274e249daf0d79a82e12bd4dc7b71e039d05248508cb9fa2759b7447c43. Declared candidate e9bc0af81c44947bbc1e22f5c7a00f9a19b95140 and product freeze 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 are strict ancestors of the reviewed state; human-approved ECR-0004 packet commit 25584d82ce5d6bd55e476cd746100eef0790a33d is also ancestral, its packet reproduces SHA-256 6d42142be1d8d5a76e09722ea2ba7f337cdfdc42b8c9e7fed6126851e4224e6d, and approval record planning/wave-amendment-approvals/W1.A05.json reproduces SHA-256 a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267 at introduction commit 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b. Taskctl projects W1.A05.T01 through W1.A05.T04 as DONE, independently approved, without current submissions; their final ledgers approve candidates 6111293f8d534e79aa8a509dfa8d37e43b218037, 3f91f7721e293b72d8367e1036c5875dc1f14ff2, c94ab3ef76529f7eee0d2f002423c21aec3e1161, and d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8 with zero final findings. S01 and S02 integration evidence reproduce SHA-256 b4091a067fc1d0b4c17a871acfd23f7d77d4339e94639b5d9631db2ad98a0e03 and 920cc28f3047bf126ac7be52162af5fc774626c700f1d98fcae6dbc4e1ed197a; both independent R01 ledgers record approved with zero findings and preserve prior closures and downstream obligations. No product path changes after product freeze 41d1fea; the later range contains only immutable evidence, generated planning projections, independently approved generic taskctl lease maintenance, and the exact security-exception renewal. Security commit e9bc0af changes only security-exceptions.json and renews exactly eight development-only TypeScript native-compiler records through 2026-09-08 under agent:security-exception-reassessment without changing keys, status, rationale, ticket, or product/runtime scope. Independent live replay passed with Trivy examining 601 packages and 152 findings, zero blocking findings and zero policy errors; all 15 focused security-policy tests plus Ruff checks pass. Governance replay validates 20 capabilities, 117 slices, 363 tasks, and 12 release gates; all 488 planning-review pages and generated backlog views pass. The canonical UI-reference validator authenticates human-approved RO-UI-ACADEMIC-MINIMAL-1.4 across 55 governed files and 33 product pages at exact package SHA-256 034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e. Packaging smoke passes locked source inputs. The real release-authoritative Windows x64 Hello probe still reports windows-hello/not-present, so configured interactive Hello success remains an explicit conditional W1-exit obligation and is not inferred from deterministic provider tests. Full product build, native, renderer, security, workflow, keyboard, accessibility, and architecture results remain authenticated by the exact commit-bound task and slice packets; this review replayed the narrower post-freeze risk surface rather than duplicating those already-bound suites. W1 remains PAUSED in amendment-hold, W1.A05 is REVIEW, ordinaryWaveResumeAuthorized remains false, and the packet expressly disclaims ordinary W1 resumption, later ordinary task/slice completion, W1 qualification or completion, G1 approval, local-main integration, and remote push. Approval authorizes only recording this amendment-exit disposition; adoption and explicit ordinary W1 resume remain separate taskctl transitions, while complete cross-capability and release-platform qualification remains due at W1 exit.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:w1-a05-exit-reviewer at `2026-09-01T13:12:55+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A05.exit.json`
 
-**Latest completion notes:** All four amendment tasks and both integration slices are independently approved; the affected security, experience, packaging, planning, and Windows x64 checks pass. Submit exact exit evidence for independent review without claiming W1 resume or release approval.
+**Latest completion notes:** APPROVED at exact frozen REVIEW-state commit 5f2f229bc7bfec244d6c77d83ff03763f50e84ea on codex/w1-windows-local-runtime with no blocking or nonblocking acceptance-bound finding. Exit evidence artifacts/evidence/W1.A05.exit.json is Git-bound at 063dfa1da01054e92b33981244fae872e9167051 and reproduces SHA-256 488dc274e249daf0d79a82e12bd4dc7b71e039d05248508cb9fa2759b7447c43. Declared candidate e9bc0af81c44947bbc1e22f5c7a00f9a19b95140 and product freeze 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 are strict ancestors of the reviewed state; human-approved ECR-0004 packet commit 25584d82ce5d6bd55e476cd746100eef0790a33d is also ancestral, its packet reproduces SHA-256 6d42142be1d8d5a76e09722ea2ba7f337cdfdc42b8c9e7fed6126851e4224e6d, and approval record planning/wave-amendment-approvals/W1.A05.json reproduces SHA-256 a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267 at introduction commit 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b. Taskctl projects W1.A05.T01 through W1.A05.T04 as DONE, independently approved, without current submissions; their final ledgers approve candidates 6111293f8d534e79aa8a509dfa8d37e43b218037, 3f91f7721e293b72d8367e1036c5875dc1f14ff2, c94ab3ef76529f7eee0d2f002423c21aec3e1161, and d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8 with zero final findings. S01 and S02 integration evidence reproduce SHA-256 b4091a067fc1d0b4c17a871acfd23f7d77d4339e94639b5d9631db2ad98a0e03 and 920cc28f3047bf126ac7be52162af5fc774626c700f1d98fcae6dbc4e1ed197a; both independent R01 ledgers record approved with zero findings and preserve prior closures and downstream obligations. No product path changes after product freeze 41d1fea; the later range contains only immutable evidence, generated planning projections, independently approved generic taskctl lease maintenance, and the exact security-exception renewal. Security commit e9bc0af changes only security-exceptions.json and renews exactly eight development-only TypeScript native-compiler records through 2026-09-08 under agent:security-exception-reassessment without changing keys, status, rationale, ticket, or product/runtime scope. Independent live replay passed with Trivy examining 601 packages and 152 findings, zero blocking findings and zero policy errors; all 15 focused security-policy tests plus Ruff checks pass. Governance replay validates 20 capabilities, 117 slices, 363 tasks, and 12 release gates; all 488 planning-review pages and generated backlog views pass. The canonical UI-reference validator authenticates human-approved RO-UI-ACADEMIC-MINIMAL-1.4 across 55 governed files and 33 product pages at exact package SHA-256 034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e. Packaging smoke passes locked source inputs. The real release-authoritative Windows x64 Hello probe still reports windows-hello/not-present, so configured interactive Hello success remains an explicit conditional W1-exit obligation and is not inferred from deterministic provider tests. Full product build, native, renderer, security, workflow, keyboard, accessibility, and architecture results remain authenticated by the exact commit-bound task and slice packets; this review replayed the narrower post-freeze risk surface rather than duplicating those already-bound suites. W1 remains PAUSED in amendment-hold, W1.A05 is REVIEW, ordinaryWaveResumeAuthorized remains false, and the packet expressly disclaims ordinary W1 resumption, later ordinary task/slice completion, W1 qualification or completion, G1 approval, local-main integration, and remote push. Approval authorizes only recording this amendment-exit disposition; adoption and explicit ordinary W1 resume remain separate taskctl transitions, while complete cross-capability and release-platform qualification remains due at W1 exit.
 
 **Bound amendment-adoption checkpoints:**
 
