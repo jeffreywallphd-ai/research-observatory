@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S04.T02",
+  "commit": "4a237a0b726f391a72657ad200eed73ff35ddb95",
+  "baseCommit": "9d734971fc5cf3fdb20b2c8d6f5a51d0cfb9887b",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S04.T02.task-start.md",
+    "docs/architecture/workflow-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S04.T02.html",
+    "planning/review-site/CAP-03/CAP-03.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py",
+    "services/core-api/src/research_observatory_core/ports/workflow_executor.py",
+    "services/core-api/src/research_observatory_core/provenance.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/workflow_executor.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/workflows/README.md",
+    "tests/workflows/__init__.py",
+    "tests/workflows/test_local_workflow_executor.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/workflows -p test_local_workflow_executor.py",
+      "exitCode": 0,
+      "result": "All 20 focused executor tests passed at the real SQLite and supervisor boundaries, including concurrent claim fencing, exact output commit/replay, atomic rollback, legal history replay, definition-bound monotonic progress, canonical checkpoint payload restart, retry, explicit artifact disposition, cancellation races, read-only polling, bounded recovery, WAL reader availability, and abrupt process exit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/data -p test_sqlite_schema.py; .venv\\Scripts\\python.exe -m unittest discover -s tests/data -p test_sqlite_migrations.py",
+      "exitCode": 0,
+      "result": "All nine strict SQLite schema tests and all 18 migration/recovery tests passed, including fresh v8 inventory, exact profile/schema fingerprints, every supported predecessor, backup-first recovery authority, v7-to-v8 parity, and material migration failpoints."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_workflow_contracts.py",
+      "exitCode": 0,
+      "result": "All 10 portable workflow contract tests passed, preserving the T01 definition, snapshot, transition, progress, checkpoint, artifact, human-task, restart, and compatibility authority consumed by the executor."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/packaging -p test_core_sidecar_package.py",
+      "exitCode": 0,
+      "result": "The affected Windows core-sidecar packaging module passed six tests with one expected environment skip; the PyInstaller smoke build included the workflow executor, port, and v8 migration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy passed across all 176 governed Python files; targeted post-remediation Ruff, formatting, and mypy checks also passed for the executor, port, repository, storage, and tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py; .venv\\Scripts\\python.exe tools/repository_structure_check.py",
+      "exitCode": 0,
+      "result": "Architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure passed for all 12 required modules."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check",
+      "exitCode": 0,
+      "result": "The immutable approved W1 packet remained ready; the deterministic review site passed for 19 capabilities, 111 slices, 337 tasks, and 488 pages; patch hygiene reported no errors."
+    },
+    {
+      "command": "Independent adversarial working-tree preflight with focused replay after each consolidated finding ledger",
+      "exitCode": 0,
+      "result": "Final disposition CLEAR. The reviewer replayed the exact-output subset boundary, public exact-revision checkpoint restart, pre-start heartbeat denial, and all prior recovery, provenance, ordering, fencing, cancellation, disposition, and concurrency findings without finding a remaining high- or medium-severity acceptance defect."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Opaque digest-only generation-fenced leases and short SQLite writer transactions prevent duplicate claim authority; expired workers are abandoned and deterministically retried by a fresh supervisor before new admission.",
+        "Completion accepts only same-project immutable aggregate revisions with canonical ledger hashes, atomically records canonical provenance/outbox/legacy projection, and commits only exact manifest members. Same completion replay is stable only for the original fenced claimant.",
+        "A spawned worker process stages a canonical checkpoint artifact and exits without releasing its lease; a fresh supervisor performs bounded recovery and receives the exact public immutable artifact revision/hash/disposition for restart. Queue mutation and recovery tests preserve existing WAL reader snapshots."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Twenty focused executor tests cover the expected supervisor path plus concurrent claim, stale/forged lease, injected atomic-completion failure, retry backoff, nonexistent checkpoint payload, progress drift/regression, security-lock recovery, cancellation races, abrupt process exit, and bounded recovery conditions.",
+        "Nine schema tests and 18 migration tests exercise the strict persistence boundary and backup/retry behavior; 10 workflow contract tests preserve the upstream T01 state machine and authority model.",
+        "The independent preflight produced three consolidated finding rounds; every reproduced defect is now covered by a focused regression test and the final pass returned CLEAR."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Schema v8, exact storage profile/recovery contracts, v7-to-v8 migration, queue/executor ports and adapters, canonical content-free provenance, sidecar packaging, architecture guidance, planning notes, and task worksheet were updated together.",
+        "The change adds no renderer database access, arbitrary executable job facility, server/Temporal runtime, Task Center UI, scientific compute scheduler, external dependency, or release authority.",
+        "Planning review regeneration, architecture/repository checks, Windows sidecar packaging, governed Python quality, and patch hygiene all pass."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T02 changes a migration, SQLite persistence, public Core port, crash recovery, completion provenance, and packaging boundary, so task verification used the real database, spawned-process, fault-injection, race, strict-schema, predecessor-migration, contract, packaging, architecture, and static-quality checks. The affected-selection preview was consulted only after the exact candidate commit; its evidence/README fallback expanded to complete profile inventories, but repository risk policy permits the narrower deterministic checks recorded here because no dependency, route, governed UI, or unrelated subsystem changed. The complete accumulated profile matrix remains owned by slice checkpoints and W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "foundation:backlog",
+      "packaging:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "CAP-03.S04.T03 owns governed Task Center, progress, cancellation, and human-gate UI behavior and accessibility against this executor contract.",
+      "CAP-03.S04 slice review owns the accumulated affected executor/contract/UI adversarial integration after all slice tasks close.",
+      "The complete service, data, e2e-local, security, performance, packaging, and Windows x64 qualification matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 4a237a0b726f391a72657ad200eed73ff35ddb95. Confirm lease fencing and recovery, exact canonical output/provenance authority, checkpoint revision restart, contract-valid history/progress, cancellation/disposition convergence, v7-to-v8 migration, packaging, scoped verification, and closure of the preflight ledgers without replaying a full profile."
+  }
+}

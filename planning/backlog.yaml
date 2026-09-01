@@ -12101,15 +12101,21 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T17:21:14+00:00'
-      updated_at: '2026-09-01T17:21:14+00:00'
+      updated_at: '2026-09-01T18:27:27+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Durable local executor candidate with focused crash, fencing, migration, provenance, checkpoint,
+        cancellation, and WAL evidence; independent preflight clear.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S04.T02.R01.json
+        sha256: 1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9
+        commit: 4a237a0b726f391a72657ad200eed73ff35ddb95
+        recorded_at: '2026-09-01T18:27:27+00:00'
       review:
         reviewer: null
         result: null
@@ -12120,10 +12126,94 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T17:21:14+00:00'
         expires_at: '2026-09-02T01:21:14+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-01T18:27:27+00:00'
+          candidate_commit: 4a237a0b726f391a72657ad200eed73ff35ddb95
+          base_commit: 9d734971fc5cf3fdb20b2c8d6f5a51d0cfb9887b
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S04.T02.R01.json
+            sha256: 1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9
+            commit: 4a237a0b726f391a72657ad200eed73ff35ddb95
+            recorded_at: '2026-09-01T18:27:27+00:00'
+          acceptance_criteria_sha256: d101a2479fb0ca48eb19f12c8a7e5726decf839babf422196a5bf8b07307325d
+          changed_paths:
+          - artifacts/evidence/CAP-03.S04.T02.task-start.md
+          - docs/architecture/workflow-contracts.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/storage/sqlite-migration-recovery.schema.json
+          - packages/contracts/storage/sqlite-profile.schema.json
+          - packages/contracts/storage/sqlite-profile.v1.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S04.T02.html
+          - planning/review-site/CAP-03/CAP-03.S04.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/migrations/runner.py
+          - services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py
+          - services/core-api/src/research_observatory_core/ports/workflow_executor.py
+          - services/core-api/src/research_observatory_core/provenance.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/storage.py
+          - services/core-api/src/research_observatory_core/workflow_executor.py
+          - tests/data/test_sqlite_migrations.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tests/workflows/README.md
+          - tests/workflows/__init__.py
+          - tests/workflows/test_local_workflow_executor.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest discover -s tests/workflows -p test_local_workflow_executor.py
+          - .venv\Scripts\python.exe -m unittest discover -s tests/data -p test_sqlite_schema.py; .venv\Scripts\python.exe
+            -m unittest discover -s tests/data -p test_sqlite_migrations.py
+          - .venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_workflow_contracts.py
+          - .venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_core_sidecar_package.py
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/architecture_check.py; .venv\Scripts\python.exe tools/repository_structure_check.py
+          - .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check
+          - Independent adversarial working-tree preflight with focused replay after each consolidated finding ledger
+          deferred_checks:
+          - CAP-03.S04.T03 owns governed Task Center, progress, cancellation, and human-gate UI behavior and accessibility
+            against this executor contract.
+          - CAP-03.S04 slice review owns the accumulated affected executor/contract/UI adversarial integration after all slice
+            tasks close.
+          - The complete service, data, e2e-local, security, performance, packaging, and Windows x64 qualification matrix
+            remains mandatory once at W1 exit.
+          selection_rationale: T02 changes a migration, SQLite persistence, public Core port, crash recovery, completion provenance,
+            and packaging boundary, so task verification used the real database, spawned-process, fault-injection, race, strict-schema,
+            predecessor-migration, contract, packaging, architecture, and static-quality checks. The affected-selection preview
+            was consulted only after the exact candidate commit; its evidence/README fallback expanded to complete profile
+            inventories, but repository risk policy permits the narrower deterministic checks recorded here because no dependency,
+            route, governed UI, or unrelated subsystem changed. The complete accumulated profile matrix remains owned by slice
+            checkpoints and W1 exit.
+          selection_sha256: 4c665a3deb99a5f85962973732072f73d65813324556f48e7802c6b763569165
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:backlog
+          - packaging:unit
+          - contracts:unit
+          - data:unit
+          packet_sha256: 6c939d3829b8ba67c547450761ae78757516fc5959e163ede2a44da8c746f01a
     - id: CAP-03.S04.T03
       capability_id: CAP-03
       slice_id: CAP-03.S04
