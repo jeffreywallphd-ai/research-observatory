@@ -17,6 +17,7 @@ import { AuditLineageWorkspace } from "./AuditLineageWorkspace";
 import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
 import { ProjectsWorkspace } from "./ProjectsWorkspace";
 import { IntentWorkspace } from "./IntentWorkspace";
+import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
 import {
   applicationUnlockFailureMessage,
   decodeApplicationUnlockAttempt,
@@ -250,7 +251,7 @@ interface CommandDefinition {
   readonly run: () => void;
 }
 
-type ApplicationWorkspace = "projects" | "home" | "intent" | "audit" | "settings" | "application-settings" | "diagnostics";
+type ApplicationWorkspace = "projects" | "home" | "intent" | "tasks" | "audit" | "settings" | "application-settings" | "diagnostics";
 
 export function ApplicationRuntime(): ReactNode {
   const [theme, setTheme] = useState<ApplicationTheme>(() => storedTheme(globalThis.window?.localStorage ?? null));
@@ -631,6 +632,15 @@ export function ApplicationRuntime(): ReactNode {
       },
     },
     {
+      id: "open-task-center",
+      label: "Open Task Center",
+      description: "Inspect durable local workflows, resource pools, progress, decisions, retry, cancellation, and logs.",
+      run: () => {
+        setWorkspace("tasks");
+        announce("Task Center opened.");
+      },
+    },
+    {
       id: "open-application-settings",
       label: "Open application settings",
       description: "Review application-wide Security and sign-in controls for this Windows account.",
@@ -717,6 +727,7 @@ export function ApplicationRuntime(): ReactNode {
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
+            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "tasks" ? "page" : undefined} onClick={() => setWorkspace("tasks")}>Task Center</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "audit" ? "page" : undefined} onClick={() => setWorkspace("audit")}>Audit &amp; lineage</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
             <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "application-settings" ? "page" : undefined} onClick={(event) => openApplicationSettings(event.currentTarget)}>Application settings</button>
@@ -740,6 +751,8 @@ export function ApplicationRuntime(): ReactNode {
             />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "intent" ? (
             <IntentWorkspace project={currentProject} announce={announce} />
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "tasks" ? (
+            <TaskCenterWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (
             <AuditLineageWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "home" ? <><div className="page-header">
