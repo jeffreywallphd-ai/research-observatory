@@ -1,0 +1,79 @@
+{
+  "task_id": "CAP-03.S04.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae",
+  "submission_record_commit": "0c1d6d9749c00cd4d2117e7e22949b1a7753c9d7",
+  "reviewer": "agent:cap03-s04-t01-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent commit-bound contract review authenticated exact candidate ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae, its direct submission child 0c1d6d9749c00cd4d2117e7e22949b1a7753c9d7, frozen evidence SHA-256 f5d463f4ffc94360e1c5dc45e8f84099f543b8e16404504f2a43fd272bf0fe2c, and Git blob adbe21512c17d7afcb8cc518d4aa099e85b7c7a7. The checked-in Python and TypeScript workflow tests, generator parity, contracts typecheck, package registration, ADR registry, and patch hygiene pass. The definition is executor-neutral, generated decoders are immutable, and the candidate correctly leaves durable SQLite execution/process recovery to T02 and governed Task Center UI to T03. Three acceptance-bound defects remain: human-task request and disposition authority can be substituted while validation reports no error; the legacy bridge sequence can diverge from the bound workflow snapshot while retaining a self-consistent ETag; and transition histories permit duplicate event identities. These are semantic gaps in the claimed auditable/replayable public contract, so R01 is not approvable. No full verification profile was run; slice integration and complete W1 qualification remain correctly deferred.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S04.T01.R01.json",
+      "sha256": "f5d463f4ffc94360e1c5dc45e8f84099f543b8e16404504f2a43fd272bf0fe2c",
+      "git_blob": "adbe21512c17d7afcb8cc518d4aa099e85b7c7a7",
+      "commit": "ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve candidate/submission commits and submission parent; verify the frozen evidence hash/blob and both candidate/submission patch hygiene ranges",
+      "result": "PASS: candidate and submission resolve to the exact requested full SHAs; submission parent is the candidate; the evidence bytes reproduce the backlog SHA-256 and committed blob; git diff --check passes for 08f35d9..candidate and candidate..submission. Submission-only paths are the evidence manifest and backlog projection."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_workflow_contracts; apps\\desktop\\node_modules\\.bin\\vitest.CMD run packages/contracts/workflow/workflow-contract.test.ts; node packages/contracts/workflow/generate.mjs --check; apps\\desktop\\node_modules\\.bin\\tsc.CMD -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "result": "PASS: Python workflow contracts passed 9/9, TypeScript workflow contracts passed 5/5, generated TypeScript/Python parity was current, and the contracts package typechecked. An initial npx tsc invocation selected no installed root compiler; the repository-local compiler command above passed and the tooling-path miss is not a product finding."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound tests.foundation.test_adr_check",
+      "result": "PASS: workflow_contracts is registered in the strict sidecar build contract; the focused packaging test passed 1/1 and the ADR registry tests passed 5/5."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Load the valid definition/snapshot through the generated Python decoder; narrow the bound human-task definition allowedDispositions to rejected, recompute its exact content hash, and retain the completed approved decision; separately replace HumanTask.requestedBy/requestedAt with another schema-valid actor/time",
+      "result": "FAIL: workflow_snapshot_errors returned an empty tuple for both mutations. The completion validator at packages/contracts/workflow/generated.ts:478 binds decision ID, assignee/decider, role, timestamp, and evidence, but never checks the decision disposition against the exact bound definition and never binds requestedBy/requestedAt to the requested transition event."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Load the valid workflow snapshot/legacy bridge, change operationSequence from 32 to 31, and change ETag to the internally matching quoted op-source-review-31 value",
+      "result": "FAIL: legacy_operation_bridge_errors returned an empty tuple. packages/contracts/workflow/generated.ts:506 binds run, snapshot revision, mapped state, and cancellation, while line 507 only makes ETag self-consistent with the uncontrolled operationSequence; it never binds sequence to snapshot.sequence or another authoritative replay position."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Load the valid workflow definition/snapshot and replace history event 2 eventId with history event 1 eventId while leaving the contiguous sequence and all projections unchanged",
+      "result": "FAIL: workflow_snapshot_errors returned an empty tuple. The collection identity check at packages/contracts/workflow/generated.ts:411 excludes transition event IDs, and the history schema at packages/contracts/workflow/workflow-contract.schema.json:560 has no semantic key-uniqueness enforcement. The reducer therefore accepts an append-only history with colliding event authority."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S04.T01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Human-task authority can be substituted outside the bound definition and request event",
+      "reproduction": "At exact candidate ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae, load valid-workflow-definition.v1.json and valid-local-workflow-snapshot.v1.json. Change the review-source HumanTaskDefinition.allowedDispositions to only ['rejected'], recompute snapshot.definition.contentHash with workflow_record_sha256, and leave the completed decision disposition as 'approved'; workflow_snapshot_errors returns (). Independently replace the HumanTask requestedBy actor and requestedAt timestamp with other schema-valid values while leaving history event 25 unchanged; validation again returns (). Thus a completed human decision can exercise authority the exact definition did not permit, and the task's asserted requester/time are not audit-bound to the append-only request event, contrary ADR-0025's fail-closed exact human-task authority and criterion 1's first-class/auditable requirement.",
+      "required_remediation": "In a strict-descendant candidate, make both generated decoders require a decision disposition contained in the exact bound step HumanTaskDefinition.allowedDispositions. Bind each HumanTask requestedBy/requestedAt to exactly one initial requested transition for the same task (and preserve exact claim/assignee authority wherever the contract represents assignment). Add matched TypeScript/Python adversarial tests for excluded dispositions, substituted requester/time, wrong or duplicate request events, and the valid fixture; regenerate outputs and replay the existing human decision, restart, and executor-neutral fixtures."
+    },
+    {
+      "id": "CAP-03.S04.T01-R01-F02",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Legacy operation sequence is self-asserted instead of bound to the exact workflow projection",
+      "reproduction": "At the exact candidate, change valid-legacy-operation-bridge.v1.json operationSequence from 32 to 31 and ETag from quoted op-source-review-32 to quoted op-source-review-31, leaving its bound snapshot at sequence 32 and every other field unchanged. Both generated decoders accept the record with no errors because they validate ETag only against the bridge's own sequence. This contradicts the ADR/docs claim that the compatibility record is an exact projection retaining sequence/ETag/replay behavior rather than independent authority.",
+      "required_remediation": "Define and enforce the authoritative sequence projection in the schema semantics and both generated decoders. For the current documented fixture this should bind operationSequence to snapshot.sequence; if a different legacy-to-workflow mapping is intended, make that mapping explicit, deterministic, and independently verifiable rather than self-asserted. Add TypeScript/Python tests that mutate sequence and matching ETag together, plus boundary/replay fixtures proving exact legacy identity, state, cancellation, sequence, and ETag projection."
+    },
+    {
+      "id": "CAP-03.S04.T01-R01-F03",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Replay history accepts duplicate transition-event identities",
+      "reproduction": "At the exact candidate, replace the second valid snapshot history event's eventId with the first event's eventId without changing sequence, entity, state, or projections. workflow_snapshot_errors returns (), decodeWorkflowSnapshot succeeds, and restart reconstruction proceeds. The decoder enforces collection IDs and numeric history sequence but never enforces uniqueness of TransitionEvent.eventId, despite ADR-0025 assigning transition events distinct identities and the contract describing one append-only auditable global history.",
+      "required_remediation": "Enforce unique TransitionEvent.eventId values in the semantic validator in both generated runtimes, with a stable named error, while retaining contiguous global sequence and projection checks. Add matched TypeScript/Python duplicate-ID negative tests and a serialize/reload/reconstruct test proving a valid history remains unchanged. Also ensure any event reference-closure checks introduced during remediation remain within T01 contract semantics and do not implement T02 persistence."
+    }
+  ],
+  "closures": []
+}
