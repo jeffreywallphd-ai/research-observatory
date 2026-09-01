@@ -1,0 +1,71 @@
+{
+  "task_id": "CAP-03.S05.T02",
+  "attempt_id": "R03",
+  "candidate_commit": "dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d",
+  "submission_record_commit": "3f6c63ca86dcb56c6cec2703d6434ee20b0cdee0",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "The strict-descendant candidate, direct-child submission, exact 14-path remediation inventory, two-path submission separation, frozen R03 evidence hash/blob, current task projection, and patch hygiene authenticate. Both R02 findings close. The corrected iterative DFS postorder matched brute-force SCC truth across every directed graph on four nodes (65,536 graphs), and focused fixtures cover convergent/cross-edge DAGs, self-loops, disjoint cycles, reversed input, and a 1,100-node SCC. Exact cycle authority persists through real SQLite propagation and reopen. At the 64-ID path limit and beyond, origin/terminal retention, total length, truncation, item/cause digest equality, and restart projection are exact. Eighteen focused graph, v9 migration, schema/profile, and package-inventory tests passed. The four R01 closures remain intact, migration/package authority is exact, and no T03 or governed-experience authority was added. No full profile was run.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T02.R03.json",
+      "sha256": "d1aa357d7838cb0ef703260e552c03fe9cd68b4650c393bf9b822e6d8f19de50",
+      "git_blob": "dfc8fd688b39773599e57a2854daf9921a1720d9",
+      "commit": "dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Authenticate R02 candidate, strict-descendant R03 candidate, direct-child submission, exact declared incremental paths, submission-only paths, frozen evidence SHA/blob, taskctl R03 projection, and git diff --check.",
+      "result": "PASS: dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d strictly descends from ca7918783eb5d6dcc377a89cd28e522b83ee7d1f; 3f6c63ca86dcb56c6cec2703d6434ee20b0cdee0 has the exact candidate as its sole parent; all 14 declared candidate paths match; submission adds only the R03 evidence and backlog projection."
+    },
+    {
+      "type": "independent-check",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.graph.test_dependency_impacts tests.data.test_sqlite_migrations.SqliteMigrationTests.test_migrates_exact_v9_fixture_without_inventing_impact_or_stale_state tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "result": "PASS: 16/16 focused graph, exact-v9 migration, and strict sidecar-inventory tests passed."
+    },
+    {
+      "type": "independent-check",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.data.test_sqlite_schema.SqliteSchemaTests.test_portable_profile_is_exact_and_schema_valid tests.data.test_sqlite_schema.SqliteSchemaTests.test_initializes_exact_strict_wal_schema_and_reopens_after_restart",
+      "result": "PASS: 2/2 exact portable-profile, strict-WAL-schema, fingerprint, and restart tests passed. Frozen v9 remains schema a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc / profile 4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76; v10 is 49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187 / 0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Exhaustively compare _strongly_connected_groups with mutual-reachability truth for all 65,536 directed graphs on four nodes, including self-loops and arbitrary convergence/cross edges.",
+      "result": "PASS: {'exhaustiveDirectedGraphs': 65536, 'status': 'PASS'}."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Build the real fixture's long chain, inspect exact-limit and over-limit preview items, propagate them in one SQLite transaction, recompute the persisted item path digest, compare immutable item/cause rows, then reopen through a fresh repository.",
+      "result": "PASS: exact=(pathLength 64, 64 stored IDs, not truncated, exact terminal); over=(pathLength 71, 64 stored IDs, truncated, exact origin and terminal); persisted item digest recomputes exactly; cause path authority matches the item; reopened stale state retains length/truncation/terminal; run completed."
+    },
+    {
+      "type": "prior-closure-regression",
+      "command": "Replay the retained graph-snapshot denial, complete authority substitution/no-write, durable conditional-decision, immutable-limit/large-SCC, cancellation, failed-batch/retry, and expected/unrelated-output tests in tests.graph.test_dependency_impacts.",
+      "result": "PASS: all four R01 closures remain intact; no graph-CAS, authority, decision, recursion, restart, or unrelated-output regression was observed."
+    },
+    {
+      "type": "package-authority-check",
+      "command": "Inspect frozen sidecar-build.json and core_sidecar_build.py governed module inventories after the v10 hash change.",
+      "result": "PASS: both inventories retain research_observatory_core.dependency_impacts and research_observatory_core.migrations.versions.v0010_dependency_impacts; strict package contract replay passed."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S05.T02-R02-F01",
+      "disposition": "fixed",
+      "evidence": "The first SCC pass now retains a per-frame next-neighbor index and emits true DFS postorder. Submitted convergent/cross-edge DAG, self-loop, disjoint-cycle, reversed-input, large-SCC and real SQLite/reopen tests pass. Independent exhaustive comparison across all 65,536 four-node directed graphs found no false, missing, or mis-grouped SCC."
+    },
+    {
+      "finding_id": "CAP-03.S05.T02-R02-F02",
+      "disposition": "fixed",
+      "evidence": "max_path_samples now means actual stored identities with a minimum of two; exact-limit paths remain complete, while over-limit samples retain exact origin and terminal plus total path_length and path_truncated=true. Preview/item authority and path digest bind those fields, v10 persists them in both item and cause rows, and independent real SQLite propagation/reopen proved exact digest and projection survival."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S05.T02-R02-F01",
+    "CAP-03.S05.T02-R02-F02"
+  ]
+}

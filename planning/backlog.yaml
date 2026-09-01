@@ -13214,12 +13214,12 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/verify.py --profile graph
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T21:49:15+00:00'
-      updated_at: '2026-09-01T23:12:34+00:00'
-      completed_at: null
+      updated_at: '2026-09-01T23:16:35+00:00'
+      completed_at: '2026-09-01T23:16:35+00:00'
       blocker: null
       implementation_notes: ''
       evidence:
@@ -13240,21 +13240,19 @@ capabilities:
         recorded_at: '2026-09-01T23:12:34+00:00'
       review: &id036
         reviewer: agent:t02-adversarial-preflight
-        result: changes-requested
-        reviewed_at: '2026-09-01T22:57:32+00:00'
-        notes: 'The strict-descendant candidate, direct-child submission, exact 15-path remediation inventory, two-path submission
-          separation, frozen evidence hash/blob, current R02 task projection, and patch hygiene authenticate. Focused replay
-          passed all nine submitted dependency-impact tests, the exact populated-v9 migration test, and the strict sidecar
-          inventory test. All four R01 findings are concretely fixed: graph changes fail closed at every continuation boundary,
-          complete initiating authority is digest- and lineage-bound, conditional decisions are immutable and reconstructable,
-          and immutable maxima plus iterative traversal eliminate the prior RecursionError. Approval remains unavailable because
-          the replacement iterative SCC pass falsely groups an acyclic convergent DAG as a cycle, and bounded paths silently
-          discard the affected endpoint without truncation authority. No full profile was run.'
+        result: approved
+        reviewed_at: '2026-09-01T23:16:35+00:00'
+        notes: The strict-descendant candidate, direct-child submission, exact 14-path remediation inventory, two-path submission
+          separation, frozen R03 evidence hash/blob, current task projection, and patch hygiene authenticate. Both R02 findings
+          close. The corrected iterative DFS postorder matched brute-force SCC truth across every directed graph on four nodes
+          (65,536 graphs), and focused fixtures cover convergent/cross-edge DAGs, self-loops, disjoint cycles, reversed input,
+          and a 1,100-node SCC. Exact cycle authority persists through real SQLite propagation and reopen. At the 64-ID path
+          limit and beyond, origin/terminal retention, total length, truncation, item/cause digest equality, and restart projection
+          are exact. Eighteen focused graph, v9 migration, schema/profile, and package-inventory tests passed. The four R01
+          closures remain intact, migration/package authority is exact, and no T03 or governed-experience authority was added.
+          No full profile was run.
       base_sha: d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-09-01T22:57:32+00:00'
-        expires_at: '2026-09-02T06:57:32+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -13530,7 +13528,19 @@ capabilities:
             - data:unit
             - graph:unit
             packet_sha256: f285f055d146fa8c7a8d9e7cf73cb35844a2c23849e52ef9d2461dae2f9567e5
-          review: *id036
+          review:
+            reviewer: agent:t02-adversarial-preflight
+            result: changes-requested
+            reviewed_at: '2026-09-01T22:57:32+00:00'
+            notes: 'The strict-descendant candidate, direct-child submission, exact 15-path remediation inventory, two-path
+              submission separation, frozen evidence hash/blob, current R02 task projection, and patch hygiene authenticate.
+              Focused replay passed all nine submitted dependency-impact tests, the exact populated-v9 migration test, and
+              the strict sidecar inventory test. All four R01 findings are concretely fixed: graph changes fail closed at
+              every continuation boundary, complete initiating authority is digest- and lineage-bound, conditional decisions
+              are immutable and reconstructable, and immutable maxima plus iterative traversal eliminate the prior RecursionError.
+              Approval remains unavailable because the replacement iterative SCC pass falsely groups an acyclic convergent
+              DAG as a cycle, and bounded paths silently discard the affected endpoint without truncation authority. No full
+              profile was run.'
           ledger:
             path: artifacts/evidence/CAP-03.S05.T02.review-R02.json
             sha256: a00984e4573f66276227afa4f4a4ed8ba6676264bfaa5bd9ce7f7669ce5394e2
@@ -13626,81 +13636,131 @@ capabilities:
               - CAP-03.S05.T02-R01-F02
               - CAP-03.S05.T02-R01-F03
               - CAP-03.S05.T02-R01-F04
-        current_submission:
-          id: R03
-          submitted_by: codex
-          submitted_at: '2026-09-01T23:12:34+00:00'
-          candidate_commit: dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d
-          base_commit: ca7918783eb5d6dcc377a89cd28e522b83ee7d1f
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S05.T02.R03.json
-            sha256: d1aa357d7838cb0ef703260e552c03fe9cd68b4650c393bf9b822e6d8f19de50
-            commit: dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d
-            recorded_at: '2026-09-01T23:12:34+00:00'
-          acceptance_criteria_sha256: a1a6200f63e409df0c4f1e4d1a87b13ea37f5a7f0979cc5be5b568b874e3ba75
-          changed_paths:
-          - artifacts/evidence/CAP-03.S05.T02.R02.json
-          - artifacts/evidence/CAP-03.S05.T02.review-R02.json
-          - docs/architecture/local-sqlite-storage.md
-          - packages/contracts/storage/README.md
-          - packages/contracts/storage/sqlite-migration-recovery.schema.json
-          - packages/contracts/storage/sqlite-profile.schema.json
-          - packages/contracts/storage/sqlite-profile.v1.json
-          - planning/backlog.yaml
-          - services/core-api/src/research_observatory_core/dependency_impacts.py
-          - services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py
-          - services/core-api/src/research_observatory_core/ports/repositories.py
-          - services/core-api/src/research_observatory_core/repositories.py
-          - services/core-api/src/research_observatory_core/storage.py
-          - tests/graph/test_dependency_impacts.py
-          selected_checks:
-          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts
-          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.data.test_sqlite_migrations
-            tests.data.test_sqlite_schema tests.data.test_material_dependencies
-          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package
-          - .venv\Scripts\python.exe tools/quality_check.py --repo .
-          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
-            --repo .
-          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check ca791878...dbd6f618
-          - .venv\Scripts\python.exe tools/verify.py --repo . --profile foundation --profile service --profile data --profile
-            graph --profile security-local --affected-base ca7918783eb5d6dcc377a89cd28e522b83ee7d1f --affected-head dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d
-            --deferred-gate W1-exit --selection-only
-          deferred_checks:
-          - CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation,
-            and affected integration/adversarial checks after T03 closes.
-          - The complete service, data, graph, security, foundation, performance, packaging, recovery, and Windows x64 qualification
-            matrix remains mandatory once at W1 exit.
-          selection_rationale: CAP-03.S05.T02-R02-F01 is a localized correctness defect in the newly iterative SCC traversal,
-            and CAP-03.S05.T02-R02-F02 is a localized authority defect in the bounded path representation. R03 therefore replays
-            the graph algorithm across acyclic convergence, cross edges, self-loops, disjoint and large cycles, then proves
-            exact cycle authority at the real SQLite/restart boundary. It also exercises path samples at and beyond the immutable
-            bound through preview, digest, impact rows, stale causes, propagation, and reopen. The v10 schema/profile and
-            packaged sidecar changed, so exact migration/strict-schema tests and a real Windows package build were repeated.
-            No route, credential, dependency version, security policy, or toolchain changed; accumulated full profiles remain
-            mandatory at CAP-03.S05 review and W1 exit.
-          selection_sha256: 8a4c2dc6748130540afb47a4f80d922ce9c5c806845ef14abc5761aca436262d
-          prior_attempt_id: R02
-          open_finding_ids:
-          - CAP-03.S05.T02-R02-F01
-          - CAP-03.S05.T02-R02-F02
-          root_cause_analysis: R02 replaced recursive SCC discovery with an iterative traversal but marked every sibling discovered
-            when queued rather than preserving per-frame DFS progress; convergent DAG edges could therefore corrupt finish
-            order and create false SCCs. R02 also retained the old prefix-only path slice while hardening adjacent authority,
-            so a bounded sample could omit its own affected endpoint and had no durable completeness metadata. R03 fixes the
-            shared design error—loss of traversal/path state at a bounded representation boundary—by retaining per-frame neighbor
-            position for exact DFS postorder and by making bounded-path length, truncation, origin, terminal, digest, projection,
-            and persistence authority explicit.
-          selected_command_ids:
-          - foundation:repository-structure
-          - foundation:architecture
-          - foundation:quality
-          - foundation:backlog
-          - packaging:unit
-          - data:unit
-          - graph:unit
-          packet_sha256: 768b272441443e8acdc7cebd2b4d003b587fcee162b552e60bd4352031ce6bff
+        - submission:
+            id: R03
+            submitted_by: codex
+            submitted_at: '2026-09-01T23:12:34+00:00'
+            candidate_commit: dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d
+            base_commit: ca7918783eb5d6dcc377a89cd28e522b83ee7d1f
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S05.T02.R03.json
+              sha256: d1aa357d7838cb0ef703260e552c03fe9cd68b4650c393bf9b822e6d8f19de50
+              commit: dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d
+              recorded_at: '2026-09-01T23:12:34+00:00'
+            acceptance_criteria_sha256: a1a6200f63e409df0c4f1e4d1a87b13ea37f5a7f0979cc5be5b568b874e3ba75
+            changed_paths:
+            - artifacts/evidence/CAP-03.S05.T02.R02.json
+            - artifacts/evidence/CAP-03.S05.T02.review-R02.json
+            - docs/architecture/local-sqlite-storage.md
+            - packages/contracts/storage/README.md
+            - packages/contracts/storage/sqlite-migration-recovery.schema.json
+            - packages/contracts/storage/sqlite-profile.schema.json
+            - packages/contracts/storage/sqlite-profile.v1.json
+            - planning/backlog.yaml
+            - services/core-api/src/research_observatory_core/dependency_impacts.py
+            - services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py
+            - services/core-api/src/research_observatory_core/ports/repositories.py
+            - services/core-api/src/research_observatory_core/repositories.py
+            - services/core-api/src/research_observatory_core/storage.py
+            - tests/graph/test_dependency_impacts.py
+            selected_checks:
+            - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts
+            - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.data.test_sqlite_migrations
+              tests.data.test_sqlite_schema tests.data.test_material_dependencies
+            - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package
+            - .venv\Scripts\python.exe tools/quality_check.py --repo .
+            - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
+              --repo .
+            - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check ca791878...dbd6f618
+            - .venv\Scripts\python.exe tools/verify.py --repo . --profile foundation --profile service --profile data --profile
+              graph --profile security-local --affected-base ca7918783eb5d6dcc377a89cd28e522b83ee7d1f --affected-head dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d
+              --deferred-gate W1-exit --selection-only
+            deferred_checks:
+            - CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation,
+              and affected integration/adversarial checks after T03 closes.
+            - The complete service, data, graph, security, foundation, performance, packaging, recovery, and Windows x64 qualification
+              matrix remains mandatory once at W1 exit.
+            selection_rationale: CAP-03.S05.T02-R02-F01 is a localized correctness defect in the newly iterative SCC traversal,
+              and CAP-03.S05.T02-R02-F02 is a localized authority defect in the bounded path representation. R03 therefore
+              replays the graph algorithm across acyclic convergence, cross edges, self-loops, disjoint and large cycles,
+              then proves exact cycle authority at the real SQLite/restart boundary. It also exercises path samples at and
+              beyond the immutable bound through preview, digest, impact rows, stale causes, propagation, and reopen. The
+              v10 schema/profile and packaged sidecar changed, so exact migration/strict-schema tests and a real Windows package
+              build were repeated. No route, credential, dependency version, security policy, or toolchain changed; accumulated
+              full profiles remain mandatory at CAP-03.S05 review and W1 exit.
+            selection_sha256: 8a4c2dc6748130540afb47a4f80d922ce9c5c806845ef14abc5761aca436262d
+            prior_attempt_id: R02
+            open_finding_ids:
+            - CAP-03.S05.T02-R02-F01
+            - CAP-03.S05.T02-R02-F02
+            root_cause_analysis: R02 replaced recursive SCC discovery with an iterative traversal but marked every sibling
+              discovered when queued rather than preserving per-frame DFS progress; convergent DAG edges could therefore corrupt
+              finish order and create false SCCs. R02 also retained the old prefix-only path slice while hardening adjacent
+              authority, so a bounded sample could omit its own affected endpoint and had no durable completeness metadata.
+              R03 fixes the shared design error—loss of traversal/path state at a bounded representation boundary—by retaining
+              per-frame neighbor position for exact DFS postorder and by making bounded-path length, truncation, origin, terminal,
+              digest, projection, and persistence authority explicit.
+            selected_command_ids:
+            - foundation:repository-structure
+            - foundation:architecture
+            - foundation:quality
+            - foundation:backlog
+            - packaging:unit
+            - data:unit
+            - graph:unit
+            packet_sha256: 768b272441443e8acdc7cebd2b4d003b587fcee162b552e60bd4352031ce6bff
+          review: *id036
+          ledger:
+            path: artifacts/evidence/CAP-03.S05.T02.review-R03.json
+            sha256: e2154a80452c8d535b66a940551d7ffbb5b94d05733cb6336a87b739d59dd1db
+          findings: []
+          closures:
+          - finding_id: CAP-03.S05.T02-R02-F01
+            disposition: fixed
+            evidence: The first SCC pass now retains a per-frame next-neighbor index and emits true DFS postorder. Submitted
+              convergent/cross-edge DAG, self-loop, disjoint-cycle, reversed-input, large-SCC and real SQLite/reopen tests
+              pass. Independent exhaustive comparison across all 65,536 four-node directed graphs found no false, missing,
+              or mis-grouped SCC.
+          - finding_id: CAP-03.S05.T02-R02-F02
+            disposition: fixed
+            evidence: max_path_samples now means actual stored identities with a minimum of two; exact-limit paths remain
+              complete, while over-limit samples retain exact origin and terminal plus total path_length and path_truncated=true.
+              Preview/item authority and path digest bind those fields, v10 persists them in both item and cause rows, and
+              independent real SQLite propagation/reopen proved exact digest and projection survival.
+          telemetry:
+            task_id: CAP-03.S05.T02
+            amendment_id: null
+            attempt_id: R03
+            submitted_at: '2026-09-01T23:12:34+00:00'
+            reviewed_at: '2026-09-01T23:16:35+00:00'
+            duration_seconds: 241
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - foundation:repository-structure
+            - foundation:architecture
+            - foundation:quality
+            - foundation:backlog
+            - packaging:unit
+            - data:unit
+            - graph:unit
+            remediation:
+              prior_attempt_id: R02
+              replayed_finding_ids:
+              - CAP-03.S05.T02-R02-F01
+              - CAP-03.S05.T02-R02-F02
+              closed_finding_ids:
+              - CAP-03.S05.T02-R02-F01
+              - CAP-03.S05.T02-R02-F02
+        current_submission: null
     - id: CAP-03.S05.T03
       capability_id: CAP-03
       slice_id: CAP-03.S05
@@ -13729,11 +13789,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-09-01T23:16:35+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
