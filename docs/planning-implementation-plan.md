@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 426a055f1ec6694a85151a56262b3f138368fac4aa11875fc901b8c78468c2d4
+source_sha256: e68dd8b4c056a052ec9a2f44ca69abd642a5ede3fe4e42c1b8e516c179353428
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1302,9 +1302,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
+### - [x] W1.A05.T04 - Implement Application Settings Security & sign-in
 
-**Status / owner / review:** `REVIEW` / codex / agent:t04-r02-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / agent:t04-r03-independent-reviewer (`approved`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T03`
 
@@ -1334,7 +1334,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A05.T04
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ##### Round R01
 
@@ -1400,7 +1400,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `W1.A05.T04-R01-F02` `fixed` — The previous guided workspace remains mounted inside a hidden, aria-hidden, inert layer while Application Settings is active. Independent built-product replay created and opened a project, changed the Research Intent use case and objective without saving, opened settings, returned, and retained the exact project, workspace, field values, and intended top-bar focus.
 - `W1.A05.T04-R01-F03` `fixed` — Locked recovery places all background content in an inert and aria-hidden subtree, the global handler suppresses Ctrl+K, Ctrl+/, and Alt+H while confirmation is active, focus stays inside the alertdialog, and no deferred dialog appears after unlock. Application Settings captures the actual top-bar, sidebar, or command-result element and independently restores all three connected initiators with a stable fallback. The built-product replay and full workflow/accessibility/visual conformance matrix passed.
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `7f0619464e329555a7425bec4cb7c0d8d3b0135c45be5c98e25ca9bcb5c0225f`
+##### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `7f0619464e329555a7425bec4cb7c0d8d3b0135c45be5c98e25ca9bcb5c0225f`
 
 - Candidate / base / branch: `d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8` / `b079bdd68e648d8059b64b984eaa841059312fe0` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-01T12:23:18+00:00`
@@ -1414,11 +1416,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R02` / `W1.A05.T04-R02-F01`
 - Root-cause escalation: R02 correctly stopped a conflicting observed policy from becoming a success result, but it used the cleanup receipt to select an unchanged terminal message without rechecking whether the observed policy still equaled the prepared source. The result object carried the different authoritative snapshot while its message described the prior snapshot, so visual and assistive outputs contradicted each other. R03 makes source-policy equality explicit and derives conflict messaging from that same comparison.
 
-**Current latest-review projection:** `changes-requested` by agent:t04-r02-independent-reviewer at `2026-09-01T11:48:13+00:00`
+**Disposition / reviewer / time:** `approved` / agent:t04-r03-independent-reviewer / `2026-09-01T12:32:41+00:00`
 
-**Latest notes:** Independent commit-bound R02 review authenticated frozen submission 177a90f85af776aa2b8df8326e3d10bf1f39118f, exact candidate b079bdd68e648d8059b64b984eaa841059312fe0, branch, ordered ancestry, all 14 declared changed paths, remediation-manifest SHA-256 3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962, and preserved R01-ledger SHA-256 2139f5c996d74721d3d049643f7acf54d8b22605e70e793361544c1e4b781626. The prior false-success exploit is removed: pending state binds mode, normalized profile, timeout, valid configuration, and the exact successor revision; the controller first replays the opaque handle for the native idempotent receipt; and same-mode wrong-profile or requested-60/observed-0 status cannot produce committed or reconciled-committed success. The live Research Intent instance is retained behind a hidden, aria-hidden, inert workspace layer during the settings detour, and the built browser proves the open project plus unsaved use case and objective survive. Actual top-bar, sidebar, and command-result initiators regain focus. Locked recovery now makes background content inert and aria-hidden, suppresses Ctrl+K, Ctrl+/, and Alt+H, retains alertdialog focus, and leaves no deferred shortcut dialog after unlock. Independent replay passed 91 desktop tests, three production TypeScript/native witness tests, 25 focused Rust tests, strict TypeScript, product/reference build, built-product browser checks, exact v1.4 UI change gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, all 66 visual captures, backlog validation, and patch hygiene. One medium blocking acceptance defect remains: after exact-target reconciliation rejects a different observed same-mode policy and cleanup returns a non-committed result, the controller reports kind unchanged and announces that the prior setting remains active even though it returns and projects the different observed snapshot, including a possible timeout reduction to zero. This no longer claims the requested commit succeeded, but it is not the required truthful conflict/uncertain report and gives screen-reader users a contradictory live announcement. A reviewer-induced first attempt to run Cargo concurrently with the product build encountered the build script's temporary removal of product-dist; the sequential rerun after the successful build passed and is not a candidate defect. Hardware-backed Windows Hello success remains legitimately conditional on a configured device, and accumulated S02/amendment/W1 packaging, performance, and cross-capability qualification remain later gates.
+**Immutable review ledger:** `artifacts/evidence/W1.A05.T04.review-R03.json` / `690090792b43760c23e48121528fd94ad371eabfaab61295f0da863b4b8d701b`
 
-**Currently open findings:** `W1.A05.T04-R02-F01`
+**Review notes:** Independent bounded R03 review found no remaining blocking or nonblocking acceptance-bound defect. Frozen submission 1841259fd2bc5cc91c6bc8d6629b2948d171c999, candidate d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8, branch, ordered ancestry, all 18 declared paths, remediation evidence SHA-256 28e5f740c7bee8da3f0be29aebbdbbf649f9260820d0844696ae2e7c5edc7b1a, and R02 ledger SHA-256 20fd8cf835255fd091d5eaeb4d8daed19dc0f2b08d6bc14bc4f084753bc6e980 authenticate. The product remediation is frozen at 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06. Later candidate history contains only independently approved GOV-MAINT-0009 and exact owner-bound lease/generated submission state; it changes no product, amendment scope, UI-reference, review, or release authority. W1.A05.T04-R02-F01 is fixed. After receipt replay and exact-target status reconciliation cannot confirm the request, bounded cleanup runs once. A complete source-policy comparison covers mode, normalized profile, timeout, configuration state, and revision. A truly unchanged source retains the bounded unchanged result; a different observed policy returns rejected with the authoritative snapshot and the exact message that native policy changed elsewhere, the request was not confirmed, and the current setting must be reviewed. Both same-mode wrong-profile and requested-60/observed-0 fixtures assert that result and exclude the former prior-policy-active message. The built product projects Other profile and timeout zero, renders the message as a danger alert, and emits the same text through the polite live region. It also independently replays and preserves the R02 closures: the open project and unsaved Research Intent position survive the settings detour; top-bar, sidebar, and command-result focus origins return exactly; locked recovery background stays inert and aria-hidden; all global shortcuts remain suppressed; modal focus is contained; and no deferred dialog appears after unlock. Independent checks passed 91 desktop tests, 15 focused settings/workspace cases, strict TypeScript, desktop lint, the real Rust-to-TypeScript witness and its three production tests, built-product browser checks, exact v1.4 UI gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, Ruff, three focused amendment/task lease tests, canonical backlog validation, exact path inventory, and patch hygiene. R02's independently authenticated 66 visual captures remain reusable because R03 changes no approved reference, CSS, token, route, visual baseline, package, or layout primitive. Hardware-backed Hello success and the accumulated S02/amendment/W1 packaging, performance, security, accessibility, and cross-capability matrix remain truthfully assigned to later mandatory gates.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A05.T04-R02-F01` `fixed` — The controller now derives the terminal result from both cleanup outcome and the complete observed-versus-source policy relationship. Exact target or recovered committed receipts remain validated; otherwise one bounded cancellation cleanup occurs. Mode, normalized profile, timeout, configuration state, and revision must all equal the prepared source before unchanged/prior-active is allowed. Any difference returns rejected with the observed authoritative snapshot and the exact changed-elsewhere/request-not-confirmed/review-before-retry message. Independent wrong-profile and requested-60/observed-0 fixtures pass, and the built browser proves the observed Other/zero policy is rendered with danger feedback and the identical polite live announcement while the prior-setting-active claim is absent. The full desktop and native witness checks retain the superseded R01 false-success correction, and the built browser retains the R01 workspace, focus, modal, shortcut, recovery, and secrecy closures.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t04-r03-independent-reviewer at `2026-09-01T12:32:41+00:00`
+
+**Latest notes:** Independent bounded R03 review found no remaining blocking or nonblocking acceptance-bound defect. Frozen submission 1841259fd2bc5cc91c6bc8d6629b2948d171c999, candidate d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8, branch, ordered ancestry, all 18 declared paths, remediation evidence SHA-256 28e5f740c7bee8da3f0be29aebbdbbf649f9260820d0844696ae2e7c5edc7b1a, and R02 ledger SHA-256 20fd8cf835255fd091d5eaeb4d8daed19dc0f2b08d6bc14bc4f084753bc6e980 authenticate. The product remediation is frozen at 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06. Later candidate history contains only independently approved GOV-MAINT-0009 and exact owner-bound lease/generated submission state; it changes no product, amendment scope, UI-reference, review, or release authority. W1.A05.T04-R02-F01 is fixed. After receipt replay and exact-target status reconciliation cannot confirm the request, bounded cleanup runs once. A complete source-policy comparison covers mode, normalized profile, timeout, configuration state, and revision. A truly unchanged source retains the bounded unchanged result; a different observed policy returns rejected with the authoritative snapshot and the exact message that native policy changed elsewhere, the request was not confirmed, and the current setting must be reviewed. Both same-mode wrong-profile and requested-60/observed-0 fixtures assert that result and exclude the former prior-policy-active message. The built product projects Other profile and timeout zero, renders the message as a danger alert, and emits the same text through the polite live region. It also independently replays and preserves the R02 closures: the open project and unsaved Research Intent position survive the settings detour; top-bar, sidebar, and command-result focus origins return exactly; locked recovery background stays inert and aria-hidden; all global shortcuts remain suppressed; modal focus is contained; and no deferred dialog appears after unlock. Independent checks passed 91 desktop tests, 15 focused settings/workspace cases, strict TypeScript, desktop lint, the real Rust-to-TypeScript witness and its three production tests, built-product browser checks, exact v1.4 UI gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, Ruff, three focused amendment/task lease tests, canonical backlog validation, exact path inventory, and patch hygiene. R02's independently authenticated 66 visual captures remain reusable because R03 changes no approved reference, CSS, token, route, visual baseline, package, or layout primitive. Hardware-backed Hello success and the accumulated S02/amendment/W1 packaging, performance, security, accessibility, and cross-capability matrix remain truthfully assigned to later mandatory gates.
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
