@@ -136,6 +136,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.object_store",
             "research_observatory_core.ports.credential_store",
             "research_observatory_core.ports.database_keys",
+            "research_observatory_core.recalculation_contracts",
             "research_observatory_core.ports.workflow_executor",
             "research_observatory_core.repositories",
             "research_observatory_core.windows_credentials",

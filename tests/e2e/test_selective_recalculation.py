@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import tempfile
 import unittest
+from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
 
@@ -14,11 +16,25 @@ from research_observatory_core.ports.repositories import (
     MaterialDependency,
     RepositoryConflict,
 )
-from research_observatory_core.ports.workflow_executor import WorkflowActor
+from research_observatory_core.ports.workflow_executor import (
+    WorkflowActor,
+    WorkflowJobClaim,
+    WorkflowJobRecord,
+    WorkflowJobSubmission,
+    WorkflowOutputReference,
+    WorkflowQueueConflict,
+    WorkflowQueueProblem,
+)
+from research_observatory_core.recalculation_contracts import (
+    RecalculationAuthority,
+    RecalculationCandidateCommit,
+    SelectiveRecalculationRepository,
+)
 from research_observatory_core.repositories import (
     create_sqlite_unit_of_work_factory,
     sqlite_dependency_impact_repository,
     sqlite_material_dependency_repository,
+    sqlite_selective_recalculation_repository,
     sqlite_workflow_queue_repository,
 )
 from research_observatory_core.selective_recalculation import (
@@ -48,7 +64,9 @@ def event(
     index: int,
     *,
     actor_type: str = "worker",
+    actor_id: str | None = None,
     event_type: str = "evidence.created",
+    idempotency_key: str | None = None,
     occurred_at: str | None = None,
 ) -> AtomicRepositoryEvent:
     timestamp = occurred_at or f"2026-09-01T22:00:{index:02d}.000Z"
@@ -60,8 +78,8 @@ def event(
         available_at=timestamp,
         trace_id=f"{index + 1:032x}",
         actor_type=actor_type,  # type: ignore[arg-type]
-        actor_id=RESEARCHER_ID if actor_type == "human" else SYSTEM_ID,
-        idempotency_key=f"selective-recalculation-{index}",
+        actor_id=actor_id or (RESEARCHER_ID if actor_type == "human" else SYSTEM_ID),
+        idempotency_key=idempotency_key or f"selective-recalculation-{index}",
     )
 
 
@@ -77,6 +95,48 @@ def dependency(index: int, revision: AggregateRevision, character: str) -> Mater
         governing_policy_id="dependency.material.v1",
         governing_policy_version="1.0.0",
     )
+
+
+def revision_content_hash(revision: AggregateRevision) -> str:
+    document = {
+        "aggregateId": revision.aggregate_id,
+        "aggregateKind": revision.aggregate_kind,
+        "contractVersion": revision.contract_version,
+        "createdAt": revision.created_at,
+        "displayLabelNormalized": revision.display_label_normalized,
+        "displayLabelObserved": revision.display_label_observed,
+        "knowledgeStatus": revision.knowledge_status,
+        "modifiedAt": revision.modified_at,
+        "objectSha256": revision.object_sha256,
+        "projectId": revision.project_id,
+        "revision": revision.revision,
+        "revisionId": revision.revision_id,
+        "rightsStatus": revision.rights_status,
+    }
+    payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+
+class InjectBeforeEnqueue(SelectiveRecalculationRepository):
+    def __init__(self, delegate: SelectiveRecalculationRepository, injection: Callable[[], None]) -> None:
+        self._delegate = delegate
+        self._injection = injection
+
+    def plan_authority(self, target_revision_id: str) -> RecalculationAuthority:
+        return self._delegate.plan_authority(target_revision_id)
+
+    def enqueue_if_current(
+        self,
+        authority: RecalculationAuthority,
+        submission: WorkflowJobSubmission,
+        *,
+        actor: WorkflowActor,
+    ) -> WorkflowJobRecord:
+        self._injection()
+        return self._delegate.enqueue_if_current(authority, submission, actor=actor)
+
+    def commit_candidate(self, command: RecalculationCandidateCommit) -> AggregateRevision:
+        return self._delegate.commit_candidate(command)
 
 
 class SelectiveRecalculationE2ETests(unittest.TestCase):
@@ -99,11 +159,12 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             batch_size=8,
         )
         self.impacts.advance(run.run_id, expected_checkpoint_sha256=run.checkpoint_sha256)
+        self.recalculation = sqlite_selective_recalculation_repository(self.root, PROJECT_ID)
+        self.workflows = sqlite_workflow_queue_repository(self.root, PROJECT_ID)
         self.service = SelectiveRecalculationService(
             unit_of_work=self.factory,
             dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
-            impacts=self.impacts,
-            workflows=sqlite_workflow_queue_repository(self.root, PROJECT_ID),
+            recalculation=self.recalculation,
         )
 
     def tearDown(self) -> None:
@@ -232,6 +293,84 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             priority=10,
         )
 
+    def candidate_draft(self) -> AggregateRevisionDraft:
+        return AggregateRevisionDraft(
+            revision_id=uid(5),
+            aggregate_id=self.adjudicated.aggregate_id,
+            aggregate_kind="evidence",
+            created_at=self.adjudicated.created_at,
+            modified_at="2026-09-01T22:02:00.000Z",
+            display_label_observed="recomputed synthesis candidate",
+            display_label_normalized="recomputed synthesis candidate",
+            knowledge_status="verified",
+            rights_status="allowed",
+            dependency_coverage="complete",
+            provenance_inputs=(self.adjudicated, self.source_v2, self.verified),
+            material_dependencies=(
+                dependency(6, self.source_v2, "b"),
+                dependency(7, self.verified, "c"),
+            ),
+        )
+
+    def commit_candidate(self, draft: AggregateRevisionDraft) -> tuple[AggregateRevision, WorkflowJobClaim]:
+        scheduled = self.service.schedule(self.request())
+        claim = self.workflows.claim_next(
+            worker_id=uid(92_001),
+            concurrency_classes=("document",),
+            now="2026-09-01T22:01:01.000Z",
+            lease_duration_ms=60_000,
+        )
+        self.assertIsNotNone(claim)
+        assert claim is not None
+        self.workflows.start(claim, now="2026-09-01T22:01:02.000Z")
+        checkpoint_artifact = WorkflowOutputReference(
+            artifact_id=self.verified.aggregate_id,
+            revision_id=self.verified.revision_id,
+            content_hash=revision_content_hash(self.verified),
+            media_type="application/vnd.research-observatory.recalculation-checkpoint+json",
+            provenance_entity_id=self.verified.aggregate_id,
+        )
+        self.workflows.stage_artifact(
+            claim,
+            artifact=checkpoint_artifact,
+            role="checkpoint",
+            now="2026-09-01T22:01:03.000Z",
+        )
+        self.workflows.checkpoint(
+            claim,
+            checkpoint_id=uid(92_002),
+            state_hash=checkpoint_artifact.content_hash,
+            payload_artifact_id=checkpoint_artifact.artifact_id,
+            now="2026-09-01T22:01:04.000Z",
+            progress={"kind": "quantified", "unit": "outputs", "completedUnits": 0, "totalUnits": 1},
+        )
+        completed_at = "2026-09-01T22:01:05.000Z"
+        candidate_event = event(
+            5,
+            actor_id=claim.worker_id,
+            event_type="aggregate.recalculation-candidate-created",
+            idempotency_key=f"recalculation-candidate:{claim.job_id}",
+            occurred_at=completed_at,
+        )
+        candidate = self.service.append_candidate(
+            draft,
+            candidate_event,
+            claim=claim,
+            expected_current_revision_id=self.adjudicated.revision_id,
+            plan_sha256=scheduled.workflow.plan_sha256,
+            completed_at=completed_at,
+        )
+        replay = self.service.append_candidate(
+            draft,
+            candidate_event,
+            claim=claim,
+            expected_current_revision_id=self.adjudicated.revision_id,
+            plan_sha256=scheduled.workflow.plan_sha256,
+            completed_at=completed_at,
+        )
+        self.assertEqual(candidate, replay)
+        return candidate, claim
+
     def test_selective_job_reuses_only_unchanged_verified_inputs_and_survives_restart(self) -> None:
         scheduled = self.service.schedule(self.request())
         replay = self.service.schedule(self.request())
@@ -262,62 +401,247 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
         self.assertEqual("selective-recalculation", projection.workflow_key)
         self.assertEqual("queued", projection.state)
 
-    def test_candidate_comparison_and_adjudicated_restore_append_history_without_overwrite(self) -> None:
-        candidate_draft = AggregateRevisionDraft(
-            revision_id=uid(5),
-            aggregate_id=self.adjudicated.aggregate_id,
-            aggregate_kind="evidence",
-            created_at=self.adjudicated.created_at,
-            modified_at="2026-09-01T22:02:00.000Z",
-            display_label_observed="recomputed synthesis candidate",
-            display_label_normalized="recomputed synthesis candidate",
-            knowledge_status="verified",
-            rights_status="allowed",
-            dependency_coverage="complete",
-            provenance_inputs=(self.adjudicated, self.source_v2, self.verified),
+    def test_enqueue_fails_without_queue_write_when_authority_changes_after_planning(self) -> None:
+        verified_v2 = self._append(
+            AggregateRevisionDraft(
+                revision_id=uid(8),
+                aggregate_id=self.verified.aggregate_id,
+                aggregate_kind="evidence",
+                created_at=self.verified.created_at,
+                modified_at="2026-09-01T22:00:08.000Z",
+                display_label_observed="verified replacement input",
+                display_label_normalized=None,
+                knowledge_status="verified",
+                rights_status="allowed",
+                dependency_coverage="not-applicable",
+                provenance_inputs=(self.verified,),
+            ),
+            8,
+            0,
+        )
+        second_change = DependencyChange(
+            change_id=uid(80_010),
+            idempotency_key="verified-v1-superseded",
+            reason="SOURCE_VERSION",
+            dependency_kind="source-revision",
+            previous_revision_id=self.verified.revision_id,
+            replacement_revision_id=verified_v2.revision_id,
+            configuration_id=None,
+            previous_configuration_version=None,
+            replacement_configuration_version=None,
+            previous_fingerprint=fingerprint("c"),
+            replacement_fingerprint=fingerprint("f"),
+            propagation_policy_id="dependency.propagation.v1",
+            propagation_policy_version="1.0.0",
+            actor_id=SYSTEM_ID,
+            trace_id="8" * 32,
+            occurred_at="2026-09-01T22:00:08.000Z",
+        )
+
+        def inject_propagation() -> None:
+            preview = self.impacts.preview(second_change)
+            run = self.impacts.begin(
+                second_change,
+                preview_sha256=preview.preview_sha256,
+                run_id=uid(80_011),
+                batch_size=8,
+            )
+            self.impacts.advance(run.run_id, expected_checkpoint_sha256=run.checkpoint_sha256)
+
+        racing_service = SelectiveRecalculationService(
+            unit_of_work=self.factory,
+            dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
+            recalculation=InjectBeforeEnqueue(self.recalculation, inject_propagation),
+        )
+        with self.assertRaises(WorkflowQueueConflict):
+            racing_service.schedule(self.request())
+        self.assertEqual((), self.workflows.task_center(limit=10))
+
+    def test_candidate_requires_an_active_exact_workflow_and_specific_event(self) -> None:
+        draft = self.candidate_draft()
+        missing_claim = WorkflowJobClaim(
+            project_id=PROJECT_ID,
+            workflow_run_id=uid(93_001),
+            job_id=uid(93_002),
+            step_run_id=uid(93_003),
+            activity_type="selective-recalculation",
+            concurrency_class="document",
+            attempt_id=uid(93_004),
+            attempt_number=1,
+            worker_id=uid(93_005),
+            lease_token="missing-workflow-lease",
+            lease_generation=1,
+            lease_expires_at="2026-09-01T22:02:00.000Z",
+            idempotency_key="missing-workflow",
+            command_fingerprint=fingerprint("a"),
+            latest_checkpoint=None,
+        )
+        missing_event = event(
+            9,
+            actor_id=missing_claim.worker_id,
+            event_type="aggregate.recalculation-candidate-created",
+            idempotency_key=f"recalculation-candidate:{missing_claim.job_id}",
+            occurred_at="2026-09-01T22:01:05.000Z",
+        )
+        with self.assertRaises(WorkflowQueueProblem):
+            self.service.append_candidate(
+                draft,
+                missing_event,
+                claim=missing_claim,
+                expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=missing_claim.command_fingerprint,
+                completed_at=missing_event.occurred_at,
+            )
+
+        scheduled = self.service.schedule(self.request())
+        claim = self.workflows.claim_next(
+            worker_id=uid(93_006),
+            concurrency_classes=("document",),
+            now="2026-09-01T22:01:01.000Z",
+            lease_duration_ms=60_000,
+        )
+        self.assertIsNotNone(claim)
+        assert claim is not None
+        completed_at = "2026-09-01T22:01:05.000Z"
+        candidate_event = event(
+            10,
+            actor_id=claim.worker_id,
+            event_type="aggregate.recalculation-candidate-created",
+            idempotency_key=f"recalculation-candidate:{claim.job_id}",
+            occurred_at=completed_at,
+        )
+        with self.assertRaises(WorkflowQueueProblem):
+            self.service.append_candidate(
+                draft,
+                candidate_event,
+                claim=claim,
+                expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=scheduled.workflow.plan_sha256,
+                completed_at=completed_at,
+            )
+        with self.assertRaises(RepositoryConflict):
+            self.service.append_candidate(
+                draft,
+                event(11, actor_id=claim.worker_id, occurred_at=completed_at),
+                claim=claim,
+                expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=scheduled.workflow.plan_sha256,
+                completed_at=completed_at,
+            )
+        with self.factory() as unit:
+            self.assertEqual((self.adjudicated,), unit.aggregates.history(self.adjudicated.aggregate_id))
+
+    def test_cancelled_workflow_and_substituted_dependency_cannot_commit_candidate(self) -> None:
+        scheduled = self.service.schedule(self.request())
+        claim = self.workflows.claim_next(
+            worker_id=uid(94_001),
+            concurrency_classes=("document",),
+            now="2026-09-01T22:01:01.000Z",
+            lease_duration_ms=60_000,
+        )
+        self.assertIsNotNone(claim)
+        assert claim is not None
+        self.workflows.start(claim, now="2026-09-01T22:01:02.000Z")
+        completed_at = "2026-09-01T22:01:05.000Z"
+        candidate_event = event(
+            12,
+            actor_id=claim.worker_id,
+            event_type="aggregate.recalculation-candidate-created",
+            idempotency_key=f"recalculation-candidate:{claim.job_id}",
+            occurred_at=completed_at,
+        )
+        substituted = replace(
+            self.candidate_draft(),
             material_dependencies=(
-                dependency(6, self.source_v2, "b"),
+                dependency(6, self.source_v1, "a"),
                 dependency(7, self.verified, "c"),
             ),
         )
-        candidate = self.service.append_candidate(
-            candidate_draft,
-            event(5, event_type="evidence.recalculated"),
-            expected_current_revision_id=self.adjudicated.revision_id,
-        )
-        self.assertEqual(
-            candidate,
+        with self.assertRaises(RepositoryConflict):
             self.service.append_candidate(
-                candidate_draft,
-                event(5, event_type="evidence.recalculated"),
+                substituted,
+                candidate_event,
+                claim=claim,
                 expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=scheduled.workflow.plan_sha256,
+                completed_at=completed_at,
+            )
+        self.workflows.cancel(claim, now="2026-09-01T22:01:03.000Z", reason_code="user-cancelled")
+        with self.assertRaises(WorkflowQueueProblem):
+            self.service.append_candidate(
+                self.candidate_draft(),
+                candidate_event,
+                claim=claim,
+                expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=scheduled.workflow.plan_sha256,
+                completed_at=completed_at,
+            )
+        with self.factory() as unit:
+            self.assertEqual((self.adjudicated,), unit.aggregates.history(self.adjudicated.aggregate_id))
+
+    def test_recovered_but_unfinished_workflow_cannot_commit_candidate(self) -> None:
+        scheduled = self.service.schedule(self.request())
+        claim = self.workflows.claim_next(
+            worker_id=uid(95_001),
+            concurrency_classes=("document",),
+            now="2026-09-01T22:01:01.000Z",
+            lease_duration_ms=1_000,
+        )
+        self.assertIsNotNone(claim)
+        assert claim is not None
+        self.workflows.start(claim, now="2026-09-01T22:01:01.500Z")
+        self.assertEqual(
+            1,
+            self.workflows.recover_expired(
+                now="2026-09-01T22:01:03.000Z",
+                actor=WorkflowActor(SYSTEM_ID, "system", "workflow-recovery"),
             ),
         )
+        completed_at = "2026-09-01T22:01:04.000Z"
+        candidate_event = event(
+            13,
+            actor_id=claim.worker_id,
+            event_type="aggregate.recalculation-candidate-created",
+            idempotency_key=f"recalculation-candidate:{claim.job_id}",
+            occurred_at=completed_at,
+        )
+        with self.assertRaises(WorkflowQueueProblem):
+            self.service.append_candidate(
+                self.candidate_draft(),
+                candidate_event,
+                claim=claim,
+                expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=scheduled.workflow.plan_sha256,
+                completed_at=completed_at,
+            )
+        with self.factory() as unit:
+            self.assertEqual((self.adjudicated,), unit.aggregates.history(self.adjudicated.aggregate_id))
+
+    def test_candidate_commit_is_atomic_with_completed_plan_and_retains_history(self) -> None:
+        candidate_draft = self.candidate_draft()
+        candidate, claim = self.commit_candidate(candidate_draft)
         comparison = self.service.compare(self.adjudicated.revision_id, candidate.revision_id)
         self.assertEqual(
             ("display-label-normalized", "display-label-observed", "knowledge-status"),
             comparison.changed_fields,
         )
         self.assertEqual(1, candidate.revision)
-
-        restored = self.service.restore(
-            RestoreRevisionCommand(
-                prior_adjudicated_revision_id=self.adjudicated.revision_id,
-                expected_current_revision_id=candidate.revision_id,
-                new_revision_id=uid(6),
-                dependency_ids=(uid(30_008), uid(30_009)),
-                modified_at="2026-09-01T22:03:00.000Z",
-                event=event(
-                    6,
-                    actor_type="human",
-                    event_type="aggregate.revision-restored",
-                    occurred_at="2026-09-01T22:03:00.000Z",
-                ),
+        self.assertEqual("succeeded", self.workflows.get(claim.job_id).state)
+        reopened_factory = create_sqlite_unit_of_work_factory(self.database, PROJECT_ID)
+        with reopened_factory() as unit:
+            self.assertEqual(
+                (self.adjudicated.revision_id, candidate.revision_id),
+                tuple(item.revision_id for item in unit.aggregates.history(self.adjudicated.aggregate_id)),
             )
+            self.assertEqual(self.adjudicated, unit.aggregates.get_revision(self.adjudicated.revision_id))
+        candidate_dependencies = sqlite_material_dependency_repository(self.root, PROJECT_ID).registration(
+            candidate.revision_id
         )
-        self.assertEqual(2, restored.revision)
         self.assertEqual(
-            restored,
+            (self.source_v2.revision_id, self.verified.revision_id),
+            tuple(item.revision_id for item in candidate_dependencies.dependencies),
+        )
+        with self.assertRaises(RepositoryConflict):
             self.service.restore(
                 RestoreRevisionCommand(
                     prior_adjudicated_revision_id=self.adjudicated.revision_id,
@@ -332,28 +656,72 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
                         occurred_at="2026-09-01T22:03:00.000Z",
                     ),
                 )
-            ),
-        )
-        self.assertEqual("adjudicated", restored.knowledge_status)
-        self.assertEqual((), self.service.compare(self.adjudicated.revision_id, restored.revision_id).changed_fields)
-
-        reopened_factory = create_sqlite_unit_of_work_factory(self.database, PROJECT_ID)
-        with reopened_factory() as unit:
+            )
+        with self.factory() as unit:
             self.assertEqual(
-                (self.adjudicated.revision_id, candidate.revision_id, restored.revision_id),
+                (self.adjudicated.revision_id, candidate.revision_id),
                 tuple(item.revision_id for item in unit.aggregates.history(self.adjudicated.aggregate_id)),
             )
-            self.assertEqual(self.adjudicated, unit.aggregates.get_revision(self.adjudicated.revision_id))
-        restored_dependencies = sqlite_material_dependency_repository(self.root, PROJECT_ID).registration(
-            restored.revision_id
+
+    def test_fresh_adjudicated_restore_appends_without_rewinding_history(self) -> None:
+        prior = self._append(
+            AggregateRevisionDraft(
+                revision_id=uid(40),
+                aggregate_id=uid(140),
+                aggregate_kind="evidence",
+                created_at=OCCURRED_AT,
+                modified_at="2026-09-01T22:10:00.000Z",
+                display_label_observed="stable adjudicated value",
+                display_label_normalized="stable adjudicated value",
+                knowledge_status="adjudicated",
+                rights_status="allowed",
+                dependency_coverage="complete",
+                provenance_inputs=(self.verified,),
+                material_dependencies=(dependency(40, self.verified, "c"),),
+            ),
+            40,
         )
-        original_dependencies = sqlite_material_dependency_repository(self.root, PROJECT_ID).registration(
-            self.adjudicated.revision_id
+        current = self._append(
+            AggregateRevisionDraft(
+                revision_id=uid(41),
+                aggregate_id=prior.aggregate_id,
+                aggregate_kind="evidence",
+                created_at=prior.created_at,
+                modified_at="2026-09-01T22:11:00.000Z",
+                display_label_observed="new candidate value",
+                display_label_normalized="new candidate value",
+                knowledge_status="verified",
+                rights_status="allowed",
+                dependency_coverage="complete",
+                provenance_inputs=(prior, self.verified),
+                material_dependencies=(dependency(41, self.verified, "c"),),
+            ),
+            41,
+            0,
         )
-        self.assertEqual(
-            tuple(item.revision_id for item in original_dependencies.dependencies),
-            tuple(item.revision_id for item in restored_dependencies.dependencies),
+        command = RestoreRevisionCommand(
+            prior_adjudicated_revision_id=prior.revision_id,
+            expected_current_revision_id=current.revision_id,
+            new_revision_id=uid(42),
+            dependency_ids=(uid(30_042),),
+            modified_at="2026-09-01T22:12:00.000Z",
+            event=event(
+                42,
+                actor_type="human",
+                event_type="aggregate.revision-restored",
+                occurred_at="2026-09-01T22:12:00.000Z",
+            ),
         )
+        restored = self.service.restore(command)
+        self.assertEqual(restored, self.service.restore(command))
+        self.assertEqual(2, restored.revision)
+        self.assertEqual("adjudicated", restored.knowledge_status)
+        self.assertEqual((), self.service.compare(prior.revision_id, restored.revision_id).changed_fields)
+        with self.factory() as unit:
+            self.assertEqual(
+                (prior.revision_id, current.revision_id, restored.revision_id),
+                tuple(item.revision_id for item in unit.aggregates.history(prior.aggregate_id)),
+            )
 
     def test_substitution_and_non_adjudicated_restore_fail_without_canonical_change(self) -> None:
         with self.assertRaises(RepositoryConflict):

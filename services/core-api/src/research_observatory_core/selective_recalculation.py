@@ -6,27 +6,26 @@ import hashlib
 import json
 from dataclasses import asdict, dataclass, replace
 
-from .dependency_impacts import dependency_change_authority_document
 from .domain_contracts import is_uuid_v7
 from .ports.repositories import (
     AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
     DependencyChange,
-    DependencyImpactRepository,
-    DependencyStaleState,
-    MaterialDependency,
     MaterialDependencyRepository,
     RepositoryConflict,
     RepositoryProblem,
     UnitOfWorkFactory,
 )
-from .ports.workflow_executor import WorkflowActor, WorkflowJobRecord, WorkflowJobSubmission, WorkflowQueueRepository
+from .ports.workflow_executor import WorkflowActor, WorkflowJobClaim, WorkflowJobRecord, WorkflowJobSubmission
+from .recalculation_contracts import (
+    RecalculationAuthority,
+    RecalculationCandidateCommit,
+    SelectiveRecalculationRepository,
+    recalculation_authority_sha256,
+)
 from .workflow_contracts import workflow_record_sha256, workflow_snapshot_errors
 from .workflow_executor import prepare_workflow_job
-
-_REUSABLE_STATUSES = frozenset({"verified", "adjudicated"})
-
 
 @dataclass(frozen=True, slots=True)
 class RecalculationWorkflowIdentity:
@@ -117,21 +116,6 @@ def _revision_document(revision: AggregateRevision) -> dict[str, object]:
     }
 
 
-def _dependency_changed(dependency: MaterialDependency, changes: tuple[DependencyChange, ...]) -> bool:
-    revision_id = dependency.revision_id
-    configuration_id = dependency.configuration_id
-    configuration_version = dependency.configuration_version
-    return any(
-        (change.previous_revision_id is not None and revision_id == change.previous_revision_id)
-        or (
-            change.configuration_id is not None
-            and configuration_id == change.configuration_id
-            and configuration_version == change.previous_configuration_version
-        )
-        for change in changes
-    )
-
-
 def _history_event(
     event_id: str,
     sequence: int,
@@ -170,13 +154,12 @@ def _schema_reference(schema_id: str) -> dict[str, str]:
 
 def _build_workflow(
     request: RecalculationWorkflowRequest,
-    target: AggregateRevision,
-    replacements: tuple[AggregateRevision, ...],
-    reusable: tuple[AggregateRevision, ...],
-    causes: tuple[DependencyStaleState, ...],
-    changes: tuple[DependencyChange, ...],
-    dependency_authority: tuple[MaterialDependency, ...],
+    authority: RecalculationAuthority,
 ) -> RecalculationWorkflow:
+    target = authority.target
+    replacements = authority.replacements
+    reusable = authority.reusable
+    causes = authority.causes
     identity = request.identity
     all_ids = (
         identity.workflow_definition_id,
@@ -193,15 +176,7 @@ def _build_workflow(
         raise RepositoryConflict("recalculation workflow identities are invalid")
     if len(set(all_ids)) != len(all_ids):
         raise RepositoryConflict("recalculation workflow identities are not unique")
-    plan_document = {
-        "changes": [dependency_change_authority_document(change) for change in changes],
-        "causes": [asdict(cause) for cause in causes],
-        "dependencies": [asdict(item) for item in dependency_authority],
-        "replacementRevisions": [_revision_document(item) for item in replacements],
-        "reusedRevisions": [_revision_document(item) for item in reusable],
-        "target": _revision_document(target),
-    }
-    plan_sha256 = _sha256(plan_document)
+    plan_sha256 = recalculation_authority_sha256(authority)
     definition: dict[str, object] = {
         "schemaVersion": "1.0",
         "documentType": "research-observatory-workflow-definition",
@@ -412,55 +387,21 @@ class SelectiveRecalculationService:
         *,
         unit_of_work: UnitOfWorkFactory,
         dependencies: MaterialDependencyRepository,
-        impacts: DependencyImpactRepository,
-        workflows: WorkflowQueueRepository,
+        recalculation: SelectiveRecalculationRepository,
     ) -> None:
         self._unit_of_work = unit_of_work
         self._dependencies = dependencies
-        self._impacts = impacts
-        self._workflows = workflows
+        self._recalculation = recalculation
 
     def schedule(self, request: RecalculationWorkflowRequest) -> ScheduledRecalculation:
-        durable_change = self._impacts.change(request.change.change_id)
-        if durable_change != request.change:
+        authority = self._recalculation.plan_authority(request.target_revision_id)
+        durable_changes = tuple(change for change in authority.changes if change.change_id == request.change.change_id)
+        if durable_changes != (request.change,):
             raise RepositoryConflict("recalculation change authority differs")
-        causes = self._impacts.stale_states(output_revision_id=request.target_revision_id)
-        if not causes or not any(cause.change_id == request.change.change_id for cause in causes):
+        if not authority.causes or not any(cause.change_id == request.change.change_id for cause in authority.causes):
             raise RepositoryConflict("recalculation target has no matching open stale cause")
-        changes = tuple(self._impacts.change(change_id) for change_id in sorted({cause.change_id for cause in causes}))
-        registration = self._dependencies.registration(request.target_revision_id)
-        with self._unit_of_work() as unit:
-            target = unit.aggregates.get_revision(request.target_revision_id)
-            if unit.aggregates.get(target.aggregate_id) != target:
-                raise RepositoryConflict("recalculation target is no longer current")
-            reusable_by_revision: dict[str, AggregateRevision] = {}
-            replacement_by_revision = {
-                change.replacement_revision_id: unit.aggregates.get_revision(change.replacement_revision_id)
-                for change in changes
-                if change.replacement_revision_id is not None
-            }
-            for dependency in registration.dependencies:
-                if dependency.revision_id is None or _dependency_changed(dependency, changes):
-                    continue
-                revision = unit.aggregates.get_revision(dependency.revision_id)
-                if revision.knowledge_status not in _REUSABLE_STATUSES:
-                    continue
-                if self._impacts.stale_states(output_revision_id=revision.revision_id):
-                    continue
-                reusable_by_revision[revision.revision_id] = revision
-        reusable = tuple(reusable_by_revision[key] for key in sorted(reusable_by_revision))
-        replacements = tuple(replacement_by_revision[key] for key in sorted(replacement_by_revision))
-        ordered_causes = tuple(sorted(causes, key=lambda cause: cause.cause_id))
-        workflow = _build_workflow(
-            request,
-            target,
-            replacements,
-            reusable,
-            ordered_causes,
-            changes,
-            tuple(registration.dependencies),
-        )
-        job = self._workflows.enqueue(workflow.submission, actor=request.actor)
+        workflow = _build_workflow(request, authority)
+        job = self._recalculation.enqueue_if_current(authority, workflow.submission, actor=request.actor)
         return ScheduledRecalculation(workflow, job)
 
     def compare(self, before_revision_id: str, after_revision_id: str) -> RevisionComparison:
@@ -498,20 +439,21 @@ class SelectiveRecalculationService:
         draft: AggregateRevisionDraft,
         event: AtomicRepositoryEvent,
         *,
+        claim: WorkflowJobClaim,
         expected_current_revision_id: str,
+        plan_sha256: str,
+        completed_at: str,
     ) -> AggregateRevision:
-        with self._unit_of_work() as unit:
-            expected = unit.aggregates.get_revision(expected_current_revision_id)
-            if (
-                expected.aggregate_id != draft.aggregate_id
-                or expected.aggregate_kind != draft.aggregate_kind
-                or draft.knowledge_status == "adjudicated"
-                or expected not in draft.provenance_inputs
-            ):
-                raise RepositoryConflict("recalculation candidate authority is invalid")
-            candidate = unit.aggregates.append(draft, event, expected_revision=expected.revision)
-            unit.commit()
-            return candidate
+        return self._recalculation.commit_candidate(
+            RecalculationCandidateCommit(
+                claim=claim,
+                draft=draft,
+                event=event,
+                expected_current_revision_id=expected_current_revision_id,
+                plan_sha256=plan_sha256,
+                completed_at=completed_at,
+            )
+        )
 
     def restore(self, command: RestoreRevisionCommand) -> AggregateRevision:
         if (
@@ -539,6 +481,7 @@ class SelectiveRecalculationService:
                 or prior.revision >= current.revision
             ):
                 raise RepositoryConflict("only a prior adjudicated revision may be restored")
+            unit.require_fresh_revision(prior.revision_id)
             dependencies = tuple(
                 replace(dependency, dependency_id=dependency_id)
                 for dependency, dependency_id in zip(registration.dependencies, command.dependency_ids, strict=True)

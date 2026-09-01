@@ -105,6 +105,7 @@
     "services/core-api/src/research_observatory_core/privacy.py",
     "services/core-api/src/research_observatory_core/projects.py",
     "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/recalculation_contracts.py",
     "services/core-api/src/research_observatory_core/storage.py",
     "services/core-api/src/research_observatory_core/task_center.py",
     "services/core-api/src/research_observatory_core/transport.py",

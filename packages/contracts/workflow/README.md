@@ -25,5 +25,7 @@ specific fields. One exact current stale output becomes one checkpoint-required
 revision and eligible unchanged verified/adjudicated input revisions, while the
 configuration and command fingerprints bind the complete stale-change,
 dependency, and reuse plan. Candidate comparison and human-authorized restore
-remain aggregate/provenance operations; restoration creates a later revision
-instead of rewinding workflow or scholarly history.
+remain aggregate/provenance operations. Candidate append and successful workflow
+output commitment are atomic and fail closed if plan authority changes.
+Restoration creates a later revision instead of rewinding workflow or scholarly
+history, and an already stale prior revision cannot be made falsely fresh.
