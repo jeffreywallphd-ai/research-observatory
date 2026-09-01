@@ -57,15 +57,15 @@
 | Definition portability | A workflow definition is strict versioned data containing schema references and registered activity/human-step declarations, with no executor, SQLite, Temporal, path, URL, shell, or provider implementation field. | Draft 2020-12 validation plus generated Python/TypeScript decoder tests; substitute forbidden fields and path/command-like values. |
 | Exact definition authority | A run binds one definition ID, immutable revision ID, semantic version, and canonical content hash. Local/server executor metadata exists only on the run snapshot and cannot change definition bytes. | One definition fixture validates against both local and server snapshots; identity/hash substitutions fail closed. |
 | State reconstruction | Ordered, contiguous transition history reconstructs the exact current workflow, step, job, attempt, and human-task projections after serialization/reload. Each entity begins in its declared initial state; terminal states have no outbound transitions. | Canonical JSON restart round trip and history-reducer assertions; missing, reordered, wrong-from, wrong-final, and terminal-outbound events are rejected. |
-| Identity/reference closure | Workflow/run/step-run/job/attempt/checkpoint/artifact/human-task/event/decision identities are unique in their namespaces and every cross-reference resolves to the exact owning entity. | Table-driven substitution tests for unknown/wrong owner, duplicate identity, step-key, attempt number, artifact, checkpoint, and human-decision references. |
+| Identity/reference closure | Workflow/run/step-run/job/attempt/checkpoint/artifact/human-task/event/decision identities are unique in their namespaces and every cross-reference resolves to the exact owning entity. Transition-event IDs remain unique independently of their contiguous numeric sequence. | Table-driven substitution tests for unknown/wrong owner, duplicate collection or transition-event identity, step-key, attempt number, artifact, checkpoint, and human-decision references. |
 | At-least-once retry | A logical job carries one stable idempotency key and an exact command fingerprint across physical attempts; changed-payload reuse conflicts. Attempts are contiguous and may repeat execution, but at most one attempt succeeds and a succeeded job binds that exact attempt and its committed outputs. No exactly-once side-effect claim appears. | Valid retry fixture plus changed-fingerprint reuse, duplicate/gapped attempt, two-success, mismatched-current-attempt, and uncommitted-output negative tests. |
 | Checkpoint/restart | Checkpoints bind an exact attempt, monotonic checkpoint sequence, immutable state/payload hashes, and a history position. They contain references, not inline research content. | Restart fixture with a running-progress self-transition and checkpoint; reordered, duplicate, missing, and foreign-attempt checkpoints fail. |
 | Progress | Progress is explicitly quantified, unknown, or not-applicable. Quantified progress is bounded and monotonic within an attempt; final success reaches the declared total when known. | Positive unknown/not-applicable fixtures and decreasing/over-total/incomplete-success negatives in both runtimes. |
 | Cancellation/failure | Definitions declare cooperative cancellation and partial-artifact disposition. Runtime histories allow only the approved cancelling/cancelled/failure paths; retained partial artifacts remain explicitly incomplete and never become committed outputs. | Transition-matrix tests and partial-artifact substitution cases; T02 owns real process interruption. |
-| Human authority and audit | Human tasks are durable entities with requester, required role, evidence references, assignee state, and an immutable typed decision. Completion binds the exact decision ID/actor/time in ordered history; replay cannot infer or overwrite approval. | Completed and pending human-task fixtures; missing decision, actor/decision substitution, completed-without-event, and overwritten-history forms fail closed. |
+| Human authority and audit | Human tasks are durable entities with requester, required role, evidence references, assignee state, and an immutable typed decision. The request and claim events bind requester/time and assignee, the decision disposition is allowed by the exact definition, and completion binds the exact decision ID/actor/time in ordered history; replay cannot infer or overwrite approval. | Completed and pending human-task fixtures; excluded disposition, substituted requester/time/claim actor, missing or duplicate request, missing decision, actor/decision substitution, completed-without-event, and overwritten-history forms fail closed. |
 | Policy/configuration authority | Every run pins exact intent revision, policy revision/hash, and configuration reference. Every human task binds its exact run, definition revision, and step run; late or cross-run decisions fail closed. | Identity/hash substitution tests for intent, policy, configuration, human run/definition/step, required role, deciding actor, and decision evidence. |
 | Audit/provenance boundary | Workflow history records execution transitions; scholarly provenance records accepted transformations; telemetry is operational and retention-bounded. Failed/cancelled attempts cannot claim committed artifacts or accepted provenance outputs. | Contract field inventory and negative fixtures for provenance output on unsuccessful attempts and inline telemetry/research payloads. |
-| Legacy operation bridge | Existing `op-*` status and bounded SSE replay remain a transport projection. A bridge record binds one legacy operation ID to one UUIDv7 workflow run without treating the legacy ID or five-state projection as canonical workflow history. | Strict bridge schema/decoder tests, identity substitution and replay-gap characterization; no Core API route change in T01. |
+| Legacy operation bridge | Existing `op-*` status and bounded SSE replay remain a transport projection. A bridge record binds one legacy operation ID to one UUIDv7 workflow run and projects the exact workflow history sequence; its matching ETag cannot make a divergent sequence authoritative. | Strict bridge schema/decoder tests, identity/sequence/ETag substitution and replay-gap characterization; no Core API route change in T01. |
 | Security-lock interruption | Ordinary process crash/restart may reconstruct resumable state. Application lock remains a distinct security cancellation boundary: protected work cannot auto-resume without a future explicit checkpointed allowlist and compatible ADR. | Definition/snapshot denial for implicit lock-resume authority and explicit interruption-reason classification; native policy behavior remains unchanged. |
 | Trust boundary | Portable values are bounded, strict, content-minimized references. Dangerous object keys, unknown fields, filesystem locations, inline payloads, and unregistered execution directives are denied before persistence/execution. | Hostile structural/schema fixtures and immutable-snapshot tests in generated runtimes. |
 | Compatibility | Contract/history/executor compatibility versions are explicit. Unsupported major versions and unknown state/step kinds fail explicitly; an exact v1 fixture remains canonical and hash-stable. | Generator drift check, schema hash assertion, exact checked-in v1 fixtures, and local/server conformance tests. |
@@ -89,6 +89,24 @@
 5. Run the tests once while the workflow package/runtime is absent and retain
    the failing result as the test-first boundary; then implement only enough
    schema, generator, documentation, and generated runtime to close them.
+
+## R01 review learning
+
+The first independent review found three acceptance rows that the original
+tests described broadly but did not challenge field-by-field:
+
+- `CAP-03.S04.T01-R01-F01`: bind allowed human dispositions, requester/time,
+  and claim actor to the exact definition and transition history.
+- `CAP-03.S04.T01-R01-F02`: bind the legacy operation sequence to the workflow
+  snapshot sequence rather than only to its self-asserted ETag.
+- `CAP-03.S04.T01-R01-F03`: require globally unique transition-event IDs in
+  addition to a contiguous numeric sequence.
+
+The remediation tests above replay each finding in both generated runtimes.
+The immediate cause was validating projection shape and the most visible
+cross-references without enumerating every authority-bearing field named by
+ADR-0025. The correction remains within T01 contract semantics and does not
+pull T02 persistence or T03 experience work forward.
 
 ## Deferred broader coverage
 

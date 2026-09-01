@@ -263,6 +263,75 @@ class WorkflowContractTests(unittest.TestCase):
         missing_decision["evidenceArtifactIds"] = ["018f47a2-4d6b-7f78-9f2e-7fb76c86e099"]
         self.assertIn("human-decision-is-audit-bound", workflow_snapshot_errors(definition, missing_evidence))
 
+        excluded_definition = copy.deepcopy(definition)
+        human_step = next(step for step in self.items(excluded_definition, "steps") if step["kind"] == "human-task")
+        cast(JsonRecord, human_step["humanTask"])["allowedDispositions"] = ["rejected"]
+        excluded_disposition = copy.deepcopy(snapshot)
+        cast(JsonRecord, excluded_disposition["definition"])["contentHash"] = workflow_record_sha256(
+            excluded_definition
+        )
+        self.assertIn(
+            "human-decision-is-audit-bound",
+            workflow_snapshot_errors(excluded_definition, excluded_disposition),
+        )
+
+        for field, replacement in (
+            (
+                "requestedBy",
+                {
+                    "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86e099",
+                    "actorType": "system",
+                    "role": "workflow-coordinator",
+                },
+            ),
+            ("requestedAt", "2026-08-30T12:01:24.500Z"),
+        ):
+            with self.subTest(field=field):
+                substituted_request = copy.deepcopy(snapshot)
+                self.items(substituted_request, "humanTasks")[0][field] = replacement
+                self.assertIn(
+                    "human-decision-is-audit-bound",
+                    workflow_snapshot_errors(definition, substituted_request),
+                )
+
+        substituted_claim = copy.deepcopy(snapshot)
+        claim_event = next(
+            event
+            for event in self.items(substituted_claim, "history")
+            if event["entityType"] == "human-task" and event["toState"] == "claimed"
+        )
+        cast(JsonRecord, claim_event["actor"])["actorId"] = "018f47a2-4d6b-7f78-9f2e-7fb76c86e099"
+        self.assertIn(
+            "human-decision-is-audit-bound",
+            workflow_snapshot_errors(definition, substituted_claim),
+        )
+
+        duplicate_request = copy.deepcopy(snapshot)
+        request_event = next(
+            event
+            for event in self.items(duplicate_request, "history")
+            if event["entityType"] == "human-task" and event["toState"] == "requested"
+        )
+        replacement_event = self.items(duplicate_request, "history")[25]
+        replacement_event.update(copy.deepcopy(request_event))
+        replacement_event["eventId"] = "018f47a2-4d6b-7f78-9f2e-7fb76c86e026"
+        replacement_event["sequence"] = 26
+        self.assertIn(
+            "human-decision-is-audit-bound",
+            workflow_snapshot_errors(definition, duplicate_request),
+        )
+
+    def test_transition_event_identities_are_unique_across_restart_replay(self) -> None:
+        definition = self.definition()
+        snapshot = self.snapshot()
+        duplicate = copy.deepcopy(snapshot)
+        history = self.items(duplicate, "history")
+        history[1]["eventId"] = history[0]["eventId"]
+
+        self.assertIn("history-event-identities-are-unique", workflow_snapshot_errors(definition, duplicate))
+        self.assertIsNone(decode_workflow_snapshot(definition, duplicate))
+        self.assertIsNotNone(decode_workflow_snapshot(definition, json.loads(json.dumps(snapshot))))
+
     def test_legacy_operation_bridge_is_an_exact_projection_not_workflow_authority(self) -> None:
         snapshot = self.snapshot()
         bridge = self.fixture("valid-legacy-operation-bridge.v1.json")
@@ -278,6 +347,14 @@ class WorkflowContractTests(unittest.TestCase):
         wrong_etag = copy.deepcopy(bridge)
         wrong_etag["etag"] = '"op-source-review-31"'
         self.assertIn("legacy-operation-bridge-etag-is-exact", legacy_operation_bridge_errors(snapshot, wrong_etag))
+
+        wrong_sequence = copy.deepcopy(bridge)
+        wrong_sequence["operationSequence"] = 31
+        wrong_sequence["etag"] = '"op-source-review-31"'
+        self.assertIn(
+            "legacy-operation-bridge-binds-exact-workflow-projection",
+            legacy_operation_bridge_errors(snapshot, wrong_sequence),
+        )
 
     def test_security_lock_is_not_an_ordinary_auto_resumable_restart(self) -> None:
         definition = self.definition()

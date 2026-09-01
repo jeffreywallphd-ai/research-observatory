@@ -15,7 +15,7 @@ type FrozenJsonValue = None | bool | int | float | str | tuple["FrozenJsonValue"
 type WorkflowSnapshot = Mapping[str, FrozenJsonValue]
 type ReconstructedWorkflowState = Mapping[str, Mapping[str, str]]
 
-WORKFLOW_SCHEMA_SHA256 = "77ed756006251ea3b4ac9912c92a805d0a0b6ee16721e3102dce2ef43b6bfeac"
+WORKFLOW_SCHEMA_SHA256 = "464716c11c7ad09c54419d49426b3cbf0f287b47c54955b0169741db025a5afd"
 _WORKFLOW_SCHEMA = json.loads(r"""{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://research-observatory.local/contracts/workflow/workflow-contract.schema.json",
@@ -35,6 +35,7 @@ _WORKFLOW_SCHEMA = json.loads(r"""{
     "references-close-over-snapshot",
     "identities-are-unique",
     "history-sequence-is-contiguous",
+    "history-event-identities-are-unique",
     "history-transition-is-allowed",
     "history-reconstructs-current-state",
     "attempt-progress-is-monotonic",
@@ -884,11 +885,16 @@ def _reconstruct(
     latest: dict[tuple[str, str], int] = {}
     errors: list[str] = []
     progress_by_attempt: dict[str, tuple[str, int | None, int | None]] = {}
+    event_ids: set[str] = set()
     security_locked = False
     history = cast(Sequence[Mapping[str, Any]], snapshot["history"])
     for index, event in enumerate(history, start=1):
         if event["sequence"] != index:
             errors.append("history-sequence-is-contiguous")
+        event_id = cast(str, event["eventId"])
+        if event_id in event_ids:
+            errors.append("history-event-identities-are-unique")
+        event_ids.add(event_id)
         kind = cast(str, event["entityType"])
         identity = cast(str, event["entityId"])
         prior = state.get(kind, {}).get(identity)
@@ -1109,22 +1115,39 @@ def workflow_snapshot_errors(definition_value: object, value: object) -> tuple[s
         ):
             errors.append("succeeded-output-artifacts-are-committed")
     human_tasks = cast(Sequence[Mapping[str, Any]], snapshot["humanTasks"])
+    step_runs = _collection_map(snapshot, "stepRuns", "stepRunId")
+    definition_steps = {step["stepKey"]: step for step in cast(Sequence[Mapping[str, Any]], definition["steps"])}
     for task in human_tasks:
+        task_step = step_runs.get(cast(str, task["stepRunId"]))
+        defined = definition_steps.get(task_step["stepKey"]) if task_step is not None else None
+        human_definition = _record(defined["humanTask"]) if defined is not None else None
+        task_events = [
+            event
+            for event in history
+            if event["entityType"] == "human-task" and event["entityId"] == task["humanTaskId"]
+        ]
+        requests = [event for event in task_events if event["fromState"] is None and event["toState"] == "requested"]
+        claims = [event for event in task_events if event["toState"] == "claimed"]
+        assigned = _record(task["assignedTo"])
+        request_actor = _record(requests[0]["actor"]) if len(requests) == 1 else None
+        claim_actor = _record(claims[0]["actor"]) if len(claims) == 1 else None
+        if (
+            len(requests) != 1
+            or request_actor != task["requestedBy"]
+            or requests[0]["occurredAt"] != task["requestedAt"]
+            or (len(claims) != 0 if assigned is None else len(claims) != 1 or claim_actor != assigned)
+        ):
+            errors.append("human-decision-is-audit-bound")
         decision = _record(task["decision"])
         if (task["state"] == "completed") != (decision is not None):
             errors.append("completed-human-task-binds-decision")
         if decision is not None:
-            completion = [
-                event
-                for event in history
-                if event["entityType"] == "human-task"
-                and event["entityId"] == task["humanTaskId"]
-                and event["toState"] == "completed"
-            ]
-            assigned = _record(task["assignedTo"])
+            completion = [event for event in task_events if event["toState"] == "completed"]
             actor = _record(completion[0]["actor"]) if len(completion) == 1 else None
             if (
-                len(completion) != 1
+                human_definition is None
+                or decision["disposition"] not in human_definition["allowedDispositions"]
+                or len(completion) != 1
                 or completion[0]["decisionId"] != decision["decisionId"]
                 or actor is None
                 or actor != decision["decidedBy"]
@@ -1189,6 +1212,7 @@ def legacy_operation_bridge_errors(snapshot_value: object, value: object) -> tup
     if (
         bridge["workflowRunId"] != snapshot.get("workflowRunId")
         or bridge["workflowSnapshotRevision"] != snapshot.get("snapshotRevision")
+        or bridge["operationSequence"] != snapshot.get("sequence")
         or bridge["operationState"] != mapped
         or bridge["cancellationRequested"] != (cancellation is not None and cancellation.get("requestedAt") is not None)
     ):
