@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S04.T03",
+  "commit": "693f62fce9d48290a2ffbeb9dd2a74ff03be7110",
+  "baseCommit": "02de5ae312985a2c700cc8093061468d8342a736",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S04.T03.R02.json",
+    "sha256": "026de494e79d955e2873b1deae5a556951b11d95d2ccf20f92c9f7b91f43908c",
+    "commit": "02de5ae312985a2c700cc8093061468d8342a736",
+    "reason": "Closes the remaining CAP-03.S04.T03-R01-F02 durable queue-admission defect without expanding the approved T03 authority or governed experience reference."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S04.T03.R02.json",
+    "artifacts/evidence/CAP-03.S04.T03.review-R02.json",
+    "artifacts/evidence/CAP-03.S04.T03.task-start.md",
+    "planning/backlog.yaml",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/workflows/test_task_center.py"
+  ],
+  "checks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.workflows.test_task_center.WorkflowTaskCenterTests.test_human_consequences_skip_end_or_resume_the_exact_graph tests.workflows.test_task_center.WorkflowTaskCenterTests.test_human_resume_rolls_back_authority_when_queue_admission_fails",
+      "exitCode": 0,
+      "result": "Both focused remediation tests passed. A resumed downstream activity is projected as one runnable queue job, survives repository restart, is claimable by the matching local worker pool, and exact human-decision replay does not duplicate admission. An injected admission failure rolls back the new authority revision, history events, human decision, and queue row together."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.workflows.test_task_center tests.service.test_task_center_api",
+      "exitCode": 0,
+      "result": "All eight affected workflow and Core API tests passed, retaining stale-command denial, cancellation, continuation, all three human consequences, exact generated request handling, and the new restart-claimable admission behavior."
+    },
+    {
+      "command": "ruff check/format --check and mypy for repositories.py plus test_task_center.py",
+      "exitCode": 0,
+      "result": "The two changed Python implementation/test files pass focused Ruff lint, Ruff formatting, and mypy without issues."
+    },
+    {
+      "command": "verify.py --profile desktop --profile service --profile e2e-local --selection-only --affected-base 02de5ae... --affected-head 693f62f... --deferred-gate W1-exit; git diff --check",
+      "exitCode": 0,
+      "result": "The deterministic affected-selection report passed in selection-only mode and records the broad profile inventory as deferred to W1 exit; exact candidate patch hygiene passed. No full profile was run at task scope."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The remaining CAP-03.S04.T03-R01-F02 reproduction is corrected at the actual SQLite boundary: resume derives only newly dependency-eligible jobs from the exact immutable definition/snapshot, then stores the next authority and admits those jobs within one transaction.",
+        "The Task Center projection contains the newly runnable job after restart and a fresh repository claim returns that exact job. Exact decision replay returns the prior result and leaves one queue admission.",
+        "An injected queue-admission exception after authority storage proves transaction rollback: snapshot revision, history sequence, waiting-human state, undecided task, and empty queue all remain at the predecessor state."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Two focused persistence regressions prove the missing happy/restart path and the material atomic-failure boundary; the complete affected workflow/Task Center API set passes eight tests.",
+        "Focused Ruff, formatting, mypy, affected-selection, and patch-hygiene checks pass. The full deployment profiles are deliberately deferred under the risk-based workflow."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Only the SQLite workflow adapter, its focused persistence tests, the task worksheet, the immutable R02 review record, and the backlog review projection changed in the remediation range.",
+        "No portable/public contract, migration, generated client, renderer, dependency, route, native command, governed UI reference, cloud path, or human authority changed. Local queue scheduling metadata inherits an existing run policy when present and otherwise retains the bounded W1 document/priority-zero default."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S04.T03-R01-F02 remained open because R02 updated canonical runnable authority without the separate durable queue admission needed by a restarted worker. R03 changes only that SQLite transaction and its focused test boundary. Verification therefore replays the exact downstream resume/restart/claim path, exact-decision idempotency, injected transactional rollback, the affected Task Center API set, focused Python static checks, affected-selection inventory, and patch hygiene. Five other R01 findings were independently closed in R02 and their unchanged boundaries were not broadly replayed. Complete desktop/service/e2e-local and deployment matrices remain owned by CAP-03.S04 integration and W1 exit.",
+    "selectedCommandIds": [
+      "service:unit"
+    ],
+    "deferred": [
+      "CAP-03.S04 independent slice review owns the accumulated executor, workflow-contract, SQLite, Core API, native supervisor, Task Center renderer, restart, cancellation, human-decision and adversarial integration union after T03 closes.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging and Windows x64 matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S04.T03-R01-F02"
+    ],
+    "rootCauseAnalysis": "CAP-03.S04.T03-R01-F02 persisted through R02 because the remediation treated a canonical pending-to-runnable snapshot transition as if it also created the executor's mutable queue projection. The test asserted only snapshot/Task Center step state after restart and never attempted a real queue claim, so it mirrored the incomplete implementation. R03 makes immutable authority and mutable job admission one transaction and extends the acceptance proof through Task Center projection, restart claim, exact replay, and injected rollback.",
+    "note": "Independently review exact strict-descendant candidate 693f62fce9d48290a2ffbeb9dd2a74ff03be7110. Replay CAP-03.S04.T03-R01-F02 at the real SQLite boundary and confirm exact-definition activation, one durable Task Center job, restart claimability, idempotent replay without duplication, and complete rollback on admission failure. Authenticate the six-path incremental range, R02 supersession, focused check selection, and absence of public contract or governed experience expansion without replaying full profiles."
+  }
+}
