@@ -13214,15 +13214,20 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/verify.py --profile graph
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T21:49:15+00:00'
-      updated_at: '2026-09-01T21:49:15+00:00'
+      updated_at: '2026-09-01T22:26:05+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S05.T02.R01.json
+        sha256: bdd1e0cc2389352102acef96a466ee456b6634b488a60bdbff52ac463acbc033
+        commit: a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140
+        recorded_at: '2026-09-01T22:26:05+00:00'
       review:
         reviewer: null
         result: null
@@ -13233,10 +13238,89 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T21:49:15+00:00'
         expires_at: '2026-09-02T05:49:15+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-01T22:26:05+00:00'
+          candidate_commit: a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140
+          base_commit: d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S05.T02.R01.json
+            sha256: bdd1e0cc2389352102acef96a466ee456b6634b488a60bdbff52ac463acbc033
+            commit: a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140
+            recorded_at: '2026-09-01T22:26:05+00:00'
+          acceptance_criteria_sha256: a1a6200f63e409df0c4f1e4d1a87b13ea37f5a7f0979cc5be5b568b874e3ba75
+          changed_paths:
+          - artifacts/evidence/CAP-03.S05.T02.task-start.md
+          - docs/architecture/local-sqlite-storage.md
+          - packages/contracts/storage/README.md
+          - packages/contracts/storage/sqlite-migration-recovery.schema.json
+          - packages/contracts/storage/sqlite-profile.schema.json
+          - packages/contracts/storage/sqlite-profile.v1.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S05.T01.html
+          - planning/review-site/CAP-03/CAP-03.S05.T02.html
+          - planning/review-site/CAP-03/CAP-03.S05.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - quality-scope.json
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/dependency_impacts.py
+          - services/core-api/src/research_observatory_core/migrations/runner.py
+          - services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/storage.py
+          - tests/data/test_sqlite_migrations.py
+          - tests/graph/test_dependency_impacts.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.data.test_sqlite_migrations
+            tests.data.test_sqlite_schema tests.data.test_material_dependencies
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
+            --repo .
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check d9de5b58...a3f0e31b
+          - .venv\Scripts\python.exe tools/verify.py --repo . --profile foundation --profile service --profile data --profile
+            graph --profile security-local --affected-base d9de5b58... --affected-head a3f0e31b... --deferred-gate W1-exit
+            --selection-only
+          deferred_checks:
+          - CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation,
+            and affected integration/adversarial checks after T03 closes.
+          - The complete service, data, graph, security, foundation, performance, packaging, recovery, and Windows x64 qualification
+            matrix remains mandatory once at W1 exit.
+          selection_rationale: T02 changes a public Core repository port, deterministic graph traversal, append-only stale
+            and audit authority, SQLite schema/migration, crash recovery, and frozen Windows sidecar inventory. Verification
+            therefore used exact real-SQLite transactions and reopen, graph policy/SCC/bound tests, v9 predecessor migration
+            and all failpoints, a real sidecar build, full governed Python quality, architecture/repository checks, backlog
+            validation, and exact-range hygiene. Complete service, security, foundation, deployment, and quantitative performance
+            profiles were not replayed at task scope because no route, dependency version, security policy, or toolchain changed
+            and the failures were localized; accumulated coverage remains mandatory at slice checkpoints and W1 exit.
+          selection_sha256: ecd9ba7cb74f5e0d9c5338a6565da7bdee4c1ed8e44da565ee637231c3c61138
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:quality
+          - foundation:backlog
+          - packaging:unit
+          - data:unit
+          - graph:unit
+          packet_sha256: 60ce5d6a39cf6032412a10be2d3e24dee77e0e336654d6a1e5db967d4ac0e92f
     - id: CAP-03.S05.T03
       capability_id: CAP-03
       slice_id: CAP-03.S05
