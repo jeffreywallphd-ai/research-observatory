@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A05.T04",
+  "commit": "d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8",
+  "baseCommit": "b079bdd68e648d8059b64b984eaa841059312fe0",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A05.T04.remediation-01.json",
+    "sha256": "3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962",
+    "commit": "b079bdd68e648d8059b64b984eaa841059312fe0",
+    "reason": "Bounded R03 remediation for W1.A05.T04-R02-F01 while preserving the R02 closures of W1.A05.T04-R01-F02 and W1.A05.T04-R01-F03 and the authority correction carried forward from W1.A05.T04-R01-F01."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+    "apps/desktop/src/app/applicationSettings.test.ts",
+    "apps/desktop/src/app/applicationSettings.ts",
+    "artifacts/evidence/W1.A05.T04.remediation-01.json",
+    "artifacts/evidence/W1.A05.T04.review-R02.json",
+    "artifacts/evidence/ui-change/W1.A05.T04.json",
+    "docs/automation/project-automation-guide.md",
+    "docs/planning-implementation-plan.md",
+    "planning/README.md",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0009.json",
+    "planning/governance-migrations/GOV-MAINT-0009.review-R01.json",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/desktop_app_check.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": "npm test --prefix apps/desktop; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 15 executed desktop test files and 91 tests passed with three native-harness cases deliberately skipped; strict TypeScript and lint passed; and the functional product/runtime/reference build completed at the R03 product candidate. Both same-mode wrong-profile and requested-60/observed-0 fixtures now require a rejected conflict result, the exact truthful message, the observed authoritative snapshot, and no prior-policy-active statement."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "exitCode": 0,
+      "result": "The built-product browser simulated lost commit and receipt responses followed by a concurrent same-mode profile/timeout-zero policy. The settings page projected the observed Other profile and zero timeout, rendered a danger alert, emitted the exact conflict message through the polite live region, and never announced that the prior policy remained active. Every prior workspace-position, focus-origin, inert-modal, shortcut, lock-reconciliation, Hello-recovery, responsive, and critical-violation assertion also passed."
+    },
+    {
+      "command": "node apps/desktop/scripts/application-lock-renderer-integration.mjs",
+      "exitCode": 0,
+      "result": "The real Rust witness and all three production TypeScript decoder/controller integration tests passed, preserving native receipt compatibility and the exact application settings boundary."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check workflows; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "The complete task range remains one exact approved-reference implementation for RO-UI-ACADEMIC-MINIMAL-1.4. All 14 workflow profiles, 139 browser cases, 390 keyboard cases, and 66 accessibility/responsive cases passed. R03 changes no approved reference, token, route, CSS, visual baseline, or package byte; the independently authenticated 66-capture R02 visual replay remains unchanged and ancestral."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe check tools/desktop_app_check.py; .venv\\Scripts\\ruff.exe format --check tools/desktop_app_check.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b079bdd68e648d8059b64b984eaa841059312fe0..41d1feaff28eea1357e3e7e7c9db494e9ec6bb06",
+      "exitCode": 0,
+      "result": "The extended browser harness passed Ruff check and formatting, the canonical backlog validated at 20 capabilities, 117 slices, 363 tasks, and 12 release gates, and the exact R03 range passed whitespace hygiene."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base b079bdd68e648d8059b64b984eaa841059312fe0 --affected-head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-R03-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed affected selector accepted the exact third-round range and its desktop, security-local, and service coverage inventory, retaining packaging, performance, and complete cross-capability qualification at W1 exit."
+    },
+    {
+      "command": "node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationSettings.test.ts; .venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_active_amendment_lease_can_be_renewed_only_by_its_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_active_task_mutations_require_the_lease_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_task_lease_can_be_renewed_only_by_its_owner; .venv\\Scripts\\ruff.exe check tools/taskctl.py tests/foundation/test_taskctl_workflow.py; .venv\\Scripts\\ruff.exe format --check tools/taskctl.py tests/foundation/test_taskctl_workflow.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b079bdd68e648d8059b64b984eaa841059312fe0..d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8",
+      "exitCode": 0,
+      "result": "At the exact submission descendant, all 13 focused settings-controller tests and the three focused amendment/task lease-control tests passed; Ruff check and formatting passed; the canonical backlog validated; and the full declared range passed whitespace hygiene. GOV-MAINT-0009 was independently approved with no findings at ledger SHA-256 6109a433450bdcd32b5a1f917114edfda5a96bc604f1b9b3cce7a97cb476f875 before its owner-only renewal command was used. The intervening commits preserve the frozen product bytes at 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 and add only the reviewed generic lease recovery, its immutable review/adoption record, and truthful generated lease projections."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The previously approved app-wide/project-scope separation, mounted guided-workspace preservation, project context, and initiating-control focus behavior are unchanged and remain green in the built-product replay."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The authoritative native snapshot remains separate from the editable draft. After the simulated conflict, the page displays the actually observed profile and timeout rather than preserving or inventing the requested values."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "W1.A05.T04-R02-F01 is fixed by comparing an observed reconciliation snapshot with the complete prepared source policy after bounded cleanup. If the source truly remains current, the existing unchanged result remains available; if any mode, profile, timeout, configuration state, or policy revision differs, the result is rejected rather than unchanged.",
+        "Both wrong-profile and requested-60/observed-0 controller fixtures assert the exact conflict result and message: the native policy changed elsewhere, the requested transition was not confirmed, and the current setting must be reviewed before retrying. The observed snapshot remains attached for truthful projection."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "No native provider, locked-state disclosure, recovery, or fallback code changed. All prior native renderer, locked secrecy, inert recovery, and no-silent-downgrade boundaries remain green."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The built-product interaction proves the conflict is both a visible danger alert and the exact polite live-region announcement while the page displays the authoritative conflicting snapshot. It explicitly proves that the contradictory prior-setting-active announcement is absent.",
+        "The user guidance now distinguishes failures that cannot publish the request from a concurrency conflict that displays the authoritative native policy. Exact v1.4 UI lineage, workflow, keyboard, accessibility, and responsive controls remain green; no reference or visual asset changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "W1.A05.T04-R02-F01 remained because R02 removed the false-success authority defect but derived its terminal message from successful cleanup rather than from the relationship between the observed native policy and the prepared source. That conflated two different facts: this request did not publish, and the prior policy is still authoritative. The workspace correctly projected the observed different snapshot, making its accompanying unchanged message contradictory. R03 separates those facts with a complete source-policy comparison after cleanup and an explicit conflict result when the observed policy differs. Credible incremental failures are misclassifying a truly unchanged source as conflict, suppressing the authoritative observed snapshot, retaining the false prior-policy message, using a non-danger presentation, or failing the screen-reader announcement. The two controller substitutions plus the built-product snapshot/alert/live-region interaction directly cover those risks while replaying the prior settings, lock, focus, and recovery browser union. An ordinary session interruption expired the active amendment lease after the product bytes were frozen; independently approved GOV-MAINT-0009 restored only the exact owner-bound temporal lease and the resulting descendant adds no product or amendment authority.",
+    "selectedCommandIds": [
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "R02 independently replayed all 66 pinned visual captures. R03 changes no approved reference, visual baseline, CSS, token, layout primitive, route, or package byte; actual product conflict rendering and two responsive product cases are covered by the built-frame browser.",
+      "A real configured Windows Hello success prompt remains hardware-conditional on a configured device; no hardware claim is fabricated.",
+      "W1.A05.S02 owns accumulated security/experience slice integration, and the complete W1 Windows-x64 packaging, performance, and cross-capability matrix remains due once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "independent-security-experience-task-review",
+    "openFindingIds": [
+      "W1.A05.T04-R02-F01"
+    ],
+    "rootCauseAnalysis": "R02 correctly stopped a conflicting observed policy from becoming a success result, but it used the cleanup receipt to select an unchanged terminal message without rechecking whether the observed policy still equaled the prepared source. The result object carried the different authoritative snapshot while its message described the prior snapshot, so visual and assistive outputs contradicted each other. R03 makes source-policy equality explicit and derives conflict messaging from that same comparison.",
+    "note": "Independently review exact strict-descendant submission candidate d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8, whose product remediation is frozen at 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 and whose later paths are the independently approved GOV-MAINT-0009 lease recovery plus generated renewal state. Replay W1.A05.T04-R02-F01 and the R02 closures. Confirm a true unchanged source can still be identified, any different observed mode/profile/timeout/configuration/revision returns rejected conflict with the authoritative snapshot, wrong-profile and requested-60/observed-0 fixtures carry the exact truthful message, the built workspace renders danger feedback and the same live announcement without the prior-setting claim, and no product, amendment, or v1.4 experience authority expands."
+  }
+}
