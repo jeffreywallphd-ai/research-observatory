@@ -84,6 +84,10 @@ decision-complete amendment stop; they must not advertise Wave start or repeated
 Wave approval. Adoption requires independently approved tasks and exit review
 plus a control/security checkpoint, and leaves the Wave paused for explicit
 resume. Older tools must fail closed once executable amendment state exists.
+After an ordinary session interruption, the recorded amendment owner renews an
+expired active campaign with `taskctl amendment renew WN.ANN --agent <agent>`;
+task leases are renewed separately. Renewal changes no scope, task state, Wave
+hold, owner, branch, worktree, profile, platform, or approval authority.
 If bootstrap review requests changes, record that disposition before remediation.
 `bootstrap-resubmit` then appends the prior frozen candidate, evidence, and review
 to the attempt history and opens a new review projection only for a strict

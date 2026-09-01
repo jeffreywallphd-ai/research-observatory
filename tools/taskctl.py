@@ -8161,6 +8161,24 @@ def command_amendment_pause(args, data, capabilities, slices, tasks, gates) -> N
     persist(args, data)
 
 
+def command_amendment_renew(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    campaign = amendment.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE" or campaign.get("scope") != "wave-amendment":
+        raise SystemExit("Only an ACTIVE Wave amendment lease may be renewed")
+    if data.get("control_plane", {}).get("active_amendment") != amendment["id"]:
+        raise SystemExit(f"Wave amendment {amendment['id']} is not the active amendment")
+    if campaign.get("owner") != args.agent:
+        raise SystemExit(f"Wave amendment {amendment['id']} is owned by {campaign.get('owner')}, not {args.agent}")
+    if lease_is_active(amendment):
+        require_active_lease(amendment, args.agent, f"Wave amendment {amendment['id']}")
+    campaign["lease"] = new_lease(args.agent, args.lease_hours)
+    campaign["updated_at"] = utc_now()
+    persist(args, data)
+    print(f"Renewed Wave amendment lease for {amendment['id']}")
+
+
 def build_amendment_exit_submission(
     args: argparse.Namespace,
     data: dict[str, Any],
@@ -10198,6 +10216,10 @@ def build_parser() -> argparse.ArgumentParser:
     ampause.add_argument("amendment")
     ampause.add_argument("--agent", required=True)
     ampause.add_argument("--reason", required=True)
+    amrenew = ams.add_parser("renew")
+    amrenew.add_argument("amendment")
+    amrenew.add_argument("--agent", required=True)
+    amrenew.add_argument("--lease-hours", type=int, default=24)
     amsubmit = ams.add_parser("submit")
     amsubmit.add_argument("amendment")
     amsubmit.add_argument("--agent", required=True)
@@ -10474,6 +10496,8 @@ def main() -> None:
         command_amendment_activate(args, data, capabilities, slices, tasks, gates)
     elif args.command == "amendment" and args.amendment_command == "pause":
         command_amendment_pause(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "renew":
+        command_amendment_renew(args, data, capabilities, slices, tasks, gates)
     elif args.command == "amendment" and args.amendment_command == "submit":
         command_amendment_submit(args, data, capabilities, slices, tasks, gates)
     elif args.command == "amendment" and args.amendment_command == "review":

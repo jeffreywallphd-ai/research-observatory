@@ -5596,6 +5596,65 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("W1.A02", data["control_plane"]["active_amendment"])
         self.assertIn("failed adoption transition", amendment["lifecycle"]["history"][-1]["rationale"])
 
+    def test_expired_active_amendment_lease_can_be_renewed_only_by_its_owner(self) -> None:
+        context, _packet = self.packet_bound_active_amendment_workflow()
+        data, capabilities, slices, tasks, gates = context
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["campaign"]["lease"] = {
+            "claimed_by": "codex",
+            "claimed_at": "2020-01-01T00:00:00+00:00",
+            "expires_at": "2020-01-01T01:00:00+00:00",
+        }
+        parser_args = taskctl_module.build_parser().parse_args(
+            ["amendment", "renew", "W1.A02", "--agent", "codex", "--lease-hours", "8"]
+        )
+        self.assertEqual("renew", parser_args.amendment_command)
+
+        with self.assertRaisesRegex(SystemExit, "owned by codex, not reviewer"), patch("taskctl.persist"):
+            taskctl_module.command_amendment_renew(
+                Namespace(amendment="W1.A02", agent="reviewer", lease_hours=8, file="unused"),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        data["control_plane"]["active_amendment"] = None
+        with self.assertRaisesRegex(SystemExit, "is not the active amendment"), patch("taskctl.persist"):
+            taskctl_module.command_amendment_renew(
+                Namespace(amendment="W1.A02", agent="codex", lease_hours=8, file="unused"),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+        data["control_plane"]["active_amendment"] = "W1.A02"
+
+        with self.assertRaisesRegex(SystemExit, "greater than zero"), patch("taskctl.persist"):
+            taskctl_module.command_amendment_renew(
+                Namespace(amendment="W1.A02", agent="codex", lease_hours=0, file="unused"),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        with patch("taskctl.persist"):
+            taskctl_module.command_amendment_renew(
+                Namespace(amendment="W1.A02", agent="codex", lease_hours=8, file="unused"),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        self.assertEqual("codex", amendment["campaign"]["lease"]["claimed_by"])
+        self.assertTrue(taskctl_module.lease_is_active(amendment))
+
     def test_amendment_adoption_records_security_checkpoint_and_keeps_wave_paused(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="REVIEW")
         amendment = data["wave_amendments"][0]
