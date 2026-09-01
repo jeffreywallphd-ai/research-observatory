@@ -7871,7 +7871,7 @@
             {
               "task_id": "CAP-03.S04.T03",
               "title": "Build task center, progress, cancellation, and human-gate UI",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -7925,18 +7925,21 @@
             {
               "task_id": "CAP-03.S04.T03",
               "title": "Build task center, progress, cancellation, and human-gate UI",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S04.T03.html",
               "dependencies": [
                 "CAP-03.S04.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "1affb3e62f1c58f9019af5d04db1ac33edd38bbb"
               },
               "plan_section_sha256": "f3e17c15650a871224a7a0f15420eed14751cb9a4e77130a265c38b93462dd1f",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-03.S04.T03.task-start.md",
+                "sha256": "f758c79c5eb413130462c17b406d208dc744db604a88754432a06334ae9898b4"
+              }
             }
           ]
         },

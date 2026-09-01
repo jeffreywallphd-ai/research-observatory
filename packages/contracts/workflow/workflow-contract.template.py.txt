@@ -261,6 +261,11 @@ def workflow_definition_errors(value: object) -> tuple[str, ...]:
         is_activity = step["kind"] == "activity"
         if is_activity != isinstance(step["activityType"], str) or is_activity == (step["humanTask"] is not None):
             errors.append("step-shape-matches-kind")
+        human_definition = _record(step["humanTask"])
+        if human_definition is not None and set(human_definition["allowedDispositions"]) != set(
+            human_definition["consequencesByDisposition"]
+        ):
+            errors.append("human-task-consequences-are-definition-bound")
         retry = cast(Mapping[str, Any], step["retryPolicy"])
         if retry["maximumBackoffMs"] < retry["initialBackoffMs"] or set(retry["retryableErrorCodes"]) & set(
             retry["nonRetryableErrorCodes"]
@@ -565,6 +570,8 @@ def workflow_snapshot_errors(definition_value: object, value: object) -> tuple[s
             if (
                 human_definition is None
                 or decision["disposition"] not in human_definition["allowedDispositions"]
+                or decision["consequenceCode"]
+                != human_definition["consequencesByDisposition"].get(decision["disposition"])
                 or len(completion) != 1
                 or completion[0]["decisionId"] != decision["decisionId"]
                 or actor is None

@@ -21,6 +21,17 @@ WorkflowJobState = Literal[
 ]
 WorkflowActorType = Literal["human", "system", "workload"]
 WorkflowInterruptionKind = Literal["ordinary-restart", "user-cancel", "security-lock", "policy", "dependency"]
+WorkflowRunDisplayState = Literal[
+    "queued",
+    "running",
+    "waiting-human",
+    "cancelling",
+    "cancelled",
+    "failed",
+    "succeeded",
+    "paused",
+]
+WorkflowHumanDisposition = Literal["approved", "rejected", "deferred", "not-applicable"]
 
 
 class WorkflowQueueProblem(RuntimeError):
@@ -174,8 +185,100 @@ class WorkflowArtifactRecord:
     provenance_entity_id: str | None
 
 
+@dataclass(frozen=True, slots=True)
+class WorkflowProgressRecord:
+    kind: Literal["quantified", "unknown", "not-applicable"]
+    unit: str
+    completed_units: int | None
+    total_units: int | None
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowTaskCenterStepRecord:
+    step_run_id: str
+    step_key: str
+    kind: Literal["activity", "human-task"]
+    state: str
+    depends_on: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowTaskCenterJobRecord:
+    job_id: str
+    state: WorkflowJobState
+    activity_type: str
+    resource_pool: ConcurrencyClass
+    priority: int
+    attempt_count: int
+    max_attempts: int
+    current_attempt_id: str | None
+    worker_id: str | None
+    progress: WorkflowProgressRecord
+    latest_checkpoint_id: str | None
+    latest_checkpoint_at: str | None
+    diagnostic_code: str | None
+    updated_at: str
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowTaskCenterHumanTaskRecord:
+    human_task_id: str
+    step_run_id: str
+    state: Literal["requested", "claimed", "completed", "cancelled", "expired", "superseded"]
+    required_role: str
+    assigned_actor_id: str | None
+    requested_at: str
+    evidence_artifact_ids: tuple[str, ...]
+    allowed_dispositions: tuple[WorkflowHumanDisposition, ...]
+    consequences_by_disposition: tuple[tuple[WorkflowHumanDisposition, str], ...]
+    decision_id: str | None
+    disposition: WorkflowHumanDisposition | None
+    decided_at: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowTaskCenterEventRecord:
+    sequence: int
+    entity_type: str
+    entity_id: str
+    to_state: str
+    occurred_at: str
+    reason_code: str
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowTaskCenterRunRecord:
+    workflow_run_id: str
+    workflow_key: str
+    definition_revision_id: str
+    definition_version: str
+    snapshot_id: str
+    snapshot_revision: int
+    state: WorkflowRunDisplayState
+    active_compute: bool
+    progress: WorkflowProgressRecord
+    revision: int
+    interruption_kind: WorkflowInterruptionKind | None
+    updated_at: str
+    steps: tuple[WorkflowTaskCenterStepRecord, ...]
+    jobs: tuple[WorkflowTaskCenterJobRecord, ...]
+    human_tasks: tuple[WorkflowTaskCenterHumanTaskRecord, ...]
+    retained_artifacts: tuple[WorkflowArtifactDisposition, ...]
+    events: tuple[WorkflowTaskCenterEventRecord, ...]
+
+
 @runtime_checkable
 class WorkflowQueueRepository(Protocol):
+    def register_authority(
+        self,
+        *,
+        definition_json: str,
+        snapshot_json: str,
+        actor: WorkflowActor,
+    ) -> WorkflowTaskCenterRunRecord: ...
+
+    def task_center(self, *, limit: int = 100) -> tuple[WorkflowTaskCenterRunRecord, ...]: ...
+
     def enqueue(self, submission: WorkflowJobSubmission, *, actor: WorkflowActor) -> WorkflowJobRecord: ...
 
     def get(self, job_id: str) -> WorkflowJobRecord: ...
@@ -230,7 +333,30 @@ class WorkflowQueueRepository(Protocol):
         now: str,
         reason_code: str,
         interruption_kind: WorkflowInterruptionKind,
+        expected_history_sequence: int | None = None,
     ) -> WorkflowJobRecord: ...
+
+    def retry_as_continuation(
+        self,
+        job_id: str,
+        *,
+        expected_history_sequence: int,
+        idempotency_key: str,
+        actor: WorkflowActor,
+        now: str,
+    ) -> WorkflowTaskCenterRunRecord: ...
+
+    def complete_human_task(
+        self,
+        human_task_id: str,
+        *,
+        expected_snapshot_revision: int,
+        expected_history_sequence: int,
+        decision_id: str,
+        disposition: WorkflowHumanDisposition,
+        actor: WorkflowActor,
+        now: str,
+    ) -> WorkflowTaskCenterRunRecord: ...
 
     def cancellation_requested(self, claim: WorkflowJobClaim, *, now: str) -> bool: ...
 
@@ -266,9 +392,15 @@ __all__ = [
     "WorkflowJobSubmission",
     "WorkflowLeaseRejected",
     "WorkflowOutputReference",
+    "WorkflowProgressRecord",
     "WorkflowQueueConflict",
     "WorkflowQueueCorrupt",
     "WorkflowQueueNotFound",
     "WorkflowQueueProblem",
     "WorkflowQueueRepository",
+    "WorkflowTaskCenterEventRecord",
+    "WorkflowTaskCenterHumanTaskRecord",
+    "WorkflowTaskCenterJobRecord",
+    "WorkflowTaskCenterRunRecord",
+    "WorkflowTaskCenterStepRecord",
 ]

@@ -335,6 +335,12 @@ export const workflowDefinitionErrors = (value: unknown): readonly string[] => {
   for (const step of steps) {
     const activity = step.kind === "activity";
     if (activity !== (typeof step.activityType === "string") || activity === (step.humanTask !== null)) errors.push("step-shape-matches-kind");
+    const humanDefinition = asRecord(step.humanTask);
+    if (humanDefinition !== null) {
+      const allowed = [...(humanDefinition.allowedDispositions as string[])].sort();
+      const consequences = Object.keys(humanDefinition.consequencesByDisposition as Record<string, unknown>).sort();
+      if (stableJson(allowed) !== stableJson(consequences)) errors.push("human-task-consequences-are-definition-bound");
+    }
     const retry = step.retryPolicy as Record<string, unknown>;
     if ((retry.maximumBackoffMs as number) < (retry.initialBackoffMs as number) || (retry.retryableErrorCodes as string[]).some((code) => (retry.nonRetryableErrorCodes as string[]).includes(code))) errors.push("retry-policy-is-consistent");
     const idempotency = step.idempotency as Record<string, unknown>;
@@ -486,8 +492,10 @@ export const workflowSnapshotErrors = (definitionValue: unknown, value: unknown)
     if (decision !== null) {
       const completion = taskEvents.filter((event) => event.toState === "completed");
       const actor = completion.length === 1 ? asRecord(completion[0]?.actor) : null;
-      const allowedDispositions = (asRecord(defined?.humanTask)?.allowedDispositions ?? []) as string[];
-      if (!allowedDispositions.includes(decision.disposition as string) || completion.length !== 1 || completion[0]?.decisionId !== decision.decisionId || stableJson(actor) !== stableJson(decision.decidedBy) || stableJson(task.assignedTo) !== stableJson(decision.decidedBy) || (decision.decidedBy as Record<string, unknown>).actorType !== "human" || (decision.decidedBy as Record<string, unknown>).role !== task.requiredRole || decision.decidedAt !== completion[0]?.occurredAt || (decision.evidenceArtifactIds as string[]).some((id) => !artifacts.has(id)) || (decision.rationaleArtifactId !== null && !artifacts.has(decision.rationaleArtifactId as string))) errors.push("human-decision-is-audit-bound");
+      const humanDefinition = asRecord(defined?.humanTask);
+      const allowedDispositions = (humanDefinition?.allowedDispositions ?? []) as string[];
+      const consequences = (humanDefinition?.consequencesByDisposition ?? {}) as Record<string, unknown>;
+      if (!allowedDispositions.includes(decision.disposition as string) || consequences[decision.disposition as string] !== decision.consequenceCode || completion.length !== 1 || completion[0]?.decisionId !== decision.decisionId || stableJson(actor) !== stableJson(decision.decidedBy) || stableJson(task.assignedTo) !== stableJson(decision.decidedBy) || (decision.decidedBy as Record<string, unknown>).actorType !== "human" || (decision.decidedBy as Record<string, unknown>).role !== task.requiredRole || decision.decidedAt !== completion[0]?.occurredAt || (decision.evidenceArtifactIds as string[]).some((id) => !artifacts.has(id)) || (decision.rationaleArtifactId !== null && !artifacts.has(decision.rationaleArtifactId as string))) errors.push("human-decision-is-audit-bound");
     }
   }
   if (cancellation.interruptionKind === "security-lock" && !["cancelling", "cancelled", "failed"].includes(snapshot.state as string)) errors.push("security-lock-does-not-auto-resume");

@@ -128,7 +128,13 @@
           "schemaVersion": "1.0.0",
           "schemaHash": "sha256:7777777777777777777777777777777777777777777777777777777777777777"
         },
-        "allowedDispositions": ["approved", "rejected", "deferred", "not-applicable"]
+        "allowedDispositions": ["approved", "rejected", "deferred", "not-applicable"],
+        "consequencesByDisposition": {
+          "approved": "resume-workflow",
+          "rejected": "end-workflow",
+          "deferred": "remain-waiting",
+          "not-applicable": "skip-step"
+        }
       }
     }
   ]

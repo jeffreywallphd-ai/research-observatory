@@ -10,6 +10,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 
+_UUID_V7_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+
 
 def _to_camel(value: str) -> str:
     first, *rest = value.split("_")
@@ -702,6 +704,159 @@ class CacheClearResult(ContractModel):
         if self.cleanup_pending != (self.state is CacheClearState.CLEARED_CLEANUP_PENDING):
             raise ValueError("cache cleanup state must match cleanup_pending")
         return self
+
+
+class WorkflowProgress(ContractModel):
+    kind: Literal["quantified", "unknown", "not-applicable"]
+    unit: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
+    completed_units: int | None = Field(default=None, ge=0, le=9_007_199_254_740_991)
+    total_units: int | None = Field(default=None, ge=0, le=9_007_199_254_740_991)
+
+    @model_validator(mode="after")
+    def validate_shape(self) -> WorkflowProgress:
+        if self.kind == "quantified":
+            if self.completed_units is None or self.total_units is None or self.completed_units > self.total_units:
+                raise ValueError("quantified workflow progress requires bounded completed and total units")
+        elif self.completed_units is not None or self.total_units is not None:
+            raise ValueError("non-quantified workflow progress cannot report numeric units")
+        return self
+
+
+class WorkflowTaskCenterStep(ContractModel):
+    step_run_id: str = Field(pattern=_UUID_V7_PATTERN)
+    step_key: str
+    kind: Literal["activity", "human-task"]
+    state: str
+    depends_on: tuple[str, ...]
+
+
+class WorkflowTaskCenterJob(ContractModel):
+    job_id: str = Field(pattern=_UUID_V7_PATTERN)
+    state: Literal[
+        "runnable", "claimed", "running", "retry-scheduled", "cancelling", "cancelled", "failed", "succeeded"
+    ]
+    activity_type: str
+    resource_pool: Literal["interactive", "document", "ai", "maintenance"]
+    priority: int = Field(ge=-1000, le=1000)
+    attempt_count: int = Field(ge=0, le=32)
+    max_attempts: int = Field(ge=1, le=32)
+    current_attempt_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    worker_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    progress: WorkflowProgress
+    latest_checkpoint_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    latest_checkpoint_at: datetime | None = None
+    diagnostic_code: str | None = None
+    updated_at: datetime
+
+
+class WorkflowTaskCenterHumanTask(ContractModel):
+    human_task_id: str = Field(pattern=_UUID_V7_PATTERN)
+    step_run_id: str = Field(pattern=_UUID_V7_PATTERN)
+    state: Literal["requested", "claimed", "completed", "cancelled", "expired", "superseded"]
+    required_role: str
+    assigned_actor_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    requested_at: datetime
+    evidence_artifact_ids: tuple[str, ...]
+    allowed_dispositions: tuple[Literal["approved", "rejected", "deferred", "not-applicable"], ...]
+    consequences_by_disposition: dict[Literal["approved", "rejected", "deferred", "not-applicable"], str]
+    decision_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    disposition: Literal["approved", "rejected", "deferred", "not-applicable"] | None = None
+    decided_at: datetime | None = None
+
+    @model_validator(mode="after")
+    def validate_decision_shape(self) -> WorkflowTaskCenterHumanTask:
+        decided = self.decision_id is not None and self.disposition is not None and self.decided_at is not None
+        if (self.state == "completed") != decided:
+            raise ValueError("completed workflow human tasks must bind one complete decision")
+        if any(value is not None for value in (self.decision_id, self.disposition, self.decided_at)) != decided:
+            raise ValueError("workflow human decision fields must be all present or all absent")
+        if self.state == "claimed" and self.assigned_actor_id is None:
+            raise ValueError("claimed workflow human tasks require an assigned actor")
+        if len(set(self.evidence_artifact_ids)) != len(self.evidence_artifact_ids):
+            raise ValueError("workflow human task evidence identities must be unique")
+        if set(self.consequences_by_disposition) != set(self.allowed_dispositions) or any(
+            not value
+            or len(value) > 96
+            or not value[0].islower()
+            or any(not (character.islower() or character.isdigit() or character in ".-") for character in value)
+            for value in self.consequences_by_disposition.values()
+        ):
+            raise ValueError("workflow human task consequences must exactly match allowed dispositions")
+        return self
+
+
+class WorkflowTaskCenterEvent(ContractModel):
+    sequence: int = Field(ge=1)
+    entity_type: str
+    entity_id: str = Field(pattern=_UUID_V7_PATTERN)
+    to_state: str
+    occurred_at: datetime
+    reason_code: str
+
+
+class WorkflowTaskCenterRun(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    workflow_run_id: str = Field(pattern=_UUID_V7_PATTERN)
+    workflow_key: str
+    definition_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    definition_version: str
+    snapshot_id: str = Field(pattern=_UUID_V7_PATTERN)
+    snapshot_revision: int = Field(ge=1)
+    state: Literal["queued", "running", "waiting-human", "cancelling", "cancelled", "failed", "succeeded", "paused"]
+    active_compute: bool
+    progress: WorkflowProgress
+    revision: int = Field(ge=1)
+    interruption_kind: Literal["ordinary-restart", "user-cancel", "security-lock", "policy", "dependency"] | None = None
+    updated_at: datetime
+    steps: tuple[WorkflowTaskCenterStep, ...]
+    jobs: tuple[WorkflowTaskCenterJob, ...]
+    human_tasks: tuple[WorkflowTaskCenterHumanTask, ...]
+    retained_artifacts: tuple[Literal["committed", "retained-incomplete", "quarantined", "discarded"], ...]
+    events: tuple[WorkflowTaskCenterEvent, ...]
+
+    @model_validator(mode="after")
+    def validate_projection(self) -> WorkflowTaskCenterRun:
+        active = any(job.state in {"claimed", "running", "cancelling"} for job in self.jobs)
+        if self.active_compute != active:
+            raise ValueError("workflow active-compute state must match durable jobs")
+        if self.state == "waiting-human" and not any(
+            task.state in {"requested", "claimed"} for task in self.human_tasks
+        ):
+            raise ValueError("waiting workflows require an open human task")
+        for identities in (
+            tuple(item.step_run_id for item in self.steps),
+            tuple(item.job_id for item in self.jobs),
+            tuple(item.human_task_id for item in self.human_tasks),
+        ):
+            if len(set(identities)) != len(identities):
+                raise ValueError("workflow Task Center identities must be unique")
+        if len(set(self.retained_artifacts)) != len(self.retained_artifacts):
+            raise ValueError("workflow artifact dispositions must be unique")
+        if any(
+            current.sequence >= following.sequence
+            for current, following in zip(self.events, self.events[1:], strict=False)
+        ):
+            raise ValueError("workflow Task Center events must be strictly ordered")
+        return self
+
+
+class WorkflowTaskCenterPage(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    items: tuple[WorkflowTaskCenterRun, ...]
+
+
+class WorkflowCancelRequest(ContractModel):
+    root: str = Field(min_length=1, max_length=1024)
+    reason_code: str = Field(default="user-requested", pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
+
+
+class WorkflowRetryRequest(ContractModel):
+    root: str = Field(min_length=1, max_length=1024)
+
+
+class WorkflowHumanDecisionRequest(ContractModel):
+    root: str = Field(min_length=1, max_length=1024)
+    disposition: Literal["approved", "rejected", "deferred", "not-applicable"]
 
 
 class OperationState(StrEnum):

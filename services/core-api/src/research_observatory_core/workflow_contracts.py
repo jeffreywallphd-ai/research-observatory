@@ -15,7 +15,7 @@ type FrozenJsonValue = None | bool | int | float | str | tuple["FrozenJsonValue"
 type WorkflowSnapshot = Mapping[str, FrozenJsonValue]
 type ReconstructedWorkflowState = Mapping[str, Mapping[str, str]]
 
-WORKFLOW_SCHEMA_SHA256 = "464716c11c7ad09c54419d49426b3cbf0f287b47c54955b0169741db025a5afd"
+WORKFLOW_SCHEMA_SHA256 = "5f8be48681df7a7c2417f8e9b231bea1f5c9dd10028408b9c3aa864dd887ce7c"
 _WORKFLOW_SCHEMA = json.loads(r"""{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://research-observatory.local/contracts/workflow/workflow-contract.schema.json",
@@ -46,6 +46,7 @@ _WORKFLOW_SCHEMA = json.loads(r"""{
     "succeeded-output-artifacts-are-committed",
     "unsuccessful-attempt-has-no-accepted-output",
     "completed-human-task-binds-decision",
+    "human-task-consequences-are-definition-bound",
     "human-decision-is-audit-bound",
     "security-lock-does-not-auto-resume"
   ],
@@ -204,7 +205,7 @@ _WORKFLOW_SCHEMA = json.loads(r"""{
     "HumanTaskDefinition": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["requiredRole", "decisionSchema", "allowedDispositions"],
+      "required": ["requiredRole", "decisionSchema", "allowedDispositions", "consequencesByDisposition"],
       "properties": {
         "requiredRole": {"$ref": "#/$defs/StableCode"},
         "decisionSchema": {"$ref": "#/$defs/SchemaReference"},
@@ -214,6 +215,13 @@ _WORKFLOW_SCHEMA = json.loads(r"""{
           "maxItems": 8,
           "uniqueItems": true,
           "items": {"enum": ["approved", "rejected", "deferred", "not-applicable"]}
+        },
+        "consequencesByDisposition": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 4,
+          "propertyNames": {"enum": ["approved", "rejected", "deferred", "not-applicable"]},
+          "additionalProperties": {"$ref": "#/$defs/StableCode"}
         }
       }
     },
@@ -843,6 +851,11 @@ def workflow_definition_errors(value: object) -> tuple[str, ...]:
         is_activity = step["kind"] == "activity"
         if is_activity != isinstance(step["activityType"], str) or is_activity == (step["humanTask"] is not None):
             errors.append("step-shape-matches-kind")
+        human_definition = _record(step["humanTask"])
+        if human_definition is not None and set(human_definition["allowedDispositions"]) != set(
+            human_definition["consequencesByDisposition"]
+        ):
+            errors.append("human-task-consequences-are-definition-bound")
         retry = cast(Mapping[str, Any], step["retryPolicy"])
         if retry["maximumBackoffMs"] < retry["initialBackoffMs"] or set(retry["retryableErrorCodes"]) & set(
             retry["nonRetryableErrorCodes"]
@@ -1147,6 +1160,8 @@ def workflow_snapshot_errors(definition_value: object, value: object) -> tuple[s
             if (
                 human_definition is None
                 or decision["disposition"] not in human_definition["allowedDispositions"]
+                or decision["consequenceCode"]
+                != human_definition["consequencesByDisposition"].get(decision["disposition"])
                 or len(completion) != 1
                 or completion[0]["decisionId"] != decision["decisionId"]
                 or actor is None

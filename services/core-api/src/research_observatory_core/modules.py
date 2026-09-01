@@ -72,5 +72,14 @@ def default_module_registry() -> ModuleRegistry:
             ModuleDefinition(module_id="projects", capabilities=("projects.lifecycle",)),
             ModuleDefinition(module_id="provenance", capabilities=("provenance.lineage.read",)),
             ModuleDefinition(module_id="runtime", capabilities=("runtime.contract", "runtime.status")),
+            ModuleDefinition(
+                module_id="workflows",
+                capabilities=(
+                    "workflows.cancel",
+                    "workflows.human-decisions",
+                    "workflows.read",
+                    "workflows.retry",
+                ),
+            ),
         )
     )

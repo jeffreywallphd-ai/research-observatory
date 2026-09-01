@@ -722,6 +722,10 @@ def validate_handshake(value: Any, pid: int) -> int:
             "provenance.lineage.read",
             "runtime.contract",
             "runtime.status",
+            "workflows.cancel",
+            "workflows.human-decisions",
+            "workflows.read",
+            "workflows.retry",
         ]
         or value.get("databaseCompatibility") != {"minimum": "0.1.0", "maximumExclusive": "0.2.0"}
         or value.get("diagnosticCode") != "RO-CORE-STARTING"
@@ -810,6 +814,10 @@ def readiness_ok(port: int, capability_token: str) -> bool:
             "provenance.lineage.read",
             "runtime.contract",
             "runtime.status",
+            "workflows.cancel",
+            "workflows.human-decisions",
+            "workflows.read",
+            "workflows.retry",
         ],
         "ready": True,
     }

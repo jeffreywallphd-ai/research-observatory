@@ -19,11 +19,15 @@ import {
   decodeProjectProjection,
   decodeProvenanceLineagePage,
   decodeVersionResponse,
+  decodeWorkflowTaskCenterPage,
+  decodeWorkflowTaskCenterRun,
   evaluateCoreApiCompatibility,
   parseOperationEventStream,
   type CoreApiResponse,
   type ProvenanceLineagePage,
   type VersionResponse,
+  type WorkflowTaskCenterRun,
+  workflowEtag,
 } from "./generated";
 
 const traceId = "0123456789abcdef0123456789abcdef";
@@ -803,5 +807,89 @@ describe("generated Core API client", () => {
       "/projects/intent/acceptances", "/projects/intent/policy/evaluations",
     ]);
     expect(requests.at(-2)).toMatchObject({ idempotencyKey: "d".repeat(32) });
+  });
+
+  it("validates Task Center projections and binds commands to exact workflow authority", async () => {
+    const workflow: WorkflowTaskCenterRun = {
+      schemaVersion: "1.0",
+      workflowRunId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d005",
+      workflowKey: "source-review",
+      definitionRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d002",
+      definitionVersion: "1.0.0",
+      snapshotId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d004",
+      snapshotRevision: 1,
+      state: "waiting-human",
+      activeCompute: false,
+      progress: { kind: "quantified", unit: "steps", completedUnits: 1, totalUnits: 2 },
+      revision: 28,
+      interruptionKind: null,
+      updatedAt: "2026-08-30T12:01:28.000Z",
+      steps: [{ stepRunId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d011", stepKey: "review-source", kind: "human-task", state: "waiting-human", dependsOn: [] }],
+      jobs: [],
+      humanTasks: [{
+        humanTaskId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d030",
+        stepRunId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d011",
+        state: "claimed",
+        requiredRole: "researcher",
+        assignedActorId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d041",
+        requestedAt: "2026-08-30T12:01:25.000Z",
+        evidenceArtifactIds: [],
+        allowedDispositions: ["approved", "rejected"],
+        consequencesByDisposition: { approved: "resume-workflow", rejected: "end-workflow" },
+        decisionId: null,
+        disposition: null,
+        decidedAt: null,
+      }],
+      retainedArtifacts: [],
+      events: [{ sequence: 28, entityType: "human-task", entityId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d030", toState: "claimed", occurredAt: "2026-08-30T12:01:28.000Z", reasonCode: "human-task-claimed" }],
+    };
+    expect(decodeWorkflowTaskCenterRun(workflow)).toEqual(workflow);
+    expect(decodeWorkflowTaskCenterRun({ ...workflow, activeCompute: true })).toBeNull();
+    expect(decodeWorkflowTaskCenterPage({ schemaVersion: "1.0", items: [workflow] })).not.toBeNull();
+
+    const requests: unknown[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return request.method === "GET"
+        ? response(200, { schemaVersion: "1.0", items: [workflow] })
+        : response(200, workflow, "application/json", workflowEtag(workflow));
+    });
+    await client.taskCenter("C:/Research/study-one", 20);
+    await client.cancelWorkflowJob(
+      "C:/Research/study-one",
+      "018f47a2-4d6b-7f78-9f2e-7fb76c86d006",
+      workflow,
+    );
+    await client.retryWorkflowJob(
+      "C:/Research/study-one",
+      "018f47a2-4d6b-7f78-9f2e-7fb76c86d006",
+      workflow,
+      "b".repeat(32),
+    );
+    await client.decideWorkflowHumanTask(
+      "C:/Research/study-one",
+      workflow.humanTasks[0]!.humanTaskId,
+      workflow,
+      "approved",
+      "a".repeat(32),
+    );
+    expect(requests[1]).toMatchObject({
+      body: JSON.stringify({ root: "C:/Research/study-one", reasonCode: "user-requested" }),
+      ifMatch: workflowEtag(workflow),
+      idempotencyKey: null,
+      path: "/projects/workflows/jobs/018f47a2-4d6b-7f78-9f2e-7fb76c86d006/cancel",
+    });
+    expect(requests[2]).toMatchObject({
+      body: JSON.stringify({ root: "C:/Research/study-one" }),
+      ifMatch: workflowEtag(workflow),
+      idempotencyKey: "b".repeat(32),
+      path: "/projects/workflows/jobs/018f47a2-4d6b-7f78-9f2e-7fb76c86d006/retry",
+    });
+    expect(requests[3]).toMatchObject({
+      body: JSON.stringify({ root: "C:/Research/study-one", disposition: "approved" }),
+      ifMatch: workflowEtag(workflow),
+      idempotencyKey: "a".repeat(32),
+      path: `/projects/workflows/human-tasks/${workflow.humanTasks[0]!.humanTaskId}/decide`,
+    });
   });
 });

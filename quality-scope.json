@@ -102,6 +102,7 @@
     "services/core-api/src/research_observatory_core/projects.py",
     "services/core-api/src/research_observatory_core/repositories.py",
     "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/task_center.py",
     "services/core-api/src/research_observatory_core/transport.py",
     "services/core-api/src/research_observatory_core/windows_credentials.py",
     "services/core-api/sidecar_entry.py",
@@ -184,7 +185,9 @@
     "tests/service/test_project_lifecycle.py",
     "tests/service/test_provenance.py",
     "tests/service/test_research_intents.py",
+    "tests/service/test_task_center_api.py",
     "tests/workflows/__init__.py",
-    "tests/workflows/test_local_workflow_executor.py"
+    "tests/workflows/test_local_workflow_executor.py",
+    "tests/workflows/test_task_center.py"
   ]
 }

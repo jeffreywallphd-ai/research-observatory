@@ -40,7 +40,9 @@ reordering, duplicate event identities, illegal transitions, projection
 mismatch, decreasing progress, terminal transitions, and security-lock
 auto-resume. Human-task request and claim events bind the recorded requester,
 request time, and assignee; a completed disposition must be allowed by the
-exact bound definition. A canonical JSON round trip into a new reducer must
+exact bound definition, and its consequence must equal that definition's
+disposition-to-consequence mapping. Core selects the mapped consequence;
+untrusted clients cannot supply or substitute it. A canonical JSON round trip into a new reducer must
 reproduce every current projection exactly.
 
 ## Retry, cancellation, and artifacts

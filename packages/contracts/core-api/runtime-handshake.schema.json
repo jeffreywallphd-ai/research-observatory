@@ -37,7 +37,11 @@
         "projects.lifecycle",
         "provenance.lineage.read",
         "runtime.contract",
-        "runtime.status"
+        "runtime.status",
+        "workflows.cancel",
+        "workflows.human-decisions",
+        "workflows.read",
+        "workflows.retry"
       ]
     },
     "databaseCompatibility": {
