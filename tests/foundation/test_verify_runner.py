@@ -106,6 +106,26 @@ class VerificationRunnerTests(unittest.TestCase):
         )
         self.assertEqual(len(commands), len(set(commands)))
 
+    def test_direct_full_profile_cli_warns_without_blocking_execution(self) -> None:
+        error_output = io.StringIO()
+        argv = ["verify.py", "--repo", str(REPO), "--profile", "service"]
+        passing_report = {"profile": "service", "status": "PASS", "commands": []}
+
+        with (
+            patch.object(sys, "argv", argv),
+            patch("verify.execute_profile", return_value=(0, passing_report)) as execute,
+            redirect_stdout(io.StringIO()),
+            redirect_stderr(error_output),
+        ):
+            self.assertEqual(0, verify_main())
+
+        execute.assert_called_once()
+        advisory = error_output.getvalue()
+        self.assertIn("complete qualification inventory", advisory)
+        self.assertIn("foundation:benchmark-registry", advisory)
+        self.assertIn("foundation:unit", advisory)
+        self.assertIn("does not block execution", advisory)
+
     def test_unknown_profile_fails_safely(self) -> None:
         exit_code, report = execute_profile(REPO, self.contract, "unknown")
 

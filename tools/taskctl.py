@@ -9514,6 +9514,33 @@ def command_renew(args, data, capabilities, slices, tasks, gates) -> None:
     print(f"Renewed task lease for {task['id']}")
 
 
+def task_check_guidance(task: dict[str, Any]) -> list[str]:
+    """Render task-scoped selection guidance while preserving the declared inventory."""
+    profiles = [str(profile) for profile in task.get("verification_profiles", [])]
+    commands = [str(command) for command in task.get("verification_commands", [])]
+    base_sha = str(task.get("base_sha") or "")
+    wave = str(task.get("wave") or "")
+    lines = [
+        "Task-scope guidance (advisory; no new gate)",
+        "Select the narrowest deterministic checks that prove the task's credible changed-path and contract risks.",
+    ]
+    if profiles and re.fullmatch(r"[0-9a-f]{40}", base_sha) and re.fullmatch(r"W[0-9]+", wave):
+        profile_arguments = " ".join(f"--profile {profile}" for profile in profiles)
+        lines.extend(
+            [
+                "Affected-selection preview (use only when the recorded claim base accurately bounds this task delta):",
+                (
+                    f"python tools/verify.py {profile_arguments} --affected-base {base_sha} --affected-head HEAD "
+                    f"--deferred-gate {wave}-exit --selection-only"
+                ),
+                "Review selected/deferred command IDs; remove --selection-only only when that selection fits the risk.",
+            ]
+        )
+    lines.extend(["", "Qualification inventory (do not run automatically at ordinary task scope)"])
+    lines.extend(commands or ["(no verification commands declared)"])
+    return lines
+
+
 def prepare_task_evidence(
     task: dict[str, Any],
     repo: Path,
@@ -10403,6 +10430,11 @@ def build_parser() -> argparse.ArgumentParser:
     renew.add_argument("--lease-hours", type=int, default=8)
     checks = sub.add_parser("checks")
     checks.add_argument("task")
+    checks.add_argument(
+        "--raw",
+        action="store_true",
+        help="print only the declared verification-command inventory for machine-compatible use",
+    )
     ev = sub.add_parser("evidence")
     ev.add_argument("task")
     ev.add_argument("--agent", required=True)
@@ -10553,7 +10585,9 @@ def main() -> None:
     elif args.command == "renew":
         command_renew(args, data, capabilities, slices, tasks, gates)
     elif args.command == "checks":
-        for command in get(tasks, args.task, "task").get("verification_commands", []):
+        task = get(tasks, args.task, "task")
+        output = task.get("verification_commands", []) if args.raw else task_check_guidance(task)
+        for command in output:
             print(command)
     elif args.command == "evidence":
         command_evidence(args, data, capabilities, slices, tasks, gates)

@@ -358,6 +358,9 @@ an observed failure that cannot be localized. Evidence must name the changed-pat
 risk analysis, selected checks, any early broad-suite rationale, and the broader
 coverage deferred to slice, checkpoint, or Wave review. A reviewer should not demand an
 unchanged full-profile replay without identifying a concrete impact path.
+`taskctl checks <task>` labels this distinction, offers an affected-selection
+preview only when the claim has an exact base, and retains `--raw` for consumers
+that need the unchanged command inventory.
 
 ### 8.2 Review efficiency and depth
 

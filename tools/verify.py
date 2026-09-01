@@ -29,6 +29,13 @@ POLICY_KEYS = {
     "waveExitProfiles",
 }
 RULE_KEYS = {"id", "patterns", "commands", "rationaleCode", "safetySensitive"}
+BROAD_TASK_COMMAND_IDS = (
+    "foundation:benchmark-registry",
+    "foundation:unit",
+    "desktop:performance",
+    "data:project-lifecycle-performance",
+    "data:storage-maintenance-performance",
+)
 
 
 def load_contract(repo: Path) -> dict[str, Any]:
@@ -256,6 +263,27 @@ def active_profile_commands(
                 }
             )
     return command_ids, skipped_optional
+
+
+def full_profile_advisory(repo: Path, contract: dict[str, Any], profile_names: list[str]) -> str | None:
+    """Describe the breadth of a direct full-profile run without blocking it."""
+    command_ids: list[str] = []
+    for profile_name in profile_names:
+        profile = contract["profiles"].get(profile_name)
+        if not isinstance(profile, dict) or not profile.get("enabled", True):
+            continue
+        active, _ = active_profile_commands(repo, contract, profile_name)
+        command_ids.extend(command_id for command_id in active if command_id not in command_ids)
+    if not command_ids:
+        return None
+    broad = [command_id for command_id in BROAD_TASK_COMMAND_IDS if command_id in command_ids]
+    broad_summary = f" Notable broad commands: {', '.join(broad)}." if broad else ""
+    return (
+        "ADVISORY: Direct --profile mode runs the complete qualification inventory for the requested "
+        f"enabled profile(s) ({len(command_ids)} active commands).{broad_summary} Ordinary task work should "
+        "run focused risk-selected checks or preview Git-derived affected selection first. This advisory does "
+        "not block execution."
+    )
 
 
 def _canonical_command_order(contract: dict[str, Any], command_ids: set[str]) -> list[str]:
@@ -737,6 +765,10 @@ def main() -> int:
         elif args.selection_only:
             print(json.dumps(aggregate, indent=2))
         return overall_exit
+
+    advisory = full_profile_advisory(repo, contract, args.profile)
+    if advisory:
+        print(advisory, file=sys.stderr)
 
     reports: list[dict[str, Any]] = []
     overall_exit = 0
