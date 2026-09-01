@@ -1,0 +1,89 @@
+{
+  "task_id": "CAP-03.S05.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140",
+  "submission_record_commit": "39c1c5bde079df22d04f5d212325c76d23be7f52",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The base/candidate/submission ancestry, exact 24-path candidate inventory, two-path submission separation, backlog projection, frozen evidence hash/blob, v9-to-v10 migration registration, sidecar inventory, and patch hygiene authenticate. A focused independent replay passed the four submitted dependency-impact tests, the exact populated-v9 migration test, and the strict sidecar inventory test. Four acceptance-bound defects remain: the propagation run can complete against a changed graph, the preview digest permits substitution of change/replacement authority, conditional decision authority is not durable or auditable, and caller-expanded traversal bounds permit a recursion crash on a valid SCC. No full profile was run.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T02.R01.json",
+      "sha256": "bdd1e0cc2389352102acef96a466ee456b6634b488a60bdbff52ac463acbc033",
+      "git_blob": "b3c46f9bcf6fac2a36d2e984a3c262a00e0767ca",
+      "commit": "a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base, candidate and submission commits; verify direct submission ancestry, frozen evidence separation, exact manifest SHA/blob, declared-versus-actual changed paths, submission-only paths and git diff --check",
+      "result": "PASS: d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe is an ancestor of the candidate; submission parent is the exact candidate; all 24 declared candidate paths match; submission adds only the R01 evidence and backlog projection; patch hygiene passes."
+    },
+    {
+      "type": "independent-check",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.graph.test_dependency_impacts tests.data.test_sqlite_migrations.SqliteMigrationTests.test_migrates_exact_v9_fixture_without_inventing_impact_or_stale_state tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "result": "PASS: 6/6 focused graph, exact-v9 migration, and strict sidecar-inventory tests passed."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Start a batch-2 propagation from the submitted fixture preview, commit its first checkpoint, append a new exact dossier-dependent revision, confirm a fresh preview changes, then advance the original run from its canonical checkpoint.",
+      "result": "FAIL: {'previewChanged': True, 'state': 'completed', 'total': 4, 'lateIncluded': False}."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Keep the canonical changeId and previous endpoint but substitute idempotency key, a same-project cross-aggregate replacement revision/fingerprint, propagation policy, and actor; pass the original preview digest to SQLite begin.",
+      "result": "FAIL: {'samePreview': True, 'crossAggregate': True, 'acceptedPolicy': 'dependency.substituted.v1', 'runState': 'running'}."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Propagate one real conditional edge with an explicit ConditionalDependencyDecision, reopen its stale-state/audit projection, and inspect the four v10 dependency-impact authority tables for decision identity fields.",
+      "result": "FAIL: {'decisionColumnPersisted': False, 'stateExposesDecision': False, 'auditExposesDecision': False, 'confidence': 'conditional', 'runState': 'completed'}."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Plan a valid 1,100-node SCC with DependencyImpactLimits(max_nodes=2000, max_edges=2000, max_depth=2000, max_path_samples=1, max_legacy_samples=1).",
+      "result": "FAIL: RecursionError at dependency_impacts.py:188 after 994 recursive visit calls; the stable DependencyImpactLimitExceeded contract is not returned."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S05.T02-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "A checkpointed run completes against a changed dependency graph and misses a newly affected output",
+      "reproduction": "At candidate a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140, repositories.py:2466 computes the preview graph and begin checks its digest at :2565, but advance at :2801 reads only the frozen items/checkpoint and never compares the current graph to the stored graph_sha256. Using the submitted real-SQLite fixture, begin with batch size 2, advance once, append a new direct dependency from dossier to post-begin-dependent, verify the fresh preview digest changes, and advance again. The run reports completed with total=4 while the late revision is not stale. This contradicts the task-start graph-snapshot/CAS contract and the criterion that the expected affected outputs are marked without false-fresh state.",
+      "required_remediation": "Bind continuation/restart to the exact graph snapshot on every mutation boundary. Recompute and compare the current project graph/legacy watermark and the full bound change/policy authority before advancing; if it differs, fail closed and require a fresh preview/run (or implement an explicitly approved deterministic replan without losing append-only history). Add real SQLite tests for graph change after begin, after a committed checkpoint, and after reopen, proving the old run cannot complete or omit the new dependent."
+    },
+    {
+      "id": "CAP-03.S05.T02-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "The preview digest accepts substituted replacement, fingerprint, policy, and actor authority",
+      "reproduction": "dependency_impacts.py:397-428 hashes changeId and the effect projection but omits the exact prior/replacement endpoints, fingerprints, reason, idempotency, propagation policy, actor, trace, occurrence time, and conditional decision identities. SQLite begin at repositories.py:2565 compares only that digest. The v10 foreign keys at storage.py:1730-1733 establish same-project existence but not same-aggregate revision lineage or declared dependency-kind compatibility. In the submitted fixture, replace the canonical extraction-v2 endpoint with the unrelated same-project other-source revision, change replacement fingerprint, policy, actor, and idempotency while retaining changeId; preview remains byte-identical and begin accepts the original digest into a running run.",
+      "required_remediation": "Make preview authority cryptographically bind the full canonical normalized DependencyChange and every exact conditional decision, not only resulting effects. At the real SQLite boundary, resolve prior and replacement revisions and require the same aggregate, valid revision progression, compatible aggregate/dependency kind, exact project, and canonical actor/timestamp/trace authority before preview/begin. Add substitution tests for each endpoint, fingerprint, reason, idempotency, policy/version, actor, trace/time, and decision field, including a same-project cross-aggregate replacement, and prove each is denied without writes."
+    },
+    {
+      "id": "CAP-03.S05.T02-R01-F03",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Conditional propagation decisions are reduced to an opaque hash and cannot be reconstructed or audited",
+      "reproduction": "ConditionalDependencyDecision is a transient port value at ports/repositories.py:190. begin includes its fields only inside authority_sha256 at repositories.py:2572, while the v10 authority tables at storage.py:1662-1857 contain no decision ID/disposition/actor/time/governing-decision-policy fields. The public stale and audit projections at ports/repositories.py:272 and :291 likewise expose none. A real conditional propagation completes and reopens with confidence='conditional', but schema/public inspection reports decisionColumnPersisted=False, stateExposesDecision=False, and auditExposesDecision=False. An ignore disposition is filtered as informational, so even its existence disappears except for the unreconstructable digest. This violates the approved versioned/testable propagation-rule and audit behavior, and prevents explaining why scholarly output became stale or remained informational after restart.",
+      "required_remediation": "Persist immutable conditional decision authority atomically with the run, items, and audit: decision ID, edge/dependency ID, disposition, actor/time, governing decision policy/version, and a reference to canonical human-decision authority where applicable. Expose a bounded content-free projection sufficient to reconstruct and verify propagate/ignore outcomes. Reject decisions for non-conditional or unreachable edges and policy substitutions. Add real SQLite reopen/replay tests for propagate and ignore proving exact decision lineage and audit visibility survive restart without duplication."
+    },
+    {
+      "id": "CAP-03.S05.T02-R01-F04",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Configurable traversal bounds allow a recursion crash on a valid large SCC",
+      "reproduction": "DependencyImpactLimits is documented as hard resource bounds at ports/repositories.py:203 but _validate_limits at dependency_impacts.py:58 checks only positivity. Callers can therefore raise max_depth above both Python recursion capacity and the SQLite item/stale depth maximum of 128 at storage.py:1768 and :1811. The SCC implementation recursively calls visit at dependency_impacts.py:188. Planning an otherwise valid 1,100-node cycle under caller-supplied limits of 2,000 exits with RecursionError rather than a deterministic cycle group or DependencyImpactLimitExceeded. This falsifies the criterion that cycles are handled safely and can fail before durable failure-audit handling.",
+      "required_remediation": "Enforce immutable maximum bounds aligned with the durable schema and memory budget regardless of caller input, and replace recursive SCC traversal with an iterative/bounded implementation (or otherwise guarantee it cannot approach interpreter recursion). Convert all exhaustion to the stable DependencyImpactLimitExceeded boundary. Test exact maximum, one-over-maximum, a large valid SCC, and repository translation/audit behavior; ensure accepted previews can always be persisted under v10 depth/path constraints."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}
