@@ -12288,11 +12288,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T18:37:07+00:00'
-      updated_at: '2026-09-01T19:50:47+00:00'
+      updated_at: '2026-09-01T20:20:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12302,6 +12302,11 @@ capabilities:
         sha256: c6b992f773445dcb5e57417eb10a54c49778b7eebc128d44681e68baa032a3c0
         commit: 27714fac4ac803584bf0ebc86c9b599d62ba8cdc
         recorded_at: '2026-09-01T19:38:55+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S04.T03.R02.json
+        sha256: 026de494e79d955e2873b1deae5a556951b11d95d2ccf20f92c9f7b91f43908c
+        commit: 02de5ae312985a2c700cc8093061468d8342a736
+        recorded_at: '2026-09-01T20:20:00+00:00'
       review: &id033
         reviewer: agent:t02-adversarial-preflight
         result: changes-requested
@@ -12316,7 +12321,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T19:50:47+00:00'
         expires_at: '2026-09-02T03:50:47+00:00'
-      verification_state: null
+      verification_state: passed
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-03.S04.T03.json
@@ -12578,7 +12583,101 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission: null
+        current_submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-09-01T20:20:00+00:00'
+          candidate_commit: 02de5ae312985a2c700cc8093061468d8342a736
+          base_commit: 27714fac4ac803584bf0ebc86c9b599d62ba8cdc
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S04.T03.R02.json
+            sha256: 026de494e79d955e2873b1deae5a556951b11d95d2ccf20f92c9f7b91f43908c
+            commit: 02de5ae312985a2c700cc8093061468d8342a736
+            recorded_at: '2026-09-01T20:20:00+00:00'
+          acceptance_criteria_sha256: 4873bee7f426e751aaa2af1820f620b0f3719abfceae6bc07c23e8bf5a08489d
+          changed_paths:
+          - apps/desktop/src/app/TaskCenterWorkspace.test.tsx
+          - apps/desktop/src/app/TaskCenterWorkspace.tsx
+          - artifacts/evidence/CAP-03.S04.T03.R01.json
+          - artifacts/evidence/CAP-03.S04.T03.review-R01.json
+          - artifacts/evidence/CAP-03.S04.T03.task-start.md
+          - packages/contracts/core-api/generated.test.ts
+          - packages/contracts/core-api/generated.ts
+          - packages/contracts/core-api/openapi.json
+          - packages/contracts/workflow/generate.mjs
+          - packages/contracts/workflow/generated.ts
+          - packages/contracts/workflow/workflow-contract.schema.json
+          - packages/contracts/workflow/workflow-contract.template.py.txt
+          - packages/contracts/workflow/workflow-contract.template.ts.txt
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S04.T03.html
+          - planning/review-site/CAP-03/CAP-03.S04.html
+          - planning/review-site/manifest.json
+          - services/core-api/src/research_observatory_core/app.py
+          - services/core-api/src/research_observatory_core/models.py
+          - services/core-api/src/research_observatory_core/ports/workflow_executor.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/task_center.py
+          - services/core-api/src/research_observatory_core/workflow_contracts.py
+          - tests/desktop/fixtures/task_center_interactions.js
+          - tests/desktop/test_desktop_app_check.py
+          - tests/service/test_task_center_api.py
+          - tests/workflows/test_task_center.py
+          - tools/core_api_contract.py
+          selected_checks:
+          - .venv\Scripts\python.exe -B -m unittest tests.workflows.test_task_center tests.service.test_task_center_api tests.contracts.test_workflow_contracts
+            tests.desktop.test_desktop_app_check.TaskCenterInteractionTests
+          - Focused TaskCenterWorkspace, generated Core API, and workflow-contract Vitest runs
+          - contracts and desktop TypeScript typecheck; desktop lint
+          - desktop production build; focused TaskCenterInteractionTests browser run
+          - core_api_contract.py --check; workflow generate.mjs --check; quality_check.py; architecture_check.py; repository_structure_check.py
+          - ui_change_gate.py --base 1affb3e... --head 02de5ae...; verify.py --selection-only --affected-base 27714fa... --affected-head
+            02de5ae... --deferred-gate W1-exit; plan_review_check.py; git diff --check
+          deferred_checks:
+          - CAP-03.S04 independent slice review owns the accumulated executor, workflow-contract, SQLite, Core API, native
+            supervisor, Task Center renderer, restart, cancellation and adversarial integration union after T03 closes.
+          - Native route syntax did not change in R02; the exact R01 candidate native allow-list replay remains valid and
+            accumulated native integration returns at slice review.
+          - The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance,
+            packaging and Windows x64 matrix remains mandatory once at W1 exit.
+          selection_rationale: 'R01 identified six acceptance-bound defects spanning transactional workflow authority, executable
+            consequence semantics, cross-project asynchronous projection ownership, generated public-response invariants,
+            restart-visible retry lineage, and governed command interaction. R02 therefore replays every finding at the narrowest
+            real boundary that can prove it: SQLite and Core API for F01/F02/F05, hostile generated-client fixtures for F04,
+            and a built-product Chromium interaction for F03/F06. Generated parity, strict typing, Python quality, architecture,
+            approved-reference lineage, planning projection, and patch hygiene cover the incremental cross-layer contract
+            risk. Native route syntax did not change after the independently replayed R01 native allow-list check, so Rust
+            was not replayed. Complete desktop/service/e2e-local and deployment-profile matrices remain deferred to CAP-03.S04
+            integration and W1 exit under the risk-based workflow.'
+          selection_sha256: c8e7495066f2d054d929ee8ea885270334e68c50f9993acb154b50d4f8241342
+          prior_attempt_id: R01
+          open_finding_ids:
+          - CAP-03.S04.T03-R01-F01
+          - CAP-03.S04.T03-R01-F02
+          - CAP-03.S04.T03-R01-F03
+          - CAP-03.S04.T03-R01-F04
+          - CAP-03.S04.T03-R01-F05
+          - CAP-03.S04.T03-R01-F06
+          root_cause_analysis: R01 threaded only part of the composite workflow authority tuple, treated definition consequence
+            codes and retry ancestry as informational metadata rather than durable executable/read-model semantics, validated
+            generated responses field-by-field without cross-field invariants, and used static renderer assertions for behavior
+            that depended on asynchronous project ownership and browser focus. R02 binds every authority field transactionally,
+            executes each consequence against the exact definition graph, persists and projects predecessor identity, mirrors
+            server invariants at the generated boundary, invalidates stale project/request generations, and replaces the unsupported
+            interaction claim with a focused built-product browser proof.
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:ui-change
+          - foundation:quality
+          - desktop:application
+          - desktop:unit
+          - service:unit
+          - contracts:unit
+          packet_sha256: 9806890a2404fae70524a29eed4840112d3113722efeaf273f198fffaab54613
     platform_targets:
     - windows-x64
     completion:
