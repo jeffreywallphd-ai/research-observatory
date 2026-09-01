@@ -77,6 +77,7 @@
     "services/core-api/src/research_observatory_core/research_intent_contracts.py",
     "services/core-api/src/research_observatory_core/research_intents.py",
     "services/core-api/src/research_observatory_core/workflow_contracts.py",
+    "services/core-api/src/research_observatory_core/workflow_executor.py",
     "services/core-api/src/research_observatory_core/migrations/__init__.py",
     "services/core-api/src/research_observatory_core/migrations/runner.py",
     "services/core-api/src/research_observatory_core/migrations/versions/__init__.py",
@@ -85,6 +86,7 @@
     "services/core-api/src/research_observatory_core/migrations/versions/v0004_object_envelope_upgrades.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py",
     "services/core-api/src/research_observatory_core/models.py",
     "services/core-api/src/research_observatory_core/modules.py",
     "services/core-api/src/research_observatory_core/object_store.py",
@@ -95,6 +97,7 @@
     "services/core-api/src/research_observatory_core/ports/object_store.py",
     "services/core-api/src/research_observatory_core/ports/object_store_keys.py",
     "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/ports/workflow_executor.py",
     "services/core-api/src/research_observatory_core/privacy.py",
     "services/core-api/src/research_observatory_core/projects.py",
     "services/core-api/src/research_observatory_core/repositories.py",
@@ -180,6 +183,8 @@
     "tests/service/fixtures/native_integration_sidecar.py",
     "tests/service/test_project_lifecycle.py",
     "tests/service/test_provenance.py",
-    "tests/service/test_research_intents.py"
+    "tests/service/test_research_intents.py",
+    "tests/workflows/__init__.py",
+    "tests/workflows/test_local_workflow_executor.py"
   ]
 }
