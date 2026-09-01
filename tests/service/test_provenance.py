@@ -53,6 +53,7 @@ def draft(
         display_label_normalized=None,
         knowledge_status="verified" if index > 1 else "extracted",
         rights_status=rights_status,
+        dependency_coverage="not-applicable",
         provenance_inputs=provenance_inputs,
     )
 

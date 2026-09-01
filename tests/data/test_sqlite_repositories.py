@@ -57,6 +57,7 @@ def draft(index: int, *, aggregate_id: str = "01890f6e-6a40-7cc5-98b7-0000000001
         display_label_normalized=None,
         knowledge_status="observed",
         rights_status="unknown",
+        dependency_coverage="not-applicable",
     )
 
 

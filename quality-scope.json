@@ -87,6 +87,7 @@
     "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py",
     "services/core-api/src/research_observatory_core/models.py",
     "services/core-api/src/research_observatory_core/modules.py",
     "services/core-api/src/research_observatory_core/object_store.py",

@@ -34,8 +34,8 @@
       "type": "string",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
     },
-    "sourceSchemaVersion": {"enum": [1, 2, 3, 4, 5, 6, 7]},
-    "targetSchemaVersion": {"const": 8},
+    "sourceSchemaVersion": {"enum": [1, 2, 3, 4, 5, 6, 7, 8]},
+    "targetSchemaVersion": {"const": 9},
     "migrationIds": {
       "oneOf": [
         {
@@ -46,7 +46,8 @@
             "0005_object_creation_source",
             "0006_actor_identity",
             "0007_provenance_ledger",
-            "0008_workflow_executor"
+            "0008_workflow_executor",
+            "0009_material_dependencies"
           ]
         },
         {
@@ -56,14 +57,16 @@
             "0005_object_creation_source",
             "0006_actor_identity",
             "0007_provenance_ledger",
-            "0008_workflow_executor"
+            "0008_workflow_executor",
+            "0009_material_dependencies"
           ]
         },
-        {"const": ["0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor"]},
-        {"const": ["0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor"]},
-        {"const": ["0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor"]},
-        {"const": ["0007_provenance_ledger", "0008_workflow_executor"]},
-        {"const": ["0008_workflow_executor"]}
+        {"const": ["0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]},
+        {"const": ["0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]},
+        {"const": ["0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]},
+        {"const": ["0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]},
+        {"const": ["0008_workflow_executor", "0009_material_dependencies"]},
+        {"const": ["0009_material_dependencies"]}
       ]
     },
     "sourceSchemaSha256": {
@@ -74,11 +77,12 @@
         "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6",
         "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd",
         "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4",
-        "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
+        "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475",
+        "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
       ]
     },
     "targetSchemaSha256": {
-      "const": "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
+      "const": "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
     },
     "checkpoint": {
       "type": "object",
@@ -97,7 +101,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v[1234567]-to-v8-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v[12345678]-to-v9-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "sizeBytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
@@ -118,7 +122,8 @@
               "0005_object_creation_source",
               "0006_actor_identity",
               "0007_provenance_ledger",
-              "0008_workflow_executor"
+              "0008_workflow_executor",
+              "0009_material_dependencies"
             ]
           },
           "sourceSchemaSha256": {
@@ -138,7 +143,8 @@
               "0005_object_creation_source",
               "0006_actor_identity",
               "0007_provenance_ledger",
-              "0008_workflow_executor"
+              "0008_workflow_executor",
+              "0009_material_dependencies"
             ]
           },
           "sourceSchemaSha256": {
@@ -152,7 +158,7 @@
       "then": {
         "properties": {
           "migrationIds": {
-            "const": ["0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor"]
+            "const": ["0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]
           },
           "sourceSchemaSha256": {
             "const": "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"
@@ -164,7 +170,7 @@
       "if": {"properties": {"sourceSchemaVersion": {"const": 4}}},
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor"]},
+          "migrationIds": {"const": ["0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]},
           "sourceSchemaSha256": {
             "const": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
           }
@@ -175,7 +181,7 @@
       "if": {"properties": {"sourceSchemaVersion": {"const": 5}}},
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor"]},
+          "migrationIds": {"const": ["0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]},
           "sourceSchemaSha256": {
             "const": "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"
           }
@@ -186,7 +192,7 @@
       "if": {"properties": {"sourceSchemaVersion": {"const": 6}}},
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0007_provenance_ledger", "0008_workflow_executor"]},
+          "migrationIds": {"const": ["0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"]},
           "sourceSchemaSha256": {
             "const": "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
           }
@@ -197,9 +203,20 @@
       "if": {"properties": {"sourceSchemaVersion": {"const": 7}}},
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0008_workflow_executor"]},
+          "migrationIds": {"const": ["0008_workflow_executor", "0009_material_dependencies"]},
           "sourceSchemaSha256": {
             "const": "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"sourceSchemaVersion": {"const": 8}}},
+      "then": {
+        "properties": {
+          "migrationIds": {"const": ["0009_material_dependencies"]},
+          "sourceSchemaSha256": {
+            "const": "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
           }
         }
       }

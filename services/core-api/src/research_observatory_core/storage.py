@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 8
+DATABASE_SCHEMA_VERSION = 9
+WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION = 8
 PROVENANCE_LEDGER_DATABASE_SCHEMA_VERSION = 7
 ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION = 6
 OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION = 5
@@ -82,6 +83,9 @@ EXPECTED_TABLES = (
     "workflow_history_events",
     "workflow_checkpoints",
     "workflow_committed_outputs",
+    "material_dependency_outputs",
+    "material_dependencies",
+    "material_dependency_diagnostics",
     "evidence",
     "ontologies",
     "decisions",
@@ -108,6 +112,9 @@ IMMUTABLE_ROW_TABLES = (
     "workflow_history_events",
     "workflow_checkpoints",
     "workflow_committed_outputs",
+    "material_dependency_outputs",
+    "material_dependencies",
+    "material_dependency_diagnostics",
     "evidence",
     "ontologies",
     "decisions",
@@ -159,6 +166,9 @@ EXPECTED_INDEXES = (
     "workflow_history_run_sequence",
     "workflow_checkpoint_attempt_sequence",
     "workflow_artifact_job_disposition",
+    "material_dependency_by_revision",
+    "material_dependency_by_configuration",
+    "material_dependency_diagnostic_output",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -173,7 +183,8 @@ OBJECT_CREATION_SOURCE_PROFILE_SHA256 = "949f2d60ebe020ad8e8e049ac9d58307213d7aa
 ACTOR_IDENTITY_SCHEMA_SHA256 = "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
 ACTOR_IDENTITY_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834ecadf204f76aa771f"
 PROVENANCE_LEDGER_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
-EXPECTED_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
+WORKFLOW_EXECUTOR_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
+EXPECTED_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -229,7 +240,8 @@ _PROFILE_SHA256 = hashlib.sha256(
     json.dumps(_PROFILE_DOCUMENT, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
 ).hexdigest()
 PROVENANCE_LEDGER_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0"
-EXPECTED_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f3583b8f1ce42db8ecba7"
+WORKFLOW_EXECUTOR_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f3583b8f1ce42db8ecba7"
+EXPECTED_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -940,6 +952,10 @@ SCHEMA_METADATA_V8_DDL = SCHEMA_METADATA_V7_DDL.replace(
     "schema_version INTEGER NOT NULL CHECK (schema_version = 7)",
     "schema_version INTEGER NOT NULL CHECK (schema_version = 8)",
 )
+SCHEMA_METADATA_V9_DDL = SCHEMA_METADATA_V8_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 8)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 9)",
+)
 
 PROVENANCE_LEDGER_DDL = (
     f"""
@@ -1502,13 +1518,133 @@ WORKFLOW_EXECUTOR_DDL = (
     "(job_id, disposition, role, artifact_id)",
 )
 
+MATERIAL_DEPENDENCY_DDL = (
+    f"""
+        CREATE TABLE material_dependency_outputs (
+            output_revision_id TEXT PRIMARY KEY CHECK ({_uuid_check("output_revision_id", "7")}),
+            project_id TEXT NOT NULL,
+            coverage TEXT NOT NULL CHECK (coverage IN ('not-applicable', 'complete', 'legacy-unreported')),
+            registration_event_id TEXT CHECK (
+                registration_event_id IS NULL OR ({_uuid_check("registration_event_id", "7")})
+            ),
+            registered_at TEXT CHECK (registered_at IS NULL OR ({_timestamp_check("registered_at")})),
+            FOREIGN KEY (output_revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (registration_event_id) REFERENCES provenance_events (event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (output_revision_id, project_id),
+            CHECK (
+                (coverage = 'legacy-unreported' AND registration_event_id IS NULL AND registered_at IS NULL)
+                OR (coverage IN ('not-applicable', 'complete')
+                    AND registration_event_id IS NOT NULL AND registered_at IS NOT NULL)
+            )
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE material_dependencies (
+            dependency_id TEXT PRIMARY KEY CHECK ({_uuid_check("dependency_id", "7")}),
+            project_id TEXT NOT NULL,
+            output_revision_id TEXT NOT NULL CHECK ({_uuid_check("output_revision_id", "7")}),
+            dependency_kind TEXT NOT NULL CHECK (dependency_kind IN (
+                'source-revision', 'evidence-record', 'ontology-version', 'prompt-version',
+                'model-version', 'parameter-set', 'schema-version', 'template-version',
+                'code-version', 'human-decision'
+            )),
+            relation_type TEXT NOT NULL CHECK (relation_type IN ('direct', 'conditional', 'non-material')),
+            dependency_revision_id TEXT CHECK (
+                dependency_revision_id IS NULL OR ({_uuid_check("dependency_revision_id", "7")})
+            ),
+            configuration_id TEXT CHECK (
+                configuration_id IS NULL OR ({_identifier_check("configuration_id", 128)})
+            ),
+            configuration_version TEXT CHECK (
+                configuration_version IS NULL OR (
+                    length(configuration_version) BETWEEN 5 AND 29
+                    AND configuration_version GLOB '[0-9]*.[0-9]*.[0-9]*'
+                    AND configuration_version NOT GLOB '*[^0-9.]*'
+                )
+            ),
+            fingerprint TEXT NOT NULL CHECK (
+                length(fingerprint) = 71 AND substr(fingerprint, 1, 7) = 'sha256:'
+                AND substr(fingerprint, 8) = lower(substr(fingerprint, 8))
+                AND substr(fingerprint, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            governing_policy_id TEXT NOT NULL CHECK ({_identifier_check("governing_policy_id", 128)}),
+            governing_policy_version TEXT NOT NULL CHECK (
+                length(governing_policy_version) BETWEEN 5 AND 29
+                AND governing_policy_version GLOB '[0-9]*.[0-9]*.[0-9]*'
+                AND governing_policy_version NOT GLOB '*[^0-9.]*'
+            ),
+            semantic_sha256 TEXT NOT NULL CHECK ({_sha256_check("semantic_sha256")}),
+            registration_event_id TEXT NOT NULL CHECK ({_uuid_check("registration_event_id", "7")}),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (output_revision_id, project_id)
+                REFERENCES material_dependency_outputs (output_revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (dependency_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (registration_event_id) REFERENCES provenance_events (event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, output_revision_id, semantic_sha256),
+            CHECK (output_revision_id IS NOT dependency_revision_id),
+            CHECK (
+                (dependency_revision_id IS NOT NULL
+                    AND configuration_id IS NULL AND configuration_version IS NULL
+                    AND dependency_kind IN (
+                        'source-revision', 'evidence-record', 'ontology-version', 'human-decision'
+                    ))
+                OR (dependency_revision_id IS NULL
+                    AND configuration_id IS NOT NULL AND configuration_version IS NOT NULL
+                    AND dependency_kind IN (
+                        'prompt-version', 'model-version', 'parameter-set', 'schema-version',
+                        'template-version', 'code-version'
+                    ))
+            )
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE material_dependency_diagnostics (
+            diagnostic_id TEXT PRIMARY KEY CHECK ({_uuid_check("diagnostic_id", "7")}),
+            project_id TEXT NOT NULL,
+            output_revision_id TEXT NOT NULL CHECK ({_uuid_check("output_revision_id", "7")}),
+            workflow_run_id TEXT NOT NULL CHECK ({_uuid_check("workflow_run_id", "7")}),
+            job_id TEXT NOT NULL CHECK ({_uuid_check("job_id", "7")}),
+            attempt_id TEXT NOT NULL CHECK ({_uuid_check("attempt_id", "7")}),
+            diagnostic_code TEXT NOT NULL CHECK (diagnostic_code = 'dependency-registration-missing'),
+            detected_at TEXT NOT NULL CHECK ({_timestamp_check("detected_at")}),
+            FOREIGN KEY (output_revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, job_id, attempt_id, output_revision_id, diagnostic_code)
+        ) STRICT
+    """,
+    *(
+        statement
+        for table, message in (
+            ("material_dependency_outputs", "material dependency coverage is immutable"),
+            ("material_dependencies", "material dependencies are append-only"),
+            ("material_dependency_diagnostics", "material dependency diagnostics are append-only"),
+        )
+        for statement in _immutable_triggers(table, message)
+    ),
+    "CREATE INDEX material_dependency_by_revision ON material_dependencies "
+    "(project_id, dependency_revision_id, relation_type, output_revision_id)",
+    "CREATE INDEX material_dependency_by_configuration ON material_dependencies "
+    "(project_id, configuration_id, configuration_version, relation_type, output_revision_id)",
+    "CREATE INDEX material_dependency_diagnostic_output ON material_dependency_diagnostics "
+    "(project_id, output_revision_id, detected_at, diagnostic_id)",
+)
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V8_DDL,
+    SCHEMA_METADATA_V9_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -1519,6 +1655,7 @@ _DDL_STATEMENTS = (
     OBJECT_CREATION_SOURCE_COLUMN,
     *PROVENANCE_LEDGER_DDL,
     *WORKFLOW_EXECUTOR_DDL,
+    *MATERIAL_DEPENDENCY_DDL,
 )
 
 

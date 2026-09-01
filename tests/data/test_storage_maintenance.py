@@ -61,6 +61,7 @@ def document_draft(object_sha256: str) -> AggregateRevisionDraft:
         display_label_normalized=None,
         knowledge_status="observed",
         rights_status="allowed",
+        dependency_coverage="not-applicable",
         object_sha256=object_sha256,
     )
 
