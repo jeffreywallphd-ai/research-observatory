@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -192,6 +192,18 @@ waves:
       commit: e125f983fcc2b5827516a97a811e53b822d2bd9f
     notes: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001
       release and explicit ordinary Wave resume.
+  - id: W1.CP03
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-09-01T13:16:10+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W1.A05
+      path: artifacts/evidence/W1.A05.adoption.json
+      sha256: 2bd56c6406474de68094bc23b064a4cbad1a49f51419b4d6230621283645df63
+      commit: 29cb181d524dd99e0ee92de3c5121c566b43600b
+    notes: Adopt independently approved W1.A05 security and experience outcomes as a W1 security checkpoint; retain conditional
+      configured-Hello and full W1-exit qualification obligations; leave W1 PAUSED pending explicit ordinary resume.
   completion:
     status: PAUSED
     reviewer: null
@@ -30896,7 +30908,7 @@ wave_amendments:
     sha256: a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267
     introduction_commit: 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -30924,6 +30936,13 @@ wave_amendments:
       rationale: All four amendment tasks and both integration slices are independently approved; the affected security, experience,
         packaging, planning, and Windows x64 checks pass. Submit exact exit evidence for independent review without claiming
         W1 resume or release approval.
+    - id: E05
+      status: ADOPTED
+      actor: codex
+      at: '2026-09-01T13:16:10+00:00'
+      rationale: Adopt independently approved W1.A05 security and experience outcomes as a W1 security checkpoint; retain
+        conditional configured-Hello and full W1-exit qualification obligations; leave W1 PAUSED pending explicit ordinary
+        resume.
   bootstrap:
     id: W1.A05.B00
     status: APPROVED
