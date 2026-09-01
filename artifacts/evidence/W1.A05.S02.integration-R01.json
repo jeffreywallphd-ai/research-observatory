@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-slice-integration-evidence",
+  "sliceId": "W1.A05.S02",
+  "attemptId": "R01",
+  "stateCommit": "74cf6e52d1d468ed9712016dd3eadc329d0231c9",
+  "productCandidateCommit": "41d1feaff28eea1357e3e7e7c9db494e9ec6bb06",
+  "branch": "codex/w1-windows-local-runtime",
+  "approvedAuthority": {
+    "packet": "planning/enabler-change-requests/ECR-0004.packet.json",
+    "packetCommit": "25584d82ce5d6bd55e476cd746100eef0790a33d",
+    "approval": "planning/wave-amendment-approvals/W1.A05.json",
+    "sliceTitle": "Configurable local sign-in and application security settings",
+    "experienceReference": "RO-UI-ACADEMIC-MINIMAL-1.4"
+  },
+  "outcome": "The desktop now has one native, versioned application-wide sign-in policy with exactly no login, Windows password, and Windows Hello. Absent state becomes explicit no login; valid predecessor password state preserves profile and timeout semantics; invalid protected state fails locked. Protected transitions are native-authorized, verified, confirmed, compare-and-swap published, and single-instance across one canonical application root. The separate Application Settings destination presents the authoritative policy and provider availability, preserves the open project and guided-workflow position, keeps locked recovery secret-free and modal, and reports cancellations, failures, response-loss reconciliation, and concurrent policy conflicts truthfully without silent downgrade.",
+  "taskEvidence": [
+    {
+      "taskId": "W1.A05.T03",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "c94ab3ef76529f7eee0d2f002423c21aec3e1161",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/W1.A05.T03.remediation-01.json",
+          "sha256": "cb2aba15cb718fe1fd83fceff3ba68bfe2dfaa587f07af7140b9b71e54acd9a1"
+        },
+        {
+          "path": "artifacts/evidence/W1.A05.T03.review-R02.json",
+          "sha256": "4d91b43e1021d25a08f76ce3c06f7e94b060ad6b782cfc2fe4d778ec9af7f3ef"
+        }
+      ]
+    },
+    {
+      "taskId": "W1.A05.T04",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8",
+      "productCommit": "41d1feaff28eea1357e3e7e7c9db494e9ec6bb06",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/W1.A05.T04.remediation-02.json",
+          "sha256": "28e5f740c7bee8da3f0be29aebbdbbf649f9260820d0844696ae2e7c5edc7b1a"
+        },
+        {
+          "path": "artifacts/evidence/W1.A05.T04.review-R03.json",
+          "sha256": "690090792b43760c23e48121528fd94ad371eabfaab61295f0da863b4b8d701b"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "exitCode": 0,
+      "result": "All 57 executed native library tests passed and the renderer witness was intentionally ignored for its dedicated harness. The union covers exact absent/predecessor migration, three-mode parsing, invalid-state lockout, provider ordering, same-SID recovery, transition confirmation, byte-stable adverse outcomes, response-loss receipts, compare-and-swap publication, single-instance process authority, abrupt termination, abandoned mutex recovery, restart/manual/idle behavior, Hello outcome mapping, lock generations, Core-start recovery, and redacted audit."
+    },
+    {
+      "command": "node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx apps/desktop/src/app/applicationSettings.test.ts apps/desktop/src/app/ApplicationSettingsWorkspace.test.tsx; node apps/desktop/scripts/application-lock-renderer-integration.mjs",
+      "exitCode": 0,
+      "result": "All 37 focused renderer/runtime/settings/workspace tests passed. The real Rust witness and all three production TypeScript bridge tests also passed, proving strict closed decoding, native-success-only unlock authority, exact policy receipts, complete source/target reconciliation, truthful different-policy conflict handling, draft separation, focus restoration, and preserved workflow state."
+    },
+    {
+      "command": "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 15 executed desktop test files and 91 tests passed with three native-harness cases deliberately skipped. Strict TypeScript and lint passed, and the functional product, runtime, and approved-reference fixtures built successfully."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract tests.security.test_windows_credentials",
+      "exitCode": 0,
+      "result": "Eighteen security/source/portable-contract/Windows credential tests passed; one redirected-vault symlink case was skipped because directory symlinks are unavailable to the current Windows token. The passing union covers native lock-generation authority, same-SID non-persisting password proof, HWND-bound Hello with no PIN or biometric capture, exact sign-in policy modes/default, secret-safe user-scoped storage, compare-and-swap behavior, redaction, corruption, and recoverable ciphertext."
+    },
+    {
+      "command": "Ruff check/format for affected Python; cargo fmt and warnings-denied clippy; architecture_check.py; build_manifest.py",
+      "exitCode": 0,
+      "result": "All affected Python files passed Ruff lint and formatting; Rust format and warnings-denied Clippy passed; architecture validation passed for 13 areas, 12 modules, five stable interfaces, and three profiles; and the exact build-input inventory passed. The build version truthfully reports a dirty worktree because the protected unrelated untracked W1.A04.B00 witness remains outside this slice and untouched."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only; .venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06",
+      "exitCode": 0,
+      "result": "The built product passed all lock reconciliation, settings draft, preserved-position, exact focus-origin, locked modal, suppressed shortcut, Hello recovery, conflict danger/live-region, responsive, and critical-violation assertions. The exact UI gate confirms one approved-reference implementation bound to RO-UI-ACADEMIC-MINIMAL-1.4 and its exact eight governed UI paths."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check workflows; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "All 14 workflow profiles, 139 browser cases, 390 keyboard cases, and 66 accessibility/responsive cases passed. R03 changed no approved reference, CSS, tokens, route, visual baseline, package, or layout primitive, so the independently authenticated 66-capture R02 visual replay remains reusable."
+    },
+    {
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline",
+      "exitCode": 0,
+      "result": "The real Windows x64 OS boundary returned exactly {schemaVersion:'1.0', provider:'windows-hello', availability:'not-present'}. No configured interactive success is inferred or fabricated."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde --affected-head 74cf6e52d1d468ed9712016dd3eadc329d0231c9 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.S02-affected-selection.json; git diff --check",
+      "exitCode": 0,
+      "result": "The safety-sensitive selector accepted the complete S02 descendant and its desktop, service, security, contracts, packaging, and foundation coverage inventory. Desktop performance remains explicitly gate-bound to W1 exit, and patch hygiene passed."
+    }
+  ],
+  "adversarialBoundary": {
+    "configurationAuthority": "Only the native manager can verify providers, issue an opaque prepared transition, validate confirmation and expiry, compare source authority, and atomically publish a successor policy. Renderer/session possession and confirmation text provide no proof.",
+    "processAuthority": "One release-authoritative desktop process may own a canonical application-data root. Duplicate startup is denied before manager/Core construction; abrupt termination releases the existence lease; restart reads the durable policy and a protected mode starts locked.",
+    "downgradeBoundary": "Cancellation, denial, unavailable destination, busy, failure, expiry, stale writer, write failure, response loss, corruption, or unknown version cannot silently publish none or another requested policy. A different observed policy is displayed as authoritative conflict, not success or unchanged.",
+    "secretBoundary": "Hello receives only the desktop HWND and fixed prompt through the OS-owned verifier; password recovery retains non-persisting current-process EqualSid proof. Locked and recovery views disclose no project or research content and the app receives no PIN or biometric.",
+    "experienceBoundary": "Application Settings is separate from Project Settings. The live guided-workflow instance remains mounted but inaccessible during the detour, return focus follows the initiating control, locked confirmation makes the background inert, and visible and assistive status use the same truthful result."
+  },
+  "profileSelection": {
+    "selected": "S02 closes a native security/migration/persistence boundary and its governed desktop experience. The selected union therefore covers native state and process lifecycle, strict renderer/native contracts, real Windows provider availability, same-user recovery, deterministic failure/restart/concurrency cases, production build, built-browser behavior, workflow/keyboard/accessibility conformance, quality, architecture, and exact affected selection.",
+    "deferredToAmendmentAndWaveExit": "The amendment exit retains the affected packaging/build/smoke/security/accessibility checkpoint over both S01 and S02. Desktop performance and the complete cross-capability W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows x64 matrix remain mandatory at W1 exit."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Configured interactive Windows Hello success is unavailable on this host because the real OS probe reports not-present; deterministic native success and every adverse mapping pass, while real configured success remains a conditional release-platform obligation when suitable hardware reports available.",
+      "Desktop performance, packaging, and the complete cross-capability W1 qualification matrix remain due at their existing exit gates.",
+      "The unrelated untracked historical W1.A04.B00 witness remains protected and untouched."
+    ]
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "W1.A05 amendment exit",
+      "contract": "Complete the affected build/smoke/security/accessibility checkpoint across the already approved S01 provider boundary and this S02 configuration/experience boundary, then obtain independent amendment-exit review before adoption.",
+      "readyPendingSliceApproval": true
+    },
+    {
+      "consumer": "resumed W1 campaign",
+      "contract": "After amendment adoption, explicitly resume the paused W1 campaign without changing the approved W1 packet, then continue only the next dependency-eligible READY task.",
+      "readyPendingSliceApproval": true
+    }
+  ]
+}
