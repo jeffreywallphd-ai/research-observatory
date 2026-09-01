@@ -8444,7 +8444,7 @@
             {
               "task_id": "CAP-03.S05.T01",
               "title": "Implement material dependency registration",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -8485,15 +8485,15 @@
             {
               "task_id": "CAP-03.S05.T01",
               "title": "Implement material dependency registration",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S05.T01.html",
               "dependencies": [
                 "CAP-03.S04.T03"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "f56d16070637147177c05c3406b5669eb1707cf0"
               },
               "plan_section_sha256": "20a1892c575622ea853f5738509a0ce3ba89936d35057314e30f9b24b8484375",
               "worksheet": null
