@@ -7872,14 +7872,239 @@
               "task_id": "CAP-03.S04.T03",
               "title": "Build task center, progress, cancellation, and human-gate UI",
               "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:t02-adversarial-preflight",
+                "result": "changes-requested",
+                "reviewed_at": "2026-09-01T19:50:47+00:00",
+                "notes": "The frozen candidate/submission boundary, evidence identity, 44-path inventory, task projection, approved-reference identity, and patch hygiene authenticate exactly. Focused replay passed 15 Python workflow/Task Center/API contract tests, one runtime-handshake test, 27 TypeScript tests, and the targeted native allow-list test. Six acceptance-bound defects remain: two authority/consequence failures and four projection, restart-lineage, client-validation, and governed-interaction failures. No full profile was run."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-01T19:38:55+00:00",
+                      "candidate_commit": "27714fac4ac803584bf0ebc86c9b599d62ba8cdc",
+                      "base_commit": "1affb3e62f1c58f9019af5d04db1ac33edd38bbb",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S04.T03.R01.json",
+                        "sha256": "c6b992f773445dcb5e57417eb10a54c49778b7eebc128d44681e68baa032a3c0",
+                        "commit": "27714fac4ac803584bf0ebc86c9b599d62ba8cdc",
+                        "recorded_at": "2026-09-01T19:38:55+00:00"
+                      },
+                      "acceptance_criteria_sha256": "4873bee7f426e751aaa2af1820f620b0f3719abfceae6bc07c23e8bf5a08489d",
+                      "changed_paths": [
+                        "apps/desktop/src-tauri/src/supervisor.rs",
+                        "apps/desktop/src/app.css",
+                        "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/TaskCenterWorkspace.test.tsx",
+                        "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+                        "artifacts/evidence/CAP-03.S04.T03.task-start.md",
+                        "artifacts/evidence/ui-change/CAP-03.S04.T03.json",
+                        "docs/architecture/workflow-contracts.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "packages/contracts/core-api/openapi.json",
+                        "packages/contracts/core-api/runtime-handshake.schema.json",
+                        "packages/contracts/workflow/fixtures/valid-local-workflow-snapshot.v1.json",
+                        "packages/contracts/workflow/fixtures/valid-workflow-definition.v1.json",
+                        "packages/contracts/workflow/generate.mjs",
+                        "packages/contracts/workflow/generated.ts",
+                        "packages/contracts/workflow/workflow-contract.schema.json",
+                        "packages/contracts/workflow/workflow-contract.template.py.txt",
+                        "packages/contracts/workflow/workflow-contract.template.ts.txt",
+                        "packages/contracts/workflow/workflow-contract.test.ts",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-03/CAP-03.S04.T03.html",
+                        "planning/review-site/CAP-03/CAP-03.S04.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W1.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/src/research_observatory_core/app.py",
+                        "services/core-api/src/research_observatory_core/main.py",
+                        "services/core-api/src/research_observatory_core/models.py",
+                        "services/core-api/src/research_observatory_core/modules.py",
+                        "services/core-api/src/research_observatory_core/ports/workflow_executor.py",
+                        "services/core-api/src/research_observatory_core/repositories.py",
+                        "services/core-api/src/research_observatory_core/task_center.py",
+                        "services/core-api/src/research_observatory_core/workflow_contracts.py",
+                        "tests/contracts/test_workflow_contracts.py",
+                        "tests/desktop/test_core_sidecar_performance_check.py",
+                        "tests/service/test_core_api.py",
+                        "tests/service/test_task_center_api.py",
+                        "tests/workflows/test_task_center.py",
+                        "tools/core_api_contract.py",
+                        "tools/core_sidecar_performance_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe -m unittest tests.workflows.test_task_center tests.service.test_task_center_api tests.service.test_core_api tests.contracts.test_workflow_contracts tests.desktop.test_core_sidecar_performance_check",
+                        "pnpm exec vitest run packages/contracts/workflow/workflow-contract.test.ts packages/contracts/core-api/generated.test.ts apps/desktop/src/app/TaskCenterWorkspace.test.tsx apps/desktop/src/app/ApplicationRuntime.test.tsx",
+                        "pnpm --filter @research-observatory/desktop typecheck; pnpm --filter @research-observatory/contracts typecheck; pnpm --filter @research-observatory/desktop lint",
+                        "pnpm --filter @research-observatory/desktop build; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+                        "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
+                        ".venv\\Scripts\\python.exe tools/ui_accessibility_check.py; .venv\\Scripts\\python.exe tools/ui_route_page_check.py; .venv\\Scripts\\python.exe tools/ui_token_check.py; .venv\\Scripts\\python.exe tools/ui_workflow_check.py",
+                        ".venv\\Scripts\\python.exe tools/core_api_contract.py --check; .venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py; .venv\\Scripts\\python.exe tools/repository_structure_check.py",
+                        ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head 27714fac4ac803584bf0ebc86c9b599d62ba8cdc; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+                        ".venv\\Scripts\\python.exe tools/verify.py --selection-only --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head 27714fac4ac803584bf0ebc86c9b599d62ba8cdc --deferred-gate W1-exit --report artifacts/tmp/CAP-03.S04.T03-affected-selection.json; git diff --check 1affb3e62f1c58f9019af5d04db1ac33edd38bbb..27714fac4ac803584bf0ebc86c9b599d62ba8cdc"
+                      ],
+                      "deferred_checks": [
+                        "CAP-03.S04 slice review owns the accumulated affected executor, workflow-contract, Core API, native-supervisor, and Task Center UI integration and adversarial union after all slice tasks close.",
+                        "Desktop visual-regression and performance qualification remain gate-bound where required by the approved W1 matrix rather than being replayed for this ordinary task submission.",
+                        "The complete service, data, e2e-local, security, performance, packaging, and Windows x64 qualification matrix remains mandatory once at W1 exit."
+                      ],
+                      "selection_rationale": "T03 changes a security-relevant human-decision authority boundary, SQLite-backed workflow projections/actions, generated public Core API contracts, a native desktop allow-list, and governed Task Center UI. Task verification therefore exercised focused real-database restart/action cases, contract generation and strict decoding, native request validation, desktop state/action rendering, production build/smoke, approved-reference accessibility/routes/tokens/workflows, and affected static/architecture/planning controls. It did not replay complete desktop, service, or e2e-local profiles: accumulated Task Center/executor integration and adversarial coverage belongs to CAP-03.S04 slice review, while the full repository and deployment-profile matrix remains mandatory once at W1 exit.",
+                      "selection_sha256": "cf638d9bf99548fd6eef4321da37bb57aa62d156b5534b80ca22f382220a69e2",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:quality",
+                        "foundation:packaging-smoke",
+                        "foundation:unit",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "packet_sha256": "aa49503ea7d51fea764737ee9ae032a8aa963fe66ff16c4e10a99973be70c1f5"
+                    },
+                    "review": {
+                      "reviewer": "agent:t02-adversarial-preflight",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-09-01T19:50:47+00:00",
+                      "notes": "The frozen candidate/submission boundary, evidence identity, 44-path inventory, task projection, approved-reference identity, and patch hygiene authenticate exactly. Focused replay passed 15 Python workflow/Task Center/API contract tests, one runtime-handshake test, 27 TypeScript tests, and the targeted native allow-list test. Six acceptance-bound defects remain: two authority/consequence failures and four projection, restart-lineage, client-validation, and governed-interaction failures. No full profile was run."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S04.T03.review-R01.json",
+                      "sha256": "8473a51fbac477f4ae387e5a40d5f4cdda11ab489f840cf8991d9c1d4201254b"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S04.T03-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Cancellation and retry accept substituted snapshot authority",
+                        "reproduction": "At the exact candidate, create a runnable project workflow and read its Task Center projection. Submit POST /projects/workflows/jobs/{jobId}/cancel with the canonical run ID and history revision but replace snapshotRevision 1 with 2 in If-Match. The request returns 200 and cancels the job. services/core-api/src/research_observatory_core/app.py:692 and :727 parse the snapshot component into _snapshot_revision and discard it; TaskCenterService.cancel/retry and repository request_cancellation/retry_as_continuation validate only run/history authority.",
+                        "required_remediation": "Carry expected snapshot revision through cancel and retry and compare it transactionally with the exact bound latest workflow snapshot before mutation or idempotent replay. Add real API/repository tests for substituted, stale and exact snapshot revisions on both commands while retaining run/history checks and canonical ETag behavior."
+                      },
+                      {
+                        "id": "CAP-03.S04.T03-R01-F02",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Definition-bound human consequences are recorded but not faithfully executed",
+                        "reproduction": "Register a valid waiting-human definition whose only allowed disposition is not-applicable and whose exact mapping is skip-step. Complete that decision. repositories.py:3919 collapses every consequence except end-workflow to terminal succeeded; the resulting decision still discloses skip-step, but the step and workflow are both recorded as succeeded. The same branch cannot resume a mid-graph workflow or activate its exact downstream definition.",
+                        "required_remediation": "Implement each supported consequence distinctly. skip-step must emit the contract's skipped step transition; resume-workflow must advance only the exact newly authorized snapshot and runnable dependency graph rather than terminalizing it; end-workflow must retain its explicit terminal semantics. Add real persistence/restart tests for all supported consequence codes, including a human gate with a downstream activity."
+                      },
+                      {
+                        "id": "CAP-03.S04.T03-R01-F03",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Project changes can display a prior project's workflow projection",
+                        "reproduction": "TaskCenterWorkspace.tsx:61 retains runs across prop changes. load at :73-84 captures one project and unconditionally calls setRuns after awaiting transport. The cleanup flag at :95-98 prevents later timer launches but does not invalidate an in-flight request or clear prior runs. Switching from project A to B therefore displays A immediately while B loads, and a delayed A response can overwrite B after the switch.",
+                        "required_remediation": "Reset runs, selection and loading state on exact project identity/root changes, bind every load to a request generation or abort signal, and ignore responses from superseded projects or older overlapping polls. Add interaction tests with deferred A/B transports proving no cross-project display and monotonic response ordering."
+                      },
+                      {
+                        "id": "CAP-03.S04.T03-R01-F04",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "The generated client accepts contradictory human-decision projections",
+                        "reproduction": "Pass decodeWorkflowTaskCenterRun a structurally valid run containing a human task with state completed while decisionId, disposition and decidedAt are all null. generated.ts:811-824 validates those fields independently and returns the projection instead of rejecting it. This omits the server model invariant at models.py:766-784 and contradicts the claimed fail-closed rejection of contradictory Core responses before rendering.",
+                        "required_remediation": "Generate and enforce the same completed-decision, claimed-assignee, consequence-key and identity/order invariants at the TypeScript process boundary. Add hostile generated-client tests for completed-without-decision, partial decision triples, decision-on-open-task, claimed-without-assignee, duplicate identities and out-of-order events."
+                      },
+                      {
+                        "id": "CAP-03.S04.T03-R01-F05",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Retry continuation lineage is not visible or restart-reconstructable in Task Center",
+                        "reproduction": "retry_as_continuation records sourceJobId only inside a private command fingerprint at repositories.py:3679. WorkflowTaskCenterRun and the generated API projection expose no predecessor run/job relationship, and the renderer displays the old and new runs as unrelated. After refresh or restart, the brief announcement is lost, contrary to the task-start requirement that retry create a new immutable continuation and make the relationship visible.",
+                        "required_remediation": "Persist an immutable continuation-from run/job reference, expose it in the bounded repository/Core/generated-client projection, and render it in Task Center. Add idempotent retry plus Core-restart tests proving the new identity, exact definition binding and predecessor relationship survive."
+                      },
+                      {
+                        "id": "CAP-03.S04.T03-R01-F06",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Successful confirmation loses focus and submitted tests do not prove claimed command interaction behavior",
+                        "reproduction": "TaskCenterWorkspace.tsx:119-122 provides focus restoration through closeConfirmation, but successful cancel/retry at :157 directly calls setConfirmation(null), removing the focused dialog button without restoring focus. TaskCenterWorkspace.test.tsx contains only static render assertions; it does not execute cancellation, retry, decision, keyboard trapping, successful close or focus recovery despite the evidence claim that these states/actions were covered.",
+                        "required_remediation": "Close successful commands through an explicit post-command focus-restoration path and add DOM interaction tests for cancel, retry, decision, Escape/Tab containment, failure retention, announcements and success focus recovery. Narrow the evidence wording to what the exact tests execute."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-03.S04.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-09-01T19:38:55+00:00",
+                      "reviewed_at": "2026-09-01T19:50:47+00:00",
+                      "duration_seconds": 712,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 2,
+                        "medium": 4,
+                        "low": 0,
+                        "blocking": 6,
+                        "total": 6
+                      },
+                      "command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:quality",
+                        "foundation:packaging-smoke",
+                        "foundation:unit",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             }
           ],
           "tasks": [
@@ -7938,7 +8163,7 @@
               "plan_section_sha256": "f3e17c15650a871224a7a0f15420eed14751cb9a4e77130a265c38b93462dd1f",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-03.S04.T03.task-start.md",
-                "sha256": "f758c79c5eb413130462c17b406d208dc744db604a88754432a06334ae9898b4"
+                "sha256": "5a25263cbe116bf49374e8b9a8c732c65c8743e23e4ce337c2584e9ac8ca8ac9"
               }
             }
           ]

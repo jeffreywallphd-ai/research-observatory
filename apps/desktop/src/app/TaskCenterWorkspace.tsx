@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
 import {
   CoreApiClientError,
@@ -67,13 +67,21 @@ export function TaskCenterWorkspace({
   const [confirmation, setConfirmation] = useState<Confirmation>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
   const restoreFocusRef = useRef<HTMLButtonElement>(null);
+  const selectedWorkflowRef = useRef<HTMLButtonElement>(null);
+  const requestGenerationRef = useRef(0);
   const writable = project?.accessMode === "read-write" && project.compatibilityState === "compatible";
   const available = !!project?.open && project.accessMode !== "closed";
+  const projectKey = project ? `${project.projectId}\u0000${project.root}` : "";
+  const activeProjectKeyRef = useRef(projectKey);
+  activeProjectKeyRef.current = projectKey;
 
-  const load = async (announceChange = false): Promise<void> => {
+  const load = useCallback(async (announceChange = false): Promise<void> => {
     if (!project || !available) return;
+    const generation = ++requestGenerationRef.current;
+    const requestedProjectKey = projectKey;
     try {
       const page = await client.taskCenter(project.root, 50);
+      if (generation !== requestGenerationRef.current || requestedProjectKey !== activeProjectKeyRef.current) return;
       setRuns(page.items);
       setSelectedId((current) => page.items.some((item) => item.workflowRunId === current)
         ? current
@@ -81,22 +89,39 @@ export function TaskCenterWorkspace({
       setFailure(null);
       if (announceChange) announce(`Task Center refreshed. ${page.items.length} workflows available.`);
     } catch (error) {
+      if (generation !== requestGenerationRef.current || requestedProjectKey !== activeProjectKeyRef.current) return;
       setFailure(safeFailure(error));
     } finally {
-      setLoading(false);
+      if (generation === requestGenerationRef.current && requestedProjectKey === activeProjectKeyRef.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [announce, available, client, project, projectKey]);
 
   useEffect(() => {
+    requestGenerationRef.current += 1;
+    setRuns(initialRuns ?? []);
+    setSelectedId(initialRuns?.[0]?.workflowRunId ?? null);
+    setFilter("");
+    setFailure(null);
+    setConfirmation(null);
+    setBusy(false);
+    restoreFocusRef.current = null;
+    selectedWorkflowRef.current = null;
     if (initialRuns !== undefined || !available) {
       setLoading(false);
       return;
     }
+    setLoading(true);
     let disposed = false;
     void load();
     const timer = globalThis.setInterval(() => { if (!disposed) void load(); }, 2_500);
-    return () => { disposed = true; globalThis.clearInterval(timer); };
-  }, [available, initialRuns, project?.root]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => {
+      disposed = true;
+      requestGenerationRef.current += 1;
+      globalThis.clearInterval(timer);
+    };
+  }, [available, initialRuns, load, projectKey]);
 
   useEffect(() => { if (confirmation) cancelRef.current?.focus(); }, [confirmation]);
 
@@ -118,7 +143,11 @@ export function TaskCenterWorkspace({
 
   const closeConfirmation = (): void => {
     setConfirmation(null);
-    globalThis.queueMicrotask(() => restoreFocusRef.current?.focus());
+    globalThis.requestAnimationFrame(() => {
+      const trigger = restoreFocusRef.current;
+      if (trigger?.isConnected && !trigger.disabled) trigger.focus();
+      else selectedWorkflowRef.current?.focus();
+    });
   };
 
   const containConfirmationFocus = (event: KeyboardEvent<HTMLElement>): void => {
@@ -144,37 +173,47 @@ export function TaskCenterWorkspace({
   const confirmCommand = async (): Promise<void> => {
     const pending = confirmation;
     if (!pending || !project) return;
+    const commandProjectKey = projectKey;
     setBusy(true);
     setFailure(null);
     try {
       const next = pending.kind === "cancel"
         ? await client.cancelWorkflowJob(project.root, pending.jobId, pending.workflow)
         : await client.retryWorkflowJob(project.root, pending.jobId, pending.workflow, commandId());
+      if (commandProjectKey !== activeProjectKeyRef.current) return;
       replaceRun(next);
       announce(pending.kind === "cancel"
         ? "Cancellation requested. Active work will stop at its next safe point."
         : "Retry created a new continuation bound to the same workflow definition.");
-      setConfirmation(null);
       await load();
+      closeConfirmation();
     } catch (error) {
-      setFailure(safeFailure(error));
+      if (commandProjectKey !== activeProjectKeyRef.current) return;
+      const message = safeFailure(error);
+      setFailure(message);
+      announce(`Task Center command failed. ${message}`);
     } finally {
-      setBusy(false);
+      if (commandProjectKey === activeProjectKeyRef.current) setBusy(false);
     }
   };
 
   const decide = async (humanTaskId: string, disposition: "approved" | "rejected" | "deferred" | "not-applicable"): Promise<void> => {
     if (!selected || !project) return;
+    const commandProjectKey = projectKey;
     setBusy(true);
     setFailure(null);
     try {
       const next = await client.decideWorkflowHumanTask(project.root, humanTaskId, selected, disposition, commandId());
+      if (commandProjectKey !== activeProjectKeyRef.current) return;
       replaceRun(next);
       announce(`Decision ${disposition} recorded against workflow definition ${next.definitionVersion}.`);
     } catch (error) {
-      setFailure(safeFailure(error));
+      if (commandProjectKey !== activeProjectKeyRef.current) return;
+      const message = safeFailure(error);
+      setFailure(message);
+      announce(`Task Center command failed. ${message}`);
     } finally {
-      setBusy(false);
+      if (commandProjectKey === activeProjectKeyRef.current) setBusy(false);
     }
   };
 
@@ -196,6 +235,7 @@ export function TaskCenterWorkspace({
         <Field id="task-center-filter" label="Filter workflows" input={{ type: "search", value: filter, onChange: (event) => setFilter(event.currentTarget.value) }} />
         <ul className="task-center-list" aria-label="Durable workflows">
           {visible.map((run) => <li key={run.workflowRunId}><button
+            ref={run.workflowRunId === selected?.workflowRunId ? selectedWorkflowRef : undefined}
             type="button"
             aria-pressed={selected?.workflowRunId === run.workflowRunId}
             onClick={() => setSelectedId(run.workflowRunId)}
@@ -211,6 +251,9 @@ export function TaskCenterWorkspace({
       {selected ? <section aria-labelledby="workflow-detail-title" className="task-center-detail">
         <Typography id="workflow-detail-title" as="h2" variant="section-title">{selected.workflowKey}</Typography>
         <p>Definition {selected.definitionVersion} · snapshot {selected.snapshotRevision} · history {selected.revision}</p>
+        {selected.continuationFromWorkflowRunId && selected.continuationFromJobId ? <p data-workflow-continuation>
+          Continuation of run {selected.continuationFromWorkflowRunId} from job {selected.continuationFromJobId}.
+        </p> : null}
         <p><strong>Execution:</strong> {selected.activeCompute ? "Compute is active." : selected.state === "waiting-human" ? "Compute is stopped while a human decision is required." : "No compute is active."}</p>
         {selected.steps.map((step) => <Panel key={step.stepRunId} title={step.stepKey} tone={step.state === "failed" ? "danger" : "neutral"}>
           <p>{step.kind} · {step.state.replace("-", " ")}</p>

@@ -3061,6 +3061,30 @@
             "title": "Activecompute",
             "type": "boolean"
           },
+          "continuationFromJobId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Continuationfromjobid"
+          },
+          "continuationFromWorkflowRunId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Continuationfromworkflowrunid"
+          },
           "definitionRevisionId": {
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "title": "Definitionrevisionid",
@@ -3188,6 +3212,8 @@
           "definitionVersion",
           "snapshotId",
           "snapshotRevision",
+          "continuationFromWorkflowRunId",
+          "continuationFromJobId",
           "state",
           "activeCompute",
           "progress",

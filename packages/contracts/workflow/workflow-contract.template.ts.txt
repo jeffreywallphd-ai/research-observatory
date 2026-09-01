@@ -64,6 +64,10 @@ export interface WorkflowSnapshot {
   readonly snapshotRevision: number;
   readonly projectId: string;
   readonly workflowRunId: string;
+  readonly continuation?: Readonly<{
+    readonly sourceWorkflowRunId: string;
+    readonly sourceJobId: string;
+  }>;
   readonly definition: Readonly<Record<string, unknown>>;
   readonly intent: Readonly<Record<string, unknown>>;
   readonly policy: Readonly<Record<string, unknown>>;
@@ -116,7 +120,7 @@ const TRANSITIONS: Readonly<Record<WorkflowEntityType, Readonly<Record<string, r
     pending: ["runnable", "cancelled", "skipped", "superseded"],
     runnable: ["running", "waiting-human", "cancelled", "skipped", "superseded"],
     running: ["running", "waiting-human", "cancelling", "succeeded", "failed"],
-    "waiting-human": ["running", "succeeded", "cancelled", "failed"],
+    "waiting-human": ["running", "succeeded", "skipped", "cancelled", "failed"],
     cancelling: ["cancelled", "failed"],
   },
   job: {
@@ -409,6 +413,11 @@ export const workflowSnapshotErrors = (definitionValue: unknown, value: unknown)
   const errors: string[] = [];
   const reference = snapshot.definition as Record<string, unknown>;
   if (reference.workflowDefinitionId !== definition.workflowDefinitionId || reference.definitionRevisionId !== definition.definitionRevisionId || reference.definitionVersion !== definition.definitionVersion || reference.contentHash !== workflowRecordSha256(definition)) errors.push("snapshot-binds-exact-definition");
+  const continuation = asRecord(snapshot.continuation);
+  if (continuation !== null && (continuation.sourceWorkflowRunId === snapshot.workflowRunId
+    || (snapshot.jobs as Array<Record<string, unknown>>).some((job) => job.jobId === continuation.sourceJobId))) {
+    errors.push("continuation-binds-predecessor-identity");
+  }
   if (progressInvalid(snapshot.progress as Record<string, unknown>) || ["stepRuns", "attempts"].some((collection) => (snapshot[collection] as Array<Record<string, unknown>>).some((item) => progressInvalid(item.progress as Record<string, unknown>)))) errors.push("progress-shape-is-consistent");
   const cancellation = snapshot.cancellation as Record<string, unknown>;
   if ((cancellation.requestedAt === null) !== (cancellation.reasonCode === null) || (cancellation.requestedAt === null) !== (cancellation.interruptionKind === null)) errors.push("cancellation-shape-is-consistent");

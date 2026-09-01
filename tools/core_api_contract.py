@@ -357,13 +357,16 @@ export function decodeWorkflowTaskCenterRun(value: unknown): WorkflowTaskCenterR
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
     "schemaVersion", "workflowRunId", "workflowKey", "definitionRevisionId", "definitionVersion",
-    "snapshotId", "snapshotRevision", "state", "activeCompute", "progress", "revision",
+    "snapshotId", "snapshotRevision", "continuationFromWorkflowRunId", "continuationFromJobId",
+    "state", "activeCompute", "progress", "revision",
     "interruptionKind", "updatedAt", "steps", "jobs", "humanTasks", "retainedArtifacts", "events",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.workflowRunId)
     || !canonicalUuid7(candidate.definitionRevisionId) || !canonicalUuid7(candidate.snapshotId)
     || typeof candidate.workflowKey !== "string" || typeof candidate.definitionVersion !== "string"
     || !integer(candidate.snapshotRevision, 1, Number.MAX_SAFE_INTEGER)
+    || (candidate.continuationFromWorkflowRunId !== null && !canonicalUuid7(candidate.continuationFromWorkflowRunId))
+    || (candidate.continuationFromJobId !== null && !canonicalUuid7(candidate.continuationFromJobId))
     || !member(candidate.state, ["queued", "running", "waiting-human", "cancelling", "cancelled", "failed", "succeeded", "paused"] as const)
     || typeof candidate.activeCompute !== "boolean" || decodeWorkflowProgress(candidate.progress) === null
     || !integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER) || !utcInstant(candidate.updatedAt)
@@ -400,7 +403,12 @@ export function decodeWorkflowTaskCenterRun(value: unknown): WorkflowTaskCenterR
       && Object.values(consequences).every((item) => typeof item === "string" && /^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/.test(item))
       && (task.decisionId === null || canonicalUuid7(task.decisionId))
       && (task.disposition === null || member(task.disposition, ["approved", "rejected", "deferred", "not-applicable"] as const))
-      && (task.decidedAt === null || utcInstant(task.decidedAt));
+      && (task.decidedAt === null || utcInstant(task.decidedAt))
+      && new Set(task.evidenceArtifactIds as string[]).size === (task.evidenceArtifactIds as string[]).length
+      && ((task.state === "completed") === (task.decisionId !== null && task.disposition !== null && task.decidedAt !== null))
+      && ((task.decisionId !== null || task.disposition !== null || task.decidedAt !== null)
+        === (task.decisionId !== null && task.disposition !== null && task.decidedAt !== null))
+      && (task.state !== "claimed" || task.assignedActorId !== null);
   })) return null;
   if (!Array.isArray(candidate.retainedArtifacts)
     || !uniqueMembers(candidate.retainedArtifacts, ["committed", "retained-incomplete", "quarantined", "discarded"] as const, 4)) return null;
@@ -412,6 +420,22 @@ export function decodeWorkflowTaskCenterRun(value: unknown): WorkflowTaskCenterR
       && typeof event.reasonCode === "string";
   })) return null;
   if (candidate.activeCompute !== candidate.jobs.some((job) => ["claimed", "running", "cancelling"].includes((job as Record<string, unknown>).state as string))) return null;
+  const continuationPresent = candidate.continuationFromWorkflowRunId !== null
+    && candidate.continuationFromJobId !== null;
+  if ((candidate.continuationFromWorkflowRunId !== null || candidate.continuationFromJobId !== null) !== continuationPresent
+    || (continuationPresent && (candidate.continuationFromWorkflowRunId === candidate.workflowRunId
+      || candidate.jobs.some((job) => (job as Record<string, unknown>).jobId === candidate.continuationFromJobId)))) return null;
+  if (candidate.state === "waiting-human" && !candidate.humanTasks.some((task) =>
+    ["requested", "claimed"].includes((task as Record<string, unknown>).state as string))) return null;
+  for (const identities of [
+    candidate.steps.map((step) => (step as Record<string, unknown>).stepRunId),
+    candidate.jobs.map((job) => (job as Record<string, unknown>).jobId),
+    candidate.humanTasks.map((task) => (task as Record<string, unknown>).humanTaskId),
+  ]) if (new Set(identities).size !== identities.length) return null;
+  const events = candidate.events as unknown[];
+  if (events.some((event, index) => index > 0
+    && ((events[index - 1] as Record<string, unknown>).sequence as number)
+      >= ((event as Record<string, unknown>).sequence as number))) return null;
   return candidate as unknown as WorkflowTaskCenterRun;
 }
 

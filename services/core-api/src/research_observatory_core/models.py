@@ -802,6 +802,8 @@ class WorkflowTaskCenterRun(ContractModel):
     definition_version: str
     snapshot_id: str = Field(pattern=_UUID_V7_PATTERN)
     snapshot_revision: int = Field(ge=1)
+    continuation_from_workflow_run_id: str | None = Field(pattern=_UUID_V7_PATTERN)
+    continuation_from_job_id: str | None = Field(pattern=_UUID_V7_PATTERN)
     state: Literal["queued", "running", "waiting-human", "cancelling", "cancelled", "failed", "succeeded", "paused"]
     active_compute: bool
     progress: WorkflowProgress
@@ -816,6 +818,17 @@ class WorkflowTaskCenterRun(ContractModel):
 
     @model_validator(mode="after")
     def validate_projection(self) -> WorkflowTaskCenterRun:
+        continued = self.continuation_from_workflow_run_id is not None and self.continuation_from_job_id is not None
+        if (
+            any(value is not None for value in (self.continuation_from_workflow_run_id, self.continuation_from_job_id))
+            != continued
+        ):
+            raise ValueError("workflow continuation fields must be all present or all absent")
+        if continued and (
+            self.continuation_from_workflow_run_id == self.workflow_run_id
+            or any(job.job_id == self.continuation_from_job_id for job in self.jobs)
+        ):
+            raise ValueError("workflow continuation must bind predecessor identities")
         active = any(job.state in {"claimed", "running", "cancelling"} for job in self.jobs)
         if self.active_compute != active:
             raise ValueError("workflow active-compute state must match durable jobs")

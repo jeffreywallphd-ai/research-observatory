@@ -2886,6 +2886,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                     display_state = "queued"
             run_progress = jobs[0].progress if len(jobs) == 1 else _workflow_progress_record(snapshot["progress"])
             updated_at = max([str(authority[3]), *(job.updated_at for job in jobs)])
+            continuation = cast(Mapping[str, object] | None, snapshot.get("continuation"))
             return WorkflowTaskCenterRunRecord(
                 workflow_run_id=workflow_run_id,
                 workflow_key=str(definition["workflowKey"]),
@@ -2893,6 +2894,10 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 definition_version=str(definition["definitionVersion"]),
                 snapshot_id=str(authority[0]),
                 snapshot_revision=int(authority[1]),
+                continuation_from_workflow_run_id=(
+                    None if continuation is None else str(continuation["sourceWorkflowRunId"])
+                ),
+                continuation_from_job_id=None if continuation is None else str(continuation["sourceJobId"]),
                 state=cast(Any, display_state),
                 active_compute=active_compute,
                 progress=run_progress,
@@ -2947,12 +2952,80 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             if connection is not None:
                 connection.close()
 
+    def _enqueue_submission(
+        self,
+        connection: CanonicalConnection,
+        submission: WorkflowJobSubmission,
+        *,
+        definition: Mapping[str, object],
+        snapshot: Mapping[str, object],
+    ) -> WorkflowJobRecord:
+        existing = connection.execute(
+            "SELECT job_id, command_fingerprint FROM workflow_queue_jobs WHERE project_id=? AND idempotency_key=?",
+            (self._project_id, submission.idempotency_key),
+        ).fetchone()
+        if existing is not None:
+            if str(existing[0]) != submission.job_id or str(existing[1]) != submission.command_fingerprint:
+                raise WorkflowQueueConflict("workflow idempotency authority differs")
+            return self._row(self._select_job(connection, self._project_id, submission.job_id))
+
+        self._store_authority(
+            connection,
+            definition=definition,
+            snapshot=snapshot,
+            definition_json=submission.definition_json,
+            snapshot_json=submission.snapshot_json,
+        )
+        connection.execute(
+            """
+            INSERT INTO workflow_queue_jobs (
+                job_id, project_id, workflow_run_id, snapshot_id, snapshot_revision,
+                step_run_id, activity_type, concurrency_class, progress_unit,
+                progress_total_kind, progress_total_units, checkpoint_mode,
+                partial_artifact_disposition, state, priority,
+                available_at, max_attempts, initial_backoff_ms, maximum_backoff_ms,
+                multiplier_basis_points, deterministic_jitter, retryable_error_codes_json,
+                non_retryable_error_codes_json, idempotency_key, command_fingerprint,
+                created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'runnable', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                submission.job_id,
+                self._project_id,
+                submission.workflow_run_id,
+                submission.snapshot_id,
+                submission.snapshot_revision,
+                submission.step_run_id,
+                submission.activity_type,
+                submission.concurrency_class,
+                submission.progress_unit,
+                submission.progress_total_kind,
+                submission.progress_total_units,
+                submission.checkpoint_mode,
+                submission.partial_artifact_disposition,
+                submission.priority,
+                submission.available_at,
+                submission.max_attempts,
+                submission.initial_backoff_ms,
+                submission.maximum_backoff_ms,
+                submission.multiplier_basis_points,
+                int(submission.deterministic_jitter),
+                _workflow_json(submission.retryable_error_codes),
+                _workflow_json(submission.non_retryable_error_codes),
+                submission.idempotency_key,
+                submission.command_fingerprint,
+                snapshot["createdAt"],
+                snapshot["updatedAt"],
+            ),
+        )
+        return self._row(self._select_job(connection, self._project_id, submission.job_id))
+
     def enqueue(self, submission: WorkflowJobSubmission, *, actor: WorkflowActor) -> WorkflowJobRecord:
         if submission.project_id != self._project_id:
             raise WorkflowQueueConflict("workflow project authority differs")
         _workflow_actor(actor)
-        definition = json.loads(submission.definition_json)
-        snapshot = json.loads(submission.snapshot_json)
+        definition = cast(dict[str, object], json.loads(submission.definition_json))
+        snapshot = cast(dict[str, object], json.loads(submission.snapshot_json))
         if (
             _workflow_json(definition) != submission.definition_json
             or _workflow_json(snapshot) != submission.snapshot_json
@@ -2962,70 +3035,11 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             or workflow_snapshot_errors(definition, snapshot)
         ):
             raise WorkflowQueueCorrupt("workflow authority digest differs")
-        final_actor = snapshot["history"][-1]["actor"]
+        final_actor = cast(Mapping[str, object], cast(list[object], snapshot["history"])[-1])["actor"]
         if final_actor != {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role}:
             raise WorkflowQueueConflict("workflow admission actor differs from snapshot authority")
         with self._transaction() as connection:
-            existing = connection.execute(
-                "SELECT job_id, command_fingerprint FROM workflow_queue_jobs WHERE project_id=? AND idempotency_key=?",
-                (self._project_id, submission.idempotency_key),
-            ).fetchone()
-            if existing is not None:
-                if str(existing[0]) != submission.job_id or str(existing[1]) != submission.command_fingerprint:
-                    raise WorkflowQueueConflict("workflow idempotency authority differs")
-                return self._row(self._select_job(connection, self._project_id, submission.job_id))
-
-            self._store_authority(
-                connection,
-                definition=definition,
-                snapshot=snapshot,
-                definition_json=submission.definition_json,
-                snapshot_json=submission.snapshot_json,
-            )
-
-            connection.execute(
-                """
-                INSERT INTO workflow_queue_jobs (
-                    job_id, project_id, workflow_run_id, snapshot_id, snapshot_revision,
-                    step_run_id, activity_type, concurrency_class, progress_unit,
-                    progress_total_kind, progress_total_units, checkpoint_mode,
-                    partial_artifact_disposition, state, priority,
-                    available_at, max_attempts, initial_backoff_ms, maximum_backoff_ms,
-                    multiplier_basis_points, deterministic_jitter, retryable_error_codes_json,
-                    non_retryable_error_codes_json, idempotency_key, command_fingerprint,
-                    created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'runnable', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    submission.job_id,
-                    self._project_id,
-                    submission.workflow_run_id,
-                    submission.snapshot_id,
-                    submission.snapshot_revision,
-                    submission.step_run_id,
-                    submission.activity_type,
-                    submission.concurrency_class,
-                    submission.progress_unit,
-                    submission.progress_total_kind,
-                    submission.progress_total_units,
-                    submission.checkpoint_mode,
-                    submission.partial_artifact_disposition,
-                    submission.priority,
-                    submission.available_at,
-                    submission.max_attempts,
-                    submission.initial_backoff_ms,
-                    submission.maximum_backoff_ms,
-                    submission.multiplier_basis_points,
-                    int(submission.deterministic_jitter),
-                    _workflow_json(submission.retryable_error_codes),
-                    _workflow_json(submission.non_retryable_error_codes),
-                    submission.idempotency_key,
-                    submission.command_fingerprint,
-                    snapshot["createdAt"],
-                    snapshot["updatedAt"],
-                ),
-            )
-            return self._row(self._select_job(connection, self._project_id, submission.job_id))
+            return self._enqueue_submission(connection, submission, definition=definition, snapshot=snapshot)
 
     def get(self, job_id: str) -> WorkflowJobRecord:
         try:
@@ -3560,6 +3574,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         now: str,
         reason_code: str,
         interruption_kind: WorkflowInterruptionKind,
+        expected_snapshot_revision: int | None = None,
         expected_history_sequence: int | None = None,
     ) -> WorkflowJobRecord:
         _workflow_time(now)
@@ -3569,6 +3584,13 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             raise WorkflowQueueProblem("workflow cancellation reason is invalid")
         with self._transaction() as connection:
             current = self._row(self._select_job(connection, self._project_id, job_id))
+            current_snapshot_revision = int(
+                connection.execute(
+                    "SELECT MAX(snapshot_revision) FROM workflow_authority_snapshots "
+                    "WHERE project_id=? AND workflow_run_id=?",
+                    (self._project_id, current.workflow_run_id),
+                ).fetchone()[0]
+            )
             current_sequence = int(
                 connection.execute(
                     "SELECT COALESCE(MAX(sequence), 0) FROM workflow_history_events "
@@ -3576,7 +3598,9 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                     (self._project_id, current.workflow_run_id),
                 ).fetchone()[0]
             )
-            if expected_history_sequence is not None and expected_history_sequence != current_sequence:
+            if (expected_snapshot_revision is not None and expected_snapshot_revision != current_snapshot_revision) or (
+                expected_history_sequence is not None and expected_history_sequence != current_sequence
+            ):
                 raise WorkflowQueueConflict("workflow cancellation precondition is stale")
             if current.state in {"succeeded", "failed", "cancelled"}:
                 return current
@@ -3666,6 +3690,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         self,
         job_id: str,
         *,
+        expected_snapshot_revision: int,
         expected_history_sequence: int,
         idempotency_key: str,
         actor: WorkflowActor,
@@ -3677,18 +3702,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             raise WorkflowQueueProblem("workflow retry idempotency key is invalid")
         retry_key = "sha256:" + hashlib.sha256(f"workflow-retry\0{job_id}\0{idempotency_key}".encode()).hexdigest()
         command_fingerprint = _workflow_sha256({"command": "retry-as-continuation", "sourceJobId": job_id})
-        connection: CanonicalConnection | None = None
-        try:
-            connection = self._open()
-            replay = connection.execute(
-                "SELECT workflow_run_id, command_fingerprint FROM workflow_queue_jobs "
-                "WHERE project_id=? AND idempotency_key=?",
-                (self._project_id, retry_key),
-            ).fetchone()
-            if replay is not None:
-                if str(replay[1]) != command_fingerprint:
-                    raise WorkflowQueueConflict("workflow retry replay differs")
-                return self._task_center_run(str(replay[0]), connection)
+        with self._transaction() as connection:
             source = connection.execute(
                 """
                 SELECT job.workflow_run_id, job.state, job.concurrency_class, job.priority,
@@ -3714,72 +3728,89 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                     (self._project_id, source[0]),
                 ).fetchone()[0]
             )
-            if current_sequence != expected_history_sequence:
+            current_snapshot_revision = int(
+                connection.execute(
+                    "SELECT MAX(snapshot_revision) FROM workflow_authority_snapshots "
+                    "WHERE project_id=? AND workflow_run_id=?",
+                    (self._project_id, source[0]),
+                ).fetchone()[0]
+            )
+            if current_snapshot_revision != expected_snapshot_revision or current_sequence != expected_history_sequence:
                 raise WorkflowQueueConflict("workflow retry precondition is stale")
+            replay = connection.execute(
+                "SELECT workflow_run_id, command_fingerprint FROM workflow_queue_jobs "
+                "WHERE project_id=? AND idempotency_key=?",
+                (self._project_id, retry_key),
+            ).fetchone()
+            if replay is not None:
+                if str(replay[1]) != command_fingerprint:
+                    raise WorkflowQueueConflict("workflow retry replay differs")
+                return self._task_center_run(str(replay[0]), connection)
             definition = cast(dict[str, object], json.loads(str(source[5])))
             snapshot = cast(dict[str, object], json.loads(str(source[4])))
             concurrency_class = cast(ConcurrencyClass, str(source[2]))
             priority = int(source[3])
-        finally:
-            if connection is not None:
-                connection.close()
 
-        continued = deepcopy(snapshot)
-        timestamp_ms = int(_workflow_time(now).timestamp() * 1_000)
-        continued_run_id = new_uuid_v7(timestamp_ms=timestamp_ms)
-        continued_snapshot_id = new_uuid_v7(timestamp_ms=timestamp_ms)
-        old_run_id = str(continued["workflowRunId"])
-        identity_map: dict[str, str] = {old_run_id: continued_run_id}
-        for collection, key in (
-            ("stepRuns", "stepRunId"),
-            ("jobs", "jobId"),
-            ("attempts", "attemptId"),
-            ("checkpoints", "checkpointId"),
-            ("humanTasks", "humanTaskId"),
-        ):
-            for value in cast(list[dict[str, object]], continued[collection]):
-                identity_map[str(value[key])] = new_uuid_v7(timestamp_ms=timestamp_ms)
-        new_job_id = identity_map[job_id]
+            continued = deepcopy(snapshot)
+            timestamp_ms = int(_workflow_time(now).timestamp() * 1_000)
+            continued_run_id = new_uuid_v7(timestamp_ms=timestamp_ms)
+            continued_snapshot_id = new_uuid_v7(timestamp_ms=timestamp_ms)
+            old_run_id = str(continued["workflowRunId"])
+            identity_map: dict[str, str] = {old_run_id: continued_run_id}
+            for collection, key in (
+                ("stepRuns", "stepRunId"),
+                ("jobs", "jobId"),
+                ("attempts", "attemptId"),
+                ("checkpoints", "checkpointId"),
+                ("humanTasks", "humanTaskId"),
+            ):
+                for value in cast(list[dict[str, object]], continued[collection]):
+                    identity_map[str(value[key])] = new_uuid_v7(timestamp_ms=timestamp_ms)
+            new_job_id = identity_map[job_id]
 
-        def remap(value: object) -> object:
-            if isinstance(value, dict):
-                return {key: remap(item) for key, item in value.items()}
-            if isinstance(value, list):
-                return [remap(item) for item in value]
-            return identity_map.get(value, value) if isinstance(value, str) else value
+            def remap(value: object) -> object:
+                if isinstance(value, dict):
+                    return {key: remap(item) for key, item in value.items()}
+                if isinstance(value, list):
+                    return [remap(item) for item in value]
+                return identity_map.get(value, value) if isinstance(value, str) else value
 
-        continued = cast(dict[str, object], remap(continued))
-        continued["snapshotId"] = continued_snapshot_id
-        continued["snapshotRevision"] = 1
-        continued["workflowRunId"] = continued_run_id
-        continued["createdAt"] = now
-        continued["updatedAt"] = now
-        jobs = cast(list[dict[str, object]], continued["jobs"])
-        if len(jobs) != 1 or str(jobs[0]["jobId"]) != new_job_id:
-            raise WorkflowQueueConflict("workflow retry source is not a single-job continuation")
-        jobs[0]["idempotencyKey"] = retry_key
-        jobs[0]["commandFingerprint"] = command_fingerprint
-        history = cast(list[dict[str, object]], continued["history"])
-        for event in history:
-            event["eventId"] = new_uuid_v7(timestamp_ms=timestamp_ms)
-            event["occurredAt"] = now
-        history[-1]["actor"] = {
-            "actorId": actor.actor_id,
-            "actorType": actor.actor_type,
-            "role": actor.role,
-        }
-        from .workflow_executor import prepare_workflow_job
+            continued = cast(dict[str, object], remap(continued))
+            continued["snapshotId"] = continued_snapshot_id
+            continued["snapshotRevision"] = 1
+            continued["workflowRunId"] = continued_run_id
+            continued["continuation"] = {
+                "sourceWorkflowRunId": old_run_id,
+                "sourceJobId": job_id,
+            }
+            continued["createdAt"] = now
+            continued["updatedAt"] = now
+            jobs = cast(list[dict[str, object]], continued["jobs"])
+            if len(jobs) != 1 or str(jobs[0]["jobId"]) != new_job_id:
+                raise WorkflowQueueConflict("workflow retry source is not a single-job continuation")
+            jobs[0]["idempotencyKey"] = retry_key
+            jobs[0]["commandFingerprint"] = command_fingerprint
+            history = cast(list[dict[str, object]], continued["history"])
+            for event in history:
+                event["eventId"] = new_uuid_v7(timestamp_ms=timestamp_ms)
+                event["occurredAt"] = now
+            history[-1]["actor"] = {
+                "actorId": actor.actor_id,
+                "actorType": actor.actor_type,
+                "role": actor.role,
+            }
+            from .workflow_executor import prepare_workflow_job
 
-        submission = prepare_workflow_job(
-            definition,
-            continued,
-            job_id=new_job_id,
-            concurrency_class=concurrency_class,
-            priority=priority,
-            available_at=now,
-        )
-        self.enqueue(submission, actor=actor)
-        return self._task_center_run(continued_run_id)
+            submission = prepare_workflow_job(
+                definition,
+                continued,
+                job_id=new_job_id,
+                concurrency_class=concurrency_class,
+                priority=priority,
+                available_at=now,
+            )
+            self._enqueue_submission(connection, submission, definition=definition, snapshot=continued)
+            return self._task_center_run(continued_run_id, connection)
 
     def complete_human_task(
         self,
@@ -3916,61 +3947,49 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                     decision_id=decision_id,
                 )
             )
-            terminal_state = "failed" if consequence == "end-workflow" else "succeeded"
-            next_step["state"] = terminal_state
+            step_state = (
+                "failed" if consequence == "end-workflow" else "skipped" if consequence == "skip-step" else "succeeded"
+            )
+            next_step["state"] = step_state
             next_step["sequence"] = sequence + 2
-            next_step["progress"] = {
-                "kind": "quantified",
-                "unit": cast(Mapping[str, object], definition_step["progress"])["unit"],
-                "completedUnits": 1,
-                "totalUnits": 1,
-            }
+            if step_state == "succeeded":
+                next_step["progress"] = {
+                    "kind": "quantified",
+                    "unit": cast(Mapping[str, object], definition_step["progress"])["unit"],
+                    "completedUnits": 1,
+                    "totalUnits": 1,
+                }
+            elif step_state == "skipped":
+                next_step["progress"] = {
+                    "kind": "not-applicable",
+                    "unit": cast(Mapping[str, object], definition_step["progress"])["unit"],
+                    "completedUnits": None,
+                    "totalUnits": None,
+                }
             history.append(
                 _workflow_event(
                     sequence=sequence + 2,
                     entity_type="workflow-step",
                     entity_id=str(next_step["stepRunId"]),
                     from_state=str(step_run["state"]),
-                    to_state=terminal_state,
+                    to_state=step_state,
                     occurred_at=now,
                     actor=actor,
-                    reason_code="human-decision-accepted"
-                    if terminal_state == "succeeded"
-                    else "human-decision-rejected",
+                    reason_code=(
+                        "human-decision-accepted"
+                        if step_state == "succeeded"
+                        else "human-step-skipped"
+                        if step_state == "skipped"
+                        else "human-decision-rejected"
+                    ),
                     decision_id=decision_id,
                 )
             )
-            if terminal_state == "succeeded":
+            next_sequence = sequence + 2
+            if consequence == "end-workflow":
                 history.append(
                     _workflow_event(
-                        sequence=sequence + 3,
-                        entity_type="workflow-run",
-                        entity_id=str(next_snapshot["workflowRunId"]),
-                        from_state=str(snapshot["state"]),
-                        to_state="running",
-                        occurred_at=now,
-                        actor=actor,
-                        reason_code="human-decision-accepted",
-                        decision_id=decision_id,
-                    )
-                )
-                history.append(
-                    _workflow_event(
-                        sequence=sequence + 4,
-                        entity_type="workflow-run",
-                        entity_id=str(next_snapshot["workflowRunId"]),
-                        from_state="running",
-                        to_state="succeeded",
-                        occurred_at=now,
-                        actor=actor,
-                        reason_code="workflow-complete",
-                    )
-                )
-                next_sequence = sequence + 4
-            else:
-                history.append(
-                    _workflow_event(
-                        sequence=sequence + 3,
+                        sequence=next_sequence + 1,
                         entity_type="workflow-run",
                         entity_id=str(next_snapshot["workflowRunId"]),
                         from_state=str(snapshot["state"]),
@@ -3981,17 +4000,102 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                         decision_id=decision_id,
                     )
                 )
-                next_sequence = sequence + 3
+                next_sequence += 1
+                next_state = "failed"
+            else:
+                history.append(
+                    _workflow_event(
+                        sequence=next_sequence + 1,
+                        entity_type="workflow-run",
+                        entity_id=str(next_snapshot["workflowRunId"]),
+                        from_state=str(snapshot["state"]),
+                        to_state="running",
+                        occurred_at=now,
+                        actor=actor,
+                        reason_code="human-decision-accepted"
+                        if consequence == "resume-workflow"
+                        else "human-step-skipped",
+                        decision_id=decision_id,
+                    )
+                )
+                next_sequence += 1
+                step_runs = cast(list[dict[str, object]], next_snapshot["stepRuns"])
+                step_by_key = {str(item["stepKey"]): item for item in step_runs}
+                for candidate_definition in cast(list[Mapping[str, object]], definition["steps"]):
+                    candidate = step_by_key[str(candidate_definition["stepKey"])]
+                    if candidate["state"] != "pending" or not all(
+                        step_by_key[str(dependency)]["state"] in {"succeeded", "skipped"}
+                        for dependency in cast(list[object], candidate_definition["dependsOn"])
+                    ):
+                        continue
+                    next_sequence += 1
+                    candidate["state"] = "runnable"
+                    candidate["sequence"] = next_sequence
+                    history.append(
+                        _workflow_event(
+                            sequence=next_sequence,
+                            entity_type="workflow-step",
+                            entity_id=str(candidate["stepRunId"]),
+                            from_state="pending",
+                            to_state="runnable",
+                            occurred_at=now,
+                            actor=actor,
+                            reason_code="dependencies-satisfied",
+                        )
+                    )
+                    for candidate_job_id in cast(list[object], candidate["jobIds"]):
+                        candidate_job = next(
+                            item
+                            for item in cast(list[dict[str, object]], next_snapshot["jobs"])
+                            if item["jobId"] == candidate_job_id
+                        )
+                        if candidate_job["state"] != "pending":
+                            continue
+                        next_sequence += 1
+                        candidate_job["state"] = "runnable"
+                        candidate_job["sequence"] = next_sequence
+                        history.append(
+                            _workflow_event(
+                                sequence=next_sequence,
+                                entity_type="job",
+                                entity_id=str(candidate_job_id),
+                                from_state="pending",
+                                to_state="runnable",
+                                occurred_at=now,
+                                actor=actor,
+                                reason_code="job-ready",
+                            )
+                        )
+                terminal_steps = {"succeeded", "skipped", "superseded"}
+                all_terminal = all(item["state"] in terminal_steps for item in step_runs)
+                if all_terminal:
+                    next_sequence += 1
+                    history.append(
+                        _workflow_event(
+                            sequence=next_sequence,
+                            entity_type="workflow-run",
+                            entity_id=str(next_snapshot["workflowRunId"]),
+                            from_state="running",
+                            to_state="succeeded",
+                            occurred_at=now,
+                            actor=actor,
+                            reason_code="workflow-complete",
+                        )
+                    )
+                    next_state = "succeeded"
+                else:
+                    next_state = "running"
             next_snapshot["snapshotRevision"] = expected_snapshot_revision + 1
-            next_snapshot["state"] = terminal_state
+            next_snapshot["state"] = next_state
             next_snapshot["sequence"] = next_sequence
             next_snapshot["updatedAt"] = now
-            if terminal_state == "succeeded":
-                total = cast(Mapping[str, object], next_snapshot["progress"])["totalUnits"]
+            if next_state in {"running", "succeeded"}:
+                total = cast(int, cast(Mapping[str, object], next_snapshot["progress"])["totalUnits"])
+                completed = sum(item["state"] in {"succeeded", "skipped"} for item in step_runs)
                 next_snapshot["progress"] = {
                     "kind": "quantified",
                     "unit": cast(Mapping[str, object], next_snapshot["progress"])["unit"],
-                    "completedUnits": total,
+                    "completedUnits": total if next_state == "succeeded" else min(completed, total),
                     "totalUnits": total,
                 }
             if workflow_snapshot_errors(definition, next_snapshot):
