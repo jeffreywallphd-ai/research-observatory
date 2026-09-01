@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 533573b62dc00443bf596359991ff19589123a8a4d2077879fab69bdfccdf1d7
+source_sha256: ddfc0cfbcd2b24941725c363b8b66f9695bb02d2eb35d241e6020a4f17bfdd0c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5124,7 +5124,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5132,7 +5132,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S04.T01 - Define workflow, step, job, attempt, artifact, and human-task contracts
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5162,7 +5162,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: W1.A05 is independently approved and ADOPTED; clear the recorded amendment interruption and resume the exact pre-amendment W1 task.
 
 #### - [ ] CAP-03.S04.T02 - Implement the local durable queue and worker supervisor
 
@@ -7672,7 +7672,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
