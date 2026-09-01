@@ -12911,11 +12911,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T20:57:36+00:00'
-      updated_at: '2026-09-01T21:39:10+00:00'
+      updated_at: '2026-09-01T21:43:46+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12925,6 +12925,11 @@ capabilities:
         sha256: 66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d
         commit: 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed
         recorded_at: '2026-09-01T21:31:39+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S05.T01.R02.json
+        sha256: 36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519
+        commit: 5e01824503f469e458aa7a6069b988d1d823e576
+        recorded_at: '2026-09-01T21:43:46+00:00'
       review: &id035
         reviewer: agent:t02-adversarial-preflight
         result: changes-requested
@@ -12940,7 +12945,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T21:39:10+00:00'
         expires_at: '2026-09-02T05:39:10+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -13083,7 +13088,60 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission: null
+        current_submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-09-01T21:43:46+00:00'
+          candidate_commit: 5e01824503f469e458aa7a6069b988d1d823e576
+          base_commit: 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S05.T01.R02.json
+            sha256: 36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519
+            commit: 5e01824503f469e458aa7a6069b988d1d823e576
+            recorded_at: '2026-09-01T21:43:46+00:00'
+          acceptance_criteria_sha256: a22c82b9d0596877c749cf2f309159c10f8152cceffb0f277215cd1bd3a53432
+          changed_paths:
+          - artifacts/evidence/CAP-03.S05.T01.R01.json
+          - artifacts/evidence/CAP-03.S05.T01.review-R01.json
+          - planning/backlog.yaml
+          - quality-scope.json
+          - tests/data/test_material_dependencies.py
+          - tests/service/test_provenance.py
+          - tools/provenance_lineage_performance_check.py
+          selected_checks:
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -c "from tools.provenance_lineage_performance_check
+            import _draft; source = _draft(1); assert source.dependency_coverage == 'not-applicable'"
+          - .venv\Scripts\python.exe -B -m unittest tests.service.test_provenance.ProvenancePerformanceFixtureTests tests.data.test_material_dependencies
+          - .venv\Scripts\python.exe -B -m unittest tests.service.test_provenance
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only
+            --affected-base 2ec58075... --affected-head 5e018245... --deferred-gate W1-exit; git diff --check 2ec58075...5e018245
+          deferred_checks:
+          - The unchanged quantitative provenance-lineage benchmark remains mandatory in its governed slice/W1-exit performance
+            replay.
+          - CAP-03.S05 slice integration and the complete W1 qualification matrix remain deferred to their existing gates.
+          selection_rationale: R01 independently cleared the aggregate transaction, typed endpoints, migration, workflow denial,
+            and packaging boundaries. Its sole finding was a deterministic constructor failure in one governed performance
+            fixture. R02 therefore replays that exact failure, adds a source/derived shape regression, reruns the affected
+            provenance and dependency tests, and executes full governed Python static quality. Running the 4,096-leaf quantitative
+            benchmark would duplicate its deliberate slice/W1-exit performance gate and is not justified for this local compatibility
+            remediation.
+          selection_sha256: b08f3564209ef0d39298dfcdafa008b563435112c8c17a21f8ade4977affb4ae
+          prior_attempt_id: R01
+          open_finding_ids:
+          - CAP-03.S05.T01-R01-F01
+          root_cause_analysis: The R01 implementation made dependency coverage mandatory across the aggregate port and updated
+            all exercised repository/workflow test fixtures, but affected selection treated the large-lineage performance
+            command as W1-exit-deferred and the task omitted a lightweight constructor compatibility test. That allowed an
+            unexecuted governed helper to retain the old call signature. R02 adds the missing constructor-level regression
+            and full quality-scope registration without running the quantitative gate early.
+          selected_command_ids:
+          - foundation:quality
+          - service:unit
+          - data:unit
+          packet_sha256: b6c3645fa809f774c9dc62fd9899a31d8e1baa1a8f0b4206ef1a668b7dec64b7
     - id: CAP-03.S05.T02
       capability_id: CAP-03
       slice_id: CAP-03.S05
