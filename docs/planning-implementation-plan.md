@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 668b5320e1f533dec0f1a81f35025c35d9718fdae330db3d44cf55366bf0b97a
+source_sha256: 00088e2c90b02079c61a635192bbe2b19887ed734a925267adeb0517d6f7a174
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5237,15 +5237,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S04.T02 - Implement the local durable queue and worker supervisor
+#### - [x] CAP-03.S04.T02 - Implement the local durable queue and worker supervisor
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S04.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:t02-adversarial-preflight (`approved`)
 
 **Objective:** SQLite-backed queue, leases, concurrency classes, heartbeat, retry, checkpoint, cancellation, and crash recovery.
 
@@ -5265,23 +5265,61 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S04.T02.R01.json` at `4a237a0b726f391a72657ad200eed73ff35ddb95`
+
 ##### Review history — CAP-03.S04.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `6c939d3829b8ba67c547450761ae78757516fc5959e163ede2a44da8c746f01a`
+
+- Candidate / base / branch: `4a237a0b726f391a72657ad200eed73ff35ddb95` / `9d734971fc5cf3fdb20b2c8d6f5a51d0cfb9887b` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T18:27:27+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S04.T02.R01.json` / `1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9` / `4a237a0b726f391a72657ad200eed73ff35ddb95`
+- Acceptance-criteria SHA-256: `d101a2479fb0ca48eb19f12c8a7e5726decf839babf422196a5bf8b07307325d`
+- Verification-selection SHA-256: `4c665a3deb99a5f85962973732072f73d65813324556f48e7802c6b763569165`
+- Changed paths: `artifacts/evidence/CAP-03.S04.T02.task-start.md`, `docs/architecture/workflow-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S04.T02.html`, `planning/review-site/CAP-03/CAP-03.S04.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py`, `services/core-api/src/research_observatory_core/ports/workflow_executor.py`, `services/core-api/src/research_observatory_core/provenance.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `services/core-api/src/research_observatory_core/workflow_executor.py`, `tests/data/test_sqlite_migrations.py`, `tests/packaging/test_core_sidecar_package.py`, `tests/workflows/README.md`, `tests/workflows/__init__.py`, `tests/workflows/test_local_workflow_executor.py`, `tools/core_sidecar_build.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest discover -s tests/workflows -p test_local_workflow_executor.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/data -p test_sqlite_schema.py; .venv\Scripts\python.exe -m unittest discover -s tests/data -p test_sqlite_migrations.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/contracts -p test_workflow_contracts.py`, `.venv\Scripts\python.exe -m unittest discover -s tests/packaging -p test_core_sidecar_package.py`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py; .venv\Scripts\python.exe tools/repository_structure_check.py`, `.venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; git diff --check`, `Independent adversarial working-tree preflight with focused replay after each consolidated finding ledger`
+- Deferred checks: `CAP-03.S04.T03 owns governed Task Center, progress, cancellation, and human-gate UI behavior and accessibility against this executor contract.`, `CAP-03.S04 slice review owns the accumulated affected executor/contract/UI adversarial integration after all slice tasks close.`, `The complete service, data, e2e-local, security, performance, packaging, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: T02 changes a migration, SQLite persistence, public Core port, crash recovery, completion provenance, and packaging boundary, so task verification used the real database, spawned-process, fault-injection, race, strict-schema, predecessor-migration, contract, packaging, architecture, and static-quality checks. The affected-selection preview was consulted only after the exact candidate commit; its evidence/README fallback expanded to complete profile inventories, but repository risk policy permits the narrower deterministic checks recorded here because no dependency, route, governed UI, or unrelated subsystem changed. The complete accumulated profile matrix remains owned by slice checkpoints and W1 exit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:t02-adversarial-preflight / `2026-09-01T18:34:05+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S04.T02.review-R01.json` / `004eebf8ef5e551af0553ce11f04eefe35ae8b21c4644c777951316eedbc047a`
+
+**Review notes:** Independent commit-bound R01 review authenticated candidate 4a237a0b726f391a72657ad200eed73ff35ddb95, its direct frozen-submission child a4f25eb69dbc7e64da83bb0017c5b102f0ed63ad, evidence SHA-256 1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9, and Git blob 84306f1b391bfa6113e6899eda4ae06b89b78219. The declared 27-path candidate inventory exactly matches the base-to-candidate delta; the submission adds only the frozen R01 manifest and backlog projection. Focused replay passed 31 lease, recovery, workflow-contract, migration, and packaging tests plus two exact SQLite profile/WAL tests. Source and adversarial inspection reconfirmed automatic bounded fresh-supervisor recovery, claimant-fenced replay, canonical same-project immutable output/content-hash binding, atomic provenance/outbox publication and rollback, global checkpoint ordering, exact current-attempt checkpoint-artifact revision binding after restart, monotonic history/progress authority, separate cancellation/security-lock semantics, explicit retained/committed/abandoned artifact dispositions, exact-manifest subset completion, and denial of heartbeat before start without history mutation. All twelve task-start preflight findings were replayed and remain closed. No acceptance-bound finding remains; T03 routing/UI and Wave-level qualification remain correctly deferred. No full profile was run.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t02-adversarial-preflight at `2026-09-01T18:34:05+00:00`
+
+**Latest notes:** Independent commit-bound R01 review authenticated candidate 4a237a0b726f391a72657ad200eed73ff35ddb95, its direct frozen-submission child a4f25eb69dbc7e64da83bb0017c5b102f0ed63ad, evidence SHA-256 1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9, and Git blob 84306f1b391bfa6113e6899eda4ae06b89b78219. The declared 27-path candidate inventory exactly matches the base-to-candidate delta; the submission adds only the frozen R01 manifest and backlog projection. Focused replay passed 31 lease, recovery, workflow-contract, migration, and packaging tests plus two exact SQLite profile/WAL tests. Source and adversarial inspection reconfirmed automatic bounded fresh-supervisor recovery, claimant-fenced replay, canonical same-project immutable output/content-hash binding, atomic provenance/outbox publication and rollback, global checkpoint ordering, exact current-attempt checkpoint-artifact revision binding after restart, monotonic history/progress authority, separate cancellation/security-lock semantics, explicit retained/committed/abandoned artifact dispositions, exact-manifest subset completion, and denial of heartbeat before start without history mutation. All twelve task-start preflight findings were replayed and remain closed. No acceptance-bound finding remains; T03 routing/UI and Wave-level qualification remain correctly deferred. No full profile was run.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S04.T03 - Build task center, progress, cancellation, and human-gate UI
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S04.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Desktop task center showing workflow graph, queued/running/waiting/failed states, resource use, logs, decisions, retry, and cancel.
 

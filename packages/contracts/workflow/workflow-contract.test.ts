@@ -200,15 +200,41 @@ describe("portable workflow contract", () => {
       excludedDefinition.steps as Array<Record<string, unknown>>
     ).find((step) => step.kind === "human-task");
     if (humanStep === undefined) throw new Error("fixture human step missing");
-    (humanStep.humanTask as Record<string, unknown>).allowedDispositions = [
+    const excludedHumanDefinition = humanStep.humanTask as Record<string, unknown>;
+    excludedHumanDefinition.allowedDispositions = [
       "rejected",
     ];
+    excludedHumanDefinition.consequencesByDisposition = {
+      rejected: "end-workflow",
+    };
     const excludedDisposition = clone(snapshot);
     (excludedDisposition.definition as Record<string, unknown>).contentHash =
       workflowRecordSha256(excludedDefinition);
     expect(
       workflowSnapshotErrors(excludedDefinition, excludedDisposition),
     ).toContain("human-decision-is-audit-bound");
+
+    const unboundDefinition = clone(definition);
+    const unboundStep = (
+      unboundDefinition.steps as Array<Record<string, unknown>>
+    ).find((step) => step.kind === "human-task");
+    if (unboundStep === undefined) throw new Error("fixture human step missing");
+    (unboundStep.humanTask as Record<string, unknown>).consequencesByDisposition = {
+      approved: "resume-workflow",
+    };
+    expect(workflowDefinitionErrors(unboundDefinition)).toContain(
+      "human-task-consequences-are-definition-bound",
+    );
+
+    const substitutedConsequence = clone(snapshot);
+    const substitutedConsequenceTask = (
+      substitutedConsequence.humanTasks as Array<Record<string, unknown>>
+    )[0]!;
+    (substitutedConsequenceTask.decision as Record<string, unknown>).consequenceCode =
+      "end-workflow";
+    expect(workflowSnapshotErrors(definition, substitutedConsequence)).toContain(
+      "human-decision-is-audit-bound",
+    );
 
     for (const [field, replacement] of [
       [

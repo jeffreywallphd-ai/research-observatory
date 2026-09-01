@@ -173,7 +173,7 @@ class CoreApiTests(unittest.TestCase):
         )
         self.assertEqual(
             [module["moduleId"] for module in modules.json()["modules"]],
-            ["intent", "operations", "privacy", "projects", "provenance", "runtime"],
+            ["intent", "operations", "privacy", "projects", "provenance", "runtime", "workflows"],
         )
         self.assertEqual(
             capabilities.json()["capabilities"],
@@ -192,6 +192,10 @@ class CoreApiTests(unittest.TestCase):
                 "provenance.lineage.read",
                 "runtime.contract",
                 "runtime.status",
+                "workflows.cancel",
+                "workflows.human-decisions",
+                "workflows.read",
+                "workflows.retry",
             ],
         )
         self.assertEqual(openapi.status_code, 200)

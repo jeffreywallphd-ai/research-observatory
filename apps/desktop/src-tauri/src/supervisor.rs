@@ -760,6 +760,73 @@ fn canonical_operation_id(value: &str) -> bool {
         && !rest.ends_with('-')
 }
 
+fn canonical_uuid_v7(value: &str) -> bool {
+    value.len() == 36
+        && value.bytes().enumerate().all(|(index, byte)| match index {
+            8 | 13 | 18 | 23 => byte == b'-',
+            14 => byte == b'7',
+            19 => matches!(byte, b'8' | b'9' | b'a' | b'b'),
+            _ => byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte),
+        })
+}
+
+fn canonical_workflow_etag(value: &str) -> bool {
+    let Some(inner) = value
+        .strip_prefix('"')
+        .and_then(|item| item.strip_suffix('"'))
+        .and_then(|item| item.strip_prefix("workflow-"))
+    else {
+        return false;
+    };
+    if inner.len() < 39 || !canonical_uuid_v7(&inner[..36]) || inner.as_bytes()[36] != b'-' {
+        return false;
+    }
+    let Some((history, snapshot)) = inner[37..].split_once('-') else {
+        return false;
+    };
+    canonical_unsigned(history, 1, 9_007_199_254_740_991)
+        && canonical_unsigned(snapshot, 1, 9_007_199_254_740_991)
+}
+
+fn form_url_encode(value: &str) -> String {
+    const HEX: &[u8; 16] = b"0123456789ABCDEF";
+    let mut encoded = String::with_capacity(value.len());
+    for byte in value.as_bytes() {
+        if byte.is_ascii_alphanumeric() || b"*-._".contains(byte) {
+            encoded.push(char::from(*byte));
+        } else if *byte == b' ' {
+            encoded.push('+');
+        } else {
+            encoded.push('%');
+            encoded.push(char::from(HEX[usize::from(byte >> 4)]));
+            encoded.push(char::from(HEX[usize::from(byte & 0x0f)]));
+        }
+    }
+    encoded
+}
+
+fn decode_form_url_component(value: &str) -> Option<String> {
+    let bytes = value.as_bytes();
+    let mut decoded = Vec::with_capacity(bytes.len());
+    let mut index = 0;
+    while index < bytes.len() {
+        match bytes[index] {
+            b'+' => decoded.push(b' '),
+            b'%' if index + 2 < bytes.len() => {
+                let high = char::from(bytes[index + 1]).to_digit(16)?;
+                let low = char::from(bytes[index + 2]).to_digit(16)?;
+                decoded.push(u8::try_from((high << 4) | low).ok()?);
+                index += 2;
+            }
+            b'%' => return None,
+            byte => decoded.push(byte),
+        }
+        index += 1;
+    }
+    let decoded = String::from_utf8(decoded).ok()?;
+    (form_url_encode(&decoded) == value).then_some(decoded)
+}
+
 fn canonical_unsigned(value: &str, minimum: u64, maximum: u64) -> bool {
     !value.is_empty()
         && value.bytes().all(|byte| byte.is_ascii_digit())
@@ -1304,6 +1371,55 @@ fn validate_project_api_request(path: &str, body: &str) -> bool {
     false
 }
 
+fn validate_workflow_api_request(path: &str, body: &str) -> bool {
+    if let Some(job_id) = path
+        .strip_prefix("/projects/workflows/jobs/")
+        .and_then(|value| value.strip_suffix("/cancel"))
+    {
+        let Some(object) = exact_json_object(body, &["root", "reasonCode"], 16_384) else {
+            return false;
+        };
+        return canonical_uuid_v7(job_id)
+            && object["root"].as_str().is_some_and(canonical_project_root)
+            && object["reasonCode"].as_str().is_some_and(|value| {
+                (1..=100).contains(&value.len())
+                    && value.bytes().enumerate().all(|(index, byte)| {
+                        if index == 0 {
+                            byte.is_ascii_lowercase()
+                        } else {
+                            byte.is_ascii_lowercase()
+                                || byte.is_ascii_digit()
+                                || matches!(byte, b'.' | b'-')
+                        }
+                    })
+            });
+    }
+    if let Some(job_id) = path
+        .strip_prefix("/projects/workflows/jobs/")
+        .and_then(|value| value.strip_suffix("/retry"))
+    {
+        return canonical_uuid_v7(job_id)
+            && exact_json_object(body, &["root"], 16_384)
+                .and_then(|object| object["root"].as_str().map(canonical_project_root))
+                .unwrap_or(false);
+    }
+    if let Some(human_task_id) = path
+        .strip_prefix("/projects/workflows/human-tasks/")
+        .and_then(|value| value.strip_suffix("/decide"))
+    {
+        let Some(object) = exact_json_object(body, &["root", "disposition"], 16_384) else {
+            return false;
+        };
+        return canonical_uuid_v7(human_task_id)
+            && object["root"].as_str().is_some_and(canonical_project_root)
+            && matches!(
+                object["disposition"].as_str(),
+                Some("approved" | "rejected" | "deferred" | "not-applicable")
+            );
+    }
+    false
+}
+
 fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
@@ -1311,7 +1427,7 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request
         .path
         .bytes()
-        .any(|byte| !(byte.is_ascii_alphanumeric() || b"/-?&=.".contains(&byte)))
+        .any(|byte| !(byte.is_ascii_alphanumeric() || b"/-?&=.%+_".contains(&byte)))
     {
         return Err("RO-CORE-API-REQUEST-INVALID");
     }
@@ -1350,6 +1466,18 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
                 return Ok(());
             }
         }
+        if let Some(query) = request
+            .path
+            .strip_prefix("/projects/workflows/task-center?root=")
+            && let Some((encoded_root, limit)) = query.split_once("&limit=")
+            && !limit.contains('&')
+            && canonical_unsigned(limit, 1, 100)
+            && decode_form_url_component(encoded_root)
+                .as_deref()
+                .is_some_and(canonical_project_root)
+        {
+            return Ok(());
+        }
     }
     if request.method == "POST"
         && request.if_match.is_none()
@@ -1363,6 +1491,25 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
                 .as_deref()
                 .is_some_and(|value| canonical_lower_hex(value, 32)),
             _ => request.idempotency_key.is_none(),
+        }
+    {
+        return Ok(());
+    }
+    if request.method == "POST"
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_workflow_api_request(&request.path, body))
+        && request
+            .if_match
+            .as_deref()
+            .is_some_and(canonical_workflow_etag)
+        && match request.path.as_str() {
+            path if path.ends_with("/cancel") => request.idempotency_key.is_none(),
+            _ => request
+                .idempotency_key
+                .as_deref()
+                .is_some_and(|value| canonical_lower_hex(value, 32)),
         }
     {
         return Ok(());
@@ -2285,6 +2432,49 @@ mod tests {
                 "POST {path}",
             );
         }
+        let workflow_run_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d005";
+        let workflow_job_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d006";
+        let human_task_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d030";
+        let workflow_etag = format!("\"workflow-{workflow_run_id}-28-1\"");
+        assert!(
+            validate_api_request(&CoreApiRequest {
+                method: "GET".to_owned(),
+                path: "/projects/workflows/task-center?root=C%3A%2FResearch%2Fstudy-one&limit=50"
+                    .to_owned(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            })
+            .is_ok()
+        );
+        for (path, body, key) in [
+            (
+                format!("/projects/workflows/jobs/{workflow_job_id}/cancel"),
+                r#"{"root":"C:/Research/study-one","reasonCode":"user-requested"}"#,
+                None,
+            ),
+            (
+                format!("/projects/workflows/jobs/{workflow_job_id}/retry"),
+                r#"{"root":"C:/Research/study-one"}"#,
+                Some("a".repeat(32)),
+            ),
+            (
+                format!("/projects/workflows/human-tasks/{human_task_id}/decide"),
+                r#"{"root":"C:/Research/study-one","disposition":"approved"}"#,
+                Some("b".repeat(32)),
+            ),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: "POST".to_owned(),
+                    path,
+                    body: Some(body.to_owned()),
+                    if_match: Some(workflow_etag.clone()),
+                    idempotency_key: key,
+                })
+                .is_ok()
+            );
+        }
         for (path, body) in [
             ("/projects/open", r#"{"root":"../escape"}"#),
             (
@@ -2346,6 +2536,35 @@ mod tests {
                 .is_err(),
                 "{method} {path}",
             );
+        }
+        for request in [
+            CoreApiRequest {
+                method: "GET".to_owned(),
+                path: "/projects/workflows/task-center?root=C%3a%2FResearch%2Fstudy-one&limit=50"
+                    .to_owned(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            },
+            CoreApiRequest {
+                method: "POST".to_owned(),
+                path: format!("/projects/workflows/human-tasks/{human_task_id}/decide"),
+                body: Some(
+                    r#"{"root":"C:/Research/study-one","disposition":"approved","consequenceCode":"end-workflow"}"#
+                        .to_owned(),
+                ),
+                if_match: Some(workflow_etag.clone()),
+                idempotency_key: Some("b".repeat(32)),
+            },
+            CoreApiRequest {
+                method: "POST".to_owned(),
+                path: format!("/projects/workflows/jobs/{workflow_job_id}/retry"),
+                body: Some(r#"{"root":"C:/Research/study-one"}"#.to_owned()),
+                if_match: Some(format!("\"workflow-{workflow_run_id}-028-1\"")),
+                idempotency_key: Some("a".repeat(32)),
+            },
+        ] {
+            assert!(validate_api_request(&request).is_err(), "unexpected workflow request");
         }
     }
 

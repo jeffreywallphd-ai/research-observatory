@@ -2601,6 +2601,648 @@
         },
         "title": "VersionResponse",
         "type": "object"
+      },
+      "WorkflowCancelRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "reasonCode": {
+            "default": "user-requested",
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Reasoncode",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ],
+        "title": "WorkflowCancelRequest",
+        "type": "object"
+      },
+      "WorkflowHumanDecisionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "disposition": {
+            "enum": [
+              "approved",
+              "rejected",
+              "deferred",
+              "not-applicable"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "disposition"
+        ],
+        "title": "WorkflowHumanDecisionRequest",
+        "type": "object"
+      },
+      "WorkflowProgress": {
+        "additionalProperties": false,
+        "properties": {
+          "completedUnits": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completedunits"
+          },
+          "kind": {
+            "enum": [
+              "quantified",
+              "unknown",
+              "not-applicable"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "totalUnits": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalunits"
+          },
+          "unit": {
+            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "unit"
+        ],
+        "title": "WorkflowProgress",
+        "type": "object"
+      },
+      "WorkflowRetryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ],
+        "title": "WorkflowRetryRequest",
+        "type": "object"
+      },
+      "WorkflowTaskCenterEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "entityId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Entityid",
+            "type": "string"
+          },
+          "entityType": {
+            "title": "Entitytype",
+            "type": "string"
+          },
+          "occurredAt": {
+            "format": "date-time",
+            "title": "Occurredat",
+            "type": "string"
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 1.0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "toState": {
+            "title": "Tostate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sequence",
+          "entityType",
+          "entityId",
+          "toState",
+          "occurredAt",
+          "reasonCode"
+        ],
+        "title": "WorkflowTaskCenterEvent",
+        "type": "object"
+      },
+      "WorkflowTaskCenterHumanTask": {
+        "additionalProperties": false,
+        "properties": {
+          "allowedDispositions": {
+            "items": {
+              "enum": [
+                "approved",
+                "rejected",
+                "deferred",
+                "not-applicable"
+              ],
+              "type": "string"
+            },
+            "title": "Alloweddispositions",
+            "type": "array"
+          },
+          "assignedActorId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignedactorid"
+          },
+          "consequencesByDisposition": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "approved",
+                "rejected",
+                "deferred",
+                "not-applicable"
+              ]
+            },
+            "title": "Consequencesbydisposition",
+            "type": "object"
+          },
+          "decidedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decidedat"
+          },
+          "decisionId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decisionid"
+          },
+          "disposition": {
+            "anyOf": [
+              {
+                "enum": [
+                  "approved",
+                  "rejected",
+                  "deferred",
+                  "not-applicable"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disposition"
+          },
+          "evidenceArtifactIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidenceartifactids",
+            "type": "array"
+          },
+          "humanTaskId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Humantaskid",
+            "type": "string"
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "title": "Requestedat",
+            "type": "string"
+          },
+          "requiredRole": {
+            "title": "Requiredrole",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "requested",
+              "claimed",
+              "completed",
+              "cancelled",
+              "expired",
+              "superseded"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "stepRunId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Steprunid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "humanTaskId",
+          "stepRunId",
+          "state",
+          "requiredRole",
+          "requestedAt",
+          "evidenceArtifactIds",
+          "allowedDispositions",
+          "consequencesByDisposition"
+        ],
+        "title": "WorkflowTaskCenterHumanTask",
+        "type": "object"
+      },
+      "WorkflowTaskCenterJob": {
+        "additionalProperties": false,
+        "properties": {
+          "activityType": {
+            "title": "Activitytype",
+            "type": "string"
+          },
+          "attemptCount": {
+            "maximum": 32.0,
+            "minimum": 0.0,
+            "title": "Attemptcount",
+            "type": "integer"
+          },
+          "currentAttemptId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currentattemptid"
+          },
+          "diagnosticCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnosticcode"
+          },
+          "jobId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Jobid",
+            "type": "string"
+          },
+          "latestCheckpointAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestcheckpointat"
+          },
+          "latestCheckpointId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestcheckpointid"
+          },
+          "maxAttempts": {
+            "maximum": 32.0,
+            "minimum": 1.0,
+            "title": "Maxattempts",
+            "type": "integer"
+          },
+          "priority": {
+            "maximum": 1000.0,
+            "minimum": -1000.0,
+            "title": "Priority",
+            "type": "integer"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/WorkflowProgress"
+          },
+          "resourcePool": {
+            "enum": [
+              "interactive",
+              "document",
+              "ai",
+              "maintenance"
+            ],
+            "title": "Resourcepool",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "runnable",
+              "claimed",
+              "running",
+              "retry-scheduled",
+              "cancelling",
+              "cancelled",
+              "failed",
+              "succeeded"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          },
+          "workerId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workerid"
+          }
+        },
+        "required": [
+          "jobId",
+          "state",
+          "activityType",
+          "resourcePool",
+          "priority",
+          "attemptCount",
+          "maxAttempts",
+          "progress",
+          "updatedAt"
+        ],
+        "title": "WorkflowTaskCenterJob",
+        "type": "object"
+      },
+      "WorkflowTaskCenterPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowTaskCenterRun"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "WorkflowTaskCenterPage",
+        "type": "object"
+      },
+      "WorkflowTaskCenterRun": {
+        "additionalProperties": false,
+        "properties": {
+          "activeCompute": {
+            "title": "Activecompute",
+            "type": "boolean"
+          },
+          "definitionRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Definitionrevisionid",
+            "type": "string"
+          },
+          "definitionVersion": {
+            "title": "Definitionversion",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowTaskCenterEvent"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "humanTasks": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowTaskCenterHumanTask"
+            },
+            "title": "Humantasks",
+            "type": "array"
+          },
+          "interruptionKind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ordinary-restart",
+                  "user-cancel",
+                  "security-lock",
+                  "policy",
+                  "dependency"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interruptionkind"
+          },
+          "jobs": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowTaskCenterJob"
+            },
+            "title": "Jobs",
+            "type": "array"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/WorkflowProgress"
+          },
+          "retainedArtifacts": {
+            "items": {
+              "enum": [
+                "committed",
+                "retained-incomplete",
+                "quarantined",
+                "discarded"
+              ],
+              "type": "string"
+            },
+            "title": "Retainedartifacts",
+            "type": "array"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "snapshotId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Snapshotid",
+            "type": "string"
+          },
+          "snapshotRevision": {
+            "minimum": 1.0,
+            "title": "Snapshotrevision",
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "running",
+              "waiting-human",
+              "cancelling",
+              "cancelled",
+              "failed",
+              "succeeded",
+              "paused"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowTaskCenterStep"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          },
+          "workflowKey": {
+            "title": "Workflowkey",
+            "type": "string"
+          },
+          "workflowRunId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Workflowrunid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflowRunId",
+          "workflowKey",
+          "definitionRevisionId",
+          "definitionVersion",
+          "snapshotId",
+          "snapshotRevision",
+          "state",
+          "activeCompute",
+          "progress",
+          "revision",
+          "updatedAt",
+          "steps",
+          "jobs",
+          "humanTasks",
+          "retainedArtifacts",
+          "events"
+        ],
+        "title": "WorkflowTaskCenterRun",
+        "type": "object"
+      },
+      "WorkflowTaskCenterStep": {
+        "additionalProperties": false,
+        "properties": {
+          "dependsOn": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Dependson",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "activity",
+              "human-task"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "stepKey": {
+            "title": "Stepkey",
+            "type": "string"
+          },
+          "stepRunId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Steprunid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stepRunId",
+          "stepKey",
+          "kind",
+          "state",
+          "dependsOn"
+        ],
+        "title": "WorkflowTaskCenterStep",
+        "type": "object"
       }
     }
   },
@@ -3620,6 +4262,459 @@
         "summary": "Restore Project",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/projects/workflows/human-tasks/{human_task_id}/decide": {
+      "post": {
+        "operationId": "decide_workflow_human_task_projects_workflows_human_tasks__human_task_id__decide_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "human_task_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Human Task Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowHumanDecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowTaskCenterRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "428": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Required"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Decide Workflow Human Task",
+        "tags": [
+          "workflows"
+        ]
+      }
+    },
+    "/projects/workflows/jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "cancel_workflow_job_projects_workflows_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowCancelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowTaskCenterRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "428": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Required"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Cancel Workflow Job",
+        "tags": [
+          "workflows"
+        ]
+      }
+    },
+    "/projects/workflows/jobs/{job_id}/retry": {
+      "post": {
+        "operationId": "retry_workflow_job_projects_workflows_jobs__job_id__retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowRetryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowTaskCenterRun"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "428": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Required"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Retry Workflow Job",
+        "tags": [
+          "workflows"
+        ]
+      }
+    },
+    "/projects/workflows/task-center": {
+      "get": {
+        "operationId": "workflow_task_center_projects_workflows_task_center_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "root",
+            "required": true,
+            "schema": {
+              "maxLength": 1024,
+              "minLength": 1,
+              "title": "Root",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowTaskCenterPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Workflow Task Center",
+        "tags": [
+          "workflows"
         ]
       }
     },

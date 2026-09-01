@@ -43,6 +43,7 @@ const expectedRules = [
   "succeeded-output-artifacts-are-committed",
   "unsuccessful-attempt-has-no-accepted-output",
   "completed-human-task-binds-decision",
+  "human-task-consequences-are-definition-bound",
   "human-decision-is-audit-bound",
   "security-lock-does-not-auto-resume",
 ];

@@ -34,6 +34,7 @@ from .repositories import (
     sqlite_intent_revision_repository,
     sqlite_privacy_policy_repository,
     sqlite_provenance_ledger_repository,
+    sqlite_workflow_queue_repository,
 )
 from .research_intents import ResearchIntentService
 from .storage import (
@@ -41,6 +42,7 @@ from .storage import (
     configure_protected_database_provider,
     database_protection_profile,
 )
+from .task_center import TaskCenterService
 from .windows_credentials import (
     create_windows_database_key_provider,
     create_windows_local_actor_identity,
@@ -125,6 +127,7 @@ def create_runtime_app(
             local_actor_id=resolved_actor_id,
         ),
         provenance=ProvenanceService(projects, sqlite_provenance_ledger_repository),
+        task_center=TaskCenterService(projects, sqlite_workflow_queue_repository, resolved_actor_id),
     )
 
 

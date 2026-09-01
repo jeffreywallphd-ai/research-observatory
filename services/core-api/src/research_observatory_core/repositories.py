@@ -9,6 +9,7 @@ import sqlite3
 import threading
 from collections.abc import Iterator, Mapping
 from contextlib import contextmanager, suppress
+from copy import deepcopy
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -55,6 +56,7 @@ from .ports.workflow_executor import (
     WorkflowArtifactRole,
     WorkflowCheckpointRecord,
     WorkflowCompletionReceipt,
+    WorkflowHumanDisposition,
     WorkflowInterruptionKind,
     WorkflowJobAuthority,
     WorkflowJobClaim,
@@ -62,11 +64,17 @@ from .ports.workflow_executor import (
     WorkflowJobSubmission,
     WorkflowLeaseRejected,
     WorkflowOutputReference,
+    WorkflowProgressRecord,
     WorkflowQueueConflict,
     WorkflowQueueCorrupt,
     WorkflowQueueNotFound,
     WorkflowQueueProblem,
     WorkflowQueueRepository,
+    WorkflowTaskCenterEventRecord,
+    WorkflowTaskCenterHumanTaskRecord,
+    WorkflowTaskCenterJobRecord,
+    WorkflowTaskCenterRunRecord,
+    WorkflowTaskCenterStepRecord,
 )
 from .provenance import (
     canonical_aggregate_provenance_event,
@@ -75,6 +83,7 @@ from .provenance import (
 )
 from .provenance_contracts import canonical_provenance_json, decode_provenance_event, provenance_record_sha256
 from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
+from .workflow_contracts import workflow_record_sha256, workflow_snapshot_errors
 
 _METADATA = MetaData()
 _IDENTITIES = Table(
@@ -2343,6 +2352,55 @@ def _workflow_progress(progress: Mapping[str, object]) -> str:
     return _workflow_json(progress)
 
 
+def _workflow_progress_record(value: object, *, unit: str = "items") -> WorkflowProgressRecord:
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError:
+            value = None
+    if isinstance(value, Mapping):
+        try:
+            _workflow_progress(cast(Mapping[str, object], value))
+            return WorkflowProgressRecord(
+                kind=cast(Any, value["kind"]),
+                unit=str(value["unit"]),
+                completed_units=cast(int | None, value["completedUnits"]),
+                total_units=cast(int | None, value["totalUnits"]),
+            )
+        except KeyError, TypeError, WorkflowQueueProblem:
+            pass
+    return WorkflowProgressRecord("unknown", unit, None, None)
+
+
+def _workflow_event(
+    *,
+    sequence: int,
+    entity_type: str,
+    entity_id: str,
+    from_state: str | None,
+    to_state: str,
+    occurred_at: str,
+    actor: WorkflowActor,
+    reason_code: str,
+    decision_id: str | None = None,
+) -> dict[str, object]:
+    return {
+        "eventId": new_uuid_v7(timestamp_ms=int(_workflow_time(occurred_at).timestamp() * 1_000)),
+        "sequence": sequence,
+        "entityType": entity_type,
+        "entityId": entity_id,
+        "fromState": from_state,
+        "toState": to_state,
+        "occurredAt": occurred_at,
+        "actor": {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role},
+        "reasonCode": reason_code,
+        "progress": None,
+        "decisionId": decision_id,
+        "checkpointId": None,
+        "interruptionKind": None,
+    }
+
+
 class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
     """Short-transaction SQLite queue with opaque lease tokens and generation fences."""
 
@@ -2485,6 +2543,410 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         )
         return sequence
 
+    def _store_authority(
+        self,
+        connection: CanonicalConnection,
+        *,
+        definition: Mapping[str, object],
+        snapshot: Mapping[str, object],
+        definition_json: str,
+        snapshot_json: str,
+    ) -> None:
+        definition_sha256 = workflow_record_sha256(definition)
+        snapshot_sha256 = workflow_record_sha256(snapshot)
+        definition_revision_id = str(definition["definitionRevisionId"])
+        snapshot_id = str(snapshot["snapshotId"])
+        snapshot_revision = int(cast(int, snapshot["snapshotRevision"]))
+        existing_definition = connection.execute(
+            "SELECT project_id, definition_json, record_sha256 FROM workflow_definitions "
+            "WHERE definition_revision_id=?",
+            (definition_revision_id,),
+        ).fetchone()
+        expected_definition = (self._project_id, definition_json, definition_sha256)
+        if existing_definition is None:
+            connection.execute(
+                """
+                INSERT INTO workflow_definitions (
+                    definition_revision_id, project_id, workflow_definition_id,
+                    definition_version, contract_version, content_hash, definition_json,
+                    record_sha256, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    definition_revision_id,
+                    self._project_id,
+                    definition["workflowDefinitionId"],
+                    definition["definitionVersion"],
+                    definition["contractVersion"],
+                    cast(Mapping[str, object], snapshot["definition"])["contentHash"],
+                    definition_json,
+                    definition_sha256,
+                    definition["createdAt"],
+                ),
+            )
+        elif tuple(existing_definition) != expected_definition:
+            raise WorkflowQueueConflict("workflow definition authority differs")
+
+        existing_snapshot = connection.execute(
+            "SELECT project_id, workflow_run_id, definition_revision_id, snapshot_json, record_sha256 "
+            "FROM workflow_authority_snapshots WHERE snapshot_id=? AND snapshot_revision=?",
+            (snapshot_id, snapshot_revision),
+        ).fetchone()
+        expected_snapshot = (
+            self._project_id,
+            str(snapshot["workflowRunId"]),
+            definition_revision_id,
+            snapshot_json,
+            snapshot_sha256,
+        )
+        if existing_snapshot is None:
+            connection.execute(
+                """
+                INSERT INTO workflow_authority_snapshots (
+                    snapshot_id, snapshot_revision, project_id, workflow_run_id,
+                    definition_revision_id, state, history_sequence, snapshot_json,
+                    record_sha256, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    snapshot_id,
+                    snapshot_revision,
+                    self._project_id,
+                    snapshot["workflowRunId"],
+                    definition_revision_id,
+                    snapshot["state"],
+                    snapshot["sequence"],
+                    snapshot_json,
+                    snapshot_sha256,
+                    snapshot["createdAt"],
+                    snapshot["updatedAt"],
+                ),
+            )
+        elif tuple(existing_snapshot) != expected_snapshot:
+            raise WorkflowQueueConflict("workflow snapshot authority differs")
+
+        for event_value in cast(list[dict[str, object]], snapshot["history"]):
+            event_json = _workflow_json(event_value)
+            event_sha256 = _workflow_sha256(event_value)
+            existing_event = connection.execute(
+                "SELECT project_id, workflow_run_id, event_json, record_sha256 "
+                "FROM workflow_history_events WHERE event_id=?",
+                (event_value["eventId"],),
+            ).fetchone()
+            expected_event = (self._project_id, snapshot["workflowRunId"], event_json, event_sha256)
+            if existing_event is not None:
+                if tuple(existing_event) != expected_event:
+                    raise WorkflowQueueConflict("workflow history authority differs")
+                continue
+            connection.execute(
+                """
+                INSERT INTO workflow_history_events (
+                    event_id, project_id, workflow_run_id, job_id, attempt_id, sequence,
+                    entity_type, entity_id, from_state, to_state, occurred_at, actor_json,
+                    reason_code, event_json, record_sha256
+                ) VALUES (?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    event_value["eventId"],
+                    self._project_id,
+                    snapshot["workflowRunId"],
+                    event_value["sequence"],
+                    event_value["entityType"],
+                    event_value["entityId"],
+                    event_value["fromState"],
+                    event_value["toState"],
+                    event_value["occurredAt"],
+                    _workflow_json(event_value["actor"]),
+                    event_value["reasonCode"],
+                    event_json,
+                    event_sha256,
+                ),
+            )
+
+    def register_authority(
+        self,
+        *,
+        definition_json: str,
+        snapshot_json: str,
+        actor: WorkflowActor,
+    ) -> WorkflowTaskCenterRunRecord:
+        _workflow_actor(actor)
+        try:
+            definition = cast(dict[str, object], json.loads(definition_json))
+            snapshot = cast(dict[str, object], json.loads(snapshot_json))
+        except (json.JSONDecodeError, TypeError) as error:
+            raise WorkflowQueueCorrupt("workflow authority JSON is invalid") from error
+        if (
+            _workflow_json(definition) != definition_json
+            or _workflow_json(snapshot) != snapshot_json
+            or snapshot.get("projectId") != self._project_id
+            or workflow_snapshot_errors(definition, snapshot)
+        ):
+            raise WorkflowQueueCorrupt("workflow authority is invalid")
+        final_actor = cast(Mapping[str, object], cast(list[object], snapshot["history"])[-1])["actor"]
+        expected_actor = {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role}
+        if final_actor != expected_actor:
+            raise WorkflowQueueConflict("workflow admission actor differs from snapshot authority")
+        with self._transaction() as connection:
+            self._store_authority(
+                connection,
+                definition=definition,
+                snapshot=snapshot,
+                definition_json=definition_json,
+                snapshot_json=snapshot_json,
+            )
+        return self._task_center_run(str(snapshot["workflowRunId"]))
+
+    def _task_center_run(
+        self,
+        workflow_run_id: str,
+        connection: CanonicalConnection | None = None,
+    ) -> WorkflowTaskCenterRunRecord:
+        owned = connection is None
+        active = self._open() if connection is None else connection
+        try:
+            authority = active.execute(
+                """
+                SELECT snapshot.snapshot_id, snapshot.snapshot_revision, snapshot.snapshot_json,
+                       snapshot.updated_at, definition.definition_json,
+                       snapshot.record_sha256, definition.record_sha256
+                  FROM workflow_authority_snapshots AS snapshot
+                  JOIN workflow_definitions AS definition
+                    ON definition.definition_revision_id=snapshot.definition_revision_id
+                 WHERE snapshot.project_id=? AND snapshot.workflow_run_id=?
+                 ORDER BY snapshot.snapshot_revision DESC LIMIT 1
+                """,
+                (self._project_id, workflow_run_id),
+            ).fetchone()
+            if authority is None:
+                raise WorkflowQueueNotFound("workflow run was not found")
+            snapshot = cast(dict[str, object], json.loads(str(authority[2])))
+            definition = cast(dict[str, object], json.loads(str(authority[4])))
+            if (
+                _workflow_sha256(snapshot) != str(authority[5])
+                or _workflow_sha256(definition) != str(authority[6])
+                or workflow_snapshot_errors(definition, snapshot)
+            ):
+                raise WorkflowQueueCorrupt("workflow task-center authority digest differs")
+            definition_steps = {
+                str(cast(Mapping[str, object], item)["stepKey"]): cast(Mapping[str, object], item)
+                for item in cast(list[object], definition["steps"])
+            }
+            job_rows = active.execute(
+                """
+                SELECT job.job_id, job.state, job.activity_type, job.concurrency_class,
+                       job.priority, job.attempt_count, job.max_attempts, job.current_attempt_id,
+                       attempt.worker_id, attempt.progress_json, job.progress_unit,
+                       job.progress_total_kind, job.progress_total_units, job.diagnostic_code,
+                       job.updated_at, job.interruption_kind, job.step_run_id
+                  FROM workflow_queue_jobs AS job
+                  LEFT JOIN workflow_job_attempts AS attempt
+                    ON attempt.attempt_id=job.current_attempt_id
+                 WHERE job.project_id=? AND job.workflow_run_id=?
+                 ORDER BY job.created_at, job.job_id
+                """,
+                (self._project_id, workflow_run_id),
+            ).fetchall()
+            jobs: list[WorkflowTaskCenterJobRecord] = []
+            job_states_by_step: dict[str, str] = {}
+            interruption_kind: WorkflowInterruptionKind | None = None
+            for row in job_rows:
+                if row[9] is None:
+                    fallback = (
+                        {"kind": "quantified", "unit": str(row[10]), "completedUnits": 0, "totalUnits": int(row[12])}
+                        if str(row[11]) == "known"
+                        else {"kind": str(row[11]), "unit": str(row[10]), "completedUnits": None, "totalUnits": None}
+                    )
+                    progress = _workflow_progress_record(fallback, unit=str(row[10]))
+                else:
+                    progress = _workflow_progress_record(row[9], unit=str(row[10]))
+                checkpoint = active.execute(
+                    "SELECT checkpoint_id, created_at FROM workflow_checkpoints "
+                    "WHERE project_id=? AND job_id=? ORDER BY history_sequence DESC LIMIT 1",
+                    (self._project_id, row[0]),
+                ).fetchone()
+                state = cast(Any, str(row[1]))
+                jobs.append(
+                    WorkflowTaskCenterJobRecord(
+                        job_id=str(row[0]),
+                        state=state,
+                        activity_type=str(row[2]),
+                        resource_pool=cast(Any, str(row[3])),
+                        priority=int(row[4]),
+                        attempt_count=int(row[5]),
+                        max_attempts=int(row[6]),
+                        current_attempt_id=None if row[7] is None else str(row[7]),
+                        worker_id=None if row[8] is None else str(row[8]),
+                        progress=progress,
+                        latest_checkpoint_id=None if checkpoint is None else str(checkpoint[0]),
+                        latest_checkpoint_at=None if checkpoint is None else str(checkpoint[1]),
+                        diagnostic_code=None if row[13] is None else str(row[13]),
+                        updated_at=str(row[14]),
+                    )
+                )
+                job_states_by_step[str(row[16])] = state
+                if row[15] is not None:
+                    interruption_kind = cast(WorkflowInterruptionKind, str(row[15]))
+
+            steps: list[WorkflowTaskCenterStepRecord] = []
+            for value in cast(list[object], snapshot["stepRuns"]):
+                step = cast(Mapping[str, object], value)
+                definition_step = definition_steps[str(step["stepKey"])]
+                queue_state = job_states_by_step.get(str(step["stepRunId"]))
+                displayed_state = str(step["state"])
+                if queue_state in {"claimed", "running", "cancelling", "cancelled", "failed", "succeeded"}:
+                    displayed_state = "running" if queue_state == "claimed" else queue_state
+                steps.append(
+                    WorkflowTaskCenterStepRecord(
+                        step_run_id=str(step["stepRunId"]),
+                        step_key=str(step["stepKey"]),
+                        kind=cast(Any, str(definition_step["kind"])),
+                        state=displayed_state,
+                        depends_on=tuple(map(str, cast(list[object], definition_step["dependsOn"]))),
+                    )
+                )
+
+            human_tasks: list[WorkflowTaskCenterHumanTaskRecord] = []
+            for value in cast(list[object], snapshot["humanTasks"]):
+                task = cast(Mapping[str, object], value)
+                step_record = next(item for item in steps if item.step_run_id == task["stepRunId"])
+                definition_task = cast(Mapping[str, object], definition_steps[step_record.step_key]["humanTask"])
+                allowed_dispositions = cast(list[WorkflowHumanDisposition], definition_task["allowedDispositions"])
+                consequences = cast(Mapping[str, object], definition_task["consequencesByDisposition"])
+                decision = cast(Mapping[str, object] | None, task["decision"])
+                assigned = cast(Mapping[str, object] | None, task["assignedTo"])
+                human_tasks.append(
+                    WorkflowTaskCenterHumanTaskRecord(
+                        human_task_id=str(task["humanTaskId"]),
+                        step_run_id=str(task["stepRunId"]),
+                        state=cast(Any, str(task["state"])),
+                        required_role=str(task["requiredRole"]),
+                        assigned_actor_id=None if assigned is None else str(assigned["actorId"]),
+                        requested_at=str(task["requestedAt"]),
+                        evidence_artifact_ids=tuple(map(str, cast(list[object], task["evidenceArtifactIds"]))),
+                        allowed_dispositions=tuple(allowed_dispositions),
+                        consequences_by_disposition=tuple(
+                            (disposition, str(consequences[disposition])) for disposition in allowed_dispositions
+                        ),
+                        decision_id=None if decision is None else str(decision["decisionId"]),
+                        disposition=None if decision is None else cast(Any, str(decision["disposition"])),
+                        decided_at=None if decision is None else str(decision["decidedAt"]),
+                    )
+                )
+
+            event_rows = active.execute(
+                """
+                SELECT sequence, entity_type, entity_id, to_state, occurred_at, reason_code
+                  FROM workflow_history_events
+                 WHERE project_id=? AND workflow_run_id=?
+                 ORDER BY sequence DESC LIMIT 25
+                """,
+                (self._project_id, workflow_run_id),
+            ).fetchall()
+            events = tuple(
+                WorkflowTaskCenterEventRecord(
+                    int(row[0]), str(row[1]), str(row[2]), str(row[3]), str(row[4]), str(row[5])
+                )
+                for row in reversed(event_rows)
+            )
+            revision = int(
+                active.execute(
+                    "SELECT COALESCE(MAX(sequence), 0) FROM workflow_history_events "
+                    "WHERE project_id=? AND workflow_run_id=?",
+                    (self._project_id, workflow_run_id),
+                ).fetchone()[0]
+            )
+            artifact_rows = active.execute(
+                """
+                SELECT DISTINCT artifact.disposition
+                  FROM workflow_attempt_artifacts AS artifact
+                  JOIN workflow_queue_jobs AS job ON job.job_id=artifact.job_id
+                 WHERE artifact.project_id=? AND job.workflow_run_id=?
+                   AND artifact.disposition<>'committed'
+                 ORDER BY artifact.disposition
+                """,
+                (self._project_id, workflow_run_id),
+            ).fetchall()
+            retained = cast(Any, tuple(str(row[0]) for row in artifact_rows))
+            active_compute = any(job.state in {"claimed", "running", "cancelling"} for job in jobs)
+            pending_human = any(task.state in {"requested", "claimed"} for task in human_tasks)
+            if active_compute:
+                display_state = "cancelling" if any(job.state == "cancelling" for job in jobs) else "running"
+            elif pending_human:
+                display_state = "waiting-human"
+            elif any(job.state in {"runnable", "retry-scheduled"} for job in jobs):
+                display_state = "queued"
+            elif any(job.state == "failed" for job in jobs):
+                display_state = "failed"
+            elif jobs and all(job.state == "cancelled" for job in jobs):
+                display_state = "cancelled"
+            else:
+                display_state = str(snapshot["state"])
+                if display_state == "accepted":
+                    display_state = "queued"
+            run_progress = jobs[0].progress if len(jobs) == 1 else _workflow_progress_record(snapshot["progress"])
+            updated_at = max([str(authority[3]), *(job.updated_at for job in jobs)])
+            return WorkflowTaskCenterRunRecord(
+                workflow_run_id=workflow_run_id,
+                workflow_key=str(definition["workflowKey"]),
+                definition_revision_id=str(definition["definitionRevisionId"]),
+                definition_version=str(definition["definitionVersion"]),
+                snapshot_id=str(authority[0]),
+                snapshot_revision=int(authority[1]),
+                state=cast(Any, display_state),
+                active_compute=active_compute,
+                progress=run_progress,
+                revision=revision,
+                interruption_kind=interruption_kind,
+                updated_at=updated_at,
+                steps=tuple(steps),
+                jobs=tuple(jobs),
+                human_tasks=tuple(human_tasks),
+                retained_artifacts=retained,
+                events=events,
+            )
+        except WorkflowQueueProblem:
+            raise
+        except (
+            KeyError,
+            StopIteration,
+            json.JSONDecodeError,
+            sqlite3.Error,
+            StorageProblem,
+            TypeError,
+            ValueError,
+        ) as error:
+            raise WorkflowQueueCorrupt("workflow task-center projection is invalid") from error
+        finally:
+            if owned:
+                active.close()
+
+    def task_center(self, *, limit: int = 100) -> tuple[WorkflowTaskCenterRunRecord, ...]:
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            raise WorkflowQueueProblem("workflow task-center limit is invalid")
+        connection: CanonicalConnection | None = None
+        try:
+            connection = self._open()
+            rows = connection.execute(
+                """
+                SELECT workflow_run_id, MAX(updated_at) AS latest
+                  FROM workflow_authority_snapshots
+                 WHERE project_id=?
+                 GROUP BY workflow_run_id
+                 ORDER BY latest DESC, workflow_run_id
+                 LIMIT ?
+                """,
+                (self._project_id, limit),
+            ).fetchall()
+            return tuple(self._task_center_run(str(row[0]), connection) for row in rows)
+        except WorkflowQueueProblem:
+            raise
+        except (OSError, sqlite3.Error, StorageProblem) as error:
+            raise WorkflowQueueProblem("workflow task-center read failed") from error
+        finally:
+            if connection is not None:
+                connection.close()
+
     def enqueue(self, submission: WorkflowJobSubmission, *, actor: WorkflowActor) -> WorkflowJobRecord:
         if submission.project_id != self._project_id:
             raise WorkflowQueueConflict("workflow project authority differs")
@@ -2496,6 +2958,8 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             or _workflow_json(snapshot) != submission.snapshot_json
             or _workflow_sha256(definition) != submission.definition_record_sha256
             or _workflow_sha256(snapshot) != submission.snapshot_record_sha256
+            or snapshot.get("projectId") != self._project_id
+            or workflow_snapshot_errors(definition, snapshot)
         ):
             raise WorkflowQueueCorrupt("workflow authority digest differs")
         final_actor = snapshot["history"][-1]["actor"]
@@ -2511,67 +2975,13 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                     raise WorkflowQueueConflict("workflow idempotency authority differs")
                 return self._row(self._select_job(connection, self._project_id, submission.job_id))
 
-            definition_existing = connection.execute(
-                "SELECT definition_json, record_sha256 FROM workflow_definitions WHERE definition_revision_id=?",
-                (submission.definition_revision_id,),
-            ).fetchone()
-            if definition_existing is None:
-                connection.execute(
-                    """
-                    INSERT INTO workflow_definitions (
-                        definition_revision_id, project_id, workflow_definition_id,
-                        definition_version, contract_version, content_hash, definition_json,
-                        record_sha256, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        submission.definition_revision_id,
-                        self._project_id,
-                        definition["workflowDefinitionId"],
-                        definition["definitionVersion"],
-                        definition["contractVersion"],
-                        snapshot["definition"]["contentHash"],
-                        submission.definition_json,
-                        submission.definition_record_sha256,
-                        definition["createdAt"],
-                    ),
-                )
-            elif tuple(definition_existing) != (
-                submission.definition_json,
-                submission.definition_record_sha256,
-            ):
-                raise WorkflowQueueConflict("workflow definition authority differs")
-
-            snapshot_existing = connection.execute(
-                "SELECT snapshot_json, record_sha256 FROM workflow_authority_snapshots "
-                "WHERE snapshot_id=? AND snapshot_revision=?",
-                (submission.snapshot_id, submission.snapshot_revision),
-            ).fetchone()
-            if snapshot_existing is None:
-                connection.execute(
-                    """
-                    INSERT INTO workflow_authority_snapshots (
-                        snapshot_id, snapshot_revision, project_id, workflow_run_id,
-                        definition_revision_id, state, history_sequence, snapshot_json,
-                        record_sha256, created_at, updated_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        submission.snapshot_id,
-                        submission.snapshot_revision,
-                        self._project_id,
-                        submission.workflow_run_id,
-                        submission.definition_revision_id,
-                        snapshot["state"],
-                        snapshot["sequence"],
-                        submission.snapshot_json,
-                        submission.snapshot_record_sha256,
-                        snapshot["createdAt"],
-                        snapshot["updatedAt"],
-                    ),
-                )
-            elif tuple(snapshot_existing) != (submission.snapshot_json, submission.snapshot_record_sha256):
-                raise WorkflowQueueConflict("workflow snapshot authority differs")
+            self._store_authority(
+                connection,
+                definition=definition,
+                snapshot=snapshot,
+                definition_json=submission.definition_json,
+                snapshot_json=submission.snapshot_json,
+            )
 
             connection.execute(
                 """
@@ -2615,35 +3025,6 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                     snapshot["updatedAt"],
                 ),
             )
-            for event_value in cast(list[dict[str, object]], snapshot["history"]):
-                entity_type = str(event_value["entityType"])
-                event_job_id = submission.job_id if entity_type == "job" else None
-                event_json = _workflow_json(event_value)
-                connection.execute(
-                    """
-                    INSERT INTO workflow_history_events (
-                        event_id, project_id, workflow_run_id, job_id, attempt_id, sequence,
-                        entity_type, entity_id, from_state, to_state, occurred_at, actor_json,
-                        reason_code, event_json, record_sha256
-                    ) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        event_value["eventId"],
-                        self._project_id,
-                        submission.workflow_run_id,
-                        event_job_id,
-                        event_value["sequence"],
-                        entity_type,
-                        event_value["entityId"],
-                        event_value["fromState"],
-                        event_value["toState"],
-                        event_value["occurredAt"],
-                        _workflow_json(event_value["actor"]),
-                        event_value["reasonCode"],
-                        event_json,
-                        _workflow_sha256(event_value),
-                    ),
-                )
             return self._row(self._select_job(connection, self._project_id, submission.job_id))
 
     def get(self, job_id: str) -> WorkflowJobRecord:
@@ -3179,6 +3560,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         now: str,
         reason_code: str,
         interruption_kind: WorkflowInterruptionKind,
+        expected_history_sequence: int | None = None,
     ) -> WorkflowJobRecord:
         _workflow_time(now)
         if interruption_kind not in {"user-cancel", "security-lock", "policy", "dependency"}:
@@ -3187,6 +3569,15 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             raise WorkflowQueueProblem("workflow cancellation reason is invalid")
         with self._transaction() as connection:
             current = self._row(self._select_job(connection, self._project_id, job_id))
+            current_sequence = int(
+                connection.execute(
+                    "SELECT COALESCE(MAX(sequence), 0) FROM workflow_history_events "
+                    "WHERE project_id=? AND workflow_run_id=?",
+                    (self._project_id, current.workflow_run_id),
+                ).fetchone()[0]
+            )
+            if expected_history_sequence is not None and expected_history_sequence != current_sequence:
+                raise WorkflowQueueConflict("workflow cancellation precondition is stale")
             if current.state in {"succeeded", "failed", "cancelled"}:
                 return current
             if current.state == "cancelling":
@@ -3270,6 +3661,350 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 extra={"interruptionKind": interruption_kind},
             )
             return self._row(self._select_job(connection, self._project_id, job_id))
+
+    def retry_as_continuation(
+        self,
+        job_id: str,
+        *,
+        expected_history_sequence: int,
+        idempotency_key: str,
+        actor: WorkflowActor,
+        now: str,
+    ) -> WorkflowTaskCenterRunRecord:
+        _workflow_time(now)
+        _workflow_actor(actor)
+        if not isinstance(idempotency_key, str) or not 1 <= len(idempotency_key) <= 256:
+            raise WorkflowQueueProblem("workflow retry idempotency key is invalid")
+        retry_key = "sha256:" + hashlib.sha256(f"workflow-retry\0{job_id}\0{idempotency_key}".encode()).hexdigest()
+        command_fingerprint = _workflow_sha256({"command": "retry-as-continuation", "sourceJobId": job_id})
+        connection: CanonicalConnection | None = None
+        try:
+            connection = self._open()
+            replay = connection.execute(
+                "SELECT workflow_run_id, command_fingerprint FROM workflow_queue_jobs "
+                "WHERE project_id=? AND idempotency_key=?",
+                (self._project_id, retry_key),
+            ).fetchone()
+            if replay is not None:
+                if str(replay[1]) != command_fingerprint:
+                    raise WorkflowQueueConflict("workflow retry replay differs")
+                return self._task_center_run(str(replay[0]), connection)
+            source = connection.execute(
+                """
+                SELECT job.workflow_run_id, job.state, job.concurrency_class, job.priority,
+                       snapshot.snapshot_json, definition.definition_json
+                  FROM workflow_queue_jobs AS job
+                  JOIN workflow_authority_snapshots AS snapshot
+                    ON snapshot.snapshot_id=job.snapshot_id
+                   AND snapshot.snapshot_revision=job.snapshot_revision
+                  JOIN workflow_definitions AS definition
+                    ON definition.definition_revision_id=snapshot.definition_revision_id
+                 WHERE job.project_id=? AND job.job_id=?
+                """,
+                (self._project_id, job_id),
+            ).fetchone()
+            if source is None:
+                raise WorkflowQueueNotFound("workflow job was not found")
+            if str(source[1]) not in {"failed", "cancelled"}:
+                raise WorkflowQueueConflict("workflow retry requires a terminal unsuccessful job")
+            current_sequence = int(
+                connection.execute(
+                    "SELECT COALESCE(MAX(sequence), 0) FROM workflow_history_events "
+                    "WHERE project_id=? AND workflow_run_id=?",
+                    (self._project_id, source[0]),
+                ).fetchone()[0]
+            )
+            if current_sequence != expected_history_sequence:
+                raise WorkflowQueueConflict("workflow retry precondition is stale")
+            definition = cast(dict[str, object], json.loads(str(source[5])))
+            snapshot = cast(dict[str, object], json.loads(str(source[4])))
+            concurrency_class = cast(ConcurrencyClass, str(source[2]))
+            priority = int(source[3])
+        finally:
+            if connection is not None:
+                connection.close()
+
+        continued = deepcopy(snapshot)
+        timestamp_ms = int(_workflow_time(now).timestamp() * 1_000)
+        continued_run_id = new_uuid_v7(timestamp_ms=timestamp_ms)
+        continued_snapshot_id = new_uuid_v7(timestamp_ms=timestamp_ms)
+        old_run_id = str(continued["workflowRunId"])
+        identity_map: dict[str, str] = {old_run_id: continued_run_id}
+        for collection, key in (
+            ("stepRuns", "stepRunId"),
+            ("jobs", "jobId"),
+            ("attempts", "attemptId"),
+            ("checkpoints", "checkpointId"),
+            ("humanTasks", "humanTaskId"),
+        ):
+            for value in cast(list[dict[str, object]], continued[collection]):
+                identity_map[str(value[key])] = new_uuid_v7(timestamp_ms=timestamp_ms)
+        new_job_id = identity_map[job_id]
+
+        def remap(value: object) -> object:
+            if isinstance(value, dict):
+                return {key: remap(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [remap(item) for item in value]
+            return identity_map.get(value, value) if isinstance(value, str) else value
+
+        continued = cast(dict[str, object], remap(continued))
+        continued["snapshotId"] = continued_snapshot_id
+        continued["snapshotRevision"] = 1
+        continued["workflowRunId"] = continued_run_id
+        continued["createdAt"] = now
+        continued["updatedAt"] = now
+        jobs = cast(list[dict[str, object]], continued["jobs"])
+        if len(jobs) != 1 or str(jobs[0]["jobId"]) != new_job_id:
+            raise WorkflowQueueConflict("workflow retry source is not a single-job continuation")
+        jobs[0]["idempotencyKey"] = retry_key
+        jobs[0]["commandFingerprint"] = command_fingerprint
+        history = cast(list[dict[str, object]], continued["history"])
+        for event in history:
+            event["eventId"] = new_uuid_v7(timestamp_ms=timestamp_ms)
+            event["occurredAt"] = now
+        history[-1]["actor"] = {
+            "actorId": actor.actor_id,
+            "actorType": actor.actor_type,
+            "role": actor.role,
+        }
+        from .workflow_executor import prepare_workflow_job
+
+        submission = prepare_workflow_job(
+            definition,
+            continued,
+            job_id=new_job_id,
+            concurrency_class=concurrency_class,
+            priority=priority,
+            available_at=now,
+        )
+        self.enqueue(submission, actor=actor)
+        return self._task_center_run(continued_run_id)
+
+    def complete_human_task(
+        self,
+        human_task_id: str,
+        *,
+        expected_snapshot_revision: int,
+        expected_history_sequence: int,
+        decision_id: str,
+        disposition: WorkflowHumanDisposition,
+        actor: WorkflowActor,
+        now: str,
+    ) -> WorkflowTaskCenterRunRecord:
+        _workflow_time(now)
+        _workflow_actor(actor)
+        if not is_uuid_v7(human_task_id) or not is_uuid_v7(decision_id):
+            raise WorkflowQueueProblem("workflow human decision identity is invalid")
+        if disposition not in {"approved", "rejected", "deferred", "not-applicable"}:
+            raise WorkflowQueueProblem("workflow human disposition is invalid")
+        with self._transaction() as connection:
+            rows = connection.execute(
+                """
+                SELECT snapshot.snapshot_id, snapshot.snapshot_revision, snapshot.workflow_run_id,
+                       snapshot.snapshot_json, definition.definition_json
+                  FROM workflow_authority_snapshots AS snapshot
+                  JOIN workflow_definitions AS definition
+                    ON definition.definition_revision_id=snapshot.definition_revision_id
+                 WHERE snapshot.project_id=?
+                 ORDER BY snapshot.updated_at DESC, snapshot.snapshot_revision DESC
+                """,
+                (self._project_id,),
+            ).fetchall()
+            authority: tuple[Any, dict[str, object], dict[str, object]] | None = None
+            for row in rows:
+                candidate = cast(dict[str, object], json.loads(str(row[3])))
+                if any(
+                    cast(Mapping[str, object], item).get("humanTaskId") == human_task_id
+                    for item in cast(list[object], candidate["humanTasks"])
+                ):
+                    authority = (row, candidate, cast(dict[str, object], json.loads(str(row[4]))))
+                    break
+            if authority is None:
+                raise WorkflowQueueNotFound("workflow human task was not found")
+            row, snapshot, definition = authority
+            current_revision = int(row[1])
+            task = next(
+                cast(dict[str, object], item)
+                for item in cast(list[object], snapshot["humanTasks"])
+                if cast(Mapping[str, object], item)["humanTaskId"] == human_task_id
+            )
+            existing_decision = cast(Mapping[str, object] | None, task["decision"])
+            if current_revision == expected_snapshot_revision + 1 and existing_decision is not None:
+                expected_actor = {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role}
+                if (
+                    existing_decision["decisionId"] == decision_id
+                    and existing_decision["disposition"] == disposition
+                    and existing_decision["decidedBy"] == expected_actor
+                ):
+                    return self._task_center_run(str(row[2]), connection)
+                raise WorkflowQueueConflict("workflow human decision replay differs")
+            current_history_sequence = int(
+                connection.execute(
+                    "SELECT COALESCE(MAX(sequence), 0) FROM workflow_history_events "
+                    "WHERE project_id=? AND workflow_run_id=?",
+                    (self._project_id, row[2]),
+                ).fetchone()[0]
+            )
+            if (
+                current_revision != expected_snapshot_revision
+                or current_history_sequence != expected_history_sequence
+                or task["state"] not in {"requested", "claimed"}
+            ):
+                raise WorkflowQueueConflict("workflow human decision precondition is stale")
+            assigned = cast(Mapping[str, object] | None, task["assignedTo"])
+            if (
+                actor.actor_type != "human"
+                or actor.role != task["requiredRole"]
+                or assigned is None
+                or assigned != {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role}
+            ):
+                raise WorkflowQueueConflict("workflow human decision authority differs")
+            step_run = next(
+                cast(dict[str, object], item)
+                for item in cast(list[object], snapshot["stepRuns"])
+                if cast(Mapping[str, object], item)["stepRunId"] == task["stepRunId"]
+            )
+            definition_step = next(
+                cast(Mapping[str, object], item)
+                for item in cast(list[object], definition["steps"])
+                if cast(Mapping[str, object], item)["stepKey"] == step_run["stepKey"]
+            )
+            human_definition = cast(Mapping[str, object], definition_step["humanTask"])
+            allowed = cast(list[object], human_definition["allowedDispositions"])
+            consequences = cast(Mapping[str, object], human_definition["consequencesByDisposition"])
+            if disposition not in allowed or not isinstance(consequences.get(disposition), str):
+                raise WorkflowQueueConflict("workflow human disposition is not authorized")
+            consequence = str(consequences[disposition])
+            if consequence not in {"resume-workflow", "end-workflow", "skip-step"}:
+                raise WorkflowQueueConflict("workflow human consequence is not executable")
+
+            next_snapshot = deepcopy(snapshot)
+            next_task = next(
+                cast(dict[str, object], item)
+                for item in cast(list[object], next_snapshot["humanTasks"])
+                if cast(Mapping[str, object], item)["humanTaskId"] == human_task_id
+            )
+            next_step = next(
+                cast(dict[str, object], item)
+                for item in cast(list[object], next_snapshot["stepRuns"])
+                if cast(Mapping[str, object], item)["stepRunId"] == next_task["stepRunId"]
+            )
+            history = cast(list[dict[str, object]], next_snapshot["history"])
+            sequence = cast(int, next_snapshot["sequence"])
+            next_task["state"] = "completed"
+            next_task["sequence"] = sequence + 1
+            next_task["decision"] = {
+                "decisionId": decision_id,
+                "disposition": disposition,
+                "decidedBy": {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role},
+                "decidedAt": now,
+                "evidenceArtifactIds": list(cast(list[object], next_task["evidenceArtifactIds"])),
+                "rationaleArtifactId": None,
+                "consequenceCode": consequence,
+            }
+            history.append(
+                _workflow_event(
+                    sequence=sequence + 1,
+                    entity_type="human-task",
+                    entity_id=human_task_id,
+                    from_state=str(task["state"]),
+                    to_state="completed",
+                    occurred_at=now,
+                    actor=actor,
+                    reason_code="human-decision-recorded",
+                    decision_id=decision_id,
+                )
+            )
+            terminal_state = "failed" if consequence == "end-workflow" else "succeeded"
+            next_step["state"] = terminal_state
+            next_step["sequence"] = sequence + 2
+            next_step["progress"] = {
+                "kind": "quantified",
+                "unit": cast(Mapping[str, object], definition_step["progress"])["unit"],
+                "completedUnits": 1,
+                "totalUnits": 1,
+            }
+            history.append(
+                _workflow_event(
+                    sequence=sequence + 2,
+                    entity_type="workflow-step",
+                    entity_id=str(next_step["stepRunId"]),
+                    from_state=str(step_run["state"]),
+                    to_state=terminal_state,
+                    occurred_at=now,
+                    actor=actor,
+                    reason_code="human-decision-accepted"
+                    if terminal_state == "succeeded"
+                    else "human-decision-rejected",
+                    decision_id=decision_id,
+                )
+            )
+            if terminal_state == "succeeded":
+                history.append(
+                    _workflow_event(
+                        sequence=sequence + 3,
+                        entity_type="workflow-run",
+                        entity_id=str(next_snapshot["workflowRunId"]),
+                        from_state=str(snapshot["state"]),
+                        to_state="running",
+                        occurred_at=now,
+                        actor=actor,
+                        reason_code="human-decision-accepted",
+                        decision_id=decision_id,
+                    )
+                )
+                history.append(
+                    _workflow_event(
+                        sequence=sequence + 4,
+                        entity_type="workflow-run",
+                        entity_id=str(next_snapshot["workflowRunId"]),
+                        from_state="running",
+                        to_state="succeeded",
+                        occurred_at=now,
+                        actor=actor,
+                        reason_code="workflow-complete",
+                    )
+                )
+                next_sequence = sequence + 4
+            else:
+                history.append(
+                    _workflow_event(
+                        sequence=sequence + 3,
+                        entity_type="workflow-run",
+                        entity_id=str(next_snapshot["workflowRunId"]),
+                        from_state=str(snapshot["state"]),
+                        to_state="failed",
+                        occurred_at=now,
+                        actor=actor,
+                        reason_code="human-decision-rejected",
+                        decision_id=decision_id,
+                    )
+                )
+                next_sequence = sequence + 3
+            next_snapshot["snapshotRevision"] = expected_snapshot_revision + 1
+            next_snapshot["state"] = terminal_state
+            next_snapshot["sequence"] = next_sequence
+            next_snapshot["updatedAt"] = now
+            if terminal_state == "succeeded":
+                total = cast(Mapping[str, object], next_snapshot["progress"])["totalUnits"]
+                next_snapshot["progress"] = {
+                    "kind": "quantified",
+                    "unit": cast(Mapping[str, object], next_snapshot["progress"])["unit"],
+                    "completedUnits": total,
+                    "totalUnits": total,
+                }
+            if workflow_snapshot_errors(definition, next_snapshot):
+                raise WorkflowQueueCorrupt("workflow human decision produced invalid authority")
+            next_json = _workflow_json(next_snapshot)
+            self._store_authority(
+                connection,
+                definition=definition,
+                snapshot=next_snapshot,
+                definition_json=_workflow_json(definition),
+                snapshot_json=next_json,
+            )
+            return self._task_center_run(str(row[2]), connection)
 
     def cancellation_requested(self, claim: WorkflowJobClaim, *, now: str) -> bool:
         _workflow_time(now)

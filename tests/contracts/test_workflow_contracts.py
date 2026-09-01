@@ -265,7 +265,9 @@ class WorkflowContractTests(unittest.TestCase):
 
         excluded_definition = copy.deepcopy(definition)
         human_step = next(step for step in self.items(excluded_definition, "steps") if step["kind"] == "human-task")
-        cast(JsonRecord, human_step["humanTask"])["allowedDispositions"] = ["rejected"]
+        excluded_human_definition = cast(JsonRecord, human_step["humanTask"])
+        excluded_human_definition["allowedDispositions"] = ["rejected"]
+        excluded_human_definition["consequencesByDisposition"] = {"rejected": "end-workflow"}
         excluded_disposition = copy.deepcopy(snapshot)
         cast(JsonRecord, excluded_disposition["definition"])["contentHash"] = workflow_record_sha256(
             excluded_definition
@@ -273,6 +275,22 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn(
             "human-decision-is-audit-bound",
             workflow_snapshot_errors(excluded_definition, excluded_disposition),
+        )
+
+        unbound_definition = copy.deepcopy(definition)
+        unbound_step = next(step for step in self.items(unbound_definition, "steps") if step["kind"] == "human-task")
+        cast(JsonRecord, unbound_step["humanTask"])["consequencesByDisposition"] = {"approved": "resume-workflow"}
+        self.assertIn(
+            "human-task-consequences-are-definition-bound",
+            workflow_definition_errors(unbound_definition),
+        )
+
+        substituted_consequence = copy.deepcopy(snapshot)
+        substituted_decision = cast(JsonRecord, self.items(substituted_consequence, "humanTasks")[0]["decision"])
+        substituted_decision["consequenceCode"] = "end-workflow"
+        self.assertIn(
+            "human-decision-is-audit-bound",
+            workflow_snapshot_errors(definition, substituted_consequence),
         )
 
         for field, replacement in (

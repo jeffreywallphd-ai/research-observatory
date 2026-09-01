@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -51,6 +52,11 @@ from .models import (
     ReadinessResponse,
     RuntimeState,
     VersionResponse,
+    WorkflowCancelRequest,
+    WorkflowHumanDecisionRequest,
+    WorkflowRetryRequest,
+    WorkflowTaskCenterPage,
+    WorkflowTaskCenterRun,
 )
 from .modules import ModuleRegistry, default_module_registry
 from .operations import (
@@ -63,6 +69,7 @@ from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .provenance import ProvenanceProblem, ProvenanceService
 from .research_intents import IntentProblem, ResearchIntentService
+from .task_center import TaskCenterProblem, TaskCenterService
 from .transport import CoreProblem, TraceCorrelationMiddleware, problem_detail
 
 _ACTION_RESULT = TypeVar("_ACTION_RESULT")
@@ -77,6 +84,7 @@ class RuntimeContext:
     privacy: ProjectPrivacyService
     intents: ResearchIntentService
     provenance: ProvenanceService
+    task_center: TaskCenterService
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -89,6 +97,7 @@ def create_app(
     privacy: ProjectPrivacyService | None = None,
     intents: ResearchIntentService | None = None,
     provenance: ProvenanceService | None = None,
+    task_center: TaskCenterService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -101,6 +110,9 @@ def create_app(
         resolved_privacy = privacy if privacy is not None else ProjectPrivacyService.unavailable(resolved_projects)
         resolved_intents = intents if intents is not None else ResearchIntentService.unavailable(resolved_projects)
         resolved_provenance = provenance if provenance is not None else ProvenanceService.unavailable(resolved_projects)
+        resolved_task_center = (
+            task_center if task_center is not None else TaskCenterService.unavailable(resolved_projects)
+        )
         context = RuntimeContext(
             settings=resolved_settings,
             modules=resolved_modules,
@@ -109,6 +121,7 @@ def create_app(
             privacy=resolved_privacy,
             intents=resolved_intents,
             provenance=resolved_provenance,
+            task_center=resolved_task_center,
         )
         app.state.runtime = context
         context.state = RuntimeState.READY
@@ -301,6 +314,52 @@ def create_app(
                     remediation="Open a compatible local project and retry with a bounded lineage request.",
                 )
             ) from error
+
+    def run_task_center_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+        except TaskCenterProblem as error:
+            raise CoreProblem(
+                problem_detail(
+                    status=error.status,
+                    code=error.code,
+                    title=error.title,
+                    detail=error.detail,
+                    trace_id=request.state.trace_id,
+                    retryable=error.retryable,
+                    remediation=error.remediation,
+                )
+            ) from error
+
+    def workflow_precondition(request: Request, if_match: str | None) -> tuple[str, int, int]:
+        match = re.fullmatch(
+            r'"workflow-([0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})-([1-9][0-9]*)-([1-9][0-9]*)"',
+            if_match or "",
+        )
+        if match is None:
+            raise CoreProblem(
+                problem_detail(
+                    status=428,
+                    code="RO-CORE-WORKFLOW-PRECONDITION-REQUIRED",
+                    title="Workflow precondition is required",
+                    detail=(
+                        "This action requires the exact workflow run, history revision "
+                        "and snapshot revision last reviewed."
+                    ),
+                    trace_id=request.state.trace_id,
+                    retryable=False,
+                    remediation="Refresh Task Center and retry the action from the current item.",
+                )
+            )
+        return match.group(1), int(match.group(2)), int(match.group(3))
+
+    def set_workflow_etag(response: Response, projection: WorkflowTaskCenterRun) -> None:
+        response.headers["ETag"] = (
+            f'"workflow-{projection.workflow_run_id}-{projection.revision}-{projection.snapshot_revision}"'
+        )
+        response.headers["Cache-Control"] = "no-store"
 
     @app.get("/healthz", response_model=HealthResponse, tags=["runtime"])
     def health(request: Request) -> HealthResponse:
@@ -594,6 +653,127 @@ def create_app(
             request,
             lambda: runtime(request).intents.evaluate_policy(command, trace_id=request.state.trace_id),
         )
+
+    @app.get(
+        "/projects/workflows/task-center",
+        response_model=WorkflowTaskCenterPage,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["workflows"],
+    )
+    def workflow_task_center(
+        request: Request,
+        response: Response,
+        root: str = Query(min_length=1, max_length=1024),
+        limit: int = Query(default=50, ge=1, le=100),
+    ) -> WorkflowTaskCenterPage:
+        response.headers["Cache-Control"] = "no-store"
+        return run_task_center_action(request, lambda: runtime(request).task_center.list(root=root, limit=limit))
+
+    @app.post(
+        "/projects/workflows/jobs/{job_id}/cancel",
+        response_model=WorkflowTaskCenterRun,
+        responses={
+            404: {"model": ProblemDetail},
+            409: {"model": ProblemDetail},
+            412: {"model": ProblemDetail},
+            422: {"model": ProblemDetail},
+            428: {"model": ProblemDetail},
+            503: {"model": ProblemDetail},
+        },
+        tags=["workflows"],
+    )
+    def cancel_workflow_job(
+        request: Request,
+        response: Response,
+        command: WorkflowCancelRequest,
+        job_id: str = Path(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"),
+        if_match: str | None = Header(default=None, alias="If-Match"),
+    ) -> WorkflowTaskCenterRun:
+        run_id, revision, _snapshot_revision = workflow_precondition(request, if_match)
+        projection = run_task_center_action(
+            request,
+            lambda: runtime(request).task_center.cancel(
+                root=command.root,
+                job_id=job_id,
+                expected_run_id=run_id,
+                expected_revision=revision,
+                reason_code=command.reason_code,
+            ),
+        )
+        set_workflow_etag(response, projection)
+        return projection
+
+    @app.post(
+        "/projects/workflows/jobs/{job_id}/retry",
+        response_model=WorkflowTaskCenterRun,
+        responses={
+            404: {"model": ProblemDetail},
+            409: {"model": ProblemDetail},
+            412: {"model": ProblemDetail},
+            422: {"model": ProblemDetail},
+            428: {"model": ProblemDetail},
+            503: {"model": ProblemDetail},
+        },
+        tags=["workflows"],
+    )
+    def retry_workflow_job(
+        request: Request,
+        response: Response,
+        command: WorkflowRetryRequest,
+        job_id: str = Path(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"),
+        if_match: str | None = Header(default=None, alias="If-Match"),
+        idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
+    ) -> WorkflowTaskCenterRun:
+        run_id, revision, _snapshot_revision = workflow_precondition(request, if_match)
+        projection = run_task_center_action(
+            request,
+            lambda: runtime(request).task_center.retry(
+                root=command.root,
+                job_id=job_id,
+                expected_run_id=run_id,
+                expected_revision=revision,
+                idempotency_key=idempotency_key,
+            ),
+        )
+        set_workflow_etag(response, projection)
+        return projection
+
+    @app.post(
+        "/projects/workflows/human-tasks/{human_task_id}/decide",
+        response_model=WorkflowTaskCenterRun,
+        responses={
+            404: {"model": ProblemDetail},
+            409: {"model": ProblemDetail},
+            412: {"model": ProblemDetail},
+            422: {"model": ProblemDetail},
+            428: {"model": ProblemDetail},
+            503: {"model": ProblemDetail},
+        },
+        tags=["workflows"],
+    )
+    def decide_workflow_human_task(
+        request: Request,
+        response: Response,
+        command: WorkflowHumanDecisionRequest,
+        human_task_id: str = Path(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"),
+        if_match: str | None = Header(default=None, alias="If-Match"),
+        idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
+    ) -> WorkflowTaskCenterRun:
+        run_id, revision, snapshot_revision = workflow_precondition(request, if_match)
+        projection = run_task_center_action(
+            request,
+            lambda: runtime(request).task_center.decide(
+                root=command.root,
+                human_task_id=human_task_id,
+                expected_run_id=run_id,
+                expected_snapshot_revision=snapshot_revision,
+                expected_history_sequence=revision,
+                disposition=command.disposition,
+                idempotency_key=idempotency_key,
+            ),
+        )
+        set_workflow_etag(response, projection)
+        return projection
 
     @app.get(
         "/runtime/operations",
