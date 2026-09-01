@@ -11032,12 +11032,12 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-30T02:18:21+00:00'
-      updated_at: '2026-09-01T17:06:50+00:00'
-      completed_at: null
+      updated_at: '2026-09-01T17:11:45+00:00'
+      completed_at: '2026-09-01T17:11:45+00:00'
       blocker: null
       implementation_notes: 'Submit exact T01 candidate for independent commit-bound review; affected checks selected by credible
         task risk, with full W1 qualification deferred to Wave exit.
@@ -11056,23 +11056,22 @@ capabilities:
         recorded_at: '2026-09-01T17:06:50+00:00'
       review: &id031
         reviewer: agent:cap03-s04-t01-reviewer
-        result: changes-requested
-        reviewed_at: '2026-09-01T16:58:41+00:00'
-        notes: 'Independent commit-bound contract review authenticated exact candidate ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae,
-          its direct submission child 0c1d6d9749c00cd4d2117e7e22949b1a7753c9d7, frozen evidence SHA-256 f5d463f4ffc94360e1c5dc45e8f84099f543b8e16404504f2a43fd272bf0fe2c,
-          and Git blob adbe21512c17d7afcb8cc518d4aa099e85b7c7a7. The checked-in Python and TypeScript workflow tests, generator
-          parity, contracts typecheck, package registration, ADR registry, and patch hygiene pass. The definition is executor-neutral,
-          generated decoders are immutable, and the candidate correctly leaves durable SQLite execution/process recovery to
-          T02 and governed Task Center UI to T03. Three acceptance-bound defects remain: human-task request and disposition
-          authority can be substituted while validation reports no error; the legacy bridge sequence can diverge from the
-          bound workflow snapshot while retaining a self-consistent ETag; and transition histories permit duplicate event
-          identities. These are semantic gaps in the claimed auditable/replayable public contract, so R01 is not approvable.
-          No full verification profile was run; slice integration and complete W1 qualification remain correctly deferred.'
+        result: approved
+        reviewed_at: '2026-09-01T17:11:45+00:00'
+        notes: 'Controlled R02 re-review authenticated exact remediation candidate 3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57,
+          its direct frozen-submission child 70f96d8c7b08a2531f9e914b37046d1c281504d8, remediation evidence SHA-256 9d39cf6f6ec8bee0654c8dd1763caf27064bad1e8c6fc3999b77b752aef01f92,
+          Git blob 0f7684143d8cc7affabbca836e71f4e32edd83bb, and preserved R01 review history. All three R01 findings are
+          fixed: completed decisions must use a disposition allowed by the exact bound definition; request actor/time and
+          represented assignment are bound to exactly one request/claim event; legacy operation sequence is bound to snapshot
+          sequence before ETag acceptance; and duplicate transition event identities fail decoding and restart reconstruction.
+          Independent replay passed 10 Python and six TypeScript workflow tests, generator parity, contracts typecheck, every
+          prior exploit, and the incremental request/claim cardinality cases. The 17-path R02 inventory exactly matches the
+          original-candidate-to-remediation range, submission-only changes are evidence/backlog projection, and patch hygiene
+          passes. No SQLite executor, process recovery, Core API route, governed Task Center UI, dependency, or external/release
+          authority entered T01; T02, T03, slice integration, and W1 exit qualification remain deferred. No full profile was
+          run, and no new acceptance-bound finding was identified.'
       base_sha: c9260e1e981fea84a651dd59104aad12e1fb8d8e
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-09-01T16:58:41+00:00'
-        expires_at: '2026-09-02T00:58:41+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -11841,7 +11840,21 @@ capabilities:
             - packaging:unit
             - contracts:unit
             packet_sha256: 4846feb3e248411f485ecfcfa687c879128fa0fcd92b9c71b259fcf80763c73e
-          review: *id031
+          review:
+            reviewer: agent:cap03-s04-t01-reviewer
+            result: changes-requested
+            reviewed_at: '2026-09-01T16:58:41+00:00'
+            notes: 'Independent commit-bound contract review authenticated exact candidate ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae,
+              its direct submission child 0c1d6d9749c00cd4d2117e7e22949b1a7753c9d7, frozen evidence SHA-256 f5d463f4ffc94360e1c5dc45e8f84099f543b8e16404504f2a43fd272bf0fe2c,
+              and Git blob adbe21512c17d7afcb8cc518d4aa099e85b7c7a7. The checked-in Python and TypeScript workflow tests,
+              generator parity, contracts typecheck, package registration, ADR registry, and patch hygiene pass. The definition
+              is executor-neutral, generated decoders are immutable, and the candidate correctly leaves durable SQLite execution/process
+              recovery to T02 and governed Task Center UI to T03. Three acceptance-bound defects remain: human-task request
+              and disposition authority can be substituted while validation reports no error; the legacy bridge sequence can
+              diverge from the bound workflow snapshot while retaining a self-consistent ETag; and transition histories permit
+              duplicate event identities. These are semantic gaps in the claimed auditable/replayable public contract, so
+              R01 is not approvable. No full verification profile was run; slice integration and complete W1 qualification
+              remain correctly deferred.'
           ledger:
             path: artifacts/evidence/CAP-03.S04.T01.review-R01.json
             sha256: 76b9f4f8ebb1e8671093c48ddd7e021b867c150c472d5a73beaece1a8a1386a1
@@ -11925,83 +11938,141 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission:
-          id: R02
-          submitted_by: codex
-          submitted_at: '2026-09-01T17:06:50+00:00'
-          candidate_commit: 3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57
-          base_commit: ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S04.T01.R02.json
-            sha256: 9d39cf6f6ec8bee0654c8dd1763caf27064bad1e8c6fc3999b77b752aef01f92
-            commit: 3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57
-            recorded_at: '2026-09-01T17:06:50+00:00'
-          acceptance_criteria_sha256: f01b8602102222dcc40ea968a086777adbc089c5c7d93ab07891020f40479806
-          changed_paths:
-          - artifacts/evidence/CAP-03.S04.T01.R01.json
-          - artifacts/evidence/CAP-03.S04.T01.review-R01.json
-          - artifacts/evidence/CAP-03.S04.T01.task-start.md
-          - docs/architecture/workflow-contracts.md
-          - packages/contracts/workflow/README.md
-          - packages/contracts/workflow/generate.mjs
-          - packages/contracts/workflow/generated.ts
-          - packages/contracts/workflow/workflow-contract.schema.json
-          - packages/contracts/workflow/workflow-contract.template.py.txt
-          - packages/contracts/workflow/workflow-contract.template.ts.txt
-          - packages/contracts/workflow/workflow-contract.test.ts
-          - planning/backlog.yaml
-          - planning/review-site/CAP-03/CAP-03.S04.T01.html
-          - planning/review-site/CAP-03/CAP-03.S04.html
-          - planning/review-site/manifest.json
-          - services/core-api/src/research_observatory_core/workflow_contracts.py
-          - tests/contracts/test_workflow_contracts.py
-          selected_checks:
-          - .venv\Scripts\python.exe -m unittest -v tests.contracts.test_workflow_contracts
-          - apps\desktop\node_modules\.bin\vitest.CMD run packages/contracts/workflow/workflow-contract.test.ts
-          - node packages/contracts/workflow/generate.mjs --check; apps\desktop\node_modules\.bin\tsc.CMD -p packages/contracts/tsconfig.json
-            --noEmit --pretty false
-          - .venv\Scripts\python.exe -m unittest -v tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound
-            tests.foundation.test_adr_check
-          - .venv\Scripts\python.exe tools/quality_check.py --repo .
-          - .venv\Scripts\python.exe tools/plan_review_check.py --repo .; git diff --check
-          deferred_checks:
-          - CAP-03.S04.T02 owns SQLite-backed dispatch, lease recovery, idempotent claim, retry, cancellation, checkpoint
-            persistence, and crash-boundary verification.
-          - CAP-03.S04.T03 owns the governed workflow monitoring and human-task experience against these contracts.
-          - CAP-03.S04 slice review will replay the accumulated affected integration and adversarial union after its tasks
-            close.
-          - The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance,
-            packaging, and Windows x64 matrix remains mandatory once at W1 exit.
-          selection_rationale: CAP-03.S04.T01-R01-F01 exposed incomplete field-by-field human authority binding, so R02 replays
-            disposition, requester, request time, request cardinality, assignee/claim actor, completion actor/time, and decision
-            evidence across Python and TypeScript. CAP-03.S04.T01-R01-F02 exposed a self-asserted compatibility sequence,
-            so R02 mutates operationSequence and its matching ETag together against the exact snapshot. CAP-03.S04.T01-R01-F03
-            exposed transition identity collision, so R02 mutates eventId independently of sequence and verifies decode/restart
-            denial. The selected checks cover these contracts, generated parity, type safety, package registration, Python
-            quality, ADR integrity, worksheet/review generation, and patch hygiene. SQLite crash/lease behavior remains T02;
-            governed workflow UI remains T03; accumulated integration remains slice review; full qualification remains W1
-            exit.
-          selection_sha256: fd06cb387d46fc959b72b6984566a63d85d42da34c95abfca6ff904559dde2bd
-          prior_attempt_id: R01
-          open_finding_ids:
-          - CAP-03.S04.T01-R01-F01
-          - CAP-03.S04.T01-R01-F02
-          - CAP-03.S04.T01-R01-F03
-          root_cause_analysis: The initial validator checked structural validity, state projection, and visible decision completion
-            links but did not enumerate requester, request time, allowed disposition, compatibility sequence, and transition
-            event ID as independent authority-bearing fields. R02 adds explicit semantic bindings for each field and matched
-            cross-runtime adversarial tests so future omissions fail deterministically.
-          selected_command_ids:
-          - foundation:architecture
-          - foundation:backlog-views
-          - foundation:adr
-          - foundation:quality
-          - foundation:packaging-smoke
-          - packaging:unit
-          - contracts:unit
-          packet_sha256: 84f7f9c7fc8b34f36d213d3789f0e827a5724e2ec95b4f59f8370fd7d1f8f0bf
+        - submission:
+            id: R02
+            submitted_by: codex
+            submitted_at: '2026-09-01T17:06:50+00:00'
+            candidate_commit: 3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57
+            base_commit: ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S04.T01.R02.json
+              sha256: 9d39cf6f6ec8bee0654c8dd1763caf27064bad1e8c6fc3999b77b752aef01f92
+              commit: 3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57
+              recorded_at: '2026-09-01T17:06:50+00:00'
+            acceptance_criteria_sha256: f01b8602102222dcc40ea968a086777adbc089c5c7d93ab07891020f40479806
+            changed_paths:
+            - artifacts/evidence/CAP-03.S04.T01.R01.json
+            - artifacts/evidence/CAP-03.S04.T01.review-R01.json
+            - artifacts/evidence/CAP-03.S04.T01.task-start.md
+            - docs/architecture/workflow-contracts.md
+            - packages/contracts/workflow/README.md
+            - packages/contracts/workflow/generate.mjs
+            - packages/contracts/workflow/generated.ts
+            - packages/contracts/workflow/workflow-contract.schema.json
+            - packages/contracts/workflow/workflow-contract.template.py.txt
+            - packages/contracts/workflow/workflow-contract.template.ts.txt
+            - packages/contracts/workflow/workflow-contract.test.ts
+            - planning/backlog.yaml
+            - planning/review-site/CAP-03/CAP-03.S04.T01.html
+            - planning/review-site/CAP-03/CAP-03.S04.html
+            - planning/review-site/manifest.json
+            - services/core-api/src/research_observatory_core/workflow_contracts.py
+            - tests/contracts/test_workflow_contracts.py
+            selected_checks:
+            - .venv\Scripts\python.exe -m unittest -v tests.contracts.test_workflow_contracts
+            - apps\desktop\node_modules\.bin\vitest.CMD run packages/contracts/workflow/workflow-contract.test.ts
+            - node packages/contracts/workflow/generate.mjs --check; apps\desktop\node_modules\.bin\tsc.CMD -p packages/contracts/tsconfig.json
+              --noEmit --pretty false
+            - .venv\Scripts\python.exe -m unittest -v tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound
+              tests.foundation.test_adr_check
+            - .venv\Scripts\python.exe tools/quality_check.py --repo .
+            - .venv\Scripts\python.exe tools/plan_review_check.py --repo .; git diff --check
+            deferred_checks:
+            - CAP-03.S04.T02 owns SQLite-backed dispatch, lease recovery, idempotent claim, retry, cancellation, checkpoint
+              persistence, and crash-boundary verification.
+            - CAP-03.S04.T03 owns the governed workflow monitoring and human-task experience against these contracts.
+            - CAP-03.S04 slice review will replay the accumulated affected integration and adversarial union after its tasks
+              close.
+            - The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance,
+              packaging, and Windows x64 matrix remains mandatory once at W1 exit.
+            selection_rationale: CAP-03.S04.T01-R01-F01 exposed incomplete field-by-field human authority binding, so R02
+              replays disposition, requester, request time, request cardinality, assignee/claim actor, completion actor/time,
+              and decision evidence across Python and TypeScript. CAP-03.S04.T01-R01-F02 exposed a self-asserted compatibility
+              sequence, so R02 mutates operationSequence and its matching ETag together against the exact snapshot. CAP-03.S04.T01-R01-F03
+              exposed transition identity collision, so R02 mutates eventId independently of sequence and verifies decode/restart
+              denial. The selected checks cover these contracts, generated parity, type safety, package registration, Python
+              quality, ADR integrity, worksheet/review generation, and patch hygiene. SQLite crash/lease behavior remains
+              T02; governed workflow UI remains T03; accumulated integration remains slice review; full qualification remains
+              W1 exit.
+            selection_sha256: fd06cb387d46fc959b72b6984566a63d85d42da34c95abfca6ff904559dde2bd
+            prior_attempt_id: R01
+            open_finding_ids:
+            - CAP-03.S04.T01-R01-F01
+            - CAP-03.S04.T01-R01-F02
+            - CAP-03.S04.T01-R01-F03
+            root_cause_analysis: The initial validator checked structural validity, state projection, and visible decision
+              completion links but did not enumerate requester, request time, allowed disposition, compatibility sequence,
+              and transition event ID as independent authority-bearing fields. R02 adds explicit semantic bindings for each
+              field and matched cross-runtime adversarial tests so future omissions fail deterministically.
+            selected_command_ids:
+            - foundation:architecture
+            - foundation:backlog-views
+            - foundation:adr
+            - foundation:quality
+            - foundation:packaging-smoke
+            - packaging:unit
+            - contracts:unit
+            packet_sha256: 84f7f9c7fc8b34f36d213d3789f0e827a5724e2ec95b4f59f8370fd7d1f8f0bf
+          review: *id031
+          ledger:
+            path: artifacts/evidence/CAP-03.S04.T01.review-R02.json
+            sha256: 22d8fc66a138abc33a676ba99005a8176a044d59262205be0247b19e732d2de9
+          findings: []
+          closures:
+          - finding_id: CAP-03.S04.T01-R01-F01
+            disposition: fixed
+            evidence: Both generated runtimes now locate exactly one initial requested event and bind its actor/time to HumanTask.requestedBy/requestedAt;
+              represented assignment requires exactly one claimed event with the exact assignee actor; and a completed decision
+              disposition must be present in the exact bound HumanTaskDefinition.allowedDispositions. Independent replay rejects
+              excluded disposition, requester/time substitution, claim substitution, duplicate request, claim without assignment,
+              and duplicate claim cases, while valid local/server and restart fixtures pass.
+          - finding_id: CAP-03.S04.T01-R01-F02
+            disposition: fixed
+            evidence: Both generated bridge validators require operationSequence to equal snapshot.sequence before accepting
+              the operation state/cancellation projection and ETag. Independent mutation from sequence 32 to 31 with a correspondingly
+              changed quoted ETag now fails with legacy-operation-bridge-binds-exact-workflow-projection; the exact valid
+              bridge still decodes.
+          - finding_id: CAP-03.S04.T01-R01-F03
+            disposition: fixed
+            evidence: The canonical semantic-rule inventory and both generated reducers now maintain an event-ID set and emit
+              history-event-identities-are-unique on collision. Independent duplicate-ID replay fails decoding and reconstruction
+              while the unchanged canonical serialize/reload fixture reconstructs successfully.
+          telemetry:
+            task_id: CAP-03.S04.T01
+            amendment_id: null
+            attempt_id: R02
+            submitted_at: '2026-09-01T17:06:50+00:00'
+            reviewed_at: '2026-09-01T17:11:45+00:00'
+            duration_seconds: 295
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - foundation:architecture
+            - foundation:backlog-views
+            - foundation:adr
+            - foundation:quality
+            - foundation:packaging-smoke
+            - packaging:unit
+            - contracts:unit
+            remediation:
+              prior_attempt_id: R01
+              replayed_finding_ids:
+              - CAP-03.S04.T01-R01-F01
+              - CAP-03.S04.T01-R01-F02
+              - CAP-03.S04.T01-R01-F03
+              closed_finding_ids:
+              - CAP-03.S04.T01-R01-F01
+              - CAP-03.S04.T01-R01-F02
+              - CAP-03.S04.T01-R01-F03
+        current_submission: null
     - id: CAP-03.S04.T02
       capability_id: CAP-03
       slice_id: CAP-03.S04
@@ -12030,11 +12101,11 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-09-01T17:11:45+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
