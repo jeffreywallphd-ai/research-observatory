@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a71f533938e3da5d375a523fd4e7a0e83a5b45c11327f32a46476b843a4eb000
+source_sha256: c104e1a729092210a6db231b409bec7f514848c9e66ffb5aae9abcc19b5ef8a0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5124,7 +5124,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5311,15 +5311,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S04.T03 - Build task center, progress, cancellation, and human-gate UI
+#### - [x] CAP-03.S04.T03 - Build task center, progress, cancellation, and human-gate UI
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S04.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:t02-adversarial-preflight (`approved`)
 
 **Objective:** Desktop task center showing workflow graph, queued/running/waiting/failed states, resource use, logs, decisions, retry, and cancel.
 
@@ -5339,13 +5339,122 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S04.T03.R01.json` at `27714fac4ac803584bf0ebc86c9b599d62ba8cdc`
+- `artifacts/evidence/CAP-03.S04.T03.R02.json` at `02de5ae312985a2c700cc8093061468d8342a736`
+- `artifacts/evidence/CAP-03.S04.T03.R03.json` at `693f62fce9d48290a2ffbeb9dd2a74ff03be7110`
+
 ##### Review history — CAP-03.S04.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 3 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `aa49503ea7d51fea764737ee9ae032a8aa963fe66ff16c4e10a99973be70c1f5`
+
+- Candidate / base / branch: `27714fac4ac803584bf0ebc86c9b599d62ba8cdc` / `1affb3e62f1c58f9019af5d04db1ac33edd38bbb` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T19:38:55+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S04.T03.R01.json` / `c6b992f773445dcb5e57417eb10a54c49778b7eebc128d44681e68baa032a3c0` / `27714fac4ac803584bf0ebc86c9b599d62ba8cdc`
+- Acceptance-criteria SHA-256: `4873bee7f426e751aaa2af1820f620b0f3719abfceae6bc07c23e8bf5a08489d`
+- Verification-selection SHA-256: `cf638d9bf99548fd6eef4321da37bb57aa62d156b5534b80ca22f382220a69e2`
+- Changed paths: `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.test.tsx`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/TaskCenterWorkspace.test.tsx`, `apps/desktop/src/app/TaskCenterWorkspace.tsx`, `artifacts/evidence/CAP-03.S04.T03.task-start.md`, `artifacts/evidence/ui-change/CAP-03.S04.T03.json`, `docs/architecture/workflow-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/core-api/runtime-handshake.schema.json`, `packages/contracts/workflow/fixtures/valid-local-workflow-snapshot.v1.json`, `packages/contracts/workflow/fixtures/valid-workflow-definition.v1.json`, `packages/contracts/workflow/generate.mjs`, `packages/contracts/workflow/generated.ts`, `packages/contracts/workflow/workflow-contract.schema.json`, `packages/contracts/workflow/workflow-contract.template.py.txt`, `packages/contracts/workflow/workflow-contract.template.ts.txt`, `packages/contracts/workflow/workflow-contract.test.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S04.T03.html`, `planning/review-site/CAP-03/CAP-03.S04.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/modules.py`, `services/core-api/src/research_observatory_core/ports/workflow_executor.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/task_center.py`, `services/core-api/src/research_observatory_core/workflow_contracts.py`, `tests/contracts/test_workflow_contracts.py`, `tests/desktop/test_core_sidecar_performance_check.py`, `tests/service/test_core_api.py`, `tests/service/test_task_center_api.py`, `tests/workflows/test_task_center.py`, `tools/core_api_contract.py`, `tools/core_sidecar_performance_check.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest tests.workflows.test_task_center tests.service.test_task_center_api tests.service.test_core_api tests.contracts.test_workflow_contracts tests.desktop.test_core_sidecar_performance_check`, `pnpm exec vitest run packages/contracts/workflow/workflow-contract.test.ts packages/contracts/core-api/generated.test.ts apps/desktop/src/app/TaskCenterWorkspace.test.tsx apps/desktop/src/app/ApplicationRuntime.test.tsx`, `pnpm --filter @research-observatory/desktop typecheck; pnpm --filter @research-observatory/contracts typecheck; pnpm --filter @research-observatory/desktop lint`, `pnpm --filter @research-observatory/desktop build; .venv\Scripts\python.exe tools/desktop_app_check.py --repo . --built-frame-only`, `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings`, `.venv\Scripts\python.exe tools/ui_accessibility_check.py; .venv\Scripts\python.exe tools/ui_route_page_check.py; .venv\Scripts\python.exe tools/ui_token_check.py; .venv\Scripts\python.exe tools/ui_workflow_check.py`, `.venv\Scripts\python.exe tools/core_api_contract.py --check; .venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py; .venv\Scripts\python.exe tools/repository_structure_check.py`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head 27714fac4ac803584bf0ebc86c9b599d62ba8cdc; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools/verify.py --selection-only --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head 27714fac4ac803584bf0ebc86c9b599d62ba8cdc --deferred-gate W1-exit --report artifacts/tmp/CAP-03.S04.T03-affected-selection.json; git diff --check 1affb3e62f1c58f9019af5d04db1ac33edd38bbb..27714fac4ac803584bf0ebc86c9b599d62ba8cdc`
+- Deferred checks: `CAP-03.S04 slice review owns the accumulated affected executor, workflow-contract, Core API, native-supervisor, and Task Center UI integration and adversarial union after all slice tasks close.`, `Desktop visual-regression and performance qualification remain gate-bound where required by the approved W1 matrix rather than being replayed for this ordinary task submission.`, `The complete service, data, e2e-local, security, performance, packaging, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: T03 changes a security-relevant human-decision authority boundary, SQLite-backed workflow projections/actions, generated public Core API contracts, a native desktop allow-list, and governed Task Center UI. Task verification therefore exercised focused real-database restart/action cases, contract generation and strict decoding, native request validation, desktop state/action rendering, production build/smoke, approved-reference accessibility/routes/tokens/workflows, and affected static/architecture/planning controls. It did not replay complete desktop, service, or e2e-local profiles: accumulated Task Center/executor integration and adversarial coverage belongs to CAP-03.S04 slice review, while the full repository and deployment-profile matrix remains mandatory once at W1 exit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-adversarial-preflight / `2026-09-01T19:50:47+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S04.T03.review-R01.json` / `8473a51fbac477f4ae387e5a40d5f4cdda11ab489f840cf8991d9c1d4201254b`
+
+**Review notes:** The frozen candidate/submission boundary, evidence identity, 44-path inventory, task projection, approved-reference identity, and patch hygiene authenticate exactly. Focused replay passed 15 Python workflow/Task Center/API contract tests, one runtime-handshake test, 27 TypeScript tests, and the targeted native allow-list test. Six acceptance-bound defects remain: two authority/consequence failures and four projection, restart-lineage, client-validation, and governed-interaction failures. No full profile was run.
+
+**Findings opened:**
+
+- `CAP-03.S04.T03-R01-F01` `high` blocking=`True` criterion=`1` — Cancellation and retry accept substituted snapshot authority; reproduce: At the exact candidate, create a runnable project workflow and read its Task Center projection. Submit POST /projects/workflows/jobs/{jobId}/cancel with the canonical run ID and history revision but replace snapshotRevision 1 with 2 in If-Match. The request returns 200 and cancels the job. services/core-api/src/research_observatory_core/app.py:692 and :727 parse the snapshot component into _snapshot_revision and discard it; TaskCenterService.cancel/retry and repository request_cancellation/retry_as_continuation validate only run/history authority.; remediate: Carry expected snapshot revision through cancel and retry and compare it transactionally with the exact bound latest workflow snapshot before mutation or idempotent replay. Add real API/repository tests for substituted, stale and exact snapshot revisions on both commands while retaining run/history checks and canonical ETag behavior.
+- `CAP-03.S04.T03-R01-F02` `high` blocking=`True` criterion=`1` — Definition-bound human consequences are recorded but not faithfully executed; reproduce: Register a valid waiting-human definition whose only allowed disposition is not-applicable and whose exact mapping is skip-step. Complete that decision. repositories.py:3919 collapses every consequence except end-workflow to terminal succeeded; the resulting decision still discloses skip-step, but the step and workflow are both recorded as succeeded. The same branch cannot resume a mid-graph workflow or activate its exact downstream definition.; remediate: Implement each supported consequence distinctly. skip-step must emit the contract's skipped step transition; resume-workflow must advance only the exact newly authorized snapshot and runnable dependency graph rather than terminalizing it; end-workflow must retain its explicit terminal semantics. Add real persistence/restart tests for all supported consequence codes, including a human gate with a downstream activity.
+- `CAP-03.S04.T03-R01-F03` `medium` blocking=`True` criterion=`1` — Project changes can display a prior project's workflow projection; reproduce: TaskCenterWorkspace.tsx:61 retains runs across prop changes. load at :73-84 captures one project and unconditionally calls setRuns after awaiting transport. The cleanup flag at :95-98 prevents later timer launches but does not invalidate an in-flight request or clear prior runs. Switching from project A to B therefore displays A immediately while B loads, and a delayed A response can overwrite B after the switch.; remediate: Reset runs, selection and loading state on exact project identity/root changes, bind every load to a request generation or abort signal, and ignore responses from superseded projects or older overlapping polls. Add interaction tests with deferred A/B transports proving no cross-project display and monotonic response ordering.
+- `CAP-03.S04.T03-R01-F04` `medium` blocking=`True` criterion=`2` — The generated client accepts contradictory human-decision projections; reproduce: Pass decodeWorkflowTaskCenterRun a structurally valid run containing a human task with state completed while decisionId, disposition and decidedAt are all null. generated.ts:811-824 validates those fields independently and returns the projection instead of rejecting it. This omits the server model invariant at models.py:766-784 and contradicts the claimed fail-closed rejection of contradictory Core responses before rendering.; remediate: Generate and enforce the same completed-decision, claimed-assignee, consequence-key and identity/order invariants at the TypeScript process boundary. Add hostile generated-client tests for completed-without-decision, partial decision triples, decision-on-open-task, claimed-without-assignee, duplicate identities and out-of-order events.
+- `CAP-03.S04.T03-R01-F05` `medium` blocking=`True` criterion=`1` — Retry continuation lineage is not visible or restart-reconstructable in Task Center; reproduce: retry_as_continuation records sourceJobId only inside a private command fingerprint at repositories.py:3679. WorkflowTaskCenterRun and the generated API projection expose no predecessor run/job relationship, and the renderer displays the old and new runs as unrelated. After refresh or restart, the brief announcement is lost, contrary to the task-start requirement that retry create a new immutable continuation and make the relationship visible.; remediate: Persist an immutable continuation-from run/job reference, expose it in the bounded repository/Core/generated-client projection, and render it in Task Center. Add idempotent retry plus Core-restart tests proving the new identity, exact definition binding and predecessor relationship survive.
+- `CAP-03.S04.T03-R01-F06` `medium` blocking=`True` criterion=`2` — Successful confirmation loses focus and submitted tests do not prove claimed command interaction behavior; reproduce: TaskCenterWorkspace.tsx:119-122 provides focus restoration through closeConfirmation, but successful cancel/retry at :157 directly calls setConfirmation(null), removing the focused dialog button without restoring focus. TaskCenterWorkspace.test.tsx contains only static render assertions; it does not execute cancellation, retry, decision, keyboard trapping, successful close or focus recovery despite the evidence claim that these states/actions were covered.; remediate: Close successful commands through an explicit post-command focus-restoration path and add DOM interaction tests for cancel, retry, decision, Escape/Tab containment, failure retention, announcements and success focus recovery. Narrow the evidence wording to what the exact tests execute.
+
+**Prior finding closures:**
+
+- None
+
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `9806890a2404fae70524a29eed4840112d3113722efeaf273f198fffaab54613`
+
+- Candidate / base / branch: `02de5ae312985a2c700cc8093061468d8342a736` / `27714fac4ac803584bf0ebc86c9b599d62ba8cdc` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T20:20:00+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S04.T03.R02.json` / `026de494e79d955e2873b1deae5a556951b11d95d2ccf20f92c9f7b91f43908c` / `02de5ae312985a2c700cc8093061468d8342a736`
+- Acceptance-criteria SHA-256: `4873bee7f426e751aaa2af1820f620b0f3719abfceae6bc07c23e8bf5a08489d`
+- Verification-selection SHA-256: `c8e7495066f2d054d929ee8ea885270334e68c50f9993acb154b50d4f8241342`
+- Changed paths: `apps/desktop/src/app/TaskCenterWorkspace.test.tsx`, `apps/desktop/src/app/TaskCenterWorkspace.tsx`, `artifacts/evidence/CAP-03.S04.T03.R01.json`, `artifacts/evidence/CAP-03.S04.T03.review-R01.json`, `artifacts/evidence/CAP-03.S04.T03.task-start.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/workflow/generate.mjs`, `packages/contracts/workflow/generated.ts`, `packages/contracts/workflow/workflow-contract.schema.json`, `packages/contracts/workflow/workflow-contract.template.py.txt`, `packages/contracts/workflow/workflow-contract.template.ts.txt`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S04.T03.html`, `planning/review-site/CAP-03/CAP-03.S04.html`, `planning/review-site/manifest.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/ports/workflow_executor.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/task_center.py`, `services/core-api/src/research_observatory_core/workflow_contracts.py`, `tests/desktop/fixtures/task_center_interactions.js`, `tests/desktop/test_desktop_app_check.py`, `tests/service/test_task_center_api.py`, `tests/workflows/test_task_center.py`, `tools/core_api_contract.py`
+- Selected checks: `.venv\Scripts\python.exe -B -m unittest tests.workflows.test_task_center tests.service.test_task_center_api tests.contracts.test_workflow_contracts tests.desktop.test_desktop_app_check.TaskCenterInteractionTests`, `Focused TaskCenterWorkspace, generated Core API, and workflow-contract Vitest runs`, `contracts and desktop TypeScript typecheck; desktop lint`, `desktop production build; focused TaskCenterInteractionTests browser run`, `core_api_contract.py --check; workflow generate.mjs --check; quality_check.py; architecture_check.py; repository_structure_check.py`, `ui_change_gate.py --base 1affb3e... --head 02de5ae...; verify.py --selection-only --affected-base 27714fa... --affected-head 02de5ae... --deferred-gate W1-exit; plan_review_check.py; git diff --check`
+- Deferred checks: `CAP-03.S04 independent slice review owns the accumulated executor, workflow-contract, SQLite, Core API, native supervisor, Task Center renderer, restart, cancellation and adversarial integration union after T03 closes.`, `Native route syntax did not change in R02; the exact R01 candidate native allow-list replay remains valid and accumulated native integration returns at slice review.`, `The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging and Windows x64 matrix remains mandatory once at W1 exit.`
+- Selection rationale: R01 identified six acceptance-bound defects spanning transactional workflow authority, executable consequence semantics, cross-project asynchronous projection ownership, generated public-response invariants, restart-visible retry lineage, and governed command interaction. R02 therefore replays every finding at the narrowest real boundary that can prove it: SQLite and Core API for F01/F02/F05, hostile generated-client fixtures for F04, and a built-product Chromium interaction for F03/F06. Generated parity, strict typing, Python quality, architecture, approved-reference lineage, planning projection, and patch hygiene cover the incremental cross-layer contract risk. Native route syntax did not change after the independently replayed R01 native allow-list check, so Rust was not replayed. Complete desktop/service/e2e-local and deployment-profile matrices remain deferred to CAP-03.S04 integration and W1 exit under the risk-based workflow.
+- Prior round / replayed open findings: `R01` / `CAP-03.S04.T03-R01-F01`, `CAP-03.S04.T03-R01-F02`, `CAP-03.S04.T03-R01-F03`, `CAP-03.S04.T03-R01-F04`, `CAP-03.S04.T03-R01-F05`, `CAP-03.S04.T03-R01-F06`
+- Root-cause escalation: R01 threaded only part of the composite workflow authority tuple, treated definition consequence codes and retry ancestry as informational metadata rather than durable executable/read-model semantics, validated generated responses field-by-field without cross-field invariants, and used static renderer assertions for behavior that depended on asynchronous project ownership and browser focus. R02 binds every authority field transactionally, executes each consequence against the exact definition graph, persists and projects predecessor identity, mirrors server invariants at the generated boundary, invalidates stale project/request generations, and replaces the unsupported interaction claim with a focused built-product browser proof.
+
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-adversarial-preflight / `2026-09-01T20:28:06+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S04.T03.review-R02.json` / `3b78900e3b0328e09e73a7d3a0af93a27ed206d85ab9b0a91e2dddc838ccefea`
+
+**Review notes:** Candidate/submission ancestry, the exact 28-path remediation inventory, frozen evidence identity, and approved UI-reference lineage authenticate. Five R01 findings are fixed. CAP-03.S04.T03-R01-F02 remains HIGH and blocking: resume persists a runnable downstream activity in canonical authority without admitting its job to the durable queue, leaving a running workflow that cannot execute. Focused replay passed 18 Python/browser tests, 22 TypeScript tests, workflow generation parity, Core API contract parity, and the approved UI-reference gate. No full profile was run.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S04.T03-R01-F01` `fixed` — Cancellation and retry now carry and transactionally compare the exact snapshot/history authority pair before mutation or idempotent replay. Focused repository and real API tests reject substituted snapshots and stale history.
+- `CAP-03.S04.T03-R01-F03` `fixed` — Exact project identity and monotonically increasing request generations reset projection state and reject stale or superseded responses. The built-product Chromium replay proves delayed project-A work cannot overwrite project B.
+- `CAP-03.S04.T03-R01-F04` `fixed` — The generated client now rejects contradictory decision triples, claimed tasks without assignment, duplicate identities, invalid continuation pairs, invalid waiting-human state, and out-of-order events. Hostile generated-client fixtures pass.
+- `CAP-03.S04.T03-R01-F05` `fixed` — Retry continuation source run/job identities are persisted in canonical snapshots, projected through Core and generated contracts, rendered in Task Center, and reconstructed after restart.
+- `CAP-03.S04.T03-R01-F06` `fixed` — Successful and dismissed confirmations share an explicit focus-restoration path with selected-workflow fallback. Built-product Chromium replay covers cancellation success/failure, failure retention, live announcement, Tab/Escape containment, success focus recovery, and human-decision submission.
+
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `f2f8924a15df42c52c3acbd9d95f1d3ebf5daaf57949bf76c4ab2394057469a9`
+
+- Candidate / base / branch: `693f62fce9d48290a2ffbeb9dd2a74ff03be7110` / `02de5ae312985a2c700cc8093061468d8342a736` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T20:35:46+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S04.T03.R03.json` / `f420e65c61ec284d5f0fa10b0535c19ae3dde122596cd837473690dc20f1330c` / `693f62fce9d48290a2ffbeb9dd2a74ff03be7110`
+- Acceptance-criteria SHA-256: `4873bee7f426e751aaa2af1820f620b0f3719abfceae6bc07c23e8bf5a08489d`
+- Verification-selection SHA-256: `46a82b20529b88e49d55153f9fa41bddbee63ce9d07e2f50df4d35df432c991d`
+- Changed paths: `artifacts/evidence/CAP-03.S04.T03.R02.json`, `artifacts/evidence/CAP-03.S04.T03.review-R02.json`, `artifacts/evidence/CAP-03.S04.T03.task-start.md`, `planning/backlog.yaml`, `services/core-api/src/research_observatory_core/repositories.py`, `tests/workflows/test_task_center.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.workflows.test_task_center.WorkflowTaskCenterTests.test_human_consequences_skip_end_or_resume_the_exact_graph tests.workflows.test_task_center.WorkflowTaskCenterTests.test_human_resume_rolls_back_authority_when_queue_admission_fails`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.workflows.test_task_center tests.service.test_task_center_api`, `ruff check/format --check and mypy for repositories.py plus test_task_center.py`, `verify.py --profile desktop --profile service --profile e2e-local --selection-only --affected-base 02de5ae... --affected-head 693f62f... --deferred-gate W1-exit; git diff --check`
+- Deferred checks: `CAP-03.S04 independent slice review owns the accumulated executor, workflow-contract, SQLite, Core API, native supervisor, Task Center renderer, restart, cancellation, human-decision and adversarial integration union after T03 closes.`, `The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging and Windows x64 matrix remains mandatory once at W1 exit.`
+- Selection rationale: CAP-03.S04.T03-R01-F02 remained open because R02 updated canonical runnable authority without the separate durable queue admission needed by a restarted worker. R03 changes only that SQLite transaction and its focused test boundary. Verification therefore replays the exact downstream resume/restart/claim path, exact-decision idempotency, injected transactional rollback, the affected Task Center API set, focused Python static checks, affected-selection inventory, and patch hygiene. Five other R01 findings were independently closed in R02 and their unchanged boundaries were not broadly replayed. Complete desktop/service/e2e-local and deployment matrices remain owned by CAP-03.S04 integration and W1 exit.
+- Prior round / replayed open findings: `R02` / `CAP-03.S04.T03-R01-F02`
+- Root-cause escalation: CAP-03.S04.T03-R01-F02 persisted through R02 because the remediation treated a canonical pending-to-runnable snapshot transition as if it also created the executor's mutable queue projection. The test asserted only snapshot/Task Center step state after restart and never attempted a real queue claim, so it mirrored the incomplete implementation. R03 makes immutable authority and mutable job admission one transaction and extends the acceptance proof through Task Center projection, restart claim, exact replay, and injected rollback.
+
+**Disposition / reviewer / time:** `approved` / agent:t02-adversarial-preflight / `2026-09-01T20:39:07+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S04.T03.review-R03.json` / `7d0de9dac7a87d974163cd3143e998e55c592045f23c17e307d1b52eef77ce92`
+
+**Review notes:** R03 closes the sole remaining blocking finding. The exact-definition downstream activity is admitted atomically to the durable SQLite queue, projected after restart, claimable by a fresh repository, idempotent under exact decision replay, and completely rolled back when admission fails. The six-path candidate range is exact; submission adds only the R03 manifest and backlog projection. No public contract, generated client, renderer, governed UI reference, route, migration, dependency, or authority expanded. No full profile was run.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S04.T03-R01-F02` `fixed` — repositories.py now collects only jobs made runnable by the exact dependency graph and, inside the same SQLite transaction as authority/history storage, prepares and admits each job through the existing queue boundary. Focused real-SQLite replay proves durable Task Center projection, fresh-repository claimability, one admission after exact decision replay, and complete rollback after an injected post-authority admission failure.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t02-adversarial-preflight at `2026-09-01T20:39:07+00:00`
+
+**Latest notes:** R03 closes the sole remaining blocking finding. The exact-definition downstream activity is admitted atomically to the durable SQLite queue, projected after restart, claimable by a fresh repository, idempotent under exact decision replay, and completely rolled back when admission fails. The six-path candidate range is exact; submission adds only the R03 manifest and backlog projection. No public contract, generated client, renderer, governed UI reference, route, migration, dependency, or authority expanded. No full profile was run.
+
+**Currently open findings:** -
 
 ### SLICE-dependency-graph-staleness-and-controlled-recalculation (`CAP-03.S05`) - Dependency graph, staleness, and controlled recalculation
 

@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-03.S04",
+  "attemptId": "R01",
+  "stateCommit": "7adbe700137056f998c42615fb2d3c096179edcd",
+  "productCandidateCommit": "7adbe700137056f998c42615fb2d3c096179edcd",
+  "branch": "codex/w1-windows-local-runtime",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-03/CAP-03.S04-portable-workflow-model-and-local-worker-fabric.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "outcome": "CAP-03.S04 provides one executor-neutral, versioned workflow definition/snapshot/history contract; a schema-v8 SQLite local queue with fenced leases, attempts, checkpoints, canonical outputs, bounded retry/recovery and cooperative cancellation; and a project-authorized Task Center that exposes content-free progress, queue/resource state, retained artifacts, definition-bound human decisions, cancellation and immutable retry continuations. A resumed human gate now atomically creates both the next canonical authority revision and every newly runnable durable queue admission, so a fresh worker can claim the exact definition-bound job after restart.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-03.S04.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S04.T01.R02.json",
+          "sha256": "9d39cf6f6ec8bee0654c8dd1763caf27064bad1e8c6fc3999b77b752aef01f92"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S04.T01.review-R02.json",
+          "sha256": "22d8fc66a138abc33a676ba99005a8176a044d59262205be0247b19e732d2de9"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S04.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S04.T02.R01.json",
+          "sha256": "1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S04.T02.review-R01.json",
+          "sha256": "004eebf8ef5e551af0553ce11f04eefe35ae8b21c4644c777951316eedbc047a"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S04.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S04.T03.R03.json",
+          "sha256": "f420e65c61ec284d5f0fa10b0535c19ae3dde122596cd837473690dc20f1330c"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S04.T03.review-R03.json",
+          "sha256": "7d0de9dac7a87d974163cd3143e998e55c592045f23c17e307d1b52eef77ce92"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center tests.service.test_task_center_api tests.data.test_sqlite_schema tests.data.test_sqlite_migrations",
+      "exitCode": 0,
+      "result": "All 65 selected portable-contract, real SQLite executor, Task Center repository/Core API, strict schema and predecessor-migration tests passed in 18.508 seconds. The union covers definition/history validation, exact human authority, fenced claims, retry/checkpoint/cancellation/recovery, v7-to-v8 backup/restart behavior, Task Center projection, continuation lineage, downstream human-resume admission, restart claimability and injected transactional rollback."
+    },
+    {
+      "command": "Bundled Node 24: vitest run workflow-contract.test.ts generated.test.ts TaskCenterWorkspace.test.tsx ApplicationRuntime.test.tsx",
+      "exitCode": 0,
+      "result": "All 28 selected TypeScript contract, generated-client, Task Center and application-runtime tests passed. Strict response invariants, human-decision commands, cancellation/retry ETags, project/request generation ownership and renderer boundary states remain integrated."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib native_api_transport_allows_only_generated_local_routes",
+      "exitCode": 0,
+      "result": "The exact native route allow-list test passed with 57 unrelated Rust tests filtered out, preserving the renderer-to-Core transport boundary without replaying the Rust workspace."
+    },
+    {
+      "command": "Bundled Node 24 contracts/desktop typechecks; workflow generator --check; desktop Vite production build; TaskCenterInteractionTests",
+      "exitCode": 0,
+      "result": "Both strict TypeScript projects and workflow generator parity passed; the production renderer built successfully; the focused built-product Chromium scenario passed cancellation success/failure, keyboard containment, announcements, focus recovery, delayed project switching, continuation display and human-decision submission."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file",
+      "exitCode": 0,
+      "result": "The Windows x64 PyInstaller Core sidecar was built and the focused package smoke passed without system Python, proving inclusion of the workflow contract, repository, migration and Task Center service paths."
+    },
+    {
+      "command": "core_api_contract.py --check; quality_check.py; architecture_check.py; repository_structure_check.py",
+      "exitCode": 0,
+      "result": "Core OpenAPI/generated-client parity passed; all 179 governed Python files passed formatting, Ruff and mypy; architecture passed 13 areas, 12 modules, five stable interfaces and three deployment profiles; repository structure passed."
+    },
+    {
+      "command": "ui_reference_check.py; ui_token_check.py; ui_route_check.py; ui_workflow_check.py; ui_accessibility_check.py; exact post-T03 governed-UI diff; planctl.py wave ready W1 --require-approved; git diff --check",
+      "exitCode": 0,
+      "result": "Current approved reference RO-UI-ACADEMIC-MINIMAL-1.4 passed integrity, token, route, workflow and 33-page/66-responsive-case accessibility validation. The exact T03 task gate passed at candidate 02de5ae and the later R03/review/projection range changes no desktop, UI-reference, UI-change-contract, OpenAPI or generated-client path. W1 planning readiness passed for 19 capabilities, 111 slices, 337 tasks and 488 pages; patch hygiene passed."
+    }
+  ],
+  "environmentNotes": [
+    "The first focused Vitest launch was denied before test discovery by sandbox EPERM on a user-profile metadata lookup. An elevated retry reached host Node 20.20.1 but stopped before discovery because pnpm 11.20.0 requires Node 22.13 or newer and node:sqlite was unavailable. The authoritative third launch used the Codex-bundled Node 24 runtime and passed 28/28; neither setup failure exercised product code.",
+    "A direct ui_change_gate invocation at the current DONE task state returned its expected controller precondition that UI evidence tasks must be IN_PROGRESS or REVIEW. The exact task candidate had already passed that gate, and the post-gate range has zero governed UI/public-client paths; current reference integrity and focused built-product interaction both pass."
+  ],
+  "findingReplay": {
+    "closedFindingIds": [
+      "CAP-03.S04.T01-R01-F01",
+      "CAP-03.S04.T01-R01-F02",
+      "CAP-03.S04.T01-R01-F03",
+      "CAP-03.S04.T03-R01-F01",
+      "CAP-03.S04.T03-R01-F02",
+      "CAP-03.S04.T03-R01-F03",
+      "CAP-03.S04.T03-R01-F04",
+      "CAP-03.S04.T03-R01-F05",
+      "CAP-03.S04.T03-R01-F06"
+    ],
+    "openFindingIds": [],
+    "result": "Every formal task finding is closed by its immutable approved task ledger. The accumulated slice union directly replays exact human-task authority, bridge/history identity, durable queue/recovery/cancellation, strict generated projection, governed interaction and the final downstream resume/admission boundary. T02 had no formal review finding and its twelve preflight defects remain covered by the approved executor tests."
+  },
+  "profileSelection": {
+    "selected": "CAP-03.S04 crosses portable contracts, a public Core API, a schema-v8 SQLite migration, local queue/lease/recovery and output-provenance transactions, the native desktop transport allow-list, packaged Core runtime and governed Task Center experience. The checkpoint therefore ran the accumulated affected contract/data/service/desktop/native/package union plus build/browser smoke and shared static/architecture/reference checks.",
+    "deferredToWaveExit": "The complete repository and deployment-profile matrix, cross-capability happy/failure/denial/cancellation/migration/restart/recovery/security/accessibility/performance/packaging qualification, Windows x64 release package and any full visual/performance replay remain mandatory once at W1 exit. No full profile was run for this slice checkpoint."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The approved plan's qualitative thousands-of-jobs and idle-polling performance expectations have no slice-specific numeric regression baseline. Bounded recovery, concurrency-class admission and WAL reader responsiveness are covered by the real executor tests; representative cross-capability performance measurement remains explicitly mandatory at W1 exit rather than being inferred here.",
+      "The complete W1 deployment and release qualification matrix remains due after all W1 slices close.",
+      "The protected pre-existing untracked W1.A04.B00 witness remains untouched and unstaged."
+    ]
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-03.S05 and CAP-03.S06",
+      "contract": "exact versioned workflow/step/job/human-task identities, append-only history, restart-stable local execution, definition-bound human consequences and bounded content-free Task Center state",
+      "readyPendingSliceApproval": true
+    },
+    {
+      "consumer": "CAP-05, CAP-08, CAP-12, CAP-17 and CAP-18 long-running scholarly work",
+      "contract": "portable activity definitions, idempotent at-least-once local jobs, immutable artifacts/provenance, checkpoint/retry/cancellation/recovery and human-gate semantics behind Core ports",
+      "readyPendingSliceApproval": true
+    }
+  ]
+}
