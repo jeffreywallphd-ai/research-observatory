@@ -870,6 +870,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationLock": False,
         "applicationLockReconciliation": False,
         "applicationSettingsDraftReconciliation": False,
+        "applicationSettingsConflictAnnouncement": False,
         "applicationSettingsPositionPreserved": False,
         "applicationSettingsFocusRestoration": False,
         "applicationHelloRecovery": False,
@@ -1473,6 +1474,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   let nextCallback = 1;
                   let lockListener = null;
                   let failStatus = false;
+                  let transitionConflict = false;
+                  let transitionCommitAttempts = 0;
                   let snapshot = {
                     schemaVersion: '1.0', state: 'unlocked', signInMode: 'windows-password',
                     policyRevision: 1, profileName: 'Private profile', inactivityTimeoutMinutes: 15,
@@ -1496,6 +1499,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   };
                   window.__LOCK_SET_STATUS__ = (next) => { snapshot = next; };
                   window.__LOCK_FAIL_STATUS__ = () => { failStatus = true; };
+                  window.__LOCK_ENABLE_TRANSITION_CONFLICT__ = () => {
+                    transitionConflict = true;
+                    transitionCommitAttempts = 0;
+                  };
                   window.__TAURI_INTERNALS__ = {
                     transformCallback: (callback, once = false) => {
                       const id = nextCallback++;
@@ -1518,6 +1525,27 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       if (command === 'application_lock_status') {
                         if (failStatus) throw new Error('monitor unavailable');
                         return {...snapshot};
+                      }
+                      if (command === 'application_sign_in_transition_prepare' && transitionConflict) {
+                        return {schemaVersion: '1.0', outcome: 'prepared',
+                          reasonCode: 'RO-SIGN-IN-TRANSITION-PREPARED', handle: 'ab'.repeat(32),
+                          sourceMode: snapshot.signInMode, targetMode: args.targetMode,
+                          warningRequired: false, snapshot: {...snapshot}};
+                      }
+                      if (command === 'application_sign_in_transition_commit' && transitionConflict) {
+                        if (args?.confirmed === false) {
+                          return {schemaVersion: '1.0', outcome: 'cancelled',
+                            reasonCode: 'RO-SIGN-IN-TRANSITION-CONFIRMATION-CANCELLED', handle: null,
+                            sourceMode: 'windows-password', targetMode: 'windows-password',
+                            warningRequired: false, snapshot: {...snapshot}};
+                        }
+                        transitionCommitAttempts += 1;
+                        if (transitionCommitAttempts === 2) {
+                          snapshot = {...snapshot, profileName: 'Other profile',
+                            inactivityTimeoutMinutes: 0, policyRevision: snapshot.policyRevision + 1,
+                            auditSequence: snapshot.auditSequence + 1};
+                        }
+                        throw new Error('simulated transition response loss');
                       }
                       if (command === 'application_lock_activity') return undefined;
                       if (command === 'application_lock_unlock') {
@@ -1614,6 +1642,51 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             details["applicationSettingsDraftReconciliation"] = (
                 lock_reconciliation.locator("#application-profile-name").input_value() == "Private profile draft"
             )
+            lock_reconciliation.evaluate("window.__LOCK_ENABLE_TRANSITION_CONFLICT__()")
+            lock_reconciliation.locator("#application-profile-name").fill("Requested")
+            lock_reconciliation.locator("#application-lock-timeout").select_option("60")
+            lock_reconciliation.get_by_role("button", name="Save change", exact=True).click()
+            conflict_message = (
+                "The native policy changed elsewhere, so the requested sign-in change was not confirmed. "
+                "Review the current setting before retrying."
+            )
+            lock_reconciliation.locator(".settings-feedback-danger").filter(has_text=conflict_message).wait_for(
+                timeout=5_000
+            )
+            lock_reconciliation.wait_for_function(
+                "message => document.querySelector('[data-live-region]')?.textContent === message",
+                arg=conflict_message,
+                timeout=5_000,
+            )
+            details["applicationSettingsConflictAnnouncement"] = (
+                lock_reconciliation.locator(".settings-feedback-danger").inner_text() == conflict_message
+                and lock_reconciliation.locator("#application-profile-name").input_value() == "Other profile"
+                and lock_reconciliation.locator("#application-lock-timeout").input_value() == "0"
+                and "prior setting remains active" not in lock_reconciliation.locator("[data-live-region]").inner_text()
+            )
+            lock_reconciliation.evaluate(
+                """(() => {
+                  const restored = {
+                    schemaVersion: '1.0', state: 'unlocked', signInMode: 'windows-password',
+                    policyRevision: 3, profileName: 'Private profile', inactivityTimeoutMinutes: 15,
+                    configurationState: 'valid', reason: null,
+                    threatDisclosure: 'Application-session protection only; this is not Windows-account isolation.',
+                    retryAfterSeconds: 0, auditSequence: 3
+                  };
+                  window.__LOCK_SET_STATUS__(restored);
+                  window.__LOCK_EMIT__(restored);
+                })()"""
+            )
+            lock_reconciliation.wait_for_function("document.querySelector('#application-lock-timeout')?.value === '15'")
+            lock_reconciliation.evaluate(
+                """window.__LOCK_SET_STATUS__({
+                  schemaVersion: '1.0', state: 'locked', signInMode: 'windows-password',
+                  policyRevision: 3, profileName: null, inactivityTimeoutMinutes: 15,
+                  configurationState: 'valid', reason: 'manual',
+                  threatDisclosure: 'Application-session protection only; this is not Windows-account isolation.',
+                  retryAfterSeconds: 0, auditSequence: 4
+                })"""
+            )
             lock_reconciliation.evaluate("window.__LOCK_EMIT__({malformed: true})")
             lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=5_000)
             malformed_text = lock_reconciliation.locator("body").inner_text()
@@ -1637,10 +1710,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             lock_reconciliation.evaluate(
                 """window.__LOCK_SET_STATUS__({
                   schemaVersion: '1.0', state: 'locked', signInMode: 'windows-password',
-                  policyRevision: 1, profileName: null, inactivityTimeoutMinutes: 15,
+                  policyRevision: 3, profileName: null, inactivityTimeoutMinutes: 15,
                   configurationState: 'valid', reason: 'inactivity',
                   threatDisclosure: 'Application-session protection only; this is not Windows-account isolation.',
-                  retryAfterSeconds: 0, auditSequence: 3
+                  retryAfterSeconds: 0, auditSequence: 6
                 })"""
             )
             lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=4_000)
@@ -1959,6 +2032,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationLock",
         "applicationLockReconciliation",
         "applicationSettingsDraftReconciliation",
+        "applicationSettingsConflictAnnouncement",
         "applicationSettingsPositionPreserved",
         "applicationSettingsFocusRestoration",
         "applicationHelloRecovery",

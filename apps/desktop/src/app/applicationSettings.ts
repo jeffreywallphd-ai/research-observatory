@@ -155,6 +155,17 @@ function snapshotMatchesTarget(
     && snapshot.policyRevision === priorRevision + 1;
 }
 
+function snapshotMatchesPriorPolicy(
+  snapshot: ApplicationLockSnapshot,
+  prior: ApplicationLockSnapshot,
+): boolean {
+  return snapshot.signInMode === prior.signInMode
+    && snapshot.profileName === prior.profileName
+    && snapshot.inactivityTimeoutMinutes === prior.inactivityTimeoutMinutes
+    && snapshot.configurationState === prior.configurationState
+    && snapshot.policyRevision === prior.policyRevision;
+}
+
 export class ApplicationSettingsController {
   private operationInProgress = false;
   private pending: PendingTransition | null = null;
@@ -389,9 +400,16 @@ export class ApplicationSettingsController {
           snapshot,
         };
       }
+      if (snapshotMatchesPriorPolicy(snapshot, prepared.snapshot)) {
+        return {
+          kind: "unchanged",
+          message: "The response was interrupted; native status confirms the prior setting remains active.",
+          snapshot,
+        };
+      }
       return {
-        kind: "unchanged",
-        message: "The response was interrupted; native status confirms the prior setting remains active.",
+        kind: "rejected",
+        message: "The native policy changed elsewhere, so the requested sign-in change was not confirmed. Review the current setting before retrying.",
         snapshot,
       };
     } catch {
