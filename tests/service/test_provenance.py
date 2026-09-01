@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import hashlib
+import runpy
 import tempfile
 import unittest
 from itertools import pairwise
 from pathlib import Path
+from typing import Protocol, cast
 
 from fastapi.testclient import TestClient
 from research_observatory_core.app import create_app
@@ -33,6 +36,23 @@ AUTH_HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 CREATED_AT = "2026-08-29T10:00:00.000Z"
 ACTOR_ID = "018f0000-0000-7000-8000-000000000001"
 AGGREGATE_ID = "018f0000-0000-7000-8000-000000000101"
+
+
+class _PerformanceDraft(Protocol):
+    def __call__(
+        self,
+        index: int,
+        *,
+        inputs: tuple[AggregateRevision, ...] = (),
+    ) -> AggregateRevisionDraft: ...
+
+
+performance_draft = cast(
+    _PerformanceDraft,
+    runpy.run_path(str(Path(__file__).resolve().parents[2] / "tools" / "provenance_lineage_performance_check.py"))[
+        "_draft"
+    ],
+)
 
 
 def draft(
@@ -70,6 +90,40 @@ def event(index: int, *, actor_type: ActorType = "human") -> AtomicRepositoryEve
         actor_id=ACTOR_ID,
         idempotency_key=f"evidence-write-{index}",
     )
+
+
+class ProvenancePerformanceFixtureTests(unittest.TestCase):
+    def test_source_and_derived_fixture_shapes_declare_truthful_dependency_coverage(self) -> None:
+        leaf = performance_draft(1)
+        self.assertEqual("not-applicable", leaf.dependency_coverage)
+        self.assertEqual((), leaf.material_dependencies)
+
+        source = AggregateRevision(
+            revision_id=leaf.revision_id,
+            aggregate_id=leaf.aggregate_id,
+            aggregate_kind=leaf.aggregate_kind,
+            project_id="018f0000-0000-4000-8000-600000000001",
+            revision=0,
+            contract_version="1.0.0",
+            created_at=leaf.created_at,
+            modified_at=leaf.modified_at,
+            display_label_observed=leaf.display_label_observed,
+            display_label_normalized=leaf.display_label_normalized,
+            knowledge_status=leaf.knowledge_status,
+            rights_status=leaf.rights_status,
+        )
+        derived = performance_draft(2, inputs=(source,))
+        self.assertEqual("complete", derived.dependency_coverage)
+        self.assertEqual((source,), derived.provenance_inputs)
+        self.assertEqual(1, len(derived.material_dependencies))
+        dependency = derived.material_dependencies[0]
+        self.assertEqual("source-revision", dependency.dependency_kind)
+        self.assertEqual(source.revision_id, dependency.revision_id)
+        self.assertEqual("benchmark.provenance-lineage.v1", dependency.governing_policy_id)
+        self.assertEqual(
+            "sha256:" + hashlib.sha256(source.revision_id.encode("ascii")).hexdigest(),
+            dependency.fingerprint,
+        )
 
 
 class ProvenanceApiTests(unittest.TestCase):

@@ -168,6 +168,7 @@
     "tests/data/test_storage_maintenance_performance_check.py",
     "tests/data/test_encrypted_object_store.py",
     "tests/data/test_local_object_store.py",
+    "tests/data/test_material_dependencies.py",
     "tests/data/test_object_envelope_upgrades.py",
     "tests/data/test_sqlite_migrations.py",
     "tests/data/test_sqlite_repositories.py",

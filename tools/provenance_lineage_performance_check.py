@@ -36,7 +36,22 @@ def _uuid7(namespace: int, index: int) -> str:
 
 
 def _draft(index: int, *, inputs: tuple[Any, ...] = ()) -> Any:
-    from research_observatory_core.ports.repositories import AggregateRevisionDraft
+    from research_observatory_core.ports.repositories import AggregateRevisionDraft, MaterialDependency
+
+    material_dependencies = tuple(
+        MaterialDependency(
+            dependency_id=_uuid7(0x500000000000, index * (BRANCH_FACTOR + 1) + offset),
+            dependency_kind="source-revision",
+            relation_type="direct",
+            revision_id=item.revision_id,
+            configuration_id=None,
+            configuration_version=None,
+            fingerprint="sha256:" + hashlib.sha256(item.revision_id.encode("ascii")).hexdigest(),
+            governing_policy_id="benchmark.provenance-lineage.v1",
+            governing_policy_version="1.0.0",
+        )
+        for offset, item in enumerate(inputs)
+    )
 
     return AggregateRevisionDraft(
         revision_id=_uuid7(0x200000000000, index),
@@ -48,7 +63,9 @@ def _draft(index: int, *, inputs: tuple[Any, ...] = ()) -> Any:
         display_label_normalized=None,
         knowledge_status="verified",
         rights_status="allowed",
+        dependency_coverage="complete" if inputs else "not-applicable",
         provenance_inputs=inputs,
+        material_dependencies=material_dependencies,
     )
 
 
