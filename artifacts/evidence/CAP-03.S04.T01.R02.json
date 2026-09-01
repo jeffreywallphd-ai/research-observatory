@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S04.T01",
+  "commit": "3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57",
+  "baseCommit": "ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S04.T01.R01.json",
+    "sha256": "f5d463f4ffc94360e1c5dc45e8f84099f543b8e16404504f2a43fd272bf0fe2c",
+    "commit": "ea0e6be9c18f9e9f3ddbf7874ba3c071b7a65aae",
+    "reason": "Remediates CAP-03.S04.T01-R01-F01, CAP-03.S04.T01-R01-F02, and CAP-03.S04.T01-R01-F03 without expanding the approved T01 contract surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S04.T01.R01.json",
+    "artifacts/evidence/CAP-03.S04.T01.review-R01.json",
+    "artifacts/evidence/CAP-03.S04.T01.task-start.md",
+    "docs/architecture/workflow-contracts.md",
+    "packages/contracts/workflow/README.md",
+    "packages/contracts/workflow/generate.mjs",
+    "packages/contracts/workflow/generated.ts",
+    "packages/contracts/workflow/workflow-contract.schema.json",
+    "packages/contracts/workflow/workflow-contract.template.py.txt",
+    "packages/contracts/workflow/workflow-contract.template.ts.txt",
+    "packages/contracts/workflow/workflow-contract.test.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S04.T01.html",
+    "planning/review-site/CAP-03/CAP-03.S04.html",
+    "planning/review-site/manifest.json",
+    "services/core-api/src/research_observatory_core/workflow_contracts.py",
+    "tests/contracts/test_workflow_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_workflow_contracts",
+      "exitCode": 0,
+      "result": "All 10 focused Python workflow-contract tests passed. The run directly replays excluded human dispositions, substituted request actor/time, substituted claim actor, duplicate request events, divergent bridge sequence with matching ETag, and duplicate transition-event identity, while preserving valid local/server decoding and serialize/reload reconstruction."
+    },
+    {
+      "command": "apps\\desktop\\node_modules\\.bin\\vitest.CMD run packages/contracts/workflow/workflow-contract.test.ts",
+      "exitCode": 0,
+      "result": "All six focused TypeScript workflow-contract tests passed over the same checked-in definition, snapshot, and bridge fixtures and the same R01 adversarial substitutions."
+    },
+    {
+      "command": "node packages/contracts/workflow/generate.mjs --check; apps\\desktop\\node_modules\\.bin\\tsc.CMD -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "exitCode": 0,
+      "result": "Generated TypeScript and Python contract outputs match the canonical schema and templates at schema SHA-256 464716c11c7ad09c54419d49426b3cbf0f287b47c54955b0169741db025a5afd, and the contracts package typecheck passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound tests.foundation.test_adr_check",
+      "exitCode": 0,
+      "result": "The focused workflow packaging registration test and all five ADR registry tests passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, lint, and mypy passed across all 171 governed Python files after formatting the generated runtime and focused tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; git diff --check",
+      "exitCode": 0,
+      "result": "The generated planning review site passed for 19 capabilities, 111 slices, 337 tasks, and 488 HTML pages, including the updated R01 learning worksheet and review history. Patch hygiene passed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S04.T01-R01-F01 is remediated in both generated runtimes: a completed disposition must appear in the exact bound HumanTaskDefinition.allowedDispositions; exactly one initial request event binds requestedBy and requestedAt; and any represented assignment is bound to exactly one claim event with the same actor.",
+        "CAP-03.S04.T01-R01-F03 is remediated with the stable history-event-identities-are-unique semantic rule. Duplicate TransitionEvent.eventId values now fail decoding and restart reconstruction independently of contiguous numeric sequence.",
+        "Valid local and server executor snapshots still decode from the same definition bytes, and a canonical serialize/reload pass reconstructs the unchanged workflow, step, job, attempt, and human-task projections."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The matched Python and TypeScript tests replay every R01 reproduction plus wrong and duplicate request events, claim substitution, the valid bridge, and valid restart behavior.",
+        "Generator parity, TypeScript type checking, Python formatting/lint/mypy, focused packaging registration, ADR registry, review-site regeneration, and patch hygiene pass.",
+        "No full verification profile was replayed. The remediation review boundary is the three prior findings plus the incremental human/history/bridge contract risk, while slice and W1 qualification retain broader coverage."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S04.T01-R01-F02 is remediated by binding legacy operationSequence to snapshot.sequence before accepting the ETag; changing both sequence and ETag together no longer creates independent bridge authority.",
+        "The canonical schema semantic inventory, generated runtimes, runtime templates, cross-runtime tests, architecture guidance, package documentation, task-start worksheet, and generated task/slice review pages were updated together.",
+        "The strict-descendant change adds no SQLite persistence, process recovery, Core API route, governed UI, dependency, external effect, or release authority. T02, T03, slice review, and W1 exit boundaries remain unchanged."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S04.T01-R01-F01 exposed incomplete field-by-field human authority binding, so R02 replays disposition, requester, request time, request cardinality, assignee/claim actor, completion actor/time, and decision evidence across Python and TypeScript. CAP-03.S04.T01-R01-F02 exposed a self-asserted compatibility sequence, so R02 mutates operationSequence and its matching ETag together against the exact snapshot. CAP-03.S04.T01-R01-F03 exposed transition identity collision, so R02 mutates eventId independently of sequence and verifies decode/restart denial. The selected checks cover these contracts, generated parity, type safety, package registration, Python quality, ADR integrity, worksheet/review generation, and patch hygiene. SQLite crash/lease behavior remains T02; governed workflow UI remains T03; accumulated integration remains slice review; full qualification remains W1 exit.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "packaging:unit",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "CAP-03.S04.T02 owns SQLite-backed dispatch, lease recovery, idempotent claim, retry, cancellation, checkpoint persistence, and crash-boundary verification.",
+      "CAP-03.S04.T03 owns the governed workflow monitoring and human-task experience against these contracts.",
+      "CAP-03.S04 slice review will replay the accumulated affected integration and adversarial union after its tasks close.",
+      "The complete happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S04.T01-R01-F01",
+      "CAP-03.S04.T01-R01-F02",
+      "CAP-03.S04.T01-R01-F03"
+    ],
+    "rootCauseAnalysis": "The initial validator checked structural validity, state projection, and visible decision completion links but did not enumerate requester, request time, allowed disposition, compatibility sequence, and transition event ID as independent authority-bearing fields. R02 adds explicit semantic bindings for each field and matched cross-runtime adversarial tests so future omissions fail deterministically.",
+    "note": "Re-review exact candidate 3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57. Replay all three R01 findings and confirm the incremental request/claim cardinality, allowed-disposition, bridge sequence/ETag, duplicate-event identity, generator parity, scope, and evidence claims without replaying a full profile."
+  }
+}
