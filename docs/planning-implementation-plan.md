@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8fe372d6d21cd5380a4ae953fe65e2dab41d0a73270b591d399f78e4f29df7d4
+source_sha256: 533573b62dc00443bf596359991ff19589123a8a4d2077879fab69bdfccdf1d7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -7672,13 +7672,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-07.S01.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Registry of installed/available models, licenses, context limits, modalities, hardware requirements, quality tiers, and allowed data classes.
 

@@ -9196,7 +9196,7 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -9241,15 +9241,15 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-07/CAP-07.S01.T02.html",
               "dependencies": [
                 "CAP-07.S01.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "949f8a37ec9a5cb48b9f0e4ea9c2cc1a30e4e4a5"
               },
               "plan_section_sha256": "1eb88f2e5fc16309d05a9fa913fc5a29e58094918a56195a74ec19a7ae828ec0",
               "worksheet": null
