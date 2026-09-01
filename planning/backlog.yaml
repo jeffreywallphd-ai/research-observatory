@@ -11004,7 +11004,7 @@ capabilities:
     depends_on:
     - CAP-03.S03.T02
     - CAP-02.S02.T03
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-03.S04.T01
       capability_id: CAP-03
@@ -12860,11 +12860,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-03.S04.integration-R01.json
+      notes: Affected CAP-03.S04 contract, SQLite, Core, native, packaged-runtime and Task Center integration union passed;
+        complete profiles remain deferred to W1 exit.
   - id: CAP-03.S05
     title: Dependency graph, staleness, and controlled recalculation
     outcome: Changes to evidence, models, schemas, or decisions identify and safely refresh affected outputs.
