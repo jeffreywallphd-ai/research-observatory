@@ -30,7 +30,7 @@
     "profileId": {"const": "sqlite-wal-v1"},
     "databaseSchemaVersion": {"const": 10},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "14806bb190c892b15a2f7804765c8e8617c47e5369eb3c2744da4d73ed0fdbd9"},
+    "schemaFingerprintSha256": {"const": "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {

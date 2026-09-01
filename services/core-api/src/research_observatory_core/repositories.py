@@ -2350,7 +2350,9 @@ def _impact_item_document(item: Any) -> dict[str, object]:
         "disposition": item.disposition,
         "outputKind": item.output_kind,
         "outputRevisionId": item.output_revision_id,
+        "pathLength": item.path_length,
         "pathRevisionIds": item.path_revision_ids,
+        "pathTruncated": item.path_truncated,
         "relationType": item.relation_type,
         "reviewRequired": item.review_required,
     }
@@ -2412,9 +2414,10 @@ def _record_dependency_stale_batch(
                 cause_id, run_id, item_sequence, project_id, change_id,
                 output_revision_id, disposition, reason, propagation_policy_id,
                 propagation_policy_version, depth, path_json, path_sha256,
-                cycle_group_id, confidence, review_required, detected_at,
+                path_length, path_truncated, cycle_group_id, confidence,
+                review_required, detected_at,
                 resolution_state
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')
             """,
             (
                 cause_id,
@@ -2430,9 +2433,11 @@ def _record_dependency_stale_batch(
                 int(row[5]),
                 str(row[7]),
                 str(row[8]),
-                None if row[9] is None else str(row[9]),
-                str(row[10]),
-                int(row[11]),
+                int(row[9]),
+                int(row[10]),
+                None if row[11] is None else str(row[11]),
+                str(row[12]),
+                int(row[13]),
                 detected_at,
             ),
         )
@@ -2691,9 +2696,10 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                     INSERT INTO dependency_impact_items (
                         item_id, run_id, item_sequence, project_id,
                         output_revision_id, output_kind, disposition, depth,
-                        relation_type, path_json, path_sha256, cycle_group_id,
-                        confidence, review_required, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        relation_type, path_json, path_sha256, path_length,
+                        path_truncated, cycle_group_id, confidence,
+                        review_required, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         new_uuid_v7(),
@@ -2706,7 +2712,15 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                         item.depth,
                         item.relation_type,
                         path_json,
-                        _impact_sha256({"pathRevisionIds": item.path_revision_ids}),
+                        _impact_sha256(
+                            {
+                                "pathLength": item.path_length,
+                                "pathRevisionIds": item.path_revision_ids,
+                                "pathTruncated": item.path_truncated,
+                            }
+                        ),
+                        item.path_length,
+                        int(item.path_truncated),
                         item.cycle_group_id,
                         item.confidence,
                         int(item.review_required),
@@ -2864,7 +2878,8 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                     """
                     SELECT item_sequence, item_id, output_revision_id, output_kind,
                            disposition, depth, relation_type, path_json, path_sha256,
-                           cycle_group_id, confidence, review_required
+                           path_length, path_truncated, cycle_group_id, confidence,
+                           review_required
                       FROM dependency_impact_items
                      WHERE project_id=? AND run_id=? AND item_sequence>?
                      ORDER BY item_sequence LIMIT ?
@@ -3172,8 +3187,9 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                     SELECT cause_id, run_id, change_id, output_revision_id,
                            disposition, reason, propagation_policy_id,
                            propagation_policy_version, depth, path_json,
-                           cycle_group_id, confidence, review_required,
-                           detected_at, resolution_state
+                           path_length, path_truncated, cycle_group_id,
+                           confidence, review_required, detected_at,
+                           resolution_state
                       FROM dependency_stale_causes
                      WHERE """
                     + where
@@ -3192,10 +3208,12 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
                         propagation_policy_version=str(row[7]),
                         depth=int(row[8]),
                         path_revision_ids=tuple(str(value) for value in json.loads(str(row[9]))),
-                        cycle_group_id=None if row[10] is None else str(row[10]),
-                        confidence=cast(Any, row[11]),
-                        review_required=bool(row[12]),
-                        detected_at=str(row[13]),
+                        path_length=int(row[10]),
+                        path_truncated=bool(row[11]),
+                        cycle_group_id=None if row[12] is None else str(row[12]),
+                        confidence=cast(Any, row[13]),
+                        review_required=bool(row[14]),
+                        detected_at=str(row[15]),
                         resolution_state="open",
                     )
                     for row in rows

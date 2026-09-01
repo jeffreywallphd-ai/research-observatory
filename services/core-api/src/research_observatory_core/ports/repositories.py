@@ -221,6 +221,8 @@ class DependencyImpactItem:
     depth: int
     relation_type: DependencyRelationType
     path_revision_ids: tuple[str, ...]
+    path_length: int
+    path_truncated: bool
     cycle_group_id: str | None
     confidence: Literal["confirmed", "conditional", "unknown"]
     review_required: bool
@@ -280,6 +282,8 @@ class DependencyStaleState:
     propagation_policy_version: str
     depth: int
     path_revision_ids: tuple[str, ...]
+    path_length: int
+    path_truncated: bool
     cycle_group_id: str | None
     confidence: Literal["confirmed", "conditional", "unknown"]
     review_required: bool

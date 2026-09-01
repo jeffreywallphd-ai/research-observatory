@@ -201,7 +201,7 @@ ACTOR_IDENTITY_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834
 PROVENANCE_LEDGER_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
 WORKFLOW_EXECUTOR_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
 MATERIAL_DEPENDENCY_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
-EXPECTED_SCHEMA_SHA256 = "14806bb190c892b15a2f7804765c8e8617c47e5369eb3c2744da4d73ed0fdbd9"
+EXPECTED_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -259,7 +259,7 @@ _PROFILE_SHA256 = hashlib.sha256(
 PROVENANCE_LEDGER_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0"
 WORKFLOW_EXECUTOR_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f3583b8f1ce42db8ecba7"
 MATERIAL_DEPENDENCY_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76"
-EXPECTED_PROFILE_SHA256 = "7ef1523ac2b4e2dd60843bc055d3b6e3f764260fecd92cc2eff45262b429ba9b"
+EXPECTED_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -1731,7 +1731,7 @@ DEPENDENCY_IMPACT_DDL = (
             max_nodes INTEGER NOT NULL CHECK (max_nodes BETWEEN 1 AND 20000),
             max_edges INTEGER NOT NULL CHECK (max_edges BETWEEN 1 AND 100000),
             max_depth INTEGER NOT NULL CHECK (max_depth BETWEEN 1 AND 128),
-            max_path_samples INTEGER NOT NULL CHECK (max_path_samples BETWEEN 1 AND 64),
+            max_path_samples INTEGER NOT NULL CHECK (max_path_samples BETWEEN 2 AND 64),
             max_legacy_samples INTEGER NOT NULL CHECK (max_legacy_samples BETWEEN 1 AND 100),
             created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
             FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
@@ -1807,6 +1807,8 @@ DEPENDENCY_IMPACT_DDL = (
                 length(path_sha256) = 71 AND substr(path_sha256, 1, 7) = 'sha256:'
                 AND substr(path_sha256, 8) NOT GLOB '*[^0-9a-f]*'
             ),
+            path_length INTEGER NOT NULL CHECK (path_length BETWEEN 1 AND 129),
+            path_truncated INTEGER NOT NULL CHECK (path_truncated IN (0, 1)),
             cycle_group_id TEXT CHECK (
                 cycle_group_id IS NULL OR (
                     length(cycle_group_id) = 71 AND substr(cycle_group_id, 1, 7) = 'sha256:'
@@ -1849,6 +1851,8 @@ DEPENDENCY_IMPACT_DDL = (
                 length(path_sha256) = 71 AND substr(path_sha256, 1, 7) = 'sha256:'
                 AND substr(path_sha256, 8) NOT GLOB '*[^0-9a-f]*'
             ),
+            path_length INTEGER NOT NULL CHECK (path_length BETWEEN 1 AND 129),
+            path_truncated INTEGER NOT NULL CHECK (path_truncated IN (0, 1)),
             cycle_group_id TEXT CHECK (
                 cycle_group_id IS NULL OR (
                     length(cycle_group_id) = 71 AND substr(cycle_group_id, 1, 7) = 'sha256:'

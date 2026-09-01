@@ -75,8 +75,8 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `material_dependency_diagnostics` | content-free append-only audit facts for dependency-sensitive completion denials |
 | `dependency_impact_runs` | durable graph/change/limit-bound propagation authority, lifecycle state, compare-and-swap checkpoint, cancellation, and bounded failure code |
 | `dependency_impact_decisions` | immutable content-free propagate/ignore authority for supplied conditional edge decisions, reconstructable by run after restart |
-| `dependency_impact_items` | immutable ordered impact decisions and sampled paths for one exact run preview |
-| `dependency_stale_causes` | append-only project/output/change/policy stale authority; repeated propagation cannot erase or replace an earlier cause |
+| `dependency_impact_items` | immutable ordered impact decisions and bounded path samples for one exact run preview; each sample binds its full path length, truncation state, and terminal output |
+| `dependency_stale_causes` | append-only project/output/change/policy stale authority, including bounded-path length/truncation authority; repeated propagation cannot erase or replace an earlier cause |
 | `dependency_impact_audit_events` | content-free append-only run-start, checkpoint, cancellation, and completion facts |
 | `provenance_events` | append-only typed event metadata, stable canonical/UUIDv7 actor authority, and record digest |
 | `settings` | append-only versioned, exactly-one-of typed scalar project settings |
@@ -201,9 +201,14 @@ edges. A graph-bound preview records direct, transitive, conditional-review,
 non-material, and unknown-impact outcomes. Propagation revalidates the exact
 graph and policy hashes inside the writer transaction, advances a bounded
 compare-and-swap checkpoint, appends stale causes, and can resume after
-interruption without duplicate authority. `legacy-unreported` coverage and
-unavailable replacement fingerprints remain unknown; they never produce a
-false fresh result.
+interruption without duplicate authority. A path longer than the immutable
+sample bound retains the changed-source prefix and affected terminal revision,
+and records the full revision count plus an explicit truncation flag; consumers
+must not interpret the omitted middle as a complete path. The configured path
+sample bound is the maximum number of revision identities stored and cannot be
+less than two because origin and terminal authority are mandatory.
+`legacy-unreported` coverage and unavailable replacement fingerprints remain
+unknown; they never produce a false fresh result.
 
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file

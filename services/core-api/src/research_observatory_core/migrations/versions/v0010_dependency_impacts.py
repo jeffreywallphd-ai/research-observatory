@@ -12,8 +12,8 @@ down_revision = "0009_material_dependencies"
 source_schema_version = 9
 target_schema_version = 10
 
-TARGET_SCHEMA_SHA256 = "14806bb190c892b15a2f7804765c8e8617c47e5369eb3c2744da4d73ed0fdbd9"
-TARGET_PROFILE_SHA256 = "7ef1523ac2b4e2dd60843bc055d3b6e3f764260fecd92cc2eff45262b429ba9b"
+TARGET_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
+TARGET_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
 
 IMPACT_MIGRATION_STEPS = (
     "dependency-impact-authority-create",
