@@ -14985,11 +14985,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile ai
       - python tools/verify.py --profile service
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-28T17:23:30+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-09-01T13:30:14+00:00'
+      updated_at: '2026-09-01T13:30:14+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14999,10 +14999,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 949f8a37ec9a5cb48b9f0e4ea9c2cc1a30e4e4a5
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-01T13:30:14+00:00'
+        expires_at: '2026-09-01T21:30:14+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-07.S01.T03
