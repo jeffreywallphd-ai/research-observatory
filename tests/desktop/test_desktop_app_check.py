@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 
 from playwright.sync_api import sync_playwright
 
@@ -17,6 +18,8 @@ from desktop_app_check import (  # noqa: E402
     command_plan,
     component_catalog_browser_errors,
     design_system_errors,
+    inline_product_index,
+    page_error_collector,
     product_build_errors,
     runtime_frame_errors,
     security_errors,
@@ -235,6 +238,100 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(any("dangling or empty" in error for error in static_errors), static_errors)
         self.assertTrue(any("structural inventory" in error for error in browser_errors), browser_errors)
         self.assertTrue(any("semantics are incomplete" in error for error in browser_errors), browser_errors)
+
+
+class TaskCenterInteractionTests(unittest.TestCase):
+    def test_commands_focus_failure_and_project_switch_are_bound_to_current_projection(self) -> None:
+        self.assertEqual([], product_build_errors(REPO))
+        document = inline_product_index(REPO)
+        fixture = (REPO / "tests" / "desktop" / "fixtures" / "task_center_interactions.js").read_text(encoding="utf-8")
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            context = browser.new_context()
+
+            def serve_application(route: Any) -> None:
+                if route.request.url in {"http://tauri.localhost/", "http://tauri.localhost/index.html"}:
+                    route.fulfill(status=200, content_type="text/html; charset=utf-8", body=document)
+                else:
+                    route.abort()
+
+            context.route("**/*", serve_application)
+            page = context.new_page()
+            page_errors: list[str] = []
+            page.on("pageerror", page_error_collector(page_errors))
+            page.add_init_script(fixture)
+            try:
+                page.goto("http://tauri.localhost/index.html", wait_until="load")
+                page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+                page.get_by_role("button", name="Local projects", exact=True).click()
+                page.locator("#project-parent-directory").fill("C:/Research")
+                page.locator("#project-directory-name").fill("study-one")
+                page.locator("#project-display-name").fill("Study One")
+                page.get_by_role("button", name="Create project", exact=True).click()
+                page.get_by_label("Current project actions").get_by_role(
+                    "button", name="Open project", exact=True
+                ).click()
+                page.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
+                page.get_by_role("button", name="Task Center", exact=True).click()
+                page.get_by_role("heading", name="project-a-extract", exact=True).wait_for(timeout=5_000)
+
+                cancel = page.get_by_role("button", name="Cancel safely", exact=True)
+                cancel.click()
+                dialog = page.get_by_role("alertdialog")
+                dialog.wait_for(state="visible", timeout=5_000)
+                self.assertEqual("Keep current state", page.locator(":focus").inner_text())
+                page.keyboard.press("Shift+Tab")
+                self.assertEqual("Confirm", page.locator(":focus").inner_text())
+                page.keyboard.press("Tab")
+                self.assertEqual("Keep current state", page.locator(":focus").inner_text())
+                page.keyboard.press("Escape")
+                dialog.wait_for(state="detached", timeout=5_000)
+                page.wait_for_function("document.activeElement?.textContent?.trim() === 'Cancel safely'", timeout=5_000)
+
+                page.evaluate("window.__FAIL_NEXT_CANCEL__()")
+                cancel.click()
+                page.get_by_role("button", name="Confirm", exact=True).click()
+                page.get_by_text("Task Center unavailable", exact=True).wait_for(timeout=5_000)
+                page.wait_for_function(
+                    "document.querySelector('[data-live-region]')?.textContent?.includes('Task Center command failed')",
+                    timeout=5_000,
+                )
+                self.assertEqual(1, dialog.count())
+                page.get_by_role("button", name="Keep current state", exact=True).click()
+                page.wait_for_function("document.activeElement?.textContent?.trim() === 'Cancel safely'", timeout=5_000)
+
+                cancel.click()
+                page.get_by_role("button", name="Confirm", exact=True).click()
+                dialog.wait_for(state="detached", timeout=5_000)
+                page.get_by_text("cancelling", exact=True).wait_for(timeout=5_000)
+                page.wait_for_function(
+                    "document.activeElement?.getAttribute('aria-pressed') === 'true'",
+                    timeout=5_000,
+                )
+
+                page.evaluate("window.__DELAY_NEXT_A__()")
+                page.get_by_role("button", name="Refresh", exact=True).click()
+                page.get_by_role("button", name="Local projects", exact=True).click()
+                page.locator("#project-root").fill("C:/Research/study-two")
+                page.locator("form").filter(has=page.locator("#project-root")).get_by_role(
+                    "button", name="Open project", exact=True
+                ).click()
+                page.get_by_text("Study Two", exact=True).wait_for(timeout=5_000)
+                page.get_by_role("button", name="Task Center", exact=True).click()
+                page.get_by_role("heading", name="project-b-review", exact=True).wait_for(timeout=5_000)
+                page.evaluate("window.__RESOLVE_A__()")
+                page.wait_for_timeout(100)
+                self.assertEqual(0, page.get_by_text("project-a-extract", exact=True).count())
+                self.assertIn("Continuation of run", page.locator("[data-workflow-continuation]").inner_text())
+
+                page.get_by_role("button", name="approved — resume workflow", exact=True).click()
+                page.get_by_text("succeeded", exact=True).wait_for(timeout=5_000)
+                self.assertEqual(0, page.get_by_role("heading", name="Decision required", exact=True).count())
+                self.assertEqual([], page_errors)
+            finally:
+                page.close()
+                context.close()
+                browser.close()
 
 
 if __name__ == "__main__":

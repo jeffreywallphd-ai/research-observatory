@@ -818,6 +818,8 @@ describe("generated Core API client", () => {
       definitionVersion: "1.0.0",
       snapshotId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d004",
       snapshotRevision: 1,
+      continuationFromWorkflowRunId: null,
+      continuationFromJobId: null,
       state: "waiting-human",
       activeCompute: false,
       progress: { kind: "quantified", unit: "steps", completedUnits: 1, totalUnits: 2 },
@@ -846,6 +848,38 @@ describe("generated Core API client", () => {
     expect(decodeWorkflowTaskCenterRun(workflow)).toEqual(workflow);
     expect(decodeWorkflowTaskCenterRun({ ...workflow, activeCompute: true })).toBeNull();
     expect(decodeWorkflowTaskCenterPage({ schemaVersion: "1.0", items: [workflow] })).not.toBeNull();
+    const humanTask = workflow.humanTasks[0]!;
+    const completedWithoutDecision = {
+      ...humanTask,
+      state: "completed",
+      assignedActorId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d041",
+    };
+    expect(decodeWorkflowTaskCenterRun({ ...workflow, humanTasks: [completedWithoutDecision] })).toBeNull();
+    expect(decodeWorkflowTaskCenterRun({
+      ...workflow,
+      humanTasks: [{ ...humanTask, decisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d031" }],
+    })).toBeNull();
+    expect(decodeWorkflowTaskCenterRun({
+      ...workflow,
+      humanTasks: [{
+        ...humanTask,
+        decisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d031",
+        disposition: "approved",
+        decidedAt: "2026-08-30T12:01:29.000Z",
+      }],
+    })).toBeNull();
+    expect(decodeWorkflowTaskCenterRun({
+      ...workflow,
+      humanTasks: [{ ...humanTask, assignedActorId: null }],
+    })).toBeNull();
+    expect(decodeWorkflowTaskCenterRun({ ...workflow, steps: [workflow.steps[0]!, workflow.steps[0]!] })).toBeNull();
+    expect(decodeWorkflowTaskCenterRun({
+      ...workflow,
+      events: [
+        { ...workflow.events[0]!, sequence: 29 },
+        { ...workflow.events[0]!, sequence: 28 },
+      ],
+    })).toBeNull();
 
     const requests: unknown[] = [];
     const client = createCoreApiClient(async (request) => {

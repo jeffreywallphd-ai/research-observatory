@@ -45,6 +45,7 @@ const expectedRules = [
   "completed-human-task-binds-decision",
   "human-task-consequences-are-definition-bound",
   "human-decision-is-audit-bound",
+  "continuation-binds-predecessor-identity",
   "security-lock-does-not-auto-resume",
 ];
 assert(schema.$schema === "https://json-schema.org/draft/2020-12/schema", "schema draft");

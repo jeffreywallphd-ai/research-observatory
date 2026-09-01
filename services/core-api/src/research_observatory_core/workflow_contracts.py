@@ -15,7 +15,7 @@ type FrozenJsonValue = None | bool | int | float | str | tuple["FrozenJsonValue"
 type WorkflowSnapshot = Mapping[str, FrozenJsonValue]
 type ReconstructedWorkflowState = Mapping[str, Mapping[str, str]]
 
-WORKFLOW_SCHEMA_SHA256 = "5f8be48681df7a7c2417f8e9b231bea1f5c9dd10028408b9c3aa864dd887ce7c"
+WORKFLOW_SCHEMA_SHA256 = "6ca61e2f18b300965192f5b5bdc27080096d425ae435ce56c9cc891c627f643d"
 _WORKFLOW_SCHEMA = json.loads(r"""{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://research-observatory.local/contracts/workflow/workflow-contract.schema.json",
@@ -48,6 +48,7 @@ _WORKFLOW_SCHEMA = json.loads(r"""{
     "completed-human-task-binds-decision",
     "human-task-consequences-are-definition-bound",
     "human-decision-is-audit-bound",
+    "continuation-binds-predecessor-identity",
     "security-lock-does-not-auto-resume"
   ],
   "$defs": {
@@ -363,6 +364,15 @@ _WORKFLOW_SCHEMA = json.loads(r"""{
         "contractVersion": {"const": "1.0.0"}
       }
     },
+    "WorkflowContinuation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceWorkflowRunId", "sourceJobId"],
+      "properties": {
+        "sourceWorkflowRunId": {"$ref": "#/$defs/UuidV7"},
+        "sourceJobId": {"$ref": "#/$defs/UuidV7"}
+      }
+    },
     "Progress": {
       "type": "object",
       "additionalProperties": false,
@@ -567,6 +577,7 @@ _WORKFLOW_SCHEMA = json.loads(r"""{
         "snapshotRevision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
         "projectId": {"$ref": "#/$defs/ProjectId"},
         "workflowRunId": {"$ref": "#/$defs/UuidV7"},
+        "continuation": {"$ref": "#/$defs/WorkflowContinuation"},
         "definition": {"$ref": "#/$defs/DefinitionReference"},
         "intent": {"$ref": "#/$defs/IntentReference"},
         "policy": {"$ref": "#/$defs/PolicyReference"},
@@ -628,7 +639,7 @@ _TRANSITIONS: Mapping[str, Mapping[str | None, frozenset[str]]] = MappingProxyTy
                 "pending": frozenset({"runnable", "cancelled", "skipped", "superseded"}),
                 "runnable": frozenset({"running", "waiting-human", "cancelled", "skipped", "superseded"}),
                 "running": frozenset({"running", "waiting-human", "cancelling", "succeeded", "failed"}),
-                "waiting-human": frozenset({"running", "succeeded", "cancelled", "failed"}),
+                "waiting-human": frozenset({"running", "succeeded", "skipped", "cancelled", "failed"}),
                 "cancelling": frozenset({"cancelled", "failed"}),
             }
         ),
@@ -1064,6 +1075,14 @@ def workflow_snapshot_errors(definition_value: object, value: object) -> tuple[s
         or reference["contentHash"] != workflow_record_sha256(definition)
     ):
         errors.append("snapshot-binds-exact-definition")
+    continuation = _record(snapshot.get("continuation"))
+    if continuation is not None and (
+        continuation["sourceWorkflowRunId"] == snapshot["workflowRunId"]
+        or any(
+            job["jobId"] == continuation["sourceJobId"] for job in cast(Sequence[Mapping[str, Any]], snapshot["jobs"])
+        )
+    ):
+        errors.append("continuation-binds-predecessor-identity")
     if _progress_errors(cast(Mapping[str, Any], snapshot["progress"])) or any(
         _progress_errors(cast(Mapping[str, Any], item["progress"]))
         for collection in ("stepRuns", "attempts")

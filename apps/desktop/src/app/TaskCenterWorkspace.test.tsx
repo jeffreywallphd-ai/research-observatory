@@ -30,6 +30,8 @@ const waiting: WorkflowTaskCenterRun = {
   definitionVersion: "1.0.0",
   snapshotId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d004",
   snapshotRevision: 1,
+  continuationFromWorkflowRunId: null,
+  continuationFromJobId: null,
   state: "waiting-human",
   activeCompute: false,
   progress: { kind: "quantified", unit: "steps", completedUnits: 1, totalUnits: 2 },
@@ -129,5 +131,19 @@ describe("Task Center workspace", () => {
     expect(html).toContain("Partial artifacts: retained-incomplete.");
     expect(html).toContain("Retry as continuation");
     expect(html).toContain("No compute is active.");
+  });
+
+  it("renders the persisted predecessor identity for a retry continuation", () => {
+    const continuation: WorkflowTaskCenterRun = {
+      ...waiting,
+      workflowRunId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d105",
+      continuationFromWorkflowRunId: waiting.workflowRunId,
+      continuationFromJobId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d106",
+    };
+    const html = renderToStaticMarkup(
+      <TaskCenterWorkspace project={project} announce={() => undefined} initialRuns={[continuation]} />,
+    );
+    expect(html).toContain(`Continuation of run ${waiting.workflowRunId}`);
+    expect(html).toContain("from job 018f47a2-4d6b-7f78-9f2e-7fb76c86d106.");
   });
 });

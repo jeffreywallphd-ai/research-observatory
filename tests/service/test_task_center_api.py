@@ -4,7 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from fastapi.testclient import TestClient
 
@@ -21,13 +21,27 @@ from research_observatory_core.repositories import sqlite_workflow_queue_reposit
 from research_observatory_core.storage import development_plaintext_database_fixture  # noqa: E402
 from research_observatory_core.task_center import TaskCenterService  # noqa: E402
 from research_observatory_core.workflow_contracts import canonical_workflow_json  # noqa: E402
+from research_observatory_core.workflow_executor import prepare_workflow_job  # noqa: E402
 
+from tests.workflows.test_local_workflow_executor import SYSTEM, WORKER_A, runnable_contracts  # noqa: E402
 from tests.workflows.test_task_center import RESEARCHER, waiting_human_authority  # noqa: E402
 
 TOKEN = "0123456789abcdef" * 4
 AUTHORITY = "127.0.0.1:49152"
 RUN_ID = "018f47a2-4d6b-7f78-9f2e-7fb76c86d005"
 TASK_ID = "018f47a2-4d6b-7f78-9f2e-7fb76c86d030"
+
+
+def workflow_etag(
+    run: dict[str, Any],
+    *,
+    revision_delta: int = 0,
+    snapshot_revision_delta: int = 0,
+) -> str:
+    return (
+        f'"workflow-{run["workflowRunId"]}-{run["revision"] + revision_delta}'
+        f'-{run["snapshotRevision"] + snapshot_revision_delta}"'
+    )
 
 
 def waiting_run() -> WorkflowTaskCenterRun:
@@ -39,6 +53,8 @@ def waiting_run() -> WorkflowTaskCenterRun:
             "definitionVersion": "1.0.0",
             "snapshotId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d004",
             "snapshotRevision": 1,
+            "continuationFromWorkflowRunId": None,
+            "continuationFromJobId": None,
             "state": "waiting-human",
             "activeCompute": False,
             "progress": {"kind": "quantified", "unit": "steps", "completedUnits": 1, "totalUnits": 2},
@@ -234,6 +250,145 @@ class TaskCenterApiTests(unittest.TestCase):
                 self.assertEqual(2, persisted["snapshotRevision"])
                 definition_reference = cast(dict[str, object], snapshot["definition"])
                 self.assertEqual(definition_reference["definitionRevisionId"], persisted["definitionRevisionId"])
+
+    def test_real_api_cancel_and_retry_require_the_exact_snapshot_and_history_pair(self) -> None:
+        with (
+            development_plaintext_database_fixture(),
+            tempfile.TemporaryDirectory(prefix="ro-task-center-api-preconditions-") as temporary,
+        ):
+            projects = ProjectLifecycleService()
+            created = projects.create(
+                parent_directory=temporary,
+                directory_name="study-one",
+                display_name="Study One",
+                template_id="theory-synthesis",
+                trace_id="e" * 32,
+            )
+            opened = projects.open(root=created.root, trace_id="e" * 32)
+            repository = sqlite_workflow_queue_repository(Path(opened.root), opened.project_id)
+
+            definition, snapshot, job_id = runnable_contracts()
+            snapshot["projectId"] = opened.project_id
+            running_submission = prepare_workflow_job(
+                definition,
+                snapshot,
+                job_id=job_id,
+                concurrency_class="document",
+                priority=4,
+                available_at="2026-08-30T12:02:00.000Z",
+            )
+            repository.enqueue(running_submission, actor=SYSTEM)
+            running_claim = repository.claim_next(
+                worker_id=WORKER_A,
+                concurrency_classes=("document",),
+                now="2026-08-30T12:02:00.000Z",
+                lease_duration_ms=30_000,
+            )
+            assert running_claim is not None
+            repository.start(running_claim, now="2026-08-30T12:02:00.100Z")
+
+            task_center = TaskCenterService(projects, sqlite_workflow_queue_repository, RESEARCHER.actor_id)
+            app = create_app(
+                settings=CoreSettings(),
+                capability_digest=capability_token_digest(TOKEN),
+                expected_authority=AUTHORITY,
+                projects=projects,
+                task_center=task_center,
+            )
+            headers = {"Authorization": f"Bearer {TOKEN}"}
+            with TestClient(
+                app,
+                base_url=f"http://{AUTHORITY}",
+                headers=headers,
+                client=("127.0.0.1", 50000),
+            ) as client:
+                page = client.get("/projects/workflows/task-center", params={"root": opened.root, "limit": 20})
+                self.assertEqual(200, page.status_code, page.text)
+                running = next(
+                    item for item in page.json()["items"] if item["workflowRunId"] == running_claim.workflow_run_id
+                )
+                cancel_url = f"/projects/workflows/jobs/{job_id}/cancel"
+                cancel_body = {"root": opened.root, "reasonCode": "user-requested"}
+                substituted = client.post(
+                    cancel_url,
+                    json=cancel_body,
+                    headers={"If-Match": workflow_etag(running, snapshot_revision_delta=1)},
+                )
+                self.assertEqual(412, substituted.status_code, substituted.text)
+                stale = client.post(
+                    cancel_url,
+                    json=cancel_body,
+                    headers={"If-Match": workflow_etag(running, revision_delta=-1)},
+                )
+                self.assertEqual(412, stale.status_code, stale.text)
+                cancelled = client.post(
+                    cancel_url,
+                    json=cancel_body,
+                    headers={"If-Match": workflow_etag(running)},
+                )
+                self.assertEqual(200, cancelled.status_code, cancelled.text)
+                self.assertEqual("cancelling", cancelled.json()["state"])
+
+                repository.cancel(
+                    running_claim,
+                    now="2026-08-30T12:02:00.400Z",
+                    reason_code="user-requested",
+                )
+                retry_definition, retry_snapshot, retry_job_id = runnable_contracts(identity_variant=True)
+                retry_snapshot["projectId"] = opened.project_id
+                retry_submission = prepare_workflow_job(
+                    retry_definition,
+                    retry_snapshot,
+                    job_id=retry_job_id,
+                    concurrency_class="document",
+                    priority=4,
+                    available_at="2026-08-30T12:03:00.000Z",
+                )
+                repository.enqueue(retry_submission, actor=SYSTEM)
+                retry_claim = repository.claim_next(
+                    worker_id=WORKER_A,
+                    concurrency_classes=("document",),
+                    now="2026-08-30T12:03:00.000Z",
+                    lease_duration_ms=30_000,
+                )
+                assert retry_claim is not None
+                repository.start(retry_claim, now="2026-08-30T12:03:00.100Z")
+                repository.fail(retry_claim, now="2026-08-30T12:03:00.200Z", error_code="invalid-input")
+                page = client.get("/projects/workflows/task-center", params={"root": opened.root, "limit": 20})
+                failed = next(
+                    item for item in page.json()["items"] if item["workflowRunId"] == retry_claim.workflow_run_id
+                )
+                retry_url = f"/projects/workflows/jobs/{retry_job_id}/retry"
+                retry_headers = {"Idempotency-Key": "f" * 32}
+                substituted = client.post(
+                    retry_url,
+                    json={"root": opened.root},
+                    headers={
+                        **retry_headers,
+                        "If-Match": workflow_etag(failed, snapshot_revision_delta=1),
+                    },
+                )
+                self.assertEqual(412, substituted.status_code, substituted.text)
+                stale = client.post(
+                    retry_url,
+                    json={"root": opened.root},
+                    headers={
+                        **retry_headers,
+                        "If-Match": workflow_etag(failed, revision_delta=-1),
+                    },
+                )
+                self.assertEqual(412, stale.status_code, stale.text)
+                continued = client.post(
+                    retry_url,
+                    json={"root": opened.root},
+                    headers={
+                        **retry_headers,
+                        "If-Match": workflow_etag(failed),
+                    },
+                )
+                self.assertEqual(200, continued.status_code, continued.text)
+                self.assertEqual(failed["workflowRunId"], continued.json()["continuationFromWorkflowRunId"])
+                self.assertEqual(retry_job_id, continued.json()["continuationFromJobId"])
 
 
 if __name__ == "__main__":

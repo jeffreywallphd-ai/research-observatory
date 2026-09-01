@@ -254,6 +254,8 @@ class WorkflowTaskCenterRunRecord:
     definition_version: str
     snapshot_id: str
     snapshot_revision: int
+    continuation_from_workflow_run_id: str | None
+    continuation_from_job_id: str | None
     state: WorkflowRunDisplayState
     active_compute: bool
     progress: WorkflowProgressRecord
@@ -333,6 +335,7 @@ class WorkflowQueueRepository(Protocol):
         now: str,
         reason_code: str,
         interruption_kind: WorkflowInterruptionKind,
+        expected_snapshot_revision: int | None = None,
         expected_history_sequence: int | None = None,
     ) -> WorkflowJobRecord: ...
 
@@ -340,6 +343,7 @@ class WorkflowQueueRepository(Protocol):
         self,
         job_id: str,
         *,
+        expected_snapshot_revision: int,
         expected_history_sequence: int,
         idempotency_key: str,
         actor: WorkflowActor,

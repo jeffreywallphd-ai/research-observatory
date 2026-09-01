@@ -38,7 +38,7 @@ _TRANSITIONS: Mapping[str, Mapping[str | None, frozenset[str]]] = MappingProxyTy
                 "pending": frozenset({"runnable", "cancelled", "skipped", "superseded"}),
                 "runnable": frozenset({"running", "waiting-human", "cancelled", "skipped", "superseded"}),
                 "running": frozenset({"running", "waiting-human", "cancelling", "succeeded", "failed"}),
-                "waiting-human": frozenset({"running", "succeeded", "cancelled", "failed"}),
+                "waiting-human": frozenset({"running", "succeeded", "skipped", "cancelled", "failed"}),
                 "cancelling": frozenset({"cancelled", "failed"}),
             }
         ),
@@ -474,6 +474,14 @@ def workflow_snapshot_errors(definition_value: object, value: object) -> tuple[s
         or reference["contentHash"] != workflow_record_sha256(definition)
     ):
         errors.append("snapshot-binds-exact-definition")
+    continuation = _record(snapshot.get("continuation"))
+    if continuation is not None and (
+        continuation["sourceWorkflowRunId"] == snapshot["workflowRunId"]
+        or any(
+            job["jobId"] == continuation["sourceJobId"] for job in cast(Sequence[Mapping[str, Any]], snapshot["jobs"])
+        )
+    ):
+        errors.append("continuation-binds-predecessor-identity")
     if _progress_errors(cast(Mapping[str, Any], snapshot["progress"])) or any(
         _progress_errors(cast(Mapping[str, Any], item["progress"]))
         for collection in ("stepRuns", "attempts")

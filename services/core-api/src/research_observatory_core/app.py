@@ -689,13 +689,14 @@ def create_app(
         job_id: str = Path(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"),
         if_match: str | None = Header(default=None, alias="If-Match"),
     ) -> WorkflowTaskCenterRun:
-        run_id, revision, _snapshot_revision = workflow_precondition(request, if_match)
+        run_id, revision, snapshot_revision = workflow_precondition(request, if_match)
         projection = run_task_center_action(
             request,
             lambda: runtime(request).task_center.cancel(
                 root=command.root,
                 job_id=job_id,
                 expected_run_id=run_id,
+                expected_snapshot_revision=snapshot_revision,
                 expected_revision=revision,
                 reason_code=command.reason_code,
             ),
@@ -724,13 +725,14 @@ def create_app(
         if_match: str | None = Header(default=None, alias="If-Match"),
         idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
     ) -> WorkflowTaskCenterRun:
-        run_id, revision, _snapshot_revision = workflow_precondition(request, if_match)
+        run_id, revision, snapshot_revision = workflow_precondition(request, if_match)
         projection = run_task_center_action(
             request,
             lambda: runtime(request).task_center.retry(
                 root=command.root,
                 job_id=job_id,
                 expected_run_id=run_id,
+                expected_snapshot_revision=snapshot_revision,
                 expected_revision=revision,
                 idempotency_key=idempotency_key,
             ),

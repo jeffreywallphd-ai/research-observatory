@@ -82,6 +82,8 @@ def _projection(record: WorkflowTaskCenterRunRecord) -> WorkflowTaskCenterRun:
         definition_version=record.definition_version,
         snapshot_id=record.snapshot_id,
         snapshot_revision=record.snapshot_revision,
+        continuation_from_workflow_run_id=record.continuation_from_workflow_run_id,
+        continuation_from_job_id=record.continuation_from_job_id,
         state=record.state,
         active_compute=record.active_compute,
         progress=_progress(record.progress),
@@ -237,6 +239,7 @@ class TaskCenterService:
         root: str,
         job_id: str,
         expected_run_id: str,
+        expected_snapshot_revision: int,
         expected_revision: int,
         reason_code: str,
     ) -> WorkflowTaskCenterRun:
@@ -256,6 +259,7 @@ class TaskCenterService:
                     now=_now(),
                     reason_code=reason_code,
                     interruption_kind="user-cancel",
+                    expected_snapshot_revision=expected_snapshot_revision,
                     expected_history_sequence=expected_revision,
                 )
                 run = next(
@@ -275,6 +279,7 @@ class TaskCenterService:
         root: str,
         job_id: str,
         expected_run_id: str,
+        expected_snapshot_revision: int,
         expected_revision: int,
         idempotency_key: str,
     ) -> WorkflowTaskCenterRun:
@@ -291,6 +296,7 @@ class TaskCenterService:
                 return _projection(
                     repository.retry_as_continuation(
                         job_id,
+                        expected_snapshot_revision=expected_snapshot_revision,
                         expected_history_sequence=expected_revision,
                         idempotency_key=idempotency_key,
                         actor=actor,
