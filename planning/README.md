@@ -383,6 +383,7 @@ An expired lease may be renewed only by its recorded owner:
 
 ```bash
 python tools/taskctl.py wave renew WN --agent <agent>
+python tools/taskctl.py amendment renew WN.ANN --agent <agent>
 python tools/taskctl.py renew CAP-XX.SXX.TXX --agent <agent>
 ```
 

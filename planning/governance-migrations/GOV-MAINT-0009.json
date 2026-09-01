@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0009",
+  "title": "Renew interrupted active Wave amendment leases",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "41d1feaff28eea1357e3e7e7c9db494e9ec6bb06",
+    "activeTask": "W1.A05.T04",
+    "taskStatus": "IN_PROGRESS",
+    "taskBaseSha": "bd8d752a0fcec1f40b1a8abe59b793c783946e4e",
+    "productCandidateCommit": "41d1feaff28eea1357e3e7e7c9db494e9ec6bb06"
+  },
+  "trigger": {
+    "denial": "taskctl refused the valid W1.A05.T04 R03 submission because the active W1.A05 amendment campaign lease expired during an ordinary session interruption. Wave and task campaigns expose owner-only renewal, but the amendment command surface exposes no renewal operation; pause, activate, task renew, and task submit all require a still-active amendment lease, leaving no legal mutation path.",
+    "atomicity": "The T04 R03 product correction is committed and frozen at the predecessor. Its evidence draft is unsubmitted, the task remains IN_PROGRESS, W1 remains paused on the approved amendment hold, and the unrelated W1.A04.B00 witness remains untracked and untouched.",
+    "diagnosis": "The durable campaign model omitted the amendment equivalent of the existing Wave renewal operation. Expiry is temporal loss of an execution lease, not loss of immutable amendment authority, so the exact recorded owner needs a bounded renewal that changes only lease timestamps."
+  },
+  "authority": "This maintenance preserves the exact approved W1.A05 packet, target Wave hold, amendment lifecycle and campaign identity, owner, branch, worktree, profile, platform, task inventory and states, T04 candidates and adverse review history, UI reference, release gate, and all product authority. It does not approve or submit a task, alter scope, change an owner, resume W1, adopt the amendment, approve G1, or authorize an external effect.",
+  "intendedDelta": {
+    "implementation": "Add `taskctl amendment renew WN.ANN --agent <owner> [--lease-hours N]` with the same bounded semantics as Wave renewal. Require a positive duration, ACTIVE wave-amendment campaign scope, the exact active-amendment control-plane identity, and the recorded campaign owner. When the existing lease is still active, authenticate it normally; when it has expired, permit only that recorded owner to replace the lease timestamps. Document the interruption path and keep task-lease renewal separate.",
+    "failClosed": [
+      "An inactive, paused, review, complete, missing-scope, or non-active-control-plane amendment cannot be renewed.",
+      "A different actor cannot renew or take over the amendment.",
+      "A non-positive lease duration is rejected.",
+      "Renewal changes only the campaign lease and updated timestamp; it cannot change authority, task state, identity, execution target, or the Wave hold.",
+      "Task mutation remains denied until the task owner separately renews its own expired task lease."
+    ],
+    "changedPaths": [
+      "docs/automation/project-automation-guide.md",
+      "planning/README.md",
+      "planning/governance-migrations/GOV-MAINT-0009.json",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tools/taskctl.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "This changes only temporal mutation admission for an already active, immutable, owner-bound amendment. The focused matrix covers expired-owner success, different-actor denial, missing active-amendment identity denial, non-positive duration denial, parser exposure, active task/campaign owner enforcement, and separate task renewal. Schema, canonical backlog, generated planning, review-site, Ruff, and exact diff checks cover adjacent control integrity. The broader workflow replay passed 75 of 76 tests; its sole error is an unrelated historical post-migration revision-11 fixture whose guarded function and inputs are unchanged by this increment.",
+    "results": [
+      {
+        "check": "focused amendment and task lease matrix",
+        "result": "passed",
+        "detail": "Three focused workflow tests passed. The new test proves owner-only expired amendment renewal, active-amendment marker and duration denials, parser exposure, and a fresh active lease; existing active-task owner and expired-task owner tests remain green."
+      },
+      {
+        "check": "taskctl schema and canonical backlog",
+        "result": "passed",
+        "detail": "All 27 schema tests passed and the canonical backlog validates at 20 capabilities, 117 slices, 363 tasks, and 12 release gates."
+      },
+      {
+        "check": "broad workflow regression",
+        "result": "qualified",
+        "detail": "75 of 76 workflow tests passed, including the new amendment renewal test and every active amendment, task submission/review, Wave, lease, ownership, parser, and append-only mutation boundary. The sole unrelated error is test_post_migration_v4_append_records_reserved_history_and_bounded_maintenance, which stops on its pre-existing exact released revision-11 fixture before reaching any changed renewal code."
+      },
+      {
+        "check": "quality and generated documentation",
+        "result": "passed",
+        "detail": "Ruff check and formatting passed for taskctl and its workflow tests; generated backlog views and the 488-page planning review site remain current and valid; changed JSON parses and Git whitespace hygiene is required before the candidate commit."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocking defect, do not use the new command. Return to predecessor 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; the T04 product candidate remains intact and unsubmitted, amendment/task leases remain expired, W1 remains paused, and no product or approval state is lost.",
+  "reviewAttempts": [],
+  "review": null
+}
