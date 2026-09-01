@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0009",
   "title": "Renew interrupted active Wave amendment leases",
-  "status": "candidate",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -63,6 +63,26 @@
     ]
   },
   "rollback": "If independent review finds a blocking defect, do not use the new command. Return to predecessor 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; the T04 product candidate remains intact and unsubmitted, amendment/task leases remain expired, W1 remains paused, and no product or approval state is lost.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0009.R01",
+      "reviewedCommit": "e71a26f15899ae616d2b931acf9303e3b97ca883",
+      "reviewer": "agent:gov-maint-0009-reviewer",
+      "reviewedAt": "2026-09-01T12:16:30.3187203Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0009.review-R01.json",
+      "sha256": "6109a433450bdcd32b5a1f917114edfda5a96bc604f1b9b3cce7a97cb476f875"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0009.R01",
+    "reviewedCommit": "e71a26f15899ae616d2b931acf9303e3b97ca883",
+    "reviewer": "agent:gov-maint-0009-reviewer",
+    "reviewedAt": "2026-09-01T12:16:30.3187203Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0009.review-R01.json",
+    "sha256": "6109a433450bdcd32b5a1f917114edfda5a96bc604f1b9b3cce7a97cb476f875"
+  }
 }

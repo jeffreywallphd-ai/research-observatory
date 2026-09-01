@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0009",
+  "reviewId": "GOV-MAINT-0009.R01",
+  "reviewedCommit": "e71a26f15899ae616d2b931acf9303e3b97ca883",
+  "reviewer": "agent:gov-maint-0009-reviewer",
+  "reviewedAt": "2026-09-01T12:16:30.3187203Z",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "docs/automation/project-automation-guide.md",
+    "planning/README.md",
+    "planning/governance-migrations/GOV-MAINT-0009.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "findings": []
+}
