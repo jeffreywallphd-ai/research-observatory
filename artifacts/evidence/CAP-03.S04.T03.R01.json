@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S04.T03",
+  "commit": "27714fac4ac803584bf0ebc86c9b599d62ba8cdc",
+  "baseCommit": "1affb3e62f1c58f9019af5d04db1ac33edd38bbb",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.test.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+    "artifacts/evidence/CAP-03.S04.T03.task-start.md",
+    "artifacts/evidence/ui-change/CAP-03.S04.T03.json",
+    "docs/architecture/workflow-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/core-api/runtime-handshake.schema.json",
+    "packages/contracts/workflow/fixtures/valid-local-workflow-snapshot.v1.json",
+    "packages/contracts/workflow/fixtures/valid-workflow-definition.v1.json",
+    "packages/contracts/workflow/generate.mjs",
+    "packages/contracts/workflow/generated.ts",
+    "packages/contracts/workflow/workflow-contract.schema.json",
+    "packages/contracts/workflow/workflow-contract.template.py.txt",
+    "packages/contracts/workflow/workflow-contract.template.ts.txt",
+    "packages/contracts/workflow/workflow-contract.test.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S04.T03.html",
+    "planning/review-site/CAP-03/CAP-03.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "services/core-api/src/research_observatory_core/ports/workflow_executor.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/task_center.py",
+    "services/core-api/src/research_observatory_core/workflow_contracts.py",
+    "tests/contracts/test_workflow_contracts.py",
+    "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/service/test_core_api.py",
+    "tests/service/test_task_center_api.py",
+    "tests/workflows/test_task_center.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.workflows.test_task_center tests.service.test_task_center_api tests.service.test_core_api tests.contracts.test_workflow_contracts tests.desktop.test_core_sidecar_performance_check",
+      "exitCode": 0,
+      "result": "All 43 focused Python tests passed across real SQLite Task Center projection/actions, exact human-decision authority, cancellation/retry/restart behavior, Core API routes and error semantics, portable workflow contracts, and runtime capability/performance-handshake checks."
+    },
+    {
+      "command": "pnpm exec vitest run packages/contracts/workflow/workflow-contract.test.ts packages/contracts/core-api/generated.test.ts apps/desktop/src/app/TaskCenterWorkspace.test.tsx apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "exitCode": 0,
+      "result": "All 27 focused TypeScript tests passed across workflow contract generation, strict Core API client decoding and commands, Task Center states/actions, and desktop runtime integration."
+    },
+    {
+      "command": "pnpm --filter @research-observatory/desktop typecheck; pnpm --filter @research-observatory/contracts typecheck; pnpm --filter @research-observatory/desktop lint",
+      "exitCode": 0,
+      "result": "Strict desktop and contract type checking passed, including generated additional-properties maps, and desktop lint passed."
+    },
+    {
+      "command": "pnpm --filter @research-observatory/desktop build; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "exitCode": 0,
+      "result": "The production desktop bundle built successfully and the built-frame smoke check passed."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings",
+      "exitCode": 0,
+      "result": "The native supervisor boundary passed 57 library tests with one intentionally ignored test, formatting, and warning-denying Clippy; the strict route/body/query/ETag/idempotency allow-list rejects malformed and authority-injecting requests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_accessibility_check.py; .venv\\Scripts\\python.exe tools/ui_route_page_check.py; .venv\\Scripts\\python.exe tools/ui_token_check.py; .venv\\Scripts\\python.exe tools/ui_workflow_check.py",
+      "exitCode": 0,
+      "result": "Approved-reference conformance passed for 33 pages and 66 responsive accessibility cases, all 33 routes, all 109 governed tokens, and 139 browser plus 390 keyboard workflow cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --check; .venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Generated Core API artifacts matched their source contract; formatting, Ruff, and mypy passed across all 179 governed Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py; .venv\\Scripts\\python.exe tools/repository_structure_check.py",
+      "exitCode": 0,
+      "result": "Architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head 27714fac4ac803584bf0ebc86c9b599d62ba8cdc; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The design-first gate accepted the exact three governed UI paths against approved reference RO-UI-ACADEMIC-MINIMAL-1.4, and the immutable W1 packet remained approved and ready after regenerated backlog and review-site projections."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --selection-only --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head 27714fac4ac803584bf0ebc86c9b599d62ba8cdc --deferred-gate W1-exit --report artifacts/tmp/CAP-03.S04.T03-affected-selection.json; git diff --check 1affb3e62f1c58f9019af5d04db1ac33edd38bbb..27714fac4ac803584bf0ebc86c9b599d62ba8cdc",
+      "exitCode": 0,
+      "result": "The deterministic affected-selection inventory passed with full-profile work bound to W1 exit, and candidate patch hygiene reported no errors."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The SQLite-backed Task Center projection distinguishes queued, running, waiting-for-human, failed, cancelled, and completed runs; reports graph steps, dependencies, monotonic progress, checkpoints, bounded diagnostics, resource-pool state, event history, and retained artifact dispositions after restart.",
+        "Cancellation records a cooperative request and retained artifact outcomes at a safe workflow boundary; retry creates a new continuation rather than rewriting the failed run.",
+        "Human decisions require actor, role, exact run/history/snapshot ETags, a validated stored workflow definition and snapshot digest, and one definition-authorized disposition. The Core derives the immutable consequence mapping, rejects client consequence injection, and resumes the exact workflow version."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused SQLite/API tests cover expected projection and action paths plus stale ETags, unauthorized roles, malformed definitions, forged digests, injected consequences, duplicate decisions, invalid retries, cancellation conflicts, bounded diagnostics, and restart persistence.",
+        "Generated-client and native-supervisor tests prove exact endpoint, payload, query, ETag, and idempotency handling across process boundaries; desktop tests cover active, waiting, failure, read-only, offline, empty, retained-artifact, decision, retry, and cancellation states.",
+        "Production build, native library tests, approved-reference accessibility/routes/tokens/workflows, strict typing, lint, Python quality, architecture, and repository checks all pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Portable workflow schemas, generated Python/TypeScript contracts, fixtures, Core API OpenAPI/client/runtime handshake, persistence repositories, application service, native allow-list, architecture guidance, planning notes, governed UI evidence, and task-start worksheet were updated together.",
+        "The change preserves Core ownership of workflow authority and renderer isolation from SQLite, introduces no arbitrary executable-job facility or remote orchestration, and exposes only the approved Task Center experience.",
+        "The approved W1 packet, generated review site, Core API contract, quality scope, build manifest, and design-first UI contract all validate at the exact candidate commit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T03 changes a security-relevant human-decision authority boundary, SQLite-backed workflow projections/actions, generated public Core API contracts, a native desktop allow-list, and governed Task Center UI. Task verification therefore exercised focused real-database restart/action cases, contract generation and strict decoding, native request validation, desktop state/action rendering, production build/smoke, approved-reference accessibility/routes/tokens/workflows, and affected static/architecture/planning controls. It did not replay complete desktop, service, or e2e-local profiles: accumulated Task Center/executor integration and adversarial coverage belongs to CAP-03.S04 slice review, while the full repository and deployment-profile matrix remains mandatory once at W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "foundation:unit",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "CAP-03.S04 slice review owns the accumulated affected executor, workflow-contract, Core API, native-supervisor, and Task Center UI integration and adversarial union after all slice tasks close.",
+      "Desktop visual-regression and performance qualification remain gate-bound where required by the approved W1 matrix rather than being replayed for this ordinary task submission.",
+      "The complete service, data, e2e-local, security, performance, packaging, and Windows x64 qualification matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 27714fac4ac803584bf0ebc86c9b599d62ba8cdc. Confirm definition-bound consequence authority, exact-version human decisions, cancellation/retry/restart semantics, bounded Task Center projections, native allow-list strictness, approved-reference conformance, scoped verification, and absence of unrelated authority expansion without replaying full profiles."
+  }
+}

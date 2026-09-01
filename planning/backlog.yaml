@@ -12288,15 +12288,20 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T18:37:07+00:00'
-      updated_at: '2026-09-01T18:37:07+00:00'
+      updated_at: '2026-09-01T19:38:55+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S04.T03.R01.json
+        sha256: c6b992f773445dcb5e57417eb10a54c49778b7eebc128d44681e68baa032a3c0
+        commit: 27714fac4ac803584bf0ebc86c9b599d62ba8cdc
+        recorded_at: '2026-09-01T19:38:55+00:00'
       review:
         reviewer: null
         result: null
@@ -12307,7 +12312,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T18:37:07+00:00'
         expires_at: '2026-09-02T02:37:07+00:00'
-      verification_state: null
+      verification_state: passed
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-03.S04.T03.json
@@ -12320,6 +12325,130 @@ capabilities:
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-01T19:38:55+00:00'
+          candidate_commit: 27714fac4ac803584bf0ebc86c9b599d62ba8cdc
+          base_commit: 1affb3e62f1c58f9019af5d04db1ac33edd38bbb
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S04.T03.R01.json
+            sha256: c6b992f773445dcb5e57417eb10a54c49778b7eebc128d44681e68baa032a3c0
+            commit: 27714fac4ac803584bf0ebc86c9b599d62ba8cdc
+            recorded_at: '2026-09-01T19:38:55+00:00'
+          acceptance_criteria_sha256: 4873bee7f426e751aaa2af1820f620b0f3719abfceae6bc07c23e8bf5a08489d
+          changed_paths:
+          - apps/desktop/src-tauri/src/supervisor.rs
+          - apps/desktop/src/app.css
+          - apps/desktop/src/app/ApplicationRuntime.test.tsx
+          - apps/desktop/src/app/ApplicationRuntime.tsx
+          - apps/desktop/src/app/TaskCenterWorkspace.test.tsx
+          - apps/desktop/src/app/TaskCenterWorkspace.tsx
+          - artifacts/evidence/CAP-03.S04.T03.task-start.md
+          - artifacts/evidence/ui-change/CAP-03.S04.T03.json
+          - docs/architecture/workflow-contracts.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/generated.test.ts
+          - packages/contracts/core-api/generated.ts
+          - packages/contracts/core-api/openapi.json
+          - packages/contracts/core-api/runtime-handshake.schema.json
+          - packages/contracts/workflow/fixtures/valid-local-workflow-snapshot.v1.json
+          - packages/contracts/workflow/fixtures/valid-workflow-definition.v1.json
+          - packages/contracts/workflow/generate.mjs
+          - packages/contracts/workflow/generated.ts
+          - packages/contracts/workflow/workflow-contract.schema.json
+          - packages/contracts/workflow/workflow-contract.template.py.txt
+          - packages/contracts/workflow/workflow-contract.template.ts.txt
+          - packages/contracts/workflow/workflow-contract.test.ts
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S04.T03.html
+          - planning/review-site/CAP-03/CAP-03.S04.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/src/research_observatory_core/app.py
+          - services/core-api/src/research_observatory_core/main.py
+          - services/core-api/src/research_observatory_core/models.py
+          - services/core-api/src/research_observatory_core/modules.py
+          - services/core-api/src/research_observatory_core/ports/workflow_executor.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/task_center.py
+          - services/core-api/src/research_observatory_core/workflow_contracts.py
+          - tests/contracts/test_workflow_contracts.py
+          - tests/desktop/test_core_sidecar_performance_check.py
+          - tests/service/test_core_api.py
+          - tests/service/test_task_center_api.py
+          - tests/workflows/test_task_center.py
+          - tools/core_api_contract.py
+          - tools/core_sidecar_performance_check.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest tests.workflows.test_task_center tests.service.test_task_center_api tests.service.test_core_api
+            tests.contracts.test_workflow_contracts tests.desktop.test_core_sidecar_performance_check
+          - pnpm exec vitest run packages/contracts/workflow/workflow-contract.test.ts packages/contracts/core-api/generated.test.ts
+            apps/desktop/src/app/TaskCenterWorkspace.test.tsx apps/desktop/src/app/ApplicationRuntime.test.tsx
+          - pnpm --filter @research-observatory/desktop typecheck; pnpm --filter @research-observatory/contracts typecheck;
+            pnpm --filter @research-observatory/desktop lint
+          - pnpm --filter @research-observatory/desktop build; .venv\Scripts\python.exe tools/desktop_app_check.py --repo
+            . --built-frame-only
+          - cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml
+            --check; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib -- -D warnings
+          - .venv\Scripts\python.exe tools/ui_accessibility_check.py; .venv\Scripts\python.exe tools/ui_route_page_check.py;
+            .venv\Scripts\python.exe tools/ui_token_check.py; .venv\Scripts\python.exe tools/ui_workflow_check.py
+          - .venv\Scripts\python.exe tools/core_api_contract.py --check; .venv\Scripts\python.exe tools/quality_check.py --repo
+            .
+          - .venv\Scripts\python.exe tools/architecture_check.py; .venv\Scripts\python.exe tools/repository_structure_check.py
+          - .venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head
+            27714fac4ac803584bf0ebc86c9b599d62ba8cdc; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved
+          - .venv\Scripts\python.exe tools/verify.py --selection-only --base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb --head
+            27714fac4ac803584bf0ebc86c9b599d62ba8cdc --deferred-gate W1-exit --report artifacts/tmp/CAP-03.S04.T03-affected-selection.json;
+            git diff --check 1affb3e62f1c58f9019af5d04db1ac33edd38bbb..27714fac4ac803584bf0ebc86c9b599d62ba8cdc
+          deferred_checks:
+          - CAP-03.S04 slice review owns the accumulated affected executor, workflow-contract, Core API, native-supervisor,
+            and Task Center UI integration and adversarial union after all slice tasks close.
+          - Desktop visual-regression and performance qualification remain gate-bound where required by the approved W1 matrix
+            rather than being replayed for this ordinary task submission.
+          - The complete service, data, e2e-local, security, performance, packaging, and Windows x64 qualification matrix
+            remains mandatory once at W1 exit.
+          selection_rationale: 'T03 changes a security-relevant human-decision authority boundary, SQLite-backed workflow
+            projections/actions, generated public Core API contracts, a native desktop allow-list, and governed Task Center
+            UI. Task verification therefore exercised focused real-database restart/action cases, contract generation and
+            strict decoding, native request validation, desktop state/action rendering, production build/smoke, approved-reference
+            accessibility/routes/tokens/workflows, and affected static/architecture/planning controls. It did not replay complete
+            desktop, service, or e2e-local profiles: accumulated Task Center/executor integration and adversarial coverage
+            belongs to CAP-03.S04 slice review, while the full repository and deployment-profile matrix remains mandatory
+            once at W1 exit.'
+          selection_sha256: cf638d9bf99548fd6eef4321da37bb57aa62d156b5534b80ca22f382220a69e2
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:unit
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          packet_sha256: aa49503ea7d51fea764737ee9ae032a8aa963fe66ff16c4e10a99973be70c1f5
     platform_targets:
     - windows-x64
     completion:
