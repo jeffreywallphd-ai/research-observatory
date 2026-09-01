@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: e68dd8b4c056a052ec9a2f44ca69abd642a5ede3fe4e42c1b8e516c179353428
+source_sha256: 5f0f6c2391e56f211b6826bd5ba4b5519d69737f0457d9ffb18887ba4f4235ed
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -61,8 +61,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ACTIVE` | 1 |
 | `ADOPTED` | 3 |
+| `REVIEW` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -82,7 +82,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` | `NONE` | `NONE` | 0 |
-| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 4 |
+| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `REVIEW` | `APPROVED` | `REVIEW` | 4 |
 
 ## Amendment-exit review and adoption projections
 
@@ -322,13 +322,23 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W1.A05
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `50037902df9cea50754189ddfa52fb546a44c757691a85dad85d1690efae77fe`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `063dfa1da01054e92b33981244fae872e9167051` / `e9bc0af81c44947bbc1e22f5c7a00f9a19b95140` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T13:03:59+00:00`
+- Bound exit evidence: amendment `W1.A05` / `artifacts/evidence/W1.A05.exit.json` / `488dc274e249daf0d79a82e12bd4dc7b71e039d05248508cb9fa2759b7447c43` / `063dfa1da01054e92b33981244fae872e9167051`
+- Acceptance-criteria SHA-256: `8efc47bcfb17e1f7ea1abe7cf40d58dd0717117f162a8ebef773f4d8dec72c0d`
+- Selected-check SHA-256: `bf4eabe9be32490e7373efaffaa2885e76e3681fc753e8b7def8478e89ab44f0`
+- Selected checks: `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked`, `npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop`, `.venv\Scripts\python.exe tools\security_check.py --repo . --live --report artifacts/tmp/W1.A05.exit-security.json`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_security_check; .venv\Scripts\ruff.exe check tools/security_check.py tests/security/test_security_check.py; .venv\Scripts\ruff.exe format --check tools/security_check.py tests/security/test_security_check.py`, `.venv\Scripts\python.exe tools\desktop_app_check.py --repo . --built-frame-only; .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; .venv\Scripts\python.exe tools\ui_conformance.py --repo . --check workflows; .venv\Scripts\python.exe tools\ui_conformance.py --repo . --check accessibility`, `.venv\Scripts\python.exe tools\packaging_smoke_check.py --repo .; .venv\Scripts\python.exe tools\architecture_check.py --repo .`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_active_amendment_lease_can_be_renewed_only_by_its_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_active_task_mutations_require_the_lease_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_task_lease_can_be_renewed_only_by_its_owner`, `.venv\Scripts\python.exe tools\taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline`, `git diff --check`
+- Prior round / replayed open findings: `-` / -
 
-**Latest completion notes:** -
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A05.exit.json`
+
+**Latest completion notes:** All four amendment tasks and both integration slices are independently approved; the affected security, experience, packaging, planning, and Windows x64 checks pass. Submit exact exit evidence for independent review without claiming W1 resume or release approval.
 
 **Bound amendment-adoption checkpoints:**
 
