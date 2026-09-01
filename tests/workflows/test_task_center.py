@@ -6,6 +6,7 @@ import unittest
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, cast
+from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ports.workflow_executor import WorkflowActor, WorkflowQueueConflict
@@ -297,27 +298,51 @@ class WorkflowTaskCenterTests(unittest.TestCase):
 
     def test_human_consequences_skip_end_or_resume_the_exact_graph(self) -> None:
         definition, snapshot, human_task_id = waiting_human_with_downstream_activity()
+        downstream_job_id = str(snapshot["jobs"][-1]["jobId"])
         self.repository.register_authority(
             definition_json=canonical_workflow_json(definition),
             snapshot_json=canonical_workflow_json(snapshot),
             actor=RESEARCHER,
         )
         waiting = self.repository.task_center(limit=20)[0]
+        decision_id = new_uuid_v7(timestamp_ms=1_788_091_321_000)
         resumed = self.repository.complete_human_task(
             human_task_id,
             expected_snapshot_revision=waiting.snapshot_revision,
             expected_history_sequence=waiting.revision,
-            decision_id=new_uuid_v7(timestamp_ms=1_788_091_321_000),
+            decision_id=decision_id,
             disposition="approved",
             actor=RESEARCHER,
             now="2026-08-30T12:02:01.000Z",
         )
-        self.assertEqual("running", resumed.state)
+        replay = self.repository.complete_human_task(
+            human_task_id,
+            expected_snapshot_revision=waiting.snapshot_revision,
+            expected_history_sequence=waiting.revision,
+            decision_id=decision_id,
+            disposition="approved",
+            actor=RESEARCHER,
+            now="2026-08-30T12:02:01.000Z",
+        )
+        self.assertEqual("queued", resumed.state)
         self.assertEqual("succeeded", next(step.state for step in resumed.steps if step.step_key == "review-source"))
         self.assertEqual("runnable", next(step.state for step in resumed.steps if step.step_key == "index-source"))
-        restarted = sqlite_workflow_queue_repository(self.root, PROJECT_ID).task_center(limit=20)[0]
+        self.assertEqual((downstream_job_id,), tuple(job.job_id for job in resumed.jobs))
+        self.assertEqual(resumed, replay)
+        reopened = sqlite_workflow_queue_repository(self.root, PROJECT_ID)
+        restarted = reopened.task_center(limit=20)[0]
         self.assertEqual(resumed.definition_revision_id, restarted.definition_revision_id)
         self.assertEqual("runnable", next(step.state for step in restarted.steps if step.step_key == "index-source"))
+        self.assertEqual((downstream_job_id,), tuple(job.job_id for job in restarted.jobs))
+        claim = reopened.claim_next(
+            worker_id=WORKER_A,
+            concurrency_classes=("document",),
+            now="2026-08-30T12:02:01.100Z",
+            lease_duration_ms=30_000,
+        )
+        self.assertIsNotNone(claim)
+        assert claim is not None
+        self.assertEqual(downstream_job_id, claim.job_id)
 
         other_root = Path(self.temporary.name).resolve() / "skip-project"
         (other_root / "state").mkdir(parents=True)
@@ -377,6 +402,41 @@ class WorkflowTaskCenterTests(unittest.TestCase):
             "failed",
             sqlite_workflow_queue_repository(end_root, PROJECT_ID).task_center(limit=20)[0].state,
         )
+
+    def test_human_resume_rolls_back_authority_when_queue_admission_fails(self) -> None:
+        definition, snapshot, human_task_id = waiting_human_with_downstream_activity()
+        self.repository.register_authority(
+            definition_json=canonical_workflow_json(definition),
+            snapshot_json=canonical_workflow_json(snapshot),
+            actor=RESEARCHER,
+        )
+        waiting = self.repository.task_center(limit=20)[0]
+
+        with (
+            patch.object(
+                type(self.repository),
+                "_enqueue_submission",
+                side_effect=WorkflowQueueConflict("injected queue admission failure"),
+            ),
+            self.assertRaises(WorkflowQueueConflict),
+        ):
+            self.repository.complete_human_task(
+                human_task_id,
+                expected_snapshot_revision=waiting.snapshot_revision,
+                expected_history_sequence=waiting.revision,
+                decision_id=new_uuid_v7(timestamp_ms=1_788_091_321_300),
+                disposition="approved",
+                actor=RESEARCHER,
+                now="2026-08-30T12:02:01.300Z",
+            )
+
+        reopened = sqlite_workflow_queue_repository(self.root, PROJECT_ID)
+        unchanged = reopened.task_center(limit=20)[0]
+        self.assertEqual(waiting.snapshot_revision, unchanged.snapshot_revision)
+        self.assertEqual(waiting.revision, unchanged.revision)
+        self.assertEqual("waiting-human", unchanged.state)
+        self.assertEqual((), unchanged.jobs)
+        self.assertIsNone(unchanged.human_tasks[0].decision_id)
 
     def test_failed_retry_is_a_new_idempotent_continuation_bound_to_exact_definition(self) -> None:
         job = self.enqueue()

@@ -3921,6 +3921,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 for item in cast(list[object], next_snapshot["stepRuns"])
                 if cast(Mapping[str, object], item)["stepRunId"] == next_task["stepRunId"]
             )
+            activated_job_ids: list[str] = []
             history = cast(list[dict[str, object]], next_snapshot["history"])
             sequence = cast(int, next_snapshot["sequence"])
             next_task["state"] = "completed"
@@ -4054,6 +4055,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                         next_sequence += 1
                         candidate_job["state"] = "runnable"
                         candidate_job["sequence"] = next_sequence
+                        activated_job_ids.append(str(candidate_job_id))
                         history.append(
                             _workflow_event(
                                 sequence=next_sequence,
@@ -4108,6 +4110,35 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 definition_json=_workflow_json(definition),
                 snapshot_json=next_json,
             )
+            if activated_job_ids:
+                inherited_policy = connection.execute(
+                    "SELECT concurrency_class, priority FROM workflow_queue_jobs "
+                    "WHERE project_id=? AND workflow_run_id=? "
+                    "ORDER BY updated_at DESC, job_id LIMIT 1",
+                    (self._project_id, next_snapshot["workflowRunId"]),
+                ).fetchone()
+                concurrency_class = cast(
+                    ConcurrencyClass,
+                    "document" if inherited_policy is None else str(inherited_policy[0]),
+                )
+                priority = 0 if inherited_policy is None else int(inherited_policy[1])
+                from .workflow_executor import prepare_workflow_job
+
+                for activated_job_id in activated_job_ids:
+                    submission = prepare_workflow_job(
+                        definition,
+                        next_snapshot,
+                        job_id=activated_job_id,
+                        concurrency_class=concurrency_class,
+                        priority=priority,
+                        available_at=now,
+                    )
+                    self._enqueue_submission(
+                        connection,
+                        submission,
+                        definition=definition,
+                        snapshot=next_snapshot,
+                    )
             return self._task_center_run(str(row[2]), connection)
 
     def cancellation_requested(self, claim: WorkflowJobClaim, *, now: str) -> bool:
