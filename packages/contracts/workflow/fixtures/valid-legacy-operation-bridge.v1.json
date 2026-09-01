@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-legacy-operation-bridge",
+  "contractVersion": "1.0.0",
+  "legacyOperationId": "op-source-review",
+  "workflowRunId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d005",
+  "workflowSnapshotRevision": 1,
+  "operationSequence": 32,
+  "operationState": "succeeded",
+  "cancellationRequested": false,
+  "etag": "\"op-source-review-32\""
+}

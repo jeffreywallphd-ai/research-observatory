@@ -474,8 +474,7 @@ class UiConformanceTests(unittest.TestCase):
                 approval_path.write_text(yaml.safe_dump(value, sort_keys=False), encoding="utf-8", newline="\n")
                 governed = ["APPROVAL.yaml", "assets/app.css"]
                 file_hashes = {
-                    relative: hashlib.sha256((reference / relative).read_bytes()).hexdigest()
-                    for relative in governed
+                    relative: hashlib.sha256((reference / relative).read_bytes()).hexdigest() for relative in governed
                 }
                 manifest = {
                     "reference_id": value["reference_id"],

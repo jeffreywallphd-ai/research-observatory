@@ -231,6 +231,15 @@
         "CAP-03.S03.T01",
         "CAP-03.S03.T02"
       ]
+    },
+    {
+      "id": "ADR-0025",
+      "path": "docs/adr/ADR-0025-adopt-versioned-executor-neutral-workflow-contracts-and-replayable-history.md",
+      "title": "Adopt versioned executor-neutral workflow contracts and replayable history",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-03.S04.T01"
+      ]
     }
   ]
 }

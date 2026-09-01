@@ -9,9 +9,10 @@
     "intent:check": "node intent/generate.mjs --check",
     "model-gateway:check": "node model-gateway/generate.mjs --check",
     "provenance:check": "node provenance/generate.mjs --check",
+    "workflow:check": "node workflow/generate.mjs --check",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
-    "verify": "pnpm run domain:check && pnpm run intent:check && pnpm run model-gateway:check && pnpm run provenance:check && pnpm run typecheck && pnpm run test"
+    "verify": "pnpm run domain:check && pnpm run intent:check && pnpm run model-gateway:check && pnpm run provenance:check && pnpm run workflow:check && pnpm run typecheck && pnpm run test"
   },
   "devDependencies": {
     "@types/node": "26.2.0",
@@ -27,6 +28,7 @@
     "./research-intent": "./intent/generated.ts",
     "./model-gateway": "./model-gateway/generated.ts",
     "./provenance": "./provenance/generated.ts",
+    "./workflow": "./workflow/generated.ts",
     "./project": "./project/index.ts"
   }
 }

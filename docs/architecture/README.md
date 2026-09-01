@@ -144,3 +144,8 @@ The minimized CloudEvents event envelope, W3C PROV entity/activity/agent
 relations, protected payload-reference boundary, deterministic record hash, and
 future-event compatibility behavior are documented in
 [`provenance-contracts.md`](provenance-contracts.md) and governed by ADR-0024.
+The executor-neutral workflow definition, distinct run/step/job/attempt/
+checkpoint/artifact/human-task identities, append-only replay history,
+at-least-once idempotency, security-lock interruption, and legacy operation
+projection bridge are documented in
+[`workflow-contracts.md`](workflow-contracts.md) and governed by ADR-0025.

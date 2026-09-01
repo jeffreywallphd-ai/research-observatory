@@ -11,3 +11,11 @@ invalid revision lineage, explicitly incomplete drafts, human-only acceptance,
 mode/use-case/stopping compatibility, temporal and egress boundaries, immutable
 ownership, and exact downstream governing references in both generated
 runtimes.
+
+Workflow coverage exercises one executor-neutral definition across local and
+server profiles, separate run/step/job/attempt/human-task transitions,
+serialize/reload replay, retry and checkpoint ownership, monotonic progress,
+committed artifact disposition, immutable human decisions, security-lock
+denial, and the exact legacy operation projection bridge in both generated
+runtimes. Real SQLite/process restart remains an integration responsibility of
+`CAP-03.S04.T02`.

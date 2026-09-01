@@ -6798,7 +6798,10 @@
                 "base_sha": "c9260e1e981fea84a651dd59104aad12e1fb8d8e"
               },
               "plan_section_sha256": "20e0d72c06113089a06c37f8ca466dbb45b33231907096603e440fd002a5fd3e",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-03.S04.T01.task-start.md",
+                "sha256": "d08a7ca2ff553b9619c7ca48cf9b26e955a8d7bada7fdf02dd60901485b2ab50"
+              }
             },
             {
               "task_id": "CAP-03.S04.T02",

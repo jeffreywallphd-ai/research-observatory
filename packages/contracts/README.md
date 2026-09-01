@@ -110,3 +110,17 @@ relation, revision, and entity identities cannot collide within an event. The
 shared semantic matrix rejects duplicate or wrong-role relations, completed
 PROV facts or outputs for failed/cancelled/denied outcomes, and missing
 generation or attribution for any succeeded output, including future types.
+
+`workflow/` defines executor-neutral, versioned workflow definitions and
+restart-reconstructable execution snapshots. Separate workflow-run, step-run,
+logical-job, physical-attempt, checkpoint, immutable-artifact, and human-task
+identities use explicit state machines and append-only transition history.
+Runs bind exact definition, Research Intent, policy, configuration, input/output
+schema, and content hashes; stable idempotency keys bind canonical command
+fingerprints across at-least-once retries. Matching generated TypeScript/Python
+decoders reject illegal transitions, broken references, decreasing progress,
+duplicate committed outputs, substituted human decisions, inline executor
+implementation details, and security-lock auto-resume. The legacy `op-*`
+record is an exact compatibility projection onto a UUIDv7 workflow run, never
+canonical workflow authority. SQLite persistence and real worker restart are
+owned by `CAP-03.S04.T02`.

@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-workflow-snapshot",
+  "contractVersion": "1.0.0",
+  "snapshotId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d006",
+  "snapshotRevision": 1,
+  "projectId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d060",
+  "workflowRunId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d005",
+  "definition": {
+    "workflowDefinitionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d001",
+    "definitionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d002",
+    "definitionVersion": "1.0.0",
+    "contentHash": "sha256:6426336efe5e2ed80eb41d39a39f77756e506bae65777e1465b7f17d3e92a5c5"
+  },
+  "intent": {
+    "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d003",
+    "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d004",
+    "contentHash": "sha256:8888888888888888888888888888888888888888888888888888888888888888"
+  },
+  "policy": {
+    "policyId": "private-local-research",
+    "policyVersion": "1.0.0",
+    "policyHash": "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+  },
+  "configuration": {
+    "configurationId": "source-review-default",
+    "configurationVersion": "1.0.0",
+    "configurationHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "executor": {
+    "profile": "local",
+    "adapterId": "local-durable-workflow",
+    "adapterVersion": "1.0.0",
+    "contractVersion": "1.0.0"
+  },
+  "state": "succeeded",
+  "progress": {"kind": "quantified", "unit": "steps", "completedUnits": 2, "totalUnits": 2},
+  "cancellation": {"requestedAt": null, "reasonCode": null, "interruptionKind": null},
+  "createdAt": "2026-08-30T12:01:00.000Z",
+  "updatedAt": "2026-08-30T12:01:32.000Z",
+  "sequence": 32,
+  "stepRuns": [
+    {
+      "stepRunId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d010",
+      "stepKey": "acquire-source",
+      "state": "succeeded",
+      "sequence": 23,
+      "progress": {"kind": "quantified", "unit": "records", "completedUnits": 100, "totalUnits": 100},
+      "jobIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d020"],
+      "humanTaskIds": [],
+      "inputArtifactIds": [],
+      "outputArtifactIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d025"]
+    },
+    {
+      "stepRunId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d011",
+      "stepKey": "review-source",
+      "state": "succeeded",
+      "sequence": 30,
+      "progress": {"kind": "quantified", "unit": "decisions", "completedUnits": 1, "totalUnits": 1},
+      "jobIds": [],
+      "humanTaskIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d030"],
+      "inputArtifactIds": [
+        "018f47a2-4d6b-7f78-9f2e-7fb76c86d025",
+        "018f47a2-4d6b-7f78-9f2e-7fb76c86d026"
+      ],
+      "outputArtifactIds": []
+    }
+  ],
+  "jobs": [
+    {
+      "jobId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+      "stepRunId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d010",
+      "state": "succeeded",
+      "sequence": 22,
+      "idempotencyKey": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "commandFingerprint": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "attemptIds": [
+        "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
+        "018f47a2-4d6b-7f78-9f2e-7fb76c86d022"
+      ],
+      "currentAttemptId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+      "inputArtifactIds": [],
+      "outputArtifactIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d025"],
+      "cancellation": {"requestedAt": null, "reasonCode": null, "interruptionKind": null}
+    }
+  ],
+  "attempts": [
+    {
+      "attemptId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
+      "jobId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+      "attemptNumber": 1,
+      "state": "failed",
+      "sequence": 13,
+      "progress": {"kind": "quantified", "unit": "records", "completedUnits": 10, "totalUnits": 100},
+      "startedAt": "2026-08-30T12:01:11.000Z",
+      "endedAt": "2026-08-30T12:01:13.000Z",
+      "checkpointIds": [],
+      "outputArtifactIds": [],
+      "provenanceActivityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d050",
+      "diagnosticCode": "dependency-unavailable"
+    },
+    {
+      "attemptId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+      "jobId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+      "attemptNumber": 2,
+      "state": "succeeded",
+      "sequence": 21,
+      "progress": {"kind": "quantified", "unit": "records", "completedUnits": 100, "totalUnits": 100},
+      "startedAt": "2026-08-30T12:01:19.000Z",
+      "endedAt": "2026-08-30T12:01:21.000Z",
+      "checkpointIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d023"],
+      "outputArtifactIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d025"],
+      "provenanceActivityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d051",
+      "diagnosticCode": null
+    }
+  ],
+  "checkpoints": [
+    {
+      "checkpointId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d023",
+      "attemptId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+      "checkpointSequence": 1,
+      "historySequence": 20,
+      "createdAt": "2026-08-30T12:01:20.000Z",
+      "stateHash": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "payloadArtifactId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d024"
+    }
+  ],
+  "artifacts": [
+    {
+      "artifactId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d024",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d124",
+      "contentHash": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "mediaType": "application/vnd.research-observatory.checkpoint+json",
+      "role": "checkpoint",
+      "disposition": "committed",
+      "createdByAttemptId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+      "provenanceEntityId": null
+    },
+    {
+      "artifactId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d025",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d125",
+      "contentHash": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "mediaType": "application/json",
+      "role": "output",
+      "disposition": "committed",
+      "createdByAttemptId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+      "provenanceEntityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d061"
+    },
+    {
+      "artifactId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d026",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d126",
+      "contentHash": "sha256:1212121212121212121212121212121212121212121212121212121212121212",
+      "mediaType": "application/json",
+      "role": "input",
+      "disposition": "committed",
+      "createdByAttemptId": null,
+      "provenanceEntityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d062"
+    },
+    {
+      "artifactId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d027",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d127",
+      "contentHash": "sha256:1313131313131313131313131313131313131313131313131313131313131313",
+      "mediaType": "text/markdown",
+      "role": "input",
+      "disposition": "committed",
+      "createdByAttemptId": null,
+      "provenanceEntityId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d063"
+    }
+  ],
+  "humanTasks": [
+    {
+      "humanTaskId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d030",
+      "workflowRunId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d005",
+      "definitionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d002",
+      "stepRunId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d011",
+      "state": "completed",
+      "sequence": 29,
+      "requestedAt": "2026-08-30T12:01:25.000Z",
+      "requestedBy": {
+        "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d042",
+        "actorType": "system",
+        "role": "workflow-coordinator"
+      },
+      "requiredRole": "researcher",
+      "assignedTo": {
+        "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d041",
+        "actorType": "human",
+        "role": "researcher"
+      },
+      "evidenceArtifactIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d026"],
+      "decision": {
+        "decisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d031",
+        "disposition": "approved",
+        "decidedBy": {
+          "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d041",
+          "actorType": "human",
+          "role": "researcher"
+        },
+        "decidedAt": "2026-08-30T12:01:29.000Z",
+        "evidenceArtifactIds": ["018f47a2-4d6b-7f78-9f2e-7fb76c86d026"],
+        "rationaleArtifactId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d027",
+        "consequenceCode": "resume-workflow"
+      }
+    }
+  ],
+  "history": [
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e001","sequence":1,"entityType":"workflow-run","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d005","fromState":null,"toState":"accepted","occurredAt":"2026-08-30T12:01:01.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d041","actorType":"human","role":"researcher"},"reasonCode":"command-accepted","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e002","sequence":2,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d010","fromState":null,"toState":"pending","occurredAt":"2026-08-30T12:01:02.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"step-created","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e003","sequence":3,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d011","fromState":null,"toState":"pending","occurredAt":"2026-08-30T12:01:03.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"step-created","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e004","sequence":4,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d010","fromState":"pending","toState":"runnable","occurredAt":"2026-08-30T12:01:04.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"dependencies-satisfied","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e005","sequence":5,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":null,"toState":"pending","occurredAt":"2026-08-30T12:01:05.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"job-created","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e006","sequence":6,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"pending","toState":"runnable","occurredAt":"2026-08-30T12:01:06.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"job-ready","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e007","sequence":7,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"runnable","toState":"claimed","occurredAt":"2026-08-30T12:01:07.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"job-claimed","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e008","sequence":8,"entityType":"job-attempt","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d021","fromState":null,"toState":"claimed","occurredAt":"2026-08-30T12:01:08.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"attempt-created","progress":{"kind":"quantified","unit":"records","completedUnits":0,"totalUnits":100},"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e009","sequence":9,"entityType":"workflow-run","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d005","fromState":"accepted","toState":"running","occurredAt":"2026-08-30T12:01:09.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"work-started","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e010","sequence":10,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d010","fromState":"runnable","toState":"running","occurredAt":"2026-08-30T12:01:10.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"step-started","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e011","sequence":11,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"claimed","toState":"running","occurredAt":"2026-08-30T12:01:11.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"job-started","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e012","sequence":12,"entityType":"job-attempt","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d021","fromState":"claimed","toState":"running","occurredAt":"2026-08-30T12:01:12.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"attempt-started","progress":{"kind":"quantified","unit":"records","completedUnits":0,"totalUnits":100},"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e013","sequence":13,"entityType":"job-attempt","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d021","fromState":"running","toState":"failed","occurredAt":"2026-08-30T12:01:13.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"dependency-unavailable","progress":{"kind":"quantified","unit":"records","completedUnits":10,"totalUnits":100},"decisionId":null,"checkpointId":null,"interruptionKind":"dependency"},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e014","sequence":14,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"running","toState":"retry-scheduled","occurredAt":"2026-08-30T12:01:14.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"retryable-failure","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":"dependency"},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e015","sequence":15,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"retry-scheduled","toState":"runnable","occurredAt":"2026-08-30T12:01:15.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"retry-due","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e016","sequence":16,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"runnable","toState":"claimed","occurredAt":"2026-08-30T12:01:16.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"job-reclaimed","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e017","sequence":17,"entityType":"job-attempt","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d022","fromState":null,"toState":"claimed","occurredAt":"2026-08-30T12:01:17.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"attempt-created","progress":{"kind":"quantified","unit":"records","completedUnits":0,"totalUnits":100},"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e018","sequence":18,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"claimed","toState":"running","occurredAt":"2026-08-30T12:01:18.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"job-restarted","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":"ordinary-restart"},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e019","sequence":19,"entityType":"job-attempt","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d022","fromState":"claimed","toState":"running","occurredAt":"2026-08-30T12:01:19.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"attempt-started","progress":{"kind":"quantified","unit":"records","completedUnits":0,"totalUnits":100},"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e020","sequence":20,"entityType":"job-attempt","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d022","fromState":"running","toState":"running","occurredAt":"2026-08-30T12:01:20.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"checkpoint-recorded","progress":{"kind":"quantified","unit":"records","completedUnits":50,"totalUnits":100},"decisionId":null,"checkpointId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d023","interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e021","sequence":21,"entityType":"job-attempt","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d022","fromState":"running","toState":"succeeded","occurredAt":"2026-08-30T12:01:21.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d040","actorType":"workload","role":"source-worker"},"reasonCode":"output-committed","progress":{"kind":"quantified","unit":"records","completedUnits":100,"totalUnits":100},"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e022","sequence":22,"entityType":"job","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d020","fromState":"running","toState":"succeeded","occurredAt":"2026-08-30T12:01:22.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"attempt-accepted","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e023","sequence":23,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d010","fromState":"running","toState":"succeeded","occurredAt":"2026-08-30T12:01:23.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"step-complete","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e024","sequence":24,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d011","fromState":"pending","toState":"runnable","occurredAt":"2026-08-30T12:01:24.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"dependencies-satisfied","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e025","sequence":25,"entityType":"human-task","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d030","fromState":null,"toState":"requested","occurredAt":"2026-08-30T12:01:25.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"human-review-requested","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e026","sequence":26,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d011","fromState":"runnable","toState":"waiting-human","occurredAt":"2026-08-30T12:01:26.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"human-review-pending","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e027","sequence":27,"entityType":"workflow-run","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d005","fromState":"running","toState":"waiting-human","occurredAt":"2026-08-30T12:01:27.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"human-review-pending","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e028","sequence":28,"entityType":"human-task","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d030","fromState":"requested","toState":"claimed","occurredAt":"2026-08-30T12:01:28.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d041","actorType":"human","role":"researcher"},"reasonCode":"human-task-claimed","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e029","sequence":29,"entityType":"human-task","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d030","fromState":"claimed","toState":"completed","occurredAt":"2026-08-30T12:01:29.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d041","actorType":"human","role":"researcher"},"reasonCode":"human-decision-recorded","progress":null,"decisionId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d031","checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e030","sequence":30,"entityType":"workflow-step","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d011","fromState":"waiting-human","toState":"succeeded","occurredAt":"2026-08-30T12:01:30.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"human-decision-accepted","progress":null,"decisionId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d031","checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e031","sequence":31,"entityType":"workflow-run","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d005","fromState":"waiting-human","toState":"running","occurredAt":"2026-08-30T12:01:31.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"human-decision-accepted","progress":null,"decisionId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d031","checkpointId":null,"interruptionKind":null},
+    {"eventId":"018f47a2-4d6b-7f78-9f2e-7fb76c86e032","sequence":32,"entityType":"workflow-run","entityId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d005","fromState":"running","toState":"succeeded","occurredAt":"2026-08-30T12:01:32.000Z","actor":{"actorId":"018f47a2-4d6b-7f78-9f2e-7fb76c86d042","actorType":"system","role":"workflow-coordinator"},"reasonCode":"workflow-complete","progress":null,"decisionId":null,"checkpointId":null,"interruptionKind":null}
+  ]
+}
