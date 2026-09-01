@@ -28,9 +28,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-sqlite-profile"},
     "profileId": {"const": "sqlite-wal-v1"},
-    "databaseSchemaVersion": {"const": 7},
+    "databaseSchemaVersion": {"const": 8},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"},
+    "schemaFingerprintSha256": {"const": "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -64,6 +64,11 @@
         "scholarly_records",
         "documents",
         "workflows",
+        "workflow_definitions",
+        "workflow_authority_snapshots",
+        "workflow_history_events",
+        "workflow_checkpoints",
+        "workflow_committed_outputs",
         "evidence",
         "ontologies",
         "decisions",
@@ -76,7 +81,16 @@
         "settings"
       ]
     },
-    "mutableStateTables": {"const": ["object_records", "object_envelope_upgrades", "outbox_events"]},
+    "mutableStateTables": {
+      "const": [
+        "object_records",
+        "object_envelope_upgrades",
+        "outbox_events",
+        "workflow_queue_jobs",
+        "workflow_job_attempts",
+        "workflow_attempt_artifacts"
+      ]
+    },
     "connectionProfile": {
       "const": {
         "foreignKeys": true,
@@ -115,6 +129,14 @@
         "scholarly_records",
         "documents",
         "workflows",
+        "workflow_definitions",
+        "workflow_authority_snapshots",
+        "workflow_queue_jobs",
+        "workflow_job_attempts",
+        "workflow_attempt_artifacts",
+        "workflow_history_events",
+        "workflow_checkpoints",
+        "workflow_committed_outputs",
         "evidence",
         "ontologies",
         "decisions",

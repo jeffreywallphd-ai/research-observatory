@@ -67,8 +67,25 @@ derived from that bound projection rather than supplying independent
 authority. The bridge is not canonical history and does not change the current
 Core API schema in T01.
 
-T01 adds no SQLite migration: the current `workflows` table is a canonical
-aggregate subtype, not a queue/history table. CAP-03.S04.T02 owns the real
-SQLite migration, durable reducer/queue, leases, supervisor, atomic
-provenance/outbox integration, and process-restart proof. CAP-03.S04.T03 owns
-the governed Task Center projection and interactions.
+T01 added no SQLite migration: the existing `workflows` table remains a
+canonical aggregate subtype, not a queue/history table. T02 adds schema v8 with
+immutable definition and snapshot authority, append-only history/checkpoints,
+mutable queue and physical-attempt projections, and one immutable accepted
+output per logical job. Queue claims use an opaque token digest plus a monotonic
+generation fence inside one short writer transaction. Activity execution holds
+no database transaction; heartbeat, checkpoint, cancellation, retry, crash
+recovery, and completion each revalidate the exact project/job/attempt/worker
+lease tuple. Completion commits the accepted output and its content-free
+canonical provenance-ledger/outbox records atomically, and it accepts only an
+existing immutable aggregate revision whose canonical content hash matches the
+output reference. Completion replay revalidates the original attempt's opaque
+claim capability before returning a receipt. The local worker supervisor
+performs bounded expired-lease recovery before admission and enforces separate
+concurrency-class limits. Cancellation safe-point polling is read-only, and
+recovery updates a bounded batch so maintenance cannot monopolize the SQLite
+writer. Process-restart tests prove that an abrupt worker exit is recovered by
+a fresh supervisor, rejects its stale lease, and resumes from the latest global
+history checkpoint without duplicate accepted output.
+
+CAP-03.S04.T03 owns the governed Task Center projection and interactions; T02
+does not introduce Task Center UI or server workflow infrastructure.

@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 7
+DATABASE_SCHEMA_VERSION = 8
+PROVENANCE_LEDGER_DATABASE_SCHEMA_VERSION = 7
 ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION = 6
 OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION = 5
 OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION = 4
@@ -73,6 +74,14 @@ EXPECTED_TABLES = (
     "scholarly_records",
     "documents",
     "workflows",
+    "workflow_definitions",
+    "workflow_authority_snapshots",
+    "workflow_queue_jobs",
+    "workflow_job_attempts",
+    "workflow_attempt_artifacts",
+    "workflow_history_events",
+    "workflow_checkpoints",
+    "workflow_committed_outputs",
     "evidence",
     "ontologies",
     "decisions",
@@ -94,6 +103,11 @@ IMMUTABLE_ROW_TABLES = (
     "scholarly_records",
     "documents",
     "workflows",
+    "workflow_definitions",
+    "workflow_authority_snapshots",
+    "workflow_history_events",
+    "workflow_checkpoints",
+    "workflow_committed_outputs",
     "evidence",
     "ontologies",
     "decisions",
@@ -105,7 +119,14 @@ IMMUTABLE_ROW_TABLES = (
     "provenance_legacy_bridges",
     "settings",
 )
-MUTABLE_STATE_TABLES = ("object_records", "object_envelope_upgrades", "outbox_events")
+MUTABLE_STATE_TABLES = (
+    "object_records",
+    "object_envelope_upgrades",
+    "outbox_events",
+    "workflow_queue_jobs",
+    "workflow_job_attempts",
+    "workflow_attempt_artifacts",
+)
 EXPECTED_TRIGGERS = tuple(
     sorted(
         [f"{table}_no_{operation}" for table in IMMUTABLE_ROW_TABLES for operation in ("delete", "update")]
@@ -113,6 +134,11 @@ EXPECTED_TRIGGERS = tuple(
             "object_records_envelope_insert",
             "object_records_envelope_update",
             "provenance_events_bridge_legacy_after_insert",
+            "workflow_queue_jobs_identity_immutable",
+            "workflow_job_attempts_identity_immutable",
+            "workflow_attempt_artifacts_identity_immutable",
+            "workflow_attempt_artifacts_disposition_transition",
+            "workflow_checkpoint_artifact_authority",
         ]
     )
 )
@@ -128,6 +154,11 @@ EXPECTED_INDEXES = (
     "provenance_ledger_entity_output",
     "provenance_ledger_relation_entity",
     "provenance_ledger_relation_related_entity",
+    "workflow_queue_dispatch",
+    "workflow_queue_lease_expiry",
+    "workflow_history_run_sequence",
+    "workflow_checkpoint_attempt_sequence",
+    "workflow_artifact_job_disposition",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -141,7 +172,8 @@ OBJECT_CREATION_SOURCE_SCHEMA_SHA256 = "4d505b3f925e9df09b137cae61b56125878aa84f
 OBJECT_CREATION_SOURCE_PROFILE_SHA256 = "949f2d60ebe020ad8e8e049ac9d58307213d7aa7008025e5b340e543064ffaa7"
 ACTOR_IDENTITY_SCHEMA_SHA256 = "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
 ACTOR_IDENTITY_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834ecadf204f76aa771f"
-EXPECTED_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
+PROVENANCE_LEDGER_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
+EXPECTED_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -196,7 +228,8 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
 _PROFILE_SHA256 = hashlib.sha256(
     json.dumps(_PROFILE_DOCUMENT, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
 ).hexdigest()
-EXPECTED_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0"
+PROVENANCE_LEDGER_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0"
+EXPECTED_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f3583b8f1ce42db8ecba7"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -903,6 +936,10 @@ SCHEMA_METADATA_V7_DDL = SCHEMA_METADATA_V6_DDL.replace(
     "schema_version INTEGER NOT NULL CHECK (schema_version = 6)",
     "schema_version INTEGER NOT NULL CHECK (schema_version = 7)",
 )
+SCHEMA_METADATA_V8_DDL = SCHEMA_METADATA_V7_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 7)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 8)",
+)
 
 PROVENANCE_LEDGER_DDL = (
     f"""
@@ -1094,13 +1131,384 @@ PROVENANCE_LEDGER_DDL = (
     """,
 )
 
+WORKFLOW_EXECUTOR_DDL = (
+    f"""
+        CREATE TABLE workflow_definitions (
+            definition_revision_id TEXT PRIMARY KEY CHECK ({_uuid_check("definition_revision_id", "7")}),
+            project_id TEXT NOT NULL,
+            workflow_definition_id TEXT NOT NULL CHECK ({_uuid_check("workflow_definition_id", "7")}),
+            definition_version TEXT NOT NULL CHECK (length(definition_version) BETWEEN 5 AND 64),
+            contract_version TEXT NOT NULL CHECK (contract_version = '1.0.0'),
+            content_hash TEXT NOT NULL CHECK (
+                length(content_hash) = 71 AND substr(content_hash, 1, 7) = 'sha256:'
+                AND substr(content_hash, 8) = lower(substr(content_hash, 8))
+                AND substr(content_hash, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            definition_json TEXT NOT NULL CHECK (length(definition_json) BETWEEN 2 AND 1048576),
+            record_sha256 TEXT NOT NULL CHECK (
+                length(record_sha256) = 71 AND substr(record_sha256, 1, 7) = 'sha256:'
+                AND substr(record_sha256, 8) = lower(substr(record_sha256, 8))
+                AND substr(record_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, workflow_definition_id, definition_revision_id),
+            UNIQUE (project_id, record_sha256)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE workflow_authority_snapshots (
+            snapshot_id TEXT NOT NULL CHECK ({_uuid_check("snapshot_id", "7")}),
+            snapshot_revision INTEGER NOT NULL CHECK (snapshot_revision BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            project_id TEXT NOT NULL,
+            workflow_run_id TEXT NOT NULL CHECK ({_uuid_check("workflow_run_id", "7")}),
+            definition_revision_id TEXT NOT NULL CHECK ({_uuid_check("definition_revision_id", "7")}),
+            state TEXT NOT NULL CHECK (state IN (
+                'accepted', 'running', 'waiting-human', 'paused', 'cancelling',
+                'succeeded', 'failed', 'cancelled'
+            )),
+            history_sequence INTEGER NOT NULL CHECK (history_sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            snapshot_json TEXT NOT NULL CHECK (length(snapshot_json) BETWEEN 2 AND 16777216),
+            record_sha256 TEXT NOT NULL CHECK (
+                length(record_sha256) = 71 AND substr(record_sha256, 1, 7) = 'sha256:'
+                AND substr(record_sha256, 8) = lower(substr(record_sha256, 8))
+                AND substr(record_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            updated_at TEXT NOT NULL CHECK ({_timestamp_check("updated_at")}),
+            PRIMARY KEY (snapshot_id, snapshot_revision),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (definition_revision_id) REFERENCES workflow_definitions (definition_revision_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, workflow_run_id, snapshot_revision),
+            UNIQUE (snapshot_id, snapshot_revision, project_id, workflow_run_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE workflow_queue_jobs (
+            job_id TEXT PRIMARY KEY CHECK ({_uuid_check("job_id", "7")}),
+            project_id TEXT NOT NULL,
+            workflow_run_id TEXT NOT NULL CHECK ({_uuid_check("workflow_run_id", "7")}),
+            snapshot_id TEXT NOT NULL CHECK ({_uuid_check("snapshot_id", "7")}),
+            snapshot_revision INTEGER NOT NULL CHECK (snapshot_revision BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            step_run_id TEXT NOT NULL CHECK ({_uuid_check("step_run_id", "7")}),
+            activity_type TEXT NOT NULL CHECK ({_identifier_check("activity_type", 96)}),
+            concurrency_class TEXT NOT NULL CHECK (
+                concurrency_class IN ('interactive', 'document', 'ai', 'maintenance')
+            ),
+            progress_unit TEXT NOT NULL CHECK ({_identifier_check("progress_unit", 96)}),
+            progress_total_kind TEXT NOT NULL CHECK (
+                progress_total_kind IN ('known', 'unknown', 'not-applicable')
+            ),
+            progress_total_units INTEGER CHECK (
+                progress_total_units IS NULL OR progress_total_units BETWEEN 0 AND {MAX_SAFE_INTEGER}
+            ),
+            checkpoint_mode TEXT NOT NULL CHECK (checkpoint_mode IN ('forbidden', 'optional', 'required')),
+            partial_artifact_disposition TEXT NOT NULL CHECK (
+                partial_artifact_disposition IN ('retained-incomplete', 'quarantined', 'discarded')
+            ),
+            state TEXT NOT NULL CHECK (state IN (
+                'runnable', 'claimed', 'running', 'retry-scheduled', 'cancelling',
+                'cancelled', 'failed', 'succeeded'
+            )),
+            priority INTEGER NOT NULL CHECK (priority BETWEEN -1000 AND 1000),
+            available_at TEXT NOT NULL CHECK ({_timestamp_check("available_at")}),
+            max_attempts INTEGER NOT NULL CHECK (max_attempts BETWEEN 1 AND 32),
+            attempt_count INTEGER NOT NULL DEFAULT 0 CHECK (attempt_count BETWEEN 0 AND 32),
+            initial_backoff_ms INTEGER NOT NULL CHECK (initial_backoff_ms BETWEEN 0 AND 86400000),
+            maximum_backoff_ms INTEGER NOT NULL CHECK (maximum_backoff_ms BETWEEN 0 AND 604800000),
+            multiplier_basis_points INTEGER NOT NULL CHECK (multiplier_basis_points BETWEEN 10000 AND 100000),
+            deterministic_jitter INTEGER NOT NULL CHECK (deterministic_jitter IN (0, 1)),
+            retryable_error_codes_json TEXT NOT NULL CHECK (length(retryable_error_codes_json) BETWEEN 2 AND 16384),
+            non_retryable_error_codes_json TEXT NOT NULL CHECK (
+                length(non_retryable_error_codes_json) BETWEEN 2 AND 16384
+            ),
+            idempotency_key TEXT NOT NULL CHECK (
+                length(idempotency_key) = 71 AND substr(idempotency_key, 1, 7) = 'sha256:'
+                AND substr(idempotency_key, 8) = lower(substr(idempotency_key, 8))
+                AND substr(idempotency_key, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            command_fingerprint TEXT NOT NULL CHECK (
+                length(command_fingerprint) = 71 AND substr(command_fingerprint, 1, 7) = 'sha256:'
+                AND substr(command_fingerprint, 8) = lower(substr(command_fingerprint, 8))
+                AND substr(command_fingerprint, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            current_attempt_id TEXT CHECK (current_attempt_id IS NULL OR ({_uuid_check("current_attempt_id", "7")})),
+            lease_generation INTEGER NOT NULL DEFAULT 0 CHECK (
+                lease_generation BETWEEN 0 AND {MAX_SAFE_INTEGER}
+            ),
+            lease_owner TEXT CHECK (lease_owner IS NULL OR ({_uuid_check("lease_owner", "7")})),
+            lease_token_sha256 TEXT CHECK (lease_token_sha256 IS NULL OR ({_sha256_check("lease_token_sha256")})),
+            lease_expires_at TEXT CHECK (lease_expires_at IS NULL OR ({_timestamp_check("lease_expires_at")})),
+            heartbeat_at TEXT CHECK (heartbeat_at IS NULL OR ({_timestamp_check("heartbeat_at")})),
+            cancellation_requested_at TEXT CHECK (
+                cancellation_requested_at IS NULL OR ({_timestamp_check("cancellation_requested_at")})
+            ),
+            cancellation_reason_code TEXT CHECK (
+                cancellation_reason_code IS NULL OR ({_identifier_check("cancellation_reason_code", 96)})
+            ),
+            interruption_kind TEXT CHECK (
+                interruption_kind IS NULL OR interruption_kind IN (
+                    'ordinary-restart', 'user-cancel', 'security-lock', 'policy', 'dependency'
+                )
+            ),
+            diagnostic_code TEXT CHECK (diagnostic_code IS NULL OR ({_identifier_check("diagnostic_code", 96)})),
+            committed_output_sha256 TEXT CHECK (
+                committed_output_sha256 IS NULL OR (
+                    length(committed_output_sha256) = 71 AND substr(committed_output_sha256, 1, 7) = 'sha256:'
+                    AND substr(committed_output_sha256, 8) = lower(substr(committed_output_sha256, 8))
+                    AND substr(committed_output_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+                )
+            ),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            updated_at TEXT NOT NULL CHECK ({_timestamp_check("updated_at")}),
+            FOREIGN KEY (snapshot_id, snapshot_revision, project_id, workflow_run_id)
+                REFERENCES workflow_authority_snapshots (snapshot_id, snapshot_revision, project_id, workflow_run_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, idempotency_key),
+            CHECK (attempt_count <= max_attempts),
+            CHECK ((progress_total_kind = 'known') = (progress_total_units IS NOT NULL)),
+            CHECK (
+                (state IN ('claimed', 'running', 'cancelling') AND current_attempt_id IS NOT NULL
+                    AND lease_owner IS NOT NULL AND lease_token_sha256 IS NOT NULL AND lease_expires_at IS NOT NULL)
+                OR (state NOT IN ('claimed', 'running', 'cancelling')
+                    AND lease_owner IS NULL AND lease_token_sha256 IS NULL AND lease_expires_at IS NULL)
+            ),
+            CHECK ((state = 'succeeded') = (committed_output_sha256 IS NOT NULL))
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE workflow_job_attempts (
+            attempt_id TEXT PRIMARY KEY CHECK ({_uuid_check("attempt_id", "7")}),
+            project_id TEXT NOT NULL,
+            job_id TEXT NOT NULL CHECK ({_uuid_check("job_id", "7")}),
+            attempt_number INTEGER NOT NULL CHECK (attempt_number BETWEEN 1 AND 32),
+            state TEXT NOT NULL CHECK (state IN (
+                'claimed', 'running', 'succeeded', 'failed', 'cancelled', 'abandoned'
+            )),
+            worker_id TEXT NOT NULL CHECK ({_uuid_check("worker_id", "7")}),
+            lease_generation INTEGER NOT NULL CHECK (lease_generation BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            lease_token_sha256 TEXT NOT NULL CHECK ({_sha256_check("lease_token_sha256")}),
+            lease_expires_at TEXT NOT NULL CHECK ({_timestamp_check("lease_expires_at")}),
+            heartbeat_at TEXT NOT NULL CHECK ({_timestamp_check("heartbeat_at")}),
+            progress_json TEXT,
+            started_at TEXT CHECK (started_at IS NULL OR ({_timestamp_check("started_at")})),
+            ended_at TEXT CHECK (ended_at IS NULL OR ({_timestamp_check("ended_at")})),
+            diagnostic_code TEXT CHECK (diagnostic_code IS NULL OR ({_identifier_check("diagnostic_code", 96)})),
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (job_id, attempt_number),
+            UNIQUE (job_id, lease_generation),
+            CHECK ((state IN ('succeeded', 'failed', 'cancelled', 'abandoned')) = (ended_at IS NOT NULL))
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE workflow_attempt_artifacts (
+            attempt_id TEXT NOT NULL CHECK ({_uuid_check("attempt_id", "7")}),
+            project_id TEXT NOT NULL,
+            job_id TEXT NOT NULL CHECK ({_uuid_check("job_id", "7")}),
+            artifact_id TEXT NOT NULL CHECK ({_uuid_check("artifact_id", "7")}),
+            revision_id TEXT NOT NULL CHECK ({_uuid_check("revision_id", "7")}),
+            role TEXT NOT NULL CHECK (role IN ('output', 'checkpoint', 'diagnostic')),
+            disposition TEXT NOT NULL CHECK (
+                disposition IN ('committed', 'retained-incomplete', 'quarantined', 'discarded')
+            ),
+            content_hash TEXT NOT NULL CHECK (
+                length(content_hash) = 71 AND substr(content_hash, 1, 7) = 'sha256:'
+                AND substr(content_hash, 8) = lower(substr(content_hash, 8))
+                AND substr(content_hash, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            media_type TEXT NOT NULL CHECK (length(media_type) BETWEEN 3 AND 100),
+            provenance_entity_id TEXT CHECK (
+                provenance_entity_id IS NULL OR ({_uuid_check("provenance_entity_id", "7")})
+            ),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            updated_at TEXT NOT NULL CHECK ({_timestamp_check("updated_at")}),
+            PRIMARY KEY (attempt_id, artifact_id),
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (attempt_id, revision_id),
+            CHECK (provenance_entity_id IS NULL OR provenance_entity_id = artifact_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE workflow_history_events (
+            event_id TEXT PRIMARY KEY CHECK ({_uuid_check("event_id", "7")}),
+            project_id TEXT NOT NULL,
+            workflow_run_id TEXT NOT NULL CHECK ({_uuid_check("workflow_run_id", "7")}),
+            job_id TEXT CHECK (job_id IS NULL OR ({_uuid_check("job_id", "7")})),
+            attempt_id TEXT CHECK (attempt_id IS NULL OR ({_uuid_check("attempt_id", "7")})),
+            sequence INTEGER NOT NULL CHECK (sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            entity_type TEXT NOT NULL CHECK (
+                entity_type IN ('workflow-run', 'workflow-step', 'job', 'job-attempt', 'human-task')
+            ),
+            entity_id TEXT NOT NULL CHECK ({_uuid_check("entity_id", "7")}),
+            from_state TEXT,
+            to_state TEXT NOT NULL CHECK ({_identifier_check("to_state", 96)}),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            actor_json TEXT NOT NULL CHECK (length(actor_json) BETWEEN 2 AND 4096),
+            reason_code TEXT NOT NULL CHECK ({_identifier_check("reason_code", 96)}),
+            event_json TEXT NOT NULL CHECK (length(event_json) BETWEEN 2 AND 65536),
+            record_sha256 TEXT NOT NULL CHECK (
+                length(record_sha256) = 71 AND substr(record_sha256, 1, 7) = 'sha256:'
+                AND substr(record_sha256, 8) = lower(substr(record_sha256, 8))
+                AND substr(record_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, workflow_run_id, sequence)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE workflow_checkpoints (
+            checkpoint_id TEXT PRIMARY KEY CHECK ({_uuid_check("checkpoint_id", "7")}),
+            project_id TEXT NOT NULL,
+            job_id TEXT NOT NULL CHECK ({_uuid_check("job_id", "7")}),
+            attempt_id TEXT NOT NULL CHECK ({_uuid_check("attempt_id", "7")}),
+            checkpoint_sequence INTEGER NOT NULL CHECK (
+                checkpoint_sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}
+            ),
+            history_sequence INTEGER NOT NULL CHECK (history_sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            state_hash TEXT NOT NULL CHECK (
+                length(state_hash) = 71 AND substr(state_hash, 1, 7) = 'sha256:'
+                AND substr(state_hash, 8) = lower(substr(state_hash, 8))
+                AND substr(state_hash, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            payload_artifact_id TEXT NOT NULL CHECK ({_uuid_check("payload_artifact_id", "7")}),
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id, payload_artifact_id)
+                REFERENCES workflow_attempt_artifacts (attempt_id, artifact_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (attempt_id, checkpoint_sequence)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE workflow_committed_outputs (
+            job_id TEXT PRIMARY KEY CHECK ({_uuid_check("job_id", "7")}),
+            project_id TEXT NOT NULL,
+            attempt_id TEXT NOT NULL CHECK ({_uuid_check("attempt_id", "7")}),
+            idempotency_key TEXT NOT NULL,
+            command_fingerprint TEXT NOT NULL,
+            output_manifest_json TEXT NOT NULL CHECK (length(output_manifest_json) BETWEEN 2 AND 1048576),
+            output_record_sha256 TEXT NOT NULL CHECK (
+                length(output_record_sha256) = 71 AND substr(output_record_sha256, 1, 7) = 'sha256:'
+                AND substr(output_record_sha256, 8) = lower(substr(output_record_sha256, 8))
+                AND substr(output_record_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            committed_at TEXT NOT NULL CHECK ({_timestamp_check("committed_at")}),
+            provenance_event_id TEXT NOT NULL CHECK ({_uuid_check("provenance_event_id", "7")}),
+            outbox_id TEXT NOT NULL CHECK ({_uuid_check("outbox_id", "7")}),
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (provenance_event_id) REFERENCES provenance_events (event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (outbox_id) REFERENCES outbox_events (outbox_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, idempotency_key)
+        ) STRICT
+    """,
+    *(
+        statement
+        for table, message in (
+            ("workflow_definitions", "workflow definitions are immutable"),
+            ("workflow_authority_snapshots", "workflow authority snapshots are immutable"),
+            ("workflow_history_events", "workflow history is append-only"),
+            ("workflow_checkpoints", "workflow checkpoints are append-only"),
+            ("workflow_committed_outputs", "workflow committed outputs are immutable"),
+        )
+        for statement in _immutable_triggers(table, message)
+    ),
+    """
+        CREATE TRIGGER workflow_queue_jobs_identity_immutable
+        BEFORE UPDATE ON workflow_queue_jobs
+        WHEN NEW.job_id <> OLD.job_id OR NEW.project_id <> OLD.project_id
+          OR NEW.workflow_run_id <> OLD.workflow_run_id OR NEW.snapshot_id <> OLD.snapshot_id
+          OR NEW.snapshot_revision <> OLD.snapshot_revision OR NEW.step_run_id <> OLD.step_run_id
+          OR NEW.activity_type <> OLD.activity_type OR NEW.concurrency_class <> OLD.concurrency_class
+          OR NEW.progress_unit <> OLD.progress_unit OR NEW.progress_total_kind <> OLD.progress_total_kind
+          OR NEW.progress_total_units IS NOT OLD.progress_total_units OR NEW.checkpoint_mode <> OLD.checkpoint_mode
+          OR NEW.partial_artifact_disposition <> OLD.partial_artifact_disposition
+          OR NEW.idempotency_key <> OLD.idempotency_key OR NEW.command_fingerprint <> OLD.command_fingerprint
+          OR NEW.max_attempts <> OLD.max_attempts
+        BEGIN
+            SELECT RAISE(ABORT, 'workflow queue authority is immutable');
+        END
+    """,
+    """
+        CREATE TRIGGER workflow_attempt_artifacts_identity_immutable
+        BEFORE UPDATE ON workflow_attempt_artifacts
+        WHEN NEW.attempt_id <> OLD.attempt_id OR NEW.project_id <> OLD.project_id
+          OR NEW.job_id <> OLD.job_id OR NEW.artifact_id <> OLD.artifact_id
+          OR NEW.revision_id <> OLD.revision_id OR NEW.role <> OLD.role
+          OR NEW.content_hash <> OLD.content_hash OR NEW.media_type <> OLD.media_type
+          OR NEW.provenance_entity_id IS NOT OLD.provenance_entity_id OR NEW.created_at <> OLD.created_at
+        BEGIN
+            SELECT RAISE(ABORT, 'workflow artifact authority is immutable');
+        END
+    """,
+    """
+        CREATE TRIGGER workflow_attempt_artifacts_disposition_transition
+        BEFORE UPDATE OF disposition ON workflow_attempt_artifacts
+        WHEN NEW.disposition <> OLD.disposition
+         AND NOT (
+            OLD.disposition='retained-incomplete'
+            AND NEW.disposition IN ('committed', 'quarantined', 'discarded')
+         )
+        BEGIN
+            SELECT RAISE(ABORT, 'workflow artifact disposition transition is invalid');
+        END
+    """,
+    """
+        CREATE TRIGGER workflow_checkpoint_artifact_authority
+        BEFORE INSERT ON workflow_checkpoints
+        WHEN NOT EXISTS (
+            SELECT 1 FROM workflow_attempt_artifacts AS artifact
+             WHERE artifact.project_id=NEW.project_id AND artifact.job_id=NEW.job_id
+               AND artifact.attempt_id=NEW.attempt_id
+               AND artifact.artifact_id=NEW.payload_artifact_id
+               AND artifact.role='checkpoint' AND artifact.disposition='committed'
+               AND artifact.content_hash=NEW.state_hash
+        )
+        BEGIN
+            SELECT RAISE(ABORT, 'workflow checkpoint artifact authority differs');
+        END
+    """,
+    """
+        CREATE TRIGGER workflow_job_attempts_identity_immutable
+        BEFORE UPDATE ON workflow_job_attempts
+        WHEN NEW.attempt_id <> OLD.attempt_id OR NEW.project_id <> OLD.project_id
+          OR NEW.job_id <> OLD.job_id OR NEW.attempt_number <> OLD.attempt_number
+          OR NEW.worker_id <> OLD.worker_id OR NEW.lease_generation <> OLD.lease_generation
+          OR NEW.lease_token_sha256 <> OLD.lease_token_sha256
+        BEGIN
+            SELECT RAISE(ABORT, 'workflow attempt authority is immutable');
+        END
+    """,
+    "CREATE INDEX workflow_queue_dispatch ON workflow_queue_jobs "
+    "(state, concurrency_class, available_at, priority DESC, job_id)",
+    "CREATE INDEX workflow_queue_lease_expiry ON workflow_queue_jobs (state, lease_expires_at, job_id)",
+    "CREATE INDEX workflow_history_run_sequence ON workflow_history_events (project_id, workflow_run_id, sequence)",
+    "CREATE INDEX workflow_checkpoint_attempt_sequence ON workflow_checkpoints (attempt_id, checkpoint_sequence)",
+    "CREATE INDEX workflow_artifact_job_disposition ON workflow_attempt_artifacts "
+    "(job_id, disposition, role, artifact_id)",
+)
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V7_DDL,
+    SCHEMA_METADATA_V8_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -1110,6 +1518,7 @@ _DDL_STATEMENTS = (
     OBJECT_ENVELOPE_UPGRADES_DDL,
     OBJECT_CREATION_SOURCE_COLUMN,
     *PROVENANCE_LEDGER_DDL,
+    *WORKFLOW_EXECUTOR_DDL,
 )
 
 

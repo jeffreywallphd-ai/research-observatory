@@ -7,8 +7,10 @@ import json
 import secrets
 import sqlite3
 import threading
-from contextlib import suppress
-from dataclasses import dataclass
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager, suppress
+from dataclasses import dataclass, replace
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -46,7 +48,31 @@ from .ports.repositories import (
     UnitOfWork,
     UnitOfWorkFactory,
 )
-from .provenance import canonical_aggregate_provenance_event, canonical_invalidation_provenance_event
+from .ports.workflow_executor import (
+    ConcurrencyClass,
+    WorkflowActor,
+    WorkflowArtifactRecord,
+    WorkflowArtifactRole,
+    WorkflowCheckpointRecord,
+    WorkflowCompletionReceipt,
+    WorkflowInterruptionKind,
+    WorkflowJobAuthority,
+    WorkflowJobClaim,
+    WorkflowJobRecord,
+    WorkflowJobSubmission,
+    WorkflowLeaseRejected,
+    WorkflowOutputReference,
+    WorkflowQueueConflict,
+    WorkflowQueueCorrupt,
+    WorkflowQueueNotFound,
+    WorkflowQueueProblem,
+    WorkflowQueueRepository,
+)
+from .provenance import (
+    canonical_aggregate_provenance_event,
+    canonical_invalidation_provenance_event,
+    canonical_workflow_completion_provenance_event,
+)
 from .provenance_contracts import canonical_provenance_json, decode_provenance_event, provenance_record_sha256
 from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
 
@@ -2243,6 +2269,1529 @@ class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
             raise _repository_failure("provenance lineage query failed") from None
 
 
+def _workflow_json(value: object) -> str:
+    return json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+
+
+def _workflow_sha256(value: object) -> str:
+    return "sha256:" + hashlib.sha256(_workflow_json(value).encode("utf-8")).hexdigest()
+
+
+def _workflow_time(value: str) -> datetime:
+    try:
+        instant = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (AttributeError, ValueError) as error:
+        raise WorkflowQueueProblem("workflow timestamp is invalid") from error
+    if instant.tzinfo is None or instant.utcoffset() != timedelta(0):
+        raise WorkflowQueueProblem("workflow timestamp is invalid")
+    canonical = instant.isoformat(timespec="milliseconds").replace("+00:00", "Z")
+    if canonical != value:
+        raise WorkflowQueueProblem("workflow timestamp is invalid")
+    return instant
+
+
+def _workflow_timestamp(value: datetime) -> str:
+    return value.astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+
+
+def _workflow_uuid(at: str) -> str:
+    return new_uuid_v7(timestamp_ms=int(_workflow_time(at).timestamp() * 1_000))
+
+
+def _workflow_code(value: str) -> bool:
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    characters = letters + "0123456789.-"
+    return (
+        isinstance(value, str)
+        and 1 <= len(value) <= 96
+        and value[0] in letters
+        and value[-1] in letters + "0123456789"
+        and all(character in characters for character in value)
+        and ".." not in value
+        and "--" not in value
+    )
+
+
+def _workflow_actor(actor: WorkflowActor) -> None:
+    if (
+        not is_uuid_v7(actor.actor_id)
+        or actor.actor_type not in {"human", "system", "workload"}
+        or not _workflow_code(actor.role)
+    ):
+        raise WorkflowQueueProblem("workflow actor authority is invalid")
+
+
+def _workflow_progress(progress: Mapping[str, object]) -> str:
+    if set(progress) != {"kind", "unit", "completedUnits", "totalUnits"} or not _workflow_code(
+        cast(str, progress.get("unit"))
+    ):
+        raise WorkflowQueueProblem("workflow progress is invalid")
+    kind = progress.get("kind")
+    completed = progress.get("completedUnits")
+    total = progress.get("totalUnits")
+    quantified = (
+        kind == "quantified"
+        and isinstance(completed, int)
+        and not isinstance(completed, bool)
+        and isinstance(total, int)
+        and not isinstance(total, bool)
+        and 0 <= completed <= total <= MAX_SAFE_INTEGER
+    )
+    unquantified = kind in {"unknown", "not-applicable"} and completed is None and total is None
+    if not quantified and not unquantified:
+        raise WorkflowQueueProblem("workflow progress is invalid")
+    return _workflow_json(progress)
+
+
+class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
+    """Short-transaction SQLite queue with opaque lease tokens and generation fences."""
+
+    def __init__(self, database: Path, project_id: str) -> None:
+        if not database.is_absolute() or not project_id:
+            raise ValueError("workflow repository authority is invalid")
+        self._database = database
+        self._project_id = project_id
+
+    def _open(self) -> CanonicalConnection:
+        return open_canonical_database(self._database, expected_project_id=self._project_id)
+
+    @contextmanager
+    def _transaction(self) -> Iterator[CanonicalConnection]:
+        connection: CanonicalConnection | None = None
+        try:
+            connection = self._open()
+            connection.execute("BEGIN IMMEDIATE")
+            yield connection
+            connection.execute("COMMIT")
+        except WorkflowQueueProblem:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise
+        except (OSError, sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise WorkflowQueueProblem("workflow persistence failed") from error
+        finally:
+            if connection is not None:
+                connection.close()
+
+    @staticmethod
+    def _row(row: Any) -> WorkflowJobRecord:
+        if row is None:
+            raise WorkflowQueueNotFound("workflow job was not found")
+        return WorkflowJobRecord(
+            job_id=str(row[0]),
+            workflow_run_id=str(row[1]),
+            state=cast(Any, str(row[2])),
+            concurrency_class=cast(Any, str(row[3])),
+            priority=int(row[4]),
+            available_at=str(row[5]),
+            attempt_count=int(row[6]),
+            max_attempts=int(row[7]),
+            current_attempt_id=None if row[8] is None else str(row[8]),
+            lease_generation=int(row[9]),
+            cancellation_requested_at=None if row[10] is None else str(row[10]),
+            interruption_kind=None if row[11] is None else cast(Any, str(row[11])),
+            diagnostic_code=None if row[12] is None else str(row[12]),
+            committed_output_sha256=None if row[13] is None else str(row[13]),
+            updated_at=str(row[14]),
+        )
+
+    @staticmethod
+    def _select_job(connection: CanonicalConnection, project_id: str, job_id: str) -> Any:
+        return connection.execute(
+            """
+            SELECT job_id, workflow_run_id, state, concurrency_class, priority, available_at,
+                   attempt_count, max_attempts, current_attempt_id, lease_generation,
+                   cancellation_requested_at, interruption_kind, diagnostic_code,
+                   committed_output_sha256, updated_at
+              FROM workflow_queue_jobs WHERE project_id=? AND job_id=?
+            """,
+            (project_id, job_id),
+        ).fetchone()
+
+    @staticmethod
+    def _append_history(
+        connection: CanonicalConnection,
+        *,
+        project_id: str,
+        workflow_run_id: str,
+        job_id: str,
+        attempt_id: str | None,
+        entity_type: str,
+        entity_id: str,
+        from_state: str | None,
+        to_state: str,
+        occurred_at: str,
+        actor: WorkflowActor,
+        reason_code: str,
+        extra: Mapping[str, object] | None = None,
+    ) -> int:
+        _workflow_actor(actor)
+        if not _workflow_code(reason_code):
+            raise WorkflowQueueProblem("workflow history reason is invalid")
+        sequence = int(
+            connection.execute(
+                "SELECT COALESCE(MAX(sequence), 0) + 1 FROM workflow_history_events "
+                "WHERE project_id=? AND workflow_run_id=?",
+                (project_id, workflow_run_id),
+            ).fetchone()[0]
+        )
+        event_id = _workflow_uuid(occurred_at)
+        actor_value = {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role}
+        event: dict[str, object] = {
+            "eventId": event_id,
+            "sequence": sequence,
+            "entityType": entity_type,
+            "entityId": entity_id,
+            "fromState": from_state,
+            "toState": to_state,
+            "occurredAt": occurred_at,
+            "actor": actor_value,
+            "reasonCode": reason_code,
+            "progress": None,
+            "decisionId": None,
+            "checkpointId": None,
+            "interruptionKind": None,
+        }
+        if extra:
+            event.update(extra)
+        event_json = _workflow_json(event)
+        connection.execute(
+            """
+            INSERT INTO workflow_history_events (
+                event_id, project_id, workflow_run_id, job_id, attempt_id, sequence,
+                entity_type, entity_id, from_state, to_state, occurred_at, actor_json,
+                reason_code, event_json, record_sha256
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                event_id,
+                project_id,
+                workflow_run_id,
+                job_id,
+                attempt_id,
+                sequence,
+                entity_type,
+                entity_id,
+                from_state,
+                to_state,
+                occurred_at,
+                _workflow_json(actor_value),
+                reason_code,
+                event_json,
+                _workflow_sha256(event),
+            ),
+        )
+        return sequence
+
+    def enqueue(self, submission: WorkflowJobSubmission, *, actor: WorkflowActor) -> WorkflowJobRecord:
+        if submission.project_id != self._project_id:
+            raise WorkflowQueueConflict("workflow project authority differs")
+        _workflow_actor(actor)
+        definition = json.loads(submission.definition_json)
+        snapshot = json.loads(submission.snapshot_json)
+        if (
+            _workflow_json(definition) != submission.definition_json
+            or _workflow_json(snapshot) != submission.snapshot_json
+            or _workflow_sha256(definition) != submission.definition_record_sha256
+            or _workflow_sha256(snapshot) != submission.snapshot_record_sha256
+        ):
+            raise WorkflowQueueCorrupt("workflow authority digest differs")
+        final_actor = snapshot["history"][-1]["actor"]
+        if final_actor != {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role}:
+            raise WorkflowQueueConflict("workflow admission actor differs from snapshot authority")
+        with self._transaction() as connection:
+            existing = connection.execute(
+                "SELECT job_id, command_fingerprint FROM workflow_queue_jobs WHERE project_id=? AND idempotency_key=?",
+                (self._project_id, submission.idempotency_key),
+            ).fetchone()
+            if existing is not None:
+                if str(existing[0]) != submission.job_id or str(existing[1]) != submission.command_fingerprint:
+                    raise WorkflowQueueConflict("workflow idempotency authority differs")
+                return self._row(self._select_job(connection, self._project_id, submission.job_id))
+
+            definition_existing = connection.execute(
+                "SELECT definition_json, record_sha256 FROM workflow_definitions WHERE definition_revision_id=?",
+                (submission.definition_revision_id,),
+            ).fetchone()
+            if definition_existing is None:
+                connection.execute(
+                    """
+                    INSERT INTO workflow_definitions (
+                        definition_revision_id, project_id, workflow_definition_id,
+                        definition_version, contract_version, content_hash, definition_json,
+                        record_sha256, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        submission.definition_revision_id,
+                        self._project_id,
+                        definition["workflowDefinitionId"],
+                        definition["definitionVersion"],
+                        definition["contractVersion"],
+                        snapshot["definition"]["contentHash"],
+                        submission.definition_json,
+                        submission.definition_record_sha256,
+                        definition["createdAt"],
+                    ),
+                )
+            elif tuple(definition_existing) != (
+                submission.definition_json,
+                submission.definition_record_sha256,
+            ):
+                raise WorkflowQueueConflict("workflow definition authority differs")
+
+            snapshot_existing = connection.execute(
+                "SELECT snapshot_json, record_sha256 FROM workflow_authority_snapshots "
+                "WHERE snapshot_id=? AND snapshot_revision=?",
+                (submission.snapshot_id, submission.snapshot_revision),
+            ).fetchone()
+            if snapshot_existing is None:
+                connection.execute(
+                    """
+                    INSERT INTO workflow_authority_snapshots (
+                        snapshot_id, snapshot_revision, project_id, workflow_run_id,
+                        definition_revision_id, state, history_sequence, snapshot_json,
+                        record_sha256, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        submission.snapshot_id,
+                        submission.snapshot_revision,
+                        self._project_id,
+                        submission.workflow_run_id,
+                        submission.definition_revision_id,
+                        snapshot["state"],
+                        snapshot["sequence"],
+                        submission.snapshot_json,
+                        submission.snapshot_record_sha256,
+                        snapshot["createdAt"],
+                        snapshot["updatedAt"],
+                    ),
+                )
+            elif tuple(snapshot_existing) != (submission.snapshot_json, submission.snapshot_record_sha256):
+                raise WorkflowQueueConflict("workflow snapshot authority differs")
+
+            connection.execute(
+                """
+                INSERT INTO workflow_queue_jobs (
+                    job_id, project_id, workflow_run_id, snapshot_id, snapshot_revision,
+                    step_run_id, activity_type, concurrency_class, progress_unit,
+                    progress_total_kind, progress_total_units, checkpoint_mode,
+                    partial_artifact_disposition, state, priority,
+                    available_at, max_attempts, initial_backoff_ms, maximum_backoff_ms,
+                    multiplier_basis_points, deterministic_jitter, retryable_error_codes_json,
+                    non_retryable_error_codes_json, idempotency_key, command_fingerprint,
+                    created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'runnable', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    submission.job_id,
+                    self._project_id,
+                    submission.workflow_run_id,
+                    submission.snapshot_id,
+                    submission.snapshot_revision,
+                    submission.step_run_id,
+                    submission.activity_type,
+                    submission.concurrency_class,
+                    submission.progress_unit,
+                    submission.progress_total_kind,
+                    submission.progress_total_units,
+                    submission.checkpoint_mode,
+                    submission.partial_artifact_disposition,
+                    submission.priority,
+                    submission.available_at,
+                    submission.max_attempts,
+                    submission.initial_backoff_ms,
+                    submission.maximum_backoff_ms,
+                    submission.multiplier_basis_points,
+                    int(submission.deterministic_jitter),
+                    _workflow_json(submission.retryable_error_codes),
+                    _workflow_json(submission.non_retryable_error_codes),
+                    submission.idempotency_key,
+                    submission.command_fingerprint,
+                    snapshot["createdAt"],
+                    snapshot["updatedAt"],
+                ),
+            )
+            for event_value in cast(list[dict[str, object]], snapshot["history"]):
+                entity_type = str(event_value["entityType"])
+                event_job_id = submission.job_id if entity_type == "job" else None
+                event_json = _workflow_json(event_value)
+                connection.execute(
+                    """
+                    INSERT INTO workflow_history_events (
+                        event_id, project_id, workflow_run_id, job_id, attempt_id, sequence,
+                        entity_type, entity_id, from_state, to_state, occurred_at, actor_json,
+                        reason_code, event_json, record_sha256
+                    ) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        event_value["eventId"],
+                        self._project_id,
+                        submission.workflow_run_id,
+                        event_job_id,
+                        event_value["sequence"],
+                        entity_type,
+                        event_value["entityId"],
+                        event_value["fromState"],
+                        event_value["toState"],
+                        event_value["occurredAt"],
+                        _workflow_json(event_value["actor"]),
+                        event_value["reasonCode"],
+                        event_json,
+                        _workflow_sha256(event_value),
+                    ),
+                )
+            return self._row(self._select_job(connection, self._project_id, submission.job_id))
+
+    def get(self, job_id: str) -> WorkflowJobRecord:
+        try:
+            connection = self._open()
+            try:
+                return self._row(self._select_job(connection, self._project_id, job_id))
+            finally:
+                connection.close()
+        except WorkflowQueueProblem:
+            raise
+        except (OSError, sqlite3.Error, StorageProblem) as error:
+            raise WorkflowQueueProblem("workflow read failed") from error
+
+    def authority(self, job_id: str) -> WorkflowJobAuthority:
+        try:
+            connection = self._open()
+            try:
+                row = connection.execute(
+                    """
+                    SELECT definition.definition_json, snapshot.snapshot_json,
+                           definition.record_sha256, snapshot.record_sha256
+                      FROM workflow_queue_jobs AS job
+                      JOIN workflow_authority_snapshots AS snapshot
+                        ON snapshot.snapshot_id=job.snapshot_id
+                       AND snapshot.snapshot_revision=job.snapshot_revision
+                      JOIN workflow_definitions AS definition
+                        ON definition.definition_revision_id=snapshot.definition_revision_id
+                     WHERE job.project_id=? AND job.job_id=?
+                    """,
+                    (self._project_id, job_id),
+                ).fetchone()
+                if row is None:
+                    raise WorkflowQueueNotFound("workflow job was not found")
+                authority = WorkflowJobAuthority(*map(str, row))
+                if (
+                    _workflow_sha256(json.loads(authority.definition_json)) != authority.definition_record_sha256
+                    or _workflow_sha256(json.loads(authority.snapshot_json)) != authority.snapshot_record_sha256
+                ):
+                    raise WorkflowQueueCorrupt("workflow authority digest differs")
+                return authority
+            finally:
+                connection.close()
+        except WorkflowQueueProblem:
+            raise
+        except (OSError, sqlite3.Error, StorageProblem, ValueError) as error:
+            raise WorkflowQueueProblem("workflow authority read failed") from error
+
+    @staticmethod
+    def _latest_checkpoint(connection: CanonicalConnection, job_id: str) -> WorkflowCheckpointRecord | None:
+        row = connection.execute(
+            """
+            SELECT checkpoint.checkpoint_id, checkpoint.attempt_id,
+                   checkpoint.checkpoint_sequence, checkpoint.history_sequence,
+                   checkpoint.created_at, checkpoint.state_hash, checkpoint.payload_artifact_id,
+                   artifact.attempt_id, artifact.job_id, artifact.artifact_id,
+                   artifact.revision_id, artifact.role, artifact.disposition,
+                   artifact.content_hash, artifact.media_type, artifact.provenance_entity_id
+              FROM workflow_checkpoints AS checkpoint
+              JOIN workflow_attempt_artifacts AS artifact
+                ON artifact.attempt_id=checkpoint.attempt_id
+               AND artifact.artifact_id=checkpoint.payload_artifact_id
+             WHERE checkpoint.job_id=?
+             ORDER BY checkpoint.history_sequence DESC LIMIT 1
+            """,
+            (job_id,),
+        ).fetchone()
+        return (
+            None
+            if row is None
+            else WorkflowCheckpointRecord(
+                checkpoint_id=str(row[0]),
+                attempt_id=str(row[1]),
+                checkpoint_sequence=int(row[2]),
+                history_sequence=int(row[3]),
+                created_at=str(row[4]),
+                state_hash=str(row[5]),
+                payload_artifact_id=str(row[6]),
+                payload=_SqliteWorkflowQueueRepository._artifact_row(row[7:]),
+            )
+        )
+
+    def claim_next(
+        self,
+        *,
+        worker_id: str,
+        concurrency_classes: tuple[ConcurrencyClass, ...],
+        now: str,
+        lease_duration_ms: int,
+    ) -> WorkflowJobClaim | None:
+        instant = _workflow_time(now)
+        if (
+            not is_uuid_v7(worker_id)
+            or not concurrency_classes
+            or any(item not in {"interactive", "document", "ai", "maintenance"} for item in concurrency_classes)
+            or not 1_000 <= lease_duration_ms <= 3_600_000
+        ):
+            raise WorkflowQueueProblem("workflow claim authority is invalid")
+        expires_at = _workflow_timestamp(instant + timedelta(milliseconds=lease_duration_ms))
+        placeholders = ",".join("?" for _ in concurrency_classes)
+        with self._transaction() as connection:
+            candidate = connection.execute(
+                f"""
+                SELECT job_id, workflow_run_id, step_run_id, activity_type, concurrency_class,
+                       attempt_count, lease_generation, idempotency_key, command_fingerprint, state,
+                       progress_unit, progress_total_kind, progress_total_units
+                 FROM workflow_queue_jobs
+                 WHERE project_id=? AND state IN ('runnable', 'retry-scheduled')
+                   AND attempt_count<max_attempts AND available_at<=?
+                   AND concurrency_class IN ({placeholders})
+                 ORDER BY priority DESC, available_at, job_id LIMIT 1
+                """,
+                (self._project_id, now, *concurrency_classes),
+            ).fetchone()
+            if candidate is None:
+                return None
+            job_id = str(candidate[0])
+            worker = WorkflowActor(worker_id, "workload", "local-workflow-worker")
+            if str(candidate[9]) == "retry-scheduled":
+                changed = connection.execute(
+                    "UPDATE workflow_queue_jobs SET state='runnable', updated_at=? "
+                    "WHERE project_id=? AND job_id=? AND state='retry-scheduled' AND available_at<=?",
+                    (now, self._project_id, job_id, now),
+                ).rowcount
+                if changed != 1:
+                    return None
+                self._append_history(
+                    connection,
+                    project_id=self._project_id,
+                    workflow_run_id=str(candidate[1]),
+                    job_id=job_id,
+                    attempt_id=None,
+                    entity_type="job",
+                    entity_id=job_id,
+                    from_state="retry-scheduled",
+                    to_state="runnable",
+                    occurred_at=now,
+                    actor=worker,
+                    reason_code="retry-due",
+                )
+            attempt_number = int(candidate[5]) + 1
+            lease_generation = int(candidate[6]) + 1
+            attempt_id = _workflow_uuid(now)
+            lease_token = secrets.token_urlsafe(32)
+            lease_digest = hashlib.sha256(lease_token.encode("ascii")).hexdigest()
+            changed = connection.execute(
+                """
+                UPDATE workflow_queue_jobs
+                   SET state='claimed', attempt_count=?, current_attempt_id=?, lease_generation=?,
+                       lease_owner=?, lease_token_sha256=?, lease_expires_at=?, heartbeat_at=?,
+                       diagnostic_code=NULL, updated_at=?
+                 WHERE project_id=? AND job_id=? AND state='runnable'
+                   AND attempt_count=? AND lease_generation=?
+                """,
+                (
+                    attempt_number,
+                    attempt_id,
+                    lease_generation,
+                    worker_id,
+                    lease_digest,
+                    expires_at,
+                    now,
+                    now,
+                    self._project_id,
+                    job_id,
+                    candidate[5],
+                    candidate[6],
+                ),
+            ).rowcount
+            if changed != 1:
+                return None
+            initial_progress = {
+                "kind": "quantified" if str(candidate[11]) == "known" else str(candidate[11]),
+                "unit": str(candidate[10]),
+                "completedUnits": 0 if str(candidate[11]) == "known" else None,
+                "totalUnits": None if candidate[12] is None else int(candidate[12]),
+            }
+            connection.execute(
+                """
+                    INSERT INTO workflow_job_attempts (
+                        attempt_id, project_id, job_id, attempt_number, state, worker_id,
+                        lease_generation, lease_token_sha256, lease_expires_at, heartbeat_at,
+                        progress_json
+                    ) VALUES (?, ?, ?, ?, 'claimed', ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    attempt_id,
+                    self._project_id,
+                    job_id,
+                    attempt_number,
+                    worker_id,
+                    lease_generation,
+                    lease_digest,
+                    expires_at,
+                    now,
+                    _workflow_json(initial_progress),
+                ),
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(candidate[1]),
+                job_id=job_id,
+                attempt_id=attempt_id,
+                entity_type="job",
+                entity_id=job_id,
+                from_state="runnable",
+                to_state="claimed",
+                occurred_at=now,
+                actor=worker,
+                reason_code="worker-claimed",
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(candidate[1]),
+                job_id=job_id,
+                attempt_id=attempt_id,
+                entity_type="job-attempt",
+                entity_id=attempt_id,
+                from_state=None,
+                to_state="claimed",
+                occurred_at=now,
+                actor=worker,
+                reason_code="attempt-created",
+                extra={"progress": initial_progress},
+            )
+            return WorkflowJobClaim(
+                project_id=self._project_id,
+                workflow_run_id=str(candidate[1]),
+                job_id=job_id,
+                step_run_id=str(candidate[2]),
+                activity_type=str(candidate[3]),
+                concurrency_class=cast(Any, str(candidate[4])),
+                attempt_id=attempt_id,
+                attempt_number=attempt_number,
+                worker_id=worker_id,
+                lease_token=lease_token,
+                lease_generation=lease_generation,
+                lease_expires_at=expires_at,
+                idempotency_key=str(candidate[7]),
+                command_fingerprint=str(candidate[8]),
+                latest_checkpoint=self._latest_checkpoint(connection, job_id),
+            )
+
+    def _lease_row(
+        self,
+        connection: CanonicalConnection,
+        claim: WorkflowJobClaim,
+        now: str,
+        *,
+        states: tuple[str, ...],
+    ) -> Any:
+        if claim.project_id != self._project_id:
+            raise WorkflowLeaseRejected("workflow lease project differs")
+        try:
+            digest = hashlib.sha256(claim.lease_token.encode("ascii")).hexdigest()
+        except UnicodeEncodeError as error:
+            raise WorkflowLeaseRejected("workflow lease capability is invalid") from error
+        row = connection.execute(
+            """
+            SELECT job.workflow_run_id, job.state, job.lease_expires_at, job.cancellation_requested_at,
+                   attempt.state, attempt.progress_json, job.progress_unit,
+                   job.progress_total_kind, job.progress_total_units, job.checkpoint_mode,
+                   job.partial_artifact_disposition
+              FROM workflow_queue_jobs AS job
+              JOIN workflow_job_attempts AS attempt ON attempt.attempt_id=job.current_attempt_id
+             WHERE job.project_id=? AND job.job_id=? AND job.current_attempt_id=?
+               AND job.lease_owner=? AND job.lease_generation=? AND job.lease_token_sha256=?
+               AND attempt.worker_id=? AND attempt.lease_generation=? AND attempt.lease_token_sha256=?
+            """,
+            (
+                self._project_id,
+                claim.job_id,
+                claim.attempt_id,
+                claim.worker_id,
+                claim.lease_generation,
+                digest,
+                claim.worker_id,
+                claim.lease_generation,
+                digest,
+            ),
+        ).fetchone()
+        if row is None or str(row[1]) not in states or str(row[2]) <= now:
+            raise WorkflowLeaseRejected("workflow lease is stale or expired")
+        return row
+
+    @staticmethod
+    def _validated_attempt_progress(row: Any, progress: Mapping[str, object]) -> tuple[str, dict[str, object]]:
+        progress_json = _workflow_progress(progress)
+        parsed = cast(dict[str, object], json.loads(progress_json))
+        expected_kind = "quantified" if str(row[7]) == "known" else str(row[7])
+        if parsed["unit"] != str(row[6]) or parsed["kind"] != expected_kind or parsed["totalUnits"] != row[8]:
+            raise WorkflowQueueConflict("workflow progress authority differs")
+        prior = cast(dict[str, object], json.loads(str(row[5])))
+        if expected_kind == "quantified" and int(cast(int, parsed["completedUnits"])) < int(
+            cast(int, prior["completedUnits"])
+        ):
+            raise WorkflowQueueConflict("workflow progress cannot regress")
+        return progress_json, parsed
+
+    def _verify_attempt_capability(self, connection: CanonicalConnection, claim: WorkflowJobClaim) -> None:
+        """Verify an immutable claimant tuple without requiring an active job lease."""
+
+        if claim.project_id != self._project_id:
+            raise WorkflowLeaseRejected("workflow lease project differs")
+        try:
+            digest = hashlib.sha256(claim.lease_token.encode("ascii")).hexdigest()
+        except UnicodeEncodeError as error:
+            raise WorkflowLeaseRejected("workflow lease capability is invalid") from error
+        row = connection.execute(
+            """
+            SELECT job.workflow_run_id, job.step_run_id, job.activity_type,
+                   job.concurrency_class, job.idempotency_key, job.command_fingerprint,
+                   attempt.attempt_number
+              FROM workflow_job_attempts AS attempt
+              JOIN workflow_queue_jobs AS job
+                ON job.project_id=attempt.project_id AND job.job_id=attempt.job_id
+             WHERE attempt.project_id=? AND attempt.job_id=? AND attempt.attempt_id=?
+               AND attempt.worker_id=? AND attempt.lease_generation=?
+               AND attempt.lease_token_sha256=?
+            """,
+            (
+                self._project_id,
+                claim.job_id,
+                claim.attempt_id,
+                claim.worker_id,
+                claim.lease_generation,
+                digest,
+            ),
+        ).fetchone()
+        if row is None or tuple(row) != (
+            claim.workflow_run_id,
+            claim.step_run_id,
+            claim.activity_type,
+            claim.concurrency_class,
+            claim.idempotency_key,
+            claim.command_fingerprint,
+            claim.attempt_number,
+        ):
+            raise WorkflowLeaseRejected("workflow attempt capability differs")
+
+    def start(self, claim: WorkflowJobClaim, *, now: str) -> WorkflowJobRecord:
+        _workflow_time(now)
+        with self._transaction() as connection:
+            row = self._lease_row(connection, claim, now, states=("claimed",))
+            connection.execute(
+                "UPDATE workflow_queue_jobs SET state='running', updated_at=? WHERE job_id=?",
+                (now, claim.job_id),
+            )
+            connection.execute(
+                "UPDATE workflow_job_attempts SET state='running', started_at=? WHERE attempt_id=?",
+                (now, claim.attempt_id),
+            )
+            actor = WorkflowActor(claim.worker_id, "workload", "local-workflow-worker")
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job",
+                entity_id=claim.job_id,
+                from_state="claimed",
+                to_state="running",
+                occurred_at=now,
+                actor=actor,
+                reason_code="worker-started",
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job-attempt",
+                entity_id=claim.attempt_id,
+                from_state="claimed",
+                to_state="running",
+                occurred_at=now,
+                actor=actor,
+                reason_code="attempt-started",
+                extra={"progress": cast(dict[str, object], json.loads(str(row[5])))},
+            )
+            return self._row(self._select_job(connection, self._project_id, claim.job_id))
+
+    def heartbeat(
+        self,
+        claim: WorkflowJobClaim,
+        *,
+        now: str,
+        lease_duration_ms: int,
+        progress: Mapping[str, object],
+    ) -> WorkflowJobClaim:
+        instant = _workflow_time(now)
+        if not 1_000 <= lease_duration_ms <= 3_600_000:
+            raise WorkflowQueueProblem("workflow heartbeat duration is invalid")
+        expires_at = _workflow_timestamp(instant + timedelta(milliseconds=lease_duration_ms))
+        with self._transaction() as connection:
+            row = self._lease_row(connection, claim, now, states=("running", "cancelling"))
+            progress_json, validated_progress = self._validated_attempt_progress(row, progress)
+            connection.execute(
+                "UPDATE workflow_queue_jobs SET lease_expires_at=?, heartbeat_at=?, updated_at=? WHERE job_id=?",
+                (expires_at, now, now, claim.job_id),
+            )
+            connection.execute(
+                "UPDATE workflow_job_attempts SET lease_expires_at=?, heartbeat_at=?, progress_json=? "
+                "WHERE attempt_id=?",
+                (expires_at, now, progress_json, claim.attempt_id),
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job-attempt",
+                entity_id=claim.attempt_id,
+                from_state=str(row[4]),
+                to_state=str(row[4]),
+                occurred_at=now,
+                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+                reason_code="progress-reported",
+                extra={"progress": validated_progress},
+            )
+        return replace(claim, lease_expires_at=expires_at)
+
+    def checkpoint(
+        self,
+        claim: WorkflowJobClaim,
+        *,
+        checkpoint_id: str,
+        state_hash: str,
+        payload_artifact_id: str,
+        now: str,
+        progress: Mapping[str, object],
+    ) -> WorkflowCheckpointRecord:
+        _workflow_time(now)
+        if not is_uuid_v7(checkpoint_id) or not is_uuid_v7(payload_artifact_id):
+            raise WorkflowQueueProblem("workflow checkpoint identity is invalid")
+        if (
+            len(state_hash) != 71
+            or not state_hash.startswith("sha256:")
+            or any(character not in "0123456789abcdef" for character in state_hash[7:])
+        ):
+            raise WorkflowQueueProblem("workflow checkpoint digest is invalid")
+        with self._transaction() as connection:
+            row = self._lease_row(connection, claim, now, states=("running", "cancelling"))
+            if str(row[9]) == "forbidden":
+                raise WorkflowQueueConflict("workflow checkpoint policy forbids checkpoints")
+            progress_json, validated_progress = self._validated_attempt_progress(row, progress)
+            artifact = connection.execute(
+                """
+                SELECT attempt_id, job_id, artifact_id, revision_id, role, disposition,
+                       content_hash, media_type, provenance_entity_id
+                  FROM workflow_attempt_artifacts
+                 WHERE project_id=? AND job_id=? AND attempt_id=? AND artifact_id=?
+                """,
+                (self._project_id, claim.job_id, claim.attempt_id, payload_artifact_id),
+            ).fetchone()
+            if artifact is None or tuple(map(str, artifact[4:7])) != (
+                "checkpoint",
+                "retained-incomplete",
+                state_hash,
+            ):
+                raise WorkflowQueueConflict("workflow checkpoint artifact authority differs")
+            payload = replace(self._artifact_row(artifact), disposition="committed")
+            connection.execute(
+                "UPDATE workflow_attempt_artifacts SET disposition='committed', updated_at=? "
+                "WHERE attempt_id=? AND artifact_id=?",
+                (now, claim.attempt_id, payload_artifact_id),
+            )
+            checkpoint_sequence = int(
+                connection.execute(
+                    "SELECT COALESCE(MAX(checkpoint_sequence), 0) + 1 FROM workflow_checkpoints WHERE attempt_id=?",
+                    (claim.attempt_id,),
+                ).fetchone()[0]
+            )
+            history_sequence = self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job-attempt",
+                entity_id=claim.attempt_id,
+                from_state=str(row[4]),
+                to_state=str(row[4]),
+                occurred_at=now,
+                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+                reason_code="checkpoint-recorded",
+                extra={"checkpointId": checkpoint_id, "progress": validated_progress},
+            )
+            connection.execute(
+                """
+                INSERT INTO workflow_checkpoints (
+                    checkpoint_id, project_id, job_id, attempt_id, checkpoint_sequence,
+                    history_sequence, created_at, state_hash, payload_artifact_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    checkpoint_id,
+                    self._project_id,
+                    claim.job_id,
+                    claim.attempt_id,
+                    checkpoint_sequence,
+                    history_sequence,
+                    now,
+                    state_hash,
+                    payload_artifact_id,
+                ),
+            )
+            connection.execute(
+                "UPDATE workflow_job_attempts SET progress_json=? WHERE attempt_id=?",
+                (progress_json, claim.attempt_id),
+            )
+            return WorkflowCheckpointRecord(
+                checkpoint_id,
+                claim.attempt_id,
+                checkpoint_sequence,
+                history_sequence,
+                now,
+                state_hash,
+                payload_artifact_id,
+                payload,
+            )
+
+    def request_cancellation(
+        self,
+        job_id: str,
+        *,
+        actor: WorkflowActor,
+        now: str,
+        reason_code: str,
+        interruption_kind: WorkflowInterruptionKind,
+    ) -> WorkflowJobRecord:
+        _workflow_time(now)
+        if interruption_kind not in {"user-cancel", "security-lock", "policy", "dependency"}:
+            raise WorkflowQueueProblem("workflow interruption kind is invalid")
+        if not _workflow_code(reason_code):
+            raise WorkflowQueueProblem("workflow cancellation reason is invalid")
+        with self._transaction() as connection:
+            current = self._row(self._select_job(connection, self._project_id, job_id))
+            if current.state in {"succeeded", "failed", "cancelled"}:
+                return current
+            if current.state == "cancelling":
+                return current
+            next_state = "cancelling" if current.state == "running" else "cancelled"
+            if current.state == "claimed" and current.current_attempt_id is not None:
+                attempt_row = connection.execute(
+                    "SELECT state, progress_json FROM workflow_job_attempts WHERE attempt_id=?",
+                    (current.current_attempt_id,),
+                ).fetchone()
+                if attempt_row is None or str(attempt_row[0]) != "claimed":
+                    raise WorkflowQueueCorrupt("workflow claimed attempt authority differs")
+                connection.execute(
+                    "UPDATE workflow_job_attempts SET state='cancelled', ended_at=?, diagnostic_code=? "
+                    "WHERE attempt_id=?",
+                    (now, reason_code, current.current_attempt_id),
+                )
+                connection.execute(
+                    """
+                    UPDATE workflow_attempt_artifacts
+                       SET disposition=(SELECT partial_artifact_disposition FROM workflow_queue_jobs WHERE job_id=?),
+                           updated_at=?
+                     WHERE attempt_id=? AND disposition='retained-incomplete'
+                    """,
+                    (job_id, now, current.current_attempt_id),
+                )
+                self._append_history(
+                    connection,
+                    project_id=self._project_id,
+                    workflow_run_id=current.workflow_run_id,
+                    job_id=job_id,
+                    attempt_id=current.current_attempt_id,
+                    entity_type="job-attempt",
+                    entity_id=current.current_attempt_id,
+                    from_state="claimed",
+                    to_state="cancelled",
+                    occurred_at=now,
+                    actor=actor,
+                    reason_code=reason_code,
+                    extra={
+                        "interruptionKind": interruption_kind,
+                        "progress": cast(dict[str, object], json.loads(str(attempt_row[1]))),
+                    },
+                )
+            connection.execute(
+                """
+                UPDATE workflow_queue_jobs
+                   SET state=?, cancellation_requested_at=?, cancellation_reason_code=?,
+                       interruption_kind=?, lease_owner=CASE WHEN ?='cancelled' THEN NULL ELSE lease_owner END,
+                       lease_token_sha256=CASE WHEN ?='cancelled' THEN NULL ELSE lease_token_sha256 END,
+                       lease_expires_at=CASE WHEN ?='cancelled' THEN NULL ELSE lease_expires_at END,
+                       updated_at=?
+                 WHERE project_id=? AND job_id=?
+                """,
+                (
+                    next_state,
+                    now,
+                    reason_code,
+                    interruption_kind,
+                    next_state,
+                    next_state,
+                    next_state,
+                    now,
+                    self._project_id,
+                    job_id,
+                ),
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=current.workflow_run_id,
+                job_id=job_id,
+                attempt_id=current.current_attempt_id,
+                entity_type="job",
+                entity_id=job_id,
+                from_state=current.state,
+                to_state=next_state,
+                occurred_at=now,
+                actor=actor,
+                reason_code=reason_code,
+                extra={"interruptionKind": interruption_kind},
+            )
+            return self._row(self._select_job(connection, self._project_id, job_id))
+
+    def cancellation_requested(self, claim: WorkflowJobClaim, *, now: str) -> bool:
+        _workflow_time(now)
+        connection: CanonicalConnection | None = None
+        try:
+            connection = self._open()
+            row = self._lease_row(connection, claim, now, states=("claimed", "running", "cancelling"))
+            return row[3] is not None
+        except WorkflowQueueProblem:
+            raise
+        except (OSError, sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise WorkflowQueueProblem("workflow cancellation read failed") from error
+        finally:
+            if connection is not None:
+                connection.close()
+
+    @staticmethod
+    def _output_manifest(outputs: tuple[WorkflowOutputReference, ...]) -> tuple[str, str]:
+        if not outputs:
+            raise WorkflowQueueProblem("workflow output manifest is empty")
+        values: list[dict[str, object]] = []
+        for output in outputs:
+            if (
+                not is_uuid_v7(output.artifact_id)
+                or not is_uuid_v7(output.revision_id)
+                or (output.provenance_entity_id is not None and not is_uuid_v7(output.provenance_entity_id))
+                or len(output.content_hash) != 71
+                or not output.content_hash.startswith("sha256:")
+                or any(character not in "0123456789abcdef" for character in output.content_hash[7:])
+                or "/" not in output.media_type
+            ):
+                raise WorkflowQueueProblem("workflow output reference is invalid")
+            values.append(
+                {
+                    "artifactId": output.artifact_id,
+                    "revisionId": output.revision_id,
+                    "contentHash": output.content_hash,
+                    "mediaType": output.media_type,
+                    "provenanceEntityId": output.provenance_entity_id,
+                }
+            )
+        if len({item.artifact_id for item in outputs}) != len(outputs) or len(
+            {item.revision_id for item in outputs}
+        ) != len(outputs):
+            raise WorkflowQueueProblem("workflow output references are not distinct")
+        manifest = _workflow_json({"outputs": values})
+        return manifest, "sha256:" + hashlib.sha256(manifest.encode("utf-8")).hexdigest()
+
+    def _resolve_outputs(
+        self,
+        connection: CanonicalConnection,
+        outputs: tuple[WorkflowOutputReference, ...],
+    ) -> tuple[AggregateRevision, ...]:
+        revisions: list[AggregateRevision] = []
+        for output in outputs:
+            if output.provenance_entity_id not in {None, output.artifact_id}:
+                raise WorkflowQueueConflict("workflow output provenance identity differs")
+            row = connection.execute(
+                """
+                SELECT revision.revision_id, revision.aggregate_id, revision.aggregate_kind,
+                       revision.project_id, revision.revision, revision.contract_version,
+                       revision.created_at, revision.modified_at,
+                       revision.display_label_observed, revision.display_label_normalized,
+                       revision.knowledge_status, revision.rights_status, document.object_sha256
+                  FROM aggregate_revisions AS revision
+                  LEFT JOIN documents AS document
+                    ON document.project_id=revision.project_id
+                   AND document.revision_id=revision.revision_id
+                 WHERE revision.project_id=? AND revision.revision_id=?
+                   AND revision.aggregate_id=?
+                """,
+                (self._project_id, output.revision_id, output.artifact_id),
+            ).fetchone()
+            if row is None:
+                raise WorkflowQueueConflict("workflow output revision is not canonical")
+            revision = _projection(row)
+            content_rows = connection.execute(
+                """
+                SELECT DISTINCT content_hash
+                  FROM provenance_ledger_entities
+                 WHERE project_id=? AND entity_id=? AND revision_id=? AND direction='output'
+                """,
+                (self._project_id, output.artifact_id, output.revision_id),
+            ).fetchall()
+            if len(content_rows) != 1 or str(content_rows[0][0]) != output.content_hash:
+                raise WorkflowQueueConflict("workflow output content authority differs")
+            revisions.append(revision)
+        return tuple(revisions)
+
+    @staticmethod
+    def _artifact_row(row: Any) -> WorkflowArtifactRecord:
+        if row is None:
+            raise WorkflowQueueNotFound("workflow attempt artifact was not found")
+        return WorkflowArtifactRecord(
+            attempt_id=str(row[0]),
+            job_id=str(row[1]),
+            artifact_id=str(row[2]),
+            revision_id=str(row[3]),
+            role=cast(WorkflowArtifactRole, str(row[4])),
+            disposition=cast(Any, str(row[5])),
+            content_hash=str(row[6]),
+            media_type=str(row[7]),
+            provenance_entity_id=None if row[8] is None else str(row[8]),
+        )
+
+    def stage_artifact(
+        self,
+        claim: WorkflowJobClaim,
+        *,
+        artifact: WorkflowOutputReference,
+        role: WorkflowArtifactRole,
+        now: str,
+    ) -> WorkflowArtifactRecord:
+        _workflow_time(now)
+        if role not in {"output", "checkpoint", "diagnostic"}:
+            raise WorkflowQueueProblem("workflow artifact role is invalid")
+        self._output_manifest((artifact,))
+        with self._transaction() as connection:
+            self._lease_row(connection, claim, now, states=("running", "cancelling"))
+            self._resolve_outputs(connection, (artifact,))
+            existing = connection.execute(
+                """
+                SELECT attempt_id, job_id, artifact_id, revision_id, role, disposition,
+                       content_hash, media_type, provenance_entity_id
+                  FROM workflow_attempt_artifacts
+                 WHERE attempt_id=? AND artifact_id=?
+                """,
+                (claim.attempt_id, artifact.artifact_id),
+            ).fetchone()
+            expected = (
+                claim.attempt_id,
+                claim.job_id,
+                artifact.artifact_id,
+                artifact.revision_id,
+                role,
+                "retained-incomplete",
+                artifact.content_hash,
+                artifact.media_type,
+                artifact.provenance_entity_id,
+            )
+            if existing is not None:
+                if tuple(existing) != expected:
+                    raise WorkflowQueueConflict("workflow attempt artifact replay differs")
+                return self._artifact_row(existing)
+            connection.execute(
+                """
+                INSERT INTO workflow_attempt_artifacts (
+                    attempt_id, project_id, job_id, artifact_id, revision_id, role,
+                    disposition, content_hash, media_type, provenance_entity_id,
+                    created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, 'retained-incomplete', ?, ?, ?, ?, ?)
+                """,
+                (
+                    claim.attempt_id,
+                    self._project_id,
+                    claim.job_id,
+                    artifact.artifact_id,
+                    artifact.revision_id,
+                    role,
+                    artifact.content_hash,
+                    artifact.media_type,
+                    artifact.provenance_entity_id,
+                    now,
+                    now,
+                ),
+            )
+            return WorkflowArtifactRecord(
+                claim.attempt_id,
+                claim.job_id,
+                artifact.artifact_id,
+                artifact.revision_id,
+                role,
+                "retained-incomplete",
+                artifact.content_hash,
+                artifact.media_type,
+                artifact.provenance_entity_id,
+            )
+
+    def complete(
+        self,
+        claim: WorkflowJobClaim,
+        *,
+        now: str,
+        outputs: tuple[WorkflowOutputReference, ...],
+    ) -> WorkflowCompletionReceipt:
+        _workflow_time(now)
+        manifest, output_sha256 = self._output_manifest(outputs)
+        with self._transaction() as connection:
+            existing = connection.execute(
+                """
+                SELECT attempt_id, output_manifest_json, output_record_sha256, committed_at,
+                       idempotency_key, command_fingerprint
+                  FROM workflow_committed_outputs WHERE project_id=? AND job_id=?
+                """,
+                (self._project_id, claim.job_id),
+            ).fetchone()
+            if existing is not None:
+                self._verify_attempt_capability(connection, claim)
+                if tuple(existing[:3]) != (claim.attempt_id, manifest, output_sha256) or tuple(existing[4:]) != (
+                    claim.idempotency_key,
+                    claim.command_fingerprint,
+                ):
+                    raise WorkflowQueueConflict("workflow completion replay differs")
+                return WorkflowCompletionReceipt(claim.job_id, claim.attempt_id, output_sha256, str(existing[3]), True)
+
+            row = self._lease_row(connection, claim, now, states=("running",))
+            if row[3] is not None:
+                raise WorkflowQueueConflict("workflow cancellation precedes completion")
+            if (
+                str(row[9]) == "required"
+                and connection.execute(
+                    "SELECT 1 FROM workflow_checkpoints WHERE project_id=? AND job_id=? LIMIT 1",
+                    (self._project_id, claim.job_id),
+                ).fetchone()
+                is None
+            ):
+                raise WorkflowQueueConflict("workflow required checkpoint is missing")
+            output_revisions = self._resolve_outputs(connection, outputs)
+            for output in outputs:
+                staged = connection.execute(
+                    """
+                    SELECT revision_id, role, disposition, content_hash, media_type, provenance_entity_id
+                      FROM workflow_attempt_artifacts
+                     WHERE project_id=? AND job_id=? AND attempt_id=? AND artifact_id=?
+                    """,
+                    (self._project_id, claim.job_id, claim.attempt_id, output.artifact_id),
+                ).fetchone()
+                expected = (
+                    output.revision_id,
+                    "output",
+                    "retained-incomplete",
+                    output.content_hash,
+                    output.media_type,
+                    output.provenance_entity_id,
+                )
+                if staged is None or tuple(staged) != expected:
+                    raise WorkflowQueueConflict("workflow output was not staged by the current attempt")
+            provenance_event_id = _workflow_uuid(now)
+            outbox_id = _workflow_uuid(now)
+            trace_id = hashlib.sha256(claim.job_id.encode("ascii")).hexdigest()[:32]
+            provenance_event = AtomicRepositoryEvent(
+                event_id=provenance_event_id,
+                outbox_id=outbox_id,
+                event_type="org.research-observatory.workflow.job-succeeded.v1",
+                occurred_at=now,
+                available_at=now,
+                trace_id=trace_id,
+                actor_type="worker",
+                actor_id=claim.worker_id,
+                idempotency_key=f"workflow-output:{claim.job_id}",
+            )
+            provenance_fingerprint = hashlib.sha256(
+                f"{claim.command_fingerprint}\n{output_sha256}".encode("ascii")
+            ).hexdigest()
+            _record_provenance(
+                connection,
+                project_id=self._project_id,
+                primary_revision_id=output_revisions[0].revision_id,
+                record_json=canonical_workflow_completion_provenance_event(
+                    outputs=output_revisions,
+                    event=provenance_event,
+                ),
+                event=provenance_event,
+                idempotency_sha256=provenance_fingerprint,
+            )
+            connection.execute(
+                """
+                INSERT INTO workflow_committed_outputs (
+                    job_id, project_id, attempt_id, idempotency_key, command_fingerprint,
+                    output_manifest_json, output_record_sha256, committed_at,
+                    provenance_event_id, outbox_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    claim.job_id,
+                    self._project_id,
+                    claim.attempt_id,
+                    claim.idempotency_key,
+                    claim.command_fingerprint,
+                    manifest,
+                    output_sha256,
+                    now,
+                    provenance_event_id,
+                    outbox_id,
+                ),
+            )
+            connection.execute(
+                "UPDATE workflow_job_attempts SET state='succeeded', ended_at=? WHERE attempt_id=?",
+                (now, claim.attempt_id),
+            )
+            for output in outputs:
+                connection.execute(
+                    "UPDATE workflow_attempt_artifacts SET disposition='committed', updated_at=? "
+                    "WHERE attempt_id=? AND artifact_id=? AND role='output' "
+                    "AND disposition='retained-incomplete'",
+                    (now, claim.attempt_id, output.artifact_id),
+                )
+            connection.execute(
+                """
+                UPDATE workflow_queue_jobs
+                   SET state='succeeded', lease_owner=NULL, lease_token_sha256=NULL,
+                       lease_expires_at=NULL, committed_output_sha256=?, updated_at=?
+                 WHERE job_id=?
+                """,
+                (output_sha256, now, claim.job_id),
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job-attempt",
+                entity_id=claim.attempt_id,
+                from_state="running",
+                to_state="succeeded",
+                occurred_at=now,
+                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+                reason_code="output-committed",
+                extra={"progress": cast(dict[str, object], json.loads(str(row[5])))},
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job",
+                entity_id=claim.job_id,
+                from_state="running",
+                to_state="succeeded",
+                occurred_at=now,
+                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+                reason_code="attempt-accepted",
+            )
+            return WorkflowCompletionReceipt(claim.job_id, claim.attempt_id, output_sha256, now, False)
+
+    def _finish_attempt(self, claim: WorkflowJobClaim, *, now: str, error_code: str, cancel: bool) -> WorkflowJobRecord:
+        _workflow_time(now)
+        if not _workflow_code(error_code):
+            raise WorkflowQueueProblem("workflow diagnostic code is invalid")
+        with self._transaction() as connection:
+            row = self._lease_row(
+                connection,
+                claim,
+                now,
+                states=("claimed", "running", "cancelling") if cancel else ("claimed", "running"),
+            )
+            job = self._row(self._select_job(connection, self._project_id, claim.job_id))
+            if cancel:
+                next_state = "cancelled"
+                attempt_state = "cancelled"
+                available_at = job.available_at
+            else:
+                policy = connection.execute(
+                    "SELECT initial_backoff_ms, maximum_backoff_ms, multiplier_basis_points, "
+                    "deterministic_jitter, retryable_error_codes_json, non_retryable_error_codes_json "
+                    "FROM workflow_queue_jobs WHERE job_id=?",
+                    (claim.job_id,),
+                ).fetchone()
+                retryable = error_code in json.loads(str(policy[4])) and error_code not in json.loads(str(policy[5]))
+                retryable = retryable and job.attempt_count < job.max_attempts
+                next_state = "retry-scheduled" if retryable else "failed"
+                attempt_state = "failed"
+                exponent = max(0, claim.attempt_number - 1)
+                delay = min(int(policy[1]), int(int(policy[0]) * (int(policy[2]) / 10_000) ** exponent))
+                if retryable and int(policy[3]) and delay:
+                    delay += int(hashlib.sha256(claim.job_id.encode("ascii")).hexdigest()[:8], 16) % max(1, delay // 5)
+                    delay = min(int(policy[1]), delay)
+                available_at = _workflow_timestamp(_workflow_time(now) + timedelta(milliseconds=delay))
+            connection.execute(
+                "UPDATE workflow_job_attempts SET state=?, ended_at=?, diagnostic_code=? WHERE attempt_id=?",
+                (attempt_state, now, error_code, claim.attempt_id),
+            )
+            if cancel:
+                connection.execute(
+                    "UPDATE workflow_attempt_artifacts SET disposition=?, updated_at=? "
+                    "WHERE attempt_id=? AND disposition='retained-incomplete'",
+                    (str(row[10]), now, claim.attempt_id),
+                )
+            connection.execute(
+                """
+                UPDATE workflow_queue_jobs
+                   SET state=?, available_at=?, lease_owner=NULL, lease_token_sha256=NULL,
+                       lease_expires_at=NULL, diagnostic_code=?, updated_at=? WHERE job_id=?
+                """,
+                (next_state, available_at, error_code, now, claim.job_id),
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job-attempt",
+                entity_id=claim.attempt_id,
+                from_state=str(row[4]),
+                to_state=attempt_state,
+                occurred_at=now,
+                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+                reason_code=error_code,
+                extra={"progress": cast(dict[str, object], json.loads(str(row[5])))},
+            )
+            self._append_history(
+                connection,
+                project_id=self._project_id,
+                workflow_run_id=str(row[0]),
+                job_id=claim.job_id,
+                attempt_id=claim.attempt_id,
+                entity_type="job",
+                entity_id=claim.job_id,
+                from_state=str(row[1]),
+                to_state=next_state,
+                occurred_at=now,
+                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+                reason_code=error_code,
+            )
+            return self._row(self._select_job(connection, self._project_id, claim.job_id))
+
+    def fail(self, claim: WorkflowJobClaim, *, now: str, error_code: str) -> WorkflowJobRecord:
+        return self._finish_attempt(claim, now=now, error_code=error_code, cancel=False)
+
+    def cancel(self, claim: WorkflowJobClaim, *, now: str, reason_code: str) -> WorkflowJobRecord:
+        return self._finish_attempt(claim, now=now, error_code=reason_code, cancel=True)
+
+    def recover_expired(self, *, now: str, actor: WorkflowActor, limit: int = 100) -> int:
+        _workflow_time(now)
+        _workflow_actor(actor)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1_000:
+            raise WorkflowQueueProblem("workflow recovery limit is invalid")
+        recovered = 0
+        with self._transaction() as connection:
+            rows = connection.execute(
+                """
+                SELECT job.job_id, job.workflow_run_id, job.state, job.current_attempt_id,
+                       job.attempt_count, job.max_attempts, job.cancellation_requested_at,
+                       attempt.state, job.interruption_kind, job.partial_artifact_disposition,
+                       attempt.progress_json
+                  FROM workflow_queue_jobs AS job
+                  JOIN workflow_job_attempts AS attempt ON attempt.attempt_id=job.current_attempt_id
+                 WHERE job.project_id=? AND job.state IN ('claimed', 'running', 'cancelling')
+                   AND job.lease_expires_at<=? ORDER BY job.job_id LIMIT ?
+                """,
+                (self._project_id, now, limit),
+            ).fetchall()
+            for row in rows:
+                job_id = str(row[0])
+                attempt_id = str(row[3])
+                if row[6] is not None or str(row[2]) == "cancelling":
+                    next_state = "cancelled"
+                    diagnostic = "cancellation-recovered"
+                elif int(row[4]) < int(row[5]):
+                    next_state = "retry-scheduled"
+                    diagnostic = "lease-expired"
+                else:
+                    next_state = "failed"
+                    diagnostic = "attempts-exhausted"
+                recovery_interruption = (
+                    str(row[8]) if next_state == "cancelled" and row[8] is not None else "ordinary-restart"
+                )
+                connection.execute(
+                    "UPDATE workflow_job_attempts SET state='abandoned', ended_at=?, diagnostic_code=? "
+                    "WHERE attempt_id=?",
+                    (now, diagnostic, attempt_id),
+                )
+                if next_state == "cancelled":
+                    connection.execute(
+                        "UPDATE workflow_attempt_artifacts SET disposition=?, updated_at=? "
+                        "WHERE attempt_id=? AND disposition='retained-incomplete'",
+                        (str(row[9]), now, attempt_id),
+                    )
+                connection.execute(
+                    """
+                    UPDATE workflow_queue_jobs
+                       SET state=?, available_at=?, lease_owner=NULL, lease_token_sha256=NULL,
+                           lease_expires_at=NULL, diagnostic_code=?, updated_at=? WHERE job_id=?
+                    """,
+                    (next_state, now, diagnostic, now, job_id),
+                )
+                self._append_history(
+                    connection,
+                    project_id=self._project_id,
+                    workflow_run_id=str(row[1]),
+                    job_id=job_id,
+                    attempt_id=attempt_id,
+                    entity_type="job-attempt",
+                    entity_id=attempt_id,
+                    from_state=str(row[7]),
+                    to_state="abandoned",
+                    occurred_at=now,
+                    actor=actor,
+                    reason_code=diagnostic,
+                    extra={
+                        "interruptionKind": recovery_interruption,
+                        "progress": cast(dict[str, object], json.loads(str(row[10]))),
+                    },
+                )
+                self._append_history(
+                    connection,
+                    project_id=self._project_id,
+                    workflow_run_id=str(row[1]),
+                    job_id=job_id,
+                    attempt_id=attempt_id,
+                    entity_type="job",
+                    entity_id=job_id,
+                    from_state=str(row[2]),
+                    to_state=next_state,
+                    occurred_at=now,
+                    actor=actor,
+                    reason_code=diagnostic,
+                    extra={"interruptionKind": recovery_interruption},
+                )
+                recovered += 1
+        return recovered
+
+
+def sqlite_workflow_queue_repository(path: Path, project_id: str) -> WorkflowQueueRepository:
+    """Compose the canonical local workflow queue for one authorized project."""
+
+    return _SqliteWorkflowQueueRepository(path / "state" / "project.sqlite3", project_id)
+
+
 def sqlite_provenance_ledger_repository(path: Path, project_id: str) -> ProvenanceLedgerRepository:
     """Compose the canonical provenance repository for one authorized project."""
 
@@ -2254,4 +3803,5 @@ __all__ = [
     "sqlite_intent_revision_repository",
     "sqlite_privacy_policy_repository",
     "sqlite_provenance_ledger_repository",
+    "sqlite_workflow_queue_repository",
 ]

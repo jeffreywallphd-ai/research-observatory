@@ -21,6 +21,8 @@ from .provenance_contracts import canonical_provenance_json, provenance_event_er
 
 _CONFIGURATION_DOCUMENT = b"research-observatory:canonical-aggregate-write:1.0.0"
 _CONFIGURATION_HASH = f"sha256:{hashlib.sha256(_CONFIGURATION_DOCUMENT).hexdigest()}"
+_WORKFLOW_CONFIGURATION_DOCUMENT = b"research-observatory:local-workflow-executor:1.0.0"
+_WORKFLOW_CONFIGURATION_HASH = f"sha256:{hashlib.sha256(_WORKFLOW_CONFIGURATION_DOCUMENT).hexdigest()}"
 _ACTOR_TYPE = {"human": "human", "system": "system", "worker": "software", "model": "model"}
 
 
@@ -257,6 +259,91 @@ def canonical_invalidation_provenance_event(
     return canonical_provenance_json(record)
 
 
+def canonical_workflow_completion_provenance_event(
+    *,
+    outputs: tuple[AggregateRevision, ...],
+    event: AtomicRepositoryEvent,
+) -> str:
+    """Construct one canonical completion fact for already-persisted immutable outputs."""
+
+    if not outputs or len(outputs) > 256:
+        raise ValueError("workflow completion requires bounded immutable outputs")
+    if event.actor_id is None or not is_uuid_v7(event.actor_id) or event.actor_type != "worker":
+        raise ValueError("workflow completion provenance requires an opaque worker identity")
+    project_id = outputs[0].project_id
+    if len({item.revision_id for item in outputs}) != len(outputs) or any(
+        item.project_id != project_id for item in outputs
+    ):
+        raise ValueError("workflow completion outputs must be distinct revisions in one project")
+    activity_id = new_uuid_v7()
+    output_entities = [_entity(item) for item in outputs]
+    relations = [
+        _relation(
+            "wasAssociatedWith",
+            event.occurred_at,
+            activity_id=activity_id,
+            agent_id=event.actor_id,
+        )
+    ]
+    for output in outputs:
+        relations.extend(
+            (
+                _relation("wasGeneratedBy", event.occurred_at, entity=output, activity_id=activity_id),
+                _relation("wasAttributedTo", event.occurred_at, entity=output, agent_id=event.actor_id),
+            )
+        )
+    span_id = hashlib.sha256(event.outbox_id.encode("ascii")).hexdigest()[:16]
+    subject = output_entities[0]
+    record = {
+        "specversion": "1.0",
+        "id": event.event_id,
+        "source": "urn:research-observatory:core",
+        "type": "org.research-observatory.workflow.job-succeeded.v1",
+        "subject": (
+            f"project/{project_id}/entity/{subject['entityKind']}/"
+            f"{subject['entityId']}/revision/{subject['revisionId']}"
+        ),
+        "time": event.occurred_at,
+        "dataschema": "urn:research-observatory:schema:provenance-event:1.0.0",
+        "datacontenttype": "application/json",
+        "projectid": project_id,
+        "actorid": event.actor_id,
+        "correlationid": new_uuid_v7(),
+        "causationid": None,
+        "traceparent": f"00-{event.trace_id}-{span_id}-01",
+        "sensitivity": "private-research",
+        "retentionclass": "project-lifetime",
+        "schemaversion": "1.0.0",
+        "data": {
+            "agent": {
+                "agentId": event.actor_id,
+                "agentType": "software",
+                "role": "local.workflow.worker",
+            },
+            "activity": {
+                "activityId": activity_id,
+                "activityType": "workflow-execution",
+                "status": "succeeded",
+                "startedAt": event.occurred_at,
+                "endedAt": event.occurred_at,
+                "configuration": {
+                    "configurationId": "core.local-workflow-executor",
+                    "configurationVersion": "1.0.0",
+                    "configurationHash": _WORKFLOW_CONFIGURATION_HASH,
+                },
+            },
+            "inputs": [],
+            "outputs": output_entities,
+            "relations": relations,
+            "payloadReference": {"state": "not-applicable"},
+        },
+    }
+    errors = provenance_event_errors(record)
+    if errors:
+        raise ValueError("workflow completion provenance contract failed: " + ", ".join(errors))
+    return canonical_provenance_json(record)
+
+
 RepositoryFactory = Callable[[Path, str], ProvenanceLedgerRepository]
 
 
@@ -316,4 +403,5 @@ __all__ = [
     "ProvenanceService",
     "canonical_aggregate_provenance_event",
     "canonical_invalidation_provenance_event",
+    "canonical_workflow_completion_provenance_event",
 ]

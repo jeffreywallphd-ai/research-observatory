@@ -7729,7 +7729,7 @@
             {
               "task_id": "CAP-03.S04.T02",
               "title": "Implement the local durable queue and worker supervisor",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -7777,18 +7777,21 @@
             {
               "task_id": "CAP-03.S04.T02",
               "title": "Implement the local durable queue and worker supervisor",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S04.T02.html",
               "dependencies": [
                 "CAP-03.S04.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "9d734971fc5cf3fdb20b2c8d6f5a51d0cfb9887b"
               },
               "plan_section_sha256": "f7a170de8f354e55c87cd013ac4ea82527cfe7555d16613d2506694955caa5a6",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-03.S04.T02.task-start.md",
+                "sha256": "b582819177daa492b3ded125086a136dba7500369e4687bb320cc3aaeaf475b1"
+              }
             },
             {
               "task_id": "CAP-03.S04.T03",
