@@ -12911,15 +12911,20 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T20:57:36+00:00'
-      updated_at: '2026-09-01T20:57:36+00:00'
+      updated_at: '2026-09-01T21:31:39+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S05.T01.R01.json
+        sha256: 66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d
+        commit: 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed
+        recorded_at: '2026-09-01T21:31:39+00:00'
       review:
         reviewer: null
         result: null
@@ -12930,10 +12935,97 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T20:57:36+00:00'
         expires_at: '2026-09-02T04:57:36+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-01T21:31:39+00:00'
+          candidate_commit: 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed
+          base_commit: f56d16070637147177c05c3406b5669eb1707cf0
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S05.T01.R01.json
+            sha256: 66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d
+            commit: 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed
+            recorded_at: '2026-09-01T21:31:39+00:00'
+          acceptance_criteria_sha256: a22c82b9d0596877c749cf2f309159c10f8152cceffb0f277215cd1bd3a53432
+          changed_paths:
+          - artifacts/evidence/CAP-03.S05.T01.task-start.md
+          - docs/architecture/local-sqlite-storage.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/storage/README.md
+          - packages/contracts/storage/sqlite-migration-recovery.schema.json
+          - packages/contracts/storage/sqlite-profile.schema.json
+          - packages/contracts/storage/sqlite-profile.v1.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S05.T01.html
+          - planning/review-site/CAP-03/CAP-03.S05.html
+          - planning/review-site/CAP-03/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/migrations/runner.py
+          - services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/storage.py
+          - tests/data/test_local_object_store.py
+          - tests/data/test_material_dependencies.py
+          - tests/data/test_sqlite_migrations.py
+          - tests/data/test_sqlite_repositories.py
+          - tests/data/test_storage_maintenance.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tests/service/test_provenance.py
+          - tests/workflows/test_local_workflow_executor.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest tests.data.test_material_dependencies
+          - .venv\Scripts\python.exe -m unittest tests.workflows.test_local_workflow_executor
+          - .venv\Scripts\python.exe -m unittest tests.data.test_material_dependencies tests.data.test_sqlite_repositories
+            tests.data.test_sqlite_schema tests.data.test_storage_maintenance tests.data.test_local_object_store
+          - .venv\Scripts\python.exe -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema
+          - .venv\Scripts\python.exe -m unittest tests.service.test_provenance tests.packaging.test_core_sidecar_package
+          - focused ruff check/format --check and mypy over the changed Python implementation, migration, tests, and packaging
+            builder
+          - .venv\Scripts\python.exe -m unittest tests.foundation.test_repository_structure; .venv\Scripts\python.exe tools/architecture_check.py
+            --repo .; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved
+          - .venv\Scripts\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only
+            --affected-base f56d1607... --affected-head 2ec58075... --deferred-gate W1-exit
+          deferred_checks:
+          - CAP-03.S05 slice review owns accumulated dependency registration, staleness traversal, and controlled recalculation
+            integration after T02 and T03 close.
+          - The complete service, data, security, performance, packaging, recovery, and Windows x64 matrix remains mandatory
+            once at W1 exit.
+          selection_rationale: T01 changes a public Core port, aggregate transaction, SQLite schema/migration, workflow completion
+            authority, audit diagnostics, and frozen sidecar inventory. Verification therefore used real SQLite transactions
+            and reopen, exact v8/v7 migration fixtures, deterministic migration and append failure injection, the affected
+            workflow/data/provenance/packaging suites, focused static checks, architecture/repository controls, and approved-wave
+            validation. It did not replay unrelated UI, graph traversal, scheduler, or complete deployment profiles. Full
+            service/data/security/performance and Windows qualification remain mandatory at W1 exit.
+          selection_sha256: 42204a6b3e1b55aac6a9fad54e98b1d71b83175d55f360d1cc2a7ca2c2c037ec
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:backlog-views
+          - foundation:quality
+          - foundation:packaging-smoke
+          - packaging:unit
+          - service:unit
+          - data:unit
+          - security-local:unit
+          packet_sha256: c3f0fb4f95186f6e06d50818b6f4f9d59f4fd7320090abcaf65a6b3129f0bfd9
     - id: CAP-03.S05.T02
       capability_id: CAP-03
       slice_id: CAP-03.S05
