@@ -1,0 +1,75 @@
+{
+  "task_id": "CAP-03.S05.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d",
+  "submission_record_commit": "176631f9b3fa8307f32f8f694143ff5a557fd3e8",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The exact base/candidate/submission ancestry, 12-path candidate inventory, two-path submission separation, frozen evidence SHA/blob, backlog REVIEW projection, patch hygiene, and selective-recalculation package registration authenticate. A narrow independent replay passed 40 submitted recalculation, workflow-contract, local-executor, Task Center, and strict package-inventory tests. Three acceptance-bound authority defects remain: candidate append is not bound to a completed exact recalculation plan, workflow admission has a stale-read/enqueue race, and restore converts an already stale adjudicated revision into a false-fresh adjudicated revision. No full profile was run.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T03.R01.json",
+      "sha256": "9c13787f8c8cb959b0929b1aab4eac2cb070b29cfe672f36e2ae12f4f6dd3b22",
+      "git_blob": "7c322f5e8b4657905699f316743499ba09f963a0",
+      "commit": "139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base, candidate, and submission commits; verify the submission's sole parent, base ancestry, exact manifest SHA/blob, declared-versus-actual candidate paths, submission-only paths, taskctl REVIEW projection, and git diff --check.",
+      "result": "PASS: the submission's sole parent is the exact candidate; b5a941d7d907561c7d7f5d1a03162155b8fe7b5f is an ancestor; all 12 declared candidate paths match; the submission adds only the R01 evidence and backlog projection; the evidence hash/blob and task projection match; patch hygiene passes."
+    },
+    {
+      "type": "independent-check",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.e2e.test_selective_recalculation tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "result": "PASS: 40 focused tests passed in 4.397 seconds."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Using the submitted real-SQLite E2E fixture, do not call schedule; append a non-adjudicated draft whose only material dependency is the already superseded source-v1 revision and whose event is generic evidence.created; then inspect workflow jobs and stale causes.",
+      "result": "FAIL: {'acceptedRevision': 1, 'eventType': 'evidence.created', 'scheduledJobs': 0, 'usesSupersededInput': True, 'candidateStaleCauses': 0}."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Using the submitted fixture, add verified-v2 and construct its durable verified-v1-to-v2 change. Wrap workflow enqueue so it propagates that change against the target immediately before delegating to the real enqueue, then schedule the original source-v1-to-v2 request and compare the admitted plan with current causes/replacements.",
+      "result": "FAIL: {'plannedCauses': 1, 'currentCauses': 2, 'reusesNowSuperseded': True, 'missingReplacement': True, 'queued': 'runnable'}."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Using the submitted fixture, confirm the prior adjudicated target has an open stale cause, append the submitted valid candidate, restore that prior adjudicated target through the human event, and inspect the restored dependency registration and stale states.",
+      "result": "FAIL: {'priorWasStale': True, 'restoredUsesChangedPredecessor': True, 'restoredStaleCauses': 0, 'knowledgeStatus': 'adjudicated'}."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S05.T03-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Candidate append is not bound to a completed exact recalculation workflow and accepts superseded inputs as fresh",
+      "reproduction": "At candidate 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d, selective_recalculation.py:496-514 validates only aggregate/kind, non-adjudicated status, predecessor inclusion, and aggregate revision CAS. It accepts no workflow job/run/attempt, plan SHA, change/cause/replacement/reuse authority, or completion output identity. The submitted happy-path test at tests/e2e/test_selective_recalculation.py:265-295 itself appends without scheduling or completing a job. The independent real-SQLite replay appended a generic evidence.created draft using superseded source-v1, with zero scheduled jobs and zero stale causes: {'acceptedRevision': 1, 'scheduledJobs': 0, 'usesSupersededInput': True, 'candidateStaleCauses': 0}.",
+      "required_remediation": "Bind candidate admission to one exact successfully completed recalculation job/run/attempt and immutable plan/command fingerprint, target, every stale cause/change, replacements, reusable inputs, and canonical output identity. At the SQLite mutation boundary, require the draft's dependency/provenance set to exactly implement that plan, require a recalculation-specific actor/event/idempotency authority, and append atomically with completion/output consumption so replay cannot admit another candidate. Add denials with no writes for unscheduled, unfinished, cancelled, recovered-but-not-completed, substituted target/change/cause/replacement/reuse/dependency/plan, and generic-event cases, plus exact replay/CAS proofs."
+    },
+    {
+      "id": "CAP-03.S05.T03-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "A graph/staleness change between planning and enqueue admits an obsolete runnable workflow",
+      "reproduction": "selective_recalculation.py:423-450 reads the durable change, open target causes, dependency registration, current target, replacement set, and reuse freshness across independent repository/unit-of-work reads; line 463 then enqueues in a separate transaction with no compare-and-swap precondition over that read set. The independent real-SQLite replay injected a second material impact propagation immediately before the real enqueue. Admission still returned runnable while its plan retained one cause versus two current causes, omitted the new replacement, and reused the newly superseded input: {'plannedCauses': 1, 'currentCauses': 2, 'reusesNowSuperseded': True, 'missingReplacement': True, 'queued': 'runnable'}.",
+      "required_remediation": "Make durable workflow admission one transactional/CAS boundary over the exact current target revision, complete target stale-cause/change set, dependency-registration digest, replacement set, reuse freshness, and plan/command fingerprint. Revalidate those fields at the enqueue mutation point and fail closed with no queue write when any changes; an explicitly governed deterministic replan may retry from fresh authority. Add injected-boundary tests for target-current change, new/closed target cause, dependency-registration change, newly superseded reusable input, replacement change, restart, and idempotent replay."
+    },
+    {
+      "id": "CAP-03.S05.T03-R01-F03",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Restore turns an already stale adjudicated revision into a false-fresh adjudicated current revision",
+      "reproduction": "selective_recalculation.py:524 reads the prior dependency registration and lines 531-565 clone it into a new adjudicated revision, but the operation neither rejects an open stale prior nor atomically carries its exact open stale causes to the new revision. The submitted fixture's prior adjudicated target is already stale because its extraction-v1 dependency was replaced by extraction-v2. After the submitted candidate and human restore, the independent real-SQLite replay observed {'priorWasStale': True, 'restoredUsesChangedPredecessor': True, 'restoredStaleCauses': 0, 'knowledgeStatus': 'adjudicated'}. The new current revision therefore appears fresh and adjudicated even though it clones a dependency invalidated by an existing material change.",
+      "required_remediation": "At the same SQLite transaction as restoration, resolve current change/staleness authority for the selected prior revision and choose one explicit safe contract: deny restoration of a materially stale prior, or permit the human to restore a known-stale value while atomically creating/carrying forward the exact open stale causes onto N+2. Preserve the adverse history and bind the disposition in the restoration event/provenance/audit. Add real-SQLite reopen/replay tests for stale-prior restore, changed predecessor, multiple causes, stale expected-current CAS, non-human and non-adjudicated denial, and exact dependency/provenance/history retention without false-fresh state."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}
