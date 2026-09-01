@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-9 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-10 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -39,6 +39,12 @@ Existing v8 output revisions migrate as `legacy-unreported` with no fabricated
 edges. New recalculable outputs must register a nonempty canonical edge set in
 the same transaction as revision, provenance, and outbox authority before a
 workflow can commit them.
+
+Version 10 adds durable dependency-impact runs, their immutable graph-bound
+items, append-only stale causes, bounded compare-and-swap checkpoints, and
+content-free impact audit facts. The v9-to-v10 migration creates no run or stale
+state for historical outputs, so missing recalculation knowledge remains
+explicit rather than invented.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and
