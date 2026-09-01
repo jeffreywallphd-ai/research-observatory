@@ -1,0 +1,70 @@
+{
+  "task_id": "CAP-03.S04.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57",
+  "submission_record_commit": "70f96d8c7b08a2531f9e914b37046d1c281504d8",
+  "reviewer": "agent:cap03-s04-t01-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Controlled R02 re-review authenticated exact remediation candidate 3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57, its direct frozen-submission child 70f96d8c7b08a2531f9e914b37046d1c281504d8, remediation evidence SHA-256 9d39cf6f6ec8bee0654c8dd1763caf27064bad1e8c6fc3999b77b752aef01f92, Git blob 0f7684143d8cc7affabbca836e71f4e32edd83bb, and preserved R01 review history. All three R01 findings are fixed: completed decisions must use a disposition allowed by the exact bound definition; request actor/time and represented assignment are bound to exactly one request/claim event; legacy operation sequence is bound to snapshot sequence before ETag acceptance; and duplicate transition event identities fail decoding and restart reconstruction. Independent replay passed 10 Python and six TypeScript workflow tests, generator parity, contracts typecheck, every prior exploit, and the incremental request/claim cardinality cases. The 17-path R02 inventory exactly matches the original-candidate-to-remediation range, submission-only changes are evidence/backlog projection, and patch hygiene passes. No SQLite executor, process recovery, Core API route, governed Task Center UI, dependency, or external/release authority entered T01; T02, T03, slice integration, and W1 exit qualification remain deferred. No full profile was run, and no new acceptance-bound finding was identified.",
+  "evidence_reproduction": {
+    "remediation_manifest": {
+      "path": "artifacts/evidence/CAP-03.S04.T01.R02.json",
+      "sha256": "9d39cf6f6ec8bee0654c8dd1763caf27064bad1e8c6fc3999b77b752aef01f92",
+      "git_blob": "0f7684143d8cc7affabbca836e71f4e32edd83bb",
+      "commit": "3229a2fc28bcfcbc3d1247a90e876d91e7d6ab57",
+      "result": "PASS: the frozen manifest binds the exact R01 candidate, R02 remediation candidate, branch, superseded evidence, 17 changed paths, criteria, prior findings, selected checks, and downstream deferrals."
+    },
+    "prior_review": {
+      "path": "artifacts/evidence/CAP-03.S04.T01.review-R01.json",
+      "sha256": "76b9f4f8ebb1e8671093c48ddd7e021b867c150c472d5a73beaece1a8a1386a1",
+      "git_blob": "72b7a19f3a5ec0a47ffeaf6239b9b1d9dad7cc0d",
+      "result": "PASS: immutable R01 history contains exactly the three findings replayed and closed by this review."
+    }
+  },
+  "checks": [
+    {
+      "command": "Resolve exact R01/R02 candidate and submission SHAs; verify ordered ancestry, direct R02 submission parent, evidence hashes/blobs, exact 17-path manifest inventory, submission/product byte separation, and git diff --check",
+      "result": "PASS: both R01 candidate/submission commits are ancestors of the R02 candidate; the R02 submission parent is the exact candidate; evidence identities reproduce; declared and actual remediation paths match; submission adds only R02 evidence and backlog projection; both remediation and submission ranges pass patch hygiene."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_workflow_contracts; apps\\desktop\\node_modules\\.bin\\vitest.CMD run packages/contracts/workflow/workflow-contract.test.ts",
+      "result": "PASS: Python passed 10/10 and TypeScript passed 6/6. The matched suites cover valid local/server definition reuse, canonical serialize/reload restart reconstruction, excluded dispositions, substituted request actor/time, substituted claim actor, duplicate request events, bridge sequence plus matching ETag mutation, duplicate event identity, and retained prior transition/reference/security invariants."
+    },
+    {
+      "command": "node packages/contracts/workflow/generate.mjs --check; apps\\desktop\\node_modules\\.bin\\tsc.CMD -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "result": "PASS: generated TypeScript/Python outputs exactly match the canonical schema/templates and the contracts package typechecks."
+    },
+    {
+      "command": "Independent generated-Python adversarial replay of every R01 mutation plus duplicate request, substituted claim, claim-without-assignment, and duplicate claim cardinality",
+      "result": "PASS: excluded disposition, request actor/time substitution, claim substitution, duplicate request, claim-without-assignment, and duplicate claim all include human-decision-is-audit-bound; divergent operationSequence plus matching ETag includes legacy-operation-bridge-binds-exact-workflow-projection; duplicate eventId includes history-event-identities-are-unique and decode_workflow_snapshot returns None. Valid fixtures remain accepted by both checked-in suites."
+    },
+    {
+      "command": "Inspect exact candidate delta and updated workflow architecture/package guidance against the T01/T02/T03 boundary",
+      "result": "PASS: changes are limited to the three prior semantic corrections, matched runtimes/tests, generator/schema rule inventory, architecture/package documentation, task-start learning, and generated planning/review projection. The candidate adds no durable SQLite executor, migration, lease/recovery behavior, Core API route, governed UI implementation, dependency, or broader authority."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S04.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Both generated runtimes now locate exactly one initial requested event and bind its actor/time to HumanTask.requestedBy/requestedAt; represented assignment requires exactly one claimed event with the exact assignee actor; and a completed decision disposition must be present in the exact bound HumanTaskDefinition.allowedDispositions. Independent replay rejects excluded disposition, requester/time substitution, claim substitution, duplicate request, claim without assignment, and duplicate claim cases, while valid local/server and restart fixtures pass."
+    },
+    {
+      "finding_id": "CAP-03.S04.T01-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Both generated bridge validators require operationSequence to equal snapshot.sequence before accepting the operation state/cancellation projection and ETag. Independent mutation from sequence 32 to 31 with a correspondingly changed quoted ETag now fails with legacy-operation-bridge-binds-exact-workflow-projection; the exact valid bridge still decodes."
+    },
+    {
+      "finding_id": "CAP-03.S04.T01-R01-F03",
+      "disposition": "fixed",
+      "evidence": "The canonical semantic-rule inventory and both generated reducers now maintain an event-ID set and emit history-event-identities-are-unique on collision. Independent duplicate-ID replay fails decoding and reconstruction while the unchanged canonical serialize/reload fixture reconstructs successfully."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S04.T01-R01-F01",
+    "CAP-03.S04.T01-R01-F02",
+    "CAP-03.S04.T01-R01-F03"
+  ]
+}
