@@ -5,11 +5,14 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 from research_observatory_core.ports.repositories import (
+    AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
+    DependencyCoverage,
     DependencyRegistrationRequired,
     MaterialDependency,
     RepositoryConflict,
@@ -233,8 +236,23 @@ class MaterialDependencyTests(unittest.TestCase):
 
         original = repositories._record_material_dependencies
 
-        def fail_after_insert(*args: object, **kwargs: object) -> None:
-            original(*args, **kwargs)
+        def fail_after_insert(
+            connection: Any,
+            *,
+            project_id: str,
+            revision: AggregateRevision,
+            coverage: DependencyCoverage,
+            dependencies: tuple[MaterialDependency, ...],
+            event: AtomicRepositoryEvent,
+        ) -> None:
+            original(
+                connection,
+                project_id=project_id,
+                revision=revision,
+                coverage=coverage,
+                dependencies=dependencies,
+                event=event,
+            )
             raise sqlite3.OperationalError("injected dependency registration failure")
 
         with (
