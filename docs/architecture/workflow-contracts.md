@@ -36,9 +36,12 @@ The contract deliberately separates:
 Each stateful entity has its own transition table. One append-only global event
 sequence records exact from/to state, actor, reason, and any progress,
 checkpoint, decision, or interruption binding. The reducer fails on gaps,
-reordering, illegal transitions, projection mismatch, decreasing progress,
-terminal transitions, and security-lock auto-resume. A canonical JSON round
-trip into a new reducer must reproduce every current projection exactly.
+reordering, duplicate event identities, illegal transitions, projection
+mismatch, decreasing progress, terminal transitions, and security-lock
+auto-resume. Human-task request and claim events bind the recorded requester,
+request time, and assignee; a completed disposition must be allowed by the
+exact bound definition. A canonical JSON round trip into a new reducer must
+reproduce every current projection exactly.
 
 ## Retry, cancellation, and artifacts
 
@@ -58,9 +61,11 @@ interruption and cannot be treated as ordinary restart authority.
 
 The checked-in legacy operation bridge retains ADR-0011's `op-*` identity,
 five-state projection, cancellation flag, sequence, ETag, and replay behavior
-while binding it to one UUIDv7 workflow run and snapshot revision. The bridge
-is not canonical history and does not change the current Core API schema in
-T01.
+while binding it to one UUIDv7 workflow run and snapshot revision. Its
+operation sequence is the exact workflow history sequence, and the ETag is
+derived from that bound projection rather than supplying independent
+authority. The bridge is not canonical history and does not change the current
+Core API schema in T01.
 
 T01 adds no SQLite migration: the current `workflows` table is a canonical
 aggregate subtype, not a queue/history table. CAP-03.S04.T02 owns the real

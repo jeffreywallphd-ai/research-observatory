@@ -13,6 +13,7 @@ import {
   workflowDefinitionErrors,
   workflowSnapshotErrors,
   workflowTransitionAllowed,
+  workflowRecordSha256,
 } from "./generated";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -145,6 +146,12 @@ describe("portable workflow contract", () => {
     expect(legacyOperationBridgeErrors(snapshot, wrong)).toContain(
       "legacy-operation-bridge-etag-is-exact",
     );
+    const wrongSequence = clone(bridge);
+    wrongSequence.operationSequence = 31;
+    wrongSequence.etag = '"op-source-review-31"';
+    expect(legacyOperationBridgeErrors(snapshot, wrongSequence)).toContain(
+      "legacy-operation-bridge-binds-exact-workflow-projection",
+    );
   });
 
   it("closes references, checkpoints, cancellation, and decision evidence across runtimes", () => {
@@ -187,5 +194,84 @@ describe("portable workflow contract", () => {
     expect(workflowSnapshotErrors(definition, missingEvidence)).toContain(
       "human-decision-is-audit-bound",
     );
+
+    const excludedDefinition = clone(definition);
+    const humanStep = (
+      excludedDefinition.steps as Array<Record<string, unknown>>
+    ).find((step) => step.kind === "human-task");
+    if (humanStep === undefined) throw new Error("fixture human step missing");
+    (humanStep.humanTask as Record<string, unknown>).allowedDispositions = [
+      "rejected",
+    ];
+    const excludedDisposition = clone(snapshot);
+    (excludedDisposition.definition as Record<string, unknown>).contentHash =
+      workflowRecordSha256(excludedDefinition);
+    expect(
+      workflowSnapshotErrors(excludedDefinition, excludedDisposition),
+    ).toContain("human-decision-is-audit-bound");
+
+    for (const [field, replacement] of [
+      [
+        "requestedBy",
+        {
+          actorId: "018f47a2-4d6b-7f78-9f2e-7fb76c86e099",
+          actorType: "system",
+          role: "workflow-coordinator",
+        },
+      ],
+      ["requestedAt", "2026-08-30T12:01:24.500Z"],
+    ] as const) {
+      const substitutedRequest = clone(snapshot);
+      const substitutedTask = (
+        substitutedRequest.humanTasks as Array<Record<string, unknown>>
+      )[0]!;
+      substitutedTask[field] = replacement;
+      expect(workflowSnapshotErrors(definition, substitutedRequest)).toContain(
+        "human-decision-is-audit-bound",
+      );
+    }
+
+    const substitutedClaim = clone(snapshot);
+    const claimEvent = (
+      substitutedClaim.history as Array<Record<string, unknown>>
+    ).find(
+      (event) =>
+        event.entityType === "human-task" && event.toState === "claimed",
+    );
+    if (claimEvent === undefined) throw new Error("fixture claim event missing");
+    (claimEvent.actor as Record<string, unknown>).actorId =
+      "018f47a2-4d6b-7f78-9f2e-7fb76c86e099";
+    expect(workflowSnapshotErrors(definition, substitutedClaim)).toContain(
+      "human-decision-is-audit-bound",
+    );
+
+    const duplicateRequest = clone(snapshot);
+    const history = duplicateRequest.history as Array<Record<string, unknown>>;
+    const requestEvent = history.find(
+      (event) =>
+        event.entityType === "human-task" && event.toState === "requested",
+    );
+    if (requestEvent === undefined) throw new Error("fixture request event missing");
+    history[25] = {
+      ...clone(requestEvent),
+      eventId: "018f47a2-4d6b-7f78-9f2e-7fb76c86e026",
+      sequence: 26,
+    };
+    expect(workflowSnapshotErrors(definition, duplicateRequest)).toContain(
+      "human-decision-is-audit-bound",
+    );
+  });
+
+  it("rejects duplicate transition identities without changing valid restart replay", () => {
+    const definition = fixture("valid-workflow-definition.v1.json");
+    const snapshot = fixture("valid-local-workflow-snapshot.v1.json");
+    const duplicate = clone(snapshot);
+    const history = duplicate.history as Array<Record<string, unknown>>;
+    history[1]!.eventId = history[0]!.eventId;
+    expect(workflowSnapshotErrors(definition, duplicate)).toContain(
+      "history-event-identities-are-unique",
+    );
+    expect(decodeWorkflowSnapshot(definition, duplicate)).toBeNull();
+    expect(decodeWorkflowSnapshot(definition, clone(snapshot))).not.toBeNull();
   });
 });

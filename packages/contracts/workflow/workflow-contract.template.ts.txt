@@ -366,9 +366,13 @@ const reconstruct = (snapshot: Record<string, unknown>): { state: Record<Workflo
   const latest = new Map<string, number>();
   const errors: string[] = [];
   const progress = new Map<string, [string, number | null, number | null]>();
+  const eventIds = new Set<string>();
   let securityLocked = false;
   (snapshot.history as Array<Record<string, unknown>>).forEach((event, index) => {
     if (event.sequence !== index + 1) errors.push("history-sequence-is-contiguous");
+    const eventId = event.eventId as string;
+    if (eventIds.has(eventId)) errors.push("history-event-identities-are-unique");
+    eventIds.add(eventId);
     const kind = event.entityType as WorkflowEntityType;
     const id = event.entityId as string;
     const prior = state[kind][id] ?? null;
@@ -470,12 +474,20 @@ export const workflowSnapshotErrors = (definitionValue: unknown, value: unknown)
     const step = stepRuns.get(task.stepRunId as string);
     const defined = step === undefined ? undefined : definitionSteps.get(step.stepKey as string);
     if (task.workflowRunId !== snapshot.workflowRunId || task.definitionRevisionId !== definition.definitionRevisionId || step === undefined || !(step.humanTaskIds as string[]).includes(task.humanTaskId as string) || defined?.kind !== "human-task" || task.requiredRole !== (defined.humanTask as Record<string, unknown>).requiredRole || (task.evidenceArtifactIds as string[]).some((id) => !artifacts.has(id))) errors.push("references-close-over-snapshot");
+    const taskEvents = (snapshot.history as Array<Record<string, unknown>>).filter((event) => event.entityType === "human-task" && event.entityId === task.humanTaskId);
+    const requests = taskEvents.filter((event) => event.fromState === null && event.toState === "requested");
+    const claims = taskEvents.filter((event) => event.toState === "claimed");
+    const requestActor = requests.length === 1 ? asRecord(requests[0]?.actor) : null;
+    const claimActor = claims.length === 1 ? asRecord(claims[0]?.actor) : null;
+    const assigned = asRecord(task.assignedTo);
+    if (requests.length !== 1 || stableJson(requestActor) !== stableJson(task.requestedBy) || requests[0]?.occurredAt !== task.requestedAt || (assigned === null ? claims.length !== 0 : claims.length !== 1 || stableJson(claimActor) !== stableJson(assigned))) errors.push("human-decision-is-audit-bound");
     const decision = asRecord(task.decision);
     if ((task.state === "completed") !== (decision !== null)) errors.push("completed-human-task-binds-decision");
     if (decision !== null) {
-      const completion = (snapshot.history as Array<Record<string, unknown>>).filter((event) => event.entityType === "human-task" && event.entityId === task.humanTaskId && event.toState === "completed");
+      const completion = taskEvents.filter((event) => event.toState === "completed");
       const actor = completion.length === 1 ? asRecord(completion[0]?.actor) : null;
-      if (completion.length !== 1 || completion[0]?.decisionId !== decision.decisionId || stableJson(actor) !== stableJson(decision.decidedBy) || stableJson(task.assignedTo) !== stableJson(decision.decidedBy) || (decision.decidedBy as Record<string, unknown>).actorType !== "human" || (decision.decidedBy as Record<string, unknown>).role !== task.requiredRole || decision.decidedAt !== completion[0]?.occurredAt || (decision.evidenceArtifactIds as string[]).some((id) => !artifacts.has(id)) || (decision.rationaleArtifactId !== null && !artifacts.has(decision.rationaleArtifactId as string))) errors.push("human-decision-is-audit-bound");
+      const allowedDispositions = (asRecord(defined?.humanTask)?.allowedDispositions ?? []) as string[];
+      if (!allowedDispositions.includes(decision.disposition as string) || completion.length !== 1 || completion[0]?.decisionId !== decision.decisionId || stableJson(actor) !== stableJson(decision.decidedBy) || stableJson(task.assignedTo) !== stableJson(decision.decidedBy) || (decision.decidedBy as Record<string, unknown>).actorType !== "human" || (decision.decidedBy as Record<string, unknown>).role !== task.requiredRole || decision.decidedAt !== completion[0]?.occurredAt || (decision.evidenceArtifactIds as string[]).some((id) => !artifacts.has(id)) || (decision.rationaleArtifactId !== null && !artifacts.has(decision.rationaleArtifactId as string))) errors.push("human-decision-is-audit-bound");
     }
   }
   if (cancellation.interruptionKind === "security-lock" && !["cancelling", "cancelled", "failed"].includes(snapshot.state as string)) errors.push("security-lock-does-not-auto-resume");
@@ -503,7 +515,7 @@ export const legacyOperationBridgeErrors = (snapshotValue: unknown, value: unkno
   const mapped: Record<string, string> = {accepted:"queued",running:"running","waiting-human":"running",paused:"running",cancelling:"running",succeeded:"succeeded",failed:"failed",cancelled:"cancelled"};
   const cancellation = snapshot.cancellation as Record<string, unknown>;
   const errors: string[] = [];
-  if (bridge.workflowRunId !== snapshot.workflowRunId || bridge.workflowSnapshotRevision !== snapshot.snapshotRevision || bridge.operationState !== mapped[snapshot.state as string] || bridge.cancellationRequested !== (cancellation.requestedAt !== null)) errors.push("legacy-operation-bridge-binds-exact-workflow-projection");
+  if (bridge.workflowRunId !== snapshot.workflowRunId || bridge.workflowSnapshotRevision !== snapshot.snapshotRevision || bridge.operationSequence !== snapshot.sequence || bridge.operationState !== mapped[snapshot.state as string] || bridge.cancellationRequested !== (cancellation.requestedAt !== null)) errors.push("legacy-operation-bridge-binds-exact-workflow-projection");
   if (bridge.etag !== `"${bridge.legacyOperationId as string}-${bridge.operationSequence as number}"`) errors.push("legacy-operation-bridge-etag-is-exact");
   return errors;
 };

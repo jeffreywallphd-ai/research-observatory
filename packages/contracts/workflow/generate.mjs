@@ -32,6 +32,7 @@ const expectedRules = [
   "references-close-over-snapshot",
   "identities-are-unique",
   "history-sequence-is-contiguous",
+  "history-event-identities-are-unique",
   "history-transition-is-allowed",
   "history-reconstructs-current-state",
   "attempt-progress-is-monotonic",
