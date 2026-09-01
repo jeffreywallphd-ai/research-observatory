@@ -1,0 +1,46 @@
+{
+  "task_id": "CAP-03.S04.T03",
+  "attempt_id": "R03",
+  "candidate_commit": "693f62fce9d48290a2ffbeb9dd2a74ff03be7110",
+  "submission_record_commit": "586af183a15b7ad37b662fc5cea373e1b5c15073",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "R03 closes the sole remaining blocking finding. The exact-definition downstream activity is admitted atomically to the durable SQLite queue, projected after restart, claimable by a fresh repository, idempotent under exact decision replay, and completely rolled back when admission fails. The six-path candidate range is exact; submission adds only the R03 manifest and backlog projection. No public contract, generated client, renderer, governed UI reference, route, migration, dependency, or authority expanded. No full profile was run.",
+  "evidence_reproduction": {
+    "manifest": {
+      "path": "artifacts/evidence/CAP-03.S04.T03.R03.json",
+      "sha256": "f420e65c61ec284d5f0fa10b0535c19ae3dde122596cd837473690dc20f1330c",
+      "git_blob": "7a9bdc995b14fd2d7a4f1ce537fc3124aa8564ca",
+      "result": "PASS"
+    },
+    "scope": {
+      "result": "PASS: base is an ancestor of candidate; submission parent is the exact candidate; declared and actual six-path ranges match; candidate excludes the R03 manifest; submission adds only artifacts/evidence/CAP-03.S04.T03.R03.json and planning/backlog.yaml; both ranges pass git diff --check."
+    }
+  },
+  "checks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest -v tests.workflows.test_task_center.WorkflowTaskCenterTests.test_human_consequences_skip_end_or_resume_the_exact_graph tests.workflows.test_task_center.WorkflowTaskCenterTests.test_human_resume_rolls_back_authority_when_queue_admission_fails",
+      "result": "PASS: 2/2. Resume projects exactly one runnable downstream job, exact replay does not duplicate it, a fresh repository claims that job, and injected admission failure rolls back snapshot revision, history, decision, state, and queue."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.workflows.test_task_center tests.service.test_task_center_api",
+      "result": "PASS: 8/8 affected workflow and Core API tests."
+    },
+    {
+      "command": "Inspect exact six-path remediation range and run git diff --check on candidate and submission boundaries",
+      "result": "PASS: product changes are limited to the SQLite repository and focused persistence tests; no public-contract or governed-UI path changed."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S04.T03-R01-F02",
+      "disposition": "fixed",
+      "evidence": "repositories.py now collects only jobs made runnable by the exact dependency graph and, inside the same SQLite transaction as authority/history storage, prepares and admits each job through the existing queue boundary. Focused real-SQLite replay proves durable Task Center projection, fresh-repository claimability, one admission after exact decision replay, and complete rollback after an injected post-authority admission failure."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S04.T03-R01-F02"
+  ]
+}
