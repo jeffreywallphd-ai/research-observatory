@@ -1,0 +1,50 @@
+{
+  "task_id": "CAP-03.S05.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "5e01824503f469e458aa7a6069b988d1d823e576",
+  "submission_record_commit": "290d263a8ae58aa27a40edbf16052d55bf5a926f",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "R02 is a strict descendant of the adverse R01 candidate and its submission is the exact direct child. The frozen R02 evidence authenticates at SHA-256 36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519 and Git blob 8281281f1708a1ecd062c04b7b914c270140b143. R01 evidence/review ancestry is preserved. The exact failing constructor reproduction now passes; leaves declare not-applicable, derived fixtures declare complete with deterministic one-for-one exact-revision edges matching provenance inputs. Three focused tests and all 181 governed Python quality checks pass. Benchmark fixture size, fact-count expectations, thresholds, and deferred ownership are unchanged; the quantitative benchmark was correctly not run.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T01.R02.json",
+      "sha256": "36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519",
+      "git_blob": "8281281f1708a1ecd062c04b7b914c270140b143",
+      "commit": "5e01824503f469e458aa7a6069b988d1d823e576"
+    },
+    {
+      "type": "independent-replay",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -c \"from tools.provenance_lineage_performance_check import _draft; source = _draft(1); assert source.dependency_coverage == 'not-applicable'; assert source.material_dependencies == ()\"",
+      "result": "PASS"
+    },
+    {
+      "type": "independent-replay",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest tests.service.test_provenance.ProvenancePerformanceFixtureTests tests.data.test_material_dependencies",
+      "result": "PASS: 3 tests passed."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Construct the maximum 64-input derived fixture twice and compare coverage, exact input revisions, dependency cardinality, identities, and equality",
+      "result": "PASS: complete coverage, 64 deterministic unique edges, exact one-for-one input correspondence, and stable replay."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "result": "PASS: 181 governed files formatted; Ruff and mypy passed."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S05.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-03.S05.T01.R02.json"
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S05.T01-R01-F01"
+  ]
+}
