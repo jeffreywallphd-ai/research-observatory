@@ -1509,6 +1509,54 @@ class _SqliteAggregateRepository:
             return _projection(row)
         raise _transaction_failure()
 
+    def get_revision(self, revision_id: str) -> AggregateRevision:
+        revision = self._by_revision_id(revision_id)
+        if revision is None:
+            raise RepositoryNotFound("aggregate revision was not found")
+        return revision
+
+    def history(self, aggregate_id: str, *, limit: int = 100) -> tuple[AggregateRevision, ...]:
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1_000:
+            self._mark_failed()
+            raise RepositoryProblem("aggregate history limit is invalid")
+        state = self._state()
+        statement = (
+            select(
+                _REVISIONS.c.revision_id,
+                _REVISIONS.c.aggregate_id,
+                _REVISIONS.c.aggregate_kind,
+                _REVISIONS.c.project_id,
+                _REVISIONS.c.revision,
+                _REVISIONS.c.contract_version,
+                _REVISIONS.c.created_at,
+                _REVISIONS.c.modified_at,
+                _REVISIONS.c.display_label_observed,
+                _REVISIONS.c.display_label_normalized,
+                _REVISIONS.c.knowledge_status,
+                _REVISIONS.c.rights_status,
+                _DOCUMENTS.c.object_sha256,
+            )
+            .select_from(
+                _REVISIONS.outerjoin(
+                    _DOCUMENTS,
+                    (_REVISIONS.c.revision_id == _DOCUMENTS.c.revision_id)
+                    & (_REVISIONS.c.project_id == _DOCUMENTS.c.project_id),
+                )
+            )
+            .where((_REVISIONS.c.aggregate_id == aggregate_id) & (_REVISIONS.c.project_id == state.project_id))
+            .order_by(desc(_REVISIONS.c.revision))
+            .limit(limit)
+        )
+        try:
+            rows = _execute(state.connection, statement).fetchall()
+        except sqlite3.Error:
+            self._mark_failed()
+        else:
+            if not rows:
+                raise RepositoryNotFound("aggregate was not found")
+            return tuple(_projection(row) for row in reversed(rows))
+        raise _transaction_failure()
+
     def append(
         self,
         draft: AggregateRevisionDraft,
@@ -3159,6 +3207,57 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
             raise
         except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
             raise RepositoryProblem("dependency propagation run query failed") from error
+
+    def change(self, change_id: str) -> DependencyChange:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                rows = connection.execute(
+                    """
+                    SELECT idempotency_key, reason, dependency_kind,
+                           previous_revision_id, replacement_revision_id,
+                           configuration_id, previous_configuration_version,
+                           replacement_configuration_version, previous_fingerprint,
+                           replacement_fingerprint, propagation_policy_id,
+                           propagation_policy_version, actor_id, trace_id, occurred_at
+                      FROM dependency_impact_runs
+                     WHERE project_id=? AND change_id=?
+                     ORDER BY run_id
+                    """,
+                    (self._project_id, change_id),
+                ).fetchall()
+                if not rows:
+                    raise RepositoryNotFound("dependency change was not found")
+                projections = tuple(
+                    DependencyChange(
+                        change_id=change_id,
+                        idempotency_key=str(row[0]),
+                        reason=cast(StalenessReason, row[1]),
+                        dependency_kind=cast(Any, row[2]),
+                        previous_revision_id=None if row[3] is None else str(row[3]),
+                        replacement_revision_id=None if row[4] is None else str(row[4]),
+                        configuration_id=None if row[5] is None else str(row[5]),
+                        previous_configuration_version=None if row[6] is None else str(row[6]),
+                        replacement_configuration_version=None if row[7] is None else str(row[7]),
+                        previous_fingerprint=str(row[8]),
+                        replacement_fingerprint=None if row[9] is None else str(row[9]),
+                        propagation_policy_id=str(row[10]),
+                        propagation_policy_version=str(row[11]),
+                        actor_id=str(row[12]),
+                        trace_id=str(row[13]),
+                        occurred_at=str(row[14]),
+                    )
+                    for row in rows
+                )
+                if any(candidate != projections[0] for candidate in projections[1:]):
+                    raise RepositoryConflict("dependency change authority differs across propagation runs")
+                return projections[0]
+            finally:
+                connection.close()
+        except RepositoryProblem:
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("dependency change read failed") from error
 
     def decisions(self, run_id: str) -> tuple[ConditionalDependencyDecision, ...]:
         try:

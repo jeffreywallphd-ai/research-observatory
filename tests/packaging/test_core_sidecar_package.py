@@ -55,6 +55,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.provenance",
                     "research_observatory_core.provenance_contracts",
                     "research_observatory_core.research_intent_contracts",
+                    "research_observatory_core.selective_recalculation",
                     "research_observatory_core.workflow_contracts",
                     "research_observatory_core.workflow_executor",
                     "research_observatory_core.migrations.runner",
@@ -100,6 +101,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             contract["requiredModules"],
         )
         self.assertIn("research_observatory_core.research_intent_contracts", contract["requiredModules"])
+        self.assertIn("research_observatory_core.selective_recalculation", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
         self.assertIn("sqlcipher3", contract["requiredModules"])
         self.assertEqual(
