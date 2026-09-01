@@ -106,6 +106,12 @@ from .provenance import (
     canonical_workflow_completion_provenance_event,
 )
 from .provenance_contracts import canonical_provenance_json, decode_provenance_event, provenance_record_sha256
+from .recalculation_contracts import (
+    RecalculationAuthority,
+    RecalculationCandidateCommit,
+    SelectiveRecalculationRepository,
+    recalculation_authority_sha256,
+)
 from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
 from .workflow_contracts import workflow_record_sha256, workflow_snapshot_errors
 
@@ -949,6 +955,12 @@ class _UnitOfWorkRegistry:
                     state.connection.execute("ROLLBACK")
             state.connection.close()
 
+    def unregister(self, token: str) -> None:
+        """Release an adopted connection token without owning its transaction."""
+
+        with self._lock:
+            self._states.pop(token, None)
+
 
 _UNIT_OF_WORKS = _UnitOfWorkRegistry()
 
@@ -1457,6 +1469,343 @@ def _projection_content_sha256(revision: AggregateRevision) -> str:
     }
     payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return f"sha256:{hashlib.sha256(payload).hexdigest()}"
+
+
+def _revision_with_connection(
+    connection: CanonicalConnection,
+    project_id: str,
+    revision_id: str,
+) -> AggregateRevision:
+    row = connection.execute(
+        """
+        SELECT revision.revision_id, revision.aggregate_id, revision.aggregate_kind,
+               revision.project_id, revision.revision, revision.contract_version,
+               revision.created_at, revision.modified_at,
+               revision.display_label_observed, revision.display_label_normalized,
+               revision.knowledge_status, revision.rights_status, document.object_sha256
+          FROM aggregate_revisions AS revision
+          LEFT JOIN documents AS document
+            ON document.project_id=revision.project_id
+           AND document.revision_id=revision.revision_id
+         WHERE revision.project_id=? AND revision.revision_id=?
+        """,
+        (project_id, revision_id),
+    ).fetchone()
+    if row is None:
+        raise RepositoryNotFound("aggregate revision was not found")
+    return _projection(row)
+
+
+def _material_registration_with_connection(
+    connection: CanonicalConnection,
+    project_id: str,
+    output_revision_id: str,
+) -> MaterialDependencyRegistration:
+    output = connection.execute(
+        """
+        SELECT dependency.output_revision_id, revision.aggregate_id,
+               revision.aggregate_kind, dependency.project_id,
+               dependency.coverage, dependency.registration_event_id,
+               dependency.registered_at
+          FROM material_dependency_outputs AS dependency
+          JOIN aggregate_revisions AS revision
+            ON revision.revision_id=dependency.output_revision_id
+           AND revision.project_id=dependency.project_id
+         WHERE dependency.project_id=? AND dependency.output_revision_id=?
+        """,
+        (project_id, output_revision_id),
+    ).fetchone()
+    if output is None:
+        raise RepositoryNotFound("material dependency registration was not found")
+    rows = connection.execute(
+        """
+        SELECT dependency_id, dependency_kind, relation_type,
+               dependency_revision_id, configuration_id,
+               configuration_version, fingerprint, governing_policy_id,
+               governing_policy_version
+          FROM material_dependencies
+         WHERE project_id=? AND output_revision_id=?
+         ORDER BY dependency_id
+        """,
+        (project_id, output_revision_id),
+    ).fetchall()
+    return MaterialDependencyRegistration(
+        output_revision_id=str(output[0]),
+        output_aggregate_id=str(output[1]),
+        output_kind=cast(AggregateKind, output[2]),
+        project_id=str(output[3]),
+        coverage=cast(DependencyCoverage, output[4]),
+        registration_event_id=None if output[5] is None else str(output[5]),
+        registered_at=None if output[6] is None else str(output[6]),
+        dependencies=tuple(
+            MaterialDependency(
+                dependency_id=str(row[0]),
+                dependency_kind=cast(Any, row[1]),
+                relation_type=cast(Any, row[2]),
+                revision_id=None if row[3] is None else str(row[3]),
+                configuration_id=None if row[4] is None else str(row[4]),
+                configuration_version=None if row[5] is None else str(row[5]),
+                fingerprint=str(row[6]),
+                governing_policy_id=str(row[7]),
+                governing_policy_version=str(row[8]),
+            )
+            for row in rows
+        ),
+    )
+
+
+def _stale_states_with_connection(
+    connection: CanonicalConnection,
+    project_id: str,
+    output_revision_id: str,
+) -> tuple[DependencyStaleState, ...]:
+    rows = connection.execute(
+        """
+        SELECT cause_id, run_id, change_id, output_revision_id,
+               disposition, reason, propagation_policy_id,
+               propagation_policy_version, depth, path_json,
+               path_length, path_truncated, cycle_group_id,
+               confidence, review_required, detected_at
+          FROM dependency_stale_causes
+         WHERE project_id=? AND output_revision_id=?
+         ORDER BY detected_at, output_revision_id, cause_id
+        """,
+        (project_id, output_revision_id),
+    ).fetchall()
+    return tuple(
+        DependencyStaleState(
+            cause_id=str(row[0]),
+            run_id=str(row[1]),
+            change_id=str(row[2]),
+            output_revision_id=str(row[3]),
+            disposition=cast(Any, row[4]),
+            reason=cast(StalenessReason, row[5]),
+            propagation_policy_id=str(row[6]),
+            propagation_policy_version=str(row[7]),
+            depth=int(row[8]),
+            path_revision_ids=tuple(str(value) for value in json.loads(str(row[9]))),
+            path_length=int(row[10]),
+            path_truncated=bool(row[11]),
+            cycle_group_id=None if row[12] is None else str(row[12]),
+            confidence=cast(Any, row[13]),
+            review_required=bool(row[14]),
+            detected_at=str(row[15]),
+            resolution_state="open",
+        )
+        for row in rows
+    )
+
+
+def _change_with_connection(
+    connection: CanonicalConnection,
+    project_id: str,
+    change_id: str,
+) -> DependencyChange:
+    rows = connection.execute(
+        """
+        SELECT idempotency_key, reason, dependency_kind,
+               previous_revision_id, replacement_revision_id,
+               configuration_id, previous_configuration_version,
+               replacement_configuration_version, previous_fingerprint,
+               replacement_fingerprint, propagation_policy_id,
+               propagation_policy_version, actor_id, trace_id, occurred_at
+          FROM dependency_impact_runs
+         WHERE project_id=? AND change_id=?
+         ORDER BY run_id
+        """,
+        (project_id, change_id),
+    ).fetchall()
+    if not rows:
+        raise RepositoryNotFound("dependency change was not found")
+    values = tuple(
+        DependencyChange(
+            change_id=change_id,
+            idempotency_key=str(row[0]),
+            reason=cast(StalenessReason, row[1]),
+            dependency_kind=cast(Any, row[2]),
+            previous_revision_id=None if row[3] is None else str(row[3]),
+            replacement_revision_id=None if row[4] is None else str(row[4]),
+            configuration_id=None if row[5] is None else str(row[5]),
+            previous_configuration_version=None if row[6] is None else str(row[6]),
+            replacement_configuration_version=None if row[7] is None else str(row[7]),
+            previous_fingerprint=str(row[8]),
+            replacement_fingerprint=None if row[9] is None else str(row[9]),
+            propagation_policy_id=str(row[10]),
+            propagation_policy_version=str(row[11]),
+            actor_id=str(row[12]),
+            trace_id=str(row[13]),
+            occurred_at=str(row[14]),
+        )
+        for row in rows
+    )
+    if any(value != values[0] for value in values[1:]):
+        raise RepositoryConflict("dependency change authority differs across propagation runs")
+    return values[0]
+
+
+def _dependency_changed_by(
+    dependency: MaterialDependency,
+    changes: tuple[DependencyChange, ...],
+) -> bool:
+    return any(
+        (change.previous_revision_id is not None and dependency.revision_id == change.previous_revision_id)
+        or (
+            change.configuration_id is not None
+            and dependency.configuration_id == change.configuration_id
+            and dependency.configuration_version == change.previous_configuration_version
+        )
+        for change in changes
+    )
+
+
+def _recalculation_authority_with_connection(
+    connection: CanonicalConnection,
+    project_id: str,
+    target_revision_id: str,
+) -> RecalculationAuthority:
+    target = _revision_with_connection(connection, project_id, target_revision_id)
+    current = connection.execute(
+        "SELECT revision_id FROM aggregate_revisions WHERE project_id=? AND aggregate_id=? "
+        "ORDER BY revision DESC LIMIT 1",
+        (project_id, target.aggregate_id),
+    ).fetchone()
+    if current is None or str(current[0]) != target_revision_id:
+        raise RepositoryConflict("recalculation target is no longer current")
+    registration = _material_registration_with_connection(connection, project_id, target_revision_id)
+    causes = _stale_states_with_connection(connection, project_id, target_revision_id)
+    changes = tuple(
+        _change_with_connection(connection, project_id, value)
+        for value in sorted({cause.change_id for cause in causes})
+    )
+    replacements = tuple(
+        _revision_with_connection(connection, project_id, revision_id)
+        for revision_id in sorted(
+            {change.replacement_revision_id for change in changes if change.replacement_revision_id is not None}
+        )
+    )
+    reusable: list[AggregateRevision] = []
+    for dependency in registration.dependencies:
+        if dependency.revision_id is None or _dependency_changed_by(dependency, changes):
+            continue
+        revision = _revision_with_connection(connection, project_id, dependency.revision_id)
+        if revision.knowledge_status not in {"verified", "adjudicated"}:
+            continue
+        if _stale_states_with_connection(connection, project_id, revision.revision_id):
+            continue
+        reusable.append(revision)
+    detached = RecalculationAuthority(
+        target=target,
+        dependencies=registration.dependencies,
+        causes=causes,
+        changes=changes,
+        replacements=replacements,
+        reusable=tuple(sorted(reusable, key=lambda item: item.revision_id)),
+        authority_sha256="",
+    )
+    return replace(detached, authority_sha256=recalculation_authority_sha256(detached))
+
+
+def _dependency_semantics(dependency: MaterialDependency) -> tuple[object, ...]:
+    return (
+        dependency.dependency_kind,
+        dependency.relation_type,
+        dependency.revision_id,
+        dependency.configuration_id,
+        dependency.configuration_version,
+        dependency.fingerprint,
+        dependency.governing_policy_id,
+        dependency.governing_policy_version,
+    )
+
+
+def _planned_candidate_dependencies(authority: RecalculationAuthority) -> tuple[tuple[object, ...], ...]:
+    planned: list[MaterialDependency] = []
+    for dependency in authority.dependencies:
+        candidate = dependency
+        matching = tuple(change for change in authority.changes if _dependency_changed_by(dependency, (change,)))
+        if len(matching) > 1:
+            raise RepositoryConflict("recalculation dependency has ambiguous replacement authority")
+        if matching:
+            change = matching[0]
+            candidate = replace(
+                dependency,
+                revision_id=(
+                    change.replacement_revision_id
+                    if change.previous_revision_id == dependency.revision_id
+                    else dependency.revision_id
+                ),
+                configuration_version=(
+                    change.replacement_configuration_version
+                    if change.configuration_id == dependency.configuration_id
+                    else dependency.configuration_version
+                ),
+                fingerprint=change.replacement_fingerprint or dependency.fingerprint,
+            )
+        planned.append(candidate)
+    return tuple(sorted((_dependency_semantics(item) for item in planned), key=repr))
+
+
+def _validate_candidate_authority(
+    authority: RecalculationAuthority,
+    command: RecalculationCandidateCommit,
+) -> None:
+    draft = command.draft
+    expected_provenance = (
+        authority.target.revision_id,
+        *(item.revision_id for item in authority.replacements),
+        *(item.revision_id for item in authority.reusable),
+    )
+    supplied_dependencies = tuple(
+        sorted((_dependency_semantics(item) for item in draft.material_dependencies), key=repr)
+    )
+    if (
+        command.expected_current_revision_id != authority.target.revision_id
+        or draft.aggregate_id != authority.target.aggregate_id
+        or draft.aggregate_kind != authority.target.aggregate_kind
+        or draft.created_at != authority.target.created_at
+        or draft.knowledge_status == "adjudicated"
+        or draft.dependency_coverage != "complete"
+        or tuple(item.revision_id for item in draft.provenance_inputs) != expected_provenance
+        or supplied_dependencies != _planned_candidate_dependencies(authority)
+    ):
+        raise RepositoryConflict("recalculation candidate differs from the admitted plan")
+
+
+def _validate_recalculation_submission(
+    authority: RecalculationAuthority,
+    submission: WorkflowJobSubmission,
+) -> tuple[dict[str, object], dict[str, object]]:
+    definition = cast(dict[str, object], json.loads(submission.definition_json))
+    snapshot = cast(dict[str, object], json.loads(submission.snapshot_json))
+    expected_artifacts = {
+        (authority.target.revision_id, authority.target.revision_id, "target"),
+        *((item.revision_id, item.revision_id, "replacement") for item in authority.replacements),
+        *((item.revision_id, item.revision_id, "reusable") for item in authority.reusable),
+        *((item.cause_id, authority.target.revision_id, "cause") for item in authority.causes),
+    }
+    observed_artifacts: set[tuple[str, str, str]] = set()
+    for item in cast(list[dict[str, object]], snapshot.get("artifacts", [])):
+        media_type = str(item.get("mediaType", ""))
+        role = (
+            "target"
+            if media_type.endswith("recalculation-target+json")
+            else "replacement"
+            if media_type.endswith("replacement-revision+json")
+            else "reusable"
+            if media_type.endswith("reusable-revision+json")
+            else "cause"
+            if media_type.endswith("stale-cause+json")
+            else "invalid"
+        )
+        observed_artifacts.add((str(item.get("artifactId")), str(item.get("revisionId")), role))
+    configuration = cast(dict[str, object], snapshot.get("configuration", {}))
+    if (
+        submission.command_fingerprint != authority.authority_sha256
+        or configuration.get("configurationHash") != authority.authority_sha256
+        or observed_artifacts != expected_artifacts
+    ):
+        raise WorkflowQueueConflict("recalculation workflow authority differs at admission")
+    return definition, snapshot
 
 
 class _SqliteAggregateRepository:
@@ -1978,6 +2327,22 @@ class _SqliteUnitOfWork:
             raise RepositoryTransactionFailed("unit of work is not active")
         _UNIT_OF_WORKS.state(self.__token)
         return _SqliteAggregateRepository(self.__token)
+
+    def require_fresh_revision(self, revision_id: str) -> None:
+        if self.__token is None:
+            raise RepositoryTransactionFailed("unit of work is not active")
+        state = _UNIT_OF_WORKS.state(self.__token)
+        try:
+            row = state.connection.execute(
+                "SELECT 1 FROM dependency_stale_causes WHERE project_id=? AND output_revision_id=? LIMIT 1",
+                (state.project_id, revision_id),
+            ).fetchone()
+        except sqlite3.Error:
+            _UNIT_OF_WORKS.fail(self.__token)
+            raise _transaction_failure() from None
+        if row is not None:
+            _UNIT_OF_WORKS.fail(self.__token)
+            raise RepositoryConflict("stale revision cannot be restored as fresh")
 
     def __enter__(self) -> _SqliteUnitOfWork:
         if self.__token is not None:
@@ -5707,6 +6072,165 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 artifact.provenance_entity_id,
             )
 
+    def _complete_with_connection(
+        self,
+        connection: CanonicalConnection,
+        claim: WorkflowJobClaim,
+        *,
+        now: str,
+        outputs: tuple[WorkflowOutputReference, ...],
+    ) -> WorkflowCompletionReceipt:
+        manifest, output_sha256 = self._output_manifest(outputs)
+        existing = connection.execute(
+            """
+            SELECT attempt_id, output_manifest_json, output_record_sha256, committed_at,
+                   idempotency_key, command_fingerprint
+              FROM workflow_committed_outputs WHERE project_id=? AND job_id=?
+            """,
+            (self._project_id, claim.job_id),
+        ).fetchone()
+        if existing is not None:
+            self._verify_attempt_capability(connection, claim)
+            if tuple(existing[:3]) != (claim.attempt_id, manifest, output_sha256) or tuple(existing[4:]) != (
+                claim.idempotency_key,
+                claim.command_fingerprint,
+            ):
+                raise WorkflowQueueConflict("workflow completion replay differs")
+            return WorkflowCompletionReceipt(claim.job_id, claim.attempt_id, output_sha256, str(existing[3]), True)
+
+        row = self._lease_row(connection, claim, now, states=("running",))
+        if row[3] is not None:
+            raise WorkflowQueueConflict("workflow cancellation precedes completion")
+        if (
+            str(row[9]) == "required"
+            and connection.execute(
+                "SELECT 1 FROM workflow_checkpoints WHERE project_id=? AND job_id=? LIMIT 1",
+                (self._project_id, claim.job_id),
+            ).fetchone()
+            is None
+        ):
+            raise WorkflowQueueConflict("workflow required checkpoint is missing")
+        output_revisions = self._resolve_outputs(connection, outputs)
+        for output in outputs:
+            staged = connection.execute(
+                """
+                SELECT revision_id, role, disposition, content_hash, media_type, provenance_entity_id
+                  FROM workflow_attempt_artifacts
+                 WHERE project_id=? AND job_id=? AND attempt_id=? AND artifact_id=?
+                """,
+                (self._project_id, claim.job_id, claim.attempt_id, output.artifact_id),
+            ).fetchone()
+            expected = (
+                output.revision_id,
+                "output",
+                "retained-incomplete",
+                output.content_hash,
+                output.media_type,
+                output.provenance_entity_id,
+            )
+            if staged is None or tuple(staged) != expected:
+                raise WorkflowQueueConflict("workflow output was not staged by the current attempt")
+        provenance_event_id = _workflow_uuid(now)
+        outbox_id = _workflow_uuid(now)
+        trace_id = hashlib.sha256(claim.job_id.encode("ascii")).hexdigest()[:32]
+        provenance_event = AtomicRepositoryEvent(
+            event_id=provenance_event_id,
+            outbox_id=outbox_id,
+            event_type="org.research-observatory.workflow.job-succeeded.v1",
+            occurred_at=now,
+            available_at=now,
+            trace_id=trace_id,
+            actor_type="worker",
+            actor_id=claim.worker_id,
+            idempotency_key=f"workflow-output:{claim.job_id}",
+        )
+        provenance_fingerprint = hashlib.sha256(
+            f"{claim.command_fingerprint}\n{output_sha256}".encode("ascii")
+        ).hexdigest()
+        _record_provenance(
+            connection,
+            project_id=self._project_id,
+            primary_revision_id=output_revisions[0].revision_id,
+            record_json=canonical_workflow_completion_provenance_event(
+                outputs=output_revisions,
+                event=provenance_event,
+            ),
+            event=provenance_event,
+            idempotency_sha256=provenance_fingerprint,
+        )
+        connection.execute(
+            """
+            INSERT INTO workflow_committed_outputs (
+                job_id, project_id, attempt_id, idempotency_key, command_fingerprint,
+                output_manifest_json, output_record_sha256, committed_at,
+                provenance_event_id, outbox_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                claim.job_id,
+                self._project_id,
+                claim.attempt_id,
+                claim.idempotency_key,
+                claim.command_fingerprint,
+                manifest,
+                output_sha256,
+                now,
+                provenance_event_id,
+                outbox_id,
+            ),
+        )
+        connection.execute(
+            "UPDATE workflow_job_attempts SET state='succeeded', ended_at=? WHERE attempt_id=?",
+            (now, claim.attempt_id),
+        )
+        for output in outputs:
+            connection.execute(
+                "UPDATE workflow_attempt_artifacts SET disposition='committed', updated_at=? "
+                "WHERE attempt_id=? AND artifact_id=? AND role='output' "
+                "AND disposition='retained-incomplete'",
+                (now, claim.attempt_id, output.artifact_id),
+            )
+        connection.execute(
+            """
+            UPDATE workflow_queue_jobs
+               SET state='succeeded', lease_owner=NULL, lease_token_sha256=NULL,
+                   lease_expires_at=NULL, committed_output_sha256=?, updated_at=?
+             WHERE job_id=?
+            """,
+            (output_sha256, now, claim.job_id),
+        )
+        actor = WorkflowActor(claim.worker_id, "workload", "local-workflow-worker")
+        self._append_history(
+            connection,
+            project_id=self._project_id,
+            workflow_run_id=str(row[0]),
+            job_id=claim.job_id,
+            attempt_id=claim.attempt_id,
+            entity_type="job-attempt",
+            entity_id=claim.attempt_id,
+            from_state="running",
+            to_state="succeeded",
+            occurred_at=now,
+            actor=actor,
+            reason_code="output-committed",
+            extra={"progress": cast(dict[str, object], json.loads(str(row[5])))},
+        )
+        self._append_history(
+            connection,
+            project_id=self._project_id,
+            workflow_run_id=str(row[0]),
+            job_id=claim.job_id,
+            attempt_id=claim.attempt_id,
+            entity_type="job",
+            entity_id=claim.job_id,
+            from_state="running",
+            to_state="succeeded",
+            occurred_at=now,
+            actor=actor,
+            reason_code="attempt-accepted",
+        )
+        return WorkflowCompletionReceipt(claim.job_id, claim.attempt_id, output_sha256, now, False)
+
     def complete(
         self,
         claim: WorkflowJobClaim,
@@ -5715,158 +6239,10 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         outputs: tuple[WorkflowOutputReference, ...],
     ) -> WorkflowCompletionReceipt:
         _workflow_time(now)
-        manifest, output_sha256 = self._output_manifest(outputs)
         if self._dependency_registration_gaps(claim, now=now, outputs=outputs):
             raise WorkflowQueueConflict("workflow output dependency registration is incomplete")
         with self._transaction() as connection:
-            existing = connection.execute(
-                """
-                SELECT attempt_id, output_manifest_json, output_record_sha256, committed_at,
-                       idempotency_key, command_fingerprint
-                  FROM workflow_committed_outputs WHERE project_id=? AND job_id=?
-                """,
-                (self._project_id, claim.job_id),
-            ).fetchone()
-            if existing is not None:
-                self._verify_attempt_capability(connection, claim)
-                if tuple(existing[:3]) != (claim.attempt_id, manifest, output_sha256) or tuple(existing[4:]) != (
-                    claim.idempotency_key,
-                    claim.command_fingerprint,
-                ):
-                    raise WorkflowQueueConflict("workflow completion replay differs")
-                return WorkflowCompletionReceipt(claim.job_id, claim.attempt_id, output_sha256, str(existing[3]), True)
-
-            row = self._lease_row(connection, claim, now, states=("running",))
-            if row[3] is not None:
-                raise WorkflowQueueConflict("workflow cancellation precedes completion")
-            if (
-                str(row[9]) == "required"
-                and connection.execute(
-                    "SELECT 1 FROM workflow_checkpoints WHERE project_id=? AND job_id=? LIMIT 1",
-                    (self._project_id, claim.job_id),
-                ).fetchone()
-                is None
-            ):
-                raise WorkflowQueueConflict("workflow required checkpoint is missing")
-            output_revisions = self._resolve_outputs(connection, outputs)
-            for output in outputs:
-                staged = connection.execute(
-                    """
-                    SELECT revision_id, role, disposition, content_hash, media_type, provenance_entity_id
-                      FROM workflow_attempt_artifacts
-                     WHERE project_id=? AND job_id=? AND attempt_id=? AND artifact_id=?
-                    """,
-                    (self._project_id, claim.job_id, claim.attempt_id, output.artifact_id),
-                ).fetchone()
-                expected = (
-                    output.revision_id,
-                    "output",
-                    "retained-incomplete",
-                    output.content_hash,
-                    output.media_type,
-                    output.provenance_entity_id,
-                )
-                if staged is None or tuple(staged) != expected:
-                    raise WorkflowQueueConflict("workflow output was not staged by the current attempt")
-            provenance_event_id = _workflow_uuid(now)
-            outbox_id = _workflow_uuid(now)
-            trace_id = hashlib.sha256(claim.job_id.encode("ascii")).hexdigest()[:32]
-            provenance_event = AtomicRepositoryEvent(
-                event_id=provenance_event_id,
-                outbox_id=outbox_id,
-                event_type="org.research-observatory.workflow.job-succeeded.v1",
-                occurred_at=now,
-                available_at=now,
-                trace_id=trace_id,
-                actor_type="worker",
-                actor_id=claim.worker_id,
-                idempotency_key=f"workflow-output:{claim.job_id}",
-            )
-            provenance_fingerprint = hashlib.sha256(
-                f"{claim.command_fingerprint}\n{output_sha256}".encode("ascii")
-            ).hexdigest()
-            _record_provenance(
-                connection,
-                project_id=self._project_id,
-                primary_revision_id=output_revisions[0].revision_id,
-                record_json=canonical_workflow_completion_provenance_event(
-                    outputs=output_revisions,
-                    event=provenance_event,
-                ),
-                event=provenance_event,
-                idempotency_sha256=provenance_fingerprint,
-            )
-            connection.execute(
-                """
-                INSERT INTO workflow_committed_outputs (
-                    job_id, project_id, attempt_id, idempotency_key, command_fingerprint,
-                    output_manifest_json, output_record_sha256, committed_at,
-                    provenance_event_id, outbox_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    claim.job_id,
-                    self._project_id,
-                    claim.attempt_id,
-                    claim.idempotency_key,
-                    claim.command_fingerprint,
-                    manifest,
-                    output_sha256,
-                    now,
-                    provenance_event_id,
-                    outbox_id,
-                ),
-            )
-            connection.execute(
-                "UPDATE workflow_job_attempts SET state='succeeded', ended_at=? WHERE attempt_id=?",
-                (now, claim.attempt_id),
-            )
-            for output in outputs:
-                connection.execute(
-                    "UPDATE workflow_attempt_artifacts SET disposition='committed', updated_at=? "
-                    "WHERE attempt_id=? AND artifact_id=? AND role='output' "
-                    "AND disposition='retained-incomplete'",
-                    (now, claim.attempt_id, output.artifact_id),
-                )
-            connection.execute(
-                """
-                UPDATE workflow_queue_jobs
-                   SET state='succeeded', lease_owner=NULL, lease_token_sha256=NULL,
-                       lease_expires_at=NULL, committed_output_sha256=?, updated_at=?
-                 WHERE job_id=?
-                """,
-                (output_sha256, now, claim.job_id),
-            )
-            self._append_history(
-                connection,
-                project_id=self._project_id,
-                workflow_run_id=str(row[0]),
-                job_id=claim.job_id,
-                attempt_id=claim.attempt_id,
-                entity_type="job-attempt",
-                entity_id=claim.attempt_id,
-                from_state="running",
-                to_state="succeeded",
-                occurred_at=now,
-                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
-                reason_code="output-committed",
-                extra={"progress": cast(dict[str, object], json.loads(str(row[5])))},
-            )
-            self._append_history(
-                connection,
-                project_id=self._project_id,
-                workflow_run_id=str(row[0]),
-                job_id=claim.job_id,
-                attempt_id=claim.attempt_id,
-                entity_type="job",
-                entity_id=claim.job_id,
-                from_state="running",
-                to_state="succeeded",
-                occurred_at=now,
-                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
-                reason_code="attempt-accepted",
-            )
-            return WorkflowCompletionReceipt(claim.job_id, claim.attempt_id, output_sha256, now, False)
+            return self._complete_with_connection(connection, claim, now=now, outputs=outputs)
 
     def _finish_attempt(self, claim: WorkflowJobClaim, *, now: str, error_code: str, cancel: bool) -> WorkflowJobRecord:
         _workflow_time(now)
@@ -6047,10 +6423,201 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         return recovered
 
 
+class _SqliteSelectiveRecalculationRepository(
+    _SqliteWorkflowQueueRepository,
+    SelectiveRecalculationRepository,
+):
+    """Atomic SQLite boundary joining recalculation authority, queue, and output commit."""
+
+    def plan_authority(self, target_revision_id: str) -> RecalculationAuthority:
+        try:
+            connection = self._open()
+            try:
+                connection.execute("BEGIN")
+                authority = _recalculation_authority_with_connection(
+                    connection,
+                    self._project_id,
+                    target_revision_id,
+                )
+                connection.execute("COMMIT")
+                return authority
+            finally:
+                if connection.in_transaction:
+                    connection.execute("ROLLBACK")
+                connection.close()
+        except RepositoryProblem:
+            raise
+        except (OSError, sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("recalculation authority read failed") from error
+
+    def enqueue_if_current(
+        self,
+        authority: RecalculationAuthority,
+        submission: WorkflowJobSubmission,
+        *,
+        actor: WorkflowActor,
+    ) -> WorkflowJobRecord:
+        if submission.project_id != self._project_id:
+            raise WorkflowQueueConflict("workflow project authority differs")
+        _workflow_actor(actor)
+        definition, snapshot = _validate_recalculation_submission(authority, submission)
+        if (
+            _workflow_json(definition) != submission.definition_json
+            or _workflow_json(snapshot) != submission.snapshot_json
+            or _workflow_sha256(definition) != submission.definition_record_sha256
+            or _workflow_sha256(snapshot) != submission.snapshot_record_sha256
+            or snapshot.get("projectId") != self._project_id
+            or workflow_snapshot_errors(definition, snapshot)
+        ):
+            raise WorkflowQueueCorrupt("workflow authority digest differs")
+        final_actor = cast(Mapping[str, object], cast(list[object], snapshot["history"])[-1])["actor"]
+        if final_actor != {"actorId": actor.actor_id, "actorType": actor.actor_type, "role": actor.role}:
+            raise WorkflowQueueConflict("workflow admission actor differs from snapshot authority")
+        with self._transaction() as connection:
+            current = _recalculation_authority_with_connection(
+                connection,
+                self._project_id,
+                authority.target.revision_id,
+            )
+            if current != authority or recalculation_authority_sha256(current) != submission.command_fingerprint:
+                raise WorkflowQueueConflict("recalculation authority changed before workflow admission")
+            return self._enqueue_submission(connection, submission, definition=definition, snapshot=snapshot)
+
+    def _candidate_job_authority(
+        self,
+        connection: CanonicalConnection,
+        command: RecalculationCandidateCommit,
+    ) -> None:
+        row = connection.execute(
+            """
+            SELECT job.activity_type, job.command_fingerprint, snapshot.snapshot_json
+              FROM workflow_queue_jobs AS job
+              JOIN workflow_authority_snapshots AS snapshot
+                ON snapshot.snapshot_id=job.snapshot_id
+               AND snapshot.snapshot_revision=job.snapshot_revision
+             WHERE job.project_id=? AND job.job_id=?
+            """,
+            (self._project_id, command.claim.job_id),
+        ).fetchone()
+        if row is None:
+            raise WorkflowQueueNotFound("recalculation workflow job was not found")
+        snapshot = cast(dict[str, object], json.loads(str(row[2])))
+        configuration = cast(dict[str, object], snapshot.get("configuration", {}))
+        if (
+            str(row[0]) != "selective-recalculation"
+            or str(row[1]) != command.plan_sha256
+            or command.claim.activity_type != "selective-recalculation"
+            or command.claim.command_fingerprint != command.plan_sha256
+            or configuration.get("configurationHash") != command.plan_sha256
+        ):
+            raise WorkflowQueueConflict("candidate workflow plan authority differs")
+
+    @staticmethod
+    def _candidate_output(candidate: AggregateRevision) -> WorkflowOutputReference:
+        return WorkflowOutputReference(
+            artifact_id=candidate.aggregate_id,
+            revision_id=candidate.revision_id,
+            content_hash=_projection_content_sha256(candidate),
+            media_type="application/vnd.research-observatory.recalculation-candidate+json",
+            provenance_entity_id=candidate.aggregate_id,
+        )
+
+    def commit_candidate(self, command: RecalculationCandidateCommit) -> AggregateRevision:
+        _workflow_time(command.completed_at)
+        if (
+            command.event.actor_type != "worker"
+            or command.event.actor_id != command.claim.worker_id
+            or command.event.event_type != "aggregate.recalculation-candidate-created"
+            or command.event.idempotency_key != f"recalculation-candidate:{command.claim.job_id}"
+            or command.event.occurred_at != command.completed_at
+        ):
+            raise RepositoryConflict("recalculation candidate event authority is invalid")
+        with self._transaction() as connection:
+            self._candidate_job_authority(connection, command)
+            token = _UNIT_OF_WORKS.register(connection, self._project_id)
+            try:
+                aggregates = _SqliteAggregateRepository(token)
+                committed = connection.execute(
+                    "SELECT 1 FROM workflow_committed_outputs WHERE project_id=? AND job_id=?",
+                    (self._project_id, command.claim.job_id),
+                ).fetchone()
+                if committed is not None:
+                    target = command.draft.provenance_inputs[0] if command.draft.provenance_inputs else None
+                    if target is None or target.revision_id != command.expected_current_revision_id:
+                        raise RepositoryConflict("recalculation candidate replay target differs")
+                    candidate = aggregates.append(
+                        command.draft,
+                        command.event,
+                        expected_revision=target.revision,
+                    )
+                    self._complete_with_connection(
+                        connection,
+                        command.claim,
+                        now=command.completed_at,
+                        outputs=(self._candidate_output(candidate),),
+                    )
+                    return candidate
+
+                authority = _recalculation_authority_with_connection(
+                    connection,
+                    self._project_id,
+                    command.expected_current_revision_id,
+                )
+                if authority.authority_sha256 != command.plan_sha256:
+                    raise RepositoryConflict("recalculation authority changed before candidate commit")
+                _validate_candidate_authority(authority, command)
+                self._lease_row(connection, command.claim, command.completed_at, states=("running",))
+                candidate = aggregates.append(
+                    command.draft,
+                    command.event,
+                    expected_revision=authority.target.revision,
+                )
+                output = self._candidate_output(candidate)
+                connection.execute(
+                    """
+                    INSERT INTO workflow_attempt_artifacts (
+                        attempt_id, project_id, job_id, artifact_id, revision_id, role,
+                        disposition, content_hash, media_type, provenance_entity_id,
+                        created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, 'output', 'retained-incomplete', ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        command.claim.attempt_id,
+                        self._project_id,
+                        command.claim.job_id,
+                        output.artifact_id,
+                        output.revision_id,
+                        output.content_hash,
+                        output.media_type,
+                        output.provenance_entity_id,
+                        command.completed_at,
+                        command.completed_at,
+                    ),
+                )
+                self._complete_with_connection(
+                    connection,
+                    command.claim,
+                    now=command.completed_at,
+                    outputs=(output,),
+                )
+                return candidate
+            finally:
+                _UNIT_OF_WORKS.unregister(token)
+
+
 def sqlite_workflow_queue_repository(path: Path, project_id: str) -> WorkflowQueueRepository:
     """Compose the canonical local workflow queue for one authorized project."""
 
     return _SqliteWorkflowQueueRepository(path / "state" / "project.sqlite3", project_id)
+
+
+def sqlite_selective_recalculation_repository(
+    path: Path,
+    project_id: str,
+) -> SelectiveRecalculationRepository:
+    """Compose the atomic selective-recalculation persistence boundary."""
+
+    return _SqliteSelectiveRecalculationRepository(path / "state" / "project.sqlite3", project_id)
 
 
 def sqlite_provenance_ledger_repository(path: Path, project_id: str) -> ProvenanceLedgerRepository:
@@ -6078,5 +6645,6 @@ __all__ = [
     "sqlite_material_dependency_repository",
     "sqlite_privacy_policy_repository",
     "sqlite_provenance_ledger_repository",
+    "sqlite_selective_recalculation_repository",
     "sqlite_workflow_queue_repository",
 ]

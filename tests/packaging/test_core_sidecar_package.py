@@ -66,6 +66,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.object_store",
                     "research_observatory_core.ports.credential_store",
                     "research_observatory_core.ports.database_keys",
+                    "research_observatory_core.recalculation_contracts",
                     "research_observatory_core.ports.workflow_executor",
                     "research_observatory_core.repositories",
                     "research_observatory_core.windows_credentials",
@@ -102,6 +103,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         )
         self.assertIn("research_observatory_core.research_intent_contracts", contract["requiredModules"])
         self.assertIn("research_observatory_core.selective_recalculation", contract["requiredModules"])
+        self.assertIn("research_observatory_core.recalculation_contracts", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
         self.assertIn("sqlcipher3", contract["requiredModules"])
         self.assertEqual(
@@ -236,6 +238,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "research_observatory_core.ports.database_keys",
                 "research_observatory_core.ports.object_store",
                 "research_observatory_core.ports.repositories",
+                "research_observatory_core.recalculation_contracts",
                 "research_observatory_core.repositories",
                 "research_observatory_core.windows_credentials",
                 "sqlcipher3",
