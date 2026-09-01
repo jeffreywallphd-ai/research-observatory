@@ -1,0 +1,57 @@
+{
+  "task_id": "CAP-03.S04.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "02de5ae312985a2c700cc8093061468d8342a736",
+  "submission_record_commit": "9d743f23369a8c413737756baba20980973f18d0",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Candidate/submission ancestry, the exact 28-path remediation inventory, frozen evidence identity, and approved UI-reference lineage authenticate. Five R01 findings are fixed. CAP-03.S04.T03-R01-F02 remains HIGH and blocking: resume persists a runnable downstream activity in canonical authority without admitting its job to the durable queue, leaving a running workflow that cannot execute. Focused replay passed 18 Python/browser tests, 22 TypeScript tests, workflow generation parity, Core API contract parity, and the approved UI-reference gate. No full profile was run.",
+  "remaining_open_findings": [
+    {
+      "id": "CAP-03.S04.T03-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "acceptance_impact": "Definition-bound resume is not executable or restart-recoverable. Task Center reports the downstream step as runnable while exposing no corresponding job, and the durable worker cannot claim it.",
+      "reproduction": "Using a canonical temporary SQLite project, register waiting_human_with_downstream_activity(), approve the human task, reopen the repository, inspect Task Center, and call claim_next(). Result: {'runState': 'running', 'stepStates': [('acquire-source', 'succeeded'), ('review-source', 'succeeded'), ('index-source', 'runnable')], 'projectedJobs': 0, 'claimable': False}. services/core-api/src/research_observatory_core/repositories.py:4022-4068 changes the snapshot step/job to runnable, but lines 4104-4110 only store authority and never insert the newly eligible job into workflow_queue_jobs. tests/workflows/test_task_center.py:315-320 asserts the runnable snapshot state but does not assert queue projection or claimability.",
+      "required_remediation": "Within the same SQLite transaction as the human-decision snapshot/history update, durably admit every newly runnable exact-definition job to workflow_queue_jobs without duplicating an existing admission. Add focused persistence tests proving Task Center projects the job, claim_next succeeds after restart, idempotent decision replay does not duplicate it, and an injected failure rolls back authority, history, and queue admission together."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S04.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Cancellation and retry now carry and transactionally compare the exact snapshot/history authority pair before mutation or idempotent replay. Focused repository and real API tests reject substituted snapshots and stale history."
+    },
+    {
+      "finding_id": "CAP-03.S04.T03-R01-F03",
+      "disposition": "fixed",
+      "evidence": "Exact project identity and monotonically increasing request generations reset projection state and reject stale or superseded responses. The built-product Chromium replay proves delayed project-A work cannot overwrite project B."
+    },
+    {
+      "finding_id": "CAP-03.S04.T03-R01-F04",
+      "disposition": "fixed",
+      "evidence": "The generated client now rejects contradictory decision triples, claimed tasks without assignment, duplicate identities, invalid continuation pairs, invalid waiting-human state, and out-of-order events. Hostile generated-client fixtures pass."
+    },
+    {
+      "finding_id": "CAP-03.S04.T03-R01-F05",
+      "disposition": "fixed",
+      "evidence": "Retry continuation source run/job identities are persisted in canonical snapshots, projected through Core and generated contracts, rendered in Task Center, and reconstructed after restart."
+    },
+    {
+      "finding_id": "CAP-03.S04.T03-R01-F06",
+      "disposition": "fixed",
+      "evidence": "Successful and dismissed confirmations share an explicit focus-restoration path with selected-workflow fallback. Built-product Chromium replay covers cancellation success/failure, failure retention, live announcement, Tab/Escape containment, success focus recovery, and human-decision submission."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S04.T03-R01-F01",
+    "CAP-03.S04.T03-R01-F02",
+    "CAP-03.S04.T03-R01-F03",
+    "CAP-03.S04.T03-R01-F04",
+    "CAP-03.S04.T03-R01-F05",
+    "CAP-03.S04.T03-R01-F06"
+  ]
+}
