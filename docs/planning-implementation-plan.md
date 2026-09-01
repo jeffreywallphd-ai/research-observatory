@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8b8d5a1fac74cf9ea1f3e63e95028c4a495da82381a5e74682038d83ca3f14cf
+source_sha256: e1f93ed24101604fde261340c9b320065418169b596141804b131b9148c69301
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1304,7 +1304,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
-**Status / owner / review:** `REVIEW` / codex / agent:t04-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `IN_PROGRESS` / codex / agent:t04-r02-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T03`
 
@@ -1333,7 +1333,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A05.T04
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -1367,7 +1367,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `efe2415144c1b55167774132213f5ce2f7fbfd3884f8392772e5df9c64355e03`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `efe2415144c1b55167774132213f5ce2f7fbfd3884f8392772e5df9c64355e03`
 
 - Candidate / base / branch: `b079bdd68e648d8059b64b984eaa841059312fe0` / `50ea2c5200e67b8416ba00a36c140ae6a5cda00c` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-30T23:50:15+00:00`
@@ -1381,11 +1383,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A05.T04-R01-F01`, `W1.A05.T04-R01-F02`, `W1.A05.T04-R01-F03`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:t04-independent-reviewer at `2026-08-30T23:18:23+00:00`
+**Disposition / reviewer / time:** `changes-requested` / agent:t04-r02-independent-reviewer / `2026-09-01T11:48:13+00:00`
 
-**Latest notes:** Independent commit-bound review authenticated frozen submission 426767c3a0f7e6e68c1dedf937225b8e6f7818ef, exact candidate/base ancestry, branch, all declared changed paths, criterion-manifest SHA-256 f4486b7f9fee3f91f1d8de672536fb0e5f4618de2f85a3ab74b0792be65f354d, and UI-contract SHA-256 801adc47ce3901bc207328c8ddc84e15dcc7083734bdec98ec4787ca7dfb246f. Exact base..candidate patch hygiene and ui_change_gate passed. Independent replay passed 35 focused renderer/model tests, 25 applicable native application-lock tests (one explicit witness intentionally ignored in this filtered run), and the built-product browser check, including polling-draft retention, locked secrecy, explicit Hello recovery, cancellation/focus, single commit, and unlock only after the mocked native committed receipt. The adopted GOV-MAINT-0006 through GOV-MAINT-0008 records and independent-review chains remain bounded to identity, activation, historical-baseline, and maintenance-envelope evidence controls; the exact gate still requires one v1.4 contract, exact task/base/owner/reference equality, approval ancestry, reviewed maintenance provenance, and governed changed-file equality, so no authority weakening was found. Three blocking acceptance defects remain. A configured Windows Hello success prompt is legitimately hardware-conditional on this not-present host; full packaging, performance, accumulated security/accessibility, and cross-capability qualification remain legitimate S02/amendment/W1-exit duties rather than T04 defects. The authenticated 66-capture v1.4 visual baseline was not automatically rewritten or replayed in full during this review because its approval/package/history/control boundary authenticated and no changed visual bytes exist after the recorded candidate.
+**Immutable review ledger:** `artifacts/evidence/W1.A05.T04.review-R02.json` / `20fd8cf835255fd091d5eaeb4d8daed19dc0f2b08d6bc14bc4f084753bc6e980`
 
-**Currently open findings:** `W1.A05.T04-R01-F01`, `W1.A05.T04-R01-F02`, `W1.A05.T04-R01-F03`
+**Review notes:** Independent commit-bound R02 review authenticated frozen submission 177a90f85af776aa2b8df8326e3d10bf1f39118f, exact candidate b079bdd68e648d8059b64b984eaa841059312fe0, branch, ordered ancestry, all 14 declared changed paths, remediation-manifest SHA-256 3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962, and preserved R01-ledger SHA-256 2139f5c996d74721d3d049643f7acf54d8b22605e70e793361544c1e4b781626. The prior false-success exploit is removed: pending state binds mode, normalized profile, timeout, valid configuration, and the exact successor revision; the controller first replays the opaque handle for the native idempotent receipt; and same-mode wrong-profile or requested-60/observed-0 status cannot produce committed or reconciled-committed success. The live Research Intent instance is retained behind a hidden, aria-hidden, inert workspace layer during the settings detour, and the built browser proves the open project plus unsaved use case and objective survive. Actual top-bar, sidebar, and command-result initiators regain focus. Locked recovery now makes background content inert and aria-hidden, suppresses Ctrl+K, Ctrl+/, and Alt+H, retains alertdialog focus, and leaves no deferred shortcut dialog after unlock. Independent replay passed 91 desktop tests, three production TypeScript/native witness tests, 25 focused Rust tests, strict TypeScript, product/reference build, built-product browser checks, exact v1.4 UI change gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, all 66 visual captures, backlog validation, and patch hygiene. One medium blocking acceptance defect remains: after exact-target reconciliation rejects a different observed same-mode policy and cleanup returns a non-committed result, the controller reports kind unchanged and announces that the prior setting remains active even though it returns and projects the different observed snapshot, including a possible timeout reduction to zero. This no longer claims the requested commit succeeded, but it is not the required truthful conflict/uncertain report and gives screen-reader users a contradictory live announcement. A reviewer-induced first attempt to run Cargo concurrently with the product build encountered the build script's temporary removal of product-dist; the sequential rerun after the successful build passed and is not a candidate defect. Hardware-backed Windows Hello success remains legitimately conditional on a configured device, and accumulated S02/amendment/W1 packaging, performance, and cross-capability qualification remain later gates.
+
+**Findings opened:**
+
+- `W1.A05.T04-R02-F01` `medium` blocking=`True` criterion=`3` — Different-policy reconciliation falsely announces that the prior setting remains active; reproduce: At candidate b079bdd68e648d8059b64b984eaa841059312fe0, the table-driven case in apps/desktop/src/app/applicationSettings.test.ts:219 prepares windows-password profile Requested with timeout 60 from profile Prior/timeout 15/revision 2, loses both commit and receipt-replay responses, observes revision 3 with either profile Other or timeout 0, and receives a successful cancellation/cleanup receipt. The test asserts the returned different snapshot with kind unchanged at line 262. ApplicationSettingsController.reconcileInterruptedCommit reaches apps/desktop/src/app/applicationSettings.ts:393-394 and says native status confirms the prior setting remains active. That statement is false because the returned snapshot is revision 3 and differs from the prior revision-2 policy; in the timeout fixture protection has materially fallen from 15/60 intent to zero. ApplicationSettingsWorkspace.applyResult applies every returned snapshot and then emits that contradictory message through the live region. Thus the remediation correctly prevents a saved/success claim but does not provide the conflict/uncertain report explicitly required by R01, and a screen-reader user is told the opposite of the policy now projected on the page.; remediate: When exact-target receipt/status reconciliation fails and the observed native snapshot differs from the prepared source, preserve that observed snapshot for truthful current-state display but return a rejected/conflict-style result whose plain-language message states that the policy changed elsewhere, the requested transition was not confirmed, and the user must review or refresh before retrying. Do not label this path unchanged or state that the prior policy remains active. Keep bounded cancellation cleanup. Update both wrong-profile and wrong-timeout controller fixtures to assert the conflict result and message, and add or extend one workspace interaction assertion proving the contradictory success/unchanged live announcement cannot occur.
+
+**Prior finding closures:**
+
+- `W1.A05.T04-R01-F01` `superseded` — The high-risk core exploit is fixed: complete normalized target plus exact successor revision are retained, opaque-handle receipt replay is preferred, direct and recovered receipts are validated, and independent replay confirms wrong-profile and wrong-timeout same-mode status cannot produce committed or reconciled-committed success. W1.A05.T04-R02-F01 narrowly retains the unresolved truthful conflict-announcement portion of the original required remediation; it does not reopen the false-success authority claim.
+- `W1.A05.T04-R01-F02` `fixed` — The previous guided workspace remains mounted inside a hidden, aria-hidden, inert layer while Application Settings is active. Independent built-product replay created and opened a project, changed the Research Intent use case and objective without saving, opened settings, returned, and retained the exact project, workspace, field values, and intended top-bar focus.
+- `W1.A05.T04-R01-F03` `fixed` — Locked recovery places all background content in an inert and aria-hidden subtree, the global handler suppresses Ctrl+K, Ctrl+/, and Alt+H while confirmation is active, focus stays inside the alertdialog, and no deferred dialog appears after unlock. Application Settings captures the actual top-bar, sidebar, or command-result element and independently restores all three connected initiators with a stable fallback. The built-product replay and full workflow/accessibility/visual conformance matrix passed.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:t04-r02-independent-reviewer at `2026-09-01T11:48:13+00:00`
+
+**Latest notes:** Independent commit-bound R02 review authenticated frozen submission 177a90f85af776aa2b8df8326e3d10bf1f39118f, exact candidate b079bdd68e648d8059b64b984eaa841059312fe0, branch, ordered ancestry, all 14 declared changed paths, remediation-manifest SHA-256 3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962, and preserved R01-ledger SHA-256 2139f5c996d74721d3d049643f7acf54d8b22605e70e793361544c1e4b781626. The prior false-success exploit is removed: pending state binds mode, normalized profile, timeout, valid configuration, and the exact successor revision; the controller first replays the opaque handle for the native idempotent receipt; and same-mode wrong-profile or requested-60/observed-0 status cannot produce committed or reconciled-committed success. The live Research Intent instance is retained behind a hidden, aria-hidden, inert workspace layer during the settings detour, and the built browser proves the open project plus unsaved use case and objective survive. Actual top-bar, sidebar, and command-result initiators regain focus. Locked recovery now makes background content inert and aria-hidden, suppresses Ctrl+K, Ctrl+/, and Alt+H, retains alertdialog focus, and leaves no deferred shortcut dialog after unlock. Independent replay passed 91 desktop tests, three production TypeScript/native witness tests, 25 focused Rust tests, strict TypeScript, product/reference build, built-product browser checks, exact v1.4 UI change gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, all 66 visual captures, backlog validation, and patch hygiene. One medium blocking acceptance defect remains: after exact-target reconciliation rejects a different observed same-mode policy and cleanup returns a non-committed result, the controller reports kind unchanged and announces that the prior setting remains active even though it returns and projects the different observed snapshot, including a possible timeout reduction to zero. This no longer claims the requested commit succeeded, but it is not the required truthful conflict/uncertain report and gives screen-reader users a contradictory live announcement. A reviewer-induced first attempt to run Cargo concurrently with the product build encountered the build script's temporary removal of product-dist; the sequential rerun after the successful build passed and is not a candidate defect. Hardware-backed Windows Hello success remains legitimately conditional on a configured device, and accumulated S02/amendment/W1 packaging, performance, and cross-capability qualification remain later gates.
+
+**Currently open findings:** `W1.A05.T04-R02-F01`
 
 
 # Capability contributions, slices, and tasks

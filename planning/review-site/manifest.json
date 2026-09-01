@@ -19985,13 +19985,13 @@
         {
           "task_id": "W1.A05.T04",
           "title": "Implement Application Settings Security & sign-in",
-          "status": "REVIEW",
+          "status": "IN_PROGRESS",
           "mode": "append-only",
           "latest_review": {
-            "reviewer": "agent:t04-independent-reviewer",
+            "reviewer": "agent:t04-r02-independent-reviewer",
             "result": "changes-requested",
-            "reviewed_at": "2026-08-30T23:18:23+00:00",
-            "notes": "Independent commit-bound review authenticated frozen submission 426767c3a0f7e6e68c1dedf937225b8e6f7818ef, exact candidate/base ancestry, branch, all declared changed paths, criterion-manifest SHA-256 f4486b7f9fee3f91f1d8de672536fb0e5f4618de2f85a3ab74b0792be65f354d, and UI-contract SHA-256 801adc47ce3901bc207328c8ddc84e15dcc7083734bdec98ec4787ca7dfb246f. Exact base..candidate patch hygiene and ui_change_gate passed. Independent replay passed 35 focused renderer/model tests, 25 applicable native application-lock tests (one explicit witness intentionally ignored in this filtered run), and the built-product browser check, including polling-draft retention, locked secrecy, explicit Hello recovery, cancellation/focus, single commit, and unlock only after the mocked native committed receipt. The adopted GOV-MAINT-0006 through GOV-MAINT-0008 records and independent-review chains remain bounded to identity, activation, historical-baseline, and maintenance-envelope evidence controls; the exact gate still requires one v1.4 contract, exact task/base/owner/reference equality, approval ancestry, reviewed maintenance provenance, and governed changed-file equality, so no authority weakening was found. Three blocking acceptance defects remain. A configured Windows Hello success prompt is legitimately hardware-conditional on this not-present host; full packaging, performance, accumulated security/accessibility, and cross-capability qualification remain legitimate S02/amendment/W1-exit duties rather than T04 defects. The authenticated 66-capture v1.4 visual baseline was not automatically rewritten or replayed in full during this review because its approval/package/history/control boundary authenticated and no changed visual bytes exist after the recorded candidate."
+            "reviewed_at": "2026-09-01T11:48:13+00:00",
+            "notes": "Independent commit-bound R02 review authenticated frozen submission 177a90f85af776aa2b8df8326e3d10bf1f39118f, exact candidate b079bdd68e648d8059b64b984eaa841059312fe0, branch, ordered ancestry, all 14 declared changed paths, remediation-manifest SHA-256 3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962, and preserved R01-ledger SHA-256 2139f5c996d74721d3d049643f7acf54d8b22605e70e793361544c1e4b781626. The prior false-success exploit is removed: pending state binds mode, normalized profile, timeout, valid configuration, and the exact successor revision; the controller first replays the opaque handle for the native idempotent receipt; and same-mode wrong-profile or requested-60/observed-0 status cannot produce committed or reconciled-committed success. The live Research Intent instance is retained behind a hidden, aria-hidden, inert workspace layer during the settings detour, and the built browser proves the open project plus unsaved use case and objective survive. Actual top-bar, sidebar, and command-result initiators regain focus. Locked recovery now makes background content inert and aria-hidden, suppresses Ctrl+K, Ctrl+/, and Alt+H, retains alertdialog focus, and leaves no deferred shortcut dialog after unlock. Independent replay passed 91 desktop tests, three production TypeScript/native witness tests, 25 focused Rust tests, strict TypeScript, product/reference build, built-product browser checks, exact v1.4 UI change gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, all 66 visual captures, backlog validation, and patch hygiene. One medium blocking acceptance defect remains: after exact-target reconciliation rejects a different observed same-mode policy and cleanup returns a non-committed result, the controller reports kind unchanged and announces that the prior setting remains active even though it returns and projects the different observed snapshot, including a possible timeout reduction to zero. This no longer claims the requested commit succeeded, but it is not the required truthful conflict/uncertain report and gives screen-reader users a contradictory live announcement. A reviewer-induced first attempt to run Cargo concurrently with the product build encountered the build script's temporary removal of product-dist; the sequential rerun after the successful build passed and is not a candidate defect. Hardware-backed Windows Hello success remains legitimately conditional on a configured device, and accumulated S02/amendment/W1 packaging, performance, and cross-capability qualification remain later gates."
           },
           "review_control": {
             "version": 1,
@@ -20174,78 +20174,164 @@
                     "closed_finding_ids": []
                   }
                 }
+              },
+              {
+                "submission": {
+                  "id": "R02",
+                  "submitted_by": "codex",
+                  "submitted_at": "2026-08-30T23:50:15+00:00",
+                  "candidate_commit": "b079bdd68e648d8059b64b984eaa841059312fe0",
+                  "base_commit": "50ea2c5200e67b8416ba00a36c140ae6a5cda00c",
+                  "branch": "codex/w1-windows-local-runtime",
+                  "evidence_reference": {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/W1.A05.T04.remediation-01.json",
+                    "sha256": "3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962",
+                    "commit": "b079bdd68e648d8059b64b984eaa841059312fe0",
+                    "recorded_at": "2026-08-30T23:50:15+00:00"
+                  },
+                  "acceptance_criteria_sha256": "9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896",
+                  "changed_paths": [
+                    "apps/desktop/src/app.css",
+                    "apps/desktop/src/app/ApplicationRuntime.tsx",
+                    "apps/desktop/src/app/applicationSettings.native.integration.test.ts",
+                    "apps/desktop/src/app/applicationSettings.test.ts",
+                    "apps/desktop/src/app/applicationSettings.ts",
+                    "artifacts/evidence/W1.A05.T04.json",
+                    "artifacts/evidence/W1.A05.T04.review-R01.json",
+                    "artifacts/evidence/ui-change/W1.A05.T04.json",
+                    "docs/planning-implementation-plan.md",
+                    "planning/backlog.yaml",
+                    "planning/review-site/enablers/ECR-0004.html",
+                    "planning/review-site/manifest.json",
+                    "planning/status-summary.md",
+                    "tools/desktop_app_check.py"
+                  ],
+                  "selected_checks": [
+                    "npm test --prefix apps/desktop; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+                    "node apps/desktop/scripts/application-lock-renderer-integration.mjs; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests",
+                    ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head b079bdd68e648d8059b64b984eaa841059312fe0",
+                    ".venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check tokens|routes|workflows|accessibility|visual",
+                    ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate tests.foundation.test_taskctl_schema; .venv\\Scripts\\ruff.exe check tools/desktop_app_check.py; .venv\\Scripts\\ruff.exe format --check tools/desktop_app_check.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 50ea2c5200e67b8416ba00a36c140ae6a5cda00c..b079bdd68e648d8059b64b984eaa841059312fe0",
+                    ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 50ea2c5200e67b8416ba00a36c140ae6a5cda00c --affected-head b079bdd68e648d8059b64b984eaa841059312fe0 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-R02-affected-selection.json"
+                  ],
+                  "deferred_checks": [
+                    "A real configured Windows Hello success prompt remains hardware-conditional; this release-authoritative host reports not-present, while native provider mapping and all renderer availability states remain covered without fabricated hardware evidence.",
+                    "W1.A05.S02 owns the independent security/experience slice integration review and amendment-exit affected build, smoke, security, and accessibility union after T04 task approval.",
+                    "The complete W1 Windows-x64 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit."
+                  ],
+                  "selection_rationale": "R02 is bounded to the three acceptance-bound R01 findings. Their shared failure pattern was insufficient preservation of the complete initiating state across asynchronous or modal detours: policy reconciliation retained only mode/revision, the workspace detour retained only a workspace enum, and interaction handling retained only a fixed fallback control while allowing global shortcuts behind a modal boundary. The remediation binds the complete normalized transition target, preserves the live guided-workspace instance, captures the actual initiating element, and makes recovery confirmation a complete modal boundary. Credible incremental failures are wrong-profile or wrong-timeout success after response loss, idempotent receipt incompatibility, lost unsaved workflow fields, stale/disconnected focus origins, background activation, deferred shortcut dialogs, or governed UI drift. Focused unit/native/browser tests plus the complete approved-reference conformance replay directly cover those risks.",
+                  "selection_sha256": "907595703c2525620b2b5455f291ccb89ec1ab5ac7d7564268e5819cf59c23ea",
+                  "prior_attempt_id": "R01",
+                  "open_finding_ids": [
+                    "W1.A05.T04-R01-F01",
+                    "W1.A05.T04-R01-F02",
+                    "W1.A05.T04-R01-F03"
+                  ],
+                  "root_cause_analysis": null,
+                  "selected_command_ids": [
+                    "foundation:ui-reference",
+                    "foundation:ui-change",
+                    "foundation:quality",
+                    "foundation:backlog",
+                    "desktop:application",
+                    "desktop:unit",
+                    "desktop:ui-reference-integrity",
+                    "desktop:ui-token",
+                    "desktop:ui-route-page",
+                    "desktop:ui-workflow",
+                    "desktop:ui-accessibility",
+                    "desktop:ui-visual-regression",
+                    "security-local:unit"
+                  ],
+                  "packet_sha256": "efe2415144c1b55167774132213f5ce2f7fbfd3884f8392772e5df9c64355e03"
+                },
+                "review": {
+                  "reviewer": "agent:t04-r02-independent-reviewer",
+                  "result": "changes-requested",
+                  "reviewed_at": "2026-09-01T11:48:13+00:00",
+                  "notes": "Independent commit-bound R02 review authenticated frozen submission 177a90f85af776aa2b8df8326e3d10bf1f39118f, exact candidate b079bdd68e648d8059b64b984eaa841059312fe0, branch, ordered ancestry, all 14 declared changed paths, remediation-manifest SHA-256 3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962, and preserved R01-ledger SHA-256 2139f5c996d74721d3d049643f7acf54d8b22605e70e793361544c1e4b781626. The prior false-success exploit is removed: pending state binds mode, normalized profile, timeout, valid configuration, and the exact successor revision; the controller first replays the opaque handle for the native idempotent receipt; and same-mode wrong-profile or requested-60/observed-0 status cannot produce committed or reconciled-committed success. The live Research Intent instance is retained behind a hidden, aria-hidden, inert workspace layer during the settings detour, and the built browser proves the open project plus unsaved use case and objective survive. Actual top-bar, sidebar, and command-result initiators regain focus. Locked recovery now makes background content inert and aria-hidden, suppresses Ctrl+K, Ctrl+/, and Alt+H, retains alertdialog focus, and leaves no deferred shortcut dialog after unlock. Independent replay passed 91 desktop tests, three production TypeScript/native witness tests, 25 focused Rust tests, strict TypeScript, product/reference build, built-product browser checks, exact v1.4 UI change gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, all 66 visual captures, backlog validation, and patch hygiene. One medium blocking acceptance defect remains: after exact-target reconciliation rejects a different observed same-mode policy and cleanup returns a non-committed result, the controller reports kind unchanged and announces that the prior setting remains active even though it returns and projects the different observed snapshot, including a possible timeout reduction to zero. This no longer claims the requested commit succeeded, but it is not the required truthful conflict/uncertain report and gives screen-reader users a contradictory live announcement. A reviewer-induced first attempt to run Cargo concurrently with the product build encountered the build script's temporary removal of product-dist; the sequential rerun after the successful build passed and is not a candidate defect. Hardware-backed Windows Hello success remains legitimately conditional on a configured device, and accumulated S02/amendment/W1 packaging, performance, and cross-capability qualification remain later gates."
+                },
+                "ledger": {
+                  "path": "artifacts/evidence/W1.A05.T04.review-R02.json",
+                  "sha256": "20fd8cf835255fd091d5eaeb4d8daed19dc0f2b08d6bc14bc4f084753bc6e980"
+                },
+                "findings": [
+                  {
+                    "id": "W1.A05.T04-R02-F01",
+                    "severity": "medium",
+                    "blocking": true,
+                    "criterion_index": 3,
+                    "title": "Different-policy reconciliation falsely announces that the prior setting remains active",
+                    "reproduction": "At candidate b079bdd68e648d8059b64b984eaa841059312fe0, the table-driven case in apps/desktop/src/app/applicationSettings.test.ts:219 prepares windows-password profile Requested with timeout 60 from profile Prior/timeout 15/revision 2, loses both commit and receipt-replay responses, observes revision 3 with either profile Other or timeout 0, and receives a successful cancellation/cleanup receipt. The test asserts the returned different snapshot with kind unchanged at line 262. ApplicationSettingsController.reconcileInterruptedCommit reaches apps/desktop/src/app/applicationSettings.ts:393-394 and says native status confirms the prior setting remains active. That statement is false because the returned snapshot is revision 3 and differs from the prior revision-2 policy; in the timeout fixture protection has materially fallen from 15/60 intent to zero. ApplicationSettingsWorkspace.applyResult applies every returned snapshot and then emits that contradictory message through the live region. Thus the remediation correctly prevents a saved/success claim but does not provide the conflict/uncertain report explicitly required by R01, and a screen-reader user is told the opposite of the policy now projected on the page.",
+                    "required_remediation": "When exact-target receipt/status reconciliation fails and the observed native snapshot differs from the prepared source, preserve that observed snapshot for truthful current-state display but return a rejected/conflict-style result whose plain-language message states that the policy changed elsewhere, the requested transition was not confirmed, and the user must review or refresh before retrying. Do not label this path unchanged or state that the prior policy remains active. Keep bounded cancellation cleanup. Update both wrong-profile and wrong-timeout controller fixtures to assert the conflict result and message, and add or extend one workspace interaction assertion proving the contradictory success/unchanged live announcement cannot occur."
+                  }
+                ],
+                "closures": [
+                  {
+                    "finding_id": "W1.A05.T04-R01-F01",
+                    "disposition": "superseded",
+                    "evidence": "The high-risk core exploit is fixed: complete normalized target plus exact successor revision are retained, opaque-handle receipt replay is preferred, direct and recovered receipts are validated, and independent replay confirms wrong-profile and wrong-timeout same-mode status cannot produce committed or reconciled-committed success. W1.A05.T04-R02-F01 narrowly retains the unresolved truthful conflict-announcement portion of the original required remediation; it does not reopen the false-success authority claim."
+                  },
+                  {
+                    "finding_id": "W1.A05.T04-R01-F02",
+                    "disposition": "fixed",
+                    "evidence": "The previous guided workspace remains mounted inside a hidden, aria-hidden, inert layer while Application Settings is active. Independent built-product replay created and opened a project, changed the Research Intent use case and objective without saving, opened settings, returned, and retained the exact project, workspace, field values, and intended top-bar focus."
+                  },
+                  {
+                    "finding_id": "W1.A05.T04-R01-F03",
+                    "disposition": "fixed",
+                    "evidence": "Locked recovery places all background content in an inert and aria-hidden subtree, the global handler suppresses Ctrl+K, Ctrl+/, and Alt+H while confirmation is active, focus stays inside the alertdialog, and no deferred dialog appears after unlock. Application Settings captures the actual top-bar, sidebar, or command-result element and independently restores all three connected initiators with a stable fallback. The built-product replay and full workflow/accessibility/visual conformance matrix passed."
+                  }
+                ],
+                "telemetry": {
+                  "task_id": "W1.A05.T04",
+                  "amendment_id": "W1.A05",
+                  "attempt_id": "R02",
+                  "submitted_at": "2026-08-30T23:50:15+00:00",
+                  "reviewed_at": "2026-09-01T11:48:13+00:00",
+                  "duration_seconds": 129478,
+                  "outcome": "changes-requested",
+                  "finding_counts": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 1,
+                    "low": 0,
+                    "blocking": 1,
+                    "total": 1
+                  },
+                  "command_ids": [
+                    "foundation:ui-reference",
+                    "foundation:ui-change",
+                    "foundation:quality",
+                    "foundation:backlog",
+                    "desktop:application",
+                    "desktop:unit",
+                    "desktop:ui-reference-integrity",
+                    "desktop:ui-token",
+                    "desktop:ui-route-page",
+                    "desktop:ui-workflow",
+                    "desktop:ui-accessibility",
+                    "desktop:ui-visual-regression",
+                    "security-local:unit"
+                  ],
+                  "remediation": {
+                    "prior_attempt_id": "R01",
+                    "replayed_finding_ids": [
+                      "W1.A05.T04-R01-F01",
+                      "W1.A05.T04-R01-F02",
+                      "W1.A05.T04-R01-F03"
+                    ],
+                    "closed_finding_ids": [
+                      "W1.A05.T04-R01-F01",
+                      "W1.A05.T04-R01-F02",
+                      "W1.A05.T04-R01-F03"
+                    ]
+                  }
+                }
               }
             ],
-            "current_submission": {
-              "id": "R02",
-              "submitted_by": "codex",
-              "submitted_at": "2026-08-30T23:50:15+00:00",
-              "candidate_commit": "b079bdd68e648d8059b64b984eaa841059312fe0",
-              "base_commit": "50ea2c5200e67b8416ba00a36c140ae6a5cda00c",
-              "branch": "codex/w1-windows-local-runtime",
-              "evidence_reference": {
-                "type": "criterion-manifest",
-                "path": "artifacts/evidence/W1.A05.T04.remediation-01.json",
-                "sha256": "3549e0ae0d76575b7936207c2bd1a7b71625e897787290f95d7f70efb6c69962",
-                "commit": "b079bdd68e648d8059b64b984eaa841059312fe0",
-                "recorded_at": "2026-08-30T23:50:15+00:00"
-              },
-              "acceptance_criteria_sha256": "9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896",
-              "changed_paths": [
-                "apps/desktop/src/app.css",
-                "apps/desktop/src/app/ApplicationRuntime.tsx",
-                "apps/desktop/src/app/applicationSettings.native.integration.test.ts",
-                "apps/desktop/src/app/applicationSettings.test.ts",
-                "apps/desktop/src/app/applicationSettings.ts",
-                "artifacts/evidence/W1.A05.T04.json",
-                "artifacts/evidence/W1.A05.T04.review-R01.json",
-                "artifacts/evidence/ui-change/W1.A05.T04.json",
-                "docs/planning-implementation-plan.md",
-                "planning/backlog.yaml",
-                "planning/review-site/enablers/ECR-0004.html",
-                "planning/review-site/manifest.json",
-                "planning/status-summary.md",
-                "tools/desktop_app_check.py"
-              ],
-              "selected_checks": [
-                "npm test --prefix apps/desktop; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
-                "node apps/desktop/scripts/application-lock-renderer-integration.mjs; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests",
-                ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head b079bdd68e648d8059b64b984eaa841059312fe0",
-                ".venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check tokens|routes|workflows|accessibility|visual",
-                ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate tests.foundation.test_taskctl_schema; .venv\\Scripts\\ruff.exe check tools/desktop_app_check.py; .venv\\Scripts\\ruff.exe format --check tools/desktop_app_check.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 50ea2c5200e67b8416ba00a36c140ae6a5cda00c..b079bdd68e648d8059b64b984eaa841059312fe0",
-                ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 50ea2c5200e67b8416ba00a36c140ae6a5cda00c --affected-head b079bdd68e648d8059b64b984eaa841059312fe0 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-R02-affected-selection.json"
-              ],
-              "deferred_checks": [
-                "A real configured Windows Hello success prompt remains hardware-conditional; this release-authoritative host reports not-present, while native provider mapping and all renderer availability states remain covered without fabricated hardware evidence.",
-                "W1.A05.S02 owns the independent security/experience slice integration review and amendment-exit affected build, smoke, security, and accessibility union after T04 task approval.",
-                "The complete W1 Windows-x64 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability matrix remains due once at W1 exit."
-              ],
-              "selection_rationale": "R02 is bounded to the three acceptance-bound R01 findings. Their shared failure pattern was insufficient preservation of the complete initiating state across asynchronous or modal detours: policy reconciliation retained only mode/revision, the workspace detour retained only a workspace enum, and interaction handling retained only a fixed fallback control while allowing global shortcuts behind a modal boundary. The remediation binds the complete normalized transition target, preserves the live guided-workspace instance, captures the actual initiating element, and makes recovery confirmation a complete modal boundary. Credible incremental failures are wrong-profile or wrong-timeout success after response loss, idempotent receipt incompatibility, lost unsaved workflow fields, stale/disconnected focus origins, background activation, deferred shortcut dialogs, or governed UI drift. Focused unit/native/browser tests plus the complete approved-reference conformance replay directly cover those risks.",
-              "selection_sha256": "907595703c2525620b2b5455f291ccb89ec1ab5ac7d7564268e5819cf59c23ea",
-              "prior_attempt_id": "R01",
-              "open_finding_ids": [
-                "W1.A05.T04-R01-F01",
-                "W1.A05.T04-R01-F02",
-                "W1.A05.T04-R01-F03"
-              ],
-              "root_cause_analysis": null,
-              "selected_command_ids": [
-                "foundation:ui-reference",
-                "foundation:ui-change",
-                "foundation:quality",
-                "foundation:backlog",
-                "desktop:application",
-                "desktop:unit",
-                "desktop:ui-reference-integrity",
-                "desktop:ui-token",
-                "desktop:ui-route-page",
-                "desktop:ui-workflow",
-                "desktop:ui-accessibility",
-                "desktop:ui-visual-regression",
-                "security-local:unit"
-              ],
-              "packet_sha256": "efe2415144c1b55167774132213f5ce2f7fbfd3884f8392772e5df9c64355e03"
-            }
+            "current_submission": null
           }
         }
       ],
