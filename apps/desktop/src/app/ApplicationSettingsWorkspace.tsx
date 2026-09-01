@@ -303,7 +303,7 @@ export function ApplicationSettingsWorkspace({
           <li>The native boundary verifies the configured and destination providers.</li>
           <li>Protection-reducing changes show a warning only after native proof.</li>
           <li>The versioned policy is published only after deliberate confirmation and atomic persistence.</li>
-          <li>Cancellation, denial, busy, unavailability, write failure, conflict, or expiry keeps the prior policy active.</li>
+          <li>Cancellation, denial, busy, unavailability, write failure, or expiry cannot publish the requested policy; a conflict displays the authoritative native policy for review.</li>
         </ol>
       </Panel>
 

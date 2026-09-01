@@ -42,7 +42,7 @@
     {
       "command": ".venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
       "result": "passed",
-      "scope": "The built-product browser harness preserved the open project and unsaved Research Intent position across the Application Settings detour, restored the actual top-bar, sidebar, and command initiators, kept locked recovery background content inert, suppressed all global shortcuts while the alertdialog owned focus, and produced no deferred shortcut dialog after unlock."
+      "scope": "The built-product browser harness preserved the open project and unsaved Research Intent position across the Application Settings detour, restored the actual top-bar, sidebar, and command initiators, projected a concurrently changed native policy with an explicit conflict alert and truthful live announcement, kept locked recovery background content inert, suppressed all global shortcuts while the alertdialog owned focus, and produced no deferred shortcut dialog after unlock."
     }
   ],
   "implementationScope": "Implement the already approved Academic Minimal v1.4 Application Settings Security & sign-in destination. The renderer presents native policy state, provider availability, preview, explicit recovery, proof-gated warning, deliberate commit, bounded locked output, and status reconciliation without receiving credentials, inventing authority, falling back between providers, or changing Project Settings and project/workflow protection."

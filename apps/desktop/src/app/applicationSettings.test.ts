@@ -259,8 +259,11 @@ describe("native application settings controller", () => {
       inactivityTimeoutMinutes: 60,
     });
 
-    expect(result).toMatchObject({ kind: "unchanged", snapshot: observedDifferentPolicy });
-    expect(result.message).not.toContain("confirms the sign-in change was saved");
+    expect(result).toMatchObject({ kind: "rejected", snapshot: observedDifferentPolicy });
+    expect(result.message).toBe(
+      "The native policy changed elsewhere, so the requested sign-in change was not confirmed. Review the current setting before retrying.",
+    );
+    expect(result.message).not.toContain("prior setting remains active");
     expect(transport.calls.map(({ command }) => command)).toEqual([
       "application_sign_in_transition_prepare",
       "application_sign_in_transition_commit",
