@@ -8444,20 +8444,261 @@
             {
               "task_id": "CAP-03.S05.T01",
               "title": "Implement material dependency registration",
-              "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "status": "DONE",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:t02-adversarial-preflight",
+                "result": "approved",
+                "reviewed_at": "2026-09-01T21:47:24+00:00",
+                "notes": "R02 is a strict descendant of the adverse R01 candidate and its submission is the exact direct child. The frozen R02 evidence authenticates at SHA-256 36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519 and Git blob 8281281f1708a1ecd062c04b7b914c270140b143. R01 evidence/review ancestry is preserved. The exact failing constructor reproduction now passes; leaves declare not-applicable, derived fixtures declare complete with deterministic one-for-one exact-revision edges matching provenance inputs. Three focused tests and all 181 governed Python quality checks pass. Benchmark fixture size, fact-count expectations, thresholds, and deferred ownership are unchanged; the quantitative benchmark was correctly not run."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-01T21:31:39+00:00",
+                      "candidate_commit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed",
+                      "base_commit": "f56d16070637147177c05c3406b5669eb1707cf0",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S05.T01.R01.json",
+                        "sha256": "66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d",
+                        "commit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed",
+                        "recorded_at": "2026-09-01T21:31:39+00:00"
+                      },
+                      "acceptance_criteria_sha256": "a22c82b9d0596877c749cf2f309159c10f8152cceffb0f277215cd1bd3a53432",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-03.S05.T01.task-start.md",
+                        "docs/architecture/local-sqlite-storage.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/storage/README.md",
+                        "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+                        "packages/contracts/storage/sqlite-profile.schema.json",
+                        "packages/contracts/storage/sqlite-profile.v1.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-03/CAP-03.S05.T01.html",
+                        "planning/review-site/CAP-03/CAP-03.S05.html",
+                        "planning/review-site/CAP-03/index.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W1.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/packaging/sidecar-build.json",
+                        "services/core-api/src/research_observatory_core/migrations/runner.py",
+                        "services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py",
+                        "services/core-api/src/research_observatory_core/ports/repositories.py",
+                        "services/core-api/src/research_observatory_core/repositories.py",
+                        "services/core-api/src/research_observatory_core/storage.py",
+                        "tests/data/test_local_object_store.py",
+                        "tests/data/test_material_dependencies.py",
+                        "tests/data/test_sqlite_migrations.py",
+                        "tests/data/test_sqlite_repositories.py",
+                        "tests/data/test_storage_maintenance.py",
+                        "tests/packaging/test_core_sidecar_package.py",
+                        "tests/service/test_provenance.py",
+                        "tests/workflows/test_local_workflow_executor.py",
+                        "tools/core_sidecar_build.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe -m unittest tests.data.test_material_dependencies",
+                        ".venv\\Scripts\\python.exe -m unittest tests.workflows.test_local_workflow_executor",
+                        ".venv\\Scripts\\python.exe -m unittest tests.data.test_material_dependencies tests.data.test_sqlite_repositories tests.data.test_sqlite_schema tests.data.test_storage_maintenance tests.data.test_local_object_store",
+                        ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema",
+                        ".venv\\Scripts\\python.exe -m unittest tests.service.test_provenance tests.packaging.test_core_sidecar_package",
+                        "focused ruff check/format --check and mypy over the changed Python implementation, migration, tests, and packaging builder",
+                        ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_repository_structure; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+                        ".venv\\Scripts\\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only --affected-base f56d1607... --affected-head 2ec58075... --deferred-gate W1-exit"
+                      ],
+                      "deferred_checks": [
+                        "CAP-03.S05 slice review owns accumulated dependency registration, staleness traversal, and controlled recalculation integration after T02 and T03 close.",
+                        "The complete service, data, security, performance, packaging, recovery, and Windows x64 matrix remains mandatory once at W1 exit."
+                      ],
+                      "selection_rationale": "T01 changes a public Core port, aggregate transaction, SQLite schema/migration, workflow completion authority, audit diagnostics, and frozen sidecar inventory. Verification therefore used real SQLite transactions and reopen, exact v8/v7 migration fixtures, deterministic migration and append failure injection, the affected workflow/data/provenance/packaging suites, focused static checks, architecture/repository controls, and approved-wave validation. It did not replay unrelated UI, graph traversal, scheduler, or complete deployment profiles. Full service/data/security/performance and Windows qualification remain mandatory at W1 exit.",
+                      "selection_sha256": "42204a6b3e1b55aac6a9fad54e98b1d71b83175d55f360d1cc2a7ca2c2c037ec",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:packaging-smoke",
+                        "packaging:unit",
+                        "service:unit",
+                        "data:unit",
+                        "security-local:unit"
+                      ],
+                      "packet_sha256": "c3f0fb4f95186f6e06d50818b6f4f9d59f4fd7320090abcaf65a6b3129f0bfd9"
+                    },
+                    "review": {
+                      "reviewer": "agent:t02-adversarial-preflight",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-09-01T21:39:10+00:00",
+                      "notes": "The base/candidate/submission ancestry, exact 30-path candidate inventory, two-path submission separation, backlog projection, and frozen evidence authenticate. Evidence SHA-256 is 66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d and Git blob is 975be19882af762918c16b40a2036c49f763c3cd. Independent focused replay passed 57 dependency, workflow, migration, schema, and packaging tests with one expected environment skip. Aggregate atomicity, exact endpoint validation, migration/restart, workflow denial diagnostics, and packaging otherwise appear sound. One blocking compatibility defect remains."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S05.T01.review-R01.json",
+                      "sha256": "78a6585b2c444c89d451b4356b4a8e9acc5904b536083dffc33b4e1b99202bb8"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S05.T01-R01-F01",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 3,
+                        "title": "Required dependency coverage breaks the governed provenance-lineage performance fixture",
+                        "reproduction": "At candidate 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed, services/core-api/src/research_observatory_core/ports/repositories.py:103 makes dependency_coverage mandatory. tools/provenance_lineage_performance_check.py:41 still constructs AggregateRevisionDraft without it. Running `$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -c \"from tools.provenance_lineage_performance_check import _draft; _draft(1)\"` exits 1 with the missing-argument TypeError. The tool remains governed at quality-scope.json:45 and is the established large-lineage qualification fixture, so the evidence claim that relevant fixtures were updated and the deferred performance obligation remains executable is false.",
+                        "required_remediation": "Update the benchmark fixture with truthful dependency authority rather than a blanket default: source-like leaves should explicitly use not-applicable, while derived intermediate/root revisions should use complete coverage with deterministic exact-revision MaterialDependency edges corresponding to their inputs. Add a lightweight focused regression that constructs both fixture shapes so future public-port changes cannot bypass affected selection. Preserve the quantitative benchmark for its governed slice/W1 performance replay rather than running the complete performance profile during ordinary task remediation."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-03.S05.T01",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-09-01T21:31:39+00:00",
+                      "reviewed_at": "2026-09-01T21:39:10+00:00",
+                      "duration_seconds": 451,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 1,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:packaging-smoke",
+                        "packaging:unit",
+                        "service:unit",
+                        "data:unit",
+                        "security-local:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  },
+                  {
+                    "submission": {
+                      "id": "R02",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-01T21:43:46+00:00",
+                      "candidate_commit": "5e01824503f469e458aa7a6069b988d1d823e576",
+                      "base_commit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S05.T01.R02.json",
+                        "sha256": "36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519",
+                        "commit": "5e01824503f469e458aa7a6069b988d1d823e576",
+                        "recorded_at": "2026-09-01T21:43:46+00:00"
+                      },
+                      "acceptance_criteria_sha256": "a22c82b9d0596877c749cf2f309159c10f8152cceffb0f277215cd1bd3a53432",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-03.S05.T01.R01.json",
+                        "artifacts/evidence/CAP-03.S05.T01.review-R01.json",
+                        "planning/backlog.yaml",
+                        "quality-scope.json",
+                        "tests/data/test_material_dependencies.py",
+                        "tests/service/test_provenance.py",
+                        "tools/provenance_lineage_performance_check.py"
+                      ],
+                      "selected_checks": [
+                        "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -c \"from tools.provenance_lineage_performance_check import _draft; source = _draft(1); assert source.dependency_coverage == 'not-applicable'\"",
+                        ".venv\\Scripts\\python.exe -B -m unittest tests.service.test_provenance.ProvenancePerformanceFixtureTests tests.data.test_material_dependencies",
+                        ".venv\\Scripts\\python.exe -B -m unittest tests.service.test_provenance",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only --affected-base 2ec58075... --affected-head 5e018245... --deferred-gate W1-exit; git diff --check 2ec58075...5e018245"
+                      ],
+                      "deferred_checks": [
+                        "The unchanged quantitative provenance-lineage benchmark remains mandatory in its governed slice/W1-exit performance replay.",
+                        "CAP-03.S05 slice integration and the complete W1 qualification matrix remain deferred to their existing gates."
+                      ],
+                      "selection_rationale": "R01 independently cleared the aggregate transaction, typed endpoints, migration, workflow denial, and packaging boundaries. Its sole finding was a deterministic constructor failure in one governed performance fixture. R02 therefore replays that exact failure, adds a source/derived shape regression, reruns the affected provenance and dependency tests, and executes full governed Python static quality. Running the 4,096-leaf quantitative benchmark would duplicate its deliberate slice/W1-exit performance gate and is not justified for this local compatibility remediation.",
+                      "selection_sha256": "b08f3564209ef0d39298dfcdafa008b563435112c8c17a21f8ade4977affb4ae",
+                      "prior_attempt_id": "R01",
+                      "open_finding_ids": [
+                        "CAP-03.S05.T01-R01-F01"
+                      ],
+                      "root_cause_analysis": "The R01 implementation made dependency coverage mandatory across the aggregate port and updated all exercised repository/workflow test fixtures, but affected selection treated the large-lineage performance command as W1-exit-deferred and the task omitted a lightweight constructor compatibility test. That allowed an unexecuted governed helper to retain the old call signature. R02 adds the missing constructor-level regression and full quality-scope registration without running the quantitative gate early.",
+                      "selected_command_ids": [
+                        "foundation:quality",
+                        "service:unit",
+                        "data:unit"
+                      ],
+                      "packet_sha256": "b6c3645fa809f774c9dc62fd9899a31d8e1baa1a8f0b4206ef1a668b7dec64b7"
+                    },
+                    "review": {
+                      "reviewer": "agent:t02-adversarial-preflight",
+                      "result": "approved",
+                      "reviewed_at": "2026-09-01T21:47:24+00:00",
+                      "notes": "R02 is a strict descendant of the adverse R01 candidate and its submission is the exact direct child. The frozen R02 evidence authenticates at SHA-256 36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519 and Git blob 8281281f1708a1ecd062c04b7b914c270140b143. R01 evidence/review ancestry is preserved. The exact failing constructor reproduction now passes; leaves declare not-applicable, derived fixtures declare complete with deterministic one-for-one exact-revision edges matching provenance inputs. Three focused tests and all 181 governed Python quality checks pass. Benchmark fixture size, fact-count expectations, thresholds, and deferred ownership are unchanged; the quantitative benchmark was correctly not run."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S05.T01.review-R02.json",
+                      "sha256": "995e75d58d3a87afccbcd258c4cc2575369885e896ccb3bc4768320993eddfd7"
+                    },
+                    "findings": [],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-03.S05.T01-R01-F01",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-03.S05.T01.R02.json"
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-03.S05.T01",
+                      "amendment_id": null,
+                      "attempt_id": "R02",
+                      "submitted_at": "2026-09-01T21:43:46+00:00",
+                      "reviewed_at": "2026-09-01T21:47:24+00:00",
+                      "duration_seconds": 218,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "foundation:quality",
+                        "service:unit",
+                        "data:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R01",
+                        "replayed_finding_ids": [
+                          "CAP-03.S05.T01-R01-F01"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-03.S05.T01-R01-F01"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             },
             {
               "task_id": "CAP-03.S05.T02",
               "title": "Implement stale-state propagation and impact preview",
-              "status": "NOT_STARTED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -8485,7 +8726,7 @@
             {
               "task_id": "CAP-03.S05.T01",
               "title": "Implement material dependency registration",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "page": "CAP-03/CAP-03.S05.T01.html",
               "dependencies": [
                 "CAP-03.S04.T03"
@@ -8504,18 +8745,21 @@
             {
               "task_id": "CAP-03.S05.T02",
               "title": "Implement stale-state propagation and impact preview",
-              "status": "NOT_STARTED",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S05.T02.html",
               "dependencies": [
                 "CAP-03.S05.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe"
               },
               "plan_section_sha256": "83de5ab1905ba20693cc0e524c28f2fc70dc83bd88186a35052adcdfdf693726",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-03.S05.T02.task-start.md",
+                "sha256": "aca2453036062632357f8ed683def7397db4057dafec9b11eb3840e34091179f"
+              }
             },
             {
               "task_id": "CAP-03.S05.T03",

@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-research-domain-workflows</a><span>/</span><a href="CAP-03.S05.html">SLICE-dependency-graph-staleness-and-controlled-recalculation</a><span>/</span><span aria-current="page">CAP-03.S05.T02</span></nav>
 
 <section class="hero compact" data-task-page="CAP-03.S05.T02">
-  <div class="hero-top"><div><span class="eyebrow">CAP-03.S05.T02 · task 2 of 3</span><h1>Implement stale-state propagation and impact preview</h1><p>Graph traversal that marks affected outputs stale, records cause, deduplicates cascades, and previews impact before destructive changes.</p></div><span class="status status-not-started">Not_Started</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-03.S05.T02 · task 2 of 3</span><h1>Implement stale-state propagation and impact preview</h1><p>Graph traversal that marks affected outputs stale, records cause, deduplicates cascades, and previews impact before destructive changes.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W1</dd></div><div><dt>Slice</dt><dd><a href="CAP-03.S05.html">SLICE-dependency-graph-staleness-and-controlled-recalculation</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>data</li><li>graph</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li><li>python tools/verify.py --profile graph</li></ul>
-  <p data-task-claim="CAP-03.S05.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-03.S05.T02" data-task-owner="codex" data-task-branch="codex/w1-windows-local-runtime" data-task-base-sha="d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe"><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>codex/w1-windows-local-runtime</code> · base <code>d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-03.S05.T02" data-task-plan-sha256="83de5ab1905ba20693cc0e524c28f2fc70dc83bd88186a35052adcdfdf693726"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-03.S05.T02` - Implement stale-state propagation and impact preview
 **Objective:** Graph traversal that marks affected outputs stale, records cause, deduplicates cascades, and previews impact before destructive changes.
@@ -89,13 +89,68 @@ python tools/verify.py --profile data
 python tools/verify.py --profile graph
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-03.S05.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-03.S05.T02" data-worksheet-sha256="aca2453036062632357f8ed683def7397db4057dafec9b11eb3840e34091179f">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-03.S05.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>aca2453036062632357f8ed683def7397db4057dafec9b11eb3840e34091179f</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-03.S05.T02 task-start acceptance closure
+
+## Frozen authority
+
+- Task / claim base: `CAP-03.S05.T02` at `d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe`; claimed by `codex` on `codex/w1-windows-local-runtime`.
+- Approved authority: CAP-03 decision `CAP-03-D02`, the approved CAP-03.S05 plan sections 4, 5.2-5.3, 8, 9.2, and 11-14 at planning commit `c5bbd97c0cdc665eecb973f5862478ef7be97752`, Systems Design sections 9.4 and 13.4, and Vision principle DP11.
+- Objective: preview and persist bounded downstream impact when an exact revision or configuration dependency changes, without rewriting immutable revisions or touching unrelated outputs.
+- Acceptance criteria: changing the fixture extraction marks exactly the expected matrix, graph, synthesis, and dossier outputs stale; unrelated outputs remain fresh; cycles terminate safely; expected and material failure paths are automated; contracts, migration, fixtures, documentation, and audit behavior change only as required.
+- Dependency: `CAP-03.S05.T01` is `DONE` after independent R02 approval; it supplies exact typed direct dependency authority in schema v9.
+- Approval/readiness: `planctl wave ready W1 --require-approved` passes for the immutable W1 packet and all 488 generated review pages after this claim.
+- Governed experience: N/A. T02 owns a portable Core contract and persistence/query boundary, not a route, page, interaction, or visible-copy change. A later UI consumer must conform to `RO-UI-ACADEMIC-MINIMAL-1.3`.
+- Non-goals: no automatic recomputation, candidate replacement, comparison, rollback, or restoration (T03); no UI or public HTTP route; no mutation of historical aggregate revisions or material edges; no reinterpretation of v9 `legacy-unreported` rows as complete.
+
+## Current implementation and exact predecessor
+
+- Schema v9 records one immutable dependency-coverage row per aggregate revision and exact typed direct edges to revision or configuration endpoints. Downstream revision and configuration indexes exist, while transitive impact and stale propagation are explicitly deferred.
+- `MaterialDependencyRepository` can read one output registration and content-free missing-registration diagnostics. No stale-state, impact-preview, propagation-run, or checkpoint authority exists yet.
+- Aggregate revisions and dependency edges are immutable. Stale authority must therefore be separate and append-only; marking an output stale must not update its historical knowledge status or manufacture transitive direct edges.
+- Existing Research Intent impact acknowledgement demonstrates a canonical digest pattern but is not graph authority and must not be reused as a substitute for a graph-snapshot-bound preview.
+- Exact compatibility predecessor: the populated governed SQLite v9 fixture, including complete/not-applicable registrations, `legacy-unreported` migrated rows, provenance/workflow facts, and current schema/profile fingerprints.
+
+## Material acceptance rows
+
+| Dimension | Observable closure | Planned proof |
+|---|---|---|
+| Criterion / outcome | Superseding the exact fixture-extraction revision discovers and marks only its reachable matrix, graph, synthesis, and dossier revisions stale; an unrelated branch remains untouched. Preview is read-only and presents the same ordered impact before mutation. | Real SQLite vertical fixture with exact expected revision IDs, zero preview writes, apply/reopen assertions, and unchanged aggregate/dependency rows. |
+| Relation policy | `direct` edges propagate; `non-material` edges remain informational and stop propagation; `conditional` edges propagate only through an explicit versioned policy disposition and otherwise remain review-required/unknown rather than fresh. | Focused traversal table covering all three relation types and denial when conditional policy authority is missing or substituted. |
+| State / invariant | Stale state and cause facts are separate from immutable revisions, idempotent per project/change/output/policy, and retain reason, origin, bounded path/SCC summary, confidence or unknown impact, review requirement, detected time, and open resolution state. | Persistence tests reject duplicate/substituted authority, prove stable replay, and show aggregate revisions and direct edges are byte-for-byte unchanged. |
+| Identity / authority | Bind project, immutable change ID/idempotency key, exact prior and replacement revision or configuration identity/version, prior/new fingerprint or explicit unavailable state, reason, propagation policy ID/version, actor/event/trace, timestamp, graph watermark, and canonical preview digest. Never resolve a mutable &quot;latest&quot; endpoint. | Shape tests plus cross-project, endpoint, fingerprint, policy, actor, and stale-preview substitution denials. |
+| Graph snapshot / preview | Preview ordering and digest are deterministic over the exact reachable edge snapshot. Propagation with a changed graph or mismatched preview digest fails closed or requires a fresh preview. A bounded prefix is never represented as complete. | Repeat preview equality, graph-change conflict, traversal-limit result, and no-write query tests. |
+| Cycles / bounds | Traversal has stable ordering, visited/frontier bounds, node/edge/depth/path-sample limits, and deterministic SCC identities. Cycles terminate and each affected revision receives one cause. | Pure traversal-seam SCC fixture; no foreign-key or immutability weakening merely to construct an impossible truthful v9 cycle. |
+| Compatibility / unknown history | Exact populated v9 migrates without adding stale facts or changing dependency rows. `legacy-unreported` remains explicit unknown-impact authority and prevents a false no-impact conclusion. Older migration chains still terminate at the exact successor schema. | v9-to-v10 fixture, retained hashes/counts, legacy uncertainty preview, full chain plan, failpoint rollback, and retry. |
+| Failure / recovery | Propagation is bounded, cancellable before a commit boundary, and resumable from a durable compare-and-swap checkpoint. Failure before or after one batch cannot mark unrelated outputs or duplicate causes; concurrent/replayed runs converge. | Deterministic write/checkpoint failpoints, cancellation, reopen/resume, concurrent/replay, and canonical post-failure assertions. |
+| Audit / diagnostics | Content-free audit facts record run/change/trace identity, visited counts, SCCs, stale counts/reasons, checkpoint/restart/cancel outcome, and failures without labels or research content. | Reopened audit-query assertions and redaction checks. |
+| Principal boundary | The portable service and SQLite adapter operate across the real canonical connection/migration boundary with project scoping and no renderer/database coupling. | Focused real-database integration test after close/reopen; architecture/import checks for the new port/module seam. |
+| Evidence truth | Narrow traversal, repository, migration, restart, contract, static-quality, and affected-selection checks prove T02. | Complete service/data/graph profiles and the quantitative slice/W1 matrix remain deferred unless a failure cannot be localized. |
+
+## First tests before product code
+
+1. A pure deterministic traversal fixture covers direct, conditional, non-material, unrelated, duplicate-path, and SCC/cycle behavior with explicit bounds and stable preview digest/order.
+2. A real v9-derived SQLite project models extraction -&gt; matrix -&gt; graph -&gt; synthesis -&gt; dossier plus an unrelated branch and configuration dependency. Preview performs no writes; propagation persists one stale cause per expected output; reopen/replay changes nothing; aggregate revisions and direct edges remain unchanged.
+3. A stale graph watermark/digest, substituted project/change/endpoint/fingerprint/policy, missing conditional disposition, traversal exhaustion, cancellation, injected checkpoint/write failure, and concurrent/replayed run fail closed or resume without false-fresh or partial unrelated state.
+4. The exact populated v9 predecessor migrates to v10 with no invented stale facts, preserves `legacy-unreported`, retains prior dependency/provenance/workflow authority, rolls back at each material failpoint, and retries successfully.
+
+## Adversarial preflight
+
+Requested from `agent:t02-adversarial-preflight` and incorporated. The preflight confirmed the approved task is sufficient authority and identified graph-snapshot-bound previews, explicit relation-policy semantics, legacy unknown impact, separate append-only stale/cause state, durable bounded checkpoint/restart authority, SCC-safe traversal, exact v9 migration, and content-free audit as the material closure points. It found no unmet approval or design gate.
+
+## Mandatory gate
+
+None discovered. Stop only if implementation requires a governed experience change, automatic recalculation or replacement authority reserved for T03, expansion of product/security authority, or reinterpretation of immutable v9 history.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-03.S05.T02" data-review-mode="latest-review-only">
   <h3>CAP-03.S05.T02 — Implement stale-state propagation and impact preview</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-03.S05.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>NOT_STARTED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-03.S05.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-03.S05.T01.html">Previous</a><a class="button button-primary" href="CAP-03.S05.T03.html">Next</a></nav>
