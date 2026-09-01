@@ -6745,13 +6745,13 @@
             {
               "task_id": "CAP-03.S04.T01",
               "title": "Define workflow, step, job, attempt, artifact, and human-task contracts",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": null
+                "notes": "Reopened: W1.A05 is independently approved and ADOPTED; clear the recorded amendment interruption and resume the exact pre-amendment W1 task."
               },
               "review_control": null
             },
@@ -6786,7 +6786,7 @@
             {
               "task_id": "CAP-03.S04.T01",
               "title": "Define workflow, step, job, attempt, artifact, and human-task contracts",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S04.T01.html",
               "dependencies": [
                 "CAP-03.S03.T02",
@@ -9196,7 +9196,7 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -9241,7 +9241,7 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "page": "CAP-07/CAP-07.S01.T02.html",
               "dependencies": [
                 "CAP-07.S01.T01"
