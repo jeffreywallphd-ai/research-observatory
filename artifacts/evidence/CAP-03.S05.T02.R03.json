@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S05.T02",
+  "commit": "dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d",
+  "baseCommit": "ca7918783eb5d6dcc377a89cd28e522b83ee7d1f",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S05.T02.R02.json",
+    "sha256": "b9ec6f37fe337c8a723f5d5728b4d074291af30958b9873db446fa2774e68fb3",
+    "commit": "ca7918783eb5d6dcc377a89cd28e522b83ee7d1f",
+    "reason": "Remediates CAP-03.S05.T02-R02-F01 and CAP-03.S05.T02-R02-F02 without expanding approved T02 authority."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S05.T02.R02.json",
+    "artifacts/evidence/CAP-03.S05.T02.review-R02.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "services/core-api/src/research_observatory_core/dependency_impacts.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/graph/test_dependency_impacts.py"
+  ],
+  "checks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.graph.test_dependency_impacts",
+      "exitCode": 0,
+      "result": "All 14 focused planner and real-SQLite tests passed. R02-F01 is replayed across acyclic chain, convergent diamond/cross-edge DAG, self-loop, disjoint cycles, reversed input order, and the retained 1,100-node SCC; exact cycle authority persists through propagation and reopen. R02-F02 is replayed at the exact 64-ID sample limit and over it: complete paths remain exact, truncated samples retain origin and terminal, full length and truncation are explicit and digest-bound, and both forms survive propagation and restart."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.data.test_material_dependencies",
+      "exitCode": 0,
+      "result": "All 31 affected migration, strict-schema, and material-dependency tests passed. Exact populated v9 migrates to the corrected v10 without invented run, decision, impact, or stale rows; prior registrations remain unchanged; failpoint rollback/retry and exact schema/profile fingerprints pass."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All 6 Windows sidecar package tests passed with one expected environment skip. The real PyInstaller onedir build includes and executes the corrected planner, repository, storage profile, and v10 migration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 184 governed Python files pass formatting, Ruff, and mypy."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "result": "Architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure passed for all 12 required modules."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check ca791878...dbd6f618",
+      "exitCode": 0,
+      "result": "The backlog validates with 20 capabilities, 117 slices, 363 tasks, and 12 release gates; the exact R03 range has no patch errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile foundation --profile service --profile data --profile graph --profile security-local --affected-base ca7918783eb5d6dcc377a89cd28e522b83ee7d1f --affected-head dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passed. The exact remediation ran the focused graph, SQLite/migration, Windows packaging, static-quality, architecture, repository, backlog, and hygiene checks above; broader service/security/foundation inventories and the two gate-bound data performance commands remain owned by the slice checkpoint or W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S05.T02-R02-F01 is closed by a true iterative DFS postorder: each active frame retains its next-neighbor index, so convergent siblings cannot be marked complete before traversal. Deterministic fixtures prove no false group for chain/diamond/cross-edge DAGs and exact stable groups for self-loops, disjoint cycles, reversed edge input, and a 1,100-member SCC.",
+        "A real SQLite cycle spanning matrix, graph, synthesis, and dossier produces one exact cycle group; after begin, propagation, completion, and repository reopen, every affected stale cause retains that exact cycle_group_id. Existing expected-output and unrelated-output behavior remains covered."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused regression tests reproduce both R02 failures before the repair and now pass at pure-planner and real persistence boundaries. Exact-limit and over-limit paths, reversed edge ordering, multiple SCC topologies, schema migration, restart, and packaged execution are covered.",
+        "The retained T02 tests continue to cover expected/unrelated outputs, non-material edges, unknown impact, duplicate-path deduplication, cancellation, failed-batch rollback/audit, retry, graph change denial, decision reconstruction, resource bounds, restart, and exact v9 migration recovery."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S05.T02-R02-F02 is closed with explicit path_length and path_truncated authority in the public impact and stale-state projections, immutable impact-item and stale-cause rows, preview/item authority documents, and path digests. max_path_samples now means the maximum number of stored revision identities and cannot be less than two; truncated samples deterministically retain the origin prefix and affected terminal revision.",
+        "The dependency-neutral port, deterministic planner, SQLite adapter, strict v10 DDL, exact migration/profile/recovery hashes, portable storage contract, architecture documentation, tests, and packaged sidecar changed together. The frozen v9 predecessor hashes remain unchanged; corrected v10 is schema 49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187 and profile 0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb.",
+        "No automatic recalculation, replacement, restoration, HTTP/UI surface, governed experience change, external service, or reinterpretation of historical dependency coverage was added."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S05.T02-R02-F01 is a localized correctness defect in the newly iterative SCC traversal, and CAP-03.S05.T02-R02-F02 is a localized authority defect in the bounded path representation. R03 therefore replays the graph algorithm across acyclic convergence, cross edges, self-loops, disjoint and large cycles, then proves exact cycle authority at the real SQLite/restart boundary. It also exercises path samples at and beyond the immutable bound through preview, digest, impact rows, stale causes, propagation, and reopen. The v10 schema/profile and packaged sidecar changed, so exact migration/strict-schema tests and a real Windows package build were repeated. No route, credential, dependency version, security policy, or toolchain changed; accumulated full profiles remain mandatory at CAP-03.S05 review and W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:backlog",
+      "packaging:unit",
+      "data:unit",
+      "graph:unit"
+    ],
+    "deferred": [
+      "CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation, and affected integration/adversarial checks after T03 closes.",
+      "The complete service, data, graph, security, foundation, performance, packaging, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S05.T02-R02-F01",
+      "CAP-03.S05.T02-R02-F02"
+    ],
+    "rootCauseAnalysis": "R02 replaced recursive SCC discovery with an iterative traversal but marked every sibling discovered when queued rather than preserving per-frame DFS progress; convergent DAG edges could therefore corrupt finish order and create false SCCs. R02 also retained the old prefix-only path slice while hardening adjacent authority, so a bounded sample could omit its own affected endpoint and had no durable completeness metadata. R03 fixes the shared design error—loss of traversal/path state at a bounded representation boundary—by retaining per-frame neighbor position for exact DFS postorder and by making bounded-path length, truncation, origin, terminal, digest, projection, and persistence authority explicit.",
+    "note": "Independently re-review exact strict-descendant candidate dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d. Replay CAP-03.S05.T02-R02-F01 and CAP-03.S05.T02-R02-F02, including acyclic convergence/cross edges, self-loop and disjoint/large SCC ordering, durable cycle IDs after reopen, and exact-limit/over-limit path samples with origin, terminal, length, truncation, digest, migration, restart, and package authority. Confirm no unrelated scope or authority expansion without replaying full profiles."
+  }
+}
