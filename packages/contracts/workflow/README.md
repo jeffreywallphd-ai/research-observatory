@@ -18,3 +18,12 @@ unique transition identities, and the existing `op-*` compatibility
 projection. Human request/claim authority and allowed dispositions are bound
 to the exact history and definition; the legacy sequence is bound to the
 workflow snapshot before its ETag is accepted.
+
+Selective recalculation reuses this contract without introducing executor-
+specific fields. One exact current stale output becomes one checkpoint-required
+`selective-recalculation` activity. The immutable snapshot carries the target
+revision and eligible unchanged verified/adjudicated input revisions, while the
+configuration and command fingerprints bind the complete stale-change,
+dependency, and reuse plan. Candidate comparison and human-authorized restore
+remain aggregate/provenance operations; restoration creates a later revision
+instead of rewinding workflow or scholarly history.

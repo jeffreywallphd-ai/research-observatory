@@ -210,6 +210,17 @@ less than two because origin and terminal authority are mandatory.
 `legacy-unreported` coverage and unavailable replacement fingerprints remain
 unknown; they never produce a false fresh result.
 
+Selective recalculation consumes that durable authority without adding another
+state store. The planner reads an exact current stale revision, its open causes,
+and its material-dependency registration, then creates one portable durable job
+whose command fingerprint binds the target, every open change/cause, the full
+dependency authority, and only unchanged `verified` or `adjudicated` revision
+inputs eligible for reuse. Recomputed candidates append through the aggregate
+compare-and-swap transaction. Exact revision/history reads support comparison,
+and an explicit human restoration appends another revision with the prior
+adjudicated value, dependency set, current predecessor, and restoration audit
+event; neither path rewrites earlier revisions or closes adverse history.
+
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file
 while a WAL transaction may be pending. Profile mismatch, corruption, redirect,
