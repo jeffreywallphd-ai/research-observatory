@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-03.S04.T03",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-03.S04.T03.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+    "version": "1.4",
+    "packageSha256": "034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e",
+    "approvalCommit": "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.3"
+  },
+  "focusedEvidence": [
+    {
+      "command": "focused TaskCenterWorkspace and ApplicationRuntime Vitest, strict desktop TypeScript, desktop lint, and production build",
+      "result": "passed",
+      "scope": "The functional renderer distinguishes active compute from a human wait, displays exact definition-bound consequences, disables mutation for read-only projects, reports retained incomplete output, and presents retry and cooperative cancellation through the generated client."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check accessibility, routes, tokens, and workflows",
+      "result": "passed",
+      "scope": "The unchanged approved Academic Minimal v1.4 reference passed all affected accessibility, route, token, and guided-workflow conformance checks, including keyboard and responsive cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "result": "passed",
+      "scope": "The assembled desktop product preserved the governed application frame, focus containment and restoration, live-region behavior, boundary recovery, responsive design-system cases, and project workspace protections."
+    }
+  ],
+  "implementationScope": "Implement the already approved Task Center destination as a project-scoped desktop workspace. Expose durable workflow state, progress, checkpoints, resource pools, bounded events, retained output dispositions, retry, cooperative cancellation, and exact human-gate consequences through the generated Core client and native request allow-list. Preserve read-only inspection, keyboard and focus behavior, local authority, content minimization, and the unchanged Academic Minimal v1.4 reference; do not add workflow authoring, hosted execution, fabricated research data, or direct renderer access to SQLite and project files."
+}
