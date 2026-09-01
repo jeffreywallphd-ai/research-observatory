@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S05.T01",
+  "commit": "5e01824503f469e458aa7a6069b988d1d823e576",
+  "baseCommit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S05.T01.R01.json",
+    "sha256": "66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d",
+    "commit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed",
+    "reason": "Closes CAP-03.S05.T01-R01-F01 by restoring truthful dependency coverage in the governed provenance-lineage performance fixture without running or changing the quantitative benchmark policy."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S05.T01.R01.json",
+    "artifacts/evidence/CAP-03.S05.T01.review-R01.json",
+    "planning/backlog.yaml",
+    "quality-scope.json",
+    "tests/data/test_material_dependencies.py",
+    "tests/service/test_provenance.py",
+    "tools/provenance_lineage_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -c \"from tools.provenance_lineage_performance_check import _draft; source = _draft(1); assert source.dependency_coverage == 'not-applicable'\"",
+      "exitCode": 0,
+      "result": "The exact R01 reproduction now passes: the governed fixture constructs a source-like leaf with explicit not-applicable coverage instead of raising TypeError."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -B -m unittest tests.service.test_provenance.ProvenancePerformanceFixtureTests tests.data.test_material_dependencies",
+      "exitCode": 0,
+      "result": "Three focused tests passed. The lightweight regression constructs both source-like and derived fixture shapes; derived revisions use complete coverage and deterministic exact-revision material dependencies matching every provenance input. The original dependency atomicity and validation tests remain green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -B -m unittest tests.service.test_provenance",
+      "exitCode": 0,
+      "result": "All five affected provenance service and fixture tests passed, retaining API lineage, denial, truncation, and integrity behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 181 governed Python files pass formatting, Ruff, and mypy. The new dependency test is now explicitly in the governed quality scope."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only --affected-base 2ec58075... --affected-head 5e018245... --deferred-gate W1-exit; git diff --check 2ec58075...5e018245",
+      "exitCode": 0,
+      "result": "Affected-selection and exact remediation-range patch hygiene passed. Quantitative performance remains deferred to its governed slice/W1-exit replay as the reviewer required; no full profile was run."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R01 dependency registration and workflow-completion authority is unchanged; the remediation consumes that exact public port truthfully in the governed lineage fixture."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A lightweight regression now constructs both leaf and derived benchmark fixtures and asserts the exact coverage and dependency-edge shapes, while the complete focused dependency test file remains green."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Source-like benchmark leaves explicitly use not-applicable. Derived intermediate/root revisions use complete coverage with one deterministic exact-revision MaterialDependency for each provenance input, preserving semantic truth instead of applying a blanket default.",
+        "The governed 181-file quality scope and affected service provenance tests pass. The quantitative benchmark thresholds and W1-exit ownership are unchanged and were deliberately not replayed during task remediation."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 independently cleared the aggregate transaction, typed endpoints, migration, workflow denial, and packaging boundaries. Its sole finding was a deterministic constructor failure in one governed performance fixture. R02 therefore replays that exact failure, adds a source/derived shape regression, reruns the affected provenance and dependency tests, and executes full governed Python static quality. Running the 4,096-leaf quantitative benchmark would duplicate its deliberate slice/W1-exit performance gate and is not justified for this local compatibility remediation.",
+    "selectedCommandIds": [
+      "foundation:quality",
+      "service:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "The unchanged quantitative provenance-lineage benchmark remains mandatory in its governed slice/W1-exit performance replay.",
+      "CAP-03.S05 slice integration and the complete W1 qualification matrix remain deferred to their existing gates."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S05.T01-R01-F01"
+    ],
+    "rootCauseAnalysis": "The R01 implementation made dependency coverage mandatory across the aggregate port and updated all exercised repository/workflow test fixtures, but affected selection treated the large-lineage performance command as W1-exit-deferred and the task omitted a lightweight constructor compatibility test. That allowed an unexecuted governed helper to retain the old call signature. R02 adds the missing constructor-level regression and full quality-scope registration without running the quantitative gate early.",
+    "note": "Re-review exact strict-descendant candidate 5e01824503f469e458aa7a6069b988d1d823e576. Replay CAP-03.S05.T01-R01-F01, confirm truthful leaf versus derived dependency coverage, deterministic one-edge-per-input identity, the lightweight regression, 181-file quality pass, and unchanged quantitative benchmark ownership. Do not restart the R01-cleared audit or run full profiles."
+  }
+}
