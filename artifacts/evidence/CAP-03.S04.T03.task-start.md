@@ -59,8 +59,29 @@ No unmet approval, dependency, design, safety, external-service, credential, or 
 The first submission exposed six related acceptance-closure gaps. The implementation threaded run/history authority but omitted snapshot revision from cancellation and retry; represented consequence codes without treating each as executable graph semantics; treated strict response decoding as field validation rather than cross-field invariant validation; stored retry ancestry only inside an idempotency fingerprint; allowed asynchronous renderer responses to outlive their project/request generation; and used static renderer assertions where the acceptance claim required real keyboard and focus behavior. These were implementation and verification-design defects within the approved task authority, not new scope or a missing approval.
 
 - `CAP-03.S04.T03-R01-F01`: cancellation and retry now compare the exact run-bound snapshot revision and history sequence inside the same SQLite transaction before mutation or replay. Real API/repository tests exercise exact, stale-history, and substituted-snapshot cases for both commands.
-- `CAP-03.S04.T03-R01-F02`: `resume-workflow`, `skip-step`, and `end-workflow` now have distinct state transitions. The exact definition graph alone activates newly dependency-eligible work, and persistence/restart tests cover all three consequences including a downstream activity.
+- `CAP-03.S04.T03-R01-F02`: `resume-workflow`, `skip-step`, and `end-workflow` now have distinct state transitions. The exact definition graph alone activates newly dependency-eligible work; the same SQLite transaction durably admits every activated job, and persistence/restart tests cover all three consequences including downstream claimability.
 - `CAP-03.S04.T03-R01-F03`: project changes reset Task Center state, every load has a monotonically increasing request generation, and stale project or overlapping responses are ignored. A deferred-response browser case proves that project A cannot overwrite project B.
 - `CAP-03.S04.T03-R01-F04`: generated TypeScript decoding now mirrors server decision, assignee, evidence-identity, continuation, entity-identity, waiting-human, and event-order invariants. Hostile decoder fixtures cover each contradictory shape.
 - `CAP-03.S04.T03-R01-F05`: retry snapshots persist immutable predecessor run/job identities; repository, Core API, generated client, and renderer projections preserve and display them after restart and idempotent replay.
 - `CAP-03.S04.T03-R01-F06`: successful confirmation uses one focus-restoration path with a stable selected-workflow fallback when the originating command becomes disabled. The focused browser check executes cancellation success/failure, Escape and Tab containment, live announcements, focus recovery, a delayed project switch, and a human decision.
+
+## R02 root cause and focused remediation
+
+The second review closed five of the six R01 findings but correctly kept
+`CAP-03.S04.T03-R01-F02` open. R02 changed the canonical snapshot and history
+from `pending` to `runnable`, but treated that projection change as if it also
+created a durable executor admission. The queue is a separate mutable
+projection, so a restarted worker had no row to claim even though canonical
+authority said the job was runnable.
+
+The focused correction collects only jobs newly activated by the exact
+definition graph, validates the complete next snapshot, stores that immutable
+authority, and prepares/adopts each local queue row inside the same SQLite
+transaction. Local scheduling metadata inherits the run's most recent queue
+policy when one exists and otherwise uses the bounded W1 document/priority-zero
+default; job identity, activity, retry, cancellation, checkpoint, progress,
+idempotency, and command authority continue to come from the exact definition
+and snapshot. Exact replay returns the existing decision without another
+admission. Focused tests prove Task Center projection, restart claimability,
+single admission on replay, and rollback of authority, history, and queue state
+when admission is injected to fail.
