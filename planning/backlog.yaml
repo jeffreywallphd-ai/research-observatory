@@ -128,20 +128,22 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
-    base_sha: bb2673d582a212b88a639c325069ee06ea60acda
+    base_sha: 9a56ed8d25d4747d0ad6741255ea5c7514e08fc7
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-30T03:20:59+00:00'
-    pause_reason: 'Quiescent pause for W1.A05: CAP-02 authentication-provider refactor, Windows Hello support, and governed
-      configurable local sign-in settings require append-only product authority and experience approval.'
-    pause_category: approved-design-gate
-    lease: null
+    updated_at: '2026-09-01T13:24:34+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-01T13:24:34+00:00'
+      expires_at: '2026-09-02T13:24:34+00:00'
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -167,6 +169,18 @@ waves:
       platform: windows-x64
       actor: codex
       resumed_at: '2026-08-27T21:47:01+00:00'
+    - id: W1.R03
+      wave_id: W1
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 9a56ed8d25d4747d0ad6741255ea5c7514e08fc7
+      prior_campaign_sha256: 876aed7486aef9a4c80a6ff5123b1e0d9ed52ab1f3803a2abe01d3e341e239b2
+      branch: codex/w1-windows-local-runtime
+      worktree: C:/workspace/research-observatory
+      profile: LOC
+      platform: windows-x64
+      actor: codex
+      resumed_at: '2026-09-01T13:24:34+00:00'
   checkpoints:
   - id: W1.CP01
     kind: security
@@ -205,7 +219,7 @@ waves:
     notes: Adopt independently approved W1.A05 security and experience outcomes as a W1 security checkpoint; retain conditional
       configured-Hello and full W1-exit qualification obligations; leave W1 PAUSED pending explicit ordinary resume.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
