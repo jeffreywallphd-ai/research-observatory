@@ -13789,15 +13789,20 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T23:19:02+00:00'
-      updated_at: '2026-09-01T23:19:02+00:00'
+      updated_at: '2026-09-01T23:36:35+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S05.T03.R01.json
+        sha256: 9c13787f8c8cb959b0929b1aab4eac2cb070b29cfe672f36e2ae12f4f6dd3b22
+        commit: 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
+        recorded_at: '2026-09-01T23:36:35+00:00'
       review:
         reviewer: null
         result: null
@@ -13808,10 +13813,78 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T23:19:02+00:00'
         expires_at: '2026-09-02T07:19:02+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-01T23:36:35+00:00'
+          candidate_commit: 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
+          base_commit: b5a941d7d907561c7d7f5d1a03162155b8fe7b5f
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S05.T03.R01.json
+            sha256: 9c13787f8c8cb959b0929b1aab4eac2cb070b29cfe672f36e2ae12f4f6dd3b22
+            commit: 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
+            recorded_at: '2026-09-01T23:36:35+00:00'
+          acceptance_criteria_sha256: 1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69
+          changed_paths:
+          - artifacts/evidence/CAP-03.S05.T03.task-start.md
+          - docs/architecture/local-sqlite-storage.md
+          - packages/contracts/workflow/README.md
+          - planning/backlog.yaml
+          - quality-scope.json
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/selective_recalculation.py
+          - tests/e2e/test_selective_recalculation.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - .venv\Scripts\python.exe -c <run tests.e2e.test_selective_recalculation, tests.contracts.test_workflow_contracts,
+            tests.workflows.test_local_workflow_executor, tests.workflows.test_task_center with services/core-api/src on sys.path>
+          - .venv\Scripts\python.exe -c <run tests.graph.test_dependency_impacts, tests.data.test_material_dependencies, tests.data.test_sqlite_repositories
+            with services/core-api/src on sys.path>
+          - .venv\Scripts\python.exe -c <run tests.packaging.test_core_sidecar_package with services/core-api/src on sys.path>
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
+            --repo .; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b5a941d7...139158aa
+          - .venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base b5a941d7d907561c7d7f5d1a03162155b8fe7b5f
+            --affected-head 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d --deferred-gate W1-exit --selection-only
+          deferred_checks:
+          - CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, selective recalculation,
+            and adversarial cross-task integration checks now that T01-T03 close.
+          - The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows
+            x64 qualification matrix remains mandatory once at W1 exit.
+          selection_rationale: T03 crosses public repository ports, exact revision history, durable stale/change authority,
+            workflow admission, immutable scholarly versions, human restoration, and the frozen sidecar package. Verification
+            therefore uses a real canonical SQLite project across propagation, queue, append, comparison, restoration, idempotent
+            replay, and reopen; it replays the affected workflow/contract, graph/data, and package boundaries plus complete
+            Python quality and architecture checks. No API/UI/schema/dependency/toolchain change occurred, so unrelated service
+            routes, desktop UI, security suites, and complete deployment profiles are deferred to the slice and W1 qualification
+            gates.
+          selection_sha256: eba263a900076388b8d6768a816e41129b4ea9f74dc5f9b873c1247b7eb8d8df
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:quality
+          - foundation:backlog
+          - packaging:unit
+          - contracts:unit
+          - data:unit
+          - graph:unit
+          - e2e-local:system
+          packet_sha256: f6e99d222aa578a23f17fa772f8d796848c84633fb5c623da1903bbc4dc47f71
     platform_targets:
     - windows-x64
     completion:
