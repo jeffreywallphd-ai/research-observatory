@@ -1,0 +1,101 @@
+{
+  "task_id": "CAP-03.S04.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "27714fac4ac803584bf0ebc86c9b599d62ba8cdc",
+  "submission_record_commit": "5182ad06e9e05170802eb22ef68f7935a603a475",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The frozen candidate/submission boundary, evidence identity, 44-path inventory, task projection, approved-reference identity, and patch hygiene authenticate exactly. Focused replay passed 15 Python workflow/Task Center/API contract tests, one runtime-handshake test, 27 TypeScript tests, and the targeted native allow-list test. Six acceptance-bound defects remain: two authority/consequence failures and four projection, restart-lineage, client-validation, and governed-interaction failures. No full profile was run.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S04.T03.R01.json",
+      "sha256": "c6b992f773445dcb5e57417eb10a54c49778b7eebc128d44681e68baa032a3c0",
+      "git_blob": "2d3f34ca8978922779965e5c175d23112501aeab",
+      "commit": "27714fac4ac803584bf0ebc86c9b599d62ba8cdc"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base, candidate and submission commits; verify direct submission ancestry, frozen evidence separation, exact manifest SHA/blob, declared-versus-actual changed paths, submission-only paths and git diff --check",
+      "result": "PASS: base 1affb3e62f1c58f9019af5d04db1ac33edd38bbb is an ancestor of the candidate; submission parent is the exact candidate; the 44 declared candidate paths match exactly; submission adds only the R01 manifest and backlog projection; patch hygiene passes."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest tests.workflows.test_task_center tests.service.test_task_center_api tests.contracts.test_workflow_contracts",
+      "result": "PASS: 15/15 focused persistence, API, restart, authority and portable-contract tests passed."
+    },
+    {
+      "type": "independent-check",
+      "command": "Focused runtime-handshake unittest; four submitted Vitest files; cargo test --lib native_api_transport_allows_only_generated_local_routes",
+      "result": "PASS: runtime handshake passed 1/1, TypeScript passed 27/27, and the targeted Rust native request allow-list passed 1/1 with 57 unrelated tests filtered out."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Create a real project and runnable SQLite workflow, read its canonical Task Center ETag, then POST cancellation with the exact run/history revision but snapshot revision incremented from 1 to 2",
+      "result": "FAIL: Core returned HTTP 200 and changed the job to cancelled. The parsed snapshot component is discarded for cancellation and retry."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "Register valid waiting-human authority with not-applicable mapped by the exact definition to skip-step, then complete that disposition through the repository",
+      "result": "FAIL: the decision retained the declared skip-step consequence, but the step and workflow were both recorded as succeeded."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S04.T03-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Cancellation and retry accept substituted snapshot authority",
+      "reproduction": "At the exact candidate, create a runnable project workflow and read its Task Center projection. Submit POST /projects/workflows/jobs/{jobId}/cancel with the canonical run ID and history revision but replace snapshotRevision 1 with 2 in If-Match. The request returns 200 and cancels the job. services/core-api/src/research_observatory_core/app.py:692 and :727 parse the snapshot component into _snapshot_revision and discard it; TaskCenterService.cancel/retry and repository request_cancellation/retry_as_continuation validate only run/history authority.",
+      "required_remediation": "Carry expected snapshot revision through cancel and retry and compare it transactionally with the exact bound latest workflow snapshot before mutation or idempotent replay. Add real API/repository tests for substituted, stale and exact snapshot revisions on both commands while retaining run/history checks and canonical ETag behavior."
+    },
+    {
+      "id": "CAP-03.S04.T03-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Definition-bound human consequences are recorded but not faithfully executed",
+      "reproduction": "Register a valid waiting-human definition whose only allowed disposition is not-applicable and whose exact mapping is skip-step. Complete that decision. repositories.py:3919 collapses every consequence except end-workflow to terminal succeeded; the resulting decision still discloses skip-step, but the step and workflow are both recorded as succeeded. The same branch cannot resume a mid-graph workflow or activate its exact downstream definition.",
+      "required_remediation": "Implement each supported consequence distinctly. skip-step must emit the contract's skipped step transition; resume-workflow must advance only the exact newly authorized snapshot and runnable dependency graph rather than terminalizing it; end-workflow must retain its explicit terminal semantics. Add real persistence/restart tests for all supported consequence codes, including a human gate with a downstream activity."
+    },
+    {
+      "id": "CAP-03.S04.T03-R01-F03",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Project changes can display a prior project's workflow projection",
+      "reproduction": "TaskCenterWorkspace.tsx:61 retains runs across prop changes. load at :73-84 captures one project and unconditionally calls setRuns after awaiting transport. The cleanup flag at :95-98 prevents later timer launches but does not invalidate an in-flight request or clear prior runs. Switching from project A to B therefore displays A immediately while B loads, and a delayed A response can overwrite B after the switch.",
+      "required_remediation": "Reset runs, selection and loading state on exact project identity/root changes, bind every load to a request generation or abort signal, and ignore responses from superseded projects or older overlapping polls. Add interaction tests with deferred A/B transports proving no cross-project display and monotonic response ordering."
+    },
+    {
+      "id": "CAP-03.S04.T03-R01-F04",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "The generated client accepts contradictory human-decision projections",
+      "reproduction": "Pass decodeWorkflowTaskCenterRun a structurally valid run containing a human task with state completed while decisionId, disposition and decidedAt are all null. generated.ts:811-824 validates those fields independently and returns the projection instead of rejecting it. This omits the server model invariant at models.py:766-784 and contradicts the claimed fail-closed rejection of contradictory Core responses before rendering.",
+      "required_remediation": "Generate and enforce the same completed-decision, claimed-assignee, consequence-key and identity/order invariants at the TypeScript process boundary. Add hostile generated-client tests for completed-without-decision, partial decision triples, decision-on-open-task, claimed-without-assignee, duplicate identities and out-of-order events."
+    },
+    {
+      "id": "CAP-03.S04.T03-R01-F05",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Retry continuation lineage is not visible or restart-reconstructable in Task Center",
+      "reproduction": "retry_as_continuation records sourceJobId only inside a private command fingerprint at repositories.py:3679. WorkflowTaskCenterRun and the generated API projection expose no predecessor run/job relationship, and the renderer displays the old and new runs as unrelated. After refresh or restart, the brief announcement is lost, contrary to the task-start requirement that retry create a new immutable continuation and make the relationship visible.",
+      "required_remediation": "Persist an immutable continuation-from run/job reference, expose it in the bounded repository/Core/generated-client projection, and render it in Task Center. Add idempotent retry plus Core-restart tests proving the new identity, exact definition binding and predecessor relationship survive."
+    },
+    {
+      "id": "CAP-03.S04.T03-R01-F06",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Successful confirmation loses focus and submitted tests do not prove claimed command interaction behavior",
+      "reproduction": "TaskCenterWorkspace.tsx:119-122 provides focus restoration through closeConfirmation, but successful cancel/retry at :157 directly calls setConfirmation(null), removing the focused dialog button without restoring focus. TaskCenterWorkspace.test.tsx contains only static render assertions; it does not execute cancellation, retry, decision, keyboard trapping, successful close or focus recovery despite the evidence claim that these states/actions were covered.",
+      "required_remediation": "Close successful commands through an explicit post-command focus-restoration path and add DOM interaction tests for cancel, retry, decision, Escape/Tab containment, failure retention, announcements and success focus recovery. Narrow the evidence wording to what the exact tests execute."
+    }
+  ],
+  "closures": []
+}
