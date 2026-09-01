@@ -33,6 +33,7 @@ from research_observatory_core.migrations.versions import (  # noqa: E402
     v0007_provenance_ledger,
     v0008_workflow_executor,
     v0009_material_dependencies,
+    v0010_dependency_impacts,
 )
 
 v0006_actor_identity = runner.v0006_actor_identity
@@ -598,6 +599,69 @@ def create_version_8_fixture(database: Path) -> None:
         connection.close()
 
 
+def create_version_9_fixture(database: Path) -> None:
+    """Materialize the exact committed v9 profile for impact migration."""
+
+    create_version_8_fixture(database)
+    connection = sqlite3.connect(database, autocommit=True)
+    try:
+        storage._configure_connection(connection, initialize=True)
+        connection.execute("BEGIN IMMEDIATE")
+        for statement in storage.MATERIAL_DEPENDENCY_DDL:
+            connection.execute(statement)
+        connection.execute(
+            """
+            INSERT INTO material_dependency_outputs (
+                output_revision_id, project_id, coverage, registration_event_id, registered_at
+            )
+            SELECT revision_id, project_id, 'legacy-unreported', NULL, NULL
+              FROM aggregate_revisions
+            """
+        )
+        connection.execute("DROP TRIGGER schema_metadata_no_update")
+        connection.execute("DROP TRIGGER schema_metadata_no_delete")
+        connection.execute("ALTER TABLE schema_metadata RENAME TO schema_metadata_v8")
+        connection.execute(storage.SCHEMA_METADATA_V9_DDL)
+        connection.execute(
+            """
+            INSERT INTO schema_metadata (
+                singleton, schema_version, database_profile, application_id,
+                profile_sha256, schema_sha256, created_at
+            )
+            SELECT singleton, 9, database_profile, application_id, ?, ?, created_at
+              FROM schema_metadata_v8
+            """,
+            (storage.MATERIAL_DEPENDENCY_PROFILE_SHA256, storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256),
+        )
+        connection.execute("DROP TABLE schema_metadata_v8")
+        for statement in v0002_schema_history.SCHEMA_METADATA_TRIGGERS:
+            connection.execute(statement)
+        connection.execute(
+            """
+            INSERT INTO schema_migrations (
+                migration_id, from_schema_version, to_schema_version, applied_at,
+                backup_manifest_sha256, source_schema_sha256, target_schema_sha256,
+                migration_tool
+            ) VALUES ('0009_material_dependencies', 8, 9, ?, ?, ?, ?, 'alembic-1.18.5')
+            """,
+            (
+                CREATED_AT,
+                "f" * 64,
+                storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
+            ),
+        )
+        connection.execute("PRAGMA user_version=9")
+        if storage._schema_fingerprint(connection) != storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256:
+            raise AssertionError(storage._schema_fingerprint(connection))
+        connection.execute("COMMIT")
+        checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+        if checkpoint != (0, 0, 0):
+            raise AssertionError(checkpoint)
+    finally:
+        connection.close()
+
+
 class SqliteMigrationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.database_profile = storage.development_plaintext_database_fixture()
@@ -635,7 +699,7 @@ class SqliteMigrationTests(unittest.TestCase):
         before = self.database.read_bytes()
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(1, plan.source_schema_version)
-        self.assertEqual(9, plan.target_schema_version)
+        self.assertEqual(10, plan.target_schema_version)
         self.assertTrue(plan.migration_required)
         self.assertEqual(
             (
@@ -647,6 +711,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             plan.migration_ids,
         )
@@ -660,7 +725,7 @@ class SqliteMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(1, result.source_schema_version)
-        self.assertEqual(9, result.target_schema_version)
+        self.assertEqual(10, result.target_schema_version)
         self.assertEqual(
             (
                 "0002_schema_history",
@@ -671,6 +736,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             result.migration_ids,
         )
@@ -779,6 +845,15 @@ class SqliteMigrationTests(unittest.TestCase):
                         9,
                         result.recovery_manifest_sha256,
                         storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        "0010_dependency_impacts",
+                        9,
+                        10,
+                        result.recovery_manifest_sha256,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                         "alembic-1.18.5",
                     ),
@@ -818,7 +893,7 @@ class SqliteMigrationTests(unittest.TestCase):
         create_version_2_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(2, plan.source_schema_version)
-        self.assertEqual(9, plan.target_schema_version)
+        self.assertEqual(10, plan.target_schema_version)
         self.assertEqual(
             (
                 "0003_object_envelopes",
@@ -828,6 +903,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             plan.migration_ids,
         )
@@ -843,6 +919,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             result.migration_ids,
         )
@@ -925,6 +1002,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         8,
                         9,
                         storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
+                    ),
+                    (
+                        "0010_dependency_impacts",
+                        9,
+                        10,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -948,6 +1032,7 @@ class SqliteMigrationTests(unittest.TestCase):
                         "0007_provenance_ledger",
                         "0008_workflow_executor",
                         "0009_material_dependencies",
+                        "0010_dependency_impacts",
                     ),
                     plan.migration_ids,
                 )
@@ -960,6 +1045,7 @@ class SqliteMigrationTests(unittest.TestCase):
                         "0007_provenance_ledger",
                         "0008_workflow_executor",
                         "0009_material_dependencies",
+                        "0010_dependency_impacts",
                     ),
                     result.migration_ids,
                 )
@@ -985,6 +1071,7 @@ class SqliteMigrationTests(unittest.TestCase):
                             "0007_provenance_ledger",
                             "0008_workflow_executor",
                             "0009_material_dependencies",
+                            "0010_dependency_impacts",
                         )
                         if legacy_object
                         else (
@@ -994,6 +1081,7 @@ class SqliteMigrationTests(unittest.TestCase):
                             "0007_provenance_ledger",
                             "0008_workflow_executor",
                             "0009_material_dependencies",
+                            "0010_dependency_impacts",
                         ),
                         history,
                     )
@@ -1011,6 +1099,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             plan.migration_ids,
         )
@@ -1023,6 +1112,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             result.migration_ids,
         )
@@ -1082,6 +1172,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         8,
                         9,
                         storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
+                    ),
+                    (
+                        "0010_dependency_impacts",
+                        9,
+                        10,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1113,6 +1210,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             plan.migration_ids,
         )
@@ -1124,6 +1222,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0007_provenance_ledger",
                 "0008_workflow_executor",
                 "0009_material_dependencies",
+                "0010_dependency_impacts",
             ),
             result.migration_ids,
         )
@@ -1161,13 +1260,23 @@ class SqliteMigrationTests(unittest.TestCase):
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(6, plan.source_schema_version)
         self.assertEqual(
-            ("0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"),
+            (
+                "0007_provenance_ledger",
+                "0008_workflow_executor",
+                "0009_material_dependencies",
+                "0010_dependency_impacts",
+            ),
             plan.migration_ids,
         )
 
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(
-            ("0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies"),
+            (
+                "0007_provenance_ledger",
+                "0008_workflow_executor",
+                "0009_material_dependencies",
+                "0010_dependency_impacts",
+            ),
             result.migration_ids,
         )
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
@@ -1196,14 +1305,22 @@ class SqliteMigrationTests(unittest.TestCase):
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(7, plan.source_schema_version)
         self.assertEqual(
-            (v0008_workflow_executor.revision, v0009_material_dependencies.revision),
+            (
+                v0008_workflow_executor.revision,
+                v0009_material_dependencies.revision,
+                v0010_dependency_impacts.revision,
+            ),
             plan.migration_ids,
         )
 
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
 
         self.assertEqual(
-            (v0008_workflow_executor.revision, v0009_material_dependencies.revision),
+            (
+                v0008_workflow_executor.revision,
+                v0009_material_dependencies.revision,
+                v0010_dependency_impacts.revision,
+            ),
             result.migration_ids,
         )
         manifest = self.project / str(result.recovery_manifest_relative_path)
@@ -1245,6 +1362,7 @@ class SqliteMigrationTests(unittest.TestCase):
                     v0007_provenance_ledger.revision,
                     v0008_workflow_executor.revision,
                     v0009_material_dependencies.revision,
+                    v0010_dependency_impacts.revision,
                 ),
                 tuple(
                     str(row[0])
@@ -1275,9 +1393,15 @@ class SqliteMigrationTests(unittest.TestCase):
 
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(storage.WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION, plan.source_schema_version)
-        self.assertEqual((v0009_material_dependencies.revision,), plan.migration_ids)
+        self.assertEqual(
+            (v0009_material_dependencies.revision, v0010_dependency_impacts.revision),
+            plan.migration_ids,
+        )
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual((v0009_material_dependencies.revision,), result.migration_ids)
+        self.assertEqual(
+            (v0009_material_dependencies.revision, v0010_dependency_impacts.revision),
+            result.migration_ids,
+        )
 
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
@@ -1309,7 +1433,7 @@ class SqliteMigrationTests(unittest.TestCase):
             }
             self.assertEqual(workflow_tables_before, workflow_tables_after)
             self.assertEqual(
-                v0009_material_dependencies.revision,
+                v0010_dependency_impacts.revision,
                 current.execute(
                     "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
                 ).fetchone()[0],
@@ -1317,11 +1441,54 @@ class SqliteMigrationTests(unittest.TestCase):
         finally:
             current.close()
 
-    def test_fresh_v6_history_remains_current_after_v9_upgrade_and_restart(self) -> None:
+    def test_migrates_exact_v9_fixture_without_inventing_impact_or_stale_state(self) -> None:
+        create_version_9_fixture(self.database)
+
+        plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual(storage.MATERIAL_DEPENDENCY_DATABASE_SCHEMA_VERSION, plan.source_schema_version)
+        self.assertEqual((v0010_dependency_impacts.revision,), plan.migration_ids)
+        self.assertEqual(storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256, plan.source_schema_sha256)
+
+        result = migrate_database(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual((v0010_dependency_impacts.revision,), result.migration_ids)
+
+        current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            self.assertEqual(
+                ("legacy-unreported", None, None),
+                tuple(
+                    current.execute(
+                        """
+                        SELECT coverage, registration_event_id, registered_at
+                          FROM material_dependency_outputs
+                         WHERE output_revision_id=?
+                        """,
+                        ("01890f6e-6a40-7cc5-98b7-123456789ad1",),
+                    ).fetchone()
+                ),
+            )
+            self.assertEqual(0, current.execute("SELECT count(*) FROM material_dependencies").fetchone()[0])
+            for table in (
+                "dependency_impact_runs",
+                "dependency_impact_items",
+                "dependency_stale_causes",
+                "dependency_impact_audit_events",
+            ):
+                self.assertEqual(0, current.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
+            self.assertEqual(
+                v0010_dependency_impacts.revision,
+                current.execute(
+                    "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
+                ).fetchone()[0],
+            )
+        finally:
+            current.close()
+
+    def test_fresh_v6_history_remains_current_after_v10_upgrade_and_restart(self) -> None:
         create_fresh_version_6_fixture(self.database)
         projection = runner.migration_framework_projection()
-        self.assertEqual(9, projection["targetSchemaVersion"])
-        self.assertEqual(v0009_material_dependencies.revision, projection["revisions"][-1])
+        self.assertEqual(10, projection["targetSchemaVersion"])
+        self.assertEqual(v0010_dependency_impacts.revision, projection["revisions"][-1])
 
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(6, plan.source_schema_version)
@@ -1330,6 +1497,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0007_provenance_ledger.revision,
                 v0008_workflow_executor.revision,
                 v0009_material_dependencies.revision,
+                v0010_dependency_impacts.revision,
             ),
             plan.migration_ids,
         )
@@ -1376,6 +1544,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         8,
                         9,
                         storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0010_dependency_impacts.revision,
+                        9,
+                        10,
+                        storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1402,6 +1577,7 @@ class SqliteMigrationTests(unittest.TestCase):
             + tuple(
                 (v0009_material_dependencies, step) for step in v0009_material_dependencies.MATERIAL_MIGRATION_STEPS
             )
+            + tuple((v0010_dependency_impacts, step) for step in v0010_dependency_impacts.IMPACT_MIGRATION_STEPS)
         )
         for index, (revision_module, failpoint) in enumerate(failpoints):
             with self.subTest(revision=revision_module.revision, failpoint=failpoint):

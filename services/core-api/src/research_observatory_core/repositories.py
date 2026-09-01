@@ -20,16 +20,26 @@ from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, s
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
 from sqlalchemy.sql import ClauseElement
 
+from .dependency_impacts import DependencyGraphEdge, plan_dependency_impact
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ports.repositories import (
+    DEFAULT_DEPENDENCY_IMPACT_LIMITS,
     AggregateKind,
     AggregateRepository,
     AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
+    ConditionalDependencyDecision,
     DependencyAuditDiagnostic,
+    DependencyChange,
     DependencyCoverage,
+    DependencyImpactAuditEvent,
+    DependencyImpactLimits,
+    DependencyImpactPreview,
+    DependencyImpactRepository,
+    DependencyPropagationRun,
     DependencyRegistrationRequired,
+    DependencyStaleState,
     IntentAuditEvent,
     IntentPolicyAuditEvent,
     IntentPolicyDecisionRecord,
@@ -53,6 +63,7 @@ from .ports.repositories import (
     RepositoryProblem,
     RepositoryTransactionFailed,
     RightsStatus,
+    StalenessReason,
     UnitOfWork,
     UnitOfWorkFactory,
 )
@@ -2318,6 +2329,776 @@ class _SqliteMaterialDependencyRepository(MaterialDependencyRepository):
                 connection.close()
         except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
             raise RepositoryProblem("material dependency diagnostic query failed") from error
+
+
+def _impact_sha256(document: object) -> str:
+    payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("ascii")
+    return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+
+def _dependency_change_document(change: DependencyChange) -> dict[str, object]:
+    return {
+        "actorId": change.actor_id,
+        "changeId": change.change_id,
+        "configurationId": change.configuration_id,
+        "dependencyKind": change.dependency_kind,
+        "idempotencyKey": change.idempotency_key,
+        "occurredAt": change.occurred_at,
+        "previousConfigurationVersion": change.previous_configuration_version,
+        "previousFingerprint": change.previous_fingerprint,
+        "previousRevisionId": change.previous_revision_id,
+        "propagationPolicyId": change.propagation_policy_id,
+        "propagationPolicyVersion": change.propagation_policy_version,
+        "reason": change.reason,
+        "replacementConfigurationVersion": change.replacement_configuration_version,
+        "replacementFingerprint": change.replacement_fingerprint,
+        "replacementRevisionId": change.replacement_revision_id,
+        "traceId": change.trace_id,
+    }
+
+
+def _impact_item_document(item: Any) -> dict[str, object]:
+    return {
+        "confidence": item.confidence,
+        "cycleGroupId": item.cycle_group_id,
+        "depth": item.depth,
+        "disposition": item.disposition,
+        "outputKind": item.output_kind,
+        "outputRevisionId": item.output_revision_id,
+        "pathRevisionIds": item.path_revision_ids,
+        "relationType": item.relation_type,
+        "reviewRequired": item.review_required,
+    }
+
+
+def _impact_checkpoint_sha256(
+    *,
+    run_id: str,
+    sequence: int,
+    event_type: str,
+    processed_items: int,
+    stale_count: int,
+    unknown_count: int,
+    previous_checkpoint_sha256: str | None,
+) -> str:
+    return _impact_sha256(
+        {
+            "eventType": event_type,
+            "previousCheckpointSha256": previous_checkpoint_sha256,
+            "processedItems": processed_items,
+            "runId": run_id,
+            "sequence": sequence,
+            "staleCount": stale_count,
+            "unknownCount": unknown_count,
+        }
+    )
+
+
+def _impact_timestamp() -> str:
+    return datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+
+
+def _record_dependency_stale_batch(
+    connection: CanonicalConnection,
+    *,
+    run_id: str,
+    project_id: str,
+    change_id: str,
+    reason: StalenessReason,
+    propagation_policy_id: str,
+    propagation_policy_version: str,
+    detected_at: str,
+    items: tuple[tuple[Any, ...], ...],
+) -> tuple[int, int]:
+    """Persist one exact checkpoint batch; caller owns the transaction."""
+
+    stale_count = 0
+    unknown_count = 0
+    for row in items:
+        disposition = str(row[4])
+        if disposition == "stale":
+            stale_count += 1
+        else:
+            unknown_count += 1
+        cause_id = new_uuid_v7()
+        connection.execute(
+            """
+            INSERT INTO dependency_stale_causes (
+                cause_id, run_id, item_sequence, project_id, change_id,
+                output_revision_id, disposition, reason, propagation_policy_id,
+                propagation_policy_version, depth, path_json, path_sha256,
+                cycle_group_id, confidence, review_required, detected_at,
+                resolution_state
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')
+            """,
+            (
+                cause_id,
+                run_id,
+                int(row[0]),
+                project_id,
+                change_id,
+                str(row[2]),
+                disposition,
+                reason,
+                propagation_policy_id,
+                propagation_policy_version,
+                int(row[5]),
+                str(row[7]),
+                str(row[8]),
+                None if row[9] is None else str(row[9]),
+                str(row[10]),
+                int(row[11]),
+                detected_at,
+            ),
+        )
+    return stale_count, unknown_count
+
+
+class _SqliteDependencyImpactRepository(DependencyImpactRepository):
+    """Project-scoped preview, append-only stale state, and restartable propagation."""
+
+    def __init__(self, database: Path, project_id: str) -> None:
+        if not database.is_absolute() or not project_id:
+            raise ValueError("dependency impact repository authority is invalid")
+        self._database = database
+        self._project_id = project_id
+
+    def _preview_with_connection(
+        self,
+        connection: CanonicalConnection,
+        change: DependencyChange,
+        *,
+        decisions: tuple[ConditionalDependencyDecision, ...],
+        limits: DependencyImpactLimits,
+    ) -> DependencyImpactPreview:
+        rows = connection.execute(
+            """
+            SELECT dependency.dependency_id, dependency.dependency_revision_id,
+                   dependency.output_revision_id, revision.aggregate_kind,
+                   dependency.relation_type, dependency.fingerprint,
+                   dependency.governing_policy_id, dependency.governing_policy_version,
+                   dependency.configuration_id, dependency.configuration_version
+              FROM material_dependencies AS dependency
+              JOIN aggregate_revisions AS revision
+                ON revision.project_id=dependency.project_id
+               AND revision.revision_id=dependency.output_revision_id
+             WHERE dependency.project_id=?
+             ORDER BY dependency.dependency_id
+             LIMIT ?
+            """,
+            (self._project_id, limits.max_edges + 1),
+        ).fetchall()
+        edges = tuple(
+            DependencyGraphEdge(
+                dependency_id=str(row[0]),
+                input_revision_id=None if row[1] is None else str(row[1]),
+                output_revision_id=str(row[2]),
+                output_kind=cast(AggregateKind, row[3]),
+                relation_type=cast(Any, row[4]),
+                fingerprint=str(row[5]),
+                governing_policy_id=str(row[6]),
+                governing_policy_version=str(row[7]),
+                configuration_id=None if row[8] is None else str(row[8]),
+                configuration_version=None if row[9] is None else str(row[9]),
+            )
+            for row in rows
+        )
+        legacy = tuple(
+            str(row[0])
+            for row in connection.execute(
+                """
+                SELECT output_revision_id
+                 FROM material_dependency_outputs
+                 WHERE project_id=? AND coverage='legacy-unreported'
+                 ORDER BY output_revision_id
+                 LIMIT ?
+                """,
+                (self._project_id, limits.max_nodes + 1),
+            ).fetchall()
+        )
+        return plan_dependency_impact(
+            self._project_id,
+            change,
+            edges,
+            decisions=decisions,
+            legacy_unreported_output_ids=legacy,
+            limits=limits,
+        )
+
+    def preview(
+        self,
+        change: DependencyChange,
+        *,
+        decisions: tuple[ConditionalDependencyDecision, ...] = (),
+        limits: DependencyImpactLimits = DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+    ) -> DependencyImpactPreview:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                return self._preview_with_connection(connection, change, decisions=decisions, limits=limits)
+            finally:
+                connection.close()
+        except RepositoryProblem:
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("dependency impact preview failed") from error
+
+    def begin(
+        self,
+        change: DependencyChange,
+        *,
+        preview_sha256: str,
+        run_id: str,
+        batch_size: int,
+        decisions: tuple[ConditionalDependencyDecision, ...] = (),
+        limits: DependencyImpactLimits = DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+    ) -> DependencyPropagationRun:
+        if not is_uuid_v7(run_id) or not re.fullmatch(r"sha256:[0-9a-f]{64}", preview_sha256):
+            raise ValueError("dependency propagation run authority is invalid")
+        if isinstance(batch_size, bool) or not 1 <= batch_size <= 1_000:
+            raise ValueError("dependency propagation batch size is invalid")
+        connection: CanonicalConnection | None = None
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            connection.execute("BEGIN IMMEDIATE")
+            preview = self._preview_with_connection(connection, change, decisions=decisions, limits=limits)
+            if preview.preview_sha256 != preview_sha256:
+                raise RepositoryConflict("dependency impact preview is stale or substituted")
+            affected = tuple(item for item in preview.impacts if item.disposition != "informational")
+            authority_sha256 = _impact_sha256(
+                {
+                    "batchSize": batch_size,
+                    "change": _dependency_change_document(change),
+                    "decisions": [
+                        {
+                            "actorId": item.actor_id,
+                            "decidedAt": item.decided_at,
+                            "decisionId": item.decision_id,
+                            "dependencyId": item.dependency_id,
+                            "disposition": item.disposition,
+                            "governingPolicyId": item.governing_policy_id,
+                            "governingPolicyVersion": item.governing_policy_version,
+                        }
+                        for item in sorted(decisions, key=lambda value: value.dependency_id)
+                    ],
+                    "items": [_impact_item_document(item) for item in affected],
+                    "previewSha256": preview.preview_sha256,
+                    "runId": run_id,
+                }
+            )
+            existing = connection.execute(
+                """
+                SELECT run_id, authority_sha256
+                  FROM dependency_impact_runs
+                 WHERE project_id=? AND (run_id=? OR idempotency_key=?)
+                 ORDER BY run_id
+                """,
+                (self._project_id, run_id, change.idempotency_key),
+            ).fetchall()
+            if existing:
+                if len(existing) != 1 or str(existing[0][0]) != run_id or str(existing[0][1]) != authority_sha256:
+                    raise RepositoryConflict("dependency propagation idempotency authority conflicts")
+                projection = self._run_with_connection(connection, run_id)
+                connection.execute("ROLLBACK")
+                return projection
+            connection.execute(
+                """
+                INSERT INTO dependency_impact_runs (
+                    run_id, project_id, change_id, idempotency_key, reason,
+                    dependency_kind, previous_revision_id, replacement_revision_id,
+                    configuration_id, previous_configuration_version,
+                    replacement_configuration_version, previous_fingerprint,
+                    replacement_fingerprint, propagation_policy_id,
+                    propagation_policy_version, actor_id, trace_id, occurred_at,
+                    graph_sha256, preview_sha256, authority_sha256, batch_size,
+                    total_items, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    run_id,
+                    self._project_id,
+                    change.change_id,
+                    change.idempotency_key,
+                    change.reason,
+                    change.dependency_kind,
+                    change.previous_revision_id,
+                    change.replacement_revision_id,
+                    change.configuration_id,
+                    change.previous_configuration_version,
+                    change.replacement_configuration_version,
+                    change.previous_fingerprint,
+                    change.replacement_fingerprint,
+                    change.propagation_policy_id,
+                    change.propagation_policy_version,
+                    change.actor_id,
+                    change.trace_id,
+                    change.occurred_at,
+                    preview.graph_sha256,
+                    preview.preview_sha256,
+                    authority_sha256,
+                    batch_size,
+                    len(affected),
+                    change.occurred_at,
+                ),
+            )
+            for sequence, item in enumerate(affected, start=1):
+                path_json = json.dumps(item.path_revision_ids, ensure_ascii=True, separators=(",", ":"))
+                connection.execute(
+                    """
+                    INSERT INTO dependency_impact_items (
+                        item_id, run_id, item_sequence, project_id,
+                        output_revision_id, output_kind, disposition, depth,
+                        relation_type, path_json, path_sha256, cycle_group_id,
+                        confidence, review_required, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        new_uuid_v7(),
+                        run_id,
+                        sequence,
+                        self._project_id,
+                        item.output_revision_id,
+                        item.output_kind,
+                        item.disposition,
+                        item.depth,
+                        item.relation_type,
+                        path_json,
+                        _impact_sha256({"pathRevisionIds": item.path_revision_ids}),
+                        item.cycle_group_id,
+                        item.confidence,
+                        int(item.review_required),
+                        change.occurred_at,
+                    ),
+                )
+            checkpoint = _impact_checkpoint_sha256(
+                run_id=run_id,
+                sequence=1,
+                event_type="started",
+                processed_items=0,
+                stale_count=0,
+                unknown_count=0,
+                previous_checkpoint_sha256=None,
+            )
+            self._insert_audit(
+                connection,
+                run_id=run_id,
+                sequence=1,
+                event_type="started",
+                processed_items=0,
+                stale_count=0,
+                unknown_count=0,
+                checkpoint_sha256=checkpoint,
+                occurred_at=change.occurred_at,
+            )
+            if not affected:
+                completed_checkpoint = _impact_checkpoint_sha256(
+                    run_id=run_id,
+                    sequence=2,
+                    event_type="completed",
+                    processed_items=0,
+                    stale_count=0,
+                    unknown_count=0,
+                    previous_checkpoint_sha256=checkpoint,
+                )
+                self._insert_audit(
+                    connection,
+                    run_id=run_id,
+                    sequence=2,
+                    event_type="completed",
+                    processed_items=0,
+                    stale_count=0,
+                    unknown_count=0,
+                    checkpoint_sha256=completed_checkpoint,
+                    occurred_at=change.occurred_at,
+                )
+            projection = self._run_with_connection(connection, run_id)
+            connection.execute("COMMIT")
+            return projection
+        except RepositoryProblem:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise RepositoryProblem("dependency propagation could not start") from error
+        finally:
+            if connection is not None:
+                connection.close()
+
+    def _insert_audit(
+        self,
+        connection: CanonicalConnection,
+        *,
+        run_id: str,
+        sequence: int,
+        event_type: str,
+        processed_items: int,
+        stale_count: int,
+        unknown_count: int,
+        checkpoint_sha256: str,
+        occurred_at: str,
+    ) -> None:
+        connection.execute(
+            """
+            INSERT INTO dependency_impact_audit_events (
+                event_id, run_id, project_id, sequence, event_type,
+                processed_items, stale_count, unknown_count,
+                checkpoint_sha256, occurred_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                new_uuid_v7(),
+                run_id,
+                self._project_id,
+                sequence,
+                event_type,
+                processed_items,
+                stale_count,
+                unknown_count,
+                checkpoint_sha256,
+                occurred_at,
+            ),
+        )
+
+    def _run_with_connection(self, connection: CanonicalConnection, run_id: str) -> DependencyPropagationRun:
+        run = connection.execute(
+            """
+            SELECT run_id, project_id, change_id, total_items, preview_sha256
+              FROM dependency_impact_runs
+             WHERE project_id=? AND run_id=?
+            """,
+            (self._project_id, run_id),
+        ).fetchone()
+        if run is None:
+            raise RepositoryNotFound("dependency propagation run was not found")
+        event = connection.execute(
+            """
+            SELECT event_type, processed_items, stale_count, unknown_count,
+                   checkpoint_sha256
+              FROM dependency_impact_audit_events
+             WHERE project_id=? AND run_id=?
+             ORDER BY sequence DESC LIMIT 1
+            """,
+            (self._project_id, run_id),
+        ).fetchone()
+        if event is None:
+            raise RepositoryProblem("dependency propagation audit authority is missing")
+        state = "running" if str(event[0]) in {"started", "checkpoint", "failed-attempt"} else str(event[0])
+        return DependencyPropagationRun(
+            run_id=str(run[0]),
+            project_id=str(run[1]),
+            change_id=str(run[2]),
+            state=cast(Any, state),
+            total_items=int(run[3]),
+            processed_items=int(event[1]),
+            stale_count=int(event[2]),
+            unknown_count=int(event[3]),
+            checkpoint_sha256=str(event[4]),
+            preview_sha256=str(run[4]),
+        )
+
+    def advance(self, run_id: str, *, expected_checkpoint_sha256: str) -> DependencyPropagationRun:
+        connection: CanonicalConnection | None = None
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            connection.execute("BEGIN IMMEDIATE")
+            current = self._run_with_connection(connection, run_id)
+            if current.checkpoint_sha256 != expected_checkpoint_sha256:
+                raise RepositoryConflict("dependency propagation checkpoint is stale or substituted")
+            if current.state != "running":
+                raise RepositoryConflict("dependency propagation run is terminal")
+            batch_size = int(
+                connection.execute(
+                    "SELECT batch_size FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
+                    (self._project_id, run_id),
+                ).fetchone()[0]
+            )
+            items = tuple(
+                tuple(row)
+                for row in connection.execute(
+                    """
+                    SELECT item_sequence, item_id, output_revision_id, output_kind,
+                           disposition, depth, relation_type, path_json, path_sha256,
+                           cycle_group_id, confidence, review_required
+                      FROM dependency_impact_items
+                     WHERE project_id=? AND run_id=? AND item_sequence>?
+                     ORDER BY item_sequence LIMIT ?
+                    """,
+                    (self._project_id, run_id, current.processed_items, batch_size),
+                ).fetchall()
+            )
+            run_authority = connection.execute(
+                """
+                SELECT change_id, reason, propagation_policy_id,
+                       propagation_policy_version, occurred_at
+                  FROM dependency_impact_runs
+                 WHERE project_id=? AND run_id=?
+                """,
+                (self._project_id, run_id),
+            ).fetchone()
+            if run_authority is None or not items:
+                raise RepositoryProblem("dependency propagation checkpoint is inconsistent")
+            added_stale, added_unknown = _record_dependency_stale_batch(
+                connection,
+                run_id=run_id,
+                project_id=self._project_id,
+                change_id=str(run_authority[0]),
+                reason=cast(StalenessReason, run_authority[1]),
+                propagation_policy_id=str(run_authority[2]),
+                propagation_policy_version=str(run_authority[3]),
+                detected_at=str(run_authority[4]),
+                items=items,
+            )
+            processed = current.processed_items + len(items)
+            stale_count = current.stale_count + added_stale
+            unknown_count = current.unknown_count + added_unknown
+            prior_sequence = int(
+                connection.execute(
+                    "SELECT max(sequence) FROM dependency_impact_audit_events WHERE project_id=? AND run_id=?",
+                    (self._project_id, run_id),
+                ).fetchone()[0]
+            )
+            event_type = "completed" if processed == current.total_items else "checkpoint"
+            checkpoint = _impact_checkpoint_sha256(
+                run_id=run_id,
+                sequence=prior_sequence + 1,
+                event_type=event_type,
+                processed_items=processed,
+                stale_count=stale_count,
+                unknown_count=unknown_count,
+                previous_checkpoint_sha256=current.checkpoint_sha256,
+            )
+            self._insert_audit(
+                connection,
+                run_id=run_id,
+                sequence=prior_sequence + 1,
+                event_type=event_type,
+                processed_items=processed,
+                stale_count=stale_count,
+                unknown_count=unknown_count,
+                checkpoint_sha256=checkpoint,
+                occurred_at=_impact_timestamp(),
+            )
+            projection = self._run_with_connection(connection, run_id)
+            connection.execute("COMMIT")
+            return projection
+        except RepositoryProblem:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError, RuntimeError) as error:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            try:
+                self._record_failed_attempt(
+                    run_id,
+                    expected_checkpoint_sha256=expected_checkpoint_sha256,
+                )
+            except RepositoryProblem as audit_error:
+                raise RepositoryProblem("dependency propagation checkpoint and failure audit failed") from audit_error
+            raise RepositoryProblem("dependency propagation checkpoint failed") from error
+        finally:
+            if connection is not None:
+                connection.close()
+
+    def _record_failed_attempt(self, run_id: str, *, expected_checkpoint_sha256: str) -> None:
+        """Append a content-free failed-attempt fact after the failed batch rolls back."""
+
+        connection: CanonicalConnection | None = None
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            connection.execute("BEGIN IMMEDIATE")
+            current = self._run_with_connection(connection, run_id)
+            if current.state != "running" or current.checkpoint_sha256 != expected_checkpoint_sha256:
+                connection.execute("ROLLBACK")
+                return
+            sequence = (
+                int(
+                    connection.execute(
+                        "SELECT max(sequence) FROM dependency_impact_audit_events WHERE project_id=? AND run_id=?",
+                        (self._project_id, run_id),
+                    ).fetchone()[0]
+                )
+                + 1
+            )
+            checkpoint = _impact_checkpoint_sha256(
+                run_id=run_id,
+                sequence=sequence,
+                event_type="failed-attempt",
+                processed_items=current.processed_items,
+                stale_count=current.stale_count,
+                unknown_count=current.unknown_count,
+                previous_checkpoint_sha256=current.checkpoint_sha256,
+            )
+            self._insert_audit(
+                connection,
+                run_id=run_id,
+                sequence=sequence,
+                event_type="failed-attempt",
+                processed_items=current.processed_items,
+                stale_count=current.stale_count,
+                unknown_count=current.unknown_count,
+                checkpoint_sha256=checkpoint,
+                occurred_at=_impact_timestamp(),
+            )
+            connection.execute("COMMIT")
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise RepositoryProblem("dependency propagation failure audit could not be recorded") from error
+        finally:
+            if connection is not None:
+                connection.close()
+
+    def cancel(
+        self,
+        run_id: str,
+        *,
+        expected_checkpoint_sha256: str,
+        occurred_at: str,
+    ) -> DependencyPropagationRun:
+        connection: CanonicalConnection | None = None
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            connection.execute("BEGIN IMMEDIATE")
+            current = self._run_with_connection(connection, run_id)
+            if current.checkpoint_sha256 != expected_checkpoint_sha256 or current.state != "running":
+                raise RepositoryConflict("dependency propagation cancellation authority conflicts")
+            sequence = (
+                int(
+                    connection.execute(
+                        "SELECT max(sequence) FROM dependency_impact_audit_events WHERE project_id=? AND run_id=?",
+                        (self._project_id, run_id),
+                    ).fetchone()[0]
+                )
+                + 1
+            )
+            checkpoint = _impact_checkpoint_sha256(
+                run_id=run_id,
+                sequence=sequence,
+                event_type="cancelled",
+                processed_items=current.processed_items,
+                stale_count=current.stale_count,
+                unknown_count=current.unknown_count,
+                previous_checkpoint_sha256=current.checkpoint_sha256,
+            )
+            self._insert_audit(
+                connection,
+                run_id=run_id,
+                sequence=sequence,
+                event_type="cancelled",
+                processed_items=current.processed_items,
+                stale_count=current.stale_count,
+                unknown_count=current.unknown_count,
+                checkpoint_sha256=checkpoint,
+                occurred_at=occurred_at,
+            )
+            projection = self._run_with_connection(connection, run_id)
+            connection.execute("COMMIT")
+            return projection
+        except RepositoryProblem:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            if connection is not None and connection.in_transaction:
+                connection.execute("ROLLBACK")
+            raise RepositoryProblem("dependency propagation cancellation failed") from error
+        finally:
+            if connection is not None:
+                connection.close()
+
+    def run(self, run_id: str) -> DependencyPropagationRun:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                return self._run_with_connection(connection, run_id)
+            finally:
+                connection.close()
+        except RepositoryProblem:
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("dependency propagation run query failed") from error
+
+    def stale_states(self, *, output_revision_id: str | None = None) -> tuple[DependencyStaleState, ...]:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                parameters: tuple[str, ...] = (self._project_id,)
+                where = "project_id=?"
+                if output_revision_id is not None:
+                    where += " AND output_revision_id=?"
+                    parameters += (output_revision_id,)
+                rows = connection.execute(
+                    """
+                    SELECT cause_id, run_id, change_id, output_revision_id,
+                           disposition, reason, propagation_policy_id,
+                           propagation_policy_version, depth, path_json,
+                           cycle_group_id, confidence, review_required,
+                           detected_at, resolution_state
+                      FROM dependency_stale_causes
+                     WHERE """
+                    + where
+                    + " ORDER BY detected_at, output_revision_id, cause_id",
+                    parameters,
+                ).fetchall()
+                return tuple(
+                    DependencyStaleState(
+                        cause_id=str(row[0]),
+                        run_id=str(row[1]),
+                        change_id=str(row[2]),
+                        output_revision_id=str(row[3]),
+                        disposition=cast(Any, row[4]),
+                        reason=cast(StalenessReason, row[5]),
+                        propagation_policy_id=str(row[6]),
+                        propagation_policy_version=str(row[7]),
+                        depth=int(row[8]),
+                        path_revision_ids=tuple(str(value) for value in json.loads(str(row[9]))),
+                        cycle_group_id=None if row[10] is None else str(row[10]),
+                        confidence=cast(Any, row[11]),
+                        review_required=bool(row[12]),
+                        detected_at=str(row[13]),
+                        resolution_state="open",
+                    )
+                    for row in rows
+                )
+            finally:
+                connection.close()
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError) as error:
+            raise RepositoryProblem("dependency stale-state query failed") from error
+
+    def audit(self, *, run_id: str) -> tuple[DependencyImpactAuditEvent, ...]:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                rows = connection.execute(
+                    """
+                    SELECT event_id, run_id, sequence, event_type, processed_items,
+                           stale_count, unknown_count, checkpoint_sha256, occurred_at
+                      FROM dependency_impact_audit_events
+                     WHERE project_id=? AND run_id=? ORDER BY sequence
+                    """,
+                    (self._project_id, run_id),
+                ).fetchall()
+                return tuple(
+                    DependencyImpactAuditEvent(
+                        event_id=str(row[0]),
+                        run_id=str(row[1]),
+                        sequence=int(row[2]),
+                        event_type=cast(Any, row[3]),
+                        processed_items=int(row[4]),
+                        stale_count=int(row[5]),
+                        unknown_count=int(row[6]),
+                        checkpoint_sha256=str(row[7]),
+                        occurred_at=str(row[8]),
+                    )
+                    for row in rows
+                )
+            finally:
+                connection.close()
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("dependency impact audit query failed") from error
 
 
 class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
@@ -5030,8 +5811,15 @@ def sqlite_material_dependency_repository(path: Path, project_id: str) -> Materi
     return _SqliteMaterialDependencyRepository(path / "state" / "project.sqlite3", project_id)
 
 
+def sqlite_dependency_impact_repository(path: Path, project_id: str) -> DependencyImpactRepository:
+    """Compose project-scoped impact preview and stale-propagation authority."""
+
+    return _SqliteDependencyImpactRepository(path / "state" / "project.sqlite3", project_id)
+
+
 __all__ = [
     "create_sqlite_unit_of_work_factory",
+    "sqlite_dependency_impact_repository",
     "sqlite_intent_revision_repository",
     "sqlite_material_dependency_repository",
     "sqlite_privacy_policy_repository",

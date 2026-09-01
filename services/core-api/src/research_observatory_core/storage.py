@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 9
+DATABASE_SCHEMA_VERSION = 10
+MATERIAL_DEPENDENCY_DATABASE_SCHEMA_VERSION = 9
 WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION = 8
 PROVENANCE_LEDGER_DATABASE_SCHEMA_VERSION = 7
 ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION = 6
@@ -86,6 +87,10 @@ EXPECTED_TABLES = (
     "material_dependency_outputs",
     "material_dependencies",
     "material_dependency_diagnostics",
+    "dependency_impact_runs",
+    "dependency_impact_items",
+    "dependency_stale_causes",
+    "dependency_impact_audit_events",
     "evidence",
     "ontologies",
     "decisions",
@@ -115,6 +120,10 @@ IMMUTABLE_ROW_TABLES = (
     "material_dependency_outputs",
     "material_dependencies",
     "material_dependency_diagnostics",
+    "dependency_impact_runs",
+    "dependency_impact_items",
+    "dependency_stale_causes",
+    "dependency_impact_audit_events",
     "evidence",
     "ontologies",
     "decisions",
@@ -169,6 +178,10 @@ EXPECTED_INDEXES = (
     "material_dependency_by_revision",
     "material_dependency_by_configuration",
     "material_dependency_diagnostic_output",
+    "dependency_impact_run_change",
+    "dependency_impact_item_sequence",
+    "dependency_stale_output",
+    "dependency_impact_audit_sequence",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -184,7 +197,8 @@ ACTOR_IDENTITY_SCHEMA_SHA256 = "11856aa1b328924596692f08acce368ffbb8798441353fe6
 ACTOR_IDENTITY_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834ecadf204f76aa771f"
 PROVENANCE_LEDGER_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
 WORKFLOW_EXECUTOR_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
-EXPECTED_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
+MATERIAL_DEPENDENCY_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
+EXPECTED_SCHEMA_SHA256 = "1fbfe20bc1f822558264c53c8a032e7de35661e8ef9dd9b0d0f7d47a3803769e"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -241,7 +255,8 @@ _PROFILE_SHA256 = hashlib.sha256(
 ).hexdigest()
 PROVENANCE_LEDGER_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0"
 WORKFLOW_EXECUTOR_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f3583b8f1ce42db8ecba7"
-EXPECTED_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76"
+MATERIAL_DEPENDENCY_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76"
+EXPECTED_PROFILE_SHA256 = "bc296eb2922cce2282306a429dd0be58604bc71ad23b4142041ed8b3d0ab7f94"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -956,6 +971,10 @@ SCHEMA_METADATA_V9_DDL = SCHEMA_METADATA_V8_DDL.replace(
     "schema_version INTEGER NOT NULL CHECK (schema_version = 8)",
     "schema_version INTEGER NOT NULL CHECK (schema_version = 9)",
 )
+SCHEMA_METADATA_V10_DDL = SCHEMA_METADATA_V9_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 9)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 10)",
+)
 
 PROVENANCE_LEDGER_DDL = (
     f"""
@@ -1638,13 +1657,228 @@ MATERIAL_DEPENDENCY_DDL = (
     "(project_id, output_revision_id, detected_at, diagnostic_id)",
 )
 
+DEPENDENCY_IMPACT_DDL = (
+    f"""
+        CREATE TABLE dependency_impact_runs (
+            run_id TEXT PRIMARY KEY CHECK ({_uuid_check("run_id", "7")}),
+            project_id TEXT NOT NULL,
+            change_id TEXT NOT NULL CHECK ({_uuid_check("change_id", "7")}),
+            idempotency_key TEXT NOT NULL CHECK (length(idempotency_key) BETWEEN 1 AND 200),
+            reason TEXT NOT NULL CHECK (reason IN (
+                'SOURCE_VERSION', 'RIGHTS_POLICY', 'SCHEMA_VERSION',
+                'MODEL_OR_PROMPT', 'ONTOLOGY_MAPPING', 'HUMAN_DECISION'
+            )),
+            dependency_kind TEXT NOT NULL CHECK (dependency_kind IN (
+                'source-revision', 'evidence-record', 'ontology-version', 'prompt-version',
+                'model-version', 'parameter-set', 'schema-version', 'template-version',
+                'code-version', 'human-decision'
+            )),
+            previous_revision_id TEXT CHECK (
+                previous_revision_id IS NULL OR ({_uuid_check("previous_revision_id", "7")})
+            ),
+            replacement_revision_id TEXT CHECK (
+                replacement_revision_id IS NULL OR ({_uuid_check("replacement_revision_id", "7")})
+            ),
+            configuration_id TEXT CHECK (
+                configuration_id IS NULL OR ({_identifier_check("configuration_id", 128)})
+            ),
+            previous_configuration_version TEXT,
+            replacement_configuration_version TEXT,
+            previous_fingerprint TEXT NOT NULL CHECK (
+                length(previous_fingerprint) = 71 AND substr(previous_fingerprint, 1, 7) = 'sha256:'
+                AND substr(previous_fingerprint, 8) = lower(substr(previous_fingerprint, 8))
+                AND substr(previous_fingerprint, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            replacement_fingerprint TEXT CHECK (
+                replacement_fingerprint IS NULL OR (
+                    length(replacement_fingerprint) = 71
+                    AND substr(replacement_fingerprint, 1, 7) = 'sha256:'
+                    AND substr(replacement_fingerprint, 8) = lower(substr(replacement_fingerprint, 8))
+                    AND substr(replacement_fingerprint, 8) NOT GLOB '*[^0-9a-f]*'
+                )
+            ),
+            propagation_policy_id TEXT NOT NULL CHECK ({_identifier_check("propagation_policy_id", 128)}),
+            propagation_policy_version TEXT NOT NULL CHECK (
+                length(propagation_policy_version) BETWEEN 5 AND 29
+                AND propagation_policy_version GLOB '[0-9]*.[0-9]*.[0-9]*'
+                AND propagation_policy_version NOT GLOB '*[^0-9.]*'
+            ),
+            actor_id TEXT NOT NULL CHECK (
+                ({_identifier_check("actor_id", 200)}) OR ({_uuid_check("actor_id", "7")})
+            ),
+            trace_id TEXT NOT NULL CHECK (
+                length(trace_id) = 32 AND trace_id = lower(trace_id)
+                AND trace_id NOT GLOB '*[^0-9a-f]*'
+            ),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            graph_sha256 TEXT NOT NULL CHECK (
+                length(graph_sha256) = 71 AND substr(graph_sha256, 1, 7) = 'sha256:'
+                AND substr(graph_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            preview_sha256 TEXT NOT NULL CHECK (
+                length(preview_sha256) = 71 AND substr(preview_sha256, 1, 7) = 'sha256:'
+                AND substr(preview_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            authority_sha256 TEXT NOT NULL CHECK (
+                length(authority_sha256) = 71 AND substr(authority_sha256, 1, 7) = 'sha256:'
+                AND substr(authority_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            batch_size INTEGER NOT NULL CHECK (batch_size BETWEEN 1 AND 1000),
+            total_items INTEGER NOT NULL CHECK (total_items BETWEEN 0 AND {MAX_SAFE_INTEGER}),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (previous_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (replacement_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id, change_id),
+            UNIQUE (project_id, idempotency_key),
+            CHECK (
+                (previous_revision_id IS NOT NULL AND replacement_revision_id IS NOT NULL
+                    AND previous_revision_id <> replacement_revision_id
+                    AND configuration_id IS NULL
+                    AND previous_configuration_version IS NULL
+                    AND replacement_configuration_version IS NULL
+                    AND dependency_kind IN (
+                        'source-revision', 'evidence-record', 'ontology-version', 'human-decision'
+                    ))
+                OR (previous_revision_id IS NULL AND replacement_revision_id IS NULL
+                    AND configuration_id IS NOT NULL
+                    AND previous_configuration_version IS NOT NULL
+                    AND replacement_configuration_version IS NOT NULL
+                    AND previous_configuration_version <> replacement_configuration_version
+                    AND dependency_kind IN (
+                        'prompt-version', 'model-version', 'parameter-set', 'schema-version',
+                        'template-version', 'code-version'
+                    ))
+            )
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE dependency_impact_items (
+            item_id TEXT PRIMARY KEY CHECK ({_uuid_check("item_id", "7")}),
+            run_id TEXT NOT NULL CHECK ({_uuid_check("run_id", "7")}),
+            item_sequence INTEGER NOT NULL CHECK (item_sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            project_id TEXT NOT NULL,
+            output_revision_id TEXT NOT NULL CHECK ({_uuid_check("output_revision_id", "7")}),
+            output_kind TEXT NOT NULL CHECK (output_kind IN (
+                'record', 'document', 'workflow', 'evidence', 'ontology', 'decision'
+            )),
+            disposition TEXT NOT NULL CHECK (disposition IN ('stale', 'unknown-impact')),
+            depth INTEGER NOT NULL CHECK (depth BETWEEN 1 AND 128),
+            relation_type TEXT NOT NULL CHECK (relation_type IN ('direct', 'conditional')),
+            path_json TEXT NOT NULL CHECK (length(path_json) BETWEEN 40 AND 65536),
+            path_sha256 TEXT NOT NULL CHECK (
+                length(path_sha256) = 71 AND substr(path_sha256, 1, 7) = 'sha256:'
+                AND substr(path_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            cycle_group_id TEXT CHECK (
+                cycle_group_id IS NULL OR (
+                    length(cycle_group_id) = 71 AND substr(cycle_group_id, 1, 7) = 'sha256:'
+                    AND substr(cycle_group_id, 8) NOT GLOB '*[^0-9a-f]*'
+                )
+            ),
+            confidence TEXT NOT NULL CHECK (confidence IN ('confirmed', 'conditional', 'unknown')),
+            review_required INTEGER NOT NULL CHECK (review_required IN (0, 1)),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (run_id) REFERENCES dependency_impact_runs (run_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (output_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (run_id, item_sequence),
+            UNIQUE (run_id, output_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE dependency_stale_causes (
+            cause_id TEXT PRIMARY KEY CHECK ({_uuid_check("cause_id", "7")}),
+            run_id TEXT NOT NULL CHECK ({_uuid_check("run_id", "7")}),
+            item_sequence INTEGER NOT NULL CHECK (item_sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            project_id TEXT NOT NULL,
+            change_id TEXT NOT NULL CHECK ({_uuid_check("change_id", "7")}),
+            output_revision_id TEXT NOT NULL CHECK ({_uuid_check("output_revision_id", "7")}),
+            disposition TEXT NOT NULL CHECK (disposition IN ('stale', 'unknown-impact')),
+            reason TEXT NOT NULL CHECK (reason IN (
+                'SOURCE_VERSION', 'RIGHTS_POLICY', 'SCHEMA_VERSION',
+                'MODEL_OR_PROMPT', 'ONTOLOGY_MAPPING', 'HUMAN_DECISION'
+            )),
+            propagation_policy_id TEXT NOT NULL CHECK ({_identifier_check("propagation_policy_id", 128)}),
+            propagation_policy_version TEXT NOT NULL CHECK (
+                length(propagation_policy_version) BETWEEN 5 AND 29
+                AND propagation_policy_version GLOB '[0-9]*.[0-9]*.[0-9]*'
+                AND propagation_policy_version NOT GLOB '*[^0-9.]*'
+            ),
+            depth INTEGER NOT NULL CHECK (depth BETWEEN 1 AND 128),
+            path_json TEXT NOT NULL CHECK (length(path_json) BETWEEN 40 AND 65536),
+            path_sha256 TEXT NOT NULL CHECK (
+                length(path_sha256) = 71 AND substr(path_sha256, 1, 7) = 'sha256:'
+                AND substr(path_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            cycle_group_id TEXT CHECK (
+                cycle_group_id IS NULL OR (
+                    length(cycle_group_id) = 71 AND substr(cycle_group_id, 1, 7) = 'sha256:'
+                    AND substr(cycle_group_id, 8) NOT GLOB '*[^0-9a-f]*'
+                )
+            ),
+            confidence TEXT NOT NULL CHECK (confidence IN ('confirmed', 'conditional', 'unknown')),
+            review_required INTEGER NOT NULL CHECK (review_required IN (0, 1)),
+            detected_at TEXT NOT NULL CHECK ({_timestamp_check("detected_at")}),
+            resolution_state TEXT NOT NULL CHECK (resolution_state = 'open'),
+            FOREIGN KEY (run_id, item_sequence)
+                REFERENCES dependency_impact_items (run_id, item_sequence)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (output_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (run_id, item_sequence),
+            UNIQUE (project_id, change_id, output_revision_id, propagation_policy_id, propagation_policy_version)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE dependency_impact_audit_events (
+            event_id TEXT PRIMARY KEY CHECK ({_uuid_check("event_id", "7")}),
+            run_id TEXT NOT NULL CHECK ({_uuid_check("run_id", "7")}),
+            project_id TEXT NOT NULL,
+            sequence INTEGER NOT NULL CHECK (sequence BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            event_type TEXT NOT NULL CHECK (
+                event_type IN ('started', 'checkpoint', 'failed-attempt', 'completed', 'cancelled')
+            ),
+            processed_items INTEGER NOT NULL CHECK (processed_items BETWEEN 0 AND {MAX_SAFE_INTEGER}),
+            stale_count INTEGER NOT NULL CHECK (stale_count BETWEEN 0 AND {MAX_SAFE_INTEGER}),
+            unknown_count INTEGER NOT NULL CHECK (unknown_count BETWEEN 0 AND {MAX_SAFE_INTEGER}),
+            checkpoint_sha256 TEXT NOT NULL CHECK (
+                length(checkpoint_sha256) = 71 AND substr(checkpoint_sha256, 1, 7) = 'sha256:'
+                AND substr(checkpoint_sha256, 8) NOT GLOB '*[^0-9a-f]*'
+            ),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            FOREIGN KEY (run_id) REFERENCES dependency_impact_runs (run_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (run_id, sequence)
+        ) STRICT
+    """,
+    *(
+        statement
+        for table, message in (
+            ("dependency_impact_runs", "dependency impact runs are append-only"),
+            ("dependency_impact_items", "dependency impact items are append-only"),
+            ("dependency_stale_causes", "dependency stale causes are append-only"),
+            ("dependency_impact_audit_events", "dependency impact audit events are append-only"),
+        )
+        for statement in _immutable_triggers(table, message)
+    ),
+    "CREATE INDEX dependency_impact_run_change ON dependency_impact_runs (project_id, change_id, run_id)",
+    "CREATE INDEX dependency_impact_item_sequence ON dependency_impact_items (project_id, run_id, item_sequence)",
+    "CREATE INDEX dependency_stale_output ON dependency_stale_causes "
+    "(project_id, output_revision_id, resolution_state, detected_at, cause_id)",
+    "CREATE INDEX dependency_impact_audit_sequence ON dependency_impact_audit_events (project_id, run_id, sequence)",
+)
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V9_DDL,
+    SCHEMA_METADATA_V10_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -1656,6 +1890,7 @@ _DDL_STATEMENTS = (
     *PROVENANCE_LEDGER_DDL,
     *WORKFLOW_EXECUTOR_DDL,
     *MATERIAL_DEPENDENCY_DDL,
+    *DEPENDENCY_IMPACT_DDL,
 )
 
 

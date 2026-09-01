@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-9 authority
+## Current version-10 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=9`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=10`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -73,6 +73,10 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `material_dependency_outputs` | immutable dependency-coverage classification for each exact output revision |
 | `material_dependencies` | immutable typed direct edges to exact revision or configuration endpoints, with policy and fingerprint authority |
 | `material_dependency_diagnostics` | content-free append-only audit facts for dependency-sensitive completion denials |
+| `dependency_impact_runs` | durable graph-bound propagation authority, lifecycle state, compare-and-swap checkpoint, cancellation, and bounded failure code |
+| `dependency_impact_items` | immutable ordered impact decisions and sampled paths for one exact run preview |
+| `dependency_stale_causes` | append-only project/output/change/policy stale authority; repeated propagation cannot erase or replace an earlier cause |
+| `dependency_impact_audit_events` | content-free append-only run-start, checkpoint, cancellation, and completion facts |
 | `provenance_events` | append-only typed event metadata, stable canonical/UUIDv7 actor authority, and record digest |
 | `settings` | append-only versioned, exactly-one-of typed scalar project settings |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
@@ -97,14 +101,14 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v8
-profiles to current schema v9. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v9
+profiles to current schema v10. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-9 database is detected
+verified backup remains available. A current version-10 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -126,7 +130,9 @@ schema DDL plus write-form identity, security, and durability PRAGMAs. T02
 uses a separate, tightly scoped migration connection that is never returned to
 ordinary code, operates only after verified backup, replaces the affected denial
 triggers as part of the successor DDL, and publishes the new exact fingerprint
-before normal access resumes.
+before normal access resumes. Version 10 adds only the durable dependency-impact
+projection boundary. Its migration does not infer changes, fabricate stale
+causes, or rewrite version-9 material dependency registrations.
 
 ## Repository and transaction boundary
 
@@ -183,9 +189,15 @@ be aggregate kinds. The command fingerprint binds the complete sorted edge set,
 so exact retry is idempotent and any changed endpoint, policy, materiality, or
 fingerprint conflicts. Workflow completion independently requires `complete`
 coverage for every selected staged output; denial leaves job and artifact state
-unchanged and persists only a content-free diagnostic. Transitive impact and
-stale propagation remain derived follow-on behavior rather than stored direct
-edges.
+unchanged and persists only a content-free diagnostic. Schema v10 derives
+transitive impact from those immutable direct edges without storing inferred
+edges. A graph-bound preview records direct, transitive, conditional-review,
+non-material, and unknown-impact outcomes. Propagation revalidates the exact
+graph and policy hashes inside the writer transaction, advances a bounded
+compare-and-swap checkpoint, appends stale causes, and can resume after
+interruption without duplicate authority. `legacy-unreported` coverage and
+unavailable replacement fingerprints remain unknown; they never produce a
+false fresh result.
 
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file

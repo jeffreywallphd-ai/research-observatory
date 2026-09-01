@@ -37,6 +37,17 @@ DependencyKind = Literal[
     "human-decision",
 ]
 DependencyRelationType = Literal["direct", "conditional", "non-material"]
+StalenessReason = Literal[
+    "SOURCE_VERSION",
+    "RIGHTS_POLICY",
+    "SCHEMA_VERSION",
+    "MODEL_OR_PROMPT",
+    "ONTOLOGY_MAPPING",
+    "HUMAN_DECISION",
+]
+DependencyImpactDisposition = Literal["stale", "unknown-impact", "informational"]
+ConditionalDependencyDisposition = Literal["propagate", "ignore"]
+DependencyPropagationState = Literal["running", "completed", "cancelled"]
 
 
 class RepositoryProblem(RuntimeError):
@@ -66,6 +77,10 @@ class RepositoryTransactionFailed(RepositoryProblem):
 
 class DependencyRegistrationRequired(RepositoryProblem):
     code = "RO-CORE-DEPENDENCY-REGISTRATION-REQUIRED"
+
+
+class DependencyImpactLimitExceeded(RepositoryProblem):
+    code = "RO-CORE-DEPENDENCY-IMPACT-LIMIT"
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,6 +162,142 @@ class DependencyAuditDiagnostic:
     attempt_id: str
     diagnostic_code: Literal["dependency-registration-missing"]
     detected_at: str
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyChange:
+    """Exact immutable endpoint change whose downstream impact is evaluated."""
+
+    change_id: str
+    idempotency_key: str
+    reason: StalenessReason
+    dependency_kind: DependencyKind
+    previous_revision_id: str | None
+    replacement_revision_id: str | None
+    configuration_id: str | None
+    previous_configuration_version: str | None
+    replacement_configuration_version: str | None
+    previous_fingerprint: str
+    replacement_fingerprint: str | None
+    propagation_policy_id: str
+    propagation_policy_version: str
+    actor_id: str
+    trace_id: str
+    occurred_at: str
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionalDependencyDecision:
+    """Versioned human or policy disposition for one conditional edge."""
+
+    dependency_id: str
+    decision_id: str
+    disposition: ConditionalDependencyDisposition
+    governing_policy_id: str
+    governing_policy_version: str
+    actor_id: str
+    decided_at: str
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyImpactLimits:
+    """Hard resource bounds for one deterministic impact traversal."""
+
+    max_nodes: int = 20_000
+    max_edges: int = 100_000
+    max_depth: int = 128
+    max_path_samples: int = 64
+    max_legacy_samples: int = 100
+
+
+DEFAULT_DEPENDENCY_IMPACT_LIMITS = DependencyImpactLimits()
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyImpactItem:
+    output_revision_id: str
+    output_kind: AggregateKind
+    disposition: DependencyImpactDisposition
+    depth: int
+    relation_type: DependencyRelationType
+    path_revision_ids: tuple[str, ...]
+    cycle_group_id: str | None
+    confidence: Literal["confirmed", "conditional", "unknown"]
+    review_required: bool
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyCycleGroup:
+    cycle_group_id: str
+    member_revision_ids: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyImpactPreview:
+    project_id: str
+    change_id: str
+    graph_sha256: str
+    preview_sha256: str
+    impacts: tuple[DependencyImpactItem, ...]
+    cycle_groups: tuple[DependencyCycleGroup, ...]
+    legacy_unreported_count: int
+    legacy_unreported_samples: tuple[str, ...]
+    visited_nodes: int
+    visited_edges: int
+
+    @property
+    def affected_output_revision_ids(self) -> tuple[str, ...]:
+        return tuple(item.output_revision_id for item in self.impacts if item.disposition != "informational")
+
+    @property
+    def informational_output_revision_ids(self) -> tuple[str, ...]:
+        return tuple(item.output_revision_id for item in self.impacts if item.disposition == "informational")
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyPropagationRun:
+    run_id: str
+    project_id: str
+    change_id: str
+    state: DependencyPropagationState
+    total_items: int
+    processed_items: int
+    stale_count: int
+    unknown_count: int
+    checkpoint_sha256: str
+    preview_sha256: str
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyStaleState:
+    cause_id: str
+    run_id: str
+    change_id: str
+    output_revision_id: str
+    disposition: Literal["stale", "unknown-impact"]
+    reason: StalenessReason
+    propagation_policy_id: str
+    propagation_policy_version: str
+    depth: int
+    path_revision_ids: tuple[str, ...]
+    cycle_group_id: str | None
+    confidence: Literal["confirmed", "conditional", "unknown"]
+    review_required: bool
+    detected_at: str
+    resolution_state: Literal["open"]
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyImpactAuditEvent:
+    event_id: str
+    run_id: str
+    sequence: int
+    event_type: Literal["started", "checkpoint", "failed-attempt", "completed", "cancelled"]
+    processed_items: int
+    stale_count: int
+    unknown_count: int
+    checkpoint_sha256: str
+    occurred_at: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -366,6 +517,44 @@ class MaterialDependencyRepository(Protocol):
 
 
 @runtime_checkable
+class DependencyImpactRepository(Protocol):
+    def preview(
+        self,
+        change: DependencyChange,
+        *,
+        decisions: tuple[ConditionalDependencyDecision, ...] = (),
+        limits: DependencyImpactLimits = DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+    ) -> DependencyImpactPreview: ...
+
+    def begin(
+        self,
+        change: DependencyChange,
+        *,
+        preview_sha256: str,
+        run_id: str,
+        batch_size: int,
+        decisions: tuple[ConditionalDependencyDecision, ...] = (),
+        limits: DependencyImpactLimits = DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+    ) -> DependencyPropagationRun: ...
+
+    def advance(self, run_id: str, *, expected_checkpoint_sha256: str) -> DependencyPropagationRun: ...
+
+    def cancel(
+        self,
+        run_id: str,
+        *,
+        expected_checkpoint_sha256: str,
+        occurred_at: str,
+    ) -> DependencyPropagationRun: ...
+
+    def run(self, run_id: str) -> DependencyPropagationRun: ...
+
+    def stale_states(self, *, output_revision_id: str | None = None) -> tuple[DependencyStaleState, ...]: ...
+
+    def audit(self, *, run_id: str) -> tuple[DependencyImpactAuditEvent, ...]: ...
+
+
+@runtime_checkable
 class UnitOfWork(Protocol):
     @property
     def aggregates(self) -> AggregateRepository: ...
@@ -385,17 +574,31 @@ class UnitOfWorkFactory(Protocol):
 
 
 __all__ = [
+    "DEFAULT_DEPENDENCY_IMPACT_LIMITS",
     "ActorType",
     "AggregateKind",
     "AggregateRepository",
     "AggregateRevision",
     "AggregateRevisionDraft",
     "AtomicRepositoryEvent",
+    "ConditionalDependencyDecision",
     "DependencyAuditDiagnostic",
+    "DependencyChange",
     "DependencyCoverage",
+    "DependencyCycleGroup",
+    "DependencyImpactAuditEvent",
+    "DependencyImpactDisposition",
+    "DependencyImpactItem",
+    "DependencyImpactLimitExceeded",
+    "DependencyImpactLimits",
+    "DependencyImpactPreview",
+    "DependencyImpactRepository",
     "DependencyKind",
+    "DependencyPropagationRun",
+    "DependencyPropagationState",
     "DependencyRegistrationRequired",
     "DependencyRelationType",
+    "DependencyStaleState",
     "IntentAuditEvent",
     "IntentRevisionRecord",
     "IntentRevisionRepository",
@@ -417,6 +620,7 @@ __all__ = [
     "RepositoryProblem",
     "RepositoryTransactionFailed",
     "RightsStatus",
+    "StalenessReason",
     "UnitOfWork",
     "UnitOfWorkFactory",
 ]
