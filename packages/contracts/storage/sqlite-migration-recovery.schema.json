@@ -86,7 +86,7 @@
       ]
     },
     "targetSchemaSha256": {
-      "const": "1fbfe20bc1f822558264c53c8a032e7de35661e8ef9dd9b0d0f7d47a3803769e"
+      "const": "14806bb190c892b15a2f7804765c8e8617c47e5369eb3c2744da4d73ed0fdbd9"
     },
     "checkpoint": {
       "type": "object",

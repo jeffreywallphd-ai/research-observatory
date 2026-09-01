@@ -73,7 +73,8 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `material_dependency_outputs` | immutable dependency-coverage classification for each exact output revision |
 | `material_dependencies` | immutable typed direct edges to exact revision or configuration endpoints, with policy and fingerprint authority |
 | `material_dependency_diagnostics` | content-free append-only audit facts for dependency-sensitive completion denials |
-| `dependency_impact_runs` | durable graph-bound propagation authority, lifecycle state, compare-and-swap checkpoint, cancellation, and bounded failure code |
+| `dependency_impact_runs` | durable graph/change/limit-bound propagation authority, lifecycle state, compare-and-swap checkpoint, cancellation, and bounded failure code |
+| `dependency_impact_decisions` | immutable content-free propagate/ignore authority for supplied conditional edge decisions, reconstructable by run after restart |
 | `dependency_impact_items` | immutable ordered impact decisions and sampled paths for one exact run preview |
 | `dependency_stale_causes` | append-only project/output/change/policy stale authority; repeated propagation cannot erase or replace an earlier cause |
 | `dependency_impact_audit_events` | content-free append-only run-start, checkpoint, cancellation, and completion facts |
@@ -131,8 +132,13 @@ uses a separate, tightly scoped migration connection that is never returned to
 ordinary code, operates only after verified backup, replaces the affected denial
 triggers as part of the successor DDL, and publishes the new exact fingerprint
 before normal access resumes. Version 10 adds only the durable dependency-impact
-projection boundary. Its migration does not infer changes, fabricate stale
-causes, or rewrite version-9 material dependency registrations.
+projection boundary. Complete change and conditional-decision authority is
+bound into each preview, supplied conditional decisions remain reconstructable,
+and every propagation checkpoint revalidates the exact graph snapshot before it
+writes. Traversal limits cannot exceed the durable 20,000-node, 100,000-edge,
+128-depth, 64-path-sample, and 100-legacy-sample maxima. Its migration does not
+infer changes, fabricate stale causes, or rewrite version-9 material dependency
+registrations.
 
 ## Repository and transaction boundary
 

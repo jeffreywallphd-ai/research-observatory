@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass, replace
+from datetime import UTC, datetime
 from heapq import heappop, heappush
 from typing import Literal
 
@@ -20,13 +21,15 @@ from research_observatory_core.ports.repositories import (
     DependencyImpactLimitExceeded,
     DependencyImpactLimits,
     DependencyImpactPreview,
+    DependencyKind,
     DependencyRelationType,
     RepositoryConflict,
     RepositoryProblem,
 )
 
 _SHA256 = re.compile(r"^sha256:[0-9a-f]{64}$")
-_IDENTIFIER = re.compile(r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$")
+_IDENTIFIER = re.compile(r"^(?!.*(?:\.\.|--))[a-z](?:[a-z0-9.-]{0,126}[a-z0-9])?$")
+_ACTOR_IDENTIFIER = re.compile(r"^(?!.*(?:\.\.|--))[a-z](?:[a-z0-9.-]{0,198}[a-z0-9])?$")
 _SEMVER = re.compile(r"^(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})$")
 _REVISION_KINDS = frozenset({"source-revision", "evidence-record", "ontology-version", "human-decision"})
 _CONFIGURATION_KINDS = frozenset(
@@ -48,6 +51,7 @@ class DependencyGraphEdge:
     governing_policy_version: str
     configuration_id: str | None = None
     configuration_version: str | None = None
+    dependency_kind: DependencyKind = "source-revision"
 
 
 def _canonical_sha256(document: object) -> str:
@@ -55,16 +59,33 @@ def _canonical_sha256(document: object) -> str:
     return "sha256:" + hashlib.sha256(payload).hexdigest()
 
 
-def _validate_limits(limits: DependencyImpactLimits) -> None:
+def validate_dependency_impact_limits(limits: DependencyImpactLimits) -> None:
     values = (
-        limits.max_nodes,
-        limits.max_edges,
-        limits.max_depth,
-        limits.max_path_samples,
-        limits.max_legacy_samples,
+        ("max_nodes", limits.max_nodes, DEFAULT_DEPENDENCY_IMPACT_LIMITS.max_nodes),
+        ("max_edges", limits.max_edges, DEFAULT_DEPENDENCY_IMPACT_LIMITS.max_edges),
+        ("max_depth", limits.max_depth, DEFAULT_DEPENDENCY_IMPACT_LIMITS.max_depth),
+        ("max_path_samples", limits.max_path_samples, DEFAULT_DEPENDENCY_IMPACT_LIMITS.max_path_samples),
+        ("max_legacy_samples", limits.max_legacy_samples, DEFAULT_DEPENDENCY_IMPACT_LIMITS.max_legacy_samples),
     )
-    if any(isinstance(value, bool) or value < 1 for value in values):
-        raise ValueError("dependency impact limits must be positive integers")
+    if any(
+        isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= maximum
+        for _, value, maximum in values
+    ):
+        raise ValueError("dependency impact limits must be positive integers within immutable maxima")
+
+
+def _canonical_utc(value: str) -> bool:
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", value) is None:
+        return False
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(UTC)
+    except ValueError:
+        return False
+    return parsed.isoformat(timespec="milliseconds").replace("+00:00", "Z") == value
+
+
+def _canonical_actor(value: str) -> bool:
+    return is_uuid_v7(value) or _ACTOR_IDENTIFIER.fullmatch(value) is not None
 
 
 def _validate_change(change: DependencyChange) -> None:
@@ -91,9 +112,9 @@ def _validate_change(change: DependencyChange) -> None:
         or (change.replacement_fingerprint is not None and _SHA256.fullmatch(change.replacement_fingerprint) is None)
         or _IDENTIFIER.fullmatch(change.propagation_policy_id) is None
         or _SEMVER.fullmatch(change.propagation_policy_version) is None
-        or not change.actor_id
+        or not _canonical_actor(change.actor_id)
         or not re.fullmatch(r"[0-9a-f]{32}", change.trace_id)
-        or not change.occurred_at.endswith("Z")
+        or not _canonical_utc(change.occurred_at)
         or revision_change == configuration_change
     ):
         raise ValueError("dependency change authority is invalid")
@@ -123,6 +144,7 @@ def _edge_document(edge: DependencyGraphEdge) -> dict[str, str | None]:
         "configurationId": edge.configuration_id,
         "configurationVersion": edge.configuration_version,
         "dependencyId": edge.dependency_id,
+        "dependencyKind": edge.dependency_kind,
         "fingerprint": edge.fingerprint,
         "governingPolicyId": edge.governing_policy_id,
         "governingPolicyVersion": edge.governing_policy_version,
@@ -133,10 +155,48 @@ def _edge_document(edge: DependencyGraphEdge) -> dict[str, str | None]:
     }
 
 
+def dependency_change_authority_document(change: DependencyChange) -> dict[str, object]:
+    """Return the exact normalized change authority bound by previews and runs."""
+
+    return {
+        "actorId": change.actor_id,
+        "changeId": change.change_id,
+        "configurationId": change.configuration_id,
+        "dependencyKind": change.dependency_kind,
+        "idempotencyKey": change.idempotency_key,
+        "occurredAt": change.occurred_at,
+        "previousConfigurationVersion": change.previous_configuration_version,
+        "previousFingerprint": change.previous_fingerprint,
+        "previousRevisionId": change.previous_revision_id,
+        "propagationPolicyId": change.propagation_policy_id,
+        "propagationPolicyVersion": change.propagation_policy_version,
+        "reason": change.reason,
+        "replacementConfigurationVersion": change.replacement_configuration_version,
+        "replacementFingerprint": change.replacement_fingerprint,
+        "replacementRevisionId": change.replacement_revision_id,
+        "traceId": change.trace_id,
+    }
+
+
+def conditional_decision_authority_document(decision: ConditionalDependencyDecision) -> dict[str, object]:
+    """Return one complete normalized conditional-decision authority record."""
+
+    return {
+        "actorId": decision.actor_id,
+        "decidedAt": decision.decided_at,
+        "decisionId": decision.decision_id,
+        "dependencyId": decision.dependency_id,
+        "disposition": decision.disposition,
+        "governingPolicyId": decision.governing_policy_id,
+        "governingPolicyVersion": decision.governing_policy_version,
+    }
+
+
 def _decision_map(
     decisions: tuple[ConditionalDependencyDecision, ...],
 ) -> dict[str, ConditionalDependencyDecision]:
     mapped: dict[str, ConditionalDependencyDecision] = {}
+    decision_ids: set[str] = set()
     for decision in decisions:
         if (
             not is_uuid_v7(decision.dependency_id)
@@ -144,16 +204,20 @@ def _decision_map(
             or decision.disposition not in {"propagate", "ignore"}
             or _IDENTIFIER.fullmatch(decision.governing_policy_id) is None
             or _SEMVER.fullmatch(decision.governing_policy_version) is None
-            or not decision.actor_id
-            or not decision.decided_at.endswith("Z")
+            or not _canonical_actor(decision.actor_id)
+            or not _canonical_utc(decision.decided_at)
             or decision.dependency_id in mapped
+            or decision.decision_id in decision_ids
         ):
             raise ValueError("conditional dependency decision authority is invalid")
         mapped[decision.dependency_id] = decision
+        decision_ids.add(decision.decision_id)
     return mapped
 
 
 def _origin_matches(change: DependencyChange, edge: DependencyGraphEdge) -> bool:
+    if change.dependency_kind != edge.dependency_kind:
+        return False
     if change.previous_revision_id is not None:
         return edge.input_revision_id == change.previous_revision_id
     return (
@@ -167,49 +231,55 @@ def _strongly_connected_groups(
     adjacency: dict[str, set[str]],
     nodes: set[str],
 ) -> tuple[DependencyCycleGroup, ...]:
-    index = 0
-    indexes: dict[str, int] = {}
-    lowlinks: dict[str, int] = {}
-    stack: list[str] = []
-    on_stack: set[str] = set()
-    groups: list[DependencyCycleGroup] = []
+    graph = {node: tuple(sorted(target for target in adjacency.get(node, set()) if target in nodes)) for node in nodes}
+    reverse: dict[str, list[str]] = {node: [] for node in nodes}
+    for source, outgoing in graph.items():
+        for target in outgoing:
+            reverse[target].append(source)
+    for incoming in reverse.values():
+        incoming.sort()
 
-    def visit(node: str) -> None:
-        nonlocal index
-        indexes[node] = index
-        lowlinks[node] = index
-        index += 1
-        stack.append(node)
-        on_stack.add(node)
-        for target in sorted(adjacency.get(node, set())):
-            if target not in nodes:
-                continue
-            if target not in indexes:
-                visit(target)
-                lowlinks[node] = min(lowlinks[node], lowlinks[target])
-            elif target in on_stack:
-                lowlinks[node] = min(lowlinks[node], indexes[target])
-        if lowlinks[node] != indexes[node]:
-            return
-        members: list[str] = []
+    visited: set[str] = set()
+    finish_order: list[str] = []
+    for root in sorted(nodes):
+        if root in visited:
+            continue
+        visited.add(root)
+        stack: list[tuple[str, bool]] = [(root, False)]
         while stack:
-            member = stack.pop()
-            on_stack.remove(member)
-            members.append(member)
-            if member == node:
-                break
+            node, exiting = stack.pop()
+            if exiting:
+                finish_order.append(node)
+                continue
+            stack.append((node, True))
+            for target in reversed(graph[node]):
+                if target not in visited:
+                    visited.add(target)
+                    stack.append((target, False))
+
+    assigned: set[str] = set()
+    groups: list[DependencyCycleGroup] = []
+    for root in reversed(finish_order):
+        if root in assigned:
+            continue
+        assigned.add(root)
+        members: list[str] = []
+        stack = [(root, False)]
+        while stack:
+            node, _ = stack.pop()
+            members.append(node)
+            for source in reversed(reverse[node]):
+                if source not in assigned:
+                    assigned.add(source)
+                    stack.append((source, False))
         ordered = tuple(sorted(members))
-        if len(ordered) > 1 or (len(ordered) == 1 and ordered[0] in adjacency.get(ordered[0], set())):
+        if len(ordered) > 1 or (len(ordered) == 1 and ordered[0] in graph[ordered[0]]):
             groups.append(
                 DependencyCycleGroup(
                     cycle_group_id=_canonical_sha256({"cycleMembers": ordered}),
                     member_revision_ids=ordered,
                 )
             )
-
-    for node in sorted(nodes):
-        if node not in indexes:
-            visit(node)
     return tuple(sorted(groups, key=lambda item: item.member_revision_ids))
 
 
@@ -227,7 +297,7 @@ def plan_dependency_impact(
     if not project_id:
         raise ValueError("project identity is required")
     _validate_change(change)
-    _validate_limits(limits)
+    validate_dependency_impact_limits(limits)
     decision_by_edge = _decision_map(decisions)
     legacy = tuple(sorted(set(legacy_unreported_output_ids)))
     if len(edges) > limits.max_edges:
@@ -240,6 +310,7 @@ def plan_dependency_impact(
     if len({edge.dependency_id for edge in ordered_edges}) != len(ordered_edges):
         raise RepositoryProblem("dependency impact graph contains duplicate edge identity")
     edges_by_input: dict[str, list[DependencyGraphEdge]] = {}
+    edge_by_id: dict[str, DependencyGraphEdge] = {}
     for edge in ordered_edges:
         revision_endpoint = edge.input_revision_id is not None
         configuration_endpoint = edge.configuration_id is not None or edge.configuration_version is not None
@@ -248,6 +319,7 @@ def plan_dependency_impact(
             or not is_uuid_v7(edge.output_revision_id)
             or (edge.input_revision_id is not None and not is_uuid_v7(edge.input_revision_id))
             or edge.relation_type not in {"direct", "conditional", "non-material"}
+            or edge.dependency_kind not in _REVISION_KINDS | _CONFIGURATION_KINDS
             or _SHA256.fullmatch(edge.fingerprint) is None
             or _IDENTIFIER.fullmatch(edge.governing_policy_id) is None
             or _SEMVER.fullmatch(edge.governing_policy_version) is None
@@ -263,8 +335,14 @@ def plan_dependency_impact(
             )
         ):
             raise RepositoryProblem("dependency impact graph contains invalid authority")
+        edge_by_id[edge.dependency_id] = edge
         if edge.input_revision_id is not None:
             edges_by_input.setdefault(edge.input_revision_id, []).append(edge)
+    if any(
+        decision_dependency_id not in edge_by_id or edge_by_id[decision_dependency_id].relation_type != "conditional"
+        for decision_dependency_id in decision_by_edge
+    ):
+        raise RepositoryConflict("conditional dependency decision does not govern a conditional graph edge")
 
     graph_sha256 = _canonical_sha256(
         {
@@ -276,6 +354,7 @@ def plan_dependency_impact(
     impacts: dict[str, DependencyImpactItem] = {}
     adjacency: dict[str, set[str]] = {}
     processed_edges: set[str] = set()
+    used_decisions: set[str] = set()
     expanded_rank: dict[str, int] = {}
     frontier: list[tuple[int, tuple[str, ...], str, DependencyGraphEdge, Literal["confirmed", "unknown"]]] = []
     replacement_changed = change.replacement_fingerprint is None or (
@@ -328,6 +407,7 @@ def plan_dependency_impact(
                 review_required = True
                 propagate = True
             else:
+                used_decisions.add(edge.dependency_id)
                 if (
                     decision.governing_policy_id != edge.governing_policy_id
                     or decision.governing_policy_version != edge.governing_policy_version
@@ -386,6 +466,8 @@ def plan_dependency_impact(
                 (depth + 1, next_path, downstream.dependency_id, downstream, downstream_confidence),
             )
 
+    if used_decisions != set(decision_by_edge):
+        raise RepositoryConflict("conditional dependency decision does not govern a reachable edge")
     cycle_groups = _strongly_connected_groups(adjacency, set(impacts))
     cycle_by_member = {member: group.cycle_group_id for group in cycle_groups for member in group.member_revision_ids}
     ordered_impacts = tuple(
@@ -395,12 +477,16 @@ def plan_dependency_impact(
         )
     )
     preview_body = {
-        "changeId": change.change_id,
+        "change": dependency_change_authority_document(change),
         "cycleGroups": [
             {"cycleGroupId": group.cycle_group_id, "memberRevisionIds": group.member_revision_ids}
             for group in cycle_groups
         ],
         "graphSha256": graph_sha256,
+        "decisions": [
+            conditional_decision_authority_document(decision_by_edge[dependency_id])
+            for dependency_id in sorted(decision_by_edge)
+        ],
         "impacts": [
             {
                 "confidence": item.confidence,
@@ -418,6 +504,13 @@ def plan_dependency_impact(
         "legacyUnreportedCount": len(legacy),
         "legacyUnreportedSamples": legacy[: limits.max_legacy_samples],
         "projectId": project_id,
+        "limits": {
+            "maxDepth": limits.max_depth,
+            "maxEdges": limits.max_edges,
+            "maxLegacySamples": limits.max_legacy_samples,
+            "maxNodes": limits.max_nodes,
+            "maxPathSamples": limits.max_path_samples,
+        },
         "visitedEdges": len(processed_edges),
         "visitedNodes": len(impacts),
     }
@@ -435,4 +528,10 @@ def plan_dependency_impact(
     )
 
 
-__all__ = ["DependencyGraphEdge", "plan_dependency_impact"]
+__all__ = [
+    "DependencyGraphEdge",
+    "conditional_decision_authority_document",
+    "dependency_change_authority_document",
+    "plan_dependency_impact",
+    "validate_dependency_impact_limits",
+]

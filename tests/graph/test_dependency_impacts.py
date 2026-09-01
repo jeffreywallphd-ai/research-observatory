@@ -11,6 +11,7 @@ from research_observatory_core.dependency_impacts import (
     plan_dependency_impact,
 )
 from research_observatory_core.ports.repositories import (
+    DEFAULT_DEPENDENCY_IMPACT_LIMITS,
     AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
@@ -124,6 +125,159 @@ def revision_change(previous: AggregateRevision, replacement: AggregateRevision)
 
 
 class DependencyImpactPlannerTests(unittest.TestCase):
+    def test_preview_digest_binds_complete_change_and_conditional_decision_authority(self) -> None:
+        previous = AggregateRevision(
+            revision_id=uid(1),
+            aggregate_id=uid(101),
+            aggregate_kind="evidence",
+            project_id=PROJECT_ID,
+            revision=1,
+            contract_version="1.0",
+            created_at=OCCURRED_AT,
+            modified_at=OCCURRED_AT,
+            display_label_observed="source",
+            display_label_normalized=None,
+            knowledge_status="observed",
+            rights_status="unknown",
+        )
+        replacement = replace(previous, revision_id=uid(2), revision=2)
+        change = revision_change(previous, replacement)
+        edge = DependencyGraphEdge(
+            uid(301),
+            previous.revision_id,
+            uid(11),
+            "evidence",
+            "conditional",
+            fingerprint("a"),
+            "p",
+            "1.0.0",
+        )
+        decision = ConditionalDependencyDecision(
+            dependency_id=edge.dependency_id,
+            decision_id=uid(81_001),
+            disposition="propagate",
+            governing_policy_id="p",
+            governing_policy_version="1.0.0",
+            actor_id=ACTOR_ID,
+            decided_at=OCCURRED_AT,
+        )
+        canonical = plan_dependency_impact(PROJECT_ID, change, (edge,), decisions=(decision,))
+        substitutions = (
+            replace(change, idempotency_key="substituted-key"),
+            replace(change, reason="RIGHTS_POLICY"),
+            replace(change, replacement_revision_id=uid(3)),
+            replace(change, replacement_fingerprint=fingerprint("c")),
+            replace(change, propagation_policy_id="dependency.substituted.v1"),
+            replace(change, propagation_policy_version="2.0.0"),
+            replace(change, actor_id=uid(81_002)),
+            replace(change, trace_id="8" * 32),
+            replace(change, occurred_at="2026-09-01T22:00:01.000Z"),
+        )
+        for substituted in substitutions:
+            with self.subTest(change=substituted):
+                self.assertNotEqual(
+                    canonical.preview_sha256,
+                    plan_dependency_impact(PROJECT_ID, substituted, (edge,), decisions=(decision,)).preview_sha256,
+                )
+        for substituted_decision in (
+            replace(decision, decision_id=uid(81_003)),
+            replace(decision, actor_id=uid(81_004)),
+            replace(decision, decided_at="2026-09-01T22:00:01.000Z"),
+            replace(decision, disposition="ignore"),
+        ):
+            with self.subTest(decision=substituted_decision):
+                self.assertNotEqual(
+                    canonical.preview_sha256,
+                    plan_dependency_impact(
+                        PROJECT_ID,
+                        change,
+                        (edge,),
+                        decisions=(substituted_decision,),
+                    ).preview_sha256,
+                )
+        self.assertNotEqual(
+            plan_dependency_impact(PROJECT_ID, change, (edge,)).preview_sha256,
+            plan_dependency_impact(
+                PROJECT_ID,
+                replace(change, previous_revision_id=uid(4)),
+                (edge,),
+            ).preview_sha256,
+        )
+        with self.assertRaises(RepositoryConflict):
+            plan_dependency_impact(PROJECT_ID, change, (), decisions=(decision,))
+
+    def test_hard_limits_and_large_shallow_scc_are_deterministic(self) -> None:
+        previous = AggregateRevision(
+            revision_id=uid(1),
+            aggregate_id=uid(101),
+            aggregate_kind="evidence",
+            project_id=PROJECT_ID,
+            revision=1,
+            contract_version="1.0",
+            created_at=OCCURRED_AT,
+            modified_at=OCCURRED_AT,
+            display_label_observed="source",
+            display_label_normalized=None,
+            knowledge_status="observed",
+            rights_status="unknown",
+        )
+        change = revision_change(previous, replace(previous, revision_id=uid(2), revision=2))
+        hub = uid(10_000)
+        members = tuple(uid(11_000 + index) for index in range(1_100))
+        edges = [
+            DependencyGraphEdge(
+                uid(100_000), previous.revision_id, hub, "evidence", "direct", fingerprint("a"), "p", "1.0.0"
+            )
+        ]
+        edges.extend(
+            DependencyGraphEdge(
+                uid(101_000 + index),
+                hub,
+                member,
+                "evidence",
+                "direct",
+                fingerprint("c"),
+                "p",
+                "1.0.0",
+            )
+            for index, member in enumerate(members)
+        )
+        edges.extend(
+            DependencyGraphEdge(
+                uid(103_000 + index),
+                member,
+                members[(index + 1) % len(members)],
+                "evidence",
+                "direct",
+                fingerprint("d"),
+                "p",
+                "1.0.0",
+            )
+            for index, member in enumerate(members)
+        )
+
+        preview = plan_dependency_impact(
+            PROJECT_ID,
+            change,
+            tuple(edges),
+            limits=replace(DEFAULT_DEPENDENCY_IMPACT_LIMITS, max_depth=128),
+        )
+        self.assertIn(members, tuple(group.member_revision_ids for group in preview.cycle_groups))
+        for field, value in (
+            ("max_nodes", 20_001),
+            ("max_edges", 100_001),
+            ("max_depth", 129),
+            ("max_path_samples", 65),
+            ("max_legacy_samples", 101),
+        ):
+            with self.subTest(limit=field), self.assertRaises(ValueError):
+                plan_dependency_impact(
+                    PROJECT_ID,
+                    change,
+                    tuple(edges),
+                    limits=replace(DEFAULT_DEPENDENCY_IMPACT_LIMITS, **{field: value}),
+                )
+
     def test_relation_policy_duplicate_paths_and_cycles_are_deterministic_and_bounded(self) -> None:
         change = replace(
             revision_change(
@@ -359,6 +513,149 @@ class SqliteDependencyImpactTests(unittest.TestCase):
         self.assertEqual("completed", recovered.state)
         with self.assertRaises(RepositoryConflict):
             reopened.advance(run.run_id, expected_checkpoint_sha256=unchanged.checkpoint_sha256)
+
+    def test_graph_change_denies_advance_before_and_after_a_reopened_checkpoint(self) -> None:
+        repository = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        preview = repository.preview(self.change())
+        started = repository.begin(
+            self.change(),
+            preview_sha256=preview.preview_sha256,
+            run_id=uid(90_010),
+            batch_size=2,
+        )
+        self._append("post-begin-dependent", "dossier")
+        with self.assertRaises(RepositoryConflict):
+            repository.advance(started.run_id, expected_checkpoint_sha256=started.checkpoint_sha256)
+        self.assertEqual((), repository.stale_states())
+
+        fresh_change = replace(
+            self.change(),
+            change_id=uid(80_010),
+            idempotency_key="fixture-extraction-superseded-checkpoint",
+        )
+        fresh_preview = repository.preview(fresh_change)
+        checkpoint_run = repository.begin(
+            fresh_change,
+            preview_sha256=fresh_preview.preview_sha256,
+            run_id=uid(90_011),
+            batch_size=2,
+        )
+        checkpointed = repository.advance(
+            checkpoint_run.run_id,
+            expected_checkpoint_sha256=checkpoint_run.checkpoint_sha256,
+        )
+        self._append("post-checkpoint-dependent", "post-begin-dependent")
+        reopened = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        with self.assertRaises(RepositoryConflict):
+            reopened.advance(checkpointed.run_id, expected_checkpoint_sha256=checkpointed.checkpoint_sha256)
+        self.assertEqual(2, len(reopened.stale_states()))
+
+    def test_begin_denies_complete_change_authority_substitution_without_writes(self) -> None:
+        repository = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        change = self.change()
+        preview = repository.preview(change)
+        substitutions = (
+            replace(change, idempotency_key="substituted-key"),
+            replace(change, reason="RIGHTS_POLICY"),
+            replace(change, replacement_fingerprint=fingerprint("c")),
+            replace(change, propagation_policy_id="dependency.substituted.v1"),
+            replace(change, propagation_policy_version="2.0.0"),
+            replace(change, actor_id=uid(81_020)),
+            replace(change, trace_id="8" * 32),
+            replace(change, occurred_at="2026-09-01T22:00:01.000Z"),
+        )
+        for index, substituted in enumerate(substitutions):
+            with self.subTest(change=substituted), self.assertRaises(RepositoryConflict):
+                repository.begin(
+                    substituted,
+                    preview_sha256=preview.preview_sha256,
+                    run_id=uid(90_020 + index),
+                    batch_size=2,
+                )
+        cross_aggregate = replace(
+            change,
+            replacement_revision_id=self.revisions["other-source"].revision_id,
+        )
+        with self.assertRaises(RepositoryConflict):
+            repository.begin(
+                cross_aggregate,
+                preview_sha256=preview.preview_sha256,
+                run_id=uid(90_040),
+                batch_size=2,
+            )
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            self.assertEqual(0, connection.execute("SELECT count(*) FROM dependency_impact_runs").fetchone()[0])
+        finally:
+            connection.close()
+
+        with self.assertRaises(DependencyImpactLimitExceeded):
+            repository.preview(
+                change,
+                limits=DependencyImpactLimits(max_nodes=1),
+            )
+
+    def test_conditional_decisions_are_immutable_and_reconstructable_after_restart(self) -> None:
+        self._append("conditional-output", "extraction-v1", relation_type="conditional")
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            dependency_id = str(
+                connection.execute(
+                    "SELECT dependency_id FROM material_dependencies WHERE output_revision_id=?",
+                    (self.revisions["conditional-output"].revision_id,),
+                ).fetchone()[0]
+            )
+        finally:
+            connection.close()
+        repository = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        ignored = ConditionalDependencyDecision(
+            dependency_id=dependency_id,
+            decision_id=uid(81_030),
+            disposition="ignore",
+            governing_policy_id="dependency.material.v1",
+            governing_policy_version="1.0.0",
+            actor_id=ACTOR_ID,
+            decided_at=OCCURRED_AT,
+        )
+        ignored_preview = repository.preview(self.change(), decisions=(ignored,))
+        ignored_run = repository.begin(
+            self.change(),
+            preview_sha256=ignored_preview.preview_sha256,
+            run_id=uid(90_050),
+            batch_size=8,
+            decisions=(ignored,),
+        )
+        ignored_run = repository.advance(
+            ignored_run.run_id,
+            expected_checkpoint_sha256=ignored_run.checkpoint_sha256,
+        )
+        self.assertEqual("completed", ignored_run.state)
+
+        propagated = replace(ignored, decision_id=uid(81_031), disposition="propagate")
+        propagated_change = replace(
+            self.change(),
+            change_id=uid(80_030),
+            idempotency_key="fixture-extraction-superseded-propagated",
+        )
+        propagated_preview = repository.preview(propagated_change, decisions=(propagated,))
+        propagated_run = repository.begin(
+            propagated_change,
+            preview_sha256=propagated_preview.preview_sha256,
+            run_id=uid(90_051),
+            batch_size=8,
+            decisions=(propagated,),
+        )
+        propagated_run = repository.advance(
+            propagated_run.run_id,
+            expected_checkpoint_sha256=propagated_run.checkpoint_sha256,
+        )
+        self.assertEqual("completed", propagated_run.state)
+
+        reopened = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        self.assertEqual((ignored,), reopened.decisions(ignored_run.run_id))
+        self.assertEqual((propagated,), reopened.decisions(propagated_run.run_id))
+        self.assertEqual("completed", reopened.audit(run_id=ignored_run.run_id)[-1].event_type)
+        self.assertEqual("completed", reopened.audit(run_id=propagated_run.run_id)[-1].event_type)
 
     def test_cancellation_is_checkpoint_bound_and_preserves_only_completed_batches(self) -> None:
         repository = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
