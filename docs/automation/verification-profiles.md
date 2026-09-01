@@ -1,8 +1,11 @@
 # Verification profiles
 
-`tools/verify.py` is the task-facing verification entry point. Its canonical
-profile and command graph lives in `verification-profiles.json`; every invocation
-validates that contract before running commands.
+`tools/verify.py` owns the canonical profile and command graph in
+`verification-profiles.json`; every invocation validates that contract before
+running commands. Direct `--profile` mode executes the complete qualification
+inventory for the requested profiles and prints a nonblocking breadth warning.
+For ordinary task work, start with `taskctl checks <task>` and select focused
+checks or preview Git-derived affected selection before executing it.
 
 ```powershell
 python tools/verify.py --list
@@ -55,8 +58,9 @@ gate owner, inactive optional commands, and a SHA-256 of the canonical command
 and profile inventory. `--selection-only` writes or prints this proof without
 executing commands. It does not change `verification-profiles.json`, command
 arguments, optional-command activation, baselines, performance methods, or
-thresholds. Ordinary `--profile` execution retains the existing schema `1.0`
-report and behavior.
+thresholds. Ordinary direct `--profile` execution retains the existing schema
+`1.0` report and behavior; its warning is advisory and does not add a
+confirmation or gate.
 
 ## Wave-exit union
 

@@ -57,6 +57,7 @@ from taskctl import (  # noqa: E402
     new_lease,
     save_atomic,
     save_validated,
+    task_check_guidance,
     task_evidence_allowed_untracked,
     validate,
     wave_resume_allowed_untracked,
@@ -1228,6 +1229,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             self.assertEqual("REVIEW", task["status"])
             self.assertEqual("passed", task["verification_state"])
             self.assertEqual(1, len(task["evidence"]))
+
             control = task["review_control"]
             self.assertEqual([], control["attempts"])
             packet = control["current_submission"]
@@ -1242,6 +1244,29 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 packet["acceptance_criteria_sha256"],
             )
             self.assertEqual(taskctl_module.task_submission_packet_sha256(packet), packet["packet_sha256"])
+
+    def test_checks_guidance_separates_task_selection_from_qualification_inventory(self) -> None:
+        task = {
+            "verification_profiles": ["service"],
+            "verification_commands": ["python tools/verify.py --profile service"],
+            "base_sha": "a" * 40,
+            "wave": "W1",
+        }
+
+        output = "\n".join(task_check_guidance(task))
+        self.assertIn("advisory; no new gate", output)
+        self.assertIn(
+            "python tools/verify.py --profile service --affected-base "
+            + "a" * 40
+            + " --affected-head HEAD --deferred-gate W1-exit --selection-only",
+            output,
+        )
+        self.assertIn("recorded claim base accurately bounds this task delta", output)
+        self.assertIn("do not run automatically at ordinary task scope", output)
+        self.assertIn("python tools/verify.py --profile service", output)
+
+        parsed = build_parser().parse_args(["checks", "CAP-00.S01.T01", "--raw"])
+        self.assertTrue(parsed.raw)
 
     def test_t01_atomic_submit_failure_never_writes_partial_backlog_state(self) -> None:
         failures: list[BaseException] = [
