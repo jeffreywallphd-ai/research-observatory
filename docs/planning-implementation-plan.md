@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2788ea53726c05b8e8eed85307a00c88e992a37e4fc34f91d8c69dbe870a5596
+source_sha256: cf331f574959b69fc238a97bd646101df5604cf5ad0830d8a675f27698a7098f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -44,7 +44,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
-| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `REVIEW` |
+| `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 
 ## Waves
 
@@ -1006,7 +1006,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A05.json` (`a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -1014,6 +1014,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-08-30T15:34:03+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-08-30T15:37:08+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `REVIEW` at `2026-09-01T13:03:59+00:00` by codex: All four amendment tasks and both integration slices are independently approved; the affected security, experience, packaging, planning, and Windows x64 checks pass. Submit exact exit evidence for independent review without claiming W1 resume or release approval.
+- `E05` `ADOPTED` at `2026-09-01T13:16:10+00:00` by codex: Adopt independently approved W1.A05 security and experience outcomes as a W1 security checkpoint; retain conditional configured-Hello and full W1-exit qualification obligations; leave W1 PAUSED pending explicit ordinary resume.
 
 ### Amendment-exit review and adoption — W1.A05
 
@@ -1057,7 +1058,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP03` `security` by codex at `2026-09-01T13:16:10+00:00` — Adopt independently approved W1.A05 security and experience outcomes as a W1 security checkpoint; retain conditional configured-Hello and full W1-exit qualification obligations; leave W1 PAUSED pending explicit ordinary resume.
+  - amendment `W1.A05` / `artifacts/evidence/W1.A05.adoption.json` / `2bd56c6406474de68094bc23b064a4cbad1a49f51419b4d6230621283645df63` / `29cb181d524dd99e0ee92de3c5121c566b43600b`
 
 **Bounded tasks:**
 
