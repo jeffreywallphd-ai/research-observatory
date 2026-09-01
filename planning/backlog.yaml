@@ -13789,11 +13789,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-09-01T23:16:35+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-09-01T23:19:02+00:00'
+      updated_at: '2026-09-01T23:19:02+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13803,10 +13803,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: b5a941d7d907561c7d7f5d1a03162155b8fe7b5f
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-01T23:19:02+00:00'
+        expires_at: '2026-09-02T07:19:02+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     platform_targets:
