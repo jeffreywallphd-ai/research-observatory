@@ -1,0 +1,48 @@
+{
+  "task_id": "CAP-03.S04.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "4a237a0b726f391a72657ad200eed73ff35ddb95",
+  "submission_record_commit": "a4f25eb69dbc7e64da83bb0017c5b102f0ed63ad",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent commit-bound R01 review authenticated candidate 4a237a0b726f391a72657ad200eed73ff35ddb95, its direct frozen-submission child a4f25eb69dbc7e64da83bb0017c5b102f0ed63ad, evidence SHA-256 1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9, and Git blob 84306f1b391bfa6113e6899eda4ae06b89b78219. The declared 27-path candidate inventory exactly matches the base-to-candidate delta; the submission adds only the frozen R01 manifest and backlog projection. Focused replay passed 31 lease, recovery, workflow-contract, migration, and packaging tests plus two exact SQLite profile/WAL tests. Source and adversarial inspection reconfirmed automatic bounded fresh-supervisor recovery, claimant-fenced replay, canonical same-project immutable output/content-hash binding, atomic provenance/outbox publication and rollback, global checkpoint ordering, exact current-attempt checkpoint-artifact revision binding after restart, monotonic history/progress authority, separate cancellation/security-lock semantics, explicit retained/committed/abandoned artifact dispositions, exact-manifest subset completion, and denial of heartbeat before start without history mutation. All twelve task-start preflight findings were replayed and remain closed. No acceptance-bound finding remains; T03 routing/UI and Wave-level qualification remain correctly deferred. No full profile was run.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-03.S04.T02.R01.json",
+      "sha256": "1e10bbe027bd184f914bb33bd628e797d22e2da407d40779516f8bc8aade45c9",
+      "git_blob": "84306f1b391bfa6113e6899eda4ae06b89b78219",
+      "commit": "4a237a0b726f391a72657ad200eed73ff35ddb95",
+      "result": "PASS: frozen manifest bytes are absent from the candidate and present unchanged in its direct submission child; commit, base, branch, 27 changed paths, three criteria, selected checks, and deferrals are exact, with no unverified item."
+    },
+    "task_projection": {
+      "path": "planning/backlog.yaml",
+      "result": "PASS: CAP-03.S04.T02 is REVIEW at R01 and binds the exact candidate/base, evidence SHA/blob, changed-path inventory, acceptance hash d101a2479fb0ca48eb19f12c8a7e5726decf839babf422196a5bf8b07307325d, and selection hash 4c665a3deb99a5f85962973732072f73d65813324556f48e7802c6b763569165; there are no projected open findings."
+    }
+  },
+  "checks": [
+    {
+      "command": "Resolve candidate/submission/base SHAs; verify direct ancestry, candidate/submission evidence separation, manifest SHA-256 and Git blob, exact candidate 27-path inventory, exact submission-only two-path inventory, frozen projection bytes, and git diff --check",
+      "result": "PASS: candidate parent is 9d734971fc5cf3fdb20b2c8d6f5a51d0cfb9887b; submission parent is the exact candidate; manifest identity reproduces; declared and actual candidate paths match exactly; submission changes only artifacts/evidence/CAP-03.S04.T02.R01.json and planning/backlog.yaml; patch hygiene passes."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.workflows.test_local_workflow_executor plus four focused WorkflowContractTests, two focused SqliteMigrationTests, and five focused CoreSidecarPackageTests",
+      "result": "PASS: 31 focused tests passed in 13.498 seconds with one expected environment-dependent hardlink test skipped. Coverage includes lease fencing and expiry recovery, fresh-supervisor bounded recovery, duplicate completion/output races, exact manifest output/provenance publication and injected-gap rollback, checkpoint/restart identity, ordered history/progress, cancellation and dispositions, exact v7-to-v8 migration/rollback, and workflow-executor packaging registration."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.data.test_sqlite_schema.SqliteSchemaTests.test_portable_profile_is_exact_and_schema_valid tests.data.test_sqlite_schema.SqliteSchemaTests.test_initializes_exact_strict_wal_schema_and_reopens_after_restart",
+      "result": "PASS: 2/2 tests passed, reproducing the exact profile/schema contract, strict WAL initialization, and restart reopen behavior."
+    },
+    {
+      "command": "Independent temp-database adversarial replay: claim but do not start a workflow attempt, invoke heartbeat, and compare ordered history before/after",
+      "result": "PASS: heartbeat is denied, history remains exactly 8 events before and after, and attempt state remains claimed."
+    },
+    {
+      "command": "Inspect exact candidate implementation/tests/contracts/migration/packaging delta and replay the twelve task-start preflight defects against the approved T02/T03 boundary",
+      "result": "PASS: every preflight defect remains closed with executable regression coverage or an exact adversarial probe. T02 establishes the durable local executor, recovery, audit/provenance, migration, and package boundary without adding T03 Core API routing or governed Task Center UI authority."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}
