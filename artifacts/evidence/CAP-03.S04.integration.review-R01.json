@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-03.S04",
+  "attemptId": "R01",
+  "stateCommit": "7adbe700137056f998c42615fb2d3c096179edcd",
+  "submissionCommit": "bd1177aacac0a6f1c620e8b8a76858f8836d37f2",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "reviewedAt": "2026-09-01T16:53:42.7872938-04:00",
+  "disposition": "approved",
+  "approvalAvailable": true,
+  "notes": "The accumulated portable workflow, SQLite v8 executor, Core Task Center, native route, packaged runtime, built renderer/browser, and approved-reference boundaries are integrated without an acceptance-bound defect. Exact human-decision downstream admission is durable, restart-claimable, idempotent, and atomic on failure. All formal task findings are closed.",
+  "evidenceAuthentication": {
+    "integrationManifest": {
+      "path": "artifacts/evidence/CAP-03.S04.integration-R01.json",
+      "sha256": "582644f212cfea078fb19764829d151a5d89f7051d8cd9d07d576f1fc63edd7e",
+      "gitBlob": "587882f56c88f9157add9c2806384956e787624a",
+      "result": "passed"
+    },
+    "taskArtifacts": {
+      "result": "passed",
+      "details": "All six declared final task evidence/review SHA-256 values reproduce exactly. The approved T01 R02, T02 R01, and T03 R03 candidate and submission commits are ancestors of the state candidate. The integration submission is the direct child of that candidate and changes only the manifest and generated planning projections."
+    }
+  },
+  "checks": [
+    {
+      "check": "focused portable-contract, SQLite executor, Task Center/Core API, schema, and migration union",
+      "result": "passed",
+      "details": "65 of 65 Python tests passed, including v7-to-v8 migration, WAL behavior, fenced leases, restart/recovery, cancellation, canonical outputs, exact human authority, downstream admission, fresh-repository claim, and injected rollback."
+    },
+    {
+      "check": "focused generated-client, Task Center, and ApplicationRuntime union",
+      "result": "passed",
+      "details": "28 of 28 TypeScript tests passed."
+    },
+    {
+      "check": "native local-route allow-list",
+      "result": "passed",
+      "details": "The focused native allow-list test passed; 57 unrelated native tests were filtered out."
+    },
+    {
+      "check": "packaged sidecar and built-product interaction",
+      "result": "passed",
+      "details": "The Windows x64 PyInstaller sidecar smoke and built-product Chromium Task Center interaction scenario passed."
+    },
+    {
+      "check": "generated contracts and approved-reference boundaries",
+      "result": "passed",
+      "details": "Core API and portable-workflow generated artifacts are current. Reference integrity, tokens, routes, workflows, and 66 responsive accessibility cases across 33 pages passed against RO-UI-ACADEMIC-MINIMAL-1.4."
+    },
+    {
+      "check": "submission ancestry, artifact hashes, path inventory, and diff hygiene",
+      "result": "passed",
+      "details": "The exact submission, integration manifest, all six final task artifacts, approved ancestry, and changed-path inventory authenticated; git diff --check passed."
+    }
+  ],
+  "environmentDisclosures": {
+    "result": "accepted",
+    "details": "The packet distinguishes pre-discovery sandbox and host-Node failures from the authoritative bundled-Node passing run. It also discloses the DONE-state ui_change_gate controller precondition and relies on the previously passing exact T03 candidate, a zero-governed-UI descendant range, and current reference validation. Neither disclosure conceals a product failure."
+  },
+  "findings": [],
+  "residuals": [
+    {
+      "severity": "non-blocking",
+      "item": "No slice-specific numeric thousands-of-jobs or idle-polling benchmark baseline exists.",
+      "disposition": "Accepted at slice scope, not waived. Real WAL reader, bounded recovery, and concurrency-admission behavior are covered here; representative cross-capability performance measurement and regression thresholds remain mandatory at W1 exit."
+    },
+    {
+      "severity": "non-blocking",
+      "item": "Complete cross-capability Windows x64 release and deployment-profile qualification remains outstanding.",
+      "disposition": "Mandatory at W1 exit."
+    }
+  ],
+  "taskctlSliceReviewNote": "APPROVED: authenticated CAP-03.S04 integration submission bd1177a and state candidate 7adbe70, all six final task artifacts and approved ancestry. Independent focused replay passed 65 Python integration tests, 28 TypeScript tests, native allow-list, packaged-sidecar smoke, built-product Chromium interaction, generated-contract parity and approved-reference checks. Every task finding is closed; no new finding exists. Quantitative queue/performance qualification remains an explicit non-blocking slice residual and mandatory W1-exit obligation."
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c104e1a729092210a6db231b409bec7f514848c9e66ffb5aae9abcc19b5ef8a0
+source_sha256: 1f99e777e96c880c35ff1f74bb92365d3186203845bb2b35485a3a746ad085e4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5124,7 +5124,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5460,7 +5460,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Changes to evidence, models, schemas, or decisions identify and safely refresh affected outputs.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5468,7 +5468,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S05.T01 - Implement material dependency registration
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
