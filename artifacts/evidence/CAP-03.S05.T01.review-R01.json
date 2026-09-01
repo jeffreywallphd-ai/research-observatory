@@ -1,0 +1,46 @@
+{
+  "task_id": "CAP-03.S05.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed",
+  "submission_record_commit": "1b1c20091700d6f0e4d5e7bd3ee18e4b95683b04",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The base/candidate/submission ancestry, exact 30-path candidate inventory, two-path submission separation, backlog projection, and frozen evidence authenticate. Evidence SHA-256 is 66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d and Git blob is 975be19882af762918c16b40a2036c49f763c3cd. Independent focused replay passed 57 dependency, workflow, migration, schema, and packaging tests with one expected environment skip. Aggregate atomicity, exact endpoint validation, migration/restart, workflow denial diagnostics, and packaging otherwise appear sound. One blocking compatibility defect remains.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T01.R01.json",
+      "sha256": "66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d",
+      "git_blob": "975be19882af762918c16b40a2036c49f763c3cd",
+      "commit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Authenticate base, candidate, direct-child submission, manifest hash/blob, declared candidate paths, submission-only paths, and ancestry",
+      "result": "PASS: base is an ancestor; submission parent is the exact candidate; candidate contains the declared 30 paths; submission adds only the frozen R01 evidence and backlog projection."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest tests.data.test_material_dependencies tests.workflows.test_local_workflow_executor tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.packaging.test_core_sidecar_package",
+      "result": "PASS: 57 tests passed; one expected environment skip."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -c \"from tools.provenance_lineage_performance_check import _draft; _draft(1)\"",
+      "result": "FAIL: TypeError: AggregateRevisionDraft.__init__() missing 1 required positional argument: 'dependency_coverage'."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S05.T01-R01-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Required dependency coverage breaks the governed provenance-lineage performance fixture",
+      "reproduction": "At candidate 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed, services/core-api/src/research_observatory_core/ports/repositories.py:103 makes dependency_coverage mandatory. tools/provenance_lineage_performance_check.py:41 still constructs AggregateRevisionDraft without it. Running `$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -c \"from tools.provenance_lineage_performance_check import _draft; _draft(1)\"` exits 1 with the missing-argument TypeError. The tool remains governed at quality-scope.json:45 and is the established large-lineage qualification fixture, so the evidence claim that relevant fixtures were updated and the deferred performance obligation remains executable is false.",
+      "required_remediation": "Update the benchmark fixture with truthful dependency authority rather than a blanket default: source-like leaves should explicitly use not-applicable, while derived intermediate/root revisions should use complete coverage with deterministic exact-revision MaterialDependency edges corresponding to their inputs. Add a lightweight focused regression that constructs both fixture shapes so future public-port changes cannot bypass affected selection. Preserve the quantitative benchmark for its governed slice/W1 performance replay rather than running the complete performance profile during ordinary task remediation."
+    }
+  ],
+  "closures": []
+}
