@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import secrets
 import sqlite3
 import threading
@@ -26,6 +27,9 @@ from .ports.repositories import (
     AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
+    DependencyAuditDiagnostic,
+    DependencyCoverage,
+    DependencyRegistrationRequired,
     IntentAuditEvent,
     IntentPolicyAuditEvent,
     IntentPolicyDecisionRecord,
@@ -35,6 +39,9 @@ from .ports.repositories import (
     LineageDirection,
     LineageNode,
     LineagePage,
+    MaterialDependency,
+    MaterialDependencyRegistration,
+    MaterialDependencyRepository,
     PrivacyAuditEvent,
     PrivacyPolicyRecord,
     PrivacyPolicyRepository,
@@ -967,6 +974,8 @@ def _command_fingerprint(
     event: AtomicRepositoryEvent,
     expected_revision: int | None,
     provenance_inputs: tuple[AggregateRevision, ...] = (),
+    dependency_coverage: DependencyCoverage = "not-applicable",
+    material_dependencies: tuple[MaterialDependency, ...] = (),
 ) -> str:
     document = {
         "actorId": event.actor_id,
@@ -978,11 +987,16 @@ def _command_fingerprint(
         "createdAt": revision.created_at,
         "displayLabelNormalized": revision.display_label_normalized,
         "displayLabelObserved": revision.display_label_observed,
+        "dependencyCoverage": dependency_coverage,
         "eventId": event.event_id,
         "eventType": event.event_type,
         "expectedRevision": expected_revision,
         "idempotencyKey": event.idempotency_key,
         "knowledgeStatus": revision.knowledge_status,
+        "materialDependencies": [
+            _material_dependency_document(item)
+            for item in sorted(material_dependencies, key=lambda item: item.dependency_id)
+        ],
         "modifiedAt": revision.modified_at,
         "objectSha256": revision.object_sha256,
         "occurredAt": event.occurred_at,
@@ -999,6 +1013,87 @@ def _command_fingerprint(
     }
     payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+_DEPENDENCY_IDENTIFIER = re.compile(r"^[a-z][a-z0-9]*(?:[._:-][a-z0-9]+){0,15}$")
+_DEPENDENCY_SEMVER = re.compile(r"^(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})\.(?:0|[1-9][0-9]{0,8})$")
+_DEPENDENCY_SHA256 = re.compile(r"^sha256:[0-9a-f]{64}$")
+_REVISION_DEPENDENCY_KINDS = frozenset({"source-revision", "evidence-record", "ontology-version", "human-decision"})
+_CONFIGURATION_DEPENDENCY_KINDS = frozenset(
+    {"prompt-version", "model-version", "parameter-set", "schema-version", "template-version", "code-version"}
+)
+
+
+def _material_dependency_document(dependency: MaterialDependency) -> dict[str, str | None]:
+    return {
+        "configurationId": dependency.configuration_id,
+        "configurationVersion": dependency.configuration_version,
+        "dependencyId": dependency.dependency_id,
+        "dependencyKind": dependency.dependency_kind,
+        "fingerprint": dependency.fingerprint,
+        "governingPolicyId": dependency.governing_policy_id,
+        "governingPolicyVersion": dependency.governing_policy_version,
+        "relationType": dependency.relation_type,
+        "revisionId": dependency.revision_id,
+    }
+
+
+def _material_dependency_semantic_sha256(dependency: MaterialDependency) -> str:
+    document = _material_dependency_document(dependency)
+    del document["dependencyId"]
+    payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _material_dependency_shape_errors(
+    output_revision_id: str,
+    coverage: DependencyCoverage,
+    dependencies: tuple[MaterialDependency, ...],
+) -> tuple[str, ...]:
+    errors: list[str] = []
+    if coverage not in {"not-applicable", "complete"}:
+        errors.append("coverage")
+    if coverage == "complete" and not dependencies:
+        errors.append("missing")
+    if coverage == "not-applicable" and dependencies:
+        errors.append("unexpected")
+    if len(dependencies) > 256 or len({item.dependency_id for item in dependencies}) != len(dependencies):
+        errors.append("identity")
+    semantics = tuple(_material_dependency_semantic_sha256(item) for item in dependencies)
+    if len(set(semantics)) != len(semantics):
+        errors.append("duplicate")
+    for dependency in dependencies:
+        revision_endpoint = dependency.revision_id is not None
+        configuration_endpoint = dependency.configuration_id is not None or dependency.configuration_version is not None
+        if not is_uuid_v7(dependency.dependency_id):
+            errors.append("identity")
+        if dependency.relation_type not in {"direct", "conditional", "non-material"}:
+            errors.append("relation")
+        if _DEPENDENCY_SHA256.fullmatch(dependency.fingerprint) is None:
+            errors.append("fingerprint")
+        if (
+            _DEPENDENCY_IDENTIFIER.fullmatch(dependency.governing_policy_id) is None
+            or _DEPENDENCY_SEMVER.fullmatch(dependency.governing_policy_version) is None
+        ):
+            errors.append("policy")
+        if revision_endpoint == configuration_endpoint:
+            errors.append("endpoint")
+        elif revision_endpoint:
+            if dependency.dependency_kind not in _REVISION_DEPENDENCY_KINDS:
+                errors.append("endpoint-kind")
+            if dependency.revision_id == output_revision_id:
+                errors.append("self")
+        else:
+            if dependency.dependency_kind not in _CONFIGURATION_DEPENDENCY_KINDS:
+                errors.append("endpoint-kind")
+            if (
+                dependency.configuration_id is None
+                or _DEPENDENCY_IDENTIFIER.fullmatch(dependency.configuration_id) is None
+                or dependency.configuration_version is None
+                or _DEPENDENCY_SEMVER.fullmatch(dependency.configuration_version) is None
+            ):
+                errors.append("configuration")
+    return tuple(sorted(set(errors)))
 
 
 _PROVENANCE_SEGMENT_V1 = "rfc8785.sha256.v1"
@@ -1261,6 +1356,53 @@ def _record_aggregate_provenance(
     )
 
 
+def _record_material_dependencies(
+    connection: CanonicalConnection,
+    *,
+    project_id: str,
+    revision: AggregateRevision,
+    coverage: DependencyCoverage,
+    dependencies: tuple[MaterialDependency, ...],
+    event: AtomicRepositoryEvent,
+) -> None:
+    connection.execute(
+        """
+        INSERT INTO material_dependency_outputs (
+            output_revision_id, project_id, coverage, registration_event_id, registered_at
+        ) VALUES (?, ?, ?, ?, ?)
+        """,
+        (revision.revision_id, project_id, coverage, event.event_id, event.occurred_at),
+    )
+    for dependency in sorted(dependencies, key=lambda item: item.dependency_id):
+        connection.execute(
+            """
+            INSERT INTO material_dependencies (
+                dependency_id, project_id, output_revision_id, dependency_kind,
+                relation_type, dependency_revision_id, configuration_id,
+                configuration_version, fingerprint, governing_policy_id,
+                governing_policy_version, semantic_sha256, registration_event_id,
+                created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                dependency.dependency_id,
+                project_id,
+                revision.revision_id,
+                dependency.dependency_kind,
+                dependency.relation_type,
+                dependency.revision_id,
+                dependency.configuration_id,
+                dependency.configuration_version,
+                dependency.fingerprint,
+                dependency.governing_policy_id,
+                dependency.governing_policy_version,
+                _material_dependency_semantic_sha256(dependency),
+                event.event_id,
+                event.occurred_at,
+            ),
+        )
+
+
 def _projection(row: Any) -> AggregateRevision:
     values: tuple[Any, ...] = tuple(row)
     return AggregateRevision(
@@ -1368,6 +1510,19 @@ class _SqliteAggregateRepository:
         if draft.aggregate_kind != "document" and draft.object_sha256 is not None:
             self._mark_failed()
             raise RepositoryProblem("object identity is only valid for documents")
+        dependency_errors = _material_dependency_shape_errors(
+            draft.revision_id,
+            draft.dependency_coverage,
+            draft.material_dependencies,
+        )
+        if "missing" in dependency_errors:
+            self._mark_failed()
+            raise DependencyRegistrationRequired("recalculable output dependency registration is missing")
+        if dependency_errors:
+            self._mark_failed()
+            if "self" in dependency_errors:
+                raise RepositoryConflict("material dependency cannot target its own output revision")
+            raise RepositoryProblem("material dependency registration is invalid")
         if len(draft.provenance_inputs) > 64 or len({item.revision_id for item in draft.provenance_inputs}) != len(
             draft.provenance_inputs
         ):
@@ -1378,6 +1533,21 @@ class _SqliteAggregateRepository:
             if stored != source or source.project_id != state.project_id or source.revision_id == draft.revision_id:
                 self._mark_failed()
                 raise RepositoryConflict("provenance input authority changed")
+        for dependency in draft.material_dependencies:
+            if dependency.revision_id is None:
+                continue
+            stored_dependency = self._by_revision_id(dependency.revision_id)
+            if stored_dependency is None or stored_dependency.project_id != state.project_id:
+                self._mark_failed()
+                raise RepositoryConflict("material dependency revision authority changed")
+            required_kind = {
+                "evidence-record": "evidence",
+                "ontology-version": "ontology",
+                "human-decision": "decision",
+            }.get(dependency.dependency_kind)
+            if required_kind is not None and stored_dependency.aggregate_kind != required_kind:
+                self._mark_failed()
+                raise RepositoryConflict("material dependency endpoint kind differs")
 
         revision_number = 0 if expected_revision is None else expected_revision + 1
         projection = AggregateRevision(
@@ -1401,6 +1571,8 @@ class _SqliteAggregateRepository:
             event,
             expected_revision,
             draft.provenance_inputs,
+            draft.dependency_coverage,
+            draft.material_dependencies,
         )
         replay = self._replay(event, fingerprint)
         if replay is not None:
@@ -1483,6 +1655,14 @@ class _SqliteAggregateRepository:
                 additional_inputs=draft.provenance_inputs,
                 event=event,
                 idempotency_sha256=fingerprint,
+            )
+            _record_material_dependencies(
+                state.connection,
+                project_id=state.project_id,
+                revision=projection,
+                coverage=draft.dependency_coverage,
+                dependencies=draft.material_dependencies,
+                event=event,
             )
         except KeyError, sqlite3.Error, ValueError:
             self._mark_failed()
@@ -2032,6 +2212,112 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
         )
         else "integrity-review"
     )
+
+
+class _SqliteMaterialDependencyRepository(MaterialDependencyRepository):
+    """Read-only material-dependency registration and denial audit adapter."""
+
+    def __init__(self, database: Path, project_id: str) -> None:
+        if not database.is_absolute() or not project_id:
+            raise ValueError("material dependency repository authority is invalid")
+        self._database = database
+        self._project_id = project_id
+
+    def registration(self, output_revision_id: str) -> MaterialDependencyRegistration:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                output = connection.execute(
+                    """
+                    SELECT dependency.output_revision_id, revision.aggregate_id,
+                           revision.aggregate_kind, dependency.project_id,
+                           dependency.coverage, dependency.registration_event_id,
+                           dependency.registered_at
+                      FROM material_dependency_outputs AS dependency
+                      JOIN aggregate_revisions AS revision
+                        ON revision.revision_id=dependency.output_revision_id
+                       AND revision.project_id=dependency.project_id
+                     WHERE dependency.project_id=? AND dependency.output_revision_id=?
+                    """,
+                    (self._project_id, output_revision_id),
+                ).fetchone()
+                if output is None:
+                    raise RepositoryNotFound("material dependency registration was not found")
+                dependencies = connection.execute(
+                    """
+                    SELECT dependency_id, dependency_kind, relation_type,
+                           dependency_revision_id, configuration_id,
+                           configuration_version, fingerprint, governing_policy_id,
+                           governing_policy_version
+                      FROM material_dependencies
+                     WHERE project_id=? AND output_revision_id=?
+                     ORDER BY dependency_id
+                    """,
+                    (self._project_id, output_revision_id),
+                ).fetchall()
+                return MaterialDependencyRegistration(
+                    output_revision_id=str(output[0]),
+                    output_aggregate_id=str(output[1]),
+                    output_kind=cast(AggregateKind, output[2]),
+                    project_id=str(output[3]),
+                    coverage=cast(DependencyCoverage, output[4]),
+                    registration_event_id=None if output[5] is None else str(output[5]),
+                    registered_at=None if output[6] is None else str(output[6]),
+                    dependencies=tuple(
+                        MaterialDependency(
+                            dependency_id=str(row[0]),
+                            dependency_kind=cast(Any, row[1]),
+                            relation_type=cast(Any, row[2]),
+                            revision_id=None if row[3] is None else str(row[3]),
+                            configuration_id=None if row[4] is None else str(row[4]),
+                            configuration_version=None if row[5] is None else str(row[5]),
+                            fingerprint=str(row[6]),
+                            governing_policy_id=str(row[7]),
+                            governing_policy_version=str(row[8]),
+                        )
+                        for row in dependencies
+                    ),
+                )
+            finally:
+                connection.close()
+        except RepositoryNotFound, RepositoryProblem:
+            raise
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("material dependency query failed") from error
+
+    def diagnostics(self, *, output_revision_id: str | None = None) -> tuple[DependencyAuditDiagnostic, ...]:
+        try:
+            connection = open_canonical_database(self._database, expected_project_id=self._project_id)
+            try:
+                parameters: tuple[str, ...] = (self._project_id,)
+                where = "project_id=?"
+                if output_revision_id is not None:
+                    where += " AND output_revision_id=?"
+                    parameters += (output_revision_id,)
+                rows = connection.execute(
+                    "SELECT diagnostic_id, project_id, output_revision_id, workflow_run_id, "
+                    "job_id, attempt_id, diagnostic_code, detected_at "
+                    f"FROM material_dependency_diagnostics WHERE {where} "
+                    "ORDER BY detected_at, diagnostic_id",
+                    parameters,
+                ).fetchall()
+                return tuple(
+                    DependencyAuditDiagnostic(
+                        diagnostic_id=str(row[0]),
+                        project_id=str(row[1]),
+                        output_revision_id=str(row[2]),
+                        workflow_run_id=str(row[3]),
+                        job_id=str(row[4]),
+                        attempt_id=str(row[5]),
+                        diagnostic_code="dependency-registration-missing",
+                        detected_at=str(row[7]),
+                    )
+                    for row in rows
+                )
+            finally:
+                connection.close()
+        except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
+            raise RepositoryProblem("material dependency diagnostic query failed") from error
 
 
 class _SqliteProvenanceLedgerRepository(ProvenanceLedgerRepository):
@@ -4245,6 +4531,74 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             provenance_entity_id=None if row[8] is None else str(row[8]),
         )
 
+    def _dependency_registration_gaps(
+        self,
+        claim: WorkflowJobClaim,
+        *,
+        now: str,
+        outputs: tuple[WorkflowOutputReference, ...],
+    ) -> tuple[str, ...]:
+        """Persist a content-free denial fact without retaining a partial completion."""
+
+        with self._transaction() as connection:
+            if (
+                connection.execute(
+                    "SELECT 1 FROM workflow_committed_outputs WHERE project_id=? AND job_id=?",
+                    (self._project_id, claim.job_id),
+                ).fetchone()
+                is not None
+            ):
+                return ()
+            row = self._lease_row(connection, claim, now, states=("running",))
+            if row[3] is not None:
+                return ()
+            self._resolve_outputs(connection, outputs)
+            gaps: list[str] = []
+            for output in outputs:
+                staged = connection.execute(
+                    """
+                    SELECT revision_id, role, disposition, content_hash, media_type, provenance_entity_id
+                      FROM workflow_attempt_artifacts
+                     WHERE project_id=? AND job_id=? AND attempt_id=? AND artifact_id=?
+                    """,
+                    (self._project_id, claim.job_id, claim.attempt_id, output.artifact_id),
+                ).fetchone()
+                expected = (
+                    output.revision_id,
+                    "output",
+                    "retained-incomplete",
+                    output.content_hash,
+                    output.media_type,
+                    output.provenance_entity_id,
+                )
+                if staged is None or tuple(staged) != expected:
+                    raise WorkflowQueueConflict("workflow output was not staged by the current attempt")
+                coverage = connection.execute(
+                    "SELECT coverage FROM material_dependency_outputs WHERE project_id=? AND output_revision_id=?",
+                    (self._project_id, output.revision_id),
+                ).fetchone()
+                if coverage is None or str(coverage[0]) != "complete":
+                    gaps.append(output.revision_id)
+            for output_revision_id in gaps:
+                connection.execute(
+                    """
+                    INSERT OR IGNORE INTO material_dependency_diagnostics (
+                        diagnostic_id, project_id, output_revision_id, workflow_run_id,
+                        job_id, attempt_id, diagnostic_code, detected_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, 'dependency-registration-missing', ?)
+                    """,
+                    (
+                        _workflow_uuid(now),
+                        self._project_id,
+                        output_revision_id,
+                        str(row[0]),
+                        claim.job_id,
+                        claim.attempt_id,
+                        now,
+                    ),
+                )
+            return tuple(gaps)
+
     def stage_artifact(
         self,
         claim: WorkflowJobClaim,
@@ -4327,6 +4681,8 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
     ) -> WorkflowCompletionReceipt:
         _workflow_time(now)
         manifest, output_sha256 = self._output_manifest(outputs)
+        if self._dependency_registration_gaps(claim, now=now, outputs=outputs):
+            raise WorkflowQueueConflict("workflow output dependency registration is incomplete")
         with self._transaction() as connection:
             existing = connection.execute(
                 """
@@ -4668,9 +5024,16 @@ def sqlite_provenance_ledger_repository(path: Path, project_id: str) -> Provenan
     return _SqliteProvenanceLedgerRepository(path / "state" / "project.sqlite3", project_id)
 
 
+def sqlite_material_dependency_repository(path: Path, project_id: str) -> MaterialDependencyRepository:
+    """Compose the canonical material-dependency query adapter for one project."""
+
+    return _SqliteMaterialDependencyRepository(path / "state" / "project.sqlite3", project_id)
+
+
 __all__ = [
     "create_sqlite_unit_of_work_factory",
     "sqlite_intent_revision_repository",
+    "sqlite_material_dependency_repository",
     "sqlite_privacy_policy_repository",
     "sqlite_provenance_ledger_repository",
     "sqlite_workflow_queue_repository",

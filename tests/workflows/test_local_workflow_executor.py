@@ -14,7 +14,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
-from research_observatory_core.ports.repositories import AggregateRevisionDraft, AtomicRepositoryEvent
+from research_observatory_core.ports.repositories import (
+    AggregateRevisionDraft,
+    AtomicRepositoryEvent,
+    MaterialDependency,
+)
 from research_observatory_core.ports.workflow_executor import (
     WorkflowActor,
     WorkflowLeaseRejected,
@@ -24,6 +28,7 @@ from research_observatory_core.ports.workflow_executor import (
 )
 from research_observatory_core.repositories import (
     create_sqlite_unit_of_work_factory,
+    sqlite_material_dependency_repository,
     sqlite_workflow_queue_repository,
 )
 from research_observatory_core.storage import (
@@ -55,7 +60,13 @@ SYSTEM = WorkflowActor(
 )
 
 
-def _canonical_artifact(project_root: Path, index: int, *, actor_id: str = WORKER_A) -> WorkflowOutputReference:
+def _canonical_artifact(
+    project_root: Path,
+    index: int,
+    *,
+    actor_id: str = WORKER_A,
+    dependency_coverage: str = "complete",
+) -> WorkflowOutputReference:
     database = project_root / "state" / "project.sqlite3"
     aggregate_id = new_uuid_v7(timestamp_ms=1_788_091_320_500 + index * 10)
     revision_id = new_uuid_v7(timestamp_ms=1_788_091_320_501 + index * 10)
@@ -72,6 +83,22 @@ def _canonical_artifact(project_root: Path, index: int, *, actor_id: str = WORKE
                 display_label_normalized=None,
                 knowledge_status="observed",
                 rights_status="unknown",
+                dependency_coverage=dependency_coverage,  # type: ignore[arg-type]
+                material_dependencies=(
+                    MaterialDependency(
+                        dependency_id=new_uuid_v7(timestamp_ms=1_788_091_320_504 + index * 10),
+                        dependency_kind="model-version",
+                        relation_type="direct",
+                        revision_id=None,
+                        configuration_id="workflow.activity.fixture",
+                        configuration_version="1.0.0",
+                        fingerprint="sha256:" + f"{index + 1:064x}",
+                        governing_policy_id="dependency.material.v1",
+                        governing_policy_version="1.0.0",
+                    ),
+                )
+                if dependency_coverage == "complete"
+                else (),
             ),
             AtomicRepositoryEvent(
                 event_id=new_uuid_v7(timestamp_ms=1_788_091_320_502 + index * 10),
@@ -226,8 +253,8 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
             available_at="2026-08-30T12:02:00.000Z",
         )
 
-    def canonical_output(self, index: int) -> WorkflowOutputReference:
-        return _canonical_artifact(self.root, index)
+    def canonical_output(self, index: int, *, dependency_coverage: str = "complete") -> WorkflowOutputReference:
+        return _canonical_artifact(self.root, index, dependency_coverage=dependency_coverage)
 
     def test_exact_t01_authority_persists_and_reopens_with_runnable_projection(self) -> None:
         submission = self.submission()
@@ -454,6 +481,50 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
             )
         finally:
             connection.close()
+
+    def test_completion_requires_dependency_coverage_for_each_selected_output_and_audits_denial(self) -> None:
+        job = self.repository.enqueue(self.submission(), actor=SYSTEM)
+        claim = self.repository.claim_next(
+            worker_id=WORKER_A,
+            concurrency_classes=("document",),
+            now="2026-08-30T12:02:00.000Z",
+            lease_duration_ms=30_000,
+        )
+        assert claim is not None
+        self.repository.start(claim, now="2026-08-30T12:02:00.100Z")
+        covered = self.canonical_output(30)
+        uncovered = self.canonical_output(31, dependency_coverage="not-applicable")
+        for index, output in enumerate((covered, uncovered)):
+            self.repository.stage_artifact(
+                claim,
+                artifact=output,
+                role="output",
+                now=f"2026-08-30T12:02:00.{200 + index:03d}Z",
+            )
+
+        with self.assertRaisesRegex(WorkflowQueueConflict, "dependency registration"):
+            self.repository.complete(
+                claim,
+                now="2026-08-30T12:02:00.300Z",
+                outputs=(covered, uncovered),
+            )
+        self.assertEqual("running", self.repository.get(job.job_id).state)
+        diagnostics = sqlite_material_dependency_repository(self.root, PROJECT_ID).diagnostics(
+            output_revision_id=uncovered.revision_id
+        )
+        self.assertEqual(1, len(diagnostics))
+        self.assertEqual("dependency-registration-missing", diagnostics[0].diagnostic_code)
+        self.assertEqual(claim.attempt_id, diagnostics[0].attempt_id)
+
+        reopened = sqlite_material_dependency_repository(self.root, PROJECT_ID)
+        self.assertEqual(diagnostics, reopened.diagnostics(output_revision_id=uncovered.revision_id))
+        receipt = self.repository.complete(
+            claim,
+            now="2026-08-30T12:02:00.400Z",
+            outputs=(covered,),
+        )
+        self.assertFalse(receipt.replayed)
+        self.assertEqual("succeeded", self.repository.get(job.job_id).state)
 
     def test_cancel_wins_before_completion_and_late_output_is_denied(self) -> None:
         job = self.repository.enqueue(self.submission(), actor=SYSTEM)

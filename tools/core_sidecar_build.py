@@ -129,6 +129,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.migrations.runner",
             "research_observatory_core.migrations.versions.v0007_provenance_ledger",
             "research_observatory_core.migrations.versions.v0008_workflow_executor",
+            "research_observatory_core.migrations.versions.v0009_material_dependencies",
             "research_observatory_core.object_store",
             "research_observatory_core.ports.credential_store",
             "research_observatory_core.ports.database_keys",

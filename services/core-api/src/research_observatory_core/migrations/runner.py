@@ -29,6 +29,7 @@ from research_observatory_core.migrations.versions import (
     v0005_object_creation_source,
     v0007_provenance_ledger,
     v0008_workflow_executor,
+    v0009_material_dependencies,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -191,6 +192,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.OBJECT_CREATION_SOURCE_DATABASE_SCHEMA_VERSION,
             storage.ACTOR_IDENTITY_DATABASE_SCHEMA_VERSION,
             storage.PROVENANCE_LEDGER_DATABASE_SCHEMA_VERSION,
+            storage.WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -200,6 +202,8 @@ def migration_framework_projection() -> dict[str, Any]:
             v0006_actor_identity.revision,
             v0007_provenance_ledger.revision,
             v0008_workflow_executor.revision,
+            v0009_material_dependencies.revision,
+            v0009_material_dependencies.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -323,6 +327,10 @@ _SUPPORTED_PROFILES = {
     storage.PROVENANCE_LEDGER_DATABASE_SCHEMA_VERSION: (
         storage.PROVENANCE_LEDGER_PROFILE_SHA256,
         storage.PROVENANCE_LEDGER_SCHEMA_SHA256,
+    ),
+    storage.WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION: (
+        storage.WORKFLOW_EXECUTOR_PROFILE_SHA256,
+        storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -502,6 +510,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             7,
             8,
             storage.PROVENANCE_LEDGER_SCHEMA_SHA256,
+            storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+        ),
+        (
+            v0009_material_dependencies.revision,
+            8,
+            9,
+            storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -570,9 +585,14 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0007_provenance_ledger.TARGET_PROFILE_SHA256 == storage.PROVENANCE_LEDGER_PROFILE_SHA256
         and v0008_workflow_executor.down_revision == v0007_provenance_ledger.revision
         and v0008_workflow_executor.source_schema_version == storage.PROVENANCE_LEDGER_DATABASE_SCHEMA_VERSION
-        and v0008_workflow_executor.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0008_workflow_executor.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0008_workflow_executor.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0008_workflow_executor.target_schema_version == storage.WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION
+        and v0008_workflow_executor.TARGET_SCHEMA_SHA256 == storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256
+        and v0008_workflow_executor.TARGET_PROFILE_SHA256 == storage.WORKFLOW_EXECUTOR_PROFILE_SHA256
+        and v0009_material_dependencies.down_revision == v0008_workflow_executor.revision
+        and v0009_material_dependencies.source_schema_version == storage.WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION
+        and v0009_material_dependencies.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0009_material_dependencies.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0009_material_dependencies.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -585,6 +605,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0006_actor_identity.revision,
             v0007_provenance_ledger.revision,
             v0008_workflow_executor.revision,
+            v0009_material_dependencies.revision,
         )
     if source_version == v0003_object_envelopes.source_schema_version:
         return (
@@ -594,6 +615,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0006_actor_identity.revision,
             v0007_provenance_ledger.revision,
             v0008_workflow_executor.revision,
+            v0009_material_dependencies.revision,
         )
     if source_version == v0004_object_envelope_upgrades.source_schema_version:
         return (
@@ -602,6 +624,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0006_actor_identity.revision,
             v0007_provenance_ledger.revision,
             v0008_workflow_executor.revision,
+            v0009_material_dependencies.revision,
         )
     if source_version == v0005_object_creation_source.source_schema_version:
         return (
@@ -609,17 +632,25 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0006_actor_identity.revision,
             v0007_provenance_ledger.revision,
             v0008_workflow_executor.revision,
+            v0009_material_dependencies.revision,
         )
     if source_version == v0006_actor_identity.source_schema_version:
         return (
             v0006_actor_identity.revision,
             v0007_provenance_ledger.revision,
             v0008_workflow_executor.revision,
+            v0009_material_dependencies.revision,
         )
     if source_version == v0007_provenance_ledger.source_schema_version:
-        return (v0007_provenance_ledger.revision, v0008_workflow_executor.revision)
+        return (
+            v0007_provenance_ledger.revision,
+            v0008_workflow_executor.revision,
+            v0009_material_dependencies.revision,
+        )
     if source_version == v0008_workflow_executor.source_schema_version:
-        return (v0008_workflow_executor.revision,)
+        return (v0008_workflow_executor.revision, v0009_material_dependencies.revision)
+    if source_version == v0009_material_dependencies.source_schema_version:
+        return (v0009_material_dependencies.revision,)
     raise MigrationProblem("migration-source-version-unsupported")
 
 
@@ -1380,12 +1411,28 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.PROVENANCE_LEDGER_SCHEMA_SHA256,
-                "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
-                "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
-                "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+                "target_schema_sha256": storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                "targetProfileSha256": storage.WORKFLOW_EXECUTOR_PROFILE_SHA256,
                 "schemaMetadataDdl": storage.SCHEMA_METADATA_V8_DDL,
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
                 "workflowAuthority": storage.WORKFLOW_EXECUTOR_DDL,
+            },
+        )
+    if source_schema_version <= storage.WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION:
+        v0009_material_dependencies.apply(
+            operations,
+            {
+                "migration_id": v0009_material_dependencies.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.WORKFLOW_EXECUTOR_SCHEMA_SHA256,
+                "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V9_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+                "materialDependencyAuthority": storage.MATERIAL_DEPENDENCY_DDL,
             },
         )
 

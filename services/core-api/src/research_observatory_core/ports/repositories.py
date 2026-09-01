@@ -23,6 +23,20 @@ KnowledgeStatus = Literal[
 RightsStatus = Literal["allowed", "denied", "unknown", "not-applicable"]
 ActorType = Literal["human", "system", "worker", "model"]
 LineageDirection = Literal["ancestors", "descendants"]
+DependencyCoverage = Literal["not-applicable", "complete", "legacy-unreported"]
+DependencyKind = Literal[
+    "source-revision",
+    "evidence-record",
+    "ontology-version",
+    "prompt-version",
+    "model-version",
+    "parameter-set",
+    "schema-version",
+    "template-version",
+    "code-version",
+    "human-decision",
+]
+DependencyRelationType = Literal["direct", "conditional", "non-material"]
 
 
 class RepositoryProblem(RuntimeError):
@@ -48,6 +62,10 @@ class RepositoryIdempotencyConflict(RepositoryConflict):
 
 class RepositoryTransactionFailed(RepositoryProblem):
     code = "RO-CORE-REPOSITORY-TRANSACTION-FAILED"
+
+
+class DependencyRegistrationRequired(RepositoryProblem):
+    code = "RO-CORE-DEPENDENCY-REGISTRATION-REQUIRED"
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,8 +100,53 @@ class AggregateRevisionDraft:
     display_label_normalized: str | None
     knowledge_status: KnowledgeStatus
     rights_status: RightsStatus
+    dependency_coverage: DependencyCoverage
     object_sha256: str | None = None
     provenance_inputs: tuple[AggregateRevision, ...] = ()
+    material_dependencies: tuple[MaterialDependency, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class MaterialDependency:
+    """One direct typed input to an exact recalculable output revision."""
+
+    dependency_id: str
+    dependency_kind: DependencyKind
+    relation_type: DependencyRelationType
+    revision_id: str | None
+    configuration_id: str | None
+    configuration_version: str | None
+    fingerprint: str
+    governing_policy_id: str
+    governing_policy_version: str
+
+
+@dataclass(frozen=True, slots=True)
+class MaterialDependencyRegistration:
+    """Detached dependency coverage and edges for one exact output revision."""
+
+    output_revision_id: str
+    output_aggregate_id: str
+    output_kind: AggregateKind
+    project_id: str
+    coverage: DependencyCoverage
+    registration_event_id: str | None
+    registered_at: str | None
+    dependencies: tuple[MaterialDependency, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class DependencyAuditDiagnostic:
+    """Content-free durable diagnostic for a denied dependency-sensitive action."""
+
+    diagnostic_id: str
+    project_id: str
+    output_revision_id: str
+    workflow_run_id: str
+    job_id: str
+    attempt_id: str
+    diagnostic_code: Literal["dependency-registration-missing"]
+    detected_at: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -296,6 +359,13 @@ class ProvenanceLedgerRepository(Protocol):
 
 
 @runtime_checkable
+class MaterialDependencyRepository(Protocol):
+    def registration(self, output_revision_id: str) -> MaterialDependencyRegistration: ...
+
+    def diagnostics(self, *, output_revision_id: str | None = None) -> tuple[DependencyAuditDiagnostic, ...]: ...
+
+
+@runtime_checkable
 class UnitOfWork(Protocol):
     @property
     def aggregates(self) -> AggregateRepository: ...
@@ -321,6 +391,11 @@ __all__ = [
     "AggregateRevision",
     "AggregateRevisionDraft",
     "AtomicRepositoryEvent",
+    "DependencyAuditDiagnostic",
+    "DependencyCoverage",
+    "DependencyKind",
+    "DependencyRegistrationRequired",
+    "DependencyRelationType",
     "IntentAuditEvent",
     "IntentRevisionRecord",
     "IntentRevisionRepository",
@@ -328,6 +403,9 @@ __all__ = [
     "LineageDirection",
     "LineageNode",
     "LineagePage",
+    "MaterialDependency",
+    "MaterialDependencyRegistration",
+    "MaterialDependencyRepository",
     "PrivacyAuditEvent",
     "PrivacyPolicyRecord",
     "PrivacyPolicyRepository",

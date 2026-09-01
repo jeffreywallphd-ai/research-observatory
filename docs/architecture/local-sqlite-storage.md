@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-6 authority
+## Current version-9 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=7`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=9`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -69,6 +69,10 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `aggregate_identities` | immutable project-scoped aggregate identity and kind |
 | `aggregate_revisions` | immutable common scholarly aggregate revision envelope |
 | `scholarly_records`, `documents`, `workflows`, `evidence`, `ontologies`, `decisions` | immutable kind extension rows keyed to a common revision |
+| `workflow_*` | versioned workflow authority, durable queue/attempt state, append-only history/checkpoints, artifacts, and committed output manifests |
+| `material_dependency_outputs` | immutable dependency-coverage classification for each exact output revision |
+| `material_dependencies` | immutable typed direct edges to exact revision or configuration endpoints, with policy and fingerprint authority |
+| `material_dependency_diagnostics` | content-free append-only audit facts for dependency-sensitive completion denials |
 | `provenance_events` | append-only typed event metadata, stable canonical/UUIDv7 actor authority, and record digest |
 | `settings` | append-only versioned, exactly-one-of typed scalar project settings |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
@@ -93,21 +97,25 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v6
-profiles to current schema v7. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v8
+profiles to current schema v9. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-7 database is detected
+verified backup remains available. A current version-9 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
 creation routes. Version 6 rebuilds only the provenance table so a stable
 profile-scoped UUIDv7 researcher identity can be carried exactly while preserving
 legacy canonical actor identifiers, append-only triggers, indexes, and every
-prior row. T03 owns SQLAlchemy repositories, optimistic
+prior row. Version 7 adds the portable provenance ledger, version 8 adds the
+durable local workflow executor, and version 9 adds material-dependency
+authority. The v8-to-v9 migration labels every existing output revision
+`legacy-unreported` and creates no dependency edge, so missing historical
+knowledge stays explicit. T03 owns SQLAlchemy repositories, optimistic
 concurrency, transaction/outbox publication, and units of work. Central
 bootstrap/migration code is the only allowed source of schema SQL; domain and UI
 code must use the repository ports. Ordinary canonical access returns a
@@ -165,6 +173,19 @@ outbox authority, and the atomic narrow actor/trace binding; they return
 production activity and responsible-agent identities and label missing
 references or mismatches `integrity-review` while retaining read-only
 inspection.
+
+Schema v9 extends the aggregate transaction with one explicit dependency
+coverage row and, for recalculable outputs, a nonempty canonical set of typed
+direct dependencies. Revision endpoints are exact project-scoped aggregate
+revisions. Prompt, model, parameter, schema, template, and code dependencies use
+immutable configuration identity plus semantic version instead of pretending to
+be aggregate kinds. The command fingerprint binds the complete sorted edge set,
+so exact retry is idempotent and any changed endpoint, policy, materiality, or
+fingerprint conflicts. Workflow completion independently requires `complete`
+coverage for every selected staged output; denial leaves job and artifact state
+unchanged and persists only a content-free diagnostic. Transitive impact and
+stale propagation remain derived follow-on behavior rather than stored direct
+edges.
 
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file
