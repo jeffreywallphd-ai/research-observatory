@@ -277,6 +277,142 @@ class DependencyImpactPlannerTests(unittest.TestCase):
                     tuple(edges),
                     limits=replace(DEFAULT_DEPENDENCY_IMPACT_LIMITS, **{field: value}),
                 )
+        with self.assertRaises(ValueError):
+            plan_dependency_impact(
+                PROJECT_ID,
+                change,
+                tuple(edges),
+                limits=replace(DEFAULT_DEPENDENCY_IMPACT_LIMITS, max_path_samples=1),
+            )
+
+    def test_convergent_acyclic_graph_is_not_reported_as_a_cycle(self) -> None:
+        previous = AggregateRevision(
+            revision_id=uid(1),
+            aggregate_id=uid(101),
+            aggregate_kind="evidence",
+            project_id=PROJECT_ID,
+            revision=1,
+            contract_version="1.0",
+            created_at=OCCURRED_AT,
+            modified_at=OCCURRED_AT,
+            display_label_observed="source",
+            display_label_normalized=None,
+            knowledge_status="observed",
+            rights_status="unknown",
+        )
+        change = revision_change(previous, replace(previous, revision_id=uid(2), revision=2))
+        a, b, c = uid(11), uid(12), uid(13)
+        edges = (
+            DependencyGraphEdge(
+                uid(301), previous.revision_id, a, "evidence", "direct", fingerprint("a"), "p", "1.0.0"
+            ),
+            DependencyGraphEdge(uid(302), a, b, "evidence", "direct", fingerprint("b"), "p", "1.0.0"),
+            DependencyGraphEdge(uid(303), a, c, "evidence", "direct", fingerprint("c"), "p", "1.0.0"),
+            DependencyGraphEdge(uid(304), b, c, "evidence", "direct", fingerprint("d"), "p", "1.0.0"),
+        )
+
+        preview = plan_dependency_impact(PROJECT_ID, change, edges)
+
+        self.assertEqual((), preview.cycle_groups)
+        self.assertTrue(all(item.cycle_group_id is None for item in preview.impacts))
+
+    def test_self_loop_and_disjoint_cycles_are_exact_and_order_independent(self) -> None:
+        previous = AggregateRevision(
+            revision_id=uid(1),
+            aggregate_id=uid(101),
+            aggregate_kind="evidence",
+            project_id=PROJECT_ID,
+            revision=1,
+            contract_version="1.0",
+            created_at=OCCURRED_AT,
+            modified_at=OCCURRED_AT,
+            display_label_observed="source",
+            display_label_normalized=None,
+            knowledge_status="observed",
+            rights_status="unknown",
+        )
+        change = revision_change(previous, replace(previous, revision_id=uid(2), revision=2))
+        a, b, c, d, e = (uid(index) for index in range(11, 16))
+        edges = (
+            DependencyGraphEdge(
+                uid(301), previous.revision_id, a, "evidence", "direct", fingerprint("a"), "p", "1.0.0"
+            ),
+            DependencyGraphEdge(uid(302), a, b, "evidence", "direct", fingerprint("b"), "p", "1.0.0"),
+            DependencyGraphEdge(uid(303), b, a, "evidence", "direct", fingerprint("c"), "p", "1.0.0"),
+            DependencyGraphEdge(
+                uid(304), previous.revision_id, c, "evidence", "direct", fingerprint("a"), "p", "1.0.0"
+            ),
+            DependencyGraphEdge(uid(305), c, c, "evidence", "direct", fingerprint("d"), "p", "1.0.0"),
+            DependencyGraphEdge(
+                uid(306), previous.revision_id, d, "evidence", "direct", fingerprint("a"), "p", "1.0.0"
+            ),
+            DependencyGraphEdge(uid(307), d, e, "evidence", "direct", fingerprint("e"), "p", "1.0.0"),
+            DependencyGraphEdge(uid(308), e, d, "evidence", "direct", fingerprint("f"), "p", "1.0.0"),
+        )
+
+        preview = plan_dependency_impact(PROJECT_ID, change, edges)
+        reversed_preview = plan_dependency_impact(PROJECT_ID, change, tuple(reversed(edges)))
+
+        self.assertEqual(preview, reversed_preview)
+        self.assertEqual(
+            ((a, b), (c,), (d, e)),
+            tuple(group.member_revision_ids for group in preview.cycle_groups),
+        )
+
+    def test_long_path_sample_preserves_terminal_authority_and_reports_truncation(self) -> None:
+        previous = AggregateRevision(
+            revision_id=uid(1),
+            aggregate_id=uid(101),
+            aggregate_kind="evidence",
+            project_id=PROJECT_ID,
+            revision=1,
+            contract_version="1.0",
+            created_at=OCCURRED_AT,
+            modified_at=OCCURRED_AT,
+            display_label_observed="source",
+            display_label_normalized=None,
+            knowledge_status="observed",
+            rights_status="unknown",
+        )
+        change = revision_change(previous, replace(previous, revision_id=uid(2), revision=2))
+        outputs = tuple(uid(10_000 + index) for index in range(70))
+        sources = (previous.revision_id, *outputs[:-1])
+        edges = tuple(
+            DependencyGraphEdge(
+                uid(20_000 + index),
+                source,
+                output,
+                "evidence",
+                "direct",
+                fingerprint("a" if index == 0 else "b"),
+                "p",
+                "1.0.0",
+            )
+            for index, (source, output) in enumerate(zip(sources, outputs, strict=True))
+        )
+
+        preview = plan_dependency_impact(PROJECT_ID, change, edges)
+        reversed_preview = plan_dependency_impact(PROJECT_ID, change, tuple(reversed(edges)))
+        exact_limit = next(item for item in preview.impacts if item.output_revision_id == outputs[62])
+        terminal = next(item for item in preview.impacts if item.output_revision_id == outputs[-1])
+
+        self.assertEqual(preview, reversed_preview)
+        self.assertFalse(exact_limit.path_truncated)
+        self.assertEqual(64, exact_limit.path_length)
+        self.assertEqual(64, len(exact_limit.path_revision_ids))
+        self.assertEqual(outputs[62], exact_limit.path_revision_ids[-1])
+        self.assertTrue(terminal.path_truncated)
+        self.assertEqual(71, terminal.path_length)
+        self.assertEqual(64, len(terminal.path_revision_ids))
+        self.assertEqual(previous.revision_id, terminal.path_revision_ids[0])
+        self.assertEqual(outputs[-1], terminal.path_revision_ids[-1])
+        narrower = plan_dependency_impact(
+            PROJECT_ID,
+            change,
+            edges,
+            limits=replace(DEFAULT_DEPENDENCY_IMPACT_LIMITS, max_path_samples=63),
+        )
+        self.assertNotEqual(preview.preview_sha256, narrower.preview_sha256)
 
     def test_relation_policy_duplicate_paths_and_cycles_are_deterministic_and_bounded(self) -> None:
         change = replace(
@@ -476,6 +612,141 @@ class SqliteDependencyImpactTests(unittest.TestCase):
         self.assertEqual(completed, replay)
         self.assertEqual(before, self._authority_counts())
         self.assertEqual(3, len(reopened.audit(run_id=run.run_id)))
+
+    def test_truncated_path_authority_survives_propagation_and_restart(self) -> None:
+        source_revision_id = self.revisions["dossier"].revision_id
+        terminal_revision_id = source_revision_id
+        exact_limit_revision_id: str | None = None
+        with self.factory() as unit:
+            for offset in range(66):
+                index = 200 + offset
+                terminal_revision_id = uid(index)
+                revision = unit.aggregates.append(
+                    AggregateRevisionDraft(
+                        revision_id=terminal_revision_id,
+                        aggregate_id=uid(1_000 + index),
+                        aggregate_kind="evidence",
+                        created_at=OCCURRED_AT,
+                        modified_at=OCCURRED_AT,
+                        display_label_observed=f"long-chain-{offset}",
+                        display_label_normalized=None,
+                        knowledge_status="observed",
+                        rights_status="unknown",
+                        dependency_coverage="complete",
+                        material_dependencies=(dependency(index, source_revision_id),),
+                    ),
+                    AtomicRepositoryEvent(
+                        event_id=uid(40_000 + index),
+                        outbox_id=uid(50_000 + index),
+                        event_type="evidence.created",
+                        occurred_at=OCCURRED_AT,
+                        available_at=OCCURRED_AT,
+                        trace_id=f"{index + 1:032x}",
+                        actor_type="worker",
+                        actor_id=ACTOR_ID,
+                        idempotency_key=f"dependency-impact-long-chain-{index}",
+                    ),
+                    expected_revision=None,
+                )
+                source_revision_id = revision.revision_id
+                if offset == 58:
+                    exact_limit_revision_id = revision.revision_id
+            unit.commit()
+
+        self.assertIsNotNone(exact_limit_revision_id)
+        repository = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        preview = repository.preview(self.change())
+        exact_limit_item = next(item for item in preview.impacts if item.output_revision_id == exact_limit_revision_id)
+        preview_item = next(item for item in preview.impacts if item.output_revision_id == terminal_revision_id)
+        self.assertFalse(exact_limit_item.path_truncated)
+        self.assertEqual(64, exact_limit_item.path_length)
+        self.assertEqual(64, len(exact_limit_item.path_revision_ids))
+        self.assertEqual(exact_limit_revision_id, exact_limit_item.path_revision_ids[-1])
+        self.assertTrue(preview_item.path_truncated)
+        self.assertEqual(71, preview_item.path_length)
+        self.assertEqual(terminal_revision_id, preview_item.path_revision_ids[-1])
+
+        run = repository.begin(
+            self.change(),
+            preview_sha256=preview.preview_sha256,
+            run_id=uid(90_060),
+            batch_size=1_000,
+        )
+        completed = repository.advance(run.run_id, expected_checkpoint_sha256=run.checkpoint_sha256)
+        self.assertEqual("completed", completed.state)
+        reopened = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        exact_stale = next(
+            item for item in reopened.stale_states() if item.output_revision_id == exact_limit_revision_id
+        )
+        stale = next(item for item in reopened.stale_states() if item.output_revision_id == terminal_revision_id)
+        self.assertFalse(exact_stale.path_truncated)
+        self.assertEqual(64, exact_stale.path_length)
+        self.assertEqual(exact_limit_revision_id, exact_stale.path_revision_ids[-1])
+        self.assertTrue(stale.path_truncated)
+        self.assertEqual(71, stale.path_length)
+        self.assertEqual(terminal_revision_id, stale.path_revision_ids[-1])
+
+    def test_cycle_group_authority_survives_propagation_and_restart(self) -> None:
+        matrix = self.revisions["matrix"].revision_id
+        graph = self.revisions["graph"].revision_id
+        synthesis = self.revisions["synthesis"].revision_id
+        dossier = self.revisions["dossier"].revision_id
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            registration_event_id = str(
+                connection.execute(
+                    "SELECT event_id FROM provenance_events WHERE project_id=? ORDER BY occurred_at LIMIT 1",
+                    (PROJECT_ID,),
+                ).fetchone()[0]
+            )
+            connection.execute(
+                """
+                INSERT INTO material_dependencies (
+                    dependency_id, project_id, output_revision_id,
+                    dependency_kind, relation_type, dependency_revision_id,
+                    configuration_id, configuration_version, fingerprint,
+                    governing_policy_id, governing_policy_version,
+                    semantic_sha256, registration_event_id, created_at
+                ) VALUES (?, ?, ?, 'source-revision', 'direct', ?, NULL, NULL,
+                          ?, 'dependency.material.v1', '1.0.0', ?, ?, ?)
+                """,
+                (
+                    uid(39_999),
+                    PROJECT_ID,
+                    matrix,
+                    dossier,
+                    fingerprint("f"),
+                    "e" * 64,
+                    registration_event_id,
+                    OCCURRED_AT,
+                ),
+            )
+        finally:
+            connection.close()
+
+        repository = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        preview = repository.preview(self.change())
+        expected_members = (matrix, graph, synthesis, dossier)
+        cycle = next(group for group in preview.cycle_groups if group.member_revision_ids == expected_members)
+        run = repository.begin(
+            self.change(),
+            preview_sha256=preview.preview_sha256,
+            run_id=uid(90_061),
+            batch_size=1_000,
+        )
+        completed = repository.advance(run.run_id, expected_checkpoint_sha256=run.checkpoint_sha256)
+        self.assertEqual("completed", completed.state)
+
+        reopened = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        durable = {
+            item.output_revision_id: item.cycle_group_id
+            for item in reopened.stale_states()
+            if item.output_revision_id in expected_members
+        }
+        self.assertEqual(
+            {member: cycle.cycle_group_id for member in expected_members},
+            durable,
+        )
 
     def test_stale_preview_and_failed_batch_are_fail_closed_and_recoverable(self) -> None:
         repository = sqlite_dependency_impact_repository(self.root, PROJECT_ID)

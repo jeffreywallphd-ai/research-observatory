@@ -46,7 +46,11 @@ bounded compare-and-swap checkpoints, and content-free impact audit facts. The
 preview digest binds the complete change, policy, actor, exact endpoint,
 conditional decisions, graph, and bounded traversal configuration. Each
 checkpoint revalidates that authority and the current graph before writing. The
-v9-to-v10 migration creates no run, decision, or stale state for historical
+bounded path representation always retains the affected terminal revision and
+binds the full revision count and truncation state in both impact-item and
+stale-cause authority; its configured sample bound is the maximum number of
+stored revision identities. The v9-to-v10 migration creates no run, decision,
+or stale state for historical
 outputs, so missing recalculation knowledge remains explicit rather than
 invented.
 

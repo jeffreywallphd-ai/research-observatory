@@ -67,7 +67,7 @@ def validate_dependency_impact_limits(limits: DependencyImpactLimits) -> None:
         ("max_path_samples", limits.max_path_samples, DEFAULT_DEPENDENCY_IMPACT_LIMITS.max_path_samples),
         ("max_legacy_samples", limits.max_legacy_samples, DEFAULT_DEPENDENCY_IMPACT_LIMITS.max_legacy_samples),
     )
-    if any(
+    if limits.max_path_samples < 2 or any(
         isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= maximum
         for _, value, maximum in values
     ):
@@ -245,17 +245,19 @@ def _strongly_connected_groups(
         if root in visited:
             continue
         visited.add(root)
-        stack: list[tuple[str, bool]] = [(root, False)]
+        stack: list[tuple[str, int]] = [(root, 0)]
         while stack:
-            node, exiting = stack.pop()
-            if exiting:
+            node, next_index = stack[-1]
+            outgoing = graph[node]
+            if next_index >= len(outgoing):
+                stack.pop()
                 finish_order.append(node)
                 continue
-            stack.append((node, True))
-            for target in reversed(graph[node]):
-                if target not in visited:
-                    visited.add(target)
-                    stack.append((target, False))
+            target = outgoing[next_index]
+            stack[-1] = (node, next_index + 1)
+            if target not in visited:
+                visited.add(target)
+                stack.append((target, 0))
 
     assigned: set[str] = set()
     groups: list[DependencyCycleGroup] = []
@@ -426,13 +428,18 @@ def plan_dependency_impact(
             confidence = inherited_confidence
             propagate = True
 
+        path_length = len(path)
+        path_truncated = path_length > limits.max_path_samples
+        sampled_path = (*path[: limits.max_path_samples - 1], path[-1]) if path_truncated else path
         candidate = DependencyImpactItem(
             output_revision_id=edge.output_revision_id,
             output_kind=edge.output_kind,
             disposition=disposition,
             depth=depth,
             relation_type=edge.relation_type,
-            path_revision_ids=path[: limits.max_path_samples + 1],
+            path_revision_ids=sampled_path,
+            path_length=path_length,
+            path_truncated=path_truncated,
             cycle_group_id=None,
             confidence=confidence,
             review_required=review_required,
@@ -495,7 +502,9 @@ def plan_dependency_impact(
                 "disposition": item.disposition,
                 "outputKind": item.output_kind,
                 "outputRevisionId": item.output_revision_id,
+                "pathLength": item.path_length,
                 "pathRevisionIds": item.path_revision_ids,
+                "pathTruncated": item.path_truncated,
                 "relationType": item.relation_type,
                 "reviewRequired": item.review_required,
             }
