@@ -1,0 +1,178 @@
+{
+  "documentType": "wave-amendment-exit-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A05",
+  "changeRequestId": "ECR-0004",
+  "targetWave": "W1",
+  "candidateCommit": "e9bc0af81c44947bbc1e22f5c7a00f9a19b95140",
+  "branch": "codex/w1-windows-local-runtime",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "scope": {
+    "bootstrap": {
+      "id": "W1.A05.B00",
+      "status": "APPROVED",
+      "implementationCommit": "658ef77fad6e657921c7cfe0bdce3fe096c7f9f7",
+      "evidence": {
+        "path": "artifacts/evidence/W1.A05.B00.remediation-04.json",
+        "sha256": "6d8e185b82b984423ad44909983458664b9806506b01da2f6f6bbb87ee41a28d"
+      }
+    },
+    "authorizedTasks": [
+      {
+        "taskId": "W1.A05.T01",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "6111293f8d534e79aa8a509dfa8d37e43b218037",
+        "finalEvidence": "artifacts/evidence/W1.A05.T01.remediation-01.json",
+        "reviewLedger": "artifacts/evidence/W1.A05.T01.review-R02.json"
+      },
+      {
+        "taskId": "W1.A05.T02",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "3f91f7721e293b72d8367e1036c5875dc1f14ff2",
+        "finalEvidence": "artifacts/evidence/W1.A05.T02.json",
+        "reviewLedger": "artifacts/evidence/W1.A05.T02.review-R01.json"
+      },
+      {
+        "taskId": "W1.A05.T03",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "c94ab3ef76529f7eee0d2f002423c21aec3e1161",
+        "finalEvidence": "artifacts/evidence/W1.A05.T03.remediation-01.json",
+        "reviewLedger": "artifacts/evidence/W1.A05.T03.review-R02.json"
+      },
+      {
+        "taskId": "W1.A05.T04",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8",
+        "productCommit": "41d1feaff28eea1357e3e7e7c9db494e9ec6bb06",
+        "finalEvidence": "artifacts/evidence/W1.A05.T04.remediation-02.json",
+        "reviewLedger": "artifacts/evidence/W1.A05.T04.review-R03.json"
+      }
+    ],
+    "authorizedSlices": [
+      {
+        "sliceId": "W1.A05.S01",
+        "reviewResult": "approved",
+        "integrationEvidence": {
+          "path": "artifacts/evidence/W1.A05.S01.integration-R01.json",
+          "sha256": "b4091a067fc1d0b4c17a871acfd23f7d77d4339e94639b5d9631db2ad98a0e03"
+        },
+        "reviewLedger": "artifacts/evidence/W1.A05.S01.integration.review-R01.json"
+      },
+      {
+        "sliceId": "W1.A05.S02",
+        "reviewResult": "approved",
+        "integrationEvidence": {
+          "path": "artifacts/evidence/W1.A05.S02.integration-R01.json",
+          "sha256": "920cc28f3047bf126ac7be52162af5fc774626c700f1d98fcae6dbc4e1ed197a"
+        },
+        "reviewLedger": "artifacts/evidence/W1.A05.S02.integration.review-R01.json"
+      }
+    ],
+    "securityExceptionMaintenance": {
+      "commit": "e9bc0af81c44947bbc1e22f5c7a00f9a19b95140",
+      "reviewer": "agent:security-exception-reassessment",
+      "result": "approved",
+      "scope": "Eight exact development-only TypeScript native-compiler exception records renewed through 2026-09-08 without changing finding keys, status, rationale, ticket, or product/runtime scope.",
+      "liveScan": "Trivy 0.73.0 examined 601 packages and 152 findings with zero blocking findings and zero policy errors."
+    },
+    "retainedBoundary": {
+      "waveStatus": "PAUSED",
+      "waveScope": "amendment-hold",
+      "activeAmendment": "W1.A05",
+      "activeRecoveryHold": null,
+      "ordinaryWaveResumeAuthorized": false
+    },
+    "unauthorizedClaims": [
+      "ordinary W1 campaign resumption before amendment adoption",
+      "completion or approval of any ordinary W1 task or slice after the paused boundary",
+      "complete W1 product or deployment qualification",
+      "W1 completion or G1 approval",
+      "local-main integration or remote push"
+    ]
+  },
+  "authority": {
+    "approvalRecord": "planning/wave-amendment-approvals/W1.A05.json",
+    "approvalIntroductionCommit": "1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b",
+    "canonicalProposal": "planning/enabler-change-requests/ECR-0004.md",
+    "packet": "planning/enabler-change-requests/ECR-0004.packet.json",
+    "packetCommit": "25584d82ce5d6bd55e476cd746100eef0790a33d",
+    "packetSha256": "6d42142be1d8d5a76e09722ea2ba7f337cdfdc42b8c9e7fed6126851e4224e6d",
+    "governedExperienceReference": "RO-UI-ACADEMIC-MINIMAL-1.4"
+  },
+  "checks": [
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "result": "passed",
+      "summary": "All 57 executed native library tests passed and one dedicated renderer witness remained intentionally ignored for its separate harness."
+    },
+    {
+      "command": "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop",
+      "result": "passed",
+      "summary": "All 91 executed desktop tests passed with three deliberate native-harness skips; strict TypeScript, lint, and the product/reference build passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --live --report artifacts/tmp/W1.A05.exit-security.json",
+      "result": "passed",
+      "summary": "Trivy 0.73.0 examined 601 packages and 152 findings with zero blocking findings and zero policy errors at exact commit e9bc0af81c44947bbc1e22f5c7a00f9a19b95140."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_security_check; .venv\\Scripts\\ruff.exe check tools/security_check.py tests/security/test_security_check.py; .venv\\Scripts\\ruff.exe format --check tools/security_check.py tests/security/test_security_check.py",
+      "result": "passed",
+      "summary": "All 15 security-policy unit tests and focused Ruff formatting/lint checks passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only; .venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; .venv\\Scripts\\python.exe tools\\ui_conformance.py --repo . --check workflows; .venv\\Scripts\\python.exe tools\\ui_conformance.py --repo . --check accessibility",
+      "result": "passed",
+      "summary": "The built frame, exact v1.4 UI gate, 139 workflow cases, 390 keyboard cases, and 66 accessibility/responsive cases passed with truthful conflict, preserved state/focus, modal, and recovery behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\packaging_smoke_check.py --repo .; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .",
+      "result": "passed",
+      "summary": "Packaging smoke passed against locked source inputs; architecture validation passed for 13 areas, 12 modules, five interfaces, and three deployment profiles."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_active_amendment_lease_can_be_renewed_only_by_its_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_active_task_mutations_require_the_lease_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_task_lease_can_be_renewed_only_by_its_owner",
+      "result": "passed",
+      "summary": "All 30 selected governance schema and lease-control tests passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "result": "passed",
+      "summary": "The backlog is valid at 20 capabilities, 117 slices, 363 tasks, and 12 release gates; all 488 planning-review pages and generated backlog views pass."
+    },
+    {
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline",
+      "result": "passed",
+      "summary": "The release-authoritative Windows x64 host truthfully reported windows-hello/not-present; no configured interactive success was inferred or fabricated."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "summary": "No whitespace errors are present."
+    }
+  ],
+  "retainedDeferredWork": {
+    "owner": "W1-exit",
+    "items": [
+      "Configured interactive Windows Hello success remains conditional on release-authoritative hardware where the real OS probe reports available.",
+      "The complete W1 Windows x64 packaging, performance, happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, and cross-capability qualification matrix remains due once at W1 exit.",
+      "Every remaining ordinary W1 task and slice must proceed only through the approved Wave campaign and its dependency order.",
+      "G1 remains a later human approval gate after complete W1 qualification."
+    ]
+  },
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "Quiescent pause for W1.A05: CAP-02 authentication-provider refactor, Windows Hello support, and governed configurable local sign-in settings require append-only product authority and experience approval."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review"
+}
