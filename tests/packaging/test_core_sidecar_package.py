@@ -54,6 +54,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.provenance",
                     "research_observatory_core.provenance_contracts",
                     "research_observatory_core.research_intent_contracts",
+                    "research_observatory_core.workflow_contracts",
                     "research_observatory_core.migrations.runner",
                     "research_observatory_core.migrations.versions.v0007_provenance_ledger",
                     "research_observatory_core.object_store",
@@ -73,6 +74,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         self.assertIn("research_observatory_core.domain_lifecycles", contract["requiredModules"])
         self.assertIn("research_observatory_core.provenance", contract["requiredModules"])
         self.assertIn("research_observatory_core.provenance_contracts", contract["requiredModules"])
+        self.assertIn("research_observatory_core.workflow_contracts", contract["requiredModules"])
         self.assertIn(
             "research_observatory_core.migrations.versions.v0007_provenance_ledger",
             contract["requiredModules"],

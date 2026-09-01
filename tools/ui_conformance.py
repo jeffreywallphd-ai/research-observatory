@@ -1220,7 +1220,7 @@ def authority_bound_approval_errors(
 
     try:
         authority_record = json.loads(authority_payload.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError):
+    except UnicodeDecodeError, json.JSONDecodeError:
         return [*errors, f"{label}: authority approval record is not valid UTF-8 JSON"]
     if not isinstance(authority_record, dict):
         return [*errors, f"{label}: authority approval record must be an object"]
@@ -1261,16 +1261,12 @@ def authority_bound_approval_errors(
         errors.append(f"{label}: authority packet identity or ancestry is invalid")
     else:
         packet_payload, packet_error = git_blob_at(repo, packet_commit, packet_path)
-        if (
-            packet_error
-            or packet_payload is None
-            or hashlib.sha256(packet_payload).hexdigest() != packet_sha256
-        ):
+        if packet_error or packet_payload is None or hashlib.sha256(packet_payload).hexdigest() != packet_sha256:
             errors.append(f"{label}: authority packet bytes do not match the approved record")
         else:
             try:
                 packet_record = json.loads(packet_payload.decode("utf-8"))
-            except (UnicodeDecodeError, json.JSONDecodeError):
+            except UnicodeDecodeError, json.JSONDecodeError:
                 packet_record = None
             if not isinstance(packet_record, dict) or (
                 packet_record.get("documentType") != "enabler-change-request-packet"
@@ -1302,7 +1298,7 @@ def authority_bound_approval_errors(
             continue
         try:
             prior_approval = yaml.safe_load(prior_payload.decode("utf-8"))
-        except (UnicodeDecodeError, yaml.YAMLError):
+        except UnicodeDecodeError, yaml.YAMLError:
             continue
         prior_authority = prior_approval.get("authority") if isinstance(prior_approval, dict) else None
         if isinstance(prior_authority, dict) and (

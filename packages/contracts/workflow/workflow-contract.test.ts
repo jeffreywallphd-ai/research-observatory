@@ -1,0 +1,191 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
+
+import {
+  canonicalWorkflowJson,
+  decodeLegacyOperationBridge,
+  decodeWorkflowDefinition,
+  decodeWorkflowSnapshot,
+  reconstructWorkflowState,
+  legacyOperationBridgeErrors,
+  workflowDefinitionErrors,
+  workflowSnapshotErrors,
+  workflowTransitionAllowed,
+} from "./generated";
+
+const root = dirname(fileURLToPath(import.meta.url));
+const fixture = (name: string): Record<string, unknown> =>
+  JSON.parse(readFileSync(resolve(root, "fixtures", name), "utf8")) as Record<
+    string,
+    unknown
+  >;
+const clone = (value: Record<string, unknown>): Record<string, unknown> =>
+  JSON.parse(JSON.stringify(value));
+
+describe("portable workflow contract", () => {
+  it("uses one immutable definition across local and server executors", () => {
+    const definition = fixture("valid-workflow-definition.v1.json");
+    expect(workflowDefinitionErrors(definition)).toEqual([]);
+    expect(decodeWorkflowDefinition(definition)).not.toBeNull();
+    for (const profile of ["local", "server"] as const) {
+      const snapshot = fixture("valid-local-workflow-snapshot.v1.json");
+      if (profile === "server") {
+        snapshot.snapshotId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d007";
+        snapshot.executor = {
+          profile: "server",
+          adapterId: "server-conformant-workflow",
+          adapterVersion: "1.0.0",
+          contractVersion: "1.0.0",
+        };
+      }
+      expect(workflowSnapshotErrors(definition, snapshot)).toEqual([]);
+      expect(decodeWorkflowSnapshot(definition, snapshot)).not.toBeNull();
+    }
+    const polluted = clone(definition);
+    polluted.executor = "sqlite";
+    expect(decodeWorkflowDefinition(polluted)).toBeNull();
+
+    const pathSmuggling = clone(definition);
+    (
+      (pathSmuggling.steps as Array<Record<string, unknown>>)[0] as Record<
+        string,
+        unknown
+      >
+    ).activityType = "C:\\tools\\run.exe";
+    expect(decodeWorkflowDefinition(pathSmuggling)).toBeNull();
+
+    const futureVersion = clone(definition);
+    futureVersion.contractVersion = "2.0.0";
+    expect(decodeWorkflowDefinition(futureVersion)).toBeNull();
+  });
+
+  it("reconstructs exact state from canonical history after restart", () => {
+    const definition = fixture("valid-workflow-definition.v1.json");
+    const snapshot = fixture("valid-local-workflow-snapshot.v1.json");
+    const restarted = JSON.parse(canonicalWorkflowJson(snapshot)) as Record<
+      string,
+      unknown
+    >;
+    expect(workflowSnapshotErrors(definition, restarted)).toEqual([]);
+    const state = reconstructWorkflowState(definition, restarted);
+    expect(state?.["workflow-run"]?.[snapshot.workflowRunId as string]).toBe(
+      snapshot.state,
+    );
+    const jobs = snapshot.jobs as Array<Record<string, unknown>>;
+    const job = jobs[0];
+    expect(job).toBeDefined();
+    if (job === undefined) throw new Error("fixture job missing");
+    expect(state?.job?.[job.jobId as string]).toBe(job.state);
+  });
+
+  it("fails closed on illegal transition, decreasing progress, and human-decision substitution", () => {
+    const definition = fixture("valid-workflow-definition.v1.json");
+    const snapshot = fixture("valid-local-workflow-snapshot.v1.json");
+    expect(
+      workflowTransitionAllowed("workflow-run", "succeeded", "running"),
+    ).toBe(false);
+    expect(workflowTransitionAllowed("job", "running", "retry-scheduled")).toBe(
+      true,
+    );
+
+    const decreasing = clone(snapshot);
+    const attemptEvents = (
+      decreasing.history as Array<Record<string, unknown>>
+    ).filter(
+      (event) => event.entityType === "job-attempt" && event.progress !== null,
+    );
+    (attemptEvents.at(-1)?.progress as Record<string, unknown>).completedUnits =
+      40;
+    expect(workflowSnapshotErrors(definition, decreasing)).toContain(
+      "attempt-progress-is-monotonic",
+    );
+
+    const substituted = clone(snapshot);
+    const task = (substituted.humanTasks as Array<Record<string, unknown>>)[0];
+    if (task === undefined) throw new Error("fixture human task missing");
+    (task.decision as Record<string, unknown>).decisionId =
+      "018f47a2-4d6b-7f78-9f2e-7fb76c86e099";
+    expect(workflowSnapshotErrors(definition, substituted)).toContain(
+      "human-decision-is-audit-bound",
+    );
+
+    const changedCommand = clone(snapshot);
+    const jobs = changedCommand.jobs as Array<Record<string, unknown>>;
+    const duplicateJob = clone(jobs[0] as Record<string, unknown>);
+    duplicateJob.jobId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d099";
+    duplicateJob.commandFingerprint = `sha256:${"d".repeat(64)}`;
+    duplicateJob.attemptIds = [];
+    duplicateJob.currentAttemptId = null;
+    duplicateJob.state = "pending";
+    jobs.push(duplicateJob);
+    expect(workflowSnapshotErrors(definition, changedCommand)).toContain(
+      "job-idempotency-binds-command-fingerprint",
+    );
+
+    const securityLocked = clone(snapshot);
+    securityLocked.cancellation = {
+      requestedAt: "2026-08-30T12:01:26.500Z",
+      reasonCode: "application-locked",
+      interruptionKind: "security-lock",
+    };
+    expect(workflowSnapshotErrors(definition, securityLocked)).toContain(
+      "security-lock-does-not-auto-resume",
+    );
+  });
+
+  it("keeps the legacy operation ID as an exact projection bridge", () => {
+    const snapshot = fixture("valid-local-workflow-snapshot.v1.json");
+    const bridge = fixture("valid-legacy-operation-bridge.v1.json");
+    expect(legacyOperationBridgeErrors(snapshot, bridge)).toEqual([]);
+    expect(decodeLegacyOperationBridge(snapshot, bridge)).not.toBeNull();
+    const wrong = clone(bridge);
+    wrong.etag = '"op-source-review-31"';
+    expect(legacyOperationBridgeErrors(snapshot, wrong)).toContain(
+      "legacy-operation-bridge-etag-is-exact",
+    );
+  });
+
+  it("closes references, checkpoints, cancellation, and decision evidence across runtimes", () => {
+    const definition = fixture("valid-workflow-definition.v1.json");
+    const snapshot = fixture("valid-local-workflow-snapshot.v1.json");
+
+    const wrongStep = clone(snapshot);
+    (wrongStep.stepRuns as Array<Record<string, unknown>>)[0]!.stepKey =
+      "substituted-step";
+    expect(workflowSnapshotErrors(definition, wrongStep)).toContain(
+      "references-close-over-snapshot",
+    );
+
+    const checkpointGap = clone(snapshot);
+    (
+      checkpointGap.checkpoints as Array<Record<string, unknown>>
+    )[0]!.checkpointSequence = 2;
+    expect(workflowSnapshotErrors(definition, checkpointGap)).toContain(
+      "checkpoint-order-and-owner-are-consistent",
+    );
+
+    const partialCancellation = clone(snapshot);
+    partialCancellation.cancellation = {
+      requestedAt: "2026-08-30T12:01:26.500Z",
+      reasonCode: null,
+      interruptionKind: "ordinary-cancellation",
+    };
+    expect(workflowSnapshotErrors(definition, partialCancellation)).not.toEqual(
+      [],
+    );
+    expect(decodeWorkflowSnapshot(definition, partialCancellation)).toBeNull();
+
+    const missingEvidence = clone(snapshot);
+    const task = (
+      missingEvidence.humanTasks as Array<Record<string, unknown>>
+    )[0]!;
+    (task.decision as Record<string, unknown>).evidenceArtifactIds = [
+      "018f47a2-4d6b-7f78-9f2e-7fb76c86e099",
+    ];
+    expect(workflowSnapshotErrors(definition, missingEvidence)).toContain(
+      "human-decision-is-audit-bound",
+    );
+  });
+});

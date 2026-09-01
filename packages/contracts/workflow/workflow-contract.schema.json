@@ -1,0 +1,581 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/workflow/workflow-contract.schema.json",
+  "title": "Research Observatory portable workflow contract",
+  "description": "Executor-neutral workflow definition, restart-reconstructable execution snapshot, and legacy operation projection bridge.",
+  "oneOf": [
+    {"$ref": "#/$defs/WorkflowDefinition"},
+    {"$ref": "#/$defs/WorkflowSnapshot"},
+    {"$ref": "#/$defs/LegacyOperationBridge"}
+  ],
+  "x-research-observatory-semanticRules": [
+    "definition-step-keys-are-unique",
+    "definition-dependencies-close-and-are-acyclic",
+    "step-shape-matches-kind",
+    "progress-shape-is-consistent",
+    "snapshot-binds-exact-definition",
+    "references-close-over-snapshot",
+    "identities-are-unique",
+    "history-sequence-is-contiguous",
+    "history-transition-is-allowed",
+    "history-reconstructs-current-state",
+    "attempt-progress-is-monotonic",
+    "attempt-numbers-are-contiguous",
+    "job-has-at-most-one-succeeded-attempt",
+    "job-idempotency-binds-command-fingerprint",
+    "checkpoint-order-and-owner-are-consistent",
+    "succeeded-output-artifacts-are-committed",
+    "unsuccessful-attempt-has-no-accepted-output",
+    "completed-human-task-binds-decision",
+    "human-decision-is-audit-bound",
+    "security-lock-does-not-auto-resume"
+  ],
+  "$defs": {
+    "UuidV7": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "ProjectId": {
+      "type": "string",
+      "description": "Canonical project identity; UUIDv4 is retained only as the accepted predecessor bridge.",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "SemanticVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "UtcInstant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?!0000-)\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "StableCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "MediaType": {
+      "type": "string",
+      "maxLength": 96,
+      "pattern": "^[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*$"
+    },
+    "SchemaReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaId", "schemaVersion", "schemaHash"],
+      "properties": {
+        "schemaId": {"$ref": "#/$defs/StableCode"},
+        "schemaVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "schemaHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "ActorReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actorId", "actorType", "role"],
+      "properties": {
+        "actorId": {"$ref": "#/$defs/UuidV7"},
+        "actorType": {"enum": ["human", "workload", "system"]},
+        "role": {"$ref": "#/$defs/StableCode"}
+      }
+    },
+    "RetryPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxAttempts",
+        "initialBackoffMs",
+        "maximumBackoffMs",
+        "multiplierBasisPoints",
+        "jitter",
+        "retryableErrorCodes",
+        "nonRetryableErrorCodes"
+      ],
+      "properties": {
+        "maxAttempts": {"type": "integer", "minimum": 1, "maximum": 32},
+        "initialBackoffMs": {"type": "integer", "minimum": 0, "maximum": 86400000},
+        "maximumBackoffMs": {"type": "integer", "minimum": 0, "maximum": 604800000},
+        "multiplierBasisPoints": {"type": "integer", "minimum": 10000, "maximum": 100000},
+        "jitter": {"enum": ["none", "deterministic"]},
+        "retryableErrorCodes": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/StableCode"}
+        },
+        "nonRetryableErrorCodes": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/StableCode"}
+        }
+      }
+    },
+    "IdempotencyPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "keyScope"],
+      "properties": {
+        "mode": {"enum": ["required", "not-applicable"]},
+        "keyScope": {
+          "oneOf": [
+            {"$ref": "#/$defs/StableCode"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "CheckpointPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "maximumIntervalSeconds"],
+      "properties": {
+        "mode": {"enum": ["required", "optional", "forbidden"]},
+        "maximumIntervalSeconds": {
+          "oneOf": [
+            {"type": "integer", "minimum": 1, "maximum": 86400},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "CancellationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "gracePeriodMs", "partialArtifactDisposition"],
+      "properties": {
+        "mode": {"const": "cooperative"},
+        "gracePeriodMs": {"type": "integer", "minimum": 0, "maximum": 600000},
+        "partialArtifactDisposition": {"enum": ["discarded", "retained-incomplete", "quarantined"]}
+      }
+    },
+    "ActivityPermissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network", "projectFiles", "model", "capabilityScopes"],
+      "properties": {
+        "network": {"enum": ["none", "policy-controlled"]},
+        "projectFiles": {"enum": ["none", "read", "read-write"]},
+        "model": {"enum": ["none", "policy-controlled"]},
+        "capabilityScopes": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/StableCode"}
+        }
+      }
+    },
+    "ProgressDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "totalKind", "totalUnits"],
+      "properties": {
+        "unit": {"$ref": "#/$defs/StableCode"},
+        "totalKind": {"enum": ["known", "unknown", "not-applicable"]},
+        "totalUnits": {
+          "oneOf": [
+            {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "HumanTaskDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiredRole", "decisionSchema", "allowedDispositions"],
+      "properties": {
+        "requiredRole": {"$ref": "#/$defs/StableCode"},
+        "decisionSchema": {"$ref": "#/$defs/SchemaReference"},
+        "allowedDispositions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"enum": ["approved", "rejected", "deferred", "not-applicable"]}
+        }
+      }
+    },
+    "StepDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stepKey",
+        "kind",
+        "activityType",
+        "dependsOn",
+        "inputSchema",
+        "outputSchema",
+        "retryPolicy",
+        "idempotency",
+        "checkpointPolicy",
+        "cancellationPolicy",
+        "permissions",
+        "progress",
+        "humanTask"
+      ],
+      "properties": {
+        "stepKey": {"$ref": "#/$defs/StableCode"},
+        "kind": {"enum": ["activity", "human-task"]},
+        "activityType": {"oneOf": [{"$ref": "#/$defs/StableCode"}, {"type": "null"}]},
+        "dependsOn": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/StableCode"}
+        },
+        "inputSchema": {"$ref": "#/$defs/SchemaReference"},
+        "outputSchema": {"$ref": "#/$defs/SchemaReference"},
+        "retryPolicy": {"$ref": "#/$defs/RetryPolicy"},
+        "idempotency": {"$ref": "#/$defs/IdempotencyPolicy"},
+        "checkpointPolicy": {"$ref": "#/$defs/CheckpointPolicy"},
+        "cancellationPolicy": {"$ref": "#/$defs/CancellationPolicy"},
+        "permissions": {"$ref": "#/$defs/ActivityPermissions"},
+        "progress": {"$ref": "#/$defs/ProgressDefinition"},
+        "humanTask": {"oneOf": [{"$ref": "#/$defs/HumanTaskDefinition"}, {"type": "null"}]}
+      }
+    },
+    "Compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["historyContractVersion", "minimumExecutorContractVersion", "maximumExecutorContractVersion"],
+      "properties": {
+        "historyContractVersion": {"const": "1.0.0"},
+        "minimumExecutorContractVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "maximumExecutorContractVersion": {"$ref": "#/$defs/SemanticVersion"}
+      }
+    },
+    "WorkflowDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "contractVersion",
+        "workflowDefinitionId",
+        "definitionRevisionId",
+        "definitionVersion",
+        "workflowKey",
+        "createdAt",
+        "inputSchema",
+        "outputSchema",
+        "compatibility",
+        "steps"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-workflow-definition"},
+        "contractVersion": {"const": "1.0.0"},
+        "workflowDefinitionId": {"$ref": "#/$defs/UuidV7"},
+        "definitionRevisionId": {"$ref": "#/$defs/UuidV7"},
+        "definitionVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "workflowKey": {"$ref": "#/$defs/StableCode"},
+        "createdAt": {"$ref": "#/$defs/UtcInstant"},
+        "inputSchema": {"$ref": "#/$defs/SchemaReference"},
+        "outputSchema": {"$ref": "#/$defs/SchemaReference"},
+        "compatibility": {"$ref": "#/$defs/Compatibility"},
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": {"$ref": "#/$defs/StepDefinition"}
+        }
+      }
+    },
+    "DefinitionReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workflowDefinitionId", "definitionRevisionId", "definitionVersion", "contentHash"],
+      "properties": {
+        "workflowDefinitionId": {"$ref": "#/$defs/UuidV7"},
+        "definitionRevisionId": {"$ref": "#/$defs/UuidV7"},
+        "definitionVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "contentHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "IntentReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intentId", "revisionId", "contentHash"],
+      "properties": {
+        "intentId": {"$ref": "#/$defs/UuidV7"},
+        "revisionId": {"$ref": "#/$defs/UuidV7"},
+        "contentHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "PolicyReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policyId", "policyVersion", "policyHash"],
+      "properties": {
+        "policyId": {"$ref": "#/$defs/StableCode"},
+        "policyVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "policyHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "ConfigurationReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["configurationId", "configurationVersion", "configurationHash"],
+      "properties": {
+        "configurationId": {"$ref": "#/$defs/StableCode"},
+        "configurationVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "configurationHash": {"$ref": "#/$defs/Sha256"}
+      }
+    },
+    "ExecutorReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "adapterId", "adapterVersion", "contractVersion"],
+      "properties": {
+        "profile": {"enum": ["local", "server"]},
+        "adapterId": {"$ref": "#/$defs/StableCode"},
+        "adapterVersion": {"$ref": "#/$defs/SemanticVersion"},
+        "contractVersion": {"const": "1.0.0"}
+      }
+    },
+    "Progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "unit", "completedUnits", "totalUnits"],
+      "properties": {
+        "kind": {"enum": ["quantified", "unknown", "not-applicable"]},
+        "unit": {"$ref": "#/$defs/StableCode"},
+        "completedUnits": {"oneOf": [{"type": "integer", "minimum": 0, "maximum": 9007199254740991}, {"type": "null"}]},
+        "totalUnits": {"oneOf": [{"type": "integer", "minimum": 0, "maximum": 9007199254740991}, {"type": "null"}]}
+      }
+    },
+    "Cancellation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requestedAt", "reasonCode", "interruptionKind"],
+      "properties": {
+        "requestedAt": {"oneOf": [{"$ref": "#/$defs/UtcInstant"}, {"type": "null"}]},
+        "reasonCode": {"oneOf": [{"$ref": "#/$defs/StableCode"}, {"type": "null"}]},
+        "interruptionKind": {
+          "oneOf": [
+            {"enum": ["user-cancel", "security-lock", "policy", "dependency"]},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "StepRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stepRunId", "stepKey", "state", "sequence", "progress", "jobIds", "humanTaskIds", "inputArtifactIds", "outputArtifactIds"],
+      "properties": {
+        "stepRunId": {"$ref": "#/$defs/UuidV7"},
+        "stepKey": {"$ref": "#/$defs/StableCode"},
+        "state": {"enum": ["pending", "runnable", "running", "waiting-human", "cancelling", "cancelled", "failed", "succeeded", "skipped", "superseded"]},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "progress": {"$ref": "#/$defs/Progress"},
+        "jobIds": {"type": "array", "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "humanTaskIds": {"type": "array", "maxItems": 64, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "inputArtifactIds": {"type": "array", "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "outputArtifactIds": {"type": "array", "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}}
+      }
+    },
+    "Job": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["jobId", "stepRunId", "state", "sequence", "idempotencyKey", "commandFingerprint", "attemptIds", "currentAttemptId", "inputArtifactIds", "outputArtifactIds", "cancellation"],
+      "properties": {
+        "jobId": {"$ref": "#/$defs/UuidV7"},
+        "stepRunId": {"$ref": "#/$defs/UuidV7"},
+        "state": {"enum": ["pending", "runnable", "claimed", "running", "retry-scheduled", "cancelling", "cancelled", "failed", "succeeded", "superseded"]},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "idempotencyKey": {"$ref": "#/$defs/Sha256"},
+        "commandFingerprint": {"$ref": "#/$defs/Sha256"},
+        "attemptIds": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "currentAttemptId": {"oneOf": [{"$ref": "#/$defs/UuidV7"}, {"type": "null"}]},
+        "inputArtifactIds": {"type": "array", "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "outputArtifactIds": {"type": "array", "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "cancellation": {"$ref": "#/$defs/Cancellation"}
+      }
+    },
+    "Attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attemptId", "jobId", "attemptNumber", "state", "sequence", "progress", "startedAt", "endedAt", "checkpointIds", "outputArtifactIds", "provenanceActivityId", "diagnosticCode"],
+      "properties": {
+        "attemptId": {"$ref": "#/$defs/UuidV7"},
+        "jobId": {"$ref": "#/$defs/UuidV7"},
+        "attemptNumber": {"type": "integer", "minimum": 1, "maximum": 32},
+        "state": {"enum": ["claimed", "running", "succeeded", "failed", "cancelled", "abandoned"]},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "progress": {"$ref": "#/$defs/Progress"},
+        "startedAt": {"oneOf": [{"$ref": "#/$defs/UtcInstant"}, {"type": "null"}]},
+        "endedAt": {"oneOf": [{"$ref": "#/$defs/UtcInstant"}, {"type": "null"}]},
+        "checkpointIds": {"type": "array", "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "outputArtifactIds": {"type": "array", "maxItems": 1024, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "provenanceActivityId": {"$ref": "#/$defs/UuidV7"},
+        "diagnosticCode": {"oneOf": [{"$ref": "#/$defs/StableCode"}, {"type": "null"}]}
+      }
+    },
+    "Checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkpointId", "attemptId", "checkpointSequence", "historySequence", "createdAt", "stateHash", "payloadArtifactId"],
+      "properties": {
+        "checkpointId": {"$ref": "#/$defs/UuidV7"},
+        "attemptId": {"$ref": "#/$defs/UuidV7"},
+        "checkpointSequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "historySequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "createdAt": {"$ref": "#/$defs/UtcInstant"},
+        "stateHash": {"$ref": "#/$defs/Sha256"},
+        "payloadArtifactId": {"$ref": "#/$defs/UuidV7"}
+      }
+    },
+    "Artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "revisionId", "contentHash", "mediaType", "role", "disposition", "createdByAttemptId", "provenanceEntityId"],
+      "properties": {
+        "artifactId": {"$ref": "#/$defs/UuidV7"},
+        "revisionId": {"$ref": "#/$defs/UuidV7"},
+        "contentHash": {"$ref": "#/$defs/Sha256"},
+        "mediaType": {"$ref": "#/$defs/MediaType"},
+        "role": {"enum": ["input", "output", "checkpoint", "diagnostic"]},
+        "disposition": {"enum": ["committed", "retained-incomplete", "quarantined", "discarded"]},
+        "createdByAttemptId": {"oneOf": [{"$ref": "#/$defs/UuidV7"}, {"type": "null"}]},
+        "provenanceEntityId": {"oneOf": [{"$ref": "#/$defs/UuidV7"}, {"type": "null"}]}
+      }
+    },
+    "HumanDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decisionId", "disposition", "decidedBy", "decidedAt", "evidenceArtifactIds", "rationaleArtifactId", "consequenceCode"],
+      "properties": {
+        "decisionId": {"$ref": "#/$defs/UuidV7"},
+        "disposition": {"enum": ["approved", "rejected", "deferred", "not-applicable"]},
+        "decidedBy": {"$ref": "#/$defs/ActorReference"},
+        "decidedAt": {"$ref": "#/$defs/UtcInstant"},
+        "evidenceArtifactIds": {"type": "array", "maxItems": 256, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "rationaleArtifactId": {"oneOf": [{"$ref": "#/$defs/UuidV7"}, {"type": "null"}]},
+        "consequenceCode": {"$ref": "#/$defs/StableCode"}
+      }
+    },
+    "HumanTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["humanTaskId", "workflowRunId", "definitionRevisionId", "stepRunId", "state", "sequence", "requestedAt", "requestedBy", "requiredRole", "assignedTo", "evidenceArtifactIds", "decision"],
+      "properties": {
+        "humanTaskId": {"$ref": "#/$defs/UuidV7"},
+        "workflowRunId": {"$ref": "#/$defs/UuidV7"},
+        "definitionRevisionId": {"$ref": "#/$defs/UuidV7"},
+        "stepRunId": {"$ref": "#/$defs/UuidV7"},
+        "state": {"enum": ["requested", "claimed", "completed", "cancelled", "expired", "superseded"]},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "requestedAt": {"$ref": "#/$defs/UtcInstant"},
+        "requestedBy": {"$ref": "#/$defs/ActorReference"},
+        "requiredRole": {"$ref": "#/$defs/StableCode"},
+        "assignedTo": {"oneOf": [{"$ref": "#/$defs/ActorReference"}, {"type": "null"}]},
+        "evidenceArtifactIds": {"type": "array", "maxItems": 256, "uniqueItems": true, "items": {"$ref": "#/$defs/UuidV7"}},
+        "decision": {"oneOf": [{"$ref": "#/$defs/HumanDecision"}, {"type": "null"}]}
+      }
+    },
+    "TransitionEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventId", "sequence", "entityType", "entityId", "fromState", "toState", "occurredAt", "actor", "reasonCode", "progress", "decisionId", "checkpointId", "interruptionKind"],
+      "properties": {
+        "eventId": {"$ref": "#/$defs/UuidV7"},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "entityType": {"enum": ["workflow-run", "workflow-step", "job", "job-attempt", "human-task"]},
+        "entityId": {"$ref": "#/$defs/UuidV7"},
+        "fromState": {"oneOf": [{"$ref": "#/$defs/StableCode"}, {"type": "null"}]},
+        "toState": {"$ref": "#/$defs/StableCode"},
+        "occurredAt": {"$ref": "#/$defs/UtcInstant"},
+        "actor": {"$ref": "#/$defs/ActorReference"},
+        "reasonCode": {"$ref": "#/$defs/StableCode"},
+        "progress": {"oneOf": [{"$ref": "#/$defs/Progress"}, {"type": "null"}]},
+        "decisionId": {"oneOf": [{"$ref": "#/$defs/UuidV7"}, {"type": "null"}]},
+        "checkpointId": {"oneOf": [{"$ref": "#/$defs/UuidV7"}, {"type": "null"}]},
+        "interruptionKind": {
+          "oneOf": [
+            {"enum": ["ordinary-restart", "user-cancel", "security-lock", "policy", "dependency"]},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "WorkflowSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "contractVersion",
+        "snapshotId",
+        "snapshotRevision",
+        "projectId",
+        "workflowRunId",
+        "definition",
+        "intent",
+        "policy",
+        "configuration",
+        "executor",
+        "state",
+        "progress",
+        "cancellation",
+        "createdAt",
+        "updatedAt",
+        "sequence",
+        "stepRuns",
+        "jobs",
+        "attempts",
+        "checkpoints",
+        "artifacts",
+        "humanTasks",
+        "history"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-workflow-snapshot"},
+        "contractVersion": {"const": "1.0.0"},
+        "snapshotId": {"$ref": "#/$defs/UuidV7"},
+        "snapshotRevision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "projectId": {"$ref": "#/$defs/ProjectId"},
+        "workflowRunId": {"$ref": "#/$defs/UuidV7"},
+        "definition": {"$ref": "#/$defs/DefinitionReference"},
+        "intent": {"$ref": "#/$defs/IntentReference"},
+        "policy": {"$ref": "#/$defs/PolicyReference"},
+        "configuration": {"$ref": "#/$defs/ConfigurationReference"},
+        "executor": {"$ref": "#/$defs/ExecutorReference"},
+        "state": {"enum": ["accepted", "running", "waiting-human", "paused", "cancelling", "succeeded", "failed", "cancelled"]},
+        "progress": {"$ref": "#/$defs/Progress"},
+        "cancellation": {"$ref": "#/$defs/Cancellation"},
+        "createdAt": {"$ref": "#/$defs/UtcInstant"},
+        "updatedAt": {"$ref": "#/$defs/UtcInstant"},
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "stepRuns": {"type": "array", "minItems": 1, "maxItems": 256, "items": {"$ref": "#/$defs/StepRun"}},
+        "jobs": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/Job"}},
+        "attempts": {"type": "array", "maxItems": 131072, "items": {"$ref": "#/$defs/Attempt"}},
+        "checkpoints": {"type": "array", "maxItems": 131072, "items": {"$ref": "#/$defs/Checkpoint"}},
+        "artifacts": {"type": "array", "maxItems": 131072, "items": {"$ref": "#/$defs/Artifact"}},
+        "humanTasks": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/HumanTask"}},
+        "history": {"type": "array", "minItems": 1, "maxItems": 1000000, "items": {"$ref": "#/$defs/TransitionEvent"}}
+      }
+    },
+    "LegacyOperationBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "documentType", "contractVersion", "legacyOperationId", "workflowRunId", "workflowSnapshotRevision", "operationSequence", "operationState", "cancellationRequested", "etag"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-legacy-operation-bridge"},
+        "contractVersion": {"const": "1.0.0"},
+        "legacyOperationId": {"type": "string", "pattern": "^op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"},
+        "workflowRunId": {"$ref": "#/$defs/UuidV7"},
+        "workflowSnapshotRevision": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "operationSequence": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "operationState": {"enum": ["queued", "running", "succeeded", "failed", "cancelled"]},
+        "cancellationRequested": {"type": "boolean"},
+        "etag": {"type": "string", "pattern": "^\"op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?-[0-9]+\"$"}
+      }
+    }
+  }
+}

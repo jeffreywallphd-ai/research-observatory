@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-workflow-definition",
+  "contractVersion": "1.0.0",
+  "workflowDefinitionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d001",
+  "definitionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d002",
+  "definitionVersion": "1.0.0",
+  "workflowKey": "source-review",
+  "createdAt": "2026-08-30T12:00:00.000Z",
+  "inputSchema": {
+    "schemaId": "source-review-input",
+    "schemaVersion": "1.0.0",
+    "schemaHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "outputSchema": {
+    "schemaId": "source-review-output",
+    "schemaVersion": "1.0.0",
+    "schemaHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "compatibility": {
+    "historyContractVersion": "1.0.0",
+    "minimumExecutorContractVersion": "1.0.0",
+    "maximumExecutorContractVersion": "1.0.0"
+  },
+  "steps": [
+    {
+      "stepKey": "acquire-source",
+      "kind": "activity",
+      "activityType": "source-acquisition",
+      "dependsOn": [],
+      "inputSchema": {
+        "schemaId": "source-acquisition-input",
+        "schemaVersion": "1.0.0",
+        "schemaHash": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      "outputSchema": {
+        "schemaId": "source-acquisition-output",
+        "schemaVersion": "1.0.0",
+        "schemaHash": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      "retryPolicy": {
+        "maxAttempts": 3,
+        "initialBackoffMs": 1000,
+        "maximumBackoffMs": 10000,
+        "multiplierBasisPoints": 20000,
+        "jitter": "deterministic",
+        "retryableErrorCodes": ["dependency-unavailable"],
+        "nonRetryableErrorCodes": ["rights-denied", "policy-denied"]
+      },
+      "idempotency": {
+        "mode": "required",
+        "keyScope": "workflow-step-inputs"
+      },
+      "checkpointPolicy": {
+        "mode": "optional",
+        "maximumIntervalSeconds": 60
+      },
+      "cancellationPolicy": {
+        "mode": "cooperative",
+        "gracePeriodMs": 5000,
+        "partialArtifactDisposition": "retained-incomplete"
+      },
+      "permissions": {
+        "network": "policy-controlled",
+        "projectFiles": "read-write",
+        "model": "none",
+        "capabilityScopes": ["objects-write", "sources-read"]
+      },
+      "progress": {
+        "unit": "records",
+        "totalKind": "known",
+        "totalUnits": 100
+      },
+      "humanTask": null
+    },
+    {
+      "stepKey": "review-source",
+      "kind": "human-task",
+      "activityType": null,
+      "dependsOn": ["acquire-source"],
+      "inputSchema": {
+        "schemaId": "source-review-decision-input",
+        "schemaVersion": "1.0.0",
+        "schemaHash": "sha256:5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "outputSchema": {
+        "schemaId": "source-review-decision-output",
+        "schemaVersion": "1.0.0",
+        "schemaHash": "sha256:6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      "retryPolicy": {
+        "maxAttempts": 1,
+        "initialBackoffMs": 0,
+        "maximumBackoffMs": 0,
+        "multiplierBasisPoints": 10000,
+        "jitter": "none",
+        "retryableErrorCodes": [],
+        "nonRetryableErrorCodes": []
+      },
+      "idempotency": {
+        "mode": "required",
+        "keyScope": "human-task-decision"
+      },
+      "checkpointPolicy": {
+        "mode": "forbidden",
+        "maximumIntervalSeconds": null
+      },
+      "cancellationPolicy": {
+        "mode": "cooperative",
+        "gracePeriodMs": 0,
+        "partialArtifactDisposition": "discarded"
+      },
+      "permissions": {
+        "network": "none",
+        "projectFiles": "none",
+        "model": "none",
+        "capabilityScopes": []
+      },
+      "progress": {
+        "unit": "decisions",
+        "totalKind": "known",
+        "totalUnits": 1
+      },
+      "humanTask": {
+        "requiredRole": "researcher",
+        "decisionSchema": {
+          "schemaId": "source-review-human-decision",
+          "schemaVersion": "1.0.0",
+          "schemaHash": "sha256:7777777777777777777777777777777777777777777777777777777777777777"
+        },
+        "allowedDispositions": ["approved", "rejected", "deferred", "not-applicable"]
+      }
+    }
+  ]
+}

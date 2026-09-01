@@ -562,8 +562,9 @@ def reviewed_preimplementation_maintenance_errors(
                 final_review_introduction is not None
                 and final_review_introduction != cutover
                 and is_ancestor(repo, final_review_introduction, cutover)
+                and isinstance(initial_changed_paths, list)
             ):
-                historical_control_paths = set(str(path) for path in initial_changed_paths)
+                historical_control_paths = {str(path) for path in initial_changed_paths}
         except ValueError:
             pass
         maintenance_control_paths = MAINTENANCE_CONTROL_PATHS | historical_control_paths | maintenance_evidence_paths
