@@ -19985,7 +19985,7 @@
         {
           "task_id": "W1.A05.T04",
           "title": "Implement Application Settings Security & sign-in",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "mode": "append-only",
           "latest_review": {
             "reviewer": "agent:t04-r02-independent-reviewer",
@@ -20331,7 +20331,74 @@
                 }
               }
             ],
-            "current_submission": null
+            "current_submission": {
+              "id": "R03",
+              "submitted_by": "codex",
+              "submitted_at": "2026-09-01T12:23:18+00:00",
+              "candidate_commit": "d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8",
+              "base_commit": "b079bdd68e648d8059b64b984eaa841059312fe0",
+              "branch": "codex/w1-windows-local-runtime",
+              "evidence_reference": {
+                "type": "criterion-manifest",
+                "path": "artifacts/evidence/W1.A05.T04.remediation-02.json",
+                "sha256": "28e5f740c7bee8da3f0be29aebbdbbf649f9260820d0844696ae2e7c5edc7b1a",
+                "commit": "d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8",
+                "recorded_at": "2026-09-01T12:23:18+00:00"
+              },
+              "acceptance_criteria_sha256": "9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896",
+              "changed_paths": [
+                "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+                "apps/desktop/src/app/applicationSettings.test.ts",
+                "apps/desktop/src/app/applicationSettings.ts",
+                "artifacts/evidence/W1.A05.T04.remediation-01.json",
+                "artifacts/evidence/W1.A05.T04.review-R02.json",
+                "artifacts/evidence/ui-change/W1.A05.T04.json",
+                "docs/automation/project-automation-guide.md",
+                "docs/planning-implementation-plan.md",
+                "planning/README.md",
+                "planning/backlog.yaml",
+                "planning/governance-migrations/GOV-MAINT-0009.json",
+                "planning/governance-migrations/GOV-MAINT-0009.review-R01.json",
+                "planning/review-site/enablers/ECR-0004.html",
+                "planning/review-site/manifest.json",
+                "planning/status-summary.md",
+                "tests/foundation/test_taskctl_workflow.py",
+                "tools/desktop_app_check.py",
+                "tools/taskctl.py"
+              ],
+              "selected_checks": [
+                "npm test --prefix apps/desktop; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop",
+                ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+                "node apps/desktop/scripts/application-lock-renderer-integration.mjs",
+                ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check workflows; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check accessibility",
+                ".venv\\Scripts\\ruff.exe check tools/desktop_app_check.py; .venv\\Scripts\\ruff.exe format --check tools/desktop_app_check.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b079bdd68e648d8059b64b984eaa841059312fe0..41d1feaff28eea1357e3e7e7c9db494e9ec6bb06",
+                ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base b079bdd68e648d8059b64b984eaa841059312fe0 --affected-head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-R03-affected-selection.json",
+                "node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationSettings.test.ts; .venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_active_amendment_lease_can_be_renewed_only_by_its_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_active_task_mutations_require_the_lease_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_task_lease_can_be_renewed_only_by_its_owner; .venv\\Scripts\\ruff.exe check tools/taskctl.py tests/foundation/test_taskctl_workflow.py; .venv\\Scripts\\ruff.exe format --check tools/taskctl.py tests/foundation/test_taskctl_workflow.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b079bdd68e648d8059b64b984eaa841059312fe0..d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8"
+              ],
+              "deferred_checks": [
+                "R02 independently replayed all 66 pinned visual captures. R03 changes no approved reference, visual baseline, CSS, token, layout primitive, route, or package byte; actual product conflict rendering and two responsive product cases are covered by the built-frame browser.",
+                "A real configured Windows Hello success prompt remains hardware-conditional on a configured device; no hardware claim is fabricated.",
+                "W1.A05.S02 owns accumulated security/experience slice integration, and the complete W1 Windows-x64 packaging, performance, and cross-capability matrix remains due once at W1 exit."
+              ],
+              "selection_rationale": "W1.A05.T04-R02-F01 remained because R02 removed the false-success authority defect but derived its terminal message from successful cleanup rather than from the relationship between the observed native policy and the prepared source. That conflated two different facts: this request did not publish, and the prior policy is still authoritative. The workspace correctly projected the observed different snapshot, making its accompanying unchanged message contradictory. R03 separates those facts with a complete source-policy comparison after cleanup and an explicit conflict result when the observed policy differs. Credible incremental failures are misclassifying a truly unchanged source as conflict, suppressing the authoritative observed snapshot, retaining the false prior-policy message, using a non-danger presentation, or failing the screen-reader announcement. The two controller substitutions plus the built-product snapshot/alert/live-region interaction directly cover those risks while replaying the prior settings, lock, focus, and recovery browser union. An ordinary session interruption expired the active amendment lease after the product bytes were frozen; independently approved GOV-MAINT-0009 restored only the exact owner-bound temporal lease and the resulting descendant adds no product or amendment authority.",
+              "selection_sha256": "415a9b8dd88e12fc909673f198fe5c8d74e6936d1b71a1c8e437ce6e13db24ce",
+              "prior_attempt_id": "R02",
+              "open_finding_ids": [
+                "W1.A05.T04-R02-F01"
+              ],
+              "root_cause_analysis": "R02 correctly stopped a conflicting observed policy from becoming a success result, but it used the cleanup receipt to select an unchanged terminal message without rechecking whether the observed policy still equaled the prepared source. The result object carried the different authoritative snapshot while its message described the prior snapshot, so visual and assistive outputs contradicted each other. R03 makes source-policy equality explicit and derives conflict messaging from that same comparison.",
+              "selected_command_ids": [
+                "foundation:ui-change",
+                "foundation:quality",
+                "foundation:backlog",
+                "desktop:application",
+                "desktop:unit",
+                "desktop:ui-workflow",
+                "desktop:ui-accessibility",
+                "security-local:unit"
+              ],
+              "packet_sha256": "7f0619464e329555a7425bec4cb7c0d8d3b0135c45be5c98e25ca9bcb5c0225f"
+            }
           }
         }
       ],

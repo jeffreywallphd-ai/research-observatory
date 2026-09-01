@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 46c51ecd6a858dd85574344e3ea4d1e95539d6dd84959c17dcf50475157dac20
+source_sha256: 426a055f1ec6694a85151a56262b3f138368fac4aa11875fc901b8c78468c2d4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1304,7 +1304,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A05.T04 - Implement Application Settings Security & sign-in
 
-**Status / owner / review:** `IN_PROGRESS` / codex / agent:t04-r02-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / agent:t04-r02-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A05.B00`, `W1.A05.T03`
 
@@ -1330,6 +1330,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/W1.A05.T04.json` at `50ea2c5200e67b8416ba00a36c140ae6a5cda00c`
 - `artifacts/evidence/W1.A05.T04.remediation-01.json` at `b079bdd68e648d8059b64b984eaa841059312fe0`
+- `artifacts/evidence/W1.A05.T04.remediation-02.json` at `d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8`
 
 #### Review history — W1.A05.T04
 
@@ -1399,7 +1400,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `W1.A05.T04-R01-F02` `fixed` — The previous guided workspace remains mounted inside a hidden, aria-hidden, inert layer while Application Settings is active. Independent built-product replay created and opened a project, changed the Research Intent use case and objective without saving, opened settings, returned, and retained the exact project, workspace, field values, and intended top-bar focus.
 - `W1.A05.T04-R01-F03` `fixed` — Locked recovery places all background content in an inert and aria-hidden subtree, the global handler suppresses Ctrl+K, Ctrl+/, and Alt+H while confirmation is active, focus stays inside the alertdialog, and no deferred dialog appears after unlock. Application Settings captures the actual top-bar, sidebar, or command-result element and independently restores all three connected initiators with a stable fallback. The built-product replay and full workflow/accessibility/visual conformance matrix passed.
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `7f0619464e329555a7425bec4cb7c0d8d3b0135c45be5c98e25ca9bcb5c0225f`
+
+- Candidate / base / branch: `d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8` / `b079bdd68e648d8059b64b984eaa841059312fe0` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T12:23:18+00:00`
+- Evidence: `artifacts/evidence/W1.A05.T04.remediation-02.json` / `28e5f740c7bee8da3f0be29aebbdbbf649f9260820d0844696ae2e7c5edc7b1a` / `d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8`
+- Acceptance-criteria SHA-256: `9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896`
+- Verification-selection SHA-256: `415a9b8dd88e12fc909673f198fe5c8d74e6936d1b71a1c8e437ce6e13db24ce`
+- Changed paths: `apps/desktop/src/app/ApplicationSettingsWorkspace.tsx`, `apps/desktop/src/app/applicationSettings.test.ts`, `apps/desktop/src/app/applicationSettings.ts`, `artifacts/evidence/W1.A05.T04.remediation-01.json`, `artifacts/evidence/W1.A05.T04.review-R02.json`, `artifacts/evidence/ui-change/W1.A05.T04.json`, `docs/automation/project-automation-guide.md`, `docs/planning-implementation-plan.md`, `planning/README.md`, `planning/backlog.yaml`, `planning/governance-migrations/GOV-MAINT-0009.json`, `planning/governance-migrations/GOV-MAINT-0009.review-R01.json`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_taskctl_workflow.py`, `tools/desktop_app_check.py`, `tools/taskctl.py`
+- Selected checks: `npm test --prefix apps/desktop; apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; node apps/desktop/scripts/lint.mjs; npm run build --prefix apps/desktop`, `.venv\Scripts\python.exe tools/desktop_app_check.py --repo . --built-frame-only`, `node apps/desktop/scripts/application-lock-renderer-integration.mjs`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; .venv\Scripts\python.exe tools/ui_conformance.py --repo . --check workflows; .venv\Scripts\python.exe tools/ui_conformance.py --repo . --check accessibility`, `.venv\Scripts\ruff.exe check tools/desktop_app_check.py; .venv\Scripts\ruff.exe format --check tools/desktop_app_check.py; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b079bdd68e648d8059b64b984eaa841059312fe0..41d1feaff28eea1357e3e7e7c9db494e9ec6bb06`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base b079bdd68e648d8059b64b984eaa841059312fe0 --affected-head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.T04-R03-affected-selection.json`, `node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationSettings.test.ts; .venv\Scripts\python.exe -m unittest tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_active_amendment_lease_can_be_renewed_only_by_its_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_active_task_mutations_require_the_lease_owner tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_expired_task_lease_can_be_renewed_only_by_its_owner; .venv\Scripts\ruff.exe check tools/taskctl.py tests/foundation/test_taskctl_workflow.py; .venv\Scripts\ruff.exe format --check tools/taskctl.py tests/foundation/test_taskctl_workflow.py; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b079bdd68e648d8059b64b984eaa841059312fe0..d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8`
+- Deferred checks: `R02 independently replayed all 66 pinned visual captures. R03 changes no approved reference, visual baseline, CSS, token, layout primitive, route, or package byte; actual product conflict rendering and two responsive product cases are covered by the built-frame browser.`, `A real configured Windows Hello success prompt remains hardware-conditional on a configured device; no hardware claim is fabricated.`, `W1.A05.S02 owns accumulated security/experience slice integration, and the complete W1 Windows-x64 packaging, performance, and cross-capability matrix remains due once at W1 exit.`
+- Selection rationale: W1.A05.T04-R02-F01 remained because R02 removed the false-success authority defect but derived its terminal message from successful cleanup rather than from the relationship between the observed native policy and the prepared source. That conflated two different facts: this request did not publish, and the prior policy is still authoritative. The workspace correctly projected the observed different snapshot, making its accompanying unchanged message contradictory. R03 separates those facts with a complete source-policy comparison after cleanup and an explicit conflict result when the observed policy differs. Credible incremental failures are misclassifying a truly unchanged source as conflict, suppressing the authoritative observed snapshot, retaining the false prior-policy message, using a non-danger presentation, or failing the screen-reader announcement. The two controller substitutions plus the built-product snapshot/alert/live-region interaction directly cover those risks while replaying the prior settings, lock, focus, and recovery browser union. An ordinary session interruption expired the active amendment lease after the product bytes were frozen; independently approved GOV-MAINT-0009 restored only the exact owner-bound temporal lease and the resulting descendant adds no product or amendment authority.
+- Prior round / replayed open findings: `R02` / `W1.A05.T04-R02-F01`
+- Root-cause escalation: R02 correctly stopped a conflicting observed policy from becoming a success result, but it used the cleanup receipt to select an unchanged terminal message without rechecking whether the observed policy still equaled the prepared source. The result object carried the different authoritative snapshot while its message described the prior snapshot, so visual and assistive outputs contradicted each other. R03 makes source-policy equality explicit and derives conflict messaging from that same comparison.
 
 **Current latest-review projection:** `changes-requested` by agent:t04-r02-independent-reviewer at `2026-09-01T11:48:13+00:00`
 
