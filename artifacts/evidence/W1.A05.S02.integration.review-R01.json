@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-slice-integration-review",
+  "sliceId": "W1.A05.S02",
+  "attemptId": "R01",
+  "submissionCommit": "bf35d61b6ae492b9ea6b2d8513ef9997459e2d2c",
+  "integrationEvidence": {
+    "path": "artifacts/evidence/W1.A05.S02.integration-R01.json",
+    "sha256": "920cc28f3047bf126ac7be52162af5fc774626c700f1d98fcae6dbc4e1ed197a",
+    "gitBlob": "6d593e70d0797d54f31a97ede325e2fb991f6e76",
+    "stateCommit": "74cf6e52d1d468ed9712016dd3eadc329d0231c9",
+    "productCandidateCommit": "41d1feaff28eea1357e3e7e7c9db494e9ec6bb06"
+  },
+  "reviewer": "agent:w1-a05-s02-security-experience-integration-reviewer",
+  "reviewedAt": "2026-09-01T08:43:34.5338212-04:00",
+  "disposition": "approved",
+  "notes": "The exact W1.A05.S02 R01 integration submission is approved with no blocking or nonblocking acceptance-bound finding. Human-approved ECR-0004/W1.A05 authority reproduces at SHA-256 6d42142be1d8d5a76e09722ea2ba7f337cdfdc42b8c9e7fed6126851e4224e6d, and its immutable packet commit is ancestral to the product and submission. Product freeze 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06 is a strict ancestor of all-task-approved state 74cf6e52d1d468ed9712016dd3eadc329d0231c9, which is a strict ancestor of submission bf35d61b6ae492b9ea6b2d8513ef9997459e2d2c; the final state-to-submission delta adds only the exact integration packet. Both S02 tasks are DONE with approved final reviews, all four final task evidence/review files reproduce the packet hashes, and no final task finding is open. Independent risk-selected replay confirms exactly none, windows-password, and windows-hello; explicit absent-state none and exact valid-v1 migration; invalid-state lockout; configured-provider or same-SID recovery proof before confirmed compare-and-swap publication; one release-authoritative process per stable canonical application root; abrupt-exit and abandoned-mutex recovery; byte-stable adverse outcomes; no silent downgrade or Hello-to-password fallback; and secret-free native proof. The built workspace keeps Application Settings separate from Project Settings, preserves the open project and unsaved guided-workflow position, restores the actual initiating focus, keeps locked recovery modal and shortcut-safe, and presents current/default/prerequisite/recovery truth. Different observed policy state produces danger feedback and the same truthful live announcement rather than a saved, unchanged, or prior-active claim. The approved RO-UI-ACADEMIC-MINIMAL-1.4 contract, workflow, keyboard, responsive, and accessibility checks pass. The real Windows x64 probe reports windows-hello/not-present, so configured interactive Hello success remains a conditional release-platform obligation and is not inferred from deterministic provider tests. Packaging, performance, the amendment-exit cross-slice checkpoint, and the complete cross-capability W1 qualification matrix remain at their existing downstream gates; this disposition does not claim amendment adoption, W1 completion, or release approval.",
+  "checks": [
+    {
+      "check": "exact authority, submission, task evidence, review state, and ancestry",
+      "result": "passed",
+      "details": "The ECR-0004 packet reproduces the approval-bound SHA-256. The ordered approved-authority -> product-freeze -> all-task-approved-state -> submission ancestry passed. State-to-submission adds only W1.A05.S02.integration-R01.json. The integration packet reproduces SHA-256 920cc28f3047bf126ac7be52162af5fc774626c700f1d98fcae6dbc4e1ed197a and Git blob 6d593e70d0797d54f31a97ede325e2fb991f6e76. T03 remediation/R02 and T04 remediation/R03 reproduce the four declared SHA-256 values; their ledgers record approved, approvalAvailable true, zero findings, and the expected prior-finding closures. T03 candidate c94ab3ef76529f7eee0d2f002423c21aec3e1161 and T04 submission candidate d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8 are ancestral to the approved state, while no product path changes after product freeze 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06. The reviewed range passes git diff --check."
+    },
+    {
+      "check": "combined native policy, migration, proof, publication, process, restart, and recovery boundary",
+      "result": "passed",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked --offline",
+      "details": "All 57 executed native library tests passed and the dedicated renderer witness was intentionally ignored here. The union covers exact absent/predecessor migration, closed three-mode parsing, invalid-state lockout, verification ordering, protected-to-none and same-SID recovery, warning/confirmation, receipt replay, atomic compare-and-swap publication, cancellation/denial/busy/unavailability/failure/expiry/stale-writer/write-failure preservation, one canonical-root process, abrupt termination, abandoned publication mutex, locked restart, manual/idle behavior, generation races, Core-start recovery, and redacted audit. Source inspection confirms release construction uses ApplicationLockManager::acquire before manager/Core startup and the process existence guard is retained for manager lifetime."
+    },
+    {
+      "check": "strict native/renderer policy and governed workspace integration",
+      "result": "passed",
+      "command": "node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/applicationLock.test.ts apps/desktop/src/app/ApplicationRuntime.test.tsx apps/desktop/src/app/applicationSettings.test.ts apps/desktop/src/app/ApplicationSettingsWorkspace.test.tsx; node apps/desktop/scripts/application-lock-renderer-integration.mjs",
+      "details": "All 37 focused renderer/runtime/settings/workspace tests passed. The real Rust contract witness and all three TypeScript bridge tests also passed. Decoding stays closed and native-success-only; protected transitions carry exact normalized target and predecessor authority; wrong-profile and requested-60/observed-0 conflicts cannot report success or unchanged; draft state remains separate from authoritative state; project/workflow position and exact focus origin survive the settings detour; locked recovery remains modal, shortcut-safe, and secret-free."
+    },
+    {
+      "check": "Windows proof, portable security contract, and credential safety",
+      "result": "passed",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_application_lock_source tests.contracts.test_credential_store_contract tests.security.test_windows_credentials",
+      "details": "Eighteen tests passed and one redirected-vault symlink case was skipped because directory symlinks are unavailable to the current Windows token. The passing set pins lock-generation authority, the exact three modes/default, non-persisting current-process EqualSid password proof, HWND-bound OS-owned Hello with no PIN or biometric capture, no Hello fallback, user-scoped secret-safe persistence, compare-and-swap, redaction, corruption handling, and recoverable ciphertext."
+    },
+    {
+      "check": "built-product experience, recovery, preservation, and truthful conflict output",
+      "result": "passed",
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "details": "The built frame returned ok:true with no critical violations. All lock reconciliation cases, settings draft reconciliation, project/workflow-position preservation, actual-origin focus restoration, locked modal/background inertness, global-shortcut suppression, no deferred dialog, recovery cancellation/retry/Core-ready behavior, exact danger/live-region conflict announcement, two responsive cases, and six light/dark 100/150/200-percent design-system cases passed."
+    },
+    {
+      "check": "approved experience authority, workflow, keyboard, responsive, and accessibility conformance",
+      "result": "passed",
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bd8d752a0fcec1f40b1a8abe59b793c783946e4e --head 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check workflows; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "details": "The exact eight governed UI paths remain bound to approved reference RO-UI-ACADEMIC-MINIMAL-1.4 and package SHA-256 034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e. All 14 workflow profiles, 139 browser cases, 390 keyboard cases, 33 accessibility pages, and 66 responsive/visual cases passed."
+    },
+    {
+      "check": "real release-platform Windows Hello availability without fabricated success",
+      "result": "passed with conditional residual",
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example hello_availability_check --locked --offline",
+      "details": "The real OS boundary returned exactly {schemaVersion:'1.0',provider:'windows-hello',availability:'not-present'}. Deterministic native tests cover Verified and every adverse mapping, but this review makes no configured interactive-success claim."
+    },
+    {
+      "check": "risk-selected profile inventory and downstream gate preservation",
+      "result": "passed",
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 10bb2cfd96e89582fdaa5be1fb4c7b9a836decde --affected-head 74cf6e52d1d468ed9712016dd3eadc329d0231c9 --deferred-gate W1-exit --selection-only --report artifacts/tmp/W1.A05.S02-independent-review-selection.json",
+      "details": "The selector accepted the S02 desktop, security-local, service, contract, packaging, and foundation coverage inventory while retaining the complete affected/full repository and release-authoritative Windows x64 matrix for W1 exit. This slice review deliberately did not replay unrelated repository audits."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingIds": [
+        "W1.A05.T03-R01-F01"
+      ],
+      "severity": "high",
+      "disposition": "remain-fixed",
+      "details": "The release path acquires one existence-only process guard per stable canonical application-data root before policy manager/Core construction. Independent native replay again proves duplicate denial, automatic lease release on abrupt process termination, locked restart from protected bytes, genuine cross-process compare-and-swap conflict, and abandoned publication-mutex recovery."
+    },
+    {
+      "findingIds": [
+        "W1.A05.T04-R01-F01",
+        "W1.A05.T04-R02-F01"
+      ],
+      "severity": "high/medium",
+      "disposition": "remain-fixed",
+      "details": "Exact target mode, normalized profile, timeout, valid configuration, and successor revision are required for success reconciliation. Exact predecessor equality is separately required for unchanged. A different observed snapshot returns rejected conflict, remains authoritative on screen, and drives the identical danger/live announcement without a prior-active claim."
+    },
+    {
+      "findingIds": [
+        "W1.A05.T04-R01-F02",
+        "W1.A05.T04-R01-F03"
+      ],
+      "severity": "high/medium",
+      "disposition": "remain-fixed",
+      "details": "Independent built-product replay retains the mounted but inaccessible guided workspace during the Application Settings detour, restores the actual top-bar/sidebar/command initiator, makes the locked confirmation background inert, suppresses global shortcuts, traps modal focus, and prevents deferred dialogs after recovery."
+    }
+  ],
+  "residuals": [
+    {
+      "id": "W1.A05.S02-RESIDUAL-CONFIGURED-HELLO-HARDWARE",
+      "disposition": "conditional-release-platform-obligation",
+      "details": "This Windows x64 host reports Windows Hello not-present. Deterministic native tests prove success and every adverse mapping, but configured interactive Hello success must be consumed later when release-authoritative hardware reports available; no success is inferred here."
+    },
+    {
+      "id": "W1.A05.S02-RESIDUAL-AMENDMENT-EXIT",
+      "disposition": "mandatory-downstream-work",
+      "details": "W1.A05 amendment exit still must run the affected cross-slice build/smoke/security/accessibility checkpoint over approved S01 and S02 and receive independent exit review before adoption."
+    },
+    {
+      "id": "W1.A05.S02-RESIDUAL-W1-EXIT",
+      "disposition": "mandatory-wave-obligation",
+      "details": "Desktop performance, packaging, and the complete cross-capability W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, and Windows x64 qualification matrix remain due at Wave exit."
+    }
+  ],
+  "downstreamHandoff": {
+    "ready": true,
+    "nextConsumer": "W1.A05 amendment exit",
+    "contracts": [
+      "Retain the exact S01 native provider/supervisor authority and S02 versioned policy, process-singleton, authenticated-transition, and recovery boundaries without widening product authority.",
+      "Run the accumulated affected build, packaging smoke, security, accessibility, and desktop integration checkpoint across both amendment slices and bind it to the exact adopted candidate.",
+      "Preserve configured Hello success as conditional when live availability is not-present, and preserve performance plus the complete cross-capability matrix for W1 exit."
+    ],
+    "constraints": "Slice approval does not adopt W1.A05, resume ordinary W1 execution, qualify W1, approve G1, authorize remote push, or authorize release."
+  }
+}
