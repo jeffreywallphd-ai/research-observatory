@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S05.T01",
+  "commit": "2ec58075eebb0d4a0aeb0610e9346ee79efd04ed",
+  "baseCommit": "f56d16070637147177c05c3406b5669eb1707cf0",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S05.T01.task-start.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S05.T01.html",
+    "planning/review-site/CAP-03/CAP-03.S05.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/test_local_object_store.py",
+    "tests/data/test_material_dependencies.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_repositories.py",
+    "tests/data/test_storage_maintenance.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_provenance.py",
+    "tests/workflows/test_local_workflow_executor.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_material_dependencies",
+      "exitCode": 0,
+      "result": "Both focused dependency tests passed over real SQLite. They prove exact revision and configuration endpoints, event/actor/time binding, reopen, exact replay, changed replay conflict, missing registration, self/nonexistent/substituted-kind and duplicate-semantic-edge denial, late-insert rollback, and successful retry."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.workflows.test_local_workflow_executor",
+      "exitCode": 0,
+      "result": "All 21 affected workflow-executor tests passed. Multi-output completion denies an uncovered exact revision, retains the running job and staged artifacts, emits one content-free durable diagnostic, survives repository reopen, and then commits only the covered selected output. Existing fencing, cancellation, checkpoint, recovery, retry, and exact replay behavior remains green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_material_dependencies tests.data.test_sqlite_repositories tests.data.test_sqlite_schema tests.data.test_storage_maintenance tests.data.test_local_object_store",
+      "exitCode": 0,
+      "result": "All 61 affected data-boundary tests passed for the aggregate unit of work, strict v9 inventory/fingerprints, immutable tables, maintenance, object-store integration, and dependency registration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema",
+      "exitCode": 0,
+      "result": "All 28 migration and strict-schema tests passed. Exact v8 data becomes legacy-unreported without fabricated edges, v7 migrates through v8 to v9, every v1-to-v9 material failpoint rolls back to the exact predecessor and retries, recovery manifests validate, and fresh/migrated schema fingerprints match."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_provenance tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "Ten affected provenance and Windows sidecar tests passed with one expected environment skip. The real PyInstaller construction included the v9 migration and retained the canonical provenance behavior."
+    },
+    {
+      "command": "focused ruff check/format --check and mypy over the changed Python implementation, migration, tests, and packaging builder",
+      "exitCode": 0,
+      "result": "Focused Ruff lint, formatting, and mypy passed with no issues; git diff --check also passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_repository_structure; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "All five repository-structure tests passed; architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; the immutable W1 packet remains approved and the 488-page review site validates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only --affected-base f56d1607... --affected-head 2ec58075... --deferred-gate W1-exit",
+      "exitCode": 0,
+      "result": "Affected-selection validation passed. The focused task checks cover the credible data, service, migration, packaging, and security boundaries; the complete profile inventory and the two gate-bound performance commands remain deferred to W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "AggregateRevisionDraft now requires an explicit dependency-coverage classification. Complete recalculable outputs require a nonempty canonical edge set; source-like outputs use not-applicable, while legacy-unreported is migration-only.",
+        "Typed immutable edges bind the exact output/project/revision/kind, either an exact aggregate revision or immutable configuration identity/version, relation/materiality, purpose-specific fingerprint, governing policy/version, and the same provenance event, actor, and timestamp as aggregate creation.",
+        "Workflow completion verifies complete coverage for every selected staged output. Missing coverage raises a bounded conflict, leaves completion authority unchanged, and persists a deduplicated content-free dependency-registration-missing diagnostic that survives reopen."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused real-SQLite tests cover the expected append/reopen/replay and workflow completion paths plus missing, self, nonexistent, substituted-kind, duplicate-semantic, changed-replay, partial-write, multi-output denial, restart, and retry boundaries.",
+        "The v8-to-v9 fixture and all migration failpoints prove truthful legacy classification, exact predecessor preservation, rollback, recovery-manifest validation, and retry."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The exact storage profile/schema, migration/recovery contract, v9 migration, dependency-neutral ports, SQLite adapter, workflow completion guard, sidecar package inventory, architecture/storage documentation, fixtures, and quality scope were updated together.",
+        "No stale propagation, impact traversal, recalculation scheduler, historical replacement, API route, renderer, governed experience reference, external service, or product authority was added."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T01 changes a public Core port, aggregate transaction, SQLite schema/migration, workflow completion authority, audit diagnostics, and frozen sidecar inventory. Verification therefore used real SQLite transactions and reopen, exact v8/v7 migration fixtures, deterministic migration and append failure injection, the affected workflow/data/provenance/packaging suites, focused static checks, architecture/repository controls, and approved-wave validation. It did not replay unrelated UI, graph traversal, scheduler, or complete deployment profiles. Full service/data/security/performance and Windows qualification remain mandatory at W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "packaging:unit",
+      "service:unit",
+      "data:unit",
+      "security-local:unit"
+    ],
+    "deferred": [
+      "CAP-03.S05 slice review owns accumulated dependency registration, staleness traversal, and controlled recalculation integration after T02 and T03 close.",
+      "The complete service, data, security, performance, packaging, recovery, and Windows x64 matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed. Authenticate the frozen evidence, typed endpoint and canonical-set authority, atomic aggregate/provenance/outbox/dependency boundary, per-output workflow denial diagnostic, exact v8-to-v9 legacy handling, failpoint recovery, sidecar inclusion, and bounded task-level verification without expanding into T02/T03 or full W1 qualification."
+  }
+}
