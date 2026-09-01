@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S05.T03",
+  "commit": "139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d",
+  "baseCommit": "b5a941d7d907561c7d7f5d1a03162155b8fe7b5f",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S05.T03.task-start.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "packages/contracts/workflow/README.md",
+    "planning/backlog.yaml",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/selective_recalculation.py",
+    "tests/e2e/test_selective_recalculation.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -c <run tests.e2e.test_selective_recalculation, tests.contracts.test_workflow_contracts, tests.workflows.test_local_workflow_executor, tests.workflows.test_task_center with services/core-api/src on sys.path>",
+      "exitCode": 0,
+      "result": "All 39 focused recalculation, portable workflow-contract, durable local-executor, and Task Center tests passed. The new real-SQLite path proves exact selective admission, durable restart/replay, immutable candidate and restored revisions, comparison, and fail-closed denial."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -c <run tests.graph.test_dependency_impacts, tests.data.test_material_dependencies, tests.data.test_sqlite_repositories with services/core-api/src on sys.path>",
+      "exitCode": 0,
+      "result": "All 35 affected graph and persistence tests passed. Existing impact propagation, cycle/path authority, exact dependency registration, aggregate transaction, idempotency, rollback, and reopen behavior remains green with the new exact revision/history and durable change reads."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -c <run tests.packaging.test_core_sidecar_package with services/core-api/src on sys.path>",
+      "exitCode": 0,
+      "result": "All 6 Windows sidecar package tests passed with one expected environment skip. The real PyInstaller onedir build discovered and packaged research_observatory_core.selective_recalculation and completed its frozen-process contract check."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 186 governed Python files passed formatting, Ruff, and mypy."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b5a941d7...139158aa",
+      "exitCode": 0,
+      "result": "Architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure and backlog validation passed; the exact task range has no patch errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base b5a941d7d907561c7d7f5d1a03162155b8fe7b5f --affected-head 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passed for the exact candidate. Focused task checks covered the credible workflow, persistence, graph, packaging, quality, and restart surface; the complete requested profile inventory remains deliberately deferred to CAP-03.S05 integration review and W1 exit under the risk-based test policy."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "SelectiveRecalculationService admits one durable portable workflow job only for an exact current revision with an open matching stale cause. The plan and command fingerprint bind every open stale cause/change, the full material-dependency registration, the exact target, replacement revisions, and only unchanged verified/adjudicated reusable revisions.",
+        "The workflow snapshot carries typed target, stale-cause, replacement-revision, and reusable-revision input artifacts, uses a checkpoint-required policy-controlled activity, persists through the existing queue, reopens exactly, and replays without duplicate authority.",
+        "Recomputed output is appended as revision N+1 under compare-and-swap and cannot self-adjudicate. Exact comparison reports changed authoritative fields. A prior adjudicated output can be restored only by an explicit human aggregate.revision-restored event; restoration appends N+2, retains prior/current provenance inputs, clones exact material dependencies under new identities, and replays idempotently without overwriting history."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The real-SQLite end-to-end fixture covers source replacement, open stale propagation, exclusion of the changed predecessor, reuse of an unchanged verified input, queue persistence/reopen, candidate append/replay, comparison, human restore/replay, exact three-revision history, and restored dependency authority.",
+        "Boundary tests deny a target without a matching stale cause, cross-aggregate comparison, and restoration of a non-adjudicated revision while leaving canonical revision history unchanged. Existing workflow, graph, dependency, repository, retry, cancellation, and recovery tests also pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The dependency-neutral aggregate and impact ports now expose exact revision/history and durable change authority. The SQLite adapter, selective application service, workflow and storage documentation, end-to-end fixture, quality inventory, and frozen Windows package inventory changed together.",
+        "No database migration was required because immutable aggregate revisions, material registrations, stale causes, provenance/outbox facts, and workflow authority already persist the complete state. No route, renderer, governed experience reference, cloud service, destructive operation, or unrelated product authority changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T03 crosses public repository ports, exact revision history, durable stale/change authority, workflow admission, immutable scholarly versions, human restoration, and the frozen sidecar package. Verification therefore uses a real canonical SQLite project across propagation, queue, append, comparison, restoration, idempotent replay, and reopen; it replays the affected workflow/contract, graph/data, and package boundaries plus complete Python quality and architecture checks. No API/UI/schema/dependency/toolchain change occurred, so unrelated service routes, desktop UI, security suites, and complete deployment profiles are deferred to the slice and W1 qualification gates.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:backlog",
+      "packaging:unit",
+      "contracts:unit",
+      "data:unit",
+      "graph:unit",
+      "e2e-local:system"
+    ],
+    "deferred": [
+      "CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, selective recalculation, and adversarial cross-task integration checks now that T01-T03 close.",
+      "The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d. Authenticate the frozen evidence; challenge target/change/cause/replacement/reuse substitution, workflow authority recovery, candidate compare-and-swap, non-adjudicated or non-human restore denial, exact dependency cloning, idempotent replay, historical retention, and packaged inclusion. Confirm no schema, API, governed-experience, or unrelated scope expansion without replaying full profiles."
+  }
+}
