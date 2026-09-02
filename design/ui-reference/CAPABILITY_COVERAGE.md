@@ -1,7 +1,7 @@
 # Research Observatory Capability-to-Page Coverage
 
-**Version:** 1.4
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.4`
+**Version:** 1.5
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.5`
 **Product pages:** 33
 **Capabilities:** 20
 
@@ -547,7 +547,7 @@ Durable analytical workflows, checkpoints, resource use, failures, cancellation,
 - resume/retry
 
 ### `audit-lineage.html` — Audit & Lineage
-Source-to-output lineage, transformations, audit events, rights decisions, and human adjudications.
+Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.
 
 **Capabilities:** CAP-03, CAP-07, CAP-09, CAP-15, CAP-16, CAP-17, CAP-18, CAP-19
 
@@ -567,6 +567,13 @@ Source-to-output lineage, transformations, audit events, rights decisions, and h
 - human decisions
 - audit events
 - exportable manifest
+- stale status with material cause and safest next action
+- grouped recalculation impact preview
+- deferral without clearing staleness
+- current privacy, rights, and egress policy status
+- selective recalculation schedule
+- before-and-after immutable revision comparison
+- human-gated restoration review
 - study-design lineage
 - technical-report and result lineage
 - manuscript claim and citation lineage
@@ -802,4 +809,3 @@ Triage simulated or uploaded review comments, govern author dispositions, revise
 - unresolved and declined issues
 - targeted re-review result
 - revised manuscript and response export
-

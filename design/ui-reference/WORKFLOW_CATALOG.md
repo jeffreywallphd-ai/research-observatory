@@ -1,9 +1,13 @@
 # Research Observatory Use-Case and Workflow Catalog
 
-**Version:** 1.4
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.4`
+**Version:** 1.5
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.5`
 
 The selected use case is stored in the versioned Research Intent Contract. It orders the primary navigation, defaults, checkpoints, and expected outputs. All tools remain accessible as supporting tools.
+
+## Cross-workflow staleness and controlled recalculation
+
+When a material dependency revision makes an object stale, Audit & Lineage explains the cause, affected object, and safest next action. The impact preview groups effects as automatic, review required, blocked, or informational after checking current rights and egress policy. Deferral keeps the stale state visible. Recalculation and restoration create immutable revisions, expose comparisons, and require an exact human review decision before an approved or adjudicated state is replaced or restored.
 
 ## Catalog
 
@@ -272,4 +276,3 @@ The selected use case is stored in the versioned Research Intent Contract. It or
 | 6 | [Revision & Response](revision-response.html) | Triage issues, record dispositions, revise, and draft responses. |
 | 7 | [Revised Manuscript](manuscript-studio.html) | Review the integrated revised article and unresolved claims. |
 | 8 | [Review Audit](audit-lineage.html) | Export review prompts, evidence, decisions, revisions, and disclosure. |
-

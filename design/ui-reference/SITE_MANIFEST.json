@@ -1,8 +1,8 @@
 {
   "name": "Research Observatory Academic Minimal UI Reference",
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.4",
-  "version": "1.4",
-  "generated_at": "2026-08-07",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "version": "1.5",
+  "generated_at": "2026-09-02",
   "approval": "APPROVAL.yaml",
   "capability_coverage": "CAPABILITY_COVERAGE.json",
   "workflow_catalog": "WORKFLOW_CATALOG.json",
@@ -251,7 +251,7 @@
     {
       "file": "audit-lineage.html",
       "page": "Audit & Lineage",
-      "purpose": "Source-to-output lineage, transformations, audit events, rights decisions, and human adjudications.",
+      "purpose": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
       "capabilities": [
         "CAP-03",
         "CAP-07",

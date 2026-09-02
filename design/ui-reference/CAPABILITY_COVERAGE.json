@@ -1,7 +1,7 @@
 {
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.4",
-  "version": "1.4",
-  "date": "2026-08-07",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "version": "1.5",
+  "date": "2026-09-02",
   "product_page_count": 33,
   "capabilities": [
     {
@@ -892,7 +892,7 @@
     },
     "audit-lineage.html": {
       "page": "Audit & Lineage",
-      "purpose": "Source-to-output lineage, transformations, audit events, rights decisions, and human adjudications.",
+      "purpose": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
       "capabilities": [
         "CAP-03",
         "CAP-07",
@@ -919,6 +919,13 @@
         "human decisions",
         "audit events",
         "exportable manifest",
+        "stale status with material cause and safest next action",
+        "grouped recalculation impact preview",
+        "deferral without clearing staleness",
+        "current privacy, rights, and egress policy status",
+        "selective recalculation schedule",
+        "before-and-after immutable revision comparison",
+        "human-gated restoration review",
         "study-design lineage",
         "technical-report and result lineage",
         "manuscript claim and citation lineage",
