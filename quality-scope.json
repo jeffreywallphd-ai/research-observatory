@@ -25,6 +25,7 @@
     "tools/core_sidecar_performance_check.py",
     "tools/desktop_app_check.py",
     "tools/desktop_performance_check.py",
+    "tools/dependency_impact_performance_check.py",
     "tools/fixture_corpus_check.py",
     "tools/gcrctl.py",
     "tools/gcr2ctl.py",
