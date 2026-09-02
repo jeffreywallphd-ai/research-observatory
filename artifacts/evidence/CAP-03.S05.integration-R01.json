@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-03.S05",
+  "attemptId": "R01",
+  "stateCommit": "bc9441a23faa1df44f80a823f432ca5988e394d6",
+  "productCandidateCommit": "bc9441a23faa1df44f80a823f432ca5988e394d6",
+  "branch": "codex/w1-windows-local-runtime",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "outcome": "CAP-03.S05 provides exact material-dependency registration at aggregate commit, deterministic and bounded impact planning with durable conditional-decision and stale-cause authority, graph-snapshot-fenced resumable propagation, and selective recalculation whose candidate commit and stale restoration are bound to the exact completed attempt. Historical revisions and non-informational dependency impacts prevent false-fresh reads, while replay, cancellation, failure, recovery, restart, substitution, cycle, path-bound, and unrelated-output behavior remain explicit and durable.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-03.S05.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T01.R02.json",
+          "sha256": "36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T01.review-R02.json",
+          "sha256": "995e75d58d3a87afccbcd258c4cc2575369885e896ccb3bc4768320993eddfd7"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S05.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T02.R03.json",
+          "sha256": "d1aa357d7838cb0ef703260e552c03fe9cd68b4650c393bf9b822e6d8f19de50"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T02.review-R03.json",
+          "sha256": "e2154a80452c8d535b66a940551d7ffbb5b94d05733cb6336a87b739d59dd1db"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S05.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T03.R03.json",
+          "sha256": "298618de9767e4ba2c60bda0ff7b25c0a18fc749b353326edc6fcdd714d5d666"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T03.review-R03.json",
+          "sha256": "fdb24ef4400d43ebd99cba826f511680038a2b7b3a8a469d73b579d367845a34"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.data.test_material_dependencies tests.graph.test_dependency_impacts tests.e2e.test_selective_recalculation",
+      "exitCode": 0,
+      "result": "All 28 selected material-dependency, impact-planning/propagation, and selective-recalculation tests passed in 5.007 seconds. The union covers exact dependency coverage, expected and unrelated outputs, deterministic DAG/SCC traversal, graph mutation fencing, bounded truthful paths, durable conditional decisions, checkpoint/cancel/fail/recover/restart, candidate commit, historical retention, stale restoration, replay, and denial paths."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center",
+      "exitCode": 0,
+      "result": "All 36 selected portable workflow, local executor, and Task Center tests passed in 4.361 seconds, preserving the predecessor S04 job, cancellation, restart, recovery, authority, and user-control contracts consumed by recalculation."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.data.test_sqlite_repositories",
+      "exitCode": 0,
+      "result": "All 48 selected strict-schema, predecessor-migration, repository transaction, backup/reopen, and recovery tests passed in 28.523 seconds for the current schema-v10 authority."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest discover -s tests/data -p test_*.py; .venv\\Scripts\\python.exe -B -m unittest discover -s tests/security -p test_*.py",
+      "exitCode": 0,
+      "result": "The complete affected data inventory passed 116 tests in 57.707 seconds. The complete security-local inventory passed 57 tests with one expected environment skip after two stale schema-version test oracles were corrected to assert the canonical current schema rather than a historical schema-6 literal."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.service.test_provenance tests.data.test_storage_maintenance tests.data.test_local_object_store",
+      "exitCode": 0,
+      "result": "All 36 selected provenance, encrypted storage maintenance, and local object-store tests passed in 10.970 seconds, covering the adjacent evidence and recovery boundaries."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All 6 Windows sidecar package tests passed with one expected environment skip. The real PyInstaller build completed in 23.509 seconds and included the current dependency-impact, recalculation, repository, and migration paths."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/provenance_lineage_performance_check.py --repo . --report artifacts/tmp/CAP-03.S05-integration-R01-lineage-performance.json",
+      "exitCode": 0,
+      "result": "PASS on Windows 11 with 20 logical CPUs, Python 3.14.6 and SQLite 3.53.1. The 4,161-revision/16,642-fact fixture measured p95 7,370.037 ms against the 18,000 ms regression limit and 30,000 ms absolute limit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/dependency_impact_performance_check.py --repo . --report artifacts/tmp/CAP-03.S05-integration-R01-dependency-impact-performance.json",
+      "exitCode": 0,
+      "result": "PASS for dependency-impact-scc-v1 on Windows-11-10.0.26200-SP0, Intel64 Family 6 Model 183 Stepping 1, Python 3.14.6. The reproducible 1,102-node/2,201-edge fixture measured nearest-rank p95 20.826 ms across seven warm repetitions against the initial conservative 500 ms regression threshold and 1,000 ms absolute limit. It also verifies exact SCC membership, traversal shape, and stable preview authority; any threshold relaxation requires review."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/security_check.py --repo . --report artifacts/tmp/CAP-03.S05-integration-R01-security.json",
+      "exitCode": 0,
+      "result": "Security dependency and secret scanning passed for 601 packages and 152 findings with zero blocking findings."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "All 188 governed Python files passed formatting, Ruff and mypy. Architecture passed 13 areas, 12 modules, five stable interfaces and three deployment profiles. Repository structure passed for all 12 required modules. The backlog validated with 20 capabilities, 117 slices, 363 tasks and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile data --profile e2e-local --profile graph --profile security-local --profile service --affected-base f56d16070637147177c05c3406b5669eb1707cf0 --affected-head 43d572dd8a0a0fdbb90b009ffb51ab15a591b385 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passed with no unknown changed paths. The accumulated slice selected foundation, package, service, contract, data, graph, e2e-local and security-local coverage. The two gate-bound data performance commands and the complete cross-capability matrix remain deferred to W1 exit."
+    }
+  ],
+  "environmentNotes": [
+    "The first complete security-local inventory exposed one stale schema-6 assertion in tests/security/test_protected_database.py. The subsequently broadened data inventory exposed the same stale literal in two object-envelope recovery assertions. Product migration behavior correctly reached canonical schema 10 and retained encrypted backup/recovery protections. Commit 1e027e47fe72801324f47ecde28fdbda3824ee0e changed only those test oracles to derive and verify the current canonical schema. The exact failures, full 57-test security inventory, and full 116-test data inventory then passed.",
+    "Two affected-selection attempts were rejected before command execution: the first supplied an abbreviated base SHA where the verifier requires a full immutable SHA, and the second omitted security-local despite the recovery-test correction. The final full-SHA selection with security-local passed; neither precondition rejection exercised product code.",
+    "The dependency-impact benchmark reuses the deterministic governed 1,100-member SCC and immutable-limit fixture. It records construction and planning together and establishes an initial characterization threshold rather than claiming a cross-machine release SLA.",
+    "Because the new benchmark was registered in the graph verification profile, affected selection conservatively requested the complete graph/foundation inventory. The first wrapper run was user-interrupted during foundation units after repository structure, runtime, architecture, agent protocol, generated views, fixture corpus, the 643.08-second benchmark registry, build manifest, UI reference/change, ADR, CI, 188-file quality, and packaging smoke all passed. Resuming the unfinished foundation inventory ran 478 tests in 3,876.449 seconds and reproduced the already recorded historical-controller baseline at 72 failures and 17 errors: frozen GCR/GRR stopped-boundary hashes, retired recovery manifests, and amendment fixtures that assume W1 is PAUSED rather than its current approved ACTIVE state. No CAP-03.S05 product, graph, data, service, package, security, benchmark, or current planning validator failed. The prior independently reviewed baseline was 72 failures and 16 errors; this run adds one historical-fixture import/error path and remains explicit W1-exit reconciliation rather than slice-scope product remediation."
+  ],
+  "findingReplay": {
+    "closedFindingIds": [
+      "CAP-03.S05.T01-R01-F01",
+      "CAP-03.S05.T02-R01-F01",
+      "CAP-03.S05.T02-R01-F02",
+      "CAP-03.S05.T02-R01-F03",
+      "CAP-03.S05.T02-R01-F04",
+      "CAP-03.S05.T02-R02-F01",
+      "CAP-03.S05.T02-R02-F02",
+      "CAP-03.S05.T03-R01-F01",
+      "CAP-03.S05.T03-R01-F02",
+      "CAP-03.S05.T03-R01-F03",
+      "CAP-03.S05.T03-R02-F01",
+      "CAP-03.S05.T03-R02-F02"
+    ],
+    "openFindingIds": [],
+    "result": "Every formal task finding is closed by its immutable approved ledger. The accumulated slice checks replay the affected real SQLite, graph, workflow, recovery, package, security, and performance boundaries, including every exact authority substitution and adjacent state family required by the final task reviews."
+  },
+  "profileSelection": {
+    "selected": "CAP-03.S05 changes a public aggregate/repository port, schema-v9/v10 migration and strict SQLite authority, deterministic graph traversal, resumable propagation, selective recalculation, workflow completion binding, frozen Windows sidecar inventory, and security-sensitive recovery fixtures. The checkpoint therefore ran the accumulated affected data/e2e-local/graph/service/security-local union, the real package build, focused workflow/provenance/storage consumers, static architecture controls, and two representative quantitative benchmarks.",
+    "deferredToWaveExit": "The complete repository and deployment-profile matrix, cross-capability happy/failure/denial/cancellation/migration/restart/recovery/security/accessibility/performance/packaging qualification, Windows x64 release package, gate-bound project-lifecycle and storage-maintenance performance commands, and the already-recorded historical foundation-controller fixture reconciliation remain mandatory once at W1 exit. The attempted complete graph profile is not represented as passing; all acceptance-bound CAP-03.S05 commands and every non-historical control reached by that attempt passed."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The initial 500 ms dependency-impact threshold is a conservative same-machine regression guard, not a release SLA. Cross-machine and cross-capability performance remain owned by W1 exit qualification.",
+      "The complete foundation inventory retains the previously recorded historical GCR/GRR/recovery/amendment fixture failures and is not represented as passing. Reconciliation is mandatory at W1 exit; none of the reproduced failures enters CAP-03.S05 product paths.",
+      "No renderer, HTTP route, generated client, or governed experience path changed in this slice; UI and accessibility replay are not applicable at this checkpoint and remain part of W1 exit where required.",
+      "The complete W1 deployment and release qualification matrix remains due after all W1 slices close.",
+      "The protected pre-existing untracked W1.A04.B00 witness remains untouched and unstaged."
+    ]
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-03.S06 and later artifact-producing capabilities",
+      "contract": "exact dependency coverage, immutable source/configuration identities, deterministic bounded impact preview, durable stale causes and current-revision freshness enforcement",
+      "readyPendingSliceApproval": true
+    },
+    {
+      "consumer": "CAP-05, CAP-08, CAP-12, CAP-17 and CAP-18 recalculable scholarly outputs",
+      "contract": "graph-snapshot-fenced propagation, explicit conditional decisions, exact completed-attempt claim authority, selective candidate commit, historical retention, restart-safe restoration and non-destructive unrelated-output behavior",
+      "readyPendingSliceApproval": true
+    }
+  ]
+}
