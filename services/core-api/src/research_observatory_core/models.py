@@ -872,6 +872,103 @@ class WorkflowHumanDecisionRequest(ContractModel):
     disposition: Literal["approved", "rejected", "deferred", "not-applicable"]
 
 
+class RecalculationPreviewRequest(ProjectRootRequest):
+    target_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+
+
+class RecalculationCauseProjection(ContractModel):
+    cause_id: str = Field(pattern=_UUID_V7_PATTERN)
+    change_id: str = Field(pattern=_UUID_V7_PATTERN)
+    disposition: Literal["stale", "unknown-impact"]
+    reason: str
+    depth: int = Field(ge=1)
+    confidence: Literal["confirmed", "conditional", "unknown"]
+    review_required: bool
+    path_revision_ids: tuple[str, ...]
+
+
+class RecalculationPreview(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str
+    target_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    plan_sha256: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    policy_sha256: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    change_ids: tuple[str, ...]
+    replacement_revision_ids: tuple[str, ...]
+    reusable_revision_ids: tuple[str, ...]
+    causes: tuple[RecalculationCauseProjection, ...]
+    defer_preserves_stale_visibility: Literal[True] = True
+
+
+class RecalculationScheduleRequest(RecalculationPreviewRequest):
+    change_id: str = Field(pattern=_UUID_V7_PATTERN)
+    expected_plan_sha256: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    intent_id: str = Field(pattern=_UUID_V7_PATTERN)
+    intent_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    intent_sha256: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    requested_at: datetime
+
+
+class RecalculationScheduleProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str
+    target_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    plan_sha256: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    workflow_run_id: str = Field(pattern=_UUID_V7_PATTERN)
+    job_id: str = Field(pattern=_UUID_V7_PATTERN)
+    state: str
+
+
+class RecalculationComparisonRequest(ProjectRootRequest):
+    before_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    after_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+
+
+class RecalculationComparisonProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    aggregate_id: str = Field(pattern=_UUID_V7_PATTERN)
+    before_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    after_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    before_revision: int = Field(ge=0)
+    after_revision: int = Field(ge=0)
+    changed_fields: tuple[str, ...]
+
+
+class RecalculationRestoreReviewRequest(RecalculationComparisonRequest):
+    intent_id: str = Field(pattern=_UUID_V7_PATTERN)
+    intent_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    intent_sha256: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    requested_at: datetime
+
+
+class RecalculationRestoreReviewProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    workflow_run_id: str = Field(pattern=_UUID_V7_PATTERN)
+    human_task_id: str = Field(pattern=_UUID_V7_PATTERN)
+    snapshot_revision: int = Field(ge=1)
+    history_sequence: int = Field(ge=1)
+    policy_sha256: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+
+
+class RecalculationRestoreRequest(ProjectRootRequest):
+    prior_adjudicated_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    expected_current_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    workflow_run_id: str = Field(pattern=_UUID_V7_PATTERN)
+    human_task_id: str = Field(pattern=_UUID_V7_PATTERN)
+    decision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    modified_at: datetime
+
+
+class RecalculationRestoredRevision(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str
+    aggregate_id: str = Field(pattern=_UUID_V7_PATTERN)
+    revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    revision: int = Field(ge=1)
+    knowledge_status: str
+    rights_status: str
+
+
 class OperationState(StrEnum):
     QUEUED = "queued"
     RUNNING = "running"

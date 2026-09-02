@@ -597,6 +597,93 @@ export function decodeIntentImpactPreview(value: unknown): IntentImpactPreview |
   return candidate as unknown as IntentImpactPreview;
 }
 
+function decodeRecalculationCause(value: unknown): RecalculationCauseProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "causeId", "changeId", "disposition", "reason", "depth", "confidence", "reviewRequired", "pathRevisionIds",
+  ])) return null;
+  if (!canonicalUuid7(candidate.causeId) || !canonicalUuid7(candidate.changeId)
+    || !member(candidate.disposition, ["stale", "unknown-impact"] as const)
+    || !boundedText(candidate.reason, 1, 1000) || !integer(candidate.depth, 1, Number.MAX_SAFE_INTEGER)
+    || !member(candidate.confidence, ["confirmed", "conditional", "unknown"] as const)
+    || typeof candidate.reviewRequired !== "boolean" || !Array.isArray(candidate.pathRevisionIds)
+    || candidate.pathRevisionIds.length > 256 || !candidate.pathRevisionIds.every(canonicalUuid7)) return null;
+  return candidate as unknown as RecalculationCauseProjection;
+}
+
+export function decodeRecalculationPreview(value: unknown): RecalculationPreview | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "targetRevisionId", "planSha256", "policySha256", "changeIds",
+    "replacementRevisionIds", "reusableRevisionIds", "causes", "deferPreservesStaleVisibility",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
+    || !canonicalUuid7(candidate.targetRevisionId) || !contentHash(candidate.planSha256)
+    || !contentHash(candidate.policySha256) || !Array.isArray(candidate.changeIds)
+    || candidate.changeIds.length > 10_000 || !candidate.changeIds.every(canonicalUuid7)
+    || !Array.isArray(candidate.replacementRevisionIds) || candidate.replacementRevisionIds.length > 10_000
+    || !candidate.replacementRevisionIds.every(canonicalUuid7) || !Array.isArray(candidate.reusableRevisionIds)
+    || candidate.reusableRevisionIds.length > 10_000 || !candidate.reusableRevisionIds.every(canonicalUuid7)
+    || !Array.isArray(candidate.causes) || candidate.causes.length > 10_000
+    || candidate.causes.some((item) => decodeRecalculationCause(item) === null)
+    || candidate.deferPreservesStaleVisibility !== true) return null;
+  return candidate as unknown as RecalculationPreview;
+}
+
+export function decodeRecalculationSchedule(value: unknown): RecalculationScheduleProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "targetRevisionId", "planSha256", "workflowRunId", "jobId", "state",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
+    || !canonicalUuid7(candidate.targetRevisionId) || !contentHash(candidate.planSha256)
+    || !canonicalUuid7(candidate.workflowRunId) || !canonicalUuid7(candidate.jobId)
+    || !member(candidate.state, [
+      "runnable", "claimed", "running", "retry-scheduled", "cancelling", "cancelled", "failed", "succeeded",
+    ] as const)) return null;
+  return candidate as unknown as RecalculationScheduleProjection;
+}
+
+export function decodeRecalculationComparison(value: unknown): RecalculationComparisonProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "aggregateId", "beforeRevisionId", "afterRevisionId", "beforeRevision", "afterRevision",
+    "changedFields",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.aggregateId)
+    || !canonicalUuid7(candidate.beforeRevisionId) || !canonicalUuid7(candidate.afterRevisionId)
+    || !integer(candidate.beforeRevision, 0, Number.MAX_SAFE_INTEGER)
+    || !integer(candidate.afterRevision, 0, Number.MAX_SAFE_INTEGER)
+    || candidate.afterRevision <= candidate.beforeRevision || !stringList(candidate.changedFields, 256)) return null;
+  return candidate as unknown as RecalculationComparisonProjection;
+}
+
+export function decodeRecalculationRestoreReview(value: unknown): RecalculationRestoreReviewProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "workflowRunId", "humanTaskId", "snapshotRevision", "historySequence", "policySha256",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.workflowRunId)
+    || !canonicalUuid7(candidate.humanTaskId) || !integer(candidate.snapshotRevision, 1, Number.MAX_SAFE_INTEGER)
+    || !integer(candidate.historySequence, 1, Number.MAX_SAFE_INTEGER) || !contentHash(candidate.policySha256)) return null;
+  return candidate as unknown as RecalculationRestoreReviewProjection;
+}
+
+export function decodeRecalculationRestoredRevision(value: unknown): RecalculationRestoredRevision | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "aggregateId", "revisionId", "revision", "knowledgeStatus", "rightsStatus",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
+    || !canonicalUuid7(candidate.aggregateId) || !canonicalUuid7(candidate.revisionId)
+    || !integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER)
+    || !member(candidate.knowledgeStatus, [
+      "observed", "extracted", "inferred", "verified", "disputed", "adjudicated", "stale", "unknown",
+      "not-reported", "not-applicable", "ambiguous", "unavailable",
+    ] as const) || !member(candidate.rightsStatus, ["allowed", "denied", "unknown", "not-applicable"] as const)) return null;
+  return candidate as unknown as RecalculationRestoredRevision;
+}
+
 function decodeDeletionDisclosure(value: unknown): DeletionDisclosure | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
@@ -877,6 +964,83 @@ function provenanceLineageBody(command: ProvenanceLineageRequest): string {
   });
 }
 
+function recalculationPreviewBody(command: RecalculationPreviewRequest): string {
+  if (!projectRoot(command.root) || !canonicalUuid7(command.targetRevisionId)) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify({ root: command.root, targetRevisionId: command.targetRevisionId });
+}
+
+function recalculationScheduleBody(command: RecalculationScheduleRequest): string {
+  recalculationPreviewBody(command);
+  if (!canonicalUuid7(command.changeId) || !contentHash(command.expectedPlanSha256)
+    || !canonicalUuid7(command.intentId) || !canonicalUuid7(command.intentRevisionId)
+    || !contentHash(command.intentSha256) || !utcInstant(command.requestedAt)) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify({
+    root: command.root,
+    targetRevisionId: command.targetRevisionId,
+    changeId: command.changeId,
+    expectedPlanSha256: command.expectedPlanSha256,
+    intentId: command.intentId,
+    intentRevisionId: command.intentRevisionId,
+    intentSha256: command.intentSha256,
+    requestedAt: command.requestedAt,
+  });
+}
+
+function recalculationComparisonBody(command: RecalculationComparisonRequest): string {
+  if (!projectRoot(command.root) || !canonicalUuid7(command.beforeRevisionId)
+    || !canonicalUuid7(command.afterRevisionId) || command.beforeRevisionId === command.afterRevisionId) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify({
+    root: command.root,
+    beforeRevisionId: command.beforeRevisionId,
+    afterRevisionId: command.afterRevisionId,
+  });
+}
+
+function recalculationRestoreReviewBody(command: RecalculationRestoreReviewRequest): string {
+  recalculationComparisonBody(command);
+  if (!canonicalUuid7(command.intentId) || !canonicalUuid7(command.intentRevisionId)
+    || !contentHash(command.intentSha256) || !utcInstant(command.requestedAt)) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify({
+    root: command.root,
+    beforeRevisionId: command.beforeRevisionId,
+    afterRevisionId: command.afterRevisionId,
+    intentId: command.intentId,
+    intentRevisionId: command.intentRevisionId,
+    intentSha256: command.intentSha256,
+    requestedAt: command.requestedAt,
+  });
+}
+
+function recalculationRestoreBody(command: RecalculationRestoreRequest): string {
+  const identities = [
+    command.priorAdjudicatedRevisionId,
+    command.expectedCurrentRevisionId,
+    command.workflowRunId,
+    command.humanTaskId,
+    command.decisionId,
+  ];
+  if (!projectRoot(command.root) || !identities.every(canonicalUuid7)
+    || command.priorAdjudicatedRevisionId === command.expectedCurrentRevisionId
+    || !utcInstant(command.modifiedAt)) throw new Error("RO-CORE-REQUEST-INVALID");
+  return JSON.stringify({
+    root: command.root,
+    priorAdjudicatedRevisionId: command.priorAdjudicatedRevisionId,
+    expectedCurrentRevisionId: command.expectedCurrentRevisionId,
+    workflowRunId: command.workflowRunId,
+    humanTaskId: command.humanTaskId,
+    decisionId: command.decisionId,
+    modifiedAt: command.modifiedAt,
+  });
+}
+
 function intentImpactBody(command: IntentImpactRequest): string {
   if (!projectRoot(command.root) || !integer(command.expectedRevision, 0, Number.MAX_SAFE_INTEGER)
     || !member(command.primaryUseCase, INTENT_PRIMARY_USE_CASES)
@@ -1100,6 +1264,56 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         ))) {
         throw new Error("RO-CORE-RESPONSE-INVALID");
       }
+      return result;
+    },
+    async previewRecalculation(command: RecalculationPreviewRequest): Promise<RecalculationPreview> {
+      const result = await requestJson(transport, {
+        method: "POST", path: "/projects/recalculation/preview", body: recalculationPreviewBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeRecalculationPreview);
+      if (result.targetRevisionId !== command.targetRevisionId) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async scheduleRecalculation(
+      command: RecalculationScheduleRequest,
+      idempotencyKey: string,
+    ): Promise<RecalculationScheduleProjection> {
+      if (!/^[0-9a-f]{32}$/.test(idempotencyKey)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, {
+        method: "POST", path: "/projects/recalculation/schedules", body: recalculationScheduleBody(command),
+        ifMatch: null, idempotencyKey,
+      }, decodeRecalculationSchedule);
+      if (result.targetRevisionId !== command.targetRevisionId
+        || result.planSha256 !== command.expectedPlanSha256) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async compareRecalculation(command: RecalculationComparisonRequest): Promise<RecalculationComparisonProjection> {
+      const result = await requestJson(transport, {
+        method: "POST", path: "/projects/recalculation/comparisons", body: recalculationComparisonBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeRecalculationComparison);
+      if (result.beforeRevisionId !== command.beforeRevisionId || result.afterRevisionId !== command.afterRevisionId) {
+        throw new Error("RO-CORE-RESPONSE-INVALID");
+      }
+      return result;
+    },
+    async requestRecalculationRestoreReview(
+      command: RecalculationRestoreReviewRequest,
+      idempotencyKey: string,
+    ): Promise<RecalculationRestoreReviewProjection> {
+      if (!/^[0-9a-f]{32}$/.test(idempotencyKey)) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/recalculation/restore-reviews",
+        body: recalculationRestoreReviewBody(command), ifMatch: null, idempotencyKey,
+      }, decodeRecalculationRestoreReview);
+    },
+    async restoreRecalculationRevision(command: RecalculationRestoreRequest): Promise<RecalculationRestoredRevision> {
+      const result = await requestJson(transport, {
+        method: "POST", path: "/projects/recalculation/restorations", body: recalculationRestoreBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeRecalculationRestoredRevision);
+      if (result.revisionId === command.priorAdjudicatedRevisionId
+        || result.revisionId === command.expectedCurrentRevisionId) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },
     async taskCenter(root: string, limit = 50): Promise<WorkflowTaskCenterPage> {

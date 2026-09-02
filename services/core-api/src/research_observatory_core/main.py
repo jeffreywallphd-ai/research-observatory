@@ -31,12 +31,16 @@ from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleService
 from .provenance import ProvenanceService
 from .repositories import (
+    create_sqlite_unit_of_work_factory,
     sqlite_intent_revision_repository,
+    sqlite_material_dependency_repository,
     sqlite_privacy_policy_repository,
     sqlite_provenance_ledger_repository,
+    sqlite_selective_recalculation_repository,
     sqlite_workflow_queue_repository,
 )
 from .research_intents import ResearchIntentService
+from .selective_recalculation import RecalculationControlService
 from .storage import (
     DEVELOPMENT_PLAINTEXT_PROFILE,
     configure_protected_database_provider,
@@ -128,6 +132,17 @@ def create_runtime_app(
         ),
         provenance=ProvenanceService(projects, sqlite_provenance_ledger_repository),
         task_center=TaskCenterService(projects, sqlite_workflow_queue_repository, resolved_actor_id),
+        recalculation=RecalculationControlService(
+            projects,
+            recalculation_factory=sqlite_selective_recalculation_repository,
+            dependency_factory=sqlite_material_dependency_repository,
+            workflow_factory=sqlite_workflow_queue_repository,
+            unit_of_work_factory=lambda path, project_id: create_sqlite_unit_of_work_factory(
+                path / "state" / "project.sqlite3",
+                project_id,
+            ),
+            local_actor_id=resolved_actor_id,
+        ),
     )
 
 

@@ -33,6 +33,10 @@ class RecalculationAuthority:
     changes: tuple[DependencyChange, ...]
     replacements: tuple[AggregateRevision, ...]
     reusable: tuple[AggregateRevision, ...]
+    policy_id: str
+    policy_version: str
+    privacy_policy_revision: int
+    policy_sha256: str
     authority_sha256: str
 
 
@@ -48,6 +52,21 @@ class RecalculationCandidateCommit:
     completed_at: str
 
 
+@dataclass(frozen=True, slots=True)
+class RestoreRevisionCommit:
+    """Exact completed human-decision authority for one immutable restoration."""
+
+    prior_adjudicated_revision_id: str
+    expected_current_revision_id: str
+    new_revision_id: str
+    dependency_ids: tuple[str, ...]
+    workflow_run_id: str
+    human_task_id: str
+    decision_id: str
+    modified_at: str
+    event: AtomicRepositoryEvent
+
+
 def recalculation_authority_document(authority: RecalculationAuthority) -> dict[str, object]:
     """Return the canonical authority document shared by planning and persistence."""
 
@@ -57,6 +76,12 @@ def recalculation_authority_document(authority: RecalculationAuthority) -> dict[
         "dependencies": [asdict(item) for item in authority.dependencies],
         "replacementRevisions": [asdict(item) for item in authority.replacements],
         "reusedRevisions": [asdict(item) for item in authority.reusable],
+        "policy": {
+            "policyId": authority.policy_id,
+            "policyVersion": authority.policy_version,
+            "privacyPolicyRevision": authority.privacy_policy_revision,
+            "policySha256": authority.policy_sha256,
+        },
         "target": asdict(authority.target),
     }
 
@@ -89,10 +114,13 @@ class SelectiveRecalculationRepository(Protocol):
 
     def commit_candidate(self, command: RecalculationCandidateCommit) -> AggregateRevision: ...
 
+    def restore_revision(self, command: RestoreRevisionCommit) -> AggregateRevision: ...
+
 
 __all__ = [
     "RecalculationAuthority",
     "RecalculationCandidateCommit",
+    "RestoreRevisionCommit",
     "SelectiveRecalculationRepository",
     "recalculation_authority_document",
     "recalculation_authority_sha256",

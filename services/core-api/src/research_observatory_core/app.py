@@ -50,6 +50,16 @@ from .models import (
     ProvenanceLineagePage,
     ProvenanceLineageRequest,
     ReadinessResponse,
+    RecalculationComparisonProjection,
+    RecalculationComparisonRequest,
+    RecalculationPreview,
+    RecalculationPreviewRequest,
+    RecalculationRestoredRevision,
+    RecalculationRestoreRequest,
+    RecalculationRestoreReviewProjection,
+    RecalculationRestoreReviewRequest,
+    RecalculationScheduleProjection,
+    RecalculationScheduleRequest,
     RuntimeState,
     VersionResponse,
     WorkflowCancelRequest,
@@ -69,6 +79,7 @@ from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .provenance import ProvenanceProblem, ProvenanceService
 from .research_intents import IntentProblem, ResearchIntentService
+from .selective_recalculation import RecalculationControlProblem, RecalculationControlService
 from .task_center import TaskCenterProblem, TaskCenterService
 from .transport import CoreProblem, TraceCorrelationMiddleware, problem_detail
 
@@ -85,6 +96,7 @@ class RuntimeContext:
     intents: ResearchIntentService
     provenance: ProvenanceService
     task_center: TaskCenterService
+    recalculation: RecalculationControlService
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -98,6 +110,7 @@ def create_app(
     intents: ResearchIntentService | None = None,
     provenance: ProvenanceService | None = None,
     task_center: TaskCenterService | None = None,
+    recalculation: RecalculationControlService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -113,6 +126,9 @@ def create_app(
         resolved_task_center = (
             task_center if task_center is not None else TaskCenterService.unavailable(resolved_projects)
         )
+        resolved_recalculation = (
+            recalculation if recalculation is not None else RecalculationControlService.unavailable(resolved_projects)
+        )
         context = RuntimeContext(
             settings=resolved_settings,
             modules=resolved_modules,
@@ -122,6 +138,7 @@ def create_app(
             intents=resolved_intents,
             provenance=resolved_provenance,
             task_center=resolved_task_center,
+            recalculation=resolved_recalculation,
         )
         app.state.runtime = context
         context.state = RuntimeState.READY
@@ -321,6 +338,24 @@ def create_app(
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
         except TaskCenterProblem as error:
+            raise CoreProblem(
+                problem_detail(
+                    status=error.status,
+                    code=error.code,
+                    title=error.title,
+                    detail=error.detail,
+                    trace_id=request.state.trace_id,
+                    retryable=error.retryable,
+                    remediation=error.remediation,
+                )
+            ) from error
+
+    def run_recalculation_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+        except RecalculationControlProblem as error:
             raise CoreProblem(
                 problem_detail(
                     status=error.status,
@@ -652,6 +687,77 @@ def create_app(
         return run_intent_action(
             request,
             lambda: runtime(request).intents.evaluate_policy(command, trace_id=request.state.trace_id),
+        )
+
+    @app.post(
+        "/projects/recalculation/preview",
+        response_model=RecalculationPreview,
+        responses={409: {"model": ProblemDetail}, 412: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["recalculation"],
+    )
+    def preview_recalculation(request: Request, command: RecalculationPreviewRequest) -> RecalculationPreview:
+        return run_recalculation_action(request, lambda: runtime(request).recalculation.preview(command))
+
+    @app.post(
+        "/projects/recalculation/schedules",
+        response_model=RecalculationScheduleProjection,
+        responses={409: {"model": ProblemDetail}, 412: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["recalculation"],
+    )
+    def schedule_recalculation(
+        request: Request,
+        command: RecalculationScheduleRequest,
+        idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
+    ) -> RecalculationScheduleProjection:
+        return run_recalculation_action(
+            request,
+            lambda: runtime(request).recalculation.schedule(command, idempotency_key=idempotency_key),
+        )
+
+    @app.post(
+        "/projects/recalculation/comparisons",
+        response_model=RecalculationComparisonProjection,
+        responses={409: {"model": ProblemDetail}, 412: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["recalculation"],
+    )
+    def compare_recalculation(
+        request: Request,
+        command: RecalculationComparisonRequest,
+    ) -> RecalculationComparisonProjection:
+        return run_recalculation_action(request, lambda: runtime(request).recalculation.compare(command))
+
+    @app.post(
+        "/projects/recalculation/restore-reviews",
+        response_model=RecalculationRestoreReviewProjection,
+        responses={409: {"model": ProblemDetail}, 412: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["recalculation"],
+    )
+    def request_recalculation_restore_review(
+        request: Request,
+        command: RecalculationRestoreReviewRequest,
+        idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
+    ) -> RecalculationRestoreReviewProjection:
+        return run_recalculation_action(
+            request,
+            lambda: runtime(request).recalculation.request_restore_review(
+                command,
+                idempotency_key=idempotency_key,
+            ),
+        )
+
+    @app.post(
+        "/projects/recalculation/restorations",
+        response_model=RecalculationRestoredRevision,
+        responses={409: {"model": ProblemDetail}, 412: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["recalculation"],
+    )
+    def restore_recalculation_revision(
+        request: Request,
+        command: RecalculationRestoreRequest,
+    ) -> RecalculationRestoredRevision:
+        return run_recalculation_action(
+            request,
+            lambda: runtime(request).recalculation.restore(command, trace_id=request.state.trace_id),
         )
 
     @app.get(
