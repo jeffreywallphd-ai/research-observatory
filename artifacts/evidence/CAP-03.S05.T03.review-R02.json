@@ -1,0 +1,79 @@
+{
+  "task_id": "CAP-03.S05.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "76494d504d37ad7552eea256689e90408375c84f",
+  "submission_record_commit": "c83c8d68f2fd102487336601e0be7a1d222fa8f2",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The strict-descendant R02 candidate, direct-child submission, exact 14-path remediation inventory, two-path submission separation, expected frozen evidence SHA/blob, current taskctl projection, patch hygiene, and package registration authenticate. Forty-five focused recalculation, workflow-contract, executor, Task Center, and strict package-inventory tests pass. CAP-03.S05.T03-R01-F02 is closed: exact authority is re-read under the queue writer transaction and the injected second change leaves zero queue rows. R01-F01 and R01-F03 remain open at narrower real boundaries: first candidate commit accepts a substituted immutable claim tuple and then cannot replay it, while restore checks only materialized stale causes and accepts a prior revision already named by a durable running impact change before its cause is propagated. No full profile was run.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T03.R02.json",
+      "sha256": "d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203",
+      "git_blob": "55875a8d82e52f4c9ff03d9ddad0741a76f8d416",
+      "commit": "76494d504d37ad7552eea256689e90408375c84f"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve R01 candidate, R02 candidate, and submission commits; verify strict ancestry and the submission's sole parent, exact evidence SHA/blob, declared-versus-actual remediation paths, submission-only paths, taskctl R02 projection, and git diff --check.",
+      "result": "PASS: 76494d504d37ad7552eea256689e90408375c84f strictly descends from 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d; c83c8d68f2fd102487336601e0be7a1d222fa8f2 has the exact candidate as sole parent; all 14 declared remediation paths match; the submission adds only R02 evidence and backlog projection; evidence SHA/blob and patch hygiene match."
+    },
+    {
+      "type": "independent-check",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.e2e.test_selective_recalculation tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "result": "PASS: 45 focused tests passed in 5.268 seconds. The strict package inventory contains selective_recalculation and recalculation_contracts."
+    },
+    {
+      "type": "independent-prior-finding-replay",
+      "finding_id": "CAP-03.S05.T03-R01-F01",
+      "command": "Replay submitted missing, claimed-but-unstarted, cancelled, recovered-but-unfinished, generic-event, superseded-dependency, exact success, and exact replay cases; then retain a true running job/attempt/worker/lease token/fingerprint while substituting workflow_run_id, step_run_id, concurrency_class, attempt_number, and idempotency_key in the claim passed to candidate commit.",
+      "result": "PARTIAL/FAIL: submitted denials and exact happy replay pass, but the substituted claim commits N+1 and job success: {'acceptedRevision': 1, 'jobState': 'succeeded', 'substitutedWorkflowRun': True, 'substitutedStepRun': True, 'substitutedConcurrency': True, 'substitutedAttemptNumber': True, 'substitutedIdempotency': True}. Repeating the same command then fails WorkflowLeaseRejected instead of returning the exact replay."
+    },
+    {
+      "type": "independent-prior-finding-replay",
+      "finding_id": "CAP-03.S05.T03-R01-F02",
+      "command": "Replay test_enqueue_fails_without_queue_write_when_authority_changes_after_planning and inspect the queue projection.",
+      "result": "PASS: a second material change propagated immediately before enqueue changes causes, replacements, and reuse authority; enqueue fails with WorkflowQueueConflict and Task Center remains empty. Code inspection confirms target, registration, causes/changes, replacements, reusable inputs, and plan hash are re-read and compared inside BEGIN IMMEDIATE."
+    },
+    {
+      "type": "independent-prior-finding-replay",
+      "finding_id": "CAP-03.S05.T03-R01-F03",
+      "command": "Replay submitted materialized-stale denial and fresh append-only restore; then begin, but do not advance, an exact durable source-version impact run whose items include a fresh prior adjudicated revision. Before any stale cause is materialized, restore that prior over its current candidate and inspect dependencies/staleness; finally advance the original run.",
+      "result": "PARTIAL/FAIL: materialized-stale denial and genuinely fresh restoration pass, but the running-change case yields {'durableChange': True, 'propagationStateBeforeRestore': 'running', 'priorStaleCausesBeforeRestore': 0, 'restoreAcceptedRevision': 2, 'restoredUsesSupersededInput': True, 'restoredStaleCauses': 0}. The old propagation then fails because restoration changed the graph, leaving the restored current revision false-fresh until a new propagation is explicitly started."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S05.T03-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "First candidate commit accepts a substituted immutable claimant tuple and produces a non-replayable success",
+      "reproduction": "At candidate 76494d504d37ad7552eea256689e90408375c84f, repositories.py:6486-6513 validates only the stored/claimed activity type and plan fingerprint; _lease_row at :4973-5013 validates the lookup capability tuple but not the claim's workflow_run_id, step_run_id, concurrency_class, idempotency_key, or attempt_number. The first-commit path at :6535-6602 never calls _verify_attempt_capability. With a real started/checkpointed lease, substitute all five fields while retaining the genuine job, attempt, worker, lease token/generation, and fingerprint. Candidate N+1 and job success are accepted, and the substituted idempotency authority is written. Repeating the exact command then reaches the existing-output branch, where _complete_with_connection calls _verify_attempt_capability at :6092-6099 and rejects the same claim. The observed result is acceptedRevision=1/jobState=succeeded followed by WorkflowLeaseRejected on replay.",
+      "required_remediation": "Verify the complete immutable attempt capability before any first-commit mutation, using the same canonical claimant comparison on both initial and replay paths. Do not persist caller-supplied idempotency or other claim authority unless it exactly matches the canonical job/attempt row. Add one-field-at-a-time substitution tests for project, workflow run, job, step run, activity, concurrency class, attempt ID/number, worker, lease token/generation, idempotency key, and command fingerprint; each must fail with no aggregate, artifact, provenance/outbox, completion, or history write. Prove exact initial commit and restart replay return the same candidate and receipt."
+    },
+    {
+      "id": "CAP-03.S05.T03-R02-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Restore ignores a durable in-flight material change and can still create a false-fresh adjudicated current revision",
+      "reproduction": "Dependency-impact begin persists the exact change and affected items at repositories.py:3038-3142 before advance materializes stale causes. UnitOfWork.require_fresh_revision at :2331-2345 checks only dependency_stale_causes, and restore calls only that check at selective_recalculation.py:484. In a real SQLite fixture, begin a source-version change whose preview includes a fresh prior adjudicated output but do not advance. Restore accepts N+2, clones the superseded predecessor, reports zero stale causes, and retains adjudicated status. Advancing the original run then fails because the restored revision changed the graph, so it cannot repair the new false-fresh current revision. Observed: {'durableChange': True, 'propagationStateBeforeRestore': 'running', 'priorStaleCausesBeforeRestore': 0, 'restoreAcceptedRevision': 2, 'restoredUsesSupersededInput': True, 'restoredStaleCauses': 0}.",
+      "required_remediation": "At the same BEGIN IMMEDIATE restoration boundary, treat applicable durable dependency changes/impact items that are running, checkpointed, cancelled, or failed before stale-cause materialization as current adverse authority, not merely rows already copied into dependency_stale_causes. Deny restoration when the selected prior dependency set is affected, or atomically retain an explicitly known-stale restore under an approved contract; do not publish it as fresh. Add begin-before-advance, checkpointed-partial, cancelled, failed/recovered, completed, multiple-change, restart, and exact replay fixtures proving no false-fresh restoration and no orphaned propagation authority."
+    }
+  ],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S05.T03-R01-F02",
+      "disposition": "fixed",
+      "evidence": "The planner now obtains one coherent SQLite authority snapshot and enqueue re-resolves and compares the exact current target, dependency registration, causes/changes, replacement/reuse sets, and authority/command hash in the queue's writer transaction. The injected second-change replay returns WorkflowQueueConflict and leaves zero queue rows."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S05.T03-R01-F01",
+    "CAP-03.S05.T03-R01-F02",
+    "CAP-03.S05.T03-R01-F03"
+  ]
+}

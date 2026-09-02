@@ -13789,11 +13789,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T23:19:02+00:00'
-      updated_at: '2026-09-02T00:00:48+00:00'
+      updated_at: '2026-09-02T00:06:46+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13811,19 +13811,21 @@ capabilities:
       review: &id037
         reviewer: agent:t02-adversarial-preflight
         result: changes-requested
-        reviewed_at: '2026-09-01T23:42:35+00:00'
-        notes: 'The exact base/candidate/submission ancestry, 12-path candidate inventory, two-path submission separation,
-          frozen evidence SHA/blob, backlog REVIEW projection, patch hygiene, and selective-recalculation package registration
-          authenticate. A narrow independent replay passed 40 submitted recalculation, workflow-contract, local-executor,
-          Task Center, and strict package-inventory tests. Three acceptance-bound authority defects remain: candidate append
-          is not bound to a completed exact recalculation plan, workflow admission has a stale-read/enqueue race, and restore
-          converts an already stale adjudicated revision into a false-fresh adjudicated revision. No full profile was run.'
+        reviewed_at: '2026-09-02T00:06:46+00:00'
+        notes: 'The strict-descendant R02 candidate, direct-child submission, exact 14-path remediation inventory, two-path
+          submission separation, expected frozen evidence SHA/blob, current taskctl projection, patch hygiene, and package
+          registration authenticate. Forty-five focused recalculation, workflow-contract, executor, Task Center, and strict
+          package-inventory tests pass. CAP-03.S05.T03-R01-F02 is closed: exact authority is re-read under the queue writer
+          transaction and the injected second change leaves zero queue rows. R01-F01 and R01-F03 remain open at narrower real
+          boundaries: first candidate commit accepts a substituted immutable claim tuple and then cannot replay it, while
+          restore checks only materialized stale causes and accepts a prior revision already named by a durable running impact
+          change before its cause is propagated. No full profile was run.'
       base_sha: b5a941d7d907561c7d7f5d1a03162155b8fe7b5f
       lease:
         claimed_by: codex
-        claimed_at: '2026-09-01T23:42:35+00:00'
-        expires_at: '2026-09-02T07:42:35+00:00'
-      verification_state: passed
+        claimed_at: '2026-09-02T00:06:46+00:00'
+        expires_at: '2026-09-02T08:06:46+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -13897,7 +13899,17 @@ capabilities:
             - graph:unit
             - e2e-local:system
             packet_sha256: f6e99d222aa578a23f17fa772f8d796848c84633fb5c623da1903bbc4dc47f71
-          review: *id037
+          review:
+            reviewer: agent:t02-adversarial-preflight
+            result: changes-requested
+            reviewed_at: '2026-09-01T23:42:35+00:00'
+            notes: 'The exact base/candidate/submission ancestry, 12-path candidate inventory, two-path submission separation,
+              frozen evidence SHA/blob, backlog REVIEW projection, patch hygiene, and selective-recalculation package registration
+              authenticate. A narrow independent replay passed 40 submitted recalculation, workflow-contract, local-executor,
+              Task Center, and strict package-inventory tests. Three acceptance-bound authority defects remain: candidate
+              append is not bound to a completed exact recalculation plan, workflow admission has a stale-read/enqueue race,
+              and restore converts an already stale adjudicated revision into a false-fresh adjudicated revision. No full
+              profile was run.'
           ledger:
             path: artifacts/evidence/CAP-03.S05.T03.review-R01.json
             sha256: 43c8dbd252438682ce342211310ac2cffe37490ec4e351d1e57416d581180652
@@ -13989,82 +14001,169 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission:
-          id: R02
-          submitted_by: codex
-          submitted_at: '2026-09-02T00:00:48+00:00'
-          candidate_commit: 76494d504d37ad7552eea256689e90408375c84f
-          base_commit: 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S05.T03.R02.json
-            sha256: d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203
-            commit: 76494d504d37ad7552eea256689e90408375c84f
-            recorded_at: '2026-09-02T00:00:48+00:00'
-          acceptance_criteria_sha256: 1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69
-          changed_paths:
-          - artifacts/evidence/CAP-03.S05.T03.R01.json
-          - artifacts/evidence/CAP-03.S05.T03.review-R01.json
-          - docs/architecture/local-sqlite-storage.md
-          - packages/contracts/workflow/README.md
-          - planning/backlog.yaml
-          - quality-scope.json
-          - services/core-api/packaging/sidecar-build.json
-          - services/core-api/src/research_observatory_core/ports/repositories.py
-          - services/core-api/src/research_observatory_core/recalculation_contracts.py
-          - services/core-api/src/research_observatory_core/repositories.py
-          - services/core-api/src/research_observatory_core/selective_recalculation.py
-          - tests/e2e/test_selective_recalculation.py
-          - tests/packaging/test_core_sidecar_package.py
-          - tools/core_sidecar_build.py
-          selected_checks:
-          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.e2e.test_selective_recalculation
-            tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center
-          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts
-            tests.data.test_material_dependencies tests.data.test_sqlite_repositories
-          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package
-          - .venv\Scripts\python.exe tools/quality_check.py --repo .
-          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
-            --repo .
-          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 139158aa...76494d50
-          - .venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
-            --affected-head 76494d504d37ad7552eea256689e90408375c84f --deferred-gate W1-exit --selection-only
-          deferred_checks:
-          - CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation,
-            and affected cross-task integration/adversarial checks after T03 closes.
-          - The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows
-            x64 qualification matrix remains mandatory once at W1 exit.
-          selection_rationale: 'R01 exposed three coupled transaction-authority defects across workflow admission, canonical
-            output commit, and human restoration. R02 therefore replays each at the narrowest real boundary: injected SQLite
-            propagation at admission; exact live worker/plan/dependency/output binding in one candidate-and-completion transaction;
-            and same-transaction stale denial for restore. Existing workflow contracts, queue recovery/cancellation, dependency
-            graph, repository behavior, static quality, architecture, and a real frozen Windows build cover credible regression
-            surfaces. No route, credential, dependency version, security policy, schema, renderer, or toolchain changed, so
-            unrelated full service/security/UI/deployment suites remain deferred to the slice and W1 gates.'
-          selection_sha256: f3fcc9c7a22b88a56b5ab4646e888635abb43694b7f9b6569515e71debdbba61
-          prior_attempt_id: R01
-          open_finding_ids:
-          - CAP-03.S05.T03-R01-F01
-          - CAP-03.S05.T03-R01-F02
-          - CAP-03.S05.T03-R01-F03
-          root_cause_analysis: 'R01 treated correct data selection, queue admission, aggregate append, and restore as individually
-            guarded operations but did not model the transaction boundaries joining them. That allowed authority to change
-            between planning and enqueue, permitted candidate creation without consumption of a successful exact workflow,
-            and separated stale-state authority from restoration. R02 makes each cross-table invariant explicit at its mutation
-            point: coherent plan snapshot plus admission CAS, atomic candidate/output completion, and transactional stale-restore
-            denial.'
-          selected_command_ids:
-          - foundation:repository-structure
-          - foundation:architecture
-          - foundation:quality
-          - foundation:backlog
-          - packaging:unit
-          - contracts:unit
-          - data:unit
-          - graph:unit
-          - e2e-local:system
-          packet_sha256: b0ed06ac693fa5a8aad19a2302aec0c3f1ac87aac2d49658d2e56f6abe94a3db
+        - submission:
+            id: R02
+            submitted_by: codex
+            submitted_at: '2026-09-02T00:00:48+00:00'
+            candidate_commit: 76494d504d37ad7552eea256689e90408375c84f
+            base_commit: 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S05.T03.R02.json
+              sha256: d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203
+              commit: 76494d504d37ad7552eea256689e90408375c84f
+              recorded_at: '2026-09-02T00:00:48+00:00'
+            acceptance_criteria_sha256: 1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69
+            changed_paths:
+            - artifacts/evidence/CAP-03.S05.T03.R01.json
+            - artifacts/evidence/CAP-03.S05.T03.review-R01.json
+            - docs/architecture/local-sqlite-storage.md
+            - packages/contracts/workflow/README.md
+            - planning/backlog.yaml
+            - quality-scope.json
+            - services/core-api/packaging/sidecar-build.json
+            - services/core-api/src/research_observatory_core/ports/repositories.py
+            - services/core-api/src/research_observatory_core/recalculation_contracts.py
+            - services/core-api/src/research_observatory_core/repositories.py
+            - services/core-api/src/research_observatory_core/selective_recalculation.py
+            - tests/e2e/test_selective_recalculation.py
+            - tests/packaging/test_core_sidecar_package.py
+            - tools/core_sidecar_build.py
+            selected_checks:
+            - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.e2e.test_selective_recalculation
+              tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center
+            - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts
+              tests.data.test_material_dependencies tests.data.test_sqlite_repositories
+            - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package
+            - .venv\Scripts\python.exe tools/quality_check.py --repo .
+            - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
+              --repo .
+            - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 139158aa...76494d50
+            - .venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
+              --affected-head 76494d504d37ad7552eea256689e90408375c84f --deferred-gate W1-exit --selection-only
+            deferred_checks:
+            - CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation,
+              and affected cross-task integration/adversarial checks after T03 closes.
+            - The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows
+              x64 qualification matrix remains mandatory once at W1 exit.
+            selection_rationale: 'R01 exposed three coupled transaction-authority defects across workflow admission, canonical
+              output commit, and human restoration. R02 therefore replays each at the narrowest real boundary: injected SQLite
+              propagation at admission; exact live worker/plan/dependency/output binding in one candidate-and-completion transaction;
+              and same-transaction stale denial for restore. Existing workflow contracts, queue recovery/cancellation, dependency
+              graph, repository behavior, static quality, architecture, and a real frozen Windows build cover credible regression
+              surfaces. No route, credential, dependency version, security policy, schema, renderer, or toolchain changed,
+              so unrelated full service/security/UI/deployment suites remain deferred to the slice and W1 gates.'
+            selection_sha256: f3fcc9c7a22b88a56b5ab4646e888635abb43694b7f9b6569515e71debdbba61
+            prior_attempt_id: R01
+            open_finding_ids:
+            - CAP-03.S05.T03-R01-F01
+            - CAP-03.S05.T03-R01-F02
+            - CAP-03.S05.T03-R01-F03
+            root_cause_analysis: 'R01 treated correct data selection, queue admission, aggregate append, and restore as individually
+              guarded operations but did not model the transaction boundaries joining them. That allowed authority to change
+              between planning and enqueue, permitted candidate creation without consumption of a successful exact workflow,
+              and separated stale-state authority from restoration. R02 makes each cross-table invariant explicit at its mutation
+              point: coherent plan snapshot plus admission CAS, atomic candidate/output completion, and transactional stale-restore
+              denial.'
+            selected_command_ids:
+            - foundation:repository-structure
+            - foundation:architecture
+            - foundation:quality
+            - foundation:backlog
+            - packaging:unit
+            - contracts:unit
+            - data:unit
+            - graph:unit
+            - e2e-local:system
+            packet_sha256: b0ed06ac693fa5a8aad19a2302aec0c3f1ac87aac2d49658d2e56f6abe94a3db
+          review: *id037
+          ledger:
+            path: artifacts/evidence/CAP-03.S05.T03.review-R02.json
+            sha256: 9d1f713156a8d6c9777bbda4edaa300e3385c16f4bae7c4ed679777dc05df83c
+          findings:
+          - id: CAP-03.S05.T03-R02-F01
+            severity: high
+            blocking: true
+            criterion_index: 1
+            title: First candidate commit accepts a substituted immutable claimant tuple and produces a non-replayable success
+            reproduction: At candidate 76494d504d37ad7552eea256689e90408375c84f, repositories.py:6486-6513 validates only
+              the stored/claimed activity type and plan fingerprint; _lease_row at :4973-5013 validates the lookup capability
+              tuple but not the claim's workflow_run_id, step_run_id, concurrency_class, idempotency_key, or attempt_number.
+              The first-commit path at :6535-6602 never calls _verify_attempt_capability. With a real started/checkpointed
+              lease, substitute all five fields while retaining the genuine job, attempt, worker, lease token/generation,
+              and fingerprint. Candidate N+1 and job success are accepted, and the substituted idempotency authority is written.
+              Repeating the exact command then reaches the existing-output branch, where _complete_with_connection calls _verify_attempt_capability
+              at :6092-6099 and rejects the same claim. The observed result is acceptedRevision=1/jobState=succeeded followed
+              by WorkflowLeaseRejected on replay.
+            required_remediation: Verify the complete immutable attempt capability before any first-commit mutation, using
+              the same canonical claimant comparison on both initial and replay paths. Do not persist caller-supplied idempotency
+              or other claim authority unless it exactly matches the canonical job/attempt row. Add one-field-at-a-time substitution
+              tests for project, workflow run, job, step run, activity, concurrency class, attempt ID/number, worker, lease
+              token/generation, idempotency key, and command fingerprint; each must fail with no aggregate, artifact, provenance/outbox,
+              completion, or history write. Prove exact initial commit and restart replay return the same candidate and receipt.
+          - id: CAP-03.S05.T03-R02-F02
+            severity: high
+            blocking: true
+            criterion_index: 1
+            title: Restore ignores a durable in-flight material change and can still create a false-fresh adjudicated current
+              revision
+            reproduction: 'Dependency-impact begin persists the exact change and affected items at repositories.py:3038-3142
+              before advance materializes stale causes. UnitOfWork.require_fresh_revision at :2331-2345 checks only dependency_stale_causes,
+              and restore calls only that check at selective_recalculation.py:484. In a real SQLite fixture, begin a source-version
+              change whose preview includes a fresh prior adjudicated output but do not advance. Restore accepts N+2, clones
+              the superseded predecessor, reports zero stale causes, and retains adjudicated status. Advancing the original
+              run then fails because the restored revision changed the graph, so it cannot repair the new false-fresh current
+              revision. Observed: {''durableChange'': True, ''propagationStateBeforeRestore'': ''running'', ''priorStaleCausesBeforeRestore'':
+              0, ''restoreAcceptedRevision'': 2, ''restoredUsesSupersededInput'': True, ''restoredStaleCauses'': 0}.'
+            required_remediation: At the same BEGIN IMMEDIATE restoration boundary, treat applicable durable dependency changes/impact
+              items that are running, checkpointed, cancelled, or failed before stale-cause materialization as current adverse
+              authority, not merely rows already copied into dependency_stale_causes. Deny restoration when the selected prior
+              dependency set is affected, or atomically retain an explicitly known-stale restore under an approved contract;
+              do not publish it as fresh. Add begin-before-advance, checkpointed-partial, cancelled, failed/recovered, completed,
+              multiple-change, restart, and exact replay fixtures proving no false-fresh restoration and no orphaned propagation
+              authority.
+          closures:
+          - finding_id: CAP-03.S05.T03-R01-F02
+            disposition: fixed
+            evidence: The planner now obtains one coherent SQLite authority snapshot and enqueue re-resolves and compares
+              the exact current target, dependency registration, causes/changes, replacement/reuse sets, and authority/command
+              hash in the queue's writer transaction. The injected second-change replay returns WorkflowQueueConflict and
+              leaves zero queue rows.
+          telemetry:
+            task_id: CAP-03.S05.T03
+            amendment_id: null
+            attempt_id: R02
+            submitted_at: '2026-09-02T00:00:48+00:00'
+            reviewed_at: '2026-09-02T00:06:46+00:00'
+            duration_seconds: 358
+            outcome: changes-requested
+            finding_counts:
+              critical: 0
+              high: 2
+              medium: 0
+              low: 0
+              blocking: 2
+              total: 2
+            command_ids:
+            - foundation:repository-structure
+            - foundation:architecture
+            - foundation:quality
+            - foundation:backlog
+            - packaging:unit
+            - contracts:unit
+            - data:unit
+            - graph:unit
+            - e2e-local:system
+            remediation:
+              prior_attempt_id: R01
+              replayed_finding_ids:
+              - CAP-03.S05.T03-R01-F01
+              - CAP-03.S05.T03-R01-F02
+              - CAP-03.S05.T03-R01-F03
+              closed_finding_ids:
+              - CAP-03.S05.T03-R01-F02
+        current_submission: null
     platform_targets:
     - windows-x64
     completion:
