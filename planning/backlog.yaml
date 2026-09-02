@@ -12881,7 +12881,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-03.S04.T03
-    status: REVIEW
+    status: IN_PROGRESS
     tasks:
     - id: CAP-03.S05.T01
       capability_id: CAP-03
@@ -14320,14 +14320,16 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: CHANGES_REQUESTED
+      reviewer: agent:cap03-s05-integration-reviewer
+      reviewed_at: '2026-09-02T11:54:12+00:00'
       evidence:
       - artifacts/evidence/CAP-03.S05.integration-R01.json
-      notes: Submit exact integrated dependency registration, bounded stale propagation, selective recalculation, migration/recovery,
-        security, package, and quantitative graph evidence for independent review. Preserve the disclosed historical foundation-controller
-        baseline for W1-exit reconciliation; do not infer a passing full profile.
+      notes: 'CHANGES_REQUESTED: exact CAP-03.S05 task artifacts and ancestry authenticate, and focused existing unions plus
+        the dependency-impact benchmark pass. Five acceptance-bound findings remain: no production researcher/API/UI path;
+        spoofable human restore authority; unbound current rights policy/status; false SCCs through non-material or ignored
+        edges; and inaccurate/truncated affected-selection evidence. The disclosed 478-test 72-failure/17-error historical
+        foundation baseline remains explicit mandatory W1-exit reconciliation rather than a separate S05 product finding.'
   - id: CAP-03.S06
     title: Use-case profiles and adaptive guided navigation
     outcome: A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench,
