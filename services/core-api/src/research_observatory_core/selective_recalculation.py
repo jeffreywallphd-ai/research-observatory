@@ -27,6 +27,7 @@ from .recalculation_contracts import (
 from .workflow_contracts import workflow_record_sha256, workflow_snapshot_errors
 from .workflow_executor import prepare_workflow_job
 
+
 @dataclass(frozen=True, slots=True)
 class RecalculationWorkflowIdentity:
     workflow_definition_id: str

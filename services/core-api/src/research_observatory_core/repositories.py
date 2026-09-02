@@ -2334,7 +2334,12 @@ class _SqliteUnitOfWork:
         state = _UNIT_OF_WORKS.state(self.__token)
         try:
             row = state.connection.execute(
-                "SELECT 1 FROM dependency_stale_causes WHERE project_id=? AND output_revision_id=? LIMIT 1",
+                """
+                SELECT 1
+                  FROM dependency_impact_items
+                 WHERE project_id=? AND output_revision_id=?
+                 LIMIT 1
+                """,
                 (state.project_id, revision_id),
             ).fetchone()
         except sqlite3.Error:
@@ -2342,7 +2347,7 @@ class _SqliteUnitOfWork:
             raise _transaction_failure() from None
         if row is not None:
             _UNIT_OF_WORKS.fail(self.__token)
-            raise RepositoryConflict("stale revision cannot be restored as fresh")
+            raise RepositoryConflict("affected revision cannot be restored as fresh")
 
     def __enter__(self) -> _SqliteUnitOfWork:
         if self.__token is not None:
@@ -6534,6 +6539,7 @@ class _SqliteSelectiveRecalculationRepository(
             raise RepositoryConflict("recalculation candidate event authority is invalid")
         with self._transaction() as connection:
             self._candidate_job_authority(connection, command)
+            self._verify_attempt_capability(connection, command.claim)
             token = _UNIT_OF_WORKS.register(connection, self._project_id)
             try:
                 aggregates = _SqliteAggregateRepository(token)

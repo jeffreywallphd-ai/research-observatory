@@ -221,7 +221,8 @@ append, workflow output commitment, and output provenance share one SQLite
 transaction. Exact revision/history reads support comparison, and an explicit
 human restoration appends another revision with the prior adjudicated value,
 dependency set, current predecessor, and restoration audit event. A prior value
-with any open stale cause cannot be restored as fresh. Neither path rewrites
+named by durable dependency-impact authority cannot be restored as fresh, even
+before propagation materializes its stale cause. Neither path rewrites
 earlier revisions or closes adverse history.
 
 WAL and SHM files are live database state. A backup or relocation implementation

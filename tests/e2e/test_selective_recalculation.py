@@ -7,6 +7,7 @@ import unittest
 from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 from research_observatory_core.ports.repositories import (
     AggregateRevision,
@@ -15,6 +16,7 @@ from research_observatory_core.ports.repositories import (
     DependencyChange,
     MaterialDependency,
     RepositoryConflict,
+    RepositoryProblem,
 )
 from research_observatory_core.ports.workflow_executor import (
     WorkflowActor,
@@ -43,7 +45,11 @@ from research_observatory_core.selective_recalculation import (
     RestoreRevisionCommand,
     SelectiveRecalculationService,
 )
-from research_observatory_core.storage import development_plaintext_database_fixture, initialize_database
+from research_observatory_core.storage import (
+    development_plaintext_database_fixture,
+    initialize_database,
+    open_canonical_database,
+)
 from research_observatory_core.workflow_contracts import workflow_snapshot_errors
 
 PROJECT_ID = "01890f6e-6a40-7cc5-98b7-123456789abc"
@@ -312,6 +318,91 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             ),
         )
 
+    def _authority_counts(self) -> tuple[int, ...]:
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            return tuple(
+                int(connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
+                for table in (
+                    "aggregate_revisions",
+                    "provenance_events",
+                    "outbox_events",
+                    "workflow_attempt_artifacts",
+                    "workflow_committed_outputs",
+                    "workflow_history_events",
+                )
+            )
+        finally:
+            connection.close()
+
+    def _restorable_pair(self, index: int) -> tuple[AggregateRevision, AggregateRevision]:
+        prior = self._append(
+            AggregateRevisionDraft(
+                revision_id=uid(index),
+                aggregate_id=uid(200 + index),
+                aggregate_kind="evidence",
+                created_at=OCCURRED_AT,
+                modified_at=f"2026-09-01T22:00:{index:02d}.000Z",
+                display_label_observed=f"adjudicated value {index}",
+                display_label_normalized=f"adjudicated value {index}",
+                knowledge_status="adjudicated",
+                rights_status="allowed",
+                dependency_coverage="complete",
+                provenance_inputs=(self.source_v1,),
+                material_dependencies=(dependency(index, self.source_v1, "a"),),
+            ),
+            index,
+        )
+        current = self._append(
+            AggregateRevisionDraft(
+                revision_id=uid(index + 1),
+                aggregate_id=prior.aggregate_id,
+                aggregate_kind="evidence",
+                created_at=prior.created_at,
+                modified_at=f"2026-09-01T22:00:{index + 1:02d}.000Z",
+                display_label_observed=f"candidate value {index}",
+                display_label_normalized=f"candidate value {index}",
+                knowledge_status="verified",
+                rights_status="allowed",
+                dependency_coverage="complete",
+                provenance_inputs=(prior, self.source_v1),
+                material_dependencies=(dependency(index + 1, self.source_v1, "a"),),
+            ),
+            index + 1,
+            0,
+        )
+        return prior, current
+
+    @staticmethod
+    def _restore_command(
+        prior: AggregateRevision,
+        current: AggregateRevision,
+        index: int,
+    ) -> RestoreRevisionCommand:
+        occurred_at = f"2026-09-01T22:00:{index + 2:02d}.000Z"
+        return RestoreRevisionCommand(
+            prior_adjudicated_revision_id=prior.revision_id,
+            expected_current_revision_id=current.revision_id,
+            new_revision_id=uid(index + 2),
+            dependency_ids=(uid(31_000 + index),),
+            modified_at=occurred_at,
+            event=event(
+                index + 2,
+                actor_type="human",
+                event_type="aggregate.revision-restored",
+                occurred_at=occurred_at,
+            ),
+        )
+
+    def _impact_change(self, index: int) -> DependencyChange:
+        return replace(
+            self.change,
+            change_id=uid(81_000 + index),
+            idempotency_key=f"source-v1-superseded-restore-{index}",
+            trace_id=f"{index:x}"[-1] * 32,
+            occurred_at=f"2026-09-01T22:10:{index:02d}.000Z",
+        )
+
     def commit_candidate(self, draft: AggregateRevisionDraft) -> tuple[AggregateRevision, WorkflowJobClaim]:
         scheduled = self.service.schedule(self.request())
         claim = self.workflows.claim_next(
@@ -360,7 +451,12 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             plan_sha256=scheduled.workflow.plan_sha256,
             completed_at=completed_at,
         )
-        replay = self.service.append_candidate(
+        reopened_service = SelectiveRecalculationService(
+            unit_of_work=create_sqlite_unit_of_work_factory(self.database, PROJECT_ID),
+            dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
+            recalculation=sqlite_selective_recalculation_repository(self.root, PROJECT_ID),
+        )
+        replay = reopened_service.append_candidate(
             draft,
             candidate_event,
             claim=claim,
@@ -530,6 +626,108 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             )
         with self.factory() as unit:
             self.assertEqual((self.adjudicated,), unit.aggregates.history(self.adjudicated.aggregate_id))
+
+    def test_candidate_rejects_each_substituted_claim_field_without_any_write(self) -> None:
+        scheduled = self.service.schedule(self.request())
+        claim = self.workflows.claim_next(
+            worker_id=uid(93_100),
+            concurrency_classes=("document",),
+            now="2026-09-01T22:01:01.000Z",
+            lease_duration_ms=60_000,
+        )
+        self.assertIsNotNone(claim)
+        assert claim is not None
+        self.workflows.start(claim, now="2026-09-01T22:01:02.000Z")
+        checkpoint_artifact = WorkflowOutputReference(
+            artifact_id=self.verified.aggregate_id,
+            revision_id=self.verified.revision_id,
+            content_hash=revision_content_hash(self.verified),
+            media_type="application/vnd.research-observatory.recalculation-checkpoint+json",
+            provenance_entity_id=self.verified.aggregate_id,
+        )
+        self.workflows.stage_artifact(
+            claim,
+            artifact=checkpoint_artifact,
+            role="checkpoint",
+            now="2026-09-01T22:01:03.000Z",
+        )
+        self.workflows.checkpoint(
+            claim,
+            checkpoint_id=uid(93_101),
+            state_hash=checkpoint_artifact.content_hash,
+            payload_artifact_id=checkpoint_artifact.artifact_id,
+            now="2026-09-01T22:01:04.000Z",
+            progress={"kind": "quantified", "unit": "outputs", "completedUnits": 0, "totalUnits": 1},
+        )
+        baseline = self._authority_counts()
+        substitutions = (
+            ("project", replace(claim, project_id=uid(93_102))),
+            ("workflow-run", replace(claim, workflow_run_id=uid(93_103))),
+            ("job", replace(claim, job_id=uid(93_104))),
+            ("step-run", replace(claim, step_run_id=uid(93_105))),
+            ("activity", replace(claim, activity_type="substituted-activity")),
+            ("concurrency", replace(claim, concurrency_class="ai")),
+            ("attempt", replace(claim, attempt_id=uid(93_106))),
+            ("attempt-number", replace(claim, attempt_number=claim.attempt_number + 1)),
+            ("worker", replace(claim, worker_id=uid(93_107))),
+            ("lease-token", replace(claim, lease_token="substituted-lease-token")),
+            ("lease-generation", replace(claim, lease_generation=claim.lease_generation + 1)),
+            ("idempotency", replace(claim, idempotency_key="substituted-idempotency")),
+            ("command", replace(claim, command_fingerprint=fingerprint("f"))),
+        )
+        completed_at = "2026-09-01T22:01:05.000Z"
+        for name, substituted in substitutions:
+            candidate_event = event(
+                14,
+                actor_id=substituted.worker_id,
+                event_type="aggregate.recalculation-candidate-created",
+                idempotency_key=f"recalculation-candidate:{substituted.job_id}",
+                occurred_at=completed_at,
+            )
+            with self.subTest(field=name), self.assertRaises(WorkflowQueueProblem):
+                self.service.append_candidate(
+                    self.candidate_draft(),
+                    candidate_event,
+                    claim=substituted,
+                    expected_current_revision_id=self.adjudicated.revision_id,
+                    plan_sha256=scheduled.workflow.plan_sha256,
+                    completed_at=completed_at,
+                )
+            self.assertEqual(baseline, self._authority_counts())
+
+        candidate_event = event(
+            14,
+            actor_id=claim.worker_id,
+            event_type="aggregate.recalculation-candidate-created",
+            idempotency_key=f"recalculation-candidate:{claim.job_id}",
+            occurred_at=completed_at,
+        )
+        candidate = self.service.append_candidate(
+            self.candidate_draft(),
+            candidate_event,
+            claim=claim,
+            expected_current_revision_id=self.adjudicated.revision_id,
+            plan_sha256=scheduled.workflow.plan_sha256,
+            completed_at=completed_at,
+        )
+        committed = self._authority_counts()
+        reopened = SelectiveRecalculationService(
+            unit_of_work=create_sqlite_unit_of_work_factory(self.database, PROJECT_ID),
+            dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
+            recalculation=sqlite_selective_recalculation_repository(self.root, PROJECT_ID),
+        )
+        self.assertEqual(
+            candidate,
+            reopened.append_candidate(
+                self.candidate_draft(),
+                candidate_event,
+                claim=claim,
+                expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=scheduled.workflow.plan_sha256,
+                completed_at=completed_at,
+            ),
+        )
+        self.assertEqual(committed, self._authority_counts())
 
     def test_cancelled_workflow_and_substituted_dependency_cannot_commit_candidate(self) -> None:
         scheduled = self.service.schedule(self.request())
@@ -713,7 +911,12 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             ),
         )
         restored = self.service.restore(command)
-        self.assertEqual(restored, self.service.restore(command))
+        reopened = SelectiveRecalculationService(
+            unit_of_work=create_sqlite_unit_of_work_factory(self.database, PROJECT_ID),
+            dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
+            recalculation=sqlite_selective_recalculation_repository(self.root, PROJECT_ID),
+        )
+        self.assertEqual(restored, reopened.restore(command))
         self.assertEqual(2, restored.revision)
         self.assertEqual("adjudicated", restored.knowledge_status)
         self.assertEqual((), self.service.compare(prior.revision_id, restored.revision_id).changed_fields)
@@ -722,6 +925,114 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
                 (prior.revision_id, current.revision_id, restored.revision_id),
                 tuple(item.revision_id for item in unit.aggregates.history(prior.aggregate_id)),
             )
+
+    def test_restore_rejects_started_cancelled_and_multiple_durable_changes_after_restart(self) -> None:
+        prior, current = self._restorable_pair(43)
+        command = self._restore_command(prior, current, 43)
+        first_change = self._impact_change(1)
+        preview = self.impacts.preview(first_change)
+        started = self.impacts.begin(
+            first_change,
+            preview_sha256=preview.preview_sha256,
+            run_id=uid(82_001),
+            batch_size=1_000,
+        )
+        self.assertEqual((), self.impacts.stale_states(output_revision_id=prior.revision_id))
+
+        reopened = SelectiveRecalculationService(
+            unit_of_work=create_sqlite_unit_of_work_factory(self.database, PROJECT_ID),
+            dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
+            recalculation=sqlite_selective_recalculation_repository(self.root, PROJECT_ID),
+        )
+        with self.assertRaises(RepositoryConflict):
+            reopened.restore(command)
+        self.assertEqual("running", self.impacts.run(started.run_id).state)
+
+        cancelled = self.impacts.cancel(
+            started.run_id,
+            expected_checkpoint_sha256=started.checkpoint_sha256,
+            occurred_at="2026-09-01T22:11:00.000Z",
+        )
+        self.assertEqual("cancelled", cancelled.state)
+        with self.assertRaises(RepositoryConflict):
+            reopened.restore(command)
+
+        second_change = self._impact_change(2)
+        second_preview = self.impacts.preview(second_change)
+        second = self.impacts.begin(
+            second_change,
+            preview_sha256=second_preview.preview_sha256,
+            run_id=uid(82_002),
+            batch_size=1_000,
+        )
+        with self.assertRaises(RepositoryConflict):
+            reopened.restore(command)
+        self.assertEqual("cancelled", self.impacts.run(started.run_id).state)
+        self.assertEqual("running", self.impacts.run(second.run_id).state)
+        with self.factory() as unit:
+            self.assertEqual(
+                (prior.revision_id, current.revision_id),
+                tuple(item.revision_id for item in unit.aggregates.history(prior.aggregate_id)),
+            )
+
+    def test_restore_rejects_unmaterialized_output_after_partial_checkpoint(self) -> None:
+        pairs = (self._restorable_pair(46), self._restorable_pair(49))
+        change = self._impact_change(3)
+        preview = self.impacts.preview(change)
+        started = self.impacts.begin(
+            change,
+            preview_sha256=preview.preview_sha256,
+            run_id=uid(82_003),
+            batch_size=1,
+        )
+        checkpointed = self.impacts.advance(
+            started.run_id,
+            expected_checkpoint_sha256=started.checkpoint_sha256,
+        )
+        self.assertEqual("running", checkpointed.state)
+        index, prior, current = next(
+            (index, *pair)
+            for index, pair in zip((46, 49), pairs, strict=True)
+            if not self.impacts.stale_states(output_revision_id=pair[0].revision_id)
+        )
+        with self.assertRaises(RepositoryConflict):
+            self.service.restore(self._restore_command(prior, current, index))
+        self.assertEqual(checkpointed, self.impacts.run(started.run_id))
+
+    def test_restore_rejects_failed_attempt_recovery_and_completed_impact(self) -> None:
+        prior, current = self._restorable_pair(52)
+        command = self._restore_command(prior, current, 52)
+        change = self._impact_change(4)
+        preview = self.impacts.preview(change)
+        started = self.impacts.begin(
+            change,
+            preview_sha256=preview.preview_sha256,
+            run_id=uid(82_004),
+            batch_size=1_000,
+        )
+        with (
+            patch(
+                "research_observatory_core.repositories._record_dependency_stale_batch",
+                side_effect=RuntimeError("injected batch failure"),
+            ),
+            self.assertRaises(RepositoryProblem),
+        ):
+            self.impacts.advance(started.run_id, expected_checkpoint_sha256=started.checkpoint_sha256)
+        failed = self.impacts.run(started.run_id)
+        self.assertEqual("failed-attempt", self.impacts.audit(run_id=started.run_id)[-1].event_type)
+        self.assertEqual((), self.impacts.stale_states(output_revision_id=prior.revision_id))
+        with self.assertRaises(RepositoryConflict):
+            self.service.restore(command)
+
+        reopened_impacts = sqlite_dependency_impact_repository(self.root, PROJECT_ID)
+        completed = reopened_impacts.advance(
+            started.run_id,
+            expected_checkpoint_sha256=failed.checkpoint_sha256,
+        )
+        self.assertEqual("completed", completed.state)
+        with self.assertRaises(RepositoryConflict):
+            self.service.restore(command)
+        self.assertTrue(reopened_impacts.stale_states(output_revision_id=prior.revision_id))
 
     def test_substitution_and_non_adjudicated_restore_fail_without_canonical_change(self) -> None:
         with self.assertRaises(RepositoryConflict):
