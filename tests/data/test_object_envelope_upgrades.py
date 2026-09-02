@@ -171,7 +171,6 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
 
         store = create_local_object_store(self.root, PROJECT_ID, key_provider=self.provider)
 
-        self.assertEqual(6, storage.DATABASE_SCHEMA_VERSION)
         self.assertNotEqual(plaintext, physical.read_bytes())
         self.assertNotIn(plaintext, physical.read_bytes())
         self.assertEqual((), tuple(self.root.rglob("*.upgrade-rollback")))
@@ -186,6 +185,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             self.root / "state" / "project.sqlite3", expected_project_id=PROJECT_ID
         )
         try:
+            self.assertEqual(storage.DATABASE_SCHEMA_VERSION, connection.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(
                 ("complete", "secretstream-xchacha20poly1305-v1", "project-encrypted-v1"),
                 tuple(
@@ -309,7 +309,10 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
         self.assertFalse((unavailable_root / ".locks" / "session.lock").exists())
         connection = sqlite3.connect(unavailable_database)
         try:
-            self.assertEqual(6, int(connection.execute("PRAGMA user_version").fetchone()[0]))
+            self.assertEqual(
+                storage.DATABASE_SCHEMA_VERSION,
+                int(connection.execute("PRAGMA user_version").fetchone()[0]),
+            )
             self.assertEqual(
                 ("replacement-writing", "key-unavailable"),
                 tuple(connection.execute("SELECT phase, failure_code FROM object_envelope_upgrades").fetchone()),
