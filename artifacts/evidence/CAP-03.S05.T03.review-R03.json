@@ -1,0 +1,81 @@
+{
+  "task_id": "CAP-03.S05.T03",
+  "attempt_id": "R03",
+  "candidate_commit": "6869a9e3d7b01b72c7e440aecb9571a878456ffd",
+  "submission_record_commit": "85fc30aec9ea03a9b996d7ae48fbe4a162a2e5a7",
+  "reviewer": "agent:t02-adversarial-preflight",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "The strict-descendant R03 candidate, direct-child submission, exact seven-path remediation inventory, two-path submission separation, frozen evidence SHA/blob, current taskctl projection, patch hygiene, and unchanged package inventory authenticate. Forty-nine focused recalculation, workflow-contract, executor, Task Center, and package-inventory tests pass, including six independently selected real-SQLite closure tests. Every open R01/R02 finding is closed: the complete immutable attempt capability is verified before either first candidate mutation or replay; all 13 material one-field substitutions leave aggregate/artifact/provenance/outbox/completion/history authority unchanged; exact commit and post-restart replay converge; and durable non-informational impact items block restoration across started, partial, failed-attempt/recovery, cancelled, completed, restarted, and overlapping states inside the writer transaction. Fresh restoration still appends and replays. No blocking finding remains and no full profile was run.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T03.R03.json",
+      "sha256": "298618de9767e4ba2c60bda0ff7b25c0a18fc749b353326edc6fcdd714d5d666",
+      "git_blob": "dc35b9b72de229e5518e075c119e11d120eecdcf",
+      "commit": "6869a9e3d7b01b72c7e440aecb9571a878456ffd"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve R02 candidate, R03 candidate, and submission commits; verify strict ancestry and the submission's sole parent, exact evidence SHA/blob, declared-versus-actual remediation paths, submission-only paths, taskctl R03 projection, and git diff --check.",
+      "result": "PASS: 6869a9e3d7b01b72c7e440aecb9571a878456ffd strictly descends from 76494d504d37ad7552eea256689e90408375c84f; 85fc30aec9ea03a9b996d7ae48fbe4a162a2e5a7 has the exact candidate as sole parent; all seven declared remediation paths match; submission adds only R03 evidence and backlog projection; the expected evidence SHA/blob and patch hygiene match."
+    },
+    {
+      "type": "independent-check",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.e2e.test_selective_recalculation tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "result": "PASS: 49 focused tests passed in 6.192 seconds; the strict frozen sidecar inventory remains valid."
+    },
+    {
+      "type": "independent-prior-finding-replay",
+      "finding_ids": [
+        "CAP-03.S05.T03-R01-F01",
+        "CAP-03.S05.T03-R02-F01"
+      ],
+      "command": "Run the exact candidate-claim substitution and atomic/restart cases, changing project, workflow run, job, step run, activity, concurrency class, attempt ID, attempt number, worker, lease token, lease generation, idempotency key, and command fingerprint one field at a time; compare aggregate_revisions, provenance_events, outbox_events, workflow_attempt_artifacts, workflow_committed_outputs, and workflow_history_events after every denial; then commit and replay the exact claim after repository reopen.",
+      "result": "PASS: all 13 substitutions fail before any named authority count changes. The complete canonical claim commits one candidate/output/provenance transaction, and post-restart exact replay returns the same candidate with every count unchanged. Code inspection confirms _verify_attempt_capability now runs inside the same SQLite writer transaction before both first-write and existing-output branches, while the first write additionally requires the live running lease and exact current plan/dependency authority."
+    },
+    {
+      "type": "independent-prior-finding-replay",
+      "finding_ids": [
+        "CAP-03.S05.T03-R01-F03",
+        "CAP-03.S05.T03-R02-F02"
+      ],
+      "command": "Run the materialized-stale, begun-before-advance after reopen, partial-checkpoint unmaterialized output, failed-attempt then recovery/completion, cancelled, overlapping/multiple change, completed-impact, and genuinely fresh restore cases against canonical SQLite; verify history/run state and exact replay.",
+      "result": "PASS: every prior revision named by a durable non-informational dependency-impact item is denied within restoration's BEGIN IMMEDIATE transaction regardless of whether a stale-cause row has materialized or the run is started, partial, failed-attempt/recovered, cancelled, completed, reopened, or overlapping. Denials leave aggregate history and propagation authority unchanged. A prior with no adverse item appends N+2, preserves dependency/provenance/history authority, and replays exactly after reopen."
+    },
+    {
+      "type": "independent-closure-selection",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest the six R03 candidate-substitution, atomic candidate, fresh restore, started/cancelled/multiple, partial checkpoint, and failed-attempt/recovery/completed selective-recalculation tests",
+      "result": "PASS: 6/6 closure-focused real-SQLite tests passed in 1.448 seconds."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S05.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Missing, unstarted, cancelled, recovered-but-unfinished, generic-event, substituted dependency/plan, and non-current authority are denied. Candidate admission now requires the exact canonical claimant, active running lease, current authority/plan, exact transformed provenance/dependencies, and required checkpoint before aggregate append, staged canonical output, workflow completion, and provenance/outbox commit in one transaction; exact reopen replay returns the same result."
+    },
+    {
+      "finding_id": "CAP-03.S05.T03-R02-F01",
+      "disposition": "fixed",
+      "evidence": "The complete immutable attempt capability verifier now runs before both first mutation and replay. Independent one-field substitution replay covered all 13 material claim fields and proved zero delta in aggregate, artifact, provenance, outbox, completion, and history rows; exact first commit and post-restart replay converge."
+    },
+    {
+      "finding_id": "CAP-03.S05.T03-R01-F03",
+      "disposition": "fixed",
+      "evidence": "Restoration's writer transaction now denies a prior revision named by any durable non-informational dependency-impact item, including already materialized stale authority, so obsolete dependency history cannot be republished as a fresh adjudicated current revision. Fresh append-only human restoration and replay remain available."
+    },
+    {
+      "finding_id": "CAP-03.S05.T03-R02-F02",
+      "disposition": "fixed",
+      "evidence": "Real SQLite replay denies false-fresh restore for begun-before-advance after reopen, partial checkpoint, failed-attempt/recovery, cancellation, completion, and overlapping durable changes while leaving history and run authority unchanged. Because restoration and the impact-item check share BEGIN IMMEDIATE, a concurrent writer cannot insert adverse authority between the check and append."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S05.T03-R01-F01",
+    "CAP-03.S05.T03-R01-F03",
+    "CAP-03.S05.T03-R02-F01",
+    "CAP-03.S05.T03-R02-F02"
+  ]
+}
