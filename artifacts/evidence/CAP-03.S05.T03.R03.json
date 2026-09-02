@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S05.T03",
+  "commit": "6869a9e3d7b01b72c7e440aecb9571a878456ffd",
+  "baseCommit": "76494d504d37ad7552eea256689e90408375c84f",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S05.T03.R02.json",
+    "sha256": "d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203",
+    "commit": "76494d504d37ad7552eea256689e90408375c84f",
+    "reason": "Remediates CAP-03.S05.T03-R02-F01 and CAP-03.S05.T03-R02-F02 without expanding approved T03 authority."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S05.T03.R02.json",
+    "artifacts/evidence/CAP-03.S05.T03.review-R02.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "planning/backlog.yaml",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/selective_recalculation.py",
+    "tests/e2e/test_selective_recalculation.py"
+  ],
+  "checks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.e2e.test_selective_recalculation tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center",
+      "exitCode": 0,
+      "result": "All 48 focused recalculation, workflow-contract, durable local-executor, and Task Center tests passed. The 12 real-SQLite recalculation tests include one-field-at-a-time immutable claim substitution, exact first commit and post-restart replay, durable started/cancelled/multiple impact changes, partial checkpoints, failed-attempt recovery, completed propagation, stale restore denial, fresh restore replay, and zero-write assertions."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.graph.test_dependency_impacts tests.data.test_material_dependencies tests.data.test_sqlite_repositories",
+      "exitCode": 0,
+      "result": "All 35 affected graph and persistence tests passed. Existing dependency registration, durable impact begin/checkpoint/failure/cancellation/recovery, aggregate transaction/CAS, append-only history, and reopen behavior remains green."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "exitCode": 0,
+      "result": "The strict frozen Windows sidecar package inventory test passed; no package membership or dependency changed in R03."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 187 governed Python files passed formatting, Ruff, and mypy."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "result": "Architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure passed for all 12 required modules."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 76494d50...6869a9e3",
+      "exitCode": 0,
+      "result": "The backlog validates with 20 capabilities, 117 slices, 363 tasks, and 12 release gates; the exact strict-descendant R03 candidate has no patch errors and its seven changed paths match this remediation packet."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 76494d504d37ad7552eea256689e90408375c84f --affected-head 6869a9e3d7b01b72c7e440aecb9571a878456ffd --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passed for the exact R03 candidate. The task ran the narrow workflow, persistence, graph, package-inventory, quality, architecture, repository, backlog, and hygiene checks above; the complete profile matrix remains deliberately deferred to CAP-03.S05 integration review and W1 exit under the risk-based test policy."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S05.T03-R02-F01 is closed by verifying the complete immutable workflow-attempt capability inside the same SQLite writer transaction before either first candidate mutation or replay. Project, workflow run, job, step run, activity, concurrency class, attempt identity/number, worker, lease token/generation, idempotency key, and command fingerprint must match canonical job/attempt authority; the live-lease check remains additionally required for first commit.",
+        "Each one-field claim substitution fails with aggregate revision, provenance event, outbox event, attempt artifact, committed output, and workflow history counts unchanged. The exact claim atomically appends and completes once, while reopening the repositories and replaying the exact command returns the same candidate with all authority counts unchanged.",
+        "CAP-03.S05.T03-R02-F02 is closed by treating every durable non-informational dependency-impact item as adverse freshness authority inside the restoration BEGIN IMMEDIATE transaction. A prior adjudicated revision named by a started, partially checkpointed, failed-attempt, cancelled, recovered/completed, or overlapping durable change cannot be published as a false-fresh current revision before stale-cause materialization."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The real-SQLite suite proves all 13 requested immutable claim fields independently fail closed with no candidate, artifact, provenance/outbox, completion, or history write; it also proves exact initial commit and restart replay converge on the same candidate and durable receipt.",
+        "Restoration fixtures cover begin-before-advance after repository restart, partial checkpoint with an unmaterialized affected output, cancellation, two overlapping durable changes, injected failed-attempt audit, reopen/recovery to completed propagation, completed stale authority, and exact fresh restoration replay without rewriting history or orphaning propagation authority."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The remediation stays within the existing atomic selective-recalculation repository and aggregate UnitOfWork boundaries. Storage documentation now states that durable dependency-impact authority, rather than only a materialized stale-cause row, prevents fresh restoration.",
+        "No schema migration, public route, renderer, governed experience reference, package membership, external service, destructive operation, automatic adjudication, or unrelated product authority changed. The only additional production behavior is fail-closed validation at the two reviewed transaction boundaries."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The complete open set is CAP-03.S05.T03-R01-F01 and its refined claimant-boundary finding CAP-03.S05.T03-R02-F01, plus CAP-03.S05.T03-R01-F03 and its refined in-flight-restoration finding CAP-03.S05.T03-R02-F02. R02 narrowed those findings to two SQLite writer-boundary invariants: complete claimant-tuple validation before first candidate mutation and recognition of durable impact items before stale-cause materialization. R03 therefore replays every claim field and every material propagation lifecycle state against real canonical SQLite, then rechecks the adjacent workflow, graph, persistence, package inventory, quality, and architecture boundaries. No schema, dependency, route, UI, security policy, runtime, or toolchain changed, so unrelated full service/security/UI/deployment profiles remain deferred to slice integration and W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:backlog",
+      "packaging:unit",
+      "contracts:unit",
+      "data:unit",
+      "graph:unit",
+      "e2e-local:system"
+    ],
+    "deferred": [
+      "CAP-03.S05 slice review owns the accumulated dependency-registration, propagation, selective-recalculation, and cross-task integration/adversarial union after T03 closes.",
+      "The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S05.T03-R01-F01",
+      "CAP-03.S05.T03-R01-F03",
+      "CAP-03.S05.T03-R02-F01",
+      "CAP-03.S05.T03-R02-F02"
+    ],
+    "rootCauseAnalysis": "R02 enforced canonical plan/output authority and liveness, but the first-write path reused the narrow active-lease lookup while the replay/completion path alone called the complete immutable claimant verifier. That asymmetry allowed caller-supplied fields to be persisted once and rejected on replay. Restoration similarly treated the derived stale-cause projection as the full freshness authority, overlooking the earlier durable impact-item decision recorded when propagation begins. R03 moves the already-existing complete claimant verifier ahead of both candidate paths and defines a durable impact item itself as adverse restoration authority, keeping both decisions inside their existing BEGIN IMMEDIATE transactions.",
+    "note": "Independently re-review exact strict-descendant candidate 6869a9e3d7b01b72c7e440aecb9571a878456ffd. Replay the two R02 findings and the still-open R01 parent findings, confirm one-field claim substitutions leave every named authority table unchanged, exact post-restart replay is stable, and durable impact lifecycle states cannot create false-fresh restored revisions. No full profiles are needed for this remediation review."
+  }
+}

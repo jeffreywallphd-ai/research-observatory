@@ -13789,11 +13789,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T23:19:02+00:00'
-      updated_at: '2026-09-02T00:06:46+00:00'
+      updated_at: '2026-09-02T00:15:04+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13808,6 +13808,11 @@ capabilities:
         sha256: d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203
         commit: 76494d504d37ad7552eea256689e90408375c84f
         recorded_at: '2026-09-02T00:00:48+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S05.T03.R03.json
+        sha256: 298618de9767e4ba2c60bda0ff7b25c0a18fc749b353326edc6fcdd714d5d666
+        commit: 6869a9e3d7b01b72c7e440aecb9571a878456ffd
+        recorded_at: '2026-09-02T00:15:04+00:00'
       review: &id037
         reviewer: agent:t02-adversarial-preflight
         result: changes-requested
@@ -13825,7 +13830,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-02T00:06:46+00:00'
         expires_at: '2026-09-02T08:06:46+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -14163,7 +14168,78 @@ capabilities:
               - CAP-03.S05.T03-R01-F03
               closed_finding_ids:
               - CAP-03.S05.T03-R01-F02
-        current_submission: null
+        current_submission:
+          id: R03
+          submitted_by: codex
+          submitted_at: '2026-09-02T00:15:04+00:00'
+          candidate_commit: 6869a9e3d7b01b72c7e440aecb9571a878456ffd
+          base_commit: 76494d504d37ad7552eea256689e90408375c84f
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S05.T03.R03.json
+            sha256: 298618de9767e4ba2c60bda0ff7b25c0a18fc749b353326edc6fcdd714d5d666
+            commit: 6869a9e3d7b01b72c7e440aecb9571a878456ffd
+            recorded_at: '2026-09-02T00:15:04+00:00'
+          acceptance_criteria_sha256: 1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69
+          changed_paths:
+          - artifacts/evidence/CAP-03.S05.T03.R02.json
+          - artifacts/evidence/CAP-03.S05.T03.review-R02.json
+          - docs/architecture/local-sqlite-storage.md
+          - planning/backlog.yaml
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/selective_recalculation.py
+          - tests/e2e/test_selective_recalculation.py
+          selected_checks:
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.e2e.test_selective_recalculation
+            tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts
+            tests.data.test_material_dependencies tests.data.test_sqlite_repositories
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
+            --repo .
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 76494d50...6869a9e3
+          - .venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 76494d504d37ad7552eea256689e90408375c84f
+            --affected-head 6869a9e3d7b01b72c7e440aecb9571a878456ffd --deferred-gate W1-exit --selection-only
+          deferred_checks:
+          - CAP-03.S05 slice review owns the accumulated dependency-registration, propagation, selective-recalculation, and
+            cross-task integration/adversarial union after T03 closes.
+          - The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows
+            x64 qualification matrix remains mandatory once at W1 exit.
+          selection_rationale: 'The complete open set is CAP-03.S05.T03-R01-F01 and its refined claimant-boundary finding
+            CAP-03.S05.T03-R02-F01, plus CAP-03.S05.T03-R01-F03 and its refined in-flight-restoration finding CAP-03.S05.T03-R02-F02.
+            R02 narrowed those findings to two SQLite writer-boundary invariants: complete claimant-tuple validation before
+            first candidate mutation and recognition of durable impact items before stale-cause materialization. R03 therefore
+            replays every claim field and every material propagation lifecycle state against real canonical SQLite, then rechecks
+            the adjacent workflow, graph, persistence, package inventory, quality, and architecture boundaries. No schema,
+            dependency, route, UI, security policy, runtime, or toolchain changed, so unrelated full service/security/UI/deployment
+            profiles remain deferred to slice integration and W1 exit.'
+          selection_sha256: 38f0500acfd763cea37bc395ac2a175587b5fc1bab934c6a090f21d976e36b32
+          prior_attempt_id: R02
+          open_finding_ids:
+          - CAP-03.S05.T03-R01-F01
+          - CAP-03.S05.T03-R01-F03
+          - CAP-03.S05.T03-R02-F01
+          - CAP-03.S05.T03-R02-F02
+          root_cause_analysis: R02 enforced canonical plan/output authority and liveness, but the first-write path reused
+            the narrow active-lease lookup while the replay/completion path alone called the complete immutable claimant verifier.
+            That asymmetry allowed caller-supplied fields to be persisted once and rejected on replay. Restoration similarly
+            treated the derived stale-cause projection as the full freshness authority, overlooking the earlier durable impact-item
+            decision recorded when propagation begins. R03 moves the already-existing complete claimant verifier ahead of
+            both candidate paths and defines a durable impact item itself as adverse restoration authority, keeping both decisions
+            inside their existing BEGIN IMMEDIATE transactions.
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:quality
+          - foundation:backlog
+          - packaging:unit
+          - contracts:unit
+          - data:unit
+          - graph:unit
+          - e2e-local:system
+          packet_sha256: 3926004af326b273693c874ff7e3237e8bfdd31aa083c6795a4570a61505373e
     platform_targets:
     - windows-x64
     completion:
