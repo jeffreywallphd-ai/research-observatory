@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-03.S05",
+  "attemptId": "R01",
+  "stateCommit": "bc9441a23faa1df44f80a823f432ca5988e394d6",
+  "submissionCommit": "67cce99da8e0b3d42aea1b467053306480467fd8",
+  "reviewer": "agent:cap03-s05-integration-reviewer",
+  "reviewedAt": "2026-09-02T07:52:32.3003224-04:00",
+  "disposition": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The immutable task evidence and approved ancestry authenticate, and focused task unions, migration/schema behavior, package inventory, and the dependency-impact benchmark replay successfully. Slice approval is unavailable because the accumulated vertical path is not exposed to a researcher, restoration accepts self-asserted human authority, recalculation and restoration can substitute rights status without current-policy authority, non-propagating edges can create false cycle groups, and the integration evidence inaccurately describes and truncates affected-path selection.",
+  "evidenceAuthentication": {
+    "integrationManifest": {
+      "path": "artifacts/evidence/CAP-03.S05.integration-R01.json",
+      "sha256": "78f3286cd2d6a20f690d1c9789578c13ea29cee8924c93177de134cfa40ca29b",
+      "gitBlob": "6d71a3b9b0f5c7287b18818baeea320f609915ed",
+      "result": "passed"
+    },
+    "taskArtifacts": {
+      "result": "passed",
+      "details": "All six declared final task evidence/review SHA-256 values and Git blobs reproduce exactly. The final T01 R02, T02 R03, and T03 R03 candidate, submission, and approval commits are ancestors of the state candidate. Approved plan commit c5bbd97c0cdc665eecb973f5862478ef7be97752 is an ancestor. Integration-manifest commit 21c83c055d8758bafa85c8508b9c2f410998669f is the direct child of the state candidate and changes only the manifest; submission 67cce99da8e0b3d42aea1b467053306480467fd8 is its direct child and changes only backlog/planning projections."
+    }
+  },
+  "checks": [
+    {
+      "check": "submission ancestry, immutable evidence hashes, path inventory, and diff hygiene",
+      "result": "passed",
+      "details": "The exact state, manifest, and submission chain; approved plan ancestry; all six final task artifacts; and their declared SHA-256/Git-blob identities authenticated. git diff --check passed."
+    },
+    {
+      "check": "focused dependency registration, graph impact, and selective recalculation union",
+      "result": "passed",
+      "details": "28 of 28 selected tests passed in 4.540 seconds. Existing expected/unrelated-output, bounded traversal, persistence, checkpoint, cancellation, failure, restart, replay, and denial fixtures remain green."
+    },
+    {
+      "check": "focused SQLite migration, strict schema, and repository union",
+      "result": "passed",
+      "details": "48 of 48 selected tests passed in 27.409 seconds for migration, schema-v10, transaction, backup/reopen, and recovery boundaries."
+    },
+    {
+      "check": "focused portable workflow, local executor, and Task Center union",
+      "result": "passed",
+      "details": "36 of 36 selected tests passed in 3.977 seconds, preserving the predecessor S04 queue, cancellation, restart, recovery, and human-task contracts."
+    },
+    {
+      "check": "frozen package inventory",
+      "result": "passed",
+      "details": "The selected strict package-inventory test passed."
+    },
+    {
+      "check": "dependency-impact quantitative characterization",
+      "result": "passed",
+      "details": "The registered tool passed independently at 20.592 ms nearest-rank p95 on its 1,102-node/2,201-edge deterministic fixture, including the declared all-material SCC oracle and stable preview."
+    },
+    {
+      "check": "material-cycle classification at non-propagating edge intersections",
+      "result": "failed",
+      "details": "Two focused adversarial fixtures formed A-to-B material propagation plus a B-to-A closing edge that was respectively non-material and conditional/ignore. Both incorrectly returned an A/B cycle group because dependency_impacts.py:395 inserts every edge into adjacency before the non-material and ignore exits at lines 402 and 418; SCCs are calculated at line 478."
+    },
+    {
+      "check": "production researcher path and downstream handoff reachability",
+      "result": "failed",
+      "details": "A focused source search found SelectiveRecalculationService and dependency-impact repository composition only in internal modules/tests. No Core API route, strict request/response projection, generated client, or desktop control composes the S05 impact-preview, enqueue, comparison, deferral, or restoration path. app.py:512 is an unrelated project-backup restore route."
+    },
+    {
+      "check": "restoration human-decision authority substitution",
+      "result": "failed",
+      "details": "A canonical SQLite fixture accepted a fresh arbitrary valid UUID as actor_id when actor_type was set to human and appended an adjudicated restoration. selective_recalculation.py:459-466 checks only the self-asserted actor type/id plus event type/time; it does not bind an authenticated principal, assigned S04 human task/decision, consequence, run/snapshot, or decision revision."
+    },
+    {
+      "check": "current rights-policy authority during recalculation and restoration",
+      "result": "failed",
+      "details": "A focused canonical SQLite fixture changed a target rights status from allowed to denied in the recalculation candidate and commit/replay accepted it. repositories.py:1748-1771 validates admitted-plan fields but not draft.rights_status; restoration then copies prior.rights_status at selective_recalculation.py:500 without binding current policy or the current revision's rights decision. The symmetric gap also permits a protection-relaxing substitution."
+    },
+    {
+      "check": "affected-path evidence truth and state-candidate coverage",
+      "result": "failed",
+      "details": "Exact replay of the manifest command reports S05 evidence/task-start/review files as unknown paths with safety-sensitive fallback, contrary to the claim of no unknown paths. Its affected-head 43d572dd8a0a0fdbb90b009ffb51ab15a591b385 also precedes schema-oracle correction 1e027e47fe72801324f47ecde28fdbda3824ee0e, benchmark/profile registration 191b08aa, and state candidate bc9441a23faa1df44f80a823f432ca5988e394d6. Replay to the exact state candidate correctly selects the verification-control changes while retaining the truthful unknown-path fallback."
+    },
+    {
+      "check": "security dependency and secret scanner replay",
+      "result": "environment-unavailable",
+      "details": "Two focused independent invocations exited 1 because Trivy failed and the wrapper withheld scanner output. This does not rebut the submitted pass and no dependency version changed, but the exact-candidate pass could not be reproduced in this review environment and must be refreshed with the remediation packet."
+    }
+  ],
+  "findings": [
+    {
+      "findingId": "CAP-03.S05-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Approved slice sections 5.1, 6, 10, and 11 require selective recalculation integrated with workflows/UI, visible/deferable impact authority, a representative researcher path, and a usable downstream handoff; T03 criterion 1 requires the user to compare and restore a prior adjudicated output.",
+      "finding": "The approved user/control path is not vertically integrated. The implementation stops at internal Python services and repositories, so a researcher cannot obtain the governed preview, enqueue controlled recalculation, compare versions, defer while retaining visibility, or restore through the production Core API/desktop boundary.",
+      "reproduction": "Search production Core API composition, routes/models, generated clients, and desktop controls for SelectiveRecalculationService, dependency-impact composition, preview/recalculation/restore operations, and version comparison. Only internal modules/tests and an unrelated /projects/restore route are present.",
+      "requiredRemediation": "Compose the smallest project-scoped production Core API contract and approved existing UI/workflow surface that makes preview, deferral, enqueue, version comparison, and restore usable with strict projections and accessible state handling. If the approved experience cannot support this without a governed reference change, stop at that real gate or replan explicitly; do not silently defer the accepted criterion."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Accepted human judgments and human-gate authority must be exact, auditable, and preserved across restore/restart; T03 criterion 1 authorizes restoration only as a user decision.",
+      "finding": "Restore treats caller-supplied actor_type='human' plus any non-null actor_id as explicit human authority. It does not prove an authenticated principal or bind the exact completed human decision and consequence that authorize restoration.",
+      "reproduction": "Replace the canonical restore event actor_id with a fresh arbitrary UUID while keeping actor_type='human'. SelectiveRecalculationService.restore accepts the command and appends an adjudicated revision.",
+      "requiredRemediation": "Require a Core-minted authenticated actor and exact completed S04 human-decision authority (or an equivalently strong signed/transactional decision receipt), bound to project, target/prior/current revisions, operation/run/snapshot, consequence, and idempotency/CAS state. Add spoof, wrong-assignee/role/project, stale-decision, replay, restart, and concurrent-current-revision denials."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F03",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Approved slice section 7 requires recalculation to re-evaluate current rights/egress policy; repository and provenance authority must prevent substituted or stale rights decisions.",
+      "finding": "Neither candidate admission nor restoration binds rights_status to a current policy decision. A candidate may supply any syntactically valid status, while restore blindly copies the prior adjudicated revision's status, including one less protective than current policy/current state.",
+      "reproduction": "Change only draft.rights_status in an otherwise admitted canonical SQLite candidate; commit/replay succeeds. Inspect repositories.py:1748-1771 and selective_recalculation.py:500.",
+      "requiredRemediation": "Bind the exact current policy/rights decision and its version/fingerprint within atomic enqueue, candidate commit, and restore transactions. Reject stale, substituted, or protection-relaxing authority and prove allowed-to-denied, denied-to-allowed, policy-change-between-plan-and-commit, restore, replay, restart, and rollback cases."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F04",
+      "severity": "medium",
+      "blocking": true,
+      "criterion": "T02 criterion 1 and selected slice decisions require truthful distinction of direct/transitive/conditional/non-material dependencies, deterministic safe cycles, and accurate user-visible cause/impact authority.",
+      "finding": "Cycle groups are computed from every traversed edge, including non-material edges and conditional edges explicitly decided as ignore. A non-propagating edge can therefore close a false strongly connected component and assign cycle authority to outputs that are not in a material propagation cycle.",
+      "reproduction": "Use source-to-A direct, A-to-B direct, and B-to-A as either non-material or conditional with disposition ignore. Both previews report A/B as a cycle group. The ordering is visible at dependency_impacts.py:395, 402, 418, and 478.",
+      "requiredRemediation": "Build SCC/cycle authority only from edges that actually propagate under the immutable graph snapshot and applicable recorded conditional decision. Add intersection fixtures for non-material and ignored closing edges, true conditional-propagate cycles, mixed cycle exits, stable IDs, bounds, persistence/restart, and downstream scheduling."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F05",
+      "severity": "medium",
+      "blocking": true,
+      "criterion": "Slice evidence must truthfully bind selected checks, changed paths, and the exact candidate under review.",
+      "finding": "The integration manifest claims affected selection passed with no unknown changed paths, but exact replay reports unknown S05 evidence/task-start/review files and safety-sensitive fallback. The selection head also stops before the declared state candidate and omits later verification-control changes from the stated range.",
+      "reproduction": "Replay the recorded verify.py selection from f56d16070637147177c05c3406b5669eb1707cf0 to 43d572dd8a0a0fdbb90b009ffb51ab15a591b385, then replay to bc9441a23faa1df44f80a823f432ca5988e394d6 and compare unknownPaths/rules.",
+      "requiredRemediation": "Regenerate the integration evidence against the exact remediation state candidate, truthfully disclose unknown-path fallback, and attach the exact selection result. Include the benchmark/profile/quality-scope changes in the affected range. Replay prior findings plus incremental boundaries only."
+    }
+  ],
+  "closures": [],
+  "foundationDisclosure": {
+    "classification": "mandatory-wave-exit-reconciliation-not-a-separate-slice-finding",
+    "details": "The attempted foundation inventory is explicitly not represented as passing: 478 tests produced 72 failures and 17 errors, compared with the previously independently reviewed 72/16 historical-controller baseline. Available evidence attributes the set to frozen GCR/GRR/recovery/amendment fixtures and a current ACTIVE-versus-historical PAUSED assumption, not to CAP-03.S05 product, graph, data, service, package, or security paths. Under the repository's risk-selected review policy, this is not by itself an additional S05 acceptance finding, but it is not waived: preserve the disclosure, retain an exact failure inventory/report when available, reconcile the additional error, and pass the complete foundation/release matrix at W1 exit."
+  },
+  "residuals": [
+    {
+      "severity": "non-blocking",
+      "item": "The dependency-impact benchmark measures the pure in-memory planner with an all-material SCC oracle and conservative initial thresholds; it does not measure SQLite batch/coalescing, paged persistence reads, crash/restart latency, or cross-machine release behavior.",
+      "disposition": "Accepted only as initial slice characterization. Representative persistent/cross-capability budgets and regression thresholds remain mandatory at W1 exit."
+    },
+    {
+      "severity": "non-blocking",
+      "item": "The complete cross-capability Windows x64 release and deployment-profile qualification, including the disclosed historical foundation-fixture reconciliation, remains outstanding.",
+      "disposition": "Mandatory at W1 exit; not waived by this review."
+    },
+    {
+      "severity": "non-blocking",
+      "item": "The submitted security scan pass could not be independently replayed because Trivy exited 1 in this review environment.",
+      "disposition": "Refresh the focused scan in the remediation environment and disclose any scanner/environment limitation truthfully."
+    }
+  ],
+  "taskctlSliceReviewNote": "CHANGES_REQUESTED: exact CAP-03.S05 task artifacts and ancestry authenticate, and focused existing unions plus the dependency-impact benchmark pass. Five acceptance-bound findings remain: no production researcher/API/UI path; spoofable human restore authority; unbound current rights policy/status; false SCCs through non-material or ignored edges; and inaccurate/truncated affected-selection evidence. The disclosed 478-test 72-failure/17-error historical foundation baseline remains explicit mandatory W1-exit reconciliation rather than a separate S05 product finding."
+}
