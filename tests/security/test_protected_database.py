@@ -21,6 +21,7 @@ sys.path.insert(0, str(CORE_SRC))
 from research_observatory_core import storage as storage_module  # noqa: E402
 from research_observatory_core.migrations.runner import migrate_database  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
+    DATABASE_SCHEMA_VERSION,
     SQLCIPHER_PROFILE,
     StorageProblem,
     configure_protected_database_provider,
@@ -345,13 +346,13 @@ class ProtectedDatabaseTests(unittest.TestCase):
 
         self.assertEqual(result.status, "migrated")
         self.assertEqual(result.source_schema_version, 4)
-        self.assertEqual(result.target_schema_version, 6)
+        self.assertEqual(result.target_schema_version, DATABASE_SCHEMA_VERSION)
         self.assertIsNotNone(result.backup_relative_path)
         backup = self.root / str(result.backup_relative_path)
         self.assertNotEqual(backup.read_bytes()[:16], b"SQLite format 3\x00")
         connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
-            self.assertEqual(connection.execute("PRAGMA user_version").fetchone()[0], 6)
+            self.assertEqual(connection.execute("PRAGMA user_version").fetchone()[0], DATABASE_SCHEMA_VERSION)
         finally:
             connection.close()
 
