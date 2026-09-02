@@ -13789,11 +13789,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T23:19:02+00:00'
-      updated_at: '2026-09-01T23:42:35+00:00'
+      updated_at: '2026-09-02T00:00:48+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13803,6 +13803,11 @@ capabilities:
         sha256: 9c13787f8c8cb959b0929b1aab4eac2cb070b29cfe672f36e2ae12f4f6dd3b22
         commit: 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
         recorded_at: '2026-09-01T23:36:35+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S05.T03.R02.json
+        sha256: d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203
+        commit: 76494d504d37ad7552eea256689e90408375c84f
+        recorded_at: '2026-09-02T00:00:48+00:00'
       review: &id037
         reviewer: agent:t02-adversarial-preflight
         result: changes-requested
@@ -13818,7 +13823,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-01T23:42:35+00:00'
         expires_at: '2026-09-02T07:42:35+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -13984,7 +13989,82 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission: null
+        current_submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-09-02T00:00:48+00:00'
+          candidate_commit: 76494d504d37ad7552eea256689e90408375c84f
+          base_commit: 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S05.T03.R02.json
+            sha256: d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203
+            commit: 76494d504d37ad7552eea256689e90408375c84f
+            recorded_at: '2026-09-02T00:00:48+00:00'
+          acceptance_criteria_sha256: 1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69
+          changed_paths:
+          - artifacts/evidence/CAP-03.S05.T03.R01.json
+          - artifacts/evidence/CAP-03.S05.T03.review-R01.json
+          - docs/architecture/local-sqlite-storage.md
+          - packages/contracts/workflow/README.md
+          - planning/backlog.yaml
+          - quality-scope.json
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/recalculation_contracts.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/selective_recalculation.py
+          - tests/e2e/test_selective_recalculation.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.e2e.test_selective_recalculation
+            tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts
+            tests.data.test_material_dependencies tests.data.test_sqlite_repositories
+          - $env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py
+            --repo .
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 139158aa...76494d50
+          - .venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d
+            --affected-head 76494d504d37ad7552eea256689e90408375c84f --deferred-gate W1-exit --selection-only
+          deferred_checks:
+          - CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation,
+            and affected cross-task integration/adversarial checks after T03 closes.
+          - The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows
+            x64 qualification matrix remains mandatory once at W1 exit.
+          selection_rationale: 'R01 exposed three coupled transaction-authority defects across workflow admission, canonical
+            output commit, and human restoration. R02 therefore replays each at the narrowest real boundary: injected SQLite
+            propagation at admission; exact live worker/plan/dependency/output binding in one candidate-and-completion transaction;
+            and same-transaction stale denial for restore. Existing workflow contracts, queue recovery/cancellation, dependency
+            graph, repository behavior, static quality, architecture, and a real frozen Windows build cover credible regression
+            surfaces. No route, credential, dependency version, security policy, schema, renderer, or toolchain changed, so
+            unrelated full service/security/UI/deployment suites remain deferred to the slice and W1 gates.'
+          selection_sha256: f3fcc9c7a22b88a56b5ab4646e888635abb43694b7f9b6569515e71debdbba61
+          prior_attempt_id: R01
+          open_finding_ids:
+          - CAP-03.S05.T03-R01-F01
+          - CAP-03.S05.T03-R01-F02
+          - CAP-03.S05.T03-R01-F03
+          root_cause_analysis: 'R01 treated correct data selection, queue admission, aggregate append, and restore as individually
+            guarded operations but did not model the transaction boundaries joining them. That allowed authority to change
+            between planning and enqueue, permitted candidate creation without consumption of a successful exact workflow,
+            and separated stale-state authority from restoration. R02 makes each cross-table invariant explicit at its mutation
+            point: coherent plan snapshot plus admission CAS, atomic candidate/output completion, and transactional stale-restore
+            denial.'
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:quality
+          - foundation:backlog
+          - packaging:unit
+          - contracts:unit
+          - data:unit
+          - graph:unit
+          - e2e-local:system
+          packet_sha256: b0ed06ac693fa5a8aad19a2302aec0c3f1ac87aac2d49658d2e56f6abe94a3db
     platform_targets:
     - windows-x64
     completion:

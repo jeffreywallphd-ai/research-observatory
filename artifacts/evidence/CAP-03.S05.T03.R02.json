@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S05.T03",
+  "commit": "76494d504d37ad7552eea256689e90408375c84f",
+  "baseCommit": "139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S05.T03.R01.json",
+    "sha256": "9c13787f8c8cb959b0929b1aab4eac2cb070b29cfe672f36e2ae12f4f6dd3b22",
+    "commit": "139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d",
+    "reason": "Remediates CAP-03.S05.T03-R01-F01 through CAP-03.S05.T03-R01-F03 without expanding approved T03 authority."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S05.T03.R01.json",
+    "artifacts/evidence/CAP-03.S05.T03.review-R01.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "packages/contracts/workflow/README.md",
+    "planning/backlog.yaml",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/recalculation_contracts.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/selective_recalculation.py",
+    "tests/e2e/test_selective_recalculation.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.e2e.test_selective_recalculation tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center",
+      "exitCode": 0,
+      "result": "All 44 focused recalculation, workflow-contract, durable local-executor, and Task Center tests passed. The eight real-SQLite recalculation tests replay all R01 defects: no-job, unfinished, cancelled, recovered, generic-event, substituted-dependency, stale-read/enqueue-race, stale-restore, exact atomic success, reopen, and idempotent replay paths."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.graph.test_dependency_impacts tests.data.test_material_dependencies tests.data.test_sqlite_repositories",
+      "exitCode": 0,
+      "result": "All 35 affected graph and persistence tests passed. Existing exact dependency registration, restartable impact propagation, immutable stale causes, aggregate transaction/CAS, idempotency, rollback, history, and reopen behavior remains green."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All 6 Windows sidecar package tests passed with one expected environment skip. The real PyInstaller onedir build includes and executes the selective recalculation service, atomic persistence adapter, and shared authority contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 187 governed Python files passed formatting, Ruff, and mypy."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "result": "Architecture passed for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure passed for all 12 required modules."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 139158aa...76494d50",
+      "exitCode": 0,
+      "result": "The backlog validates with 20 capabilities, 117 slices, 363 tasks, and 12 release gates; the exact strict-descendant task candidate has no patch errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d --affected-head 76494d504d37ad7552eea256689e90408375c84f --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passed for the exact R02 candidate. The task ran the narrow workflow, persistence, graph, package, quality, architecture, repository, backlog, and hygiene checks above; the complete profile matrix remains deliberately deferred to CAP-03.S05 integration review and W1 exit under the risk-based test policy."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "CAP-03.S05.T03-R01-F02 is closed by reading target, dependency registration, all open causes and durable changes, replacements, and reusable-input freshness in one coherent SQLite snapshot, then re-reading and comparing that complete authority under the queue's BEGIN IMMEDIATE transaction before inserting a runnable job. Any intervening target, cause, change, dependency, replacement, or reusable-input change fails with no queue write.",
+        "CAP-03.S05.T03-R01-F01 is closed by a recalculation-specific worker event and live lease, exact plan fingerprint, exact target/provenance/dependency transformation, checkpoint requirement, and one SQLite transaction that appends N+1, stages its canonical output identity, and commits the workflow output/provenance. A missing, unfinished, cancelled, or recovered workflow, generic event, or substituted input cannot create a revision; exact replay returns the same candidate and output receipt.",
+        "CAP-03.S05.T03-R01-F03 is closed by checking prior-revision freshness inside the same BEGIN IMMEDIATE aggregate transaction used for restoration. The selected safe contract denies any prior revision with an open stale cause, so a human cannot turn obsolete dependency authority into a false-fresh adjudicated current revision. A fresh adjudicated prior still restores by appending N+2 with exact dependency/provenance/history retention."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The real-SQLite suite proves source replacement and stale propagation, exact selective plan construction, restart/replay, injected second-change admission denial with zero jobs, atomic candidate/workflow success, exact comparison, history retention, fresh human restoration, and stale restoration denial.",
+        "Adversarial cases prove no canonical write for missing, claimed-but-unstarted, cancelled, recovered-but-unfinished, generic-event, superseded-dependency, mismatched-plan, or stale-restore authority. Existing workflow cancellation/retry/recovery and dependency graph/repository suites remain green."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The application service depends on a stable atomic selective-recalculation repository contract; the SQLite adapter owns cross-table transaction mechanics while the aggregate UnitOfWork exposes only a narrow same-transaction freshness assertion. Workflow/storage documentation and the frozen Windows package inventory changed with those boundaries.",
+        "No schema migration, HTTP/renderer surface, governed experience reference, cloud service, destructive operation, automatic adjudication, or unrelated product authority changed. Historical revisions and adverse stale causes remain immutable."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 exposed three coupled transaction-authority defects across workflow admission, canonical output commit, and human restoration. R02 therefore replays each at the narrowest real boundary: injected SQLite propagation at admission; exact live worker/plan/dependency/output binding in one candidate-and-completion transaction; and same-transaction stale denial for restore. Existing workflow contracts, queue recovery/cancellation, dependency graph, repository behavior, static quality, architecture, and a real frozen Windows build cover credible regression surfaces. No route, credential, dependency version, security policy, schema, renderer, or toolchain changed, so unrelated full service/security/UI/deployment suites remain deferred to the slice and W1 gates.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:backlog",
+      "packaging:unit",
+      "contracts:unit",
+      "data:unit",
+      "graph:unit",
+      "e2e-local:system"
+    ],
+    "deferred": [
+      "CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation, and affected cross-task integration/adversarial checks after T03 closes.",
+      "The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-03.S05.T03-R01-F01",
+      "CAP-03.S05.T03-R01-F02",
+      "CAP-03.S05.T03-R01-F03"
+    ],
+    "rootCauseAnalysis": "R01 treated correct data selection, queue admission, aggregate append, and restore as individually guarded operations but did not model the transaction boundaries joining them. That allowed authority to change between planning and enqueue, permitted candidate creation without consumption of a successful exact workflow, and separated stale-state authority from restoration. R02 makes each cross-table invariant explicit at its mutation point: coherent plan snapshot plus admission CAS, atomic candidate/output completion, and transactional stale-restore denial.",
+    "note": "Independently re-review exact strict-descendant candidate 76494d504d37ad7552eea256689e90408375c84f. Replay all three R01 finding IDs and confirm exact workflow/plan/output binding and atomic replay, stale-read admission denial with no queue write, fail-closed stale restoration, fresh append-only restoration, package execution, and absence of unrelated authority expansion without replaying full profiles."
+  }
+}
