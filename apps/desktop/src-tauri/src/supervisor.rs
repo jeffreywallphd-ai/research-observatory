@@ -1420,6 +1420,124 @@ fn validate_workflow_api_request(path: &str, body: &str) -> bool {
     false
 }
 
+fn recalculation_hash(value: &serde_json::Value) -> bool {
+    value
+        .as_str()
+        .and_then(|hash| hash.strip_prefix("sha256:"))
+        .is_some_and(|hash| canonical_lower_hex(hash, 64))
+}
+
+fn recalculation_timestamp(value: &serde_json::Value) -> bool {
+    value.as_str().is_some_and(|timestamp| {
+        (20..=35).contains(&timestamp.len())
+            && timestamp.is_ascii()
+            && timestamp.as_bytes().get(10) == Some(&b'T')
+            && (timestamp.ends_with('Z')
+                || timestamp
+                    .get(19..)
+                    .is_some_and(|zone| zone.contains('+') || zone.contains('-')))
+            && timestamp.bytes().all(|byte| {
+                byte.is_ascii_digit() || matches!(byte, b'-' | b':' | b'.' | b'+' | b'T' | b'Z')
+            })
+    })
+}
+
+fn validate_recalculation_api_request(path: &str, body: &str) -> bool {
+    const MAX_RECALCULATION_BODY_BYTES: usize = 32_768;
+    let expected = match path {
+        "/projects/recalculation/preview" => &["root", "targetRevisionId"][..],
+        "/projects/recalculation/schedules" => &[
+            "root",
+            "targetRevisionId",
+            "changeId",
+            "expectedPlanSha256",
+            "intentId",
+            "intentRevisionId",
+            "intentSha256",
+            "requestedAt",
+        ],
+        "/projects/recalculation/comparisons" => &["root", "beforeRevisionId", "afterRevisionId"],
+        "/projects/recalculation/restore-reviews" => &[
+            "root",
+            "beforeRevisionId",
+            "afterRevisionId",
+            "intentId",
+            "intentRevisionId",
+            "intentSha256",
+            "requestedAt",
+        ],
+        "/projects/recalculation/restorations" => &[
+            "root",
+            "priorAdjudicatedRevisionId",
+            "expectedCurrentRevisionId",
+            "workflowRunId",
+            "humanTaskId",
+            "decisionId",
+            "modifiedAt",
+        ],
+        _ => return false,
+    };
+    let Some(object) = exact_json_object(body, expected, MAX_RECALCULATION_BODY_BYTES) else {
+        return false;
+    };
+    if !object["root"].as_str().is_some_and(canonical_project_root) {
+        return false;
+    }
+    let uuid_fields: &[&str] = match path {
+        "/projects/recalculation/preview" => &["targetRevisionId"],
+        "/projects/recalculation/schedules" => &[
+            "targetRevisionId",
+            "changeId",
+            "intentId",
+            "intentRevisionId",
+        ],
+        "/projects/recalculation/comparisons" => &["beforeRevisionId", "afterRevisionId"],
+        "/projects/recalculation/restore-reviews" => &[
+            "beforeRevisionId",
+            "afterRevisionId",
+            "intentId",
+            "intentRevisionId",
+        ],
+        "/projects/recalculation/restorations" => &[
+            "priorAdjudicatedRevisionId",
+            "expectedCurrentRevisionId",
+            "workflowRunId",
+            "humanTaskId",
+            "decisionId",
+        ],
+        _ => return false,
+    };
+    if !uuid_fields.iter().all(|field| {
+        object
+            .get(*field)
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(canonical_uuid_v7)
+    }) {
+        return false;
+    }
+    match path {
+        "/projects/recalculation/schedules" => {
+            object
+                .get("expectedPlanSha256")
+                .is_some_and(recalculation_hash)
+                && object.get("intentSha256").is_some_and(recalculation_hash)
+                && object
+                    .get("requestedAt")
+                    .is_some_and(recalculation_timestamp)
+        }
+        "/projects/recalculation/restore-reviews" => {
+            object.get("intentSha256").is_some_and(recalculation_hash)
+                && object
+                    .get("requestedAt")
+                    .is_some_and(recalculation_timestamp)
+        }
+        "/projects/recalculation/restorations" => object
+            .get("modifiedAt")
+            .is_some_and(recalculation_timestamp),
+        _ => true,
+    }
+}
+
 fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
@@ -1521,6 +1639,24 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
             .body
             .as_deref()
             .is_some_and(|body| validate_project_api_request(&request.path, body))
+    {
+        return Ok(());
+    }
+    if request.method == "POST"
+        && request.if_match.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_recalculation_api_request(&request.path, body))
+        && match request.path.as_str() {
+            "/projects/recalculation/schedules" | "/projects/recalculation/restore-reviews" => {
+                request
+                    .idempotency_key
+                    .as_deref()
+                    .is_some_and(|value| canonical_lower_hex(value, 32))
+            }
+            _ => request.idempotency_key.is_none(),
+        }
     {
         return Ok(());
     }
@@ -2565,6 +2701,147 @@ mod tests {
             },
         ] {
             assert!(validate_api_request(&request).is_err(), "unexpected workflow request");
+        }
+    }
+
+    #[test]
+    fn native_api_transport_accepts_only_exact_recalculation_request_shapes() {
+        let target_revision_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d041";
+        let prior_revision_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d042";
+        let change_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d043";
+        let intent_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d044";
+        let intent_revision_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d045";
+        let workflow_run_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d046";
+        let human_task_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d047";
+        let decision_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d048";
+        let hash = format!("sha256:{}", "a".repeat(64));
+        let requests = [
+            (
+                "/projects/recalculation/preview",
+                serde_json::json!({
+                    "root": "C:/Research/study-one",
+                    "targetRevisionId": target_revision_id,
+                }),
+                None,
+            ),
+            (
+                "/projects/recalculation/schedules",
+                serde_json::json!({
+                    "root": "C:/Research/study-one",
+                    "targetRevisionId": target_revision_id,
+                    "changeId": change_id,
+                    "expectedPlanSha256": hash,
+                    "intentId": intent_id,
+                    "intentRevisionId": intent_revision_id,
+                    "intentSha256": hash,
+                    "requestedAt": "2026-09-02T12:00:00.000Z",
+                }),
+                Some("c".repeat(32)),
+            ),
+            (
+                "/projects/recalculation/comparisons",
+                serde_json::json!({
+                    "root": "C:/Research/study-one",
+                    "beforeRevisionId": prior_revision_id,
+                    "afterRevisionId": target_revision_id,
+                }),
+                None,
+            ),
+            (
+                "/projects/recalculation/restore-reviews",
+                serde_json::json!({
+                    "root": "C:/Research/study-one",
+                    "beforeRevisionId": prior_revision_id,
+                    "afterRevisionId": target_revision_id,
+                    "intentId": intent_id,
+                    "intentRevisionId": intent_revision_id,
+                    "intentSha256": hash,
+                    "requestedAt": "2026-09-02T12:00:00+00:00",
+                }),
+                Some("d".repeat(32)),
+            ),
+            (
+                "/projects/recalculation/restorations",
+                serde_json::json!({
+                    "root": "C:/Research/study-one",
+                    "priorAdjudicatedRevisionId": prior_revision_id,
+                    "expectedCurrentRevisionId": target_revision_id,
+                    "workflowRunId": workflow_run_id,
+                    "humanTaskId": human_task_id,
+                    "decisionId": decision_id,
+                    "modifiedAt": "2026-09-02T12:00:00Z",
+                }),
+                None,
+            ),
+        ];
+        for (path, body, key) in requests {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: "POST".to_owned(),
+                    path: path.to_owned(),
+                    body: Some(serde_json::to_string(&body).expect("recalculation request JSON")),
+                    if_match: None,
+                    idempotency_key: key,
+                })
+                .is_ok(),
+                "POST {path}",
+            );
+        }
+
+        for request in [
+            CoreApiRequest {
+                method: "POST".to_owned(),
+                path: "/projects/recalculation/preview".to_owned(),
+                body: Some(
+                    serde_json::json!({
+                        "root": "C:/Research/study-one",
+                        "targetRevisionId": target_revision_id,
+                        "actorId": "spoofed-researcher",
+                    })
+                    .to_string(),
+                ),
+                if_match: None,
+                idempotency_key: None,
+            },
+            CoreApiRequest {
+                method: "POST".to_owned(),
+                path: "/projects/recalculation/schedules".to_owned(),
+                body: Some(
+                    serde_json::json!({
+                        "root": "C:/Research/study-one",
+                        "targetRevisionId": target_revision_id,
+                        "changeId": change_id,
+                        "expectedPlanSha256": hash,
+                        "intentId": intent_id,
+                        "intentRevisionId": intent_revision_id,
+                        "intentSha256": hash,
+                        "requestedAt": "not-a-time",
+                    })
+                    .to_string(),
+                ),
+                if_match: None,
+                idempotency_key: Some("c".repeat(32)),
+            },
+            CoreApiRequest {
+                method: "POST".to_owned(),
+                path: "/projects/recalculation/restore-reviews".to_owned(),
+                body: Some(
+                    serde_json::json!({
+                        "root": "C:/Research/study-one",
+                        "beforeRevisionId": prior_revision_id,
+                        "afterRevisionId": target_revision_id,
+                        "intentId": intent_id,
+                        "intentRevisionId": intent_revision_id,
+                        "intentSha256": hash,
+                        "requestedAt": "2026-09-02T12:00:00Z",
+                    })
+                    .to_string(),
+                ),
+                if_match: None,
+                idempotency_key: None,
+            },
+        ] {
+            assert!(validate_api_request(&request).is_err());
         }
     }
 

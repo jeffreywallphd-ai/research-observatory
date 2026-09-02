@@ -18,6 +18,11 @@ import {
   decodeProblemDetail,
   decodeProjectProjection,
   decodeProvenanceLineagePage,
+  decodeRecalculationComparison,
+  decodeRecalculationPreview,
+  decodeRecalculationRestoredRevision,
+  decodeRecalculationRestoreReview,
+  decodeRecalculationSchedule,
   decodeVersionResponse,
   decodeWorkflowTaskCenterPage,
   decodeWorkflowTaskCenterRun,
@@ -25,6 +30,11 @@ import {
   parseOperationEventStream,
   type CoreApiResponse,
   type ProvenanceLineagePage,
+  type RecalculationComparisonProjection,
+  type RecalculationPreview,
+  type RecalculationRestoredRevision,
+  type RecalculationRestoreReviewProjection,
+  type RecalculationScheduleProjection,
   type VersionResponse,
   type WorkflowTaskCenterRun,
   workflowEtag,
@@ -48,6 +58,150 @@ describe("generated Core API client", () => {
   it("binds generated source to the exact OpenAPI bytes", () => {
     const path = fileURLToPath(new URL("./openapi.json", import.meta.url));
     expect(createHash("sha256").update(readFileSync(path)).digest("hex")).toBe(CORE_API_OPENAPI_SHA256);
+  });
+
+  it("provides a strict end-to-end recalculation client surface", async () => {
+    const projectId = "01890f47-eae3-4cc0-98c4-dc0c0c073981";
+    const targetRevisionId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d041";
+    const priorRevisionId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d042";
+    const changeId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d043";
+    const intentId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d044";
+    const intentRevisionId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d045";
+    const workflowRunId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d046";
+    const humanTaskId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d047";
+    const decisionId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d048";
+    const restoredRevisionId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d049";
+    const aggregateId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d04a";
+    const jobId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d04b";
+    const causeId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d04c";
+    const planSha256 = `sha256:${"a".repeat(64)}`;
+    const policySha256 = `sha256:${"b".repeat(64)}`;
+    const requestedAt = "2026-09-02T12:00:00.000Z";
+    const preview: RecalculationPreview = {
+      schemaVersion: "1.0",
+      projectId,
+      targetRevisionId,
+      planSha256,
+      policySha256,
+      changeIds: [changeId],
+      replacementRevisionIds: [],
+      reusableRevisionIds: [priorRevisionId],
+      causes: [{
+        causeId,
+        changeId,
+        disposition: "stale",
+        reason: "A material source revision changed.",
+        depth: 1,
+        confidence: "confirmed",
+        reviewRequired: true,
+        pathRevisionIds: [priorRevisionId, targetRevisionId],
+      }],
+      deferPreservesStaleVisibility: true,
+    };
+    const scheduled: RecalculationScheduleProjection = {
+      schemaVersion: "1.0",
+      projectId,
+      targetRevisionId,
+      planSha256,
+      workflowRunId,
+      jobId,
+      state: "runnable",
+    };
+    const comparison: RecalculationComparisonProjection = {
+      schemaVersion: "1.0",
+      aggregateId,
+      beforeRevisionId: priorRevisionId,
+      afterRevisionId: targetRevisionId,
+      beforeRevision: 1,
+      afterRevision: 2,
+      changedFields: ["knowledgeStatus"],
+    };
+    const restoreReview: RecalculationRestoreReviewProjection = {
+      schemaVersion: "1.0",
+      workflowRunId,
+      humanTaskId,
+      snapshotRevision: 1,
+      historySequence: 7,
+      policySha256,
+    };
+    const restored: RecalculationRestoredRevision = {
+      schemaVersion: "1.0",
+      projectId,
+      aggregateId,
+      revisionId: restoredRevisionId,
+      revision: 3,
+      knowledgeStatus: "adjudicated",
+      rightsStatus: "allowed",
+    };
+    const requests: unknown[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      const bodies: Record<string, unknown> = {
+        "/projects/recalculation/preview": preview,
+        "/projects/recalculation/schedules": scheduled,
+        "/projects/recalculation/comparisons": comparison,
+        "/projects/recalculation/restore-reviews": restoreReview,
+        "/projects/recalculation/restorations": restored,
+      };
+      return response(200, bodies[request.path]);
+    });
+    await expect(client.previewRecalculation({ root: "C:/Research/study-one", targetRevisionId }))
+      .resolves.toEqual(preview);
+    await expect(client.scheduleRecalculation({
+      root: "C:/Research/study-one",
+      targetRevisionId,
+      changeId,
+      expectedPlanSha256: planSha256,
+      intentId,
+      intentRevisionId,
+      intentSha256: policySha256,
+      requestedAt,
+    }, "c".repeat(32))).resolves.toEqual(scheduled);
+    await expect(client.compareRecalculation({
+      root: "C:/Research/study-one",
+      beforeRevisionId: priorRevisionId,
+      afterRevisionId: targetRevisionId,
+    })).resolves.toEqual(comparison);
+    await expect(client.requestRecalculationRestoreReview({
+      root: "C:/Research/study-one",
+      beforeRevisionId: priorRevisionId,
+      afterRevisionId: targetRevisionId,
+      intentId,
+      intentRevisionId,
+      intentSha256: policySha256,
+      requestedAt,
+    }, "d".repeat(32))).resolves.toEqual(restoreReview);
+    await expect(client.restoreRecalculationRevision({
+      root: "C:/Research/study-one",
+      priorAdjudicatedRevisionId: priorRevisionId,
+      expectedCurrentRevisionId: targetRevisionId,
+      workflowRunId,
+      humanTaskId,
+      decisionId,
+      modifiedAt: requestedAt,
+    })).resolves.toEqual(restored);
+
+    expect(requests).toHaveLength(5);
+    expect(requests[1]).toMatchObject({
+      path: "/projects/recalculation/schedules",
+      ifMatch: null,
+      idempotencyKey: "c".repeat(32),
+    });
+    expect(JSON.parse((requests[1] as { body: string }).body)).toEqual({
+      root: "C:/Research/study-one",
+      targetRevisionId,
+      changeId,
+      expectedPlanSha256: planSha256,
+      intentId,
+      intentRevisionId,
+      intentSha256: policySha256,
+      requestedAt,
+    });
+    expect(decodeRecalculationPreview({ ...preview, actorId: "spoofed" })).toBeNull();
+    expect(decodeRecalculationSchedule({ ...scheduled, planSha256: "sha256:not-canonical" })).toBeNull();
+    expect(decodeRecalculationComparison({ ...comparison, afterRevision: 1 })).toBeNull();
+    expect(decodeRecalculationRestoreReview({ ...restoreReview, policySha256: null })).toBeNull();
+    expect(decodeRecalculationRestoredRevision({ ...restored, rightsStatus: "unverified" })).toBeNull();
   });
 
   it("decodes bounded lineage exactly and posts the governed lineage request", async () => {

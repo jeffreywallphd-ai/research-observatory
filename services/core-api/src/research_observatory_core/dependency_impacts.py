@@ -391,9 +391,6 @@ def plan_dependency_impact(
         processed_edges.add(edge.dependency_id)
         if len(processed_edges) > limits.max_edges:
             raise DependencyImpactLimitExceeded("dependency impact edge limit exceeded")
-        if edge.input_revision_id is not None:
-            adjacency.setdefault(edge.input_revision_id, set()).add(edge.output_revision_id)
-
         decision = decision_by_edge.get(edge.dependency_id)
         disposition: Literal["stale", "unknown-impact", "informational"]
         confidence: Literal["confirmed", "conditional", "unknown"]
@@ -459,6 +456,8 @@ def plan_dependency_impact(
             raise DependencyImpactLimitExceeded("dependency impact node limit exceeded")
         if not propagate:
             continue
+        if edge.input_revision_id is not None:
+            adjacency.setdefault(edge.input_revision_id, set()).add(edge.output_revision_id)
         propagation_rank = 2 if disposition == "stale" else 1
         if expanded_rank.get(edge.output_revision_id, 0) >= propagation_rank:
             continue

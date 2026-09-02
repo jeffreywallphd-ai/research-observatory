@@ -2500,6 +2500,548 @@
         "title": "ReadinessResponse",
         "type": "object"
       },
+      "RecalculationCauseProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "causeId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Causeid",
+            "type": "string"
+          },
+          "changeId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Changeid",
+            "type": "string"
+          },
+          "confidence": {
+            "enum": [
+              "confirmed",
+              "conditional",
+              "unknown"
+            ],
+            "title": "Confidence",
+            "type": "string"
+          },
+          "depth": {
+            "minimum": 1.0,
+            "title": "Depth",
+            "type": "integer"
+          },
+          "disposition": {
+            "enum": [
+              "stale",
+              "unknown-impact"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "pathRevisionIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Pathrevisionids",
+            "type": "array"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "reviewRequired": {
+            "title": "Reviewrequired",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "causeId",
+          "changeId",
+          "disposition",
+          "reason",
+          "depth",
+          "confidence",
+          "reviewRequired",
+          "pathRevisionIds"
+        ],
+        "title": "RecalculationCauseProjection",
+        "type": "object"
+      },
+      "RecalculationComparisonProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "afterRevision": {
+            "minimum": 0.0,
+            "title": "Afterrevision",
+            "type": "integer"
+          },
+          "afterRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Afterrevisionid",
+            "type": "string"
+          },
+          "aggregateId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Aggregateid",
+            "type": "string"
+          },
+          "beforeRevision": {
+            "minimum": 0.0,
+            "title": "Beforerevision",
+            "type": "integer"
+          },
+          "beforeRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Beforerevisionid",
+            "type": "string"
+          },
+          "changedFields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Changedfields",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "aggregateId",
+          "beforeRevisionId",
+          "afterRevisionId",
+          "beforeRevision",
+          "afterRevision",
+          "changedFields"
+        ],
+        "title": "RecalculationComparisonProjection",
+        "type": "object"
+      },
+      "RecalculationComparisonRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "afterRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Afterrevisionid",
+            "type": "string"
+          },
+          "beforeRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Beforerevisionid",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "beforeRevisionId",
+          "afterRevisionId"
+        ],
+        "title": "RecalculationComparisonRequest",
+        "type": "object"
+      },
+      "RecalculationPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "causes": {
+            "items": {
+              "$ref": "#/components/schemas/RecalculationCauseProjection"
+            },
+            "title": "Causes",
+            "type": "array"
+          },
+          "changeIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Changeids",
+            "type": "array"
+          },
+          "deferPreservesStaleVisibility": {
+            "const": true,
+            "default": true,
+            "title": "Deferpreservesstalevisibility",
+            "type": "boolean"
+          },
+          "planSha256": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Plansha256",
+            "type": "string"
+          },
+          "policySha256": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Policysha256",
+            "type": "string"
+          },
+          "projectId": {
+            "title": "Projectid",
+            "type": "string"
+          },
+          "replacementRevisionIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Replacementrevisionids",
+            "type": "array"
+          },
+          "reusableRevisionIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reusablerevisionids",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "targetRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Targetrevisionid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "targetRevisionId",
+          "planSha256",
+          "policySha256",
+          "changeIds",
+          "replacementRevisionIds",
+          "reusableRevisionIds",
+          "causes"
+        ],
+        "title": "RecalculationPreview",
+        "type": "object"
+      },
+      "RecalculationPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "targetRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Targetrevisionid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "targetRevisionId"
+        ],
+        "title": "RecalculationPreviewRequest",
+        "type": "object"
+      },
+      "RecalculationRestoreRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "decisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Decisionid",
+            "type": "string"
+          },
+          "expectedCurrentRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Expectedcurrentrevisionid",
+            "type": "string"
+          },
+          "humanTaskId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Humantaskid",
+            "type": "string"
+          },
+          "modifiedAt": {
+            "format": "date-time",
+            "title": "Modifiedat",
+            "type": "string"
+          },
+          "priorAdjudicatedRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Prioradjudicatedrevisionid",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "workflowRunId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Workflowrunid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "priorAdjudicatedRevisionId",
+          "expectedCurrentRevisionId",
+          "workflowRunId",
+          "humanTaskId",
+          "decisionId",
+          "modifiedAt"
+        ],
+        "title": "RecalculationRestoreRequest",
+        "type": "object"
+      },
+      "RecalculationRestoreReviewProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "historySequence": {
+            "minimum": 1.0,
+            "title": "Historysequence",
+            "type": "integer"
+          },
+          "humanTaskId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Humantaskid",
+            "type": "string"
+          },
+          "policySha256": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Policysha256",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "snapshotRevision": {
+            "minimum": 1.0,
+            "title": "Snapshotrevision",
+            "type": "integer"
+          },
+          "workflowRunId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Workflowrunid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflowRunId",
+          "humanTaskId",
+          "snapshotRevision",
+          "historySequence",
+          "policySha256"
+        ],
+        "title": "RecalculationRestoreReviewProjection",
+        "type": "object"
+      },
+      "RecalculationRestoreReviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "afterRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Afterrevisionid",
+            "type": "string"
+          },
+          "beforeRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Beforerevisionid",
+            "type": "string"
+          },
+          "intentId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Intentid",
+            "type": "string"
+          },
+          "intentRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Intentrevisionid",
+            "type": "string"
+          },
+          "intentSha256": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Intentsha256",
+            "type": "string"
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "title": "Requestedat",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "beforeRevisionId",
+          "afterRevisionId",
+          "intentId",
+          "intentRevisionId",
+          "intentSha256",
+          "requestedAt"
+        ],
+        "title": "RecalculationRestoreReviewRequest",
+        "type": "object"
+      },
+      "RecalculationRestoredRevision": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregateId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Aggregateid",
+            "type": "string"
+          },
+          "knowledgeStatus": {
+            "title": "Knowledgestatus",
+            "type": "string"
+          },
+          "projectId": {
+            "title": "Projectid",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "revisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Revisionid",
+            "type": "string"
+          },
+          "rightsStatus": {
+            "title": "Rightsstatus",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "aggregateId",
+          "revisionId",
+          "revision",
+          "knowledgeStatus",
+          "rightsStatus"
+        ],
+        "title": "RecalculationRestoredRevision",
+        "type": "object"
+      },
+      "RecalculationScheduleProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "jobId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Jobid",
+            "type": "string"
+          },
+          "planSha256": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Plansha256",
+            "type": "string"
+          },
+          "projectId": {
+            "title": "Projectid",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "targetRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Targetrevisionid",
+            "type": "string"
+          },
+          "workflowRunId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Workflowrunid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "targetRevisionId",
+          "planSha256",
+          "workflowRunId",
+          "jobId",
+          "state"
+        ],
+        "title": "RecalculationScheduleProjection",
+        "type": "object"
+      },
+      "RecalculationScheduleRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "changeId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Changeid",
+            "type": "string"
+          },
+          "expectedPlanSha256": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Expectedplansha256",
+            "type": "string"
+          },
+          "intentId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Intentid",
+            "type": "string"
+          },
+          "intentRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Intentrevisionid",
+            "type": "string"
+          },
+          "intentSha256": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Intentsha256",
+            "type": "string"
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "title": "Requestedat",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "targetRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Targetrevisionid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "targetRevisionId",
+          "changeId",
+          "expectedPlanSha256",
+          "intentId",
+          "intentRevisionId",
+          "intentSha256",
+          "requestedAt"
+        ],
+        "title": "RecalculationScheduleRequest",
+        "type": "object"
+      },
       "RemoteModelApproval": {
         "enum": [
           "preview-every-task"
@@ -4227,6 +4769,385 @@
         "summary": "Provenance Lineage",
         "tags": [
           "provenance"
+        ]
+      }
+    },
+    "/projects/recalculation/comparisons": {
+      "post": {
+        "operationId": "compare_recalculation_projects_recalculation_comparisons_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecalculationComparisonRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecalculationComparisonProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Compare Recalculation",
+        "tags": [
+          "recalculation"
+        ]
+      }
+    },
+    "/projects/recalculation/preview": {
+      "post": {
+        "operationId": "preview_recalculation_projects_recalculation_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecalculationPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecalculationPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Preview Recalculation",
+        "tags": [
+          "recalculation"
+        ]
+      }
+    },
+    "/projects/recalculation/restorations": {
+      "post": {
+        "operationId": "restore_recalculation_revision_projects_recalculation_restorations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecalculationRestoreRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecalculationRestoredRevision"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Restore Recalculation Revision",
+        "tags": [
+          "recalculation"
+        ]
+      }
+    },
+    "/projects/recalculation/restore-reviews": {
+      "post": {
+        "operationId": "request_recalculation_restore_review_projects_recalculation_restore_reviews_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecalculationRestoreReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecalculationRestoreReviewProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Request Recalculation Restore Review",
+        "tags": [
+          "recalculation"
+        ]
+      }
+    },
+    "/projects/recalculation/schedules": {
+      "post": {
+        "operationId": "schedule_recalculation_projects_recalculation_schedules_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecalculationScheduleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecalculationScheduleProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Schedule Recalculation",
+        "tags": [
+          "recalculation"
         ]
       }
     },

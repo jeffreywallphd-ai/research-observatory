@@ -109,6 +109,7 @@ from .provenance_contracts import canonical_provenance_json, decode_provenance_e
 from .recalculation_contracts import (
     RecalculationAuthority,
     RecalculationCandidateCommit,
+    RestoreRevisionCommit,
     SelectiveRecalculationRepository,
     recalculation_authority_sha256,
 )
@@ -1693,6 +1694,42 @@ def _recalculation_authority_with_connection(
         if _stale_states_with_connection(connection, project_id, revision.revision_id):
             continue
         reusable.append(revision)
+    maximum = connection.execute(
+        "SELECT MAX(revision) FROM settings WHERE project_id=? AND setting_key LIKE 'privacy.%'",
+        (project_id,),
+    ).fetchone()[0]
+    privacy_policy_revision = 0 if maximum is None else int(maximum)
+    policy_settings: list[dict[str, object]] = []
+    if maximum is not None:
+        rows = connection.execute(
+            """
+            SELECT setting_key, value_type, text_value, integer_value
+              FROM settings
+             WHERE project_id=? AND revision=? AND setting_key LIKE 'privacy.%'
+             ORDER BY setting_key
+            """,
+            (project_id, privacy_policy_revision),
+        ).fetchall()
+        for key, value_type, text_value, integer_value in rows:
+            if value_type == "text" and isinstance(text_value, str) and integer_value is None:
+                value: str | int = text_value
+            elif value_type == "integer" and isinstance(integer_value, int) and text_value is None:
+                value = integer_value
+            else:
+                raise RepositoryProblem("recalculation privacy policy authority is invalid")
+            policy_settings.append({"key": str(key), "value": value})
+    policy_id = "project-privacy-and-rights"
+    policy_version = "1.0.0"
+    policy_sha256 = _workflow_sha256(
+        {
+            "policyId": policy_id,
+            "policyVersion": policy_version,
+            "privacyPolicyRevision": privacy_policy_revision,
+            "projectId": project_id,
+            "rightsStatus": target.rights_status,
+            "settings": policy_settings,
+        }
+    )
     detached = RecalculationAuthority(
         target=target,
         dependencies=registration.dependencies,
@@ -1700,6 +1737,10 @@ def _recalculation_authority_with_connection(
         changes=changes,
         replacements=replacements,
         reusable=tuple(sorted(reusable, key=lambda item: item.revision_id)),
+        policy_id=policy_id,
+        policy_version=policy_version,
+        privacy_policy_revision=privacy_policy_revision,
+        policy_sha256=policy_sha256,
         authority_sha256="",
     )
     return replace(detached, authority_sha256=recalculation_authority_sha256(detached))
@@ -1764,6 +1805,7 @@ def _validate_candidate_authority(
         or draft.aggregate_kind != authority.target.aggregate_kind
         or draft.created_at != authority.target.created_at
         or draft.knowledge_status == "adjudicated"
+        or draft.rights_status != authority.target.rights_status
         or draft.dependency_coverage != "complete"
         or tuple(item.revision_id for item in draft.provenance_inputs) != expected_provenance
         or supplied_dependencies != _planned_candidate_dependencies(authority)
@@ -1799,9 +1841,16 @@ def _validate_recalculation_submission(
         )
         observed_artifacts.add((str(item.get("artifactId")), str(item.get("revisionId")), role))
     configuration = cast(dict[str, object], snapshot.get("configuration", {}))
+    policy = cast(dict[str, object], snapshot.get("policy", {}))
     if (
         submission.command_fingerprint != authority.authority_sha256
         or configuration.get("configurationHash") != authority.authority_sha256
+        or policy
+        != {
+            "policyId": authority.policy_id,
+            "policyVersion": authority.policy_version,
+            "policyHash": authority.policy_sha256,
+        }
         or observed_artifacts != expected_artifacts
     ):
         raise WorkflowQueueConflict("recalculation workflow authority differs at admission")
@@ -6607,6 +6656,155 @@ class _SqliteSelectiveRecalculationRepository(
                     outputs=(output,),
                 )
                 return candidate
+            finally:
+                _UNIT_OF_WORKS.unregister(token)
+
+    def restore_revision(self, command: RestoreRevisionCommit) -> AggregateRevision:
+        _workflow_time(command.modified_at)
+        if (
+            command.event.actor_type != "human"
+            or command.event.actor_id is None
+            or command.event.event_type != "aggregate.revision-restored"
+            or command.event.idempotency_key != f"restore-revision:{command.decision_id}"
+            or command.event.occurred_at != command.modified_at
+        ):
+            raise RepositoryConflict("revision restoration event authority is invalid")
+        with self._transaction() as connection:
+            prior = _revision_with_connection(connection, self._project_id, command.prior_adjudicated_revision_id)
+            current = _revision_with_connection(connection, self._project_id, command.expected_current_revision_id)
+            if (
+                prior.knowledge_status != "adjudicated"
+                or prior.aggregate_id != current.aggregate_id
+                or prior.aggregate_kind != current.aggregate_kind
+                or prior.revision >= current.revision
+            ):
+                raise RepositoryConflict("only a prior adjudicated revision may be restored")
+            existing = connection.execute(
+                "SELECT 1 FROM aggregate_revisions WHERE project_id=? AND revision_id=?",
+                (self._project_id, command.new_revision_id),
+            ).fetchone()
+            authority: RecalculationAuthority | None = None
+            if existing is None:
+                authority = _recalculation_authority_with_connection(
+                    connection,
+                    self._project_id,
+                    current.revision_id,
+                )
+            registration = _material_registration_with_connection(connection, self._project_id, prior.revision_id)
+            if (
+                len(command.dependency_ids) != len(registration.dependencies)
+                or len(set(command.dependency_ids)) != len(command.dependency_ids)
+                or connection.execute(
+                    "SELECT 1 FROM dependency_impact_items WHERE project_id=? AND output_revision_id=? LIMIT 1",
+                    (self._project_id, prior.revision_id),
+                ).fetchone()
+                is not None
+            ):
+                raise RepositoryConflict("revision restoration dependency or freshness authority is invalid")
+
+            row = connection.execute(
+                """
+                SELECT snapshot.snapshot_json, snapshot.record_sha256, definition.definition_json,
+                       definition.record_sha256
+                  FROM workflow_authority_snapshots AS snapshot
+                  JOIN workflow_definitions AS definition
+                    ON definition.definition_revision_id=snapshot.definition_revision_id
+                 WHERE snapshot.project_id=? AND snapshot.workflow_run_id=?
+                 ORDER BY snapshot.snapshot_revision DESC LIMIT 1
+                """,
+                (self._project_id, command.workflow_run_id),
+            ).fetchone()
+            if row is None:
+                raise WorkflowQueueNotFound("restore-review workflow was not found")
+            snapshot = cast(dict[str, object], json.loads(str(row[0])))
+            definition = cast(dict[str, object], json.loads(str(row[2])))
+            policy = cast(Mapping[str, object], snapshot.get("policy", {}))
+            configuration = cast(Mapping[str, object], snapshot.get("configuration", {}))
+            if (
+                _workflow_sha256(snapshot) != str(row[1])
+                or _workflow_sha256(definition) != str(row[3])
+                or workflow_snapshot_errors(definition, snapshot)
+                or definition.get("workflowKey") != "selective-recalculation-restore-review"
+                or snapshot.get("state") != "succeeded"
+                or snapshot.get("projectId") != self._project_id
+                or (
+                    authority is not None
+                    and (
+                        policy
+                        != {
+                            "policyId": authority.policy_id,
+                            "policyVersion": authority.policy_version,
+                            "policyHash": authority.policy_sha256,
+                        }
+                        or configuration.get("configurationHash") != authority.authority_sha256
+                    )
+                )
+            ):
+                raise WorkflowQueueConflict("restore-review workflow authority differs")
+            tasks = [
+                cast(Mapping[str, object], value)
+                for value in cast(list[object], snapshot["humanTasks"])
+                if cast(Mapping[str, object], value).get("humanTaskId") == command.human_task_id
+            ]
+            if len(tasks) != 1:
+                raise WorkflowQueueConflict("restore-review human task authority differs")
+            task = tasks[0]
+            decision = cast(Mapping[str, object] | None, task.get("decision"))
+            actor = {"actorId": command.event.actor_id, "actorType": "human", "role": "researcher"}
+            expected_evidence = {prior.revision_id, current.revision_id}
+            evidence = set(map(str, cast(list[object], task.get("evidenceArtifactIds", []))))
+            artifacts = {
+                (str(item.get("artifactId")), str(item.get("revisionId")), str(item.get("contentHash")))
+                for item in cast(list[Mapping[str, object]], snapshot["artifacts"])
+            }
+            expected_artifacts = {
+                (prior.revision_id, prior.revision_id, _projection_content_sha256(prior)),
+                (current.revision_id, current.revision_id, _projection_content_sha256(current)),
+            }
+            if (
+                task.get("state") != "completed"
+                or task.get("requiredRole") != "researcher"
+                or task.get("assignedTo") != actor
+                or evidence != expected_evidence
+                or artifacts != expected_artifacts
+                or decision is None
+                or decision.get("decisionId") != command.decision_id
+                or decision.get("disposition") != "approved"
+                or decision.get("consequenceCode") != "resume-workflow"
+                or decision.get("decidedBy") != actor
+                or set(map(str, cast(list[object], decision.get("evidenceArtifactIds", [])))) != expected_evidence
+            ):
+                raise WorkflowQueueConflict("restore-review decision authority differs")
+            token = _UNIT_OF_WORKS.register(connection, self._project_id)
+            try:
+                aggregates = _SqliteAggregateRepository(token)
+                dependencies = tuple(
+                    replace(dependency, dependency_id=dependency_id)
+                    for dependency, dependency_id in zip(
+                        registration.dependencies,
+                        command.dependency_ids,
+                        strict=True,
+                    )
+                )
+                return aggregates.append(
+                    AggregateRevisionDraft(
+                        revision_id=command.new_revision_id,
+                        aggregate_id=prior.aggregate_id,
+                        aggregate_kind=prior.aggregate_kind,
+                        created_at=prior.created_at,
+                        modified_at=command.modified_at,
+                        display_label_observed=prior.display_label_observed,
+                        display_label_normalized=prior.display_label_normalized,
+                        knowledge_status=prior.knowledge_status,
+                        rights_status=current.rights_status,
+                        dependency_coverage=registration.coverage,
+                        object_sha256=prior.object_sha256,
+                        provenance_inputs=(current, prior),
+                        material_dependencies=dependencies,
+                    ),
+                    command.event,
+                    expected_revision=current.revision,
+                )
             finally:
                 _UNIT_OF_WORKS.unregister(token)
 

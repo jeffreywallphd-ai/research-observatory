@@ -316,6 +316,64 @@ class DependencyImpactPlannerTests(unittest.TestCase):
         self.assertEqual((), preview.cycle_groups)
         self.assertTrue(all(item.cycle_group_id is None for item in preview.impacts))
 
+    def test_cycle_groups_include_only_edges_that_propagate(self) -> None:
+        previous = AggregateRevision(
+            revision_id=uid(1),
+            aggregate_id=uid(101),
+            aggregate_kind="evidence",
+            project_id=PROJECT_ID,
+            revision=1,
+            contract_version="1.0",
+            created_at=OCCURRED_AT,
+            modified_at=OCCURRED_AT,
+            display_label_observed="source",
+            display_label_normalized=None,
+            knowledge_status="observed",
+            rights_status="unknown",
+        )
+        change = revision_change(previous, replace(previous, revision_id=uid(2), revision=2))
+        a, b = uid(11), uid(12)
+        leading_edges = (
+            DependencyGraphEdge(
+                uid(301), previous.revision_id, a, "evidence", "direct", fingerprint("a"), "p", "1.0.0"
+            ),
+            DependencyGraphEdge(uid(302), a, b, "evidence", "direct", fingerprint("b"), "p", "1.0.0"),
+        )
+
+        non_material = DependencyGraphEdge(
+            uid(303), b, a, "evidence", "non-material", fingerprint("c"), "p", "1.0.0"
+        )
+        non_material_preview = plan_dependency_impact(PROJECT_ID, change, (*leading_edges, non_material))
+        self.assertEqual((), non_material_preview.cycle_groups)
+        self.assertTrue(all(item.cycle_group_id is None for item in non_material_preview.impacts))
+
+        conditional = replace(non_material, relation_type="conditional")
+        ignored_decision = ConditionalDependencyDecision(
+            dependency_id=conditional.dependency_id,
+            decision_id=uid(81_001),
+            disposition="ignore",
+            governing_policy_id="p",
+            governing_policy_version="1.0.0",
+            actor_id=ACTOR_ID,
+            decided_at=OCCURRED_AT,
+        )
+        ignored_preview = plan_dependency_impact(
+            PROJECT_ID,
+            change,
+            (*leading_edges, conditional),
+            decisions=(ignored_decision,),
+        )
+        self.assertEqual((), ignored_preview.cycle_groups)
+        self.assertTrue(all(item.cycle_group_id is None for item in ignored_preview.impacts))
+
+        propagated_preview = plan_dependency_impact(
+            PROJECT_ID,
+            change,
+            (*leading_edges, conditional),
+            decisions=(replace(ignored_decision, disposition="propagate"),),
+        )
+        self.assertEqual(((a, b),), tuple(group.member_revision_ids for group in propagated_preview.cycle_groups))
+
     def test_self_loop_and_disjoint_cycles_are_exact_and_order_independent(self) -> None:
         previous = AggregateRevision(
             revision_id=uid(1),

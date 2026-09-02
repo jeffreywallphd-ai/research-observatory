@@ -15,6 +15,8 @@ from research_observatory_core.ports.repositories import (
     AtomicRepositoryEvent,
     DependencyChange,
     MaterialDependency,
+    PrivacyAuditEvent,
+    PrivacySetting,
     RepositoryConflict,
     RepositoryProblem,
 )
@@ -36,12 +38,15 @@ from research_observatory_core.repositories import (
     create_sqlite_unit_of_work_factory,
     sqlite_dependency_impact_repository,
     sqlite_material_dependency_repository,
+    sqlite_privacy_policy_repository,
     sqlite_selective_recalculation_repository,
     sqlite_workflow_queue_repository,
 )
 from research_observatory_core.selective_recalculation import (
     RecalculationWorkflowIdentity,
     RecalculationWorkflowRequest,
+    RestoreReviewIdentity,
+    RestoreReviewRequest,
     RestoreRevisionCommand,
     SelectiveRecalculationService,
 )
@@ -171,6 +176,7 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             unit_of_work=self.factory,
             dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
             recalculation=self.recalculation,
+            workflows=self.workflows,
         )
 
     def tearDown(self) -> None:
@@ -182,6 +188,34 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             revision = unit.aggregates.append(draft, event(index), expected_revision=expected)
             unit.commit()
             return revision
+
+    def _append_privacy_policy(self) -> None:
+        settings = tuple(
+            PrivacySetting(key, value)
+            for key, value in sorted(
+                {
+                    "privacy.cache-retention-days": 30,
+                    "privacy.document-retention": "project-lifetime",
+                    "privacy.egress-consent-version": "none",
+                    "privacy.log-retention-days": 14,
+                    "privacy.network-policy": "offline",
+                    "privacy.remote-model-approval": "preview-every-task",
+                    "privacy.telemetry-mode": "off",
+                }.items()
+            )
+        )
+        sqlite_privacy_policy_repository(self.root, PROJECT_ID).append(
+            expected_revision=0,
+            revision=1,
+            settings=settings,
+            event=PrivacyAuditEvent(
+                event_id=uid(89_001),
+                event_type="privacy.policy.changed",
+                occurred_at="2026-09-01T22:00:30.000Z",
+                trace_id="7" * 32,
+                record_sha256="f" * 64,
+            ),
+        )
 
     def _build_fixture(self) -> None:
         self.source_v1 = self._append(
@@ -291,9 +325,6 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             intent_id=uid(90_007),
             intent_revision_id=uid(90_008),
             intent_sha256=fingerprint("d"),
-            policy_id="private-local-research",
-            policy_version="1.0.0",
-            policy_sha256=fingerprint("e"),
             configuration_id="selective-recalculation-default",
             configuration_version="1.0.0",
             priority=10,
@@ -373,26 +404,97 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
         )
         return prior, current
 
-    @staticmethod
     def _restore_command(
+        self,
         prior: AggregateRevision,
         current: AggregateRevision,
         index: int,
+        *,
+        disposition: str = "approved",
     ) -> RestoreRevisionCommand:
-        occurred_at = f"2026-09-01T22:00:{index + 2:02d}.000Z"
+        identity_base = 130_000 + index * 20
+        identity = RestoreReviewIdentity(
+            workflow_definition_id=uid(identity_base),
+            definition_revision_id=uid(identity_base + 1),
+            workflow_run_id=uid(identity_base + 2),
+            snapshot_id=uid(identity_base + 3),
+            step_run_id=uid(identity_base + 4),
+            human_task_id=uid(identity_base + 5),
+            history_event_ids=tuple(uid(identity_base + 6 + offset) for offset in range(7)),
+        )
+        actor = WorkflowActor(RESEARCHER_ID, "human", "researcher")
+        review = self.service.request_restore_review(
+            RestoreReviewRequest(
+                prior_adjudicated_revision_id=prior.revision_id,
+                expected_current_revision_id=current.revision_id,
+                identity=identity,
+                actor=actor,
+                created_at=f"2026-09-01T23:{index:02d}:00.000Z",
+                intent_id=uid(identity_base + 13),
+                intent_revision_id=uid(identity_base + 14),
+                intent_sha256=fingerprint("d"),
+                configuration_id="selective-recalculation-restore-default",
+                configuration_version="1.0.0",
+            )
+        )
+        decision_id = uid(identity_base + 15)
+        self.workflows.complete_human_task(
+            review.human_task_id,
+            expected_snapshot_revision=review.snapshot_revision,
+            expected_history_sequence=review.history_sequence,
+            decision_id=decision_id,
+            disposition=disposition,  # type: ignore[arg-type]
+            actor=actor,
+            now=f"2026-09-01T23:{index:02d}:01.000Z",
+        )
+        occurred_at = f"2026-09-01T23:{index:02d}:02.000Z"
         return RestoreRevisionCommand(
             prior_adjudicated_revision_id=prior.revision_id,
             expected_current_revision_id=current.revision_id,
             new_revision_id=uid(index + 2),
             dependency_ids=(uid(31_000 + index),),
+            workflow_run_id=review.workflow_run_id,
+            human_task_id=review.human_task_id,
+            decision_id=decision_id,
             modified_at=occurred_at,
             event=event(
                 index + 2,
                 actor_type="human",
                 event_type="aggregate.revision-restored",
+                idempotency_key=f"restore-revision:{decision_id}",
                 occurred_at=occurred_at,
             ),
         )
+
+    def test_restore_requires_exact_completed_human_decision_and_current_policy(self) -> None:
+        prior, current = self._restorable_pair(54)
+        command = self._restore_command(prior, current, 54)
+
+        with self.assertRaises(WorkflowQueueConflict):
+            self.service.restore(replace(command, event=replace(command.event, actor_id=SYSTEM_ID)))
+        substituted_decision_id = uid(150_001)
+        with self.assertRaises(WorkflowQueueConflict):
+            self.service.restore(
+                replace(
+                    command,
+                    decision_id=substituted_decision_id,
+                    event=replace(command.event, idempotency_key=f"restore-revision:{substituted_decision_id}"),
+                )
+            )
+
+        self._append_privacy_policy()
+        with self.assertRaises(WorkflowQueueConflict):
+            self.service.restore(command)
+        with self.factory() as unit:
+            self.assertEqual(
+                (prior.revision_id, current.revision_id),
+                tuple(item.revision_id for item in unit.aggregates.history(prior.aggregate_id)),
+            )
+
+        rejected_prior, rejected_current = self._restorable_pair(57)
+        rejected = self._restore_command(rejected_prior, rejected_current, 57, disposition="rejected")
+        with self.assertRaises(WorkflowQueueConflict):
+            self.service.restore(rejected)
 
     def _impact_change(self, index: int) -> DependencyChange:
         return replace(
@@ -551,6 +653,18 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
         )
         with self.assertRaises(WorkflowQueueConflict):
             racing_service.schedule(self.request())
+        self.assertEqual((), self.workflows.task_center(limit=10))
+
+    def test_enqueue_fails_without_queue_write_when_privacy_policy_changes_after_planning(self) -> None:
+        racing_service = SelectiveRecalculationService(
+            unit_of_work=self.factory,
+            dependencies=sqlite_material_dependency_repository(self.root, PROJECT_ID),
+            recalculation=InjectBeforeEnqueue(self.recalculation, self._append_privacy_policy),
+        )
+
+        with self.assertRaises(WorkflowQueueConflict):
+            racing_service.schedule(self.request())
+
         self.assertEqual((), self.workflows.task_center(limit=10))
 
     def test_candidate_requires_an_active_exact_workflow_and_specific_event(self) -> None:
@@ -764,6 +878,15 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
                 plan_sha256=scheduled.workflow.plan_sha256,
                 completed_at=completed_at,
             )
+        with self.assertRaises(RepositoryConflict):
+            self.service.append_candidate(
+                replace(self.candidate_draft(), rights_status="denied"),
+                candidate_event,
+                claim=claim,
+                expected_current_revision_id=self.adjudicated.revision_id,
+                plan_sha256=scheduled.workflow.plan_sha256,
+                completed_at=completed_at,
+            )
         self.workflows.cancel(claim, now="2026-09-01T22:01:03.000Z", reason_code="user-cancelled")
         with self.assertRaises(WorkflowQueueProblem):
             self.service.append_candidate(
@@ -846,6 +969,9 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
                     expected_current_revision_id=candidate.revision_id,
                     new_revision_id=uid(6),
                     dependency_ids=(uid(30_008), uid(30_009)),
+                    workflow_run_id=uid(140_001),
+                    human_task_id=uid(140_002),
+                    decision_id=uid(140_003),
                     modified_at="2026-09-01T22:03:00.000Z",
                     event=event(
                         6,
@@ -897,19 +1023,7 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             41,
             0,
         )
-        command = RestoreRevisionCommand(
-            prior_adjudicated_revision_id=prior.revision_id,
-            expected_current_revision_id=current.revision_id,
-            new_revision_id=uid(42),
-            dependency_ids=(uid(30_042),),
-            modified_at="2026-09-01T22:12:00.000Z",
-            event=event(
-                42,
-                actor_type="human",
-                event_type="aggregate.revision-restored",
-                occurred_at="2026-09-01T22:12:00.000Z",
-            ),
-        )
+        command = self._restore_command(prior, current, 40)
         restored = self.service.restore(command)
         reopened = SelectiveRecalculationService(
             unit_of_work=create_sqlite_unit_of_work_factory(self.database, PROJECT_ID),
@@ -1046,6 +1160,9 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
                     expected_current_revision_id=self.verified.revision_id,
                     new_revision_id=uid(7),
                     dependency_ids=(),
+                    workflow_run_id=uid(140_011),
+                    human_task_id=uid(140_012),
+                    decision_id=uid(140_013),
                     modified_at="2026-09-01T22:04:00.000Z",
                     event=event(
                         7,
