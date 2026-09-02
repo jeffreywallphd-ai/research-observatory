@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cfc4356ff2448699629e8856bb15c31a7f7ed77cd65c0abd0185a14c2e0fa50b
+source_sha256: a01e29c4ca252affcfafc9aec364f78c6e69f7e1cce22a8b026bbf78223a9868
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5460,21 +5460,21 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Changes to evidence, models, schemas, or decisions identify and safely refresh affected outputs.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S04.T03`
 
-#### - [ ] CAP-03.S05.T01 - Implement material dependency registration
+#### - [x] CAP-03.S05.T01 - Implement material dependency registration
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S04.T03`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:t02-adversarial-preflight (`approved`)
 
 **Objective:** Dependency edges from outputs to source revisions, evidence records, ontology versions, prompts/models, parameters, and human decisions.
 
@@ -5493,23 +5493,92 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S05.T01.R01.json` at `2ec58075eebb0d4a0aeb0610e9346ee79efd04ed`
+- `artifacts/evidence/CAP-03.S05.T01.R02.json` at `5e01824503f469e458aa7a6069b988d1d823e576`
+
 ##### Review history — CAP-03.S05.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 2 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `c3f0fb4f95186f6e06d50818b6f4f9d59f4fd7320090abcaf65a6b3129f0bfd9`
 
-#### - [ ] CAP-03.S05.T02 - Implement stale-state propagation and impact preview
+- Candidate / base / branch: `2ec58075eebb0d4a0aeb0610e9346ee79efd04ed` / `f56d16070637147177c05c3406b5669eb1707cf0` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T21:31:39+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T01.R01.json` / `66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d` / `2ec58075eebb0d4a0aeb0610e9346ee79efd04ed`
+- Acceptance-criteria SHA-256: `a22c82b9d0596877c749cf2f309159c10f8152cceffb0f277215cd1bd3a53432`
+- Verification-selection SHA-256: `42204a6b3e1b55aac6a9fad54e98b1d71b83175d55f360d1cc2a7ca2c2c037ec`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T01.task-start.md`, `docs/architecture/local-sqlite-storage.md`, `docs/planning-implementation-plan.md`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S05.T01.html`, `planning/review-site/CAP-03/CAP-03.S05.html`, `planning/review-site/CAP-03/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/data/test_local_object_store.py`, `tests/data/test_material_dependencies.py`, `tests/data/test_sqlite_migrations.py`, `tests/data/test_sqlite_repositories.py`, `tests/data/test_storage_maintenance.py`, `tests/packaging/test_core_sidecar_package.py`, `tests/service/test_provenance.py`, `tests/workflows/test_local_workflow_executor.py`, `tools/core_sidecar_build.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest tests.data.test_material_dependencies`, `.venv\Scripts\python.exe -m unittest tests.workflows.test_local_workflow_executor`, `.venv\Scripts\python.exe -m unittest tests.data.test_material_dependencies tests.data.test_sqlite_repositories tests.data.test_sqlite_schema tests.data.test_storage_maintenance tests.data.test_local_object_store`, `.venv\Scripts\python.exe -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema`, `.venv\Scripts\python.exe -m unittest tests.service.test_provenance tests.packaging.test_core_sidecar_package`, `focused ruff check/format --check and mypy over the changed Python implementation, migration, tests, and packaging builder`, `.venv\Scripts\python.exe -m unittest tests.foundation.test_repository_structure; .venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/planctl.py --repo . wave ready W1 --require-approved`, `.venv\Scripts\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only --affected-base f56d1607... --affected-head 2ec58075... --deferred-gate W1-exit`
+- Deferred checks: `CAP-03.S05 slice review owns accumulated dependency registration, staleness traversal, and controlled recalculation integration after T02 and T03 close.`, `The complete service, data, security, performance, packaging, recovery, and Windows x64 matrix remains mandatory once at W1 exit.`
+- Selection rationale: T01 changes a public Core port, aggregate transaction, SQLite schema/migration, workflow completion authority, audit diagnostics, and frozen sidecar inventory. Verification therefore used real SQLite transactions and reopen, exact v8/v7 migration fixtures, deterministic migration and append failure injection, the affected workflow/data/provenance/packaging suites, focused static checks, architecture/repository controls, and approved-wave validation. It did not replay unrelated UI, graph traversal, scheduler, or complete deployment profiles. Full service/data/security/performance and Windows qualification remain mandatory at W1 exit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-adversarial-preflight / `2026-09-01T21:39:10+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T01.review-R01.json` / `78a6585b2c444c89d451b4356b4a8e9acc5904b536083dffc33b4e1b99202bb8`
+
+**Review notes:** The base/candidate/submission ancestry, exact 30-path candidate inventory, two-path submission separation, backlog projection, and frozen evidence authenticate. Evidence SHA-256 is 66e2625991bfc4b7f8b9c5adbd14a74e2e46d7a35d11acc912e3da3812ee0d9d and Git blob is 975be19882af762918c16b40a2036c49f763c3cd. Independent focused replay passed 57 dependency, workflow, migration, schema, and packaging tests with one expected environment skip. Aggregate atomicity, exact endpoint validation, migration/restart, workflow denial diagnostics, and packaging otherwise appear sound. One blocking compatibility defect remains.
+
+**Findings opened:**
+
+- `CAP-03.S05.T01-R01-F01` `medium` blocking=`True` criterion=`3` — Required dependency coverage breaks the governed provenance-lineage performance fixture; reproduce: At candidate 2ec58075eebb0d4a0aeb0610e9346ee79efd04ed, services/core-api/src/research_observatory_core/ports/repositories.py:103 makes dependency_coverage mandatory. tools/provenance_lineage_performance_check.py:41 still constructs AggregateRevisionDraft without it. Running `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -c "from tools.provenance_lineage_performance_check import _draft; _draft(1)"` exits 1 with the missing-argument TypeError. The tool remains governed at quality-scope.json:45 and is the established large-lineage qualification fixture, so the evidence claim that relevant fixtures were updated and the deferred performance obligation remains executable is false.; remediate: Update the benchmark fixture with truthful dependency authority rather than a blanket default: source-like leaves should explicitly use not-applicable, while derived intermediate/root revisions should use complete coverage with deterministic exact-revision MaterialDependency edges corresponding to their inputs. Add a lightweight focused regression that constructs both fixture shapes so future public-port changes cannot bypass affected selection. Preserve the quantitative benchmark for its governed slice/W1 performance replay rather than running the complete performance profile during ordinary task remediation.
+
+**Prior finding closures:**
+
+- None
+
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `b6c3645fa809f774c9dc62fd9899a31d8e1baa1a8f0b4206ef1a668b7dec64b7`
+
+- Candidate / base / branch: `5e01824503f469e458aa7a6069b988d1d823e576` / `2ec58075eebb0d4a0aeb0610e9346ee79efd04ed` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T21:43:46+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T01.R02.json` / `36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519` / `5e01824503f469e458aa7a6069b988d1d823e576`
+- Acceptance-criteria SHA-256: `a22c82b9d0596877c749cf2f309159c10f8152cceffb0f277215cd1bd3a53432`
+- Verification-selection SHA-256: `b08f3564209ef0d39298dfcdafa008b563435112c8c17a21f8ade4977affb4ae`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T01.R01.json`, `artifacts/evidence/CAP-03.S05.T01.review-R01.json`, `planning/backlog.yaml`, `quality-scope.json`, `tests/data/test_material_dependencies.py`, `tests/service/test_provenance.py`, `tools/provenance_lineage_performance_check.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -c "from tools.provenance_lineage_performance_check import _draft; source = _draft(1); assert source.dependency_coverage == 'not-applicable'"`, `.venv\Scripts\python.exe -B -m unittest tests.service.test_provenance.ProvenancePerformanceFixtureTests tests.data.test_material_dependencies`, `.venv\Scripts\python.exe -B -m unittest tests.service.test_provenance`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/verify.py --profile service --profile data --profile security-local --selection-only --affected-base 2ec58075... --affected-head 5e018245... --deferred-gate W1-exit; git diff --check 2ec58075...5e018245`
+- Deferred checks: `The unchanged quantitative provenance-lineage benchmark remains mandatory in its governed slice/W1-exit performance replay.`, `CAP-03.S05 slice integration and the complete W1 qualification matrix remain deferred to their existing gates.`
+- Selection rationale: R01 independently cleared the aggregate transaction, typed endpoints, migration, workflow denial, and packaging boundaries. Its sole finding was a deterministic constructor failure in one governed performance fixture. R02 therefore replays that exact failure, adds a source/derived shape regression, reruns the affected provenance and dependency tests, and executes full governed Python static quality. Running the 4,096-leaf quantitative benchmark would duplicate its deliberate slice/W1-exit performance gate and is not justified for this local compatibility remediation.
+- Prior round / replayed open findings: `R01` / `CAP-03.S05.T01-R01-F01`
+- Root-cause escalation: The R01 implementation made dependency coverage mandatory across the aggregate port and updated all exercised repository/workflow test fixtures, but affected selection treated the large-lineage performance command as W1-exit-deferred and the task omitted a lightweight constructor compatibility test. That allowed an unexecuted governed helper to retain the old call signature. R02 adds the missing constructor-level regression and full quality-scope registration without running the quantitative gate early.
+
+**Disposition / reviewer / time:** `approved` / agent:t02-adversarial-preflight / `2026-09-01T21:47:24+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T01.review-R02.json` / `995e75d58d3a87afccbcd258c4cc2575369885e896ccb3bc4768320993eddfd7`
+
+**Review notes:** R02 is a strict descendant of the adverse R01 candidate and its submission is the exact direct child. The frozen R02 evidence authenticates at SHA-256 36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519 and Git blob 8281281f1708a1ecd062c04b7b914c270140b143. R01 evidence/review ancestry is preserved. The exact failing constructor reproduction now passes; leaves declare not-applicable, derived fixtures declare complete with deterministic one-for-one exact-revision edges matching provenance inputs. Three focused tests and all 181 governed Python quality checks pass. Benchmark fixture size, fact-count expectations, thresholds, and deferred ownership are unchanged; the quantitative benchmark was correctly not run.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S05.T01-R01-F01` `fixed` — artifacts/evidence/CAP-03.S05.T01.R02.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t02-adversarial-preflight at `2026-09-01T21:47:24+00:00`
+
+**Latest notes:** R02 is a strict descendant of the adverse R01 candidate and its submission is the exact direct child. The frozen R02 evidence authenticates at SHA-256 36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519 and Git blob 8281281f1708a1ecd062c04b7b914c270140b143. R01 evidence/review ancestry is preserved. The exact failing constructor reproduction now passes; leaves declare not-applicable, derived fixtures declare complete with deterministic one-for-one exact-revision edges matching provenance inputs. Three focused tests and all 181 governed Python quality checks pass. Benchmark fixture size, fact-count expectations, thresholds, and deferred ownership are unchanged; the quantitative benchmark was correctly not run.
+
+**Currently open findings:** -
+
+#### - [x] CAP-03.S05.T02 - Implement stale-state propagation and impact preview
+
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S05.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / agent:t02-adversarial-preflight (`approved`)
 
 **Objective:** Graph traversal that marks affected outputs stale, records cause, deduplicates cascades, and previews impact before destructive changes.
 
@@ -5529,23 +5598,131 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile graph
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S05.T02.R01.json` at `a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140`
+- `artifacts/evidence/CAP-03.S05.T02.R02.json` at `ca7918783eb5d6dcc377a89cd28e522b83ee7d1f`
+- `artifacts/evidence/CAP-03.S05.T02.R03.json` at `dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d`
+
 ##### Review history — CAP-03.S05.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 3 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `60ce5d6a39cf6032412a10be2d3e24dee77e0e336654d6a1e5db967d4ac0e92f`
 
-#### - [ ] CAP-03.S05.T03 - Implement selective recomputation and historical retention
+- Candidate / base / branch: `a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140` / `d9de5b58b3cdd218cab50b5ed3504e8430fb9dfe` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T22:26:05+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T02.R01.json` / `bdd1e0cc2389352102acef96a466ee456b6634b488a60bdbff52ac463acbc033` / `a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140`
+- Acceptance-criteria SHA-256: `a1a6200f63e409df0c4f1e4d1a87b13ea37f5a7f0979cc5be5b568b874e3ba75`
+- Verification-selection SHA-256: `ecd9ba7cb74f5e0d9c5338a6565da7bdee4c1ed8e44da565ee637231c3c61138`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T02.task-start.md`, `docs/architecture/local-sqlite-storage.md`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S05.T01.html`, `planning/review-site/CAP-03/CAP-03.S05.T02.html`, `planning/review-site/CAP-03/CAP-03.S05.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/dependency_impacts.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/data/test_sqlite_migrations.py`, `tests/graph/test_dependency_impacts.py`, `tests/packaging/test_core_sidecar_package.py`, `tools/core_sidecar_build.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.data.test_material_dependencies`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check d9de5b58...a3f0e31b`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile foundation --profile service --profile data --profile graph --profile security-local --affected-base d9de5b58... --affected-head a3f0e31b... --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation, and affected integration/adversarial checks after T03 closes.`, `The complete service, data, graph, security, foundation, performance, packaging, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: T02 changes a public Core repository port, deterministic graph traversal, append-only stale and audit authority, SQLite schema/migration, crash recovery, and frozen Windows sidecar inventory. Verification therefore used exact real-SQLite transactions and reopen, graph policy/SCC/bound tests, v9 predecessor migration and all failpoints, a real sidecar build, full governed Python quality, architecture/repository checks, backlog validation, and exact-range hygiene. Complete service, security, foundation, deployment, and quantitative performance profiles were not replayed at task scope because no route, dependency version, security policy, or toolchain changed and the failures were localized; accumulated coverage remains mandatory at slice checkpoints and W1 exit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-adversarial-preflight / `2026-09-01T22:34:09+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T02.review-R01.json` / `16f6073fff5d80e63c60758d3ff010d8a01c8d37ddd2103a3b85048c578596f6`
+
+**Review notes:** The base/candidate/submission ancestry, exact 24-path candidate inventory, two-path submission separation, backlog projection, frozen evidence hash/blob, v9-to-v10 migration registration, sidecar inventory, and patch hygiene authenticate. A focused independent replay passed the four submitted dependency-impact tests, the exact populated-v9 migration test, and the strict sidecar inventory test. Four acceptance-bound defects remain: the propagation run can complete against a changed graph, the preview digest permits substitution of change/replacement authority, conditional decision authority is not durable or auditable, and caller-expanded traversal bounds permit a recursion crash on a valid SCC. No full profile was run.
+
+**Findings opened:**
+
+- `CAP-03.S05.T02-R01-F01` `high` blocking=`True` criterion=`1` — A checkpointed run completes against a changed dependency graph and misses a newly affected output; reproduce: At candidate a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140, repositories.py:2466 computes the preview graph and begin checks its digest at :2565, but advance at :2801 reads only the frozen items/checkpoint and never compares the current graph to the stored graph_sha256. Using the submitted real-SQLite fixture, begin with batch size 2, advance once, append a new direct dependency from dossier to post-begin-dependent, verify the fresh preview digest changes, and advance again. The run reports completed with total=4 while the late revision is not stale. This contradicts the task-start graph-snapshot/CAS contract and the criterion that the expected affected outputs are marked without false-fresh state.; remediate: Bind continuation/restart to the exact graph snapshot on every mutation boundary. Recompute and compare the current project graph/legacy watermark and the full bound change/policy authority before advancing; if it differs, fail closed and require a fresh preview/run (or implement an explicitly approved deterministic replan without losing append-only history). Add real SQLite tests for graph change after begin, after a committed checkpoint, and after reopen, proving the old run cannot complete or omit the new dependent.
+- `CAP-03.S05.T02-R01-F02` `high` blocking=`True` criterion=`1` — The preview digest accepts substituted replacement, fingerprint, policy, and actor authority; reproduce: dependency_impacts.py:397-428 hashes changeId and the effect projection but omits the exact prior/replacement endpoints, fingerprints, reason, idempotency, propagation policy, actor, trace, occurrence time, and conditional decision identities. SQLite begin at repositories.py:2565 compares only that digest. The v10 foreign keys at storage.py:1730-1733 establish same-project existence but not same-aggregate revision lineage or declared dependency-kind compatibility. In the submitted fixture, replace the canonical extraction-v2 endpoint with the unrelated same-project other-source revision, change replacement fingerprint, policy, actor, and idempotency while retaining changeId; preview remains byte-identical and begin accepts the original digest into a running run.; remediate: Make preview authority cryptographically bind the full canonical normalized DependencyChange and every exact conditional decision, not only resulting effects. At the real SQLite boundary, resolve prior and replacement revisions and require the same aggregate, valid revision progression, compatible aggregate/dependency kind, exact project, and canonical actor/timestamp/trace authority before preview/begin. Add substitution tests for each endpoint, fingerprint, reason, idempotency, policy/version, actor, trace/time, and decision field, including a same-project cross-aggregate replacement, and prove each is denied without writes.
+- `CAP-03.S05.T02-R01-F03` `high` blocking=`True` criterion=`3` — Conditional propagation decisions are reduced to an opaque hash and cannot be reconstructed or audited; reproduce: ConditionalDependencyDecision is a transient port value at ports/repositories.py:190. begin includes its fields only inside authority_sha256 at repositories.py:2572, while the v10 authority tables at storage.py:1662-1857 contain no decision ID/disposition/actor/time/governing-decision-policy fields. The public stale and audit projections at ports/repositories.py:272 and :291 likewise expose none. A real conditional propagation completes and reopens with confidence='conditional', but schema/public inspection reports decisionColumnPersisted=False, stateExposesDecision=False, and auditExposesDecision=False. An ignore disposition is filtered as informational, so even its existence disappears except for the unreconstructable digest. This violates the approved versioned/testable propagation-rule and audit behavior, and prevents explaining why scholarly output became stale or remained informational after restart.; remediate: Persist immutable conditional decision authority atomically with the run, items, and audit: decision ID, edge/dependency ID, disposition, actor/time, governing decision policy/version, and a reference to canonical human-decision authority where applicable. Expose a bounded content-free projection sufficient to reconstruct and verify propagate/ignore outcomes. Reject decisions for non-conditional or unreachable edges and policy substitutions. Add real SQLite reopen/replay tests for propagate and ignore proving exact decision lineage and audit visibility survive restart without duplication.
+- `CAP-03.S05.T02-R01-F04` `medium` blocking=`True` criterion=`1` — Configurable traversal bounds allow a recursion crash on a valid large SCC; reproduce: DependencyImpactLimits is documented as hard resource bounds at ports/repositories.py:203 but _validate_limits at dependency_impacts.py:58 checks only positivity. Callers can therefore raise max_depth above both Python recursion capacity and the SQLite item/stale depth maximum of 128 at storage.py:1768 and :1811. The SCC implementation recursively calls visit at dependency_impacts.py:188. Planning an otherwise valid 1,100-node cycle under caller-supplied limits of 2,000 exits with RecursionError rather than a deterministic cycle group or DependencyImpactLimitExceeded. This falsifies the criterion that cycles are handled safely and can fail before durable failure-audit handling.; remediate: Enforce immutable maximum bounds aligned with the durable schema and memory budget regardless of caller input, and replace recursive SCC traversal with an iterative/bounded implementation (or otherwise guarantee it cannot approach interpreter recursion). Convert all exhaustion to the stable DependencyImpactLimitExceeded boundary. Test exact maximum, one-over-maximum, a large valid SCC, and repository translation/audit behavior; ensure accepted previews can always be persisted under v10 depth/path constraints.
+
+**Prior finding closures:**
+
+- None
+
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `f285f055d146fa8c7a8d9e7cf73cb35844a2c23849e52ef9d2461dae2f9567e5`
+
+- Candidate / base / branch: `ca7918783eb5d6dcc377a89cd28e522b83ee7d1f` / `a3f0e31b0a5514f2e2355fb28472a9fc6ccf4140` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T22:50:37+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T02.R02.json` / `b9ec6f37fe337c8a723f5d5728b4d074291af30958b9873db446fa2774e68fb3` / `ca7918783eb5d6dcc377a89cd28e522b83ee7d1f`
+- Acceptance-criteria SHA-256: `a1a6200f63e409df0c4f1e4d1a87b13ea37f5a7f0979cc5be5b568b874e3ba75`
+- Verification-selection SHA-256: `9440986a000f2d4adb984079543832e79a29026e0ef813ee703995bef5d547d2`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T02.R01.json`, `artifacts/evidence/CAP-03.S05.T02.review-R01.json`, `docs/architecture/local-sqlite-storage.md`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `services/core-api/src/research_observatory_core/dependency_impacts.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/data/test_sqlite_migrations.py`, `tests/graph/test_dependency_impacts.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.data.test_material_dependencies`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check a3f0e31b...ca791878`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile foundation --profile service --profile data --profile graph --profile security-local --affected-base a3f0e31b... --affected-head ca791878... --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation, and affected integration/adversarial checks after T03 closes.`, `The complete service, data, graph, security, foundation, performance, packaging, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: R01 exposed four coupled authority defects in graph-snapshot continuity, preview identity, conditional-decision durability, and traversal bounds. R02 therefore replays each at the narrowest real boundary: pure deterministic planning for full digests, decision reachability and large SCC behavior; transactionally reopened SQLite for exact graph-CAS, endpoint lineage, decision persistence and no-write denial; v9 migration/strict-schema checks for new immutable authority; and a real Windows sidecar build because the packaged planner and migration changed. Full service, security, foundation, performance, recovery and deployment matrices were not replayed at task scope because no route, credential, dependency version, security policy or toolchain changed; accumulated coverage remains mandatory at CAP-03.S05 checkpoints and W1 exit.
+- Prior round / replayed open findings: `R01` / `CAP-03.S05.T02-R01-F01`, `CAP-03.S05.T02-R01-F02`, `CAP-03.S05.T02-R01-F03`, `CAP-03.S05.T02-R01-F04`
+- Root-cause escalation: R01 treated the graph digest as a begin-time check instead of a checkpoint CAS invariant, hashed only the effect projection instead of the full initiating authority, collapsed conditional decisions into an unreconstructable digest, and exposed configurable limits without immutable maxima while using recursive SCC traversal. R02 makes those authorities explicit and durable: every preview binds the complete change, decision set and limits; every checkpoint reconstructs and revalidates them against the current graph; decisions persist as immutable content-free rows; endpoints are lineage-checked; and traversal uses bounded inputs plus iterative SCC discovery.
+
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-adversarial-preflight / `2026-09-01T22:57:32+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T02.review-R02.json` / `a00984e4573f66276227afa4f4a4ed8ba6676264bfaa5bd9ce7f7669ce5394e2`
+
+**Review notes:** The strict-descendant candidate, direct-child submission, exact 15-path remediation inventory, two-path submission separation, frozen evidence hash/blob, current R02 task projection, and patch hygiene authenticate. Focused replay passed all nine submitted dependency-impact tests, the exact populated-v9 migration test, and the strict sidecar inventory test. All four R01 findings are concretely fixed: graph changes fail closed at every continuation boundary, complete initiating authority is digest- and lineage-bound, conditional decisions are immutable and reconstructable, and immutable maxima plus iterative traversal eliminate the prior RecursionError. Approval remains unavailable because the replacement iterative SCC pass falsely groups an acyclic convergent DAG as a cycle, and bounded paths silently discard the affected endpoint without truncation authority. No full profile was run.
+
+**Findings opened:**
+
+- `CAP-03.S05.T02-R02-F01` `high` blocking=`True` criterion=`1` — The iterative SCC replacement invents cycles in acyclic convergent graphs; reproduce: At exact candidate ca7918783eb5d6dcc377a89cd28e522b83ee7d1f, dependency_impacts.py:248-257 pushes every sibling frame and marks each target visited before its DFS frame executes. A later sibling edge can therefore see an unprocessed target as already visited, producing invalid finish order for the second Kosaraju pass at :262. Plan four direct edges source->A, A->B, A->C, and B->C. The graph is a DAG, but cycle_groups contains (B,C), and both outputs receive the same false cycle_group_id. This makes the durable impact/stale cause assert a nonexistent cycle and violates the exact-preview and safe-cycle acceptance criterion. The submitted 1,100-node test does not expose this because every member really is mutually reachable.; remediate: Implement a correct deterministic iterative SCC traversal whose first pass preserves true DFS postorder (for example, retain an iterator/index per active frame rather than pre-marking all siblings), or use another bounded iterative SCC algorithm. Add acyclic chain, diamond/convergent DAG, cross-edge DAG, self-loop, disjoint cycles, and 1,100-node SCC fixtures; assert no false groups, exact members, stable order under reversed edge input, and exact durable cycle_group_id after SQLite propagation/reopen.
+- `CAP-03.S05.T02-R02-F02` `medium` blocking=`True` criterion=`3` — Bounded impact paths silently discard the affected endpoint and are persisted as if complete; reproduce: dependency_impacts.py:435 stores only path[:max_path_samples + 1], but DependencyImpactItem and DependencyStaleState at ports/repositories.py:217-225 and :272-286 have no truncation/completeness authority. repositories.py:2688-2710 persists and hashes that prefix unchanged. With the default max_path_samples=64, a 70-edge acyclic chain yields the deepest item at depth 70 with 65 recorded IDs; the last recorded ID is not the affected output and no field says the path is truncated. The task-start contract explicitly says a bounded prefix must never be represented as complete, while the approved stale-state contract requires a truthful path summary.; remediate: Make bounded path authority explicit and endpoint-preserving. Persist and project a truncation/completeness flag plus total path length, and include the exact origin and affected output (with a deterministic bounded middle sample or equivalent digest) in preview, item, stale cause, and authority hashes. Align max_path_samples semantics with the number stored. Add pure and real SQLite/restart tests at exact limit and over limit proving complete paths remain exact and truncated summaries are visibly truncated, endpoint-valid, deterministic, and digest-bound.
+
+**Prior finding closures:**
+
+- `CAP-03.S05.T02-R01-F01` `fixed` — Every advance transaction reconstructs the immutable change, decisions and limits, recomputes the current graph/preview, and compares both stored hashes before stale writes. Real tests deny mutation after begin and after checkpoint/reopen while preserving zero or only the already committed causes.
+- `CAP-03.S05.T02-R01-F02` `fixed` — The preview now hashes the complete normalized change, decision set and limits; the SQLite boundary requires same-project same-aggregate/kind later revision lineage. Field substitution and the exact R01 cross-aggregate replay fail with RepositoryConflict and zero run writes.
+- `CAP-03.S05.T02-R01-F03` `fixed` — Immutable dependency_impact_decisions rows are inserted atomically with run/items/audit, exposed through a bounded project-scoped decisions(run_id) port, and reconstruct exact propagate/ignore authority after restart. Nonconditional and unreachable decision use fails closed.
+- `CAP-03.S05.T02-R01-F04` `fixed` — All caller limits now have immutable maxima aligned with v10 durable constraints and the submitted valid 1,100-member SCC completes without Python recursion. One-over limits and repository exhaustion translation are bounded. R02-F01 is a distinct correctness regression in the new iterative postorder, not a recurrence of RecursionError.
+
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `768b272441443e8acdc7cebd2b4d003b587fcee162b552e60bd4352031ce6bff`
+
+- Candidate / base / branch: `dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d` / `ca7918783eb5d6dcc377a89cd28e522b83ee7d1f` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T23:12:34+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T02.R03.json` / `d1aa357d7838cb0ef703260e552c03fe9cd68b4650c393bf9b822e6d8f19de50` / `dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d`
+- Acceptance-criteria SHA-256: `a1a6200f63e409df0c4f1e4d1a87b13ea37f5a7f0979cc5be5b568b874e3ba75`
+- Verification-selection SHA-256: `8a4c2dc6748130540afb47a4f80d922ce9c5c806845ef14abc5761aca436262d`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T02.R02.json`, `artifacts/evidence/CAP-03.S05.T02.review-R02.json`, `docs/architecture/local-sqlite-storage.md`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `services/core-api/src/research_observatory_core/dependency_impacts.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/graph/test_dependency_impacts.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.data.test_material_dependencies`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check ca791878...dbd6f618`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile foundation --profile service --profile data --profile graph --profile security-local --affected-base ca7918783eb5d6dcc377a89cd28e522b83ee7d1f --affected-head dbd6f618fb620fe4cfa57e6ef1eeb6fe9da8558d --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation, and affected integration/adversarial checks after T03 closes.`, `The complete service, data, graph, security, foundation, performance, packaging, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: CAP-03.S05.T02-R02-F01 is a localized correctness defect in the newly iterative SCC traversal, and CAP-03.S05.T02-R02-F02 is a localized authority defect in the bounded path representation. R03 therefore replays the graph algorithm across acyclic convergence, cross edges, self-loops, disjoint and large cycles, then proves exact cycle authority at the real SQLite/restart boundary. It also exercises path samples at and beyond the immutable bound through preview, digest, impact rows, stale causes, propagation, and reopen. The v10 schema/profile and packaged sidecar changed, so exact migration/strict-schema tests and a real Windows package build were repeated. No route, credential, dependency version, security policy, or toolchain changed; accumulated full profiles remain mandatory at CAP-03.S05 review and W1 exit.
+- Prior round / replayed open findings: `R02` / `CAP-03.S05.T02-R02-F01`, `CAP-03.S05.T02-R02-F02`
+- Root-cause escalation: R02 replaced recursive SCC discovery with an iterative traversal but marked every sibling discovered when queued rather than preserving per-frame DFS progress; convergent DAG edges could therefore corrupt finish order and create false SCCs. R02 also retained the old prefix-only path slice while hardening adjacent authority, so a bounded sample could omit its own affected endpoint and had no durable completeness metadata. R03 fixes the shared design error—loss of traversal/path state at a bounded representation boundary—by retaining per-frame neighbor position for exact DFS postorder and by making bounded-path length, truncation, origin, terminal, digest, projection, and persistence authority explicit.
+
+**Disposition / reviewer / time:** `approved` / agent:t02-adversarial-preflight / `2026-09-01T23:16:35+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T02.review-R03.json` / `e2154a80452c8d535b66a940551d7ffbb5b94d05733cb6336a87b739d59dd1db`
+
+**Review notes:** The strict-descendant candidate, direct-child submission, exact 14-path remediation inventory, two-path submission separation, frozen R03 evidence hash/blob, current task projection, and patch hygiene authenticate. Both R02 findings close. The corrected iterative DFS postorder matched brute-force SCC truth across every directed graph on four nodes (65,536 graphs), and focused fixtures cover convergent/cross-edge DAGs, self-loops, disjoint cycles, reversed input, and a 1,100-node SCC. Exact cycle authority persists through real SQLite propagation and reopen. At the 64-ID path limit and beyond, origin/terminal retention, total length, truncation, item/cause digest equality, and restart projection are exact. Eighteen focused graph, v9 migration, schema/profile, and package-inventory tests passed. The four R01 closures remain intact, migration/package authority is exact, and no T03 or governed-experience authority was added. No full profile was run.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S05.T02-R02-F01` `fixed` — The first SCC pass now retains a per-frame next-neighbor index and emits true DFS postorder. Submitted convergent/cross-edge DAG, self-loop, disjoint-cycle, reversed-input, large-SCC and real SQLite/reopen tests pass. Independent exhaustive comparison across all 65,536 four-node directed graphs found no false, missing, or mis-grouped SCC.
+- `CAP-03.S05.T02-R02-F02` `fixed` — max_path_samples now means actual stored identities with a minimum of two; exact-limit paths remain complete, while over-limit samples retain exact origin and terminal plus total path_length and path_truncated=true. Preview/item authority and path digest bind those fields, v10 persists them in both item and cause rows, and independent real SQLite propagation/reopen proved exact digest and projection survival.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t02-adversarial-preflight at `2026-09-01T23:16:35+00:00`
+
+**Latest notes:** The strict-descendant candidate, direct-child submission, exact 14-path remediation inventory, two-path submission separation, frozen R03 evidence hash/blob, current task projection, and patch hygiene authenticate. Both R02 findings close. The corrected iterative DFS postorder matched brute-force SCC truth across every directed graph on four nodes (65,536 graphs), and focused fixtures cover convergent/cross-edge DAGs, self-loops, disjoint cycles, reversed input, and a 1,100-node SCC. Exact cycle authority persists through real SQLite propagation and reopen. At the 64-ID path limit and beyond, origin/terminal retention, total length, truncation, item/cause digest equality, and restart projection are exact. Eighteen focused graph, v9 migration, schema/profile, and package-inventory tests passed. The four R01 closures remain intact, migration/package authority is exact, and no T03 or governed-experience authority was added. No full profile was run.
+
+**Currently open findings:** -
+
+#### - [x] CAP-03.S05.T03 - Implement selective recomputation and historical retention
+
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S05.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / agent:t02-adversarial-preflight (`approved`)
 
 **Objective:** Workflow generation from stale subgraphs with reuse of valid intermediates, versioned replacement, comparison, and rollback.
 
@@ -5564,13 +5741,119 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S05.T03.R01.json` at `139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d`
+- `artifacts/evidence/CAP-03.S05.T03.R02.json` at `76494d504d37ad7552eea256689e90408375c84f`
+- `artifacts/evidence/CAP-03.S05.T03.R03.json` at `6869a9e3d7b01b72c7e440aecb9571a878456ffd`
+
 ##### Review history — CAP-03.S05.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 3 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `f6e99d222aa578a23f17fa772f8d796848c84633fb5c623da1903bbc4dc47f71`
+
+- Candidate / base / branch: `139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d` / `b5a941d7d907561c7d7f5d1a03162155b8fe7b5f` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-01T23:36:35+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T03.R01.json` / `9c13787f8c8cb959b0929b1aab4eac2cb070b29cfe672f36e2ae12f4f6dd3b22` / `139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d`
+- Acceptance-criteria SHA-256: `1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69`
+- Verification-selection SHA-256: `eba263a900076388b8d6768a816e41129b4ea9f74dc5f9b873c1247b7eb8d8df`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T03.task-start.md`, `docs/architecture/local-sqlite-storage.md`, `packages/contracts/workflow/README.md`, `planning/backlog.yaml`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/selective_recalculation.py`, `tests/e2e/test_selective_recalculation.py`, `tests/packaging/test_core_sidecar_package.py`, `tools/core_sidecar_build.py`
+- Selected checks: `.venv\Scripts\python.exe -c <run tests.e2e.test_selective_recalculation, tests.contracts.test_workflow_contracts, tests.workflows.test_local_workflow_executor, tests.workflows.test_task_center with services/core-api/src on sys.path>`, `.venv\Scripts\python.exe -c <run tests.graph.test_dependency_impacts, tests.data.test_material_dependencies, tests.data.test_sqlite_repositories with services/core-api/src on sys.path>`, `.venv\Scripts\python.exe -c <run tests.packaging.test_core_sidecar_package with services/core-api/src on sys.path>`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py --repo .; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check b5a941d7...139158aa`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base b5a941d7d907561c7d7f5d1a03162155b8fe7b5f --affected-head 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, selective recalculation, and adversarial cross-task integration checks now that T01-T03 close.`, `The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: T03 crosses public repository ports, exact revision history, durable stale/change authority, workflow admission, immutable scholarly versions, human restoration, and the frozen sidecar package. Verification therefore uses a real canonical SQLite project across propagation, queue, append, comparison, restoration, idempotent replay, and reopen; it replays the affected workflow/contract, graph/data, and package boundaries plus complete Python quality and architecture checks. No API/UI/schema/dependency/toolchain change occurred, so unrelated service routes, desktop UI, security suites, and complete deployment profiles are deferred to the slice and W1 qualification gates.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-adversarial-preflight / `2026-09-01T23:42:35+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T03.review-R01.json` / `43c8dbd252438682ce342211310ac2cffe37490ec4e351d1e57416d581180652`
+
+**Review notes:** The exact base/candidate/submission ancestry, 12-path candidate inventory, two-path submission separation, frozen evidence SHA/blob, backlog REVIEW projection, patch hygiene, and selective-recalculation package registration authenticate. A narrow independent replay passed 40 submitted recalculation, workflow-contract, local-executor, Task Center, and strict package-inventory tests. Three acceptance-bound authority defects remain: candidate append is not bound to a completed exact recalculation plan, workflow admission has a stale-read/enqueue race, and restore converts an already stale adjudicated revision into a false-fresh adjudicated revision. No full profile was run.
+
+**Findings opened:**
+
+- `CAP-03.S05.T03-R01-F01` `high` blocking=`True` criterion=`1` — Candidate append is not bound to a completed exact recalculation workflow and accepts superseded inputs as fresh; reproduce: At candidate 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d, selective_recalculation.py:496-514 validates only aggregate/kind, non-adjudicated status, predecessor inclusion, and aggregate revision CAS. It accepts no workflow job/run/attempt, plan SHA, change/cause/replacement/reuse authority, or completion output identity. The submitted happy-path test at tests/e2e/test_selective_recalculation.py:265-295 itself appends without scheduling or completing a job. The independent real-SQLite replay appended a generic evidence.created draft using superseded source-v1, with zero scheduled jobs and zero stale causes: {'acceptedRevision': 1, 'scheduledJobs': 0, 'usesSupersededInput': True, 'candidateStaleCauses': 0}.; remediate: Bind candidate admission to one exact successfully completed recalculation job/run/attempt and immutable plan/command fingerprint, target, every stale cause/change, replacements, reusable inputs, and canonical output identity. At the SQLite mutation boundary, require the draft's dependency/provenance set to exactly implement that plan, require a recalculation-specific actor/event/idempotency authority, and append atomically with completion/output consumption so replay cannot admit another candidate. Add denials with no writes for unscheduled, unfinished, cancelled, recovered-but-not-completed, substituted target/change/cause/replacement/reuse/dependency/plan, and generic-event cases, plus exact replay/CAS proofs.
+- `CAP-03.S05.T03-R01-F02` `high` blocking=`True` criterion=`1` — A graph/staleness change between planning and enqueue admits an obsolete runnable workflow; reproduce: selective_recalculation.py:423-450 reads the durable change, open target causes, dependency registration, current target, replacement set, and reuse freshness across independent repository/unit-of-work reads; line 463 then enqueues in a separate transaction with no compare-and-swap precondition over that read set. The independent real-SQLite replay injected a second material impact propagation immediately before the real enqueue. Admission still returned runnable while its plan retained one cause versus two current causes, omitted the new replacement, and reused the newly superseded input: {'plannedCauses': 1, 'currentCauses': 2, 'reusesNowSuperseded': True, 'missingReplacement': True, 'queued': 'runnable'}.; remediate: Make durable workflow admission one transactional/CAS boundary over the exact current target revision, complete target stale-cause/change set, dependency-registration digest, replacement set, reuse freshness, and plan/command fingerprint. Revalidate those fields at the enqueue mutation point and fail closed with no queue write when any changes; an explicitly governed deterministic replan may retry from fresh authority. Add injected-boundary tests for target-current change, new/closed target cause, dependency-registration change, newly superseded reusable input, replacement change, restart, and idempotent replay.
+- `CAP-03.S05.T03-R01-F03` `high` blocking=`True` criterion=`1` — Restore turns an already stale adjudicated revision into a false-fresh adjudicated current revision; reproduce: selective_recalculation.py:524 reads the prior dependency registration and lines 531-565 clone it into a new adjudicated revision, but the operation neither rejects an open stale prior nor atomically carries its exact open stale causes to the new revision. The submitted fixture's prior adjudicated target is already stale because its extraction-v1 dependency was replaced by extraction-v2. After the submitted candidate and human restore, the independent real-SQLite replay observed {'priorWasStale': True, 'restoredUsesChangedPredecessor': True, 'restoredStaleCauses': 0, 'knowledgeStatus': 'adjudicated'}. The new current revision therefore appears fresh and adjudicated even though it clones a dependency invalidated by an existing material change.; remediate: At the same SQLite transaction as restoration, resolve current change/staleness authority for the selected prior revision and choose one explicit safe contract: deny restoration of a materially stale prior, or permit the human to restore a known-stale value while atomically creating/carrying forward the exact open stale causes onto N+2. Preserve the adverse history and bind the disposition in the restoration event/provenance/audit. Add real-SQLite reopen/replay tests for stale-prior restore, changed predecessor, multiple causes, stale expected-current CAS, non-human and non-adjudicated denial, and exact dependency/provenance/history retention without false-fresh state.
+
+**Prior finding closures:**
+
+- None
+
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `b0ed06ac693fa5a8aad19a2302aec0c3f1ac87aac2d49658d2e56f6abe94a3db`
+
+- Candidate / base / branch: `76494d504d37ad7552eea256689e90408375c84f` / `139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-02T00:00:48+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T03.R02.json` / `d0896aeebbfb74a21cedfac10a6dad4e8edb3f3ea7847e0733f69800a68e5203` / `76494d504d37ad7552eea256689e90408375c84f`
+- Acceptance-criteria SHA-256: `1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69`
+- Verification-selection SHA-256: `f3fcc9c7a22b88a56b5ab4646e888635abb43694b7f9b6569515e71debdbba61`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T03.R01.json`, `artifacts/evidence/CAP-03.S05.T03.review-R01.json`, `docs/architecture/local-sqlite-storage.md`, `packages/contracts/workflow/README.md`, `planning/backlog.yaml`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/recalculation_contracts.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/selective_recalculation.py`, `tests/e2e/test_selective_recalculation.py`, `tests/packaging/test_core_sidecar_package.py`, `tools/core_sidecar_build.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.e2e.test_selective_recalculation tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts tests.data.test_material_dependencies tests.data.test_sqlite_repositories`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 139158aa...76494d50`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d --affected-head 76494d504d37ad7552eea256689e90408375c84f --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S05 slice review owns accumulated dependency registration, stale propagation, controlled recalculation, and affected cross-task integration/adversarial checks after T03 closes.`, `The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: R01 exposed three coupled transaction-authority defects across workflow admission, canonical output commit, and human restoration. R02 therefore replays each at the narrowest real boundary: injected SQLite propagation at admission; exact live worker/plan/dependency/output binding in one candidate-and-completion transaction; and same-transaction stale denial for restore. Existing workflow contracts, queue recovery/cancellation, dependency graph, repository behavior, static quality, architecture, and a real frozen Windows build cover credible regression surfaces. No route, credential, dependency version, security policy, schema, renderer, or toolchain changed, so unrelated full service/security/UI/deployment suites remain deferred to the slice and W1 gates.
+- Prior round / replayed open findings: `R01` / `CAP-03.S05.T03-R01-F01`, `CAP-03.S05.T03-R01-F02`, `CAP-03.S05.T03-R01-F03`
+- Root-cause escalation: R01 treated correct data selection, queue admission, aggregate append, and restore as individually guarded operations but did not model the transaction boundaries joining them. That allowed authority to change between planning and enqueue, permitted candidate creation without consumption of a successful exact workflow, and separated stale-state authority from restoration. R02 makes each cross-table invariant explicit at its mutation point: coherent plan snapshot plus admission CAS, atomic candidate/output completion, and transactional stale-restore denial.
+
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-adversarial-preflight / `2026-09-02T00:06:46+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T03.review-R02.json` / `9d1f713156a8d6c9777bbda4edaa300e3385c16f4bae7c4ed679777dc05df83c`
+
+**Review notes:** The strict-descendant R02 candidate, direct-child submission, exact 14-path remediation inventory, two-path submission separation, expected frozen evidence SHA/blob, current taskctl projection, patch hygiene, and package registration authenticate. Forty-five focused recalculation, workflow-contract, executor, Task Center, and strict package-inventory tests pass. CAP-03.S05.T03-R01-F02 is closed: exact authority is re-read under the queue writer transaction and the injected second change leaves zero queue rows. R01-F01 and R01-F03 remain open at narrower real boundaries: first candidate commit accepts a substituted immutable claim tuple and then cannot replay it, while restore checks only materialized stale causes and accepts a prior revision already named by a durable running impact change before its cause is propagated. No full profile was run.
+
+**Findings opened:**
+
+- `CAP-03.S05.T03-R02-F01` `high` blocking=`True` criterion=`1` — First candidate commit accepts a substituted immutable claimant tuple and produces a non-replayable success; reproduce: At candidate 76494d504d37ad7552eea256689e90408375c84f, repositories.py:6486-6513 validates only the stored/claimed activity type and plan fingerprint; _lease_row at :4973-5013 validates the lookup capability tuple but not the claim's workflow_run_id, step_run_id, concurrency_class, idempotency_key, or attempt_number. The first-commit path at :6535-6602 never calls _verify_attempt_capability. With a real started/checkpointed lease, substitute all five fields while retaining the genuine job, attempt, worker, lease token/generation, and fingerprint. Candidate N+1 and job success are accepted, and the substituted idempotency authority is written. Repeating the exact command then reaches the existing-output branch, where _complete_with_connection calls _verify_attempt_capability at :6092-6099 and rejects the same claim. The observed result is acceptedRevision=1/jobState=succeeded followed by WorkflowLeaseRejected on replay.; remediate: Verify the complete immutable attempt capability before any first-commit mutation, using the same canonical claimant comparison on both initial and replay paths. Do not persist caller-supplied idempotency or other claim authority unless it exactly matches the canonical job/attempt row. Add one-field-at-a-time substitution tests for project, workflow run, job, step run, activity, concurrency class, attempt ID/number, worker, lease token/generation, idempotency key, and command fingerprint; each must fail with no aggregate, artifact, provenance/outbox, completion, or history write. Prove exact initial commit and restart replay return the same candidate and receipt.
+- `CAP-03.S05.T03-R02-F02` `high` blocking=`True` criterion=`1` — Restore ignores a durable in-flight material change and can still create a false-fresh adjudicated current revision; reproduce: Dependency-impact begin persists the exact change and affected items at repositories.py:3038-3142 before advance materializes stale causes. UnitOfWork.require_fresh_revision at :2331-2345 checks only dependency_stale_causes, and restore calls only that check at selective_recalculation.py:484. In a real SQLite fixture, begin a source-version change whose preview includes a fresh prior adjudicated output but do not advance. Restore accepts N+2, clones the superseded predecessor, reports zero stale causes, and retains adjudicated status. Advancing the original run then fails because the restored revision changed the graph, so it cannot repair the new false-fresh current revision. Observed: {'durableChange': True, 'propagationStateBeforeRestore': 'running', 'priorStaleCausesBeforeRestore': 0, 'restoreAcceptedRevision': 2, 'restoredUsesSupersededInput': True, 'restoredStaleCauses': 0}.; remediate: At the same BEGIN IMMEDIATE restoration boundary, treat applicable durable dependency changes/impact items that are running, checkpointed, cancelled, or failed before stale-cause materialization as current adverse authority, not merely rows already copied into dependency_stale_causes. Deny restoration when the selected prior dependency set is affected, or atomically retain an explicitly known-stale restore under an approved contract; do not publish it as fresh. Add begin-before-advance, checkpointed-partial, cancelled, failed/recovered, completed, multiple-change, restart, and exact replay fixtures proving no false-fresh restoration and no orphaned propagation authority.
+
+**Prior finding closures:**
+
+- `CAP-03.S05.T03-R01-F02` `fixed` — The planner now obtains one coherent SQLite authority snapshot and enqueue re-resolves and compares the exact current target, dependency registration, causes/changes, replacement/reuse sets, and authority/command hash in the queue's writer transaction. The injected second-change replay returns WorkflowQueueConflict and leaves zero queue rows.
+
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `3926004af326b273693c874ff7e3237e8bfdd31aa083c6795a4570a61505373e`
+
+- Candidate / base / branch: `6869a9e3d7b01b72c7e440aecb9571a878456ffd` / `76494d504d37ad7552eea256689e90408375c84f` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-02T00:15:04+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T03.R03.json` / `298618de9767e4ba2c60bda0ff7b25c0a18fc749b353326edc6fcdd714d5d666` / `6869a9e3d7b01b72c7e440aecb9571a878456ffd`
+- Acceptance-criteria SHA-256: `1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69`
+- Verification-selection SHA-256: `38f0500acfd763cea37bc395ac2a175587b5fc1bab934c6a090f21d976e36b32`
+- Changed paths: `artifacts/evidence/CAP-03.S05.T03.R02.json`, `artifacts/evidence/CAP-03.S05.T03.review-R02.json`, `docs/architecture/local-sqlite-storage.md`, `planning/backlog.yaml`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/selective_recalculation.py`, `tests/e2e/test_selective_recalculation.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.e2e.test_selective_recalculation tests.contracts.test_workflow_contracts tests.workflows.test_local_workflow_executor tests.workflows.test_task_center`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.graph.test_dependency_impacts tests.data.test_material_dependencies tests.data.test_sqlite_repositories`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; .venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 76494d50...6869a9e3`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile service --profile e2e-local --affected-base 76494d504d37ad7552eea256689e90408375c84f --affected-head 6869a9e3d7b01b72c7e440aecb9571a878456ffd --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S05 slice review owns the accumulated dependency-registration, propagation, selective-recalculation, and cross-task integration/adversarial union after T03 closes.`, `The complete foundation, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 qualification matrix remains mandatory once at W1 exit.`
+- Selection rationale: The complete open set is CAP-03.S05.T03-R01-F01 and its refined claimant-boundary finding CAP-03.S05.T03-R02-F01, plus CAP-03.S05.T03-R01-F03 and its refined in-flight-restoration finding CAP-03.S05.T03-R02-F02. R02 narrowed those findings to two SQLite writer-boundary invariants: complete claimant-tuple validation before first candidate mutation and recognition of durable impact items before stale-cause materialization. R03 therefore replays every claim field and every material propagation lifecycle state against real canonical SQLite, then rechecks the adjacent workflow, graph, persistence, package inventory, quality, and architecture boundaries. No schema, dependency, route, UI, security policy, runtime, or toolchain changed, so unrelated full service/security/UI/deployment profiles remain deferred to slice integration and W1 exit.
+- Prior round / replayed open findings: `R02` / `CAP-03.S05.T03-R01-F01`, `CAP-03.S05.T03-R01-F03`, `CAP-03.S05.T03-R02-F01`, `CAP-03.S05.T03-R02-F02`
+- Root-cause escalation: R02 enforced canonical plan/output authority and liveness, but the first-write path reused the narrow active-lease lookup while the replay/completion path alone called the complete immutable claimant verifier. That asymmetry allowed caller-supplied fields to be persisted once and rejected on replay. Restoration similarly treated the derived stale-cause projection as the full freshness authority, overlooking the earlier durable impact-item decision recorded when propagation begins. R03 moves the already-existing complete claimant verifier ahead of both candidate paths and defines a durable impact item itself as adverse restoration authority, keeping both decisions inside their existing BEGIN IMMEDIATE transactions.
+
+**Disposition / reviewer / time:** `approved` / agent:t02-adversarial-preflight / `2026-09-02T00:18:14+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T03.review-R03.json` / `fdb24ef4400d43ebd99cba826f511680038a2b7b3a8a469d73b579d367845a34`
+
+**Review notes:** The strict-descendant R03 candidate, direct-child submission, exact seven-path remediation inventory, two-path submission separation, frozen evidence SHA/blob, current taskctl projection, patch hygiene, and unchanged package inventory authenticate. Forty-nine focused recalculation, workflow-contract, executor, Task Center, and package-inventory tests pass, including six independently selected real-SQLite closure tests. Every open R01/R02 finding is closed: the complete immutable attempt capability is verified before either first candidate mutation or replay; all 13 material one-field substitutions leave aggregate/artifact/provenance/outbox/completion/history authority unchanged; exact commit and post-restart replay converge; and durable non-informational impact items block restoration across started, partial, failed-attempt/recovery, cancelled, completed, restarted, and overlapping states inside the writer transaction. Fresh restoration still appends and replays. No blocking finding remains and no full profile was run.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S05.T03-R01-F01` `fixed` — Missing, unstarted, cancelled, recovered-but-unfinished, generic-event, substituted dependency/plan, and non-current authority are denied. Candidate admission now requires the exact canonical claimant, active running lease, current authority/plan, exact transformed provenance/dependencies, and required checkpoint before aggregate append, staged canonical output, workflow completion, and provenance/outbox commit in one transaction; exact reopen replay returns the same result.
+- `CAP-03.S05.T03-R02-F01` `fixed` — The complete immutable attempt capability verifier now runs before both first mutation and replay. Independent one-field substitution replay covered all 13 material claim fields and proved zero delta in aggregate, artifact, provenance, outbox, completion, and history rows; exact first commit and post-restart replay converge.
+- `CAP-03.S05.T03-R01-F03` `fixed` — Restoration's writer transaction now denies a prior revision named by any durable non-informational dependency-impact item, including already materialized stale authority, so obsolete dependency history cannot be republished as a fresh adjudicated current revision. Fresh append-only human restoration and replay remain available.
+- `CAP-03.S05.T03-R02-F02` `fixed` — Real SQLite replay denies false-fresh restore for begun-before-advance after reopen, partial checkpoint, failed-attempt/recovery, cancellation, completion, and overlapping durable changes while leaving history and run authority unchanged. Because restoration and the impact-item check share BEGIN IMMEDIATE, a concurrent writer cannot insert adverse authority between the check and append.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t02-adversarial-preflight at `2026-09-02T00:18:14+00:00`
+
+**Latest notes:** The strict-descendant R03 candidate, direct-child submission, exact seven-path remediation inventory, two-path submission separation, frozen evidence SHA/blob, current taskctl projection, patch hygiene, and unchanged package inventory authenticate. Forty-nine focused recalculation, workflow-contract, executor, Task Center, and package-inventory tests pass, including six independently selected real-SQLite closure tests. Every open R01/R02 finding is closed: the complete immutable attempt capability is verified before either first candidate mutation or replay; all 13 material one-field substitutions leave aggregate/artifact/provenance/outbox/completion/history authority unchanged; exact commit and post-restart replay converge; and durable non-informational impact items block restoration across started, partial, failed-attempt/recovery, cancelled, completed, restarted, and overlapping states inside the writer transaction. Fresh restoration still appends and replays. No blocking finding remains and no full profile was run.
+
+**Currently open findings:** -
 
 ### SLICE-use-case-profiles-and-adaptive-guided-navigation (`CAP-03.S06`) - Use-case profiles and adaptive guided navigation
 
