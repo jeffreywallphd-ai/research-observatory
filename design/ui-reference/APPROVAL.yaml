@@ -1,22 +1,18 @@
-reference_id: RO-UI-ACADEMIC-MINIMAL-1.4
-version: '1.4'
-status: approved
-approval_kind: human
-approved_by: human:repository-owner
-approved_at: '2026-08-30T06:03:51.1527117-04:00'
-approval_basis: The repository owner explicitly approved ECR-0004/W1.A05 at immutable
-  approval-record introduction commit 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b.
-  That authority reserves RO-UI-ACADEMIC-MINIMAL-1.4 and approves the exact
-  Application Settings Security & sign-in proposal for materialization before any
-  renderer implementation. This record does not represent implementation or release
-  approval.
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
+version: '1.5'
+status: proposed
+approval_kind: pending-human
+approved_by: null
+approved_at: null
+approval_basis: Human approval is pending for the controlled-recalculation experience
+  required by the already-approved CAP-03.S05 slice plan. This proposal does not
+  authorize renderer implementation or represent release approval.
 authority:
-  amendment_id: W1.A05
-  change_request_id: ECR-0004
-  approval_record: planning/wave-amendment-approvals/W1.A05.json
-  approval_record_sha256: a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267
-  approval_record_introduction_commit: 1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b
-supersedes: RO-UI-ACADEMIC-MINIMAL-1.3
+  wave_id: W1
+  slice_id: CAP-03.S05
+  approved_wave_commit: c5bbd97e2ef660693fec7926002b4dfb75a7c684
+  slice_plan: planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.4
 scope:
   normative:
   - design tokens
@@ -27,6 +23,10 @@ scope:
   - workflow context and previous/next behavior
   - route and page inventory
   - application-wide Security & sign-in governance form and provider states
+  - dependency staleness explanation and persistent deferred state
+  - grouped controlled-recalculation impact preview
+  - current privacy, rights, and egress policy visibility
+  - immutable recalculation comparison and human-gated restoration
   - required page regions
   - research-production safeguards
   - cross-platform desktop parity

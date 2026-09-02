@@ -1,12 +1,27 @@
 {
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.4",
-  "version": "1.4",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "version": "1.5",
   "selection": {
     "when": "project creation",
     "governed_by": "Research Intent Contract",
     "default": "empirical-study-to-article",
     "change_behavior": "versioned impact preview and human approval",
     "all_tools_accessible": true
+  },
+  "controlled_recalculation": {
+    "applies_to": "all workflows",
+    "surface": "audit-lineage.html",
+    "trigger": "a material dependency revision makes a downstream object stale",
+    "preview_groups": [
+      "automatic",
+      "review required",
+      "blocked",
+      "informational"
+    ],
+    "deferral": "preserves the stale state, cause, and safest next action",
+    "policy": "re-evaluate current rights and egress policy before scheduling",
+    "revision_rule": "recalculation and restoration create immutable revisions",
+    "human_authority": "an exact human review decision is required before replacing or restoring an approved or adjudicated state"
   },
   "workflows": {
     "rapid-orientation": {

@@ -109,6 +109,12 @@ Use 280 px issue clusters, a flexible revision/diff and response editor, and a 3
 - Reviewed: evaluated in a specific simulated review round.
 - Revised: changed in response to an accepted issue.
 
+### Staleness and controlled recalculation
+
+Stale is a durable, labeled state rather than a color or transient alert. Show the material dependency change, why the selected object may be affected, and the safest next action. Deferring recalculation preserves the stale state and its cause.
+
+Impact previews group affected objects as automatic, review required, blocked, or informational after re-evaluating current rights and egress policy. Selective recalculation creates a new immutable revision and exposes a before-and-after comparison. Replacing or restoring a researcher-approved or adjudicated state requires an explicit human decision bound to the exact revision; prior revisions and decisions remain available.
+
 ## 9. Interaction and accessibility
 
 Meet WCAG 2.2 AA. Maintain visible focus, logical tab order, accessible names, predictable Escape behavior, list/table alternatives for spatial views, reduced-motion support, and non-color status cues. Use confirmation only for destructive, privacy-sensitive, externally transmitted, or difficult-to-reverse actions. Preserve keyboard operation for workflow navigation, tables, evidence linking, manuscript outlines, review triage, and dialogs.

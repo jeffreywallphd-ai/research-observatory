@@ -1,16 +1,16 @@
 # Research Observatory UI Reference
 
-This directory is the approved, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.4**.
+This directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.5**.
 
 ## Start with the workflow
 
-Open `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.
+Open `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, `audit-lineage.html` for controlled recalculation, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.
 
 ## Authority
 
-- `assets/tokens.css`, semantic rules in `STYLE_GUIDE.md`, the fourteen profiles in `WORKFLOW_CATALOG.*`, route inventory, required page regions, accessibility behavior, and approved visual baselines are normative.
+- `assets/tokens.css`, semantic rules in `STYLE_GUIDE.md`, the fourteen profiles in `WORKFLOW_CATALOG.*`, route inventory, required page regions, accessibility behavior, and approved visual baselines are normative once this revision is approved.
 - Mock names, values, studies, providers, dates, prose, charts, and inactive actions are illustrative and do not create backend scope.
-- `APPROVAL.yaml` records approval; `REFERENCE_MANIFEST.yaml` identifies governed files; `CAPABILITY_COVERAGE.*` maps capabilities to pages.
+- `APPROVAL.yaml` records approval status; `REFERENCE_MANIFEST.yaml` identifies governed files; `CAPABILITY_COVERAGE.*` maps capabilities to pages.
 - Intentional user-facing changes require an updated proposed reference, validation, human approval, and only then application implementation.
 
 ## Open locally
