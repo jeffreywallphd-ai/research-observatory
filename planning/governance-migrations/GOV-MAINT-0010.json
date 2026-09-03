@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0010",
   "title": "Activate approved desktop UI reference 1.5",
-  "status": "candidate",
+  "status": "changes-requested",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -55,6 +55,20 @@
     ]
   },
   "rollback": "If independent review finds a blocking defect, do not implement the 1.5 renderer. Return to predecessor 6ed8e76fb52349780cccac913b3652553a57afbd, which retains the approved 1.5 reference while desktop product verification remains bound to the previously active 1.4 package.",
-  "reviewAttempts": [],
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0010.R01",
+      "reviewedCommit": "3130c373e912aff2d6143bd15201d69e38ab1b55",
+      "reviewer": "agent:gov-maint-0010-reviewer",
+      "reviewedAt": "2026-09-03T11:18:43.7307607Z",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": [
+        "GOV-MAINT-0010.R01-F01",
+        "GOV-MAINT-0010.R01-F02"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0010.review-R01.json",
+      "sha256": "3d6d13a68ddc026cc1605ef663380103fe4bffb6ab002c4199b5f4ecdd15f962"
+    }
+  ],
   "review": null
 }
