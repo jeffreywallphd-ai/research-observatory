@@ -9855,7 +9855,7 @@
             {
               "task_id": "CAP-03.S06.T01",
               "title": "Define the versioned use-case and workflow-profile contracts",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -9922,16 +9922,16 @@
             {
               "task_id": "CAP-03.S06.T01",
               "title": "Define the versioned use-case and workflow-profile contracts",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S06.T01.html",
               "dependencies": [
                 "CAP-03.S02.T01",
                 "CAP-00.S06.T04"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "f97003d34fc32b705195d518487bd40b79a2545d"
               },
               "plan_section_sha256": "c67793989f054e27240fbd234642e712b50fd50b0bec25cb6a0cafaa324e5022",
               "worksheet": null
