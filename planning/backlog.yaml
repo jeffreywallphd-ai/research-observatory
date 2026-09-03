@@ -13789,14 +13789,15 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T23:19:02+00:00'
-      updated_at: '2026-09-03T12:49:48+00:00'
+      updated_at: '2026-09-03T12:59:20+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
+      implementation_notes: R04 closes the slice-discovered production-path gap under exact Academic Minimal v1.5 authority;
+        broader integration remains at CAP-03.S05 review.
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-03.S05.T03.R01.json
@@ -13813,6 +13814,11 @@ capabilities:
         sha256: 298618de9767e4ba2c60bda0ff7b25c0a18fc749b353326edc6fcdd714d5d666
         commit: 6869a9e3d7b01b72c7e440aecb9571a878456ffd
         recorded_at: '2026-09-02T00:15:04+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S05.T03.R04.json
+        sha256: 12e744c87352d8586a077c726d2cc11054692aff0c6902008cd9e27dd449088f
+        commit: ab0844204768f2282d694c9df2caa931a7e8fcf3
+        recorded_at: '2026-09-03T12:59:20+00:00'
       review: &id037
         reviewer: agent:t02-adversarial-preflight
         result: approved
@@ -13840,7 +13846,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-03T12:49:48+00:00'
         expires_at: '2026-09-03T20:49:48+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -14328,7 +14334,173 @@ capabilities:
               - CAP-03.S05.T03-R01-F03
               - CAP-03.S05.T03-R02-F01
               - CAP-03.S05.T03-R02-F02
-        current_submission: null
+        current_submission:
+          id: R04
+          submitted_by: codex
+          submitted_at: '2026-09-03T12:59:20+00:00'
+          candidate_commit: ab0844204768f2282d694c9df2caa931a7e8fcf3
+          base_commit: 6869a9e3d7b01b72c7e440aecb9571a878456ffd
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S05.T03.R04.json
+            sha256: 12e744c87352d8586a077c726d2cc11054692aff0c6902008cd9e27dd449088f
+            commit: ab0844204768f2282d694c9df2caa931a7e8fcf3
+            recorded_at: '2026-09-03T12:59:20+00:00'
+          acceptance_criteria_sha256: 1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69
+          changed_paths:
+          - apps/desktop/scripts/assemble-application.mjs
+          - apps/desktop/scripts/assemble-reference.mjs
+          - apps/desktop/src-tauri/src/supervisor.rs
+          - apps/desktop/src/app.css
+          - apps/desktop/src/app/AuditLineageWorkspace.test.tsx
+          - apps/desktop/src/app/AuditLineageWorkspace.tsx
+          - apps/desktop/src/app/audit-lineage.conformance.json
+          - artifacts/evidence/CAP-03.S05.T03.R03.json
+          - artifacts/evidence/CAP-03.S05.T03.review-R03.json
+          - artifacts/evidence/CAP-03.S05.integration-R01.json
+          - artifacts/evidence/CAP-03.S05.integration.review-R01.json
+          - artifacts/evidence/ui-change/CAP-03.S05.T03.json
+          - design/ui-reference/APPROVAL.yaml
+          - design/ui-reference/CAPABILITY_COVERAGE.json
+          - design/ui-reference/CAPABILITY_COVERAGE.md
+          - design/ui-reference/README.md
+          - design/ui-reference/REFERENCE_MANIFEST.yaml
+          - design/ui-reference/SITE_MANIFEST.json
+          - design/ui-reference/STYLE_GUIDE.md
+          - design/ui-reference/STYLE_GUIDE_SOURCE.md
+          - design/ui-reference/WORKFLOW_CATALOG.json
+          - design/ui-reference/WORKFLOW_CATALOG.md
+          - design/ui-reference/application-settings.html
+          - design/ui-reference/audit-lineage.html
+          - design/ui-reference/claim-graph.html
+          - design/ui-reference/corpus-canvas.html
+          - design/ui-reference/critical-lens.html
+          - design/ui-reference/document-reader.html
+          - design/ui-reference/evidence-matrix.html
+          - design/ui-reference/help-onboarding.html
+          - design/ui-reference/index.html
+          - design/ui-reference/ingestion-reconciliation.html
+          - design/ui-reference/intent-contract.html
+          - design/ui-reference/living-monitor.html
+          - design/ui-reference/manuscript-blueprint.html
+          - design/ui-reference/manuscript-studio.html
+          - design/ui-reference/model-center.html
+          - design/ui-reference/new-project.html
+          - design/ui-reference/novelty-audit.html
+          - design/ui-reference/opportunity-radar.html
+          - design/ui-reference/parsing-quality.html
+          - design/ui-reference/project-settings.html
+          - design/ui-reference/projects.html
+          - design/ui-reference/prototype-index.html
+          - design/ui-reference/research-notebook.html
+          - design/ui-reference/reviewer-simulation.html
+          - design/ui-reference/revision-response.html
+          - design/ui-reference/schema-manager.html
+          - design/ui-reference/screening.html
+          - design/ui-reference/scripts/build_mockups.py
+          - design/ui-reference/search-studio.html
+          - design/ui-reference/source-manager.html
+          - design/ui-reference/study-design.html
+          - design/ui-reference/style-guide.html
+          - design/ui-reference/synthesis-studio.html
+          - design/ui-reference/task-center.html
+          - design/ui-reference/technical-reports.html
+          - design/ui-reference/theory-map.html
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/generated.test.ts
+          - packages/contracts/core-api/generated.ts
+          - packages/contracts/core-api/openapi.json
+          - planning/backlog.yaml
+          - planning/governance-migrations/GOV-MAINT-0010.json
+          - planning/governance-migrations/GOV-MAINT-0010.review-R01.json
+          - planning/governance-migrations/GOV-MAINT-0010.review-R02.json
+          - planning/governance-migrations/GOV-MAINT-0010.review-R03.json
+          - planning/governance-migrations/GOV-MAINT-0010.review-R04.json
+          - planning/review-site/CAP-03/CAP-03.S05.T03.html
+          - planning/review-site/CAP-03/CAP-03.S05.html
+          - planning/review-site/CAP-03/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/src/research_observatory_core/app.py
+          - services/core-api/src/research_observatory_core/dependency_impacts.py
+          - services/core-api/src/research_observatory_core/main.py
+          - services/core-api/src/research_observatory_core/models.py
+          - services/core-api/src/research_observatory_core/recalculation_contracts.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/selective_recalculation.py
+          - tests/data/test_object_envelope_upgrades.py
+          - tests/desktop/test_desktop_app_check.py
+          - tests/desktop/test_ui_conformance.py
+          - tests/e2e/test_selective_recalculation.py
+          - tests/foundation/test_ui_change_gate.py
+          - tests/graph/test_dependency_impacts.py
+          - tests/security/test_protected_database.py
+          - tests/service/test_recalculation_api.py
+          - tools/core_api_contract.py
+          - tools/dependency_impact_performance_check.py
+          - tools/desktop_app_check.py
+          - tools/ui_change_gate.py
+          - tools/ui_conformance.py
+          - verification-profiles.json
+          - verification/baselines/desktop-ui.json
+          - verification/extensions/desktop-ui.json
+          selected_checks:
+          - apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix
+            apps/desktop; npm test --prefix apps/desktop -- --run src/app/ApplicationRuntime.test.tsx src/app/AuditLineageWorkspace.test.tsx
+          - npm run build --prefix apps/desktop; .venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check;
+            .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only
+          - .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --base 5ff2ff8de64513ced687153cebe53b5eebeed32f --head
+            ab0844204768f2282d694c9df2caa931a7e8fcf3
+          - .venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe
+            tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo .
+            --check accessibility
+          - $env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -B -m unittest tests.service.test_recalculation_api.RecalculationApiTests.test_routes_expose_complete_flow_without_accepting_actor_or_policy_authority
+            tests.e2e.test_selective_recalculation.SelectiveRecalculationE2ETests.test_restore_requires_exact_completed_human_decision_and_current_policy
+            tests.e2e.test_selective_recalculation.SelectiveRecalculationE2ETests.test_enqueue_fails_without_queue_write_when_privacy_policy_changes_after_planning
+            tests.graph.test_dependency_impacts.DependencyImpactPlannerTests.test_cycle_groups_include_only_edges_that_propagate
+          - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 5ff2ff8de64513ced687153cebe53b5eebeed32f..ab0844204768f2282d694c9df2caa931a7e8fcf3
+          - .venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile e2e-local --affected-base
+            5ff2ff8de64513ced687153cebe53b5eebeed32f --affected-head ab0844204768f2282d694c9df2caa931a7e8fcf3 --deferred-gate
+            W1-exit --selection-only
+          - .venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile e2e-local --profile
+            graph --profile data --profile security-local --affected-base 6869a9e3d7b01b72c7e440aecb9571a878456ffd --affected-head
+            ab0844204768f2282d694c9df2caa931a7e8fcf3 --deferred-gate W1-exit --selection-only
+          deferred_checks:
+          - CAP-03.S05 R02 slice review owns the exact five-finding replay and accumulated API, graph, persistence, workflow,
+            renderer, UI, security, and affected-selection union.
+          - The complete foundation, desktop, service, e2e-local, security, data, graph, packaging, performance, recovery,
+            and Windows x64 release matrix remains mandatory once at W1 exit.
+          selection_rationale: CAP-03.S05-R01-F01 showed that the previously approved internal selective-recalculation behavior
+            lacked a production researcher path. This R04 increment affects the public generated Core client consumer, governed
+            Audit & Lineage UI, build assembly, functional-frame checker, and task/reference evidence boundary. The credible
+            incremental failures are API-shape drift, wrong project/revision/intent authority, retry mutation, read-only escape,
+            hidden stale state, inaccurate impact class, non-human restoration, policy substitution, keyboard/focus/responsive
+            regression, or reference mismatch. The selected checks exercise those exact boundaries plus the other four slice
+            findings' narrow regressions. The selector's broad fallback is disclosed rather than automatically replayed at
+            task level; accumulated integration and full qualification remain owned by slice review and W1 exit.
+          selection_sha256: 936f60557ba04343442497b8590baafcfacb26b2bcb3c01dc11a0682c5667a33
+          prior_attempt_id: R03
+          open_finding_ids: []
+          root_cause_analysis: The original task review correctly proved the internal recomputation, immutable candidate,
+            and restoration transaction boundaries, but the task evidence treated the researcher-facing API/UI handoff as
+            slice-level follow-up and the first slice review correctly rejected that omission. The remediation composes the
+            already-secured Core path through strict generated contracts into the approved Audit & Lineage workspace, preserving
+            backend authority rather than reproducing it in the renderer.
+          selected_command_ids:
+          - foundation:ui-change
+          - foundation:backlog
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - service:unit
+          - graph:unit
+          - e2e-local:system
+          packet_sha256: 45106bf9f8356a62c0e7939349c241bc6ab5f338f8189bd65b58832d41459fe5
       cancellation: null
     platform_targets:
     - windows-x64
