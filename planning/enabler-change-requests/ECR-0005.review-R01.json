@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0005",
+  "proposedAmendmentId": "W1.A06",
+  "attemptId": "R01",
+  "candidateCommit": "5cd1e03b2665389c40fe711b00c2968bcaa8b9e4",
+  "packetSha256": "788de5365d145439817d0d79024056c5438d3ed858b918ea1725026da7b01034",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr5-planning-authority-reviewer",
+  "reviewedAt": "2026-09-03T10:56:58.8583690-04:00",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "ECR-0005-R01-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 1,
+      "title": "The generated decision surface misorders the interleaved Wave authority chain",
+      "reproduction": "Open planning/review-site/enablers/ECR-0005.html and inspect the table labelled Ordered Wave authority chain. It renders adopted W1.A05 before terminal reserved W1.A04 because tools/plan_review_site.py emits authorityChain.orderedAmendments and authorityChain.reservedAmendments as separate groups. This conflicts with the packet and proposal sequence W1.A01, W1.A02, W1.A03, reserved W1.A04, adopted W1.A05.",
+      "requiredRemediation": "Create a strict-descendant R02 candidate that renders one canonical immutable-identity-ordered amendment sequence, preserving the W1.A04 reserved/superseded meaning between W1.A03 and W1.A05. Regenerate the review page and manifest, add focused regression coverage for interleaved adopted and reserved history, preserve this adverse ledger append-only, and obtain a new independent exact-commit review before human approval."
+    },
+    {
+      "id": "ECR-0005-R01-F02",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 1,
+      "title": "The generated decision surface falsely presents an approved experience reference as pending materialization",
+      "reproduction": "Open planning/review-site/enablers/ECR-0005.html and inspect Governed experience proposal. It says RO-UI-ACADEMIC-MINIMAL-1.5 requires human approval, that approval reserves the reference, and bootstrap must materialize its canonical approval. design/ui-reference/APPROVAL.yaml already records that exact reference as human-approved; ECR-0005 reaffirms it unchanged and its bootstrap expressly prohibits experience-reference materialization. The false text is emitted unconditionally by tools/plan_review_site.py.",
+      "requiredRemediation": "Create a strict-descendant R02 candidate that distinguishes an unchanged binding to an existing approved reference from a newly proposed pending reference. For ECR-0005, state that ECR approval reaffirms and binds RO-UI-ACADEMIC-MINIMAL-1.5 without reserving or materializing it. Regenerate the review page and manifest, add focused regression coverage, preserve this adverse ledger append-only, and obtain a new independent exact-commit review before human approval."
+    }
+  ],
+  "closures": [],
+  "verified": [
+    "The exact candidate 5cd1e03b2665389c40fe711b00c2968bcaa8b9e4 is on codex/w1-windows-local-runtime with parent 15e446b6310299bd75447e249756c61adebbe4ca. Its eight-path delta contains only the three inert ECR-0005 source records and five generated review-site files; no backlog, product, task-state, approval, or predecessor-authority file changed.",
+    "ECR-0005 and W1.A06 are the next valid identities. The immutable W1 base, adopted W1.A01-W1.A03, terminal reserved and superseded W1.A04, adopted W1.A05, GOV-MIG-0001, GOV-MAINT-0011, and GOV-MAINT-0012 authority and ancestry validate without mutation.",
+    "W1 remains PAUSED at Wave scope with no lease, active ordinary task, active amendment campaign, or active recovery hold. CAP-03.S06.T01 is READY and unclaimed. The proposal remains pending and non-executable.",
+    "The governed REFERENCE_MANIFEST.yaml, APPROVAL.yaml, and WORKFLOW_CATALOG.json hashes match the packet. RO-UI-ACADEMIC-MINIMAL-1.5 is approved, and the catalog contains exactly fourteen unique workflow identities with no built-in, extension, or profile-pack classification.",
+    "The exact criterion replacement resolves the eight-versus-fourteen conflict across the backlog, CAP-03.S06 slice plan, T01 objective, T05, and governed catalog without hidden product, security, architecture, experience, or refactor authority. The immutable W1 baseline is 194 points and the amendment allocates zero refactor points.",
+    "planctl ECR structural and historical validation, canonical backlog validation for 20 capabilities, 117 slices, 363 tasks, and 12 release gates, generated backlog-view validation, 489-page review-site validation, and Git whitespace validation pass. Full product/runtime/Windows suites are correctly deferred for this planning-only candidate.",
+    "Human approval is not legally available for candidate 5cd1e03b2665389c40fe711b00c2968bcaa8b9e4 while ECR-0005-R01-F01 and ECR-0005-R01-F02 remain open.",
+    "The protected untracked artifacts/evidence/W1.A04.B00.json witness was not opened, hashed, staged, modified, or deleted during review."
+  ],
+  "approvalAvailable": false
+}
