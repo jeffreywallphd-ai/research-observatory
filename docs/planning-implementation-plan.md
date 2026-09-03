@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cf3ba05959c9df68e9cb3b30aa4fb65de49bf652bbc41d26540e14951f9919b8
+source_sha256: 295af5c99f2b523f98cb443ab8f1e3f4744c981b39adac1751c1efd795a49466
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5460,7 +5460,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Changes to evidence, models, schemas, or decisions identify and safely refresh affected outputs.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
