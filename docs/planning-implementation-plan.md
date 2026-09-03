@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e310a03fef4d93d63628dffeaed51f089522ba6be5527fe3b91ac933b3815449
+source_sha256: cf3ba05959c9df68e9cb3b30aa4fb65de49bf652bbc41d26540e14951f9919b8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5460,7 +5460,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Changes to evidence, models, schemas, or decisions identify and safely refresh affected outputs.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5722,7 +5722,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-03.S05.T02`
 
-**Owner / review:** codex / agent:t02-adversarial-preflight (`approved`)
+**Owner / review:** codex / agent:cap03-s05-t03-r04-reviewer (`approved`)
 
 **Objective:** Workflow generation from stale subgraphs with reuse of valid intermediates, versioned replacement, comparison, and rollback.
 
@@ -5746,10 +5746,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-03.S05.T03.R01.json` at `139158aa96c1d63dd4d4a40c954fbfc3b5e9f56d`
 - `artifacts/evidence/CAP-03.S05.T03.R02.json` at `76494d504d37ad7552eea256689e90408375c84f`
 - `artifacts/evidence/CAP-03.S05.T03.R03.json` at `6869a9e3d7b01b72c7e440aecb9571a878456ffd`
+- `artifacts/evidence/CAP-03.S05.T03.R04.json` at `ab0844204768f2282d694c9df2caa931a7e8fcf3`
 
 ##### Review history — CAP-03.S05.T03
 
-**Review mode:** `append-only v1` / 3 completed round(s)
+**Review mode:** `append-only v1` / 4 completed round(s)
 
 ###### Round R01
 
@@ -5847,11 +5848,41 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S05.T03-R01-F03` `fixed` — Restoration's writer transaction now denies a prior revision named by any durable non-informational dependency-impact item, including already materialized stale authority, so obsolete dependency history cannot be republished as a fresh adjudicated current revision. Fresh append-only human restoration and replay remain available.
 - `CAP-03.S05.T03-R02-F02` `fixed` — Real SQLite replay denies false-fresh restore for begun-before-advance after reopen, partial checkpoint, failed-attempt/recovery, cancellation, completion, and overlapping durable changes while leaving history and run authority unchanged. Because restoration and the impact-item check share BEGIN IMMEDIATE, a concurrent writer cannot insert adverse authority between the check and append.
 
+###### Round R04
+
+**Immutable submission packet:** `R04` / packet SHA-256 `45106bf9f8356a62c0e7939349c241bc6ab5f338f8189bd65b58832d41459fe5`
+
+- Candidate / base / branch: `ab0844204768f2282d694c9df2caa931a7e8fcf3` / `6869a9e3d7b01b72c7e440aecb9571a878456ffd` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T12:59:20+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S05.T03.R04.json` / `12e744c87352d8586a077c726d2cc11054692aff0c6902008cd9e27dd449088f` / `ab0844204768f2282d694c9df2caa931a7e8fcf3`
+- Acceptance-criteria SHA-256: `1c4ad1bfb4dc924511f57b85371e01a2c9a3ed4ff086082334d4da07285aef69`
+- Verification-selection SHA-256: `936f60557ba04343442497b8590baafcfacb26b2bcb3c01dc11a0682c5667a33`
+- Changed paths: `apps/desktop/scripts/assemble-application.mjs`, `apps/desktop/scripts/assemble-reference.mjs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/AuditLineageWorkspace.test.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.tsx`, `apps/desktop/src/app/audit-lineage.conformance.json`, `artifacts/evidence/CAP-03.S05.T03.R03.json`, `artifacts/evidence/CAP-03.S05.T03.review-R03.json`, `artifacts/evidence/CAP-03.S05.integration-R01.json`, `artifacts/evidence/CAP-03.S05.integration.review-R01.json`, `artifacts/evidence/ui-change/CAP-03.S05.T03.json`, `design/ui-reference/APPROVAL.yaml`, `design/ui-reference/CAPABILITY_COVERAGE.json`, `design/ui-reference/CAPABILITY_COVERAGE.md`, `design/ui-reference/README.md`, `design/ui-reference/REFERENCE_MANIFEST.yaml`, `design/ui-reference/SITE_MANIFEST.json`, `design/ui-reference/STYLE_GUIDE.md`, `design/ui-reference/STYLE_GUIDE_SOURCE.md`, `design/ui-reference/WORKFLOW_CATALOG.json`, `design/ui-reference/WORKFLOW_CATALOG.md`, `design/ui-reference/application-settings.html`, `design/ui-reference/audit-lineage.html`, `design/ui-reference/claim-graph.html`, `design/ui-reference/corpus-canvas.html`, `design/ui-reference/critical-lens.html`, `design/ui-reference/document-reader.html`, `design/ui-reference/evidence-matrix.html`, `design/ui-reference/help-onboarding.html`, `design/ui-reference/index.html`, `design/ui-reference/ingestion-reconciliation.html`, `design/ui-reference/intent-contract.html`, `design/ui-reference/living-monitor.html`, `design/ui-reference/manuscript-blueprint.html`, `design/ui-reference/manuscript-studio.html`, `design/ui-reference/model-center.html`, `design/ui-reference/new-project.html`, `design/ui-reference/novelty-audit.html`, `design/ui-reference/opportunity-radar.html`, `design/ui-reference/parsing-quality.html`, `design/ui-reference/project-settings.html`, `design/ui-reference/projects.html`, `design/ui-reference/prototype-index.html`, `design/ui-reference/research-notebook.html`, `design/ui-reference/reviewer-simulation.html`, `design/ui-reference/revision-response.html`, `design/ui-reference/schema-manager.html`, `design/ui-reference/screening.html`, `design/ui-reference/scripts/build_mockups.py`, `design/ui-reference/search-studio.html`, `design/ui-reference/source-manager.html`, `design/ui-reference/study-design.html`, `design/ui-reference/style-guide.html`, `design/ui-reference/synthesis-studio.html`, `design/ui-reference/task-center.html`, `design/ui-reference/technical-reports.html`, `design/ui-reference/theory-map.html`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `planning/backlog.yaml`, `planning/governance-migrations/GOV-MAINT-0010.json`, `planning/governance-migrations/GOV-MAINT-0010.review-R01.json`, `planning/governance-migrations/GOV-MAINT-0010.review-R02.json`, `planning/governance-migrations/GOV-MAINT-0010.review-R03.json`, `planning/governance-migrations/GOV-MAINT-0010.review-R04.json`, `planning/review-site/CAP-03/CAP-03.S05.T03.html`, `planning/review-site/CAP-03/CAP-03.S05.html`, `planning/review-site/CAP-03/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/dependency_impacts.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/recalculation_contracts.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/selective_recalculation.py`, `tests/data/test_object_envelope_upgrades.py`, `tests/desktop/test_desktop_app_check.py`, `tests/desktop/test_ui_conformance.py`, `tests/e2e/test_selective_recalculation.py`, `tests/foundation/test_ui_change_gate.py`, `tests/graph/test_dependency_impacts.py`, `tests/security/test_protected_database.py`, `tests/service/test_recalculation_api.py`, `tools/core_api_contract.py`, `tools/dependency_impact_performance_check.py`, `tools/desktop_app_check.py`, `tools/ui_change_gate.py`, `tools/ui_conformance.py`, `verification-profiles.json`, `verification/baselines/desktop-ui.json`, `verification/extensions/desktop-ui.json`
+- Selected checks: `apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm test --prefix apps/desktop -- --run src/app/ApplicationRuntime.test.tsx src/app/AuditLineageWorkspace.test.tsx`, `npm run build --prefix apps/desktop; .venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only`, `.venv/Scripts/python.exe tools/ui_change_gate.py --repo . --base 5ff2ff8de64513ced687153cebe53b5eebeed32f --head ab0844204768f2282d694c9df2caa931a7e8fcf3`, `.venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility`, `$env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -B -m unittest tests.service.test_recalculation_api.RecalculationApiTests.test_routes_expose_complete_flow_without_accepting_actor_or_policy_authority tests.e2e.test_selective_recalculation.SelectiveRecalculationE2ETests.test_restore_requires_exact_completed_human_decision_and_current_policy tests.e2e.test_selective_recalculation.SelectiveRecalculationE2ETests.test_enqueue_fails_without_queue_write_when_privacy_policy_changes_after_planning tests.graph.test_dependency_impacts.DependencyImpactPlannerTests.test_cycle_groups_include_only_edges_that_propagate`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 5ff2ff8de64513ced687153cebe53b5eebeed32f..ab0844204768f2282d694c9df2caa931a7e8fcf3`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile e2e-local --affected-base 5ff2ff8de64513ced687153cebe53b5eebeed32f --affected-head ab0844204768f2282d694c9df2caa931a7e8fcf3 --deferred-gate W1-exit --selection-only`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile e2e-local --profile graph --profile data --profile security-local --affected-base 6869a9e3d7b01b72c7e440aecb9571a878456ffd --affected-head ab0844204768f2282d694c9df2caa931a7e8fcf3 --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S05 R02 slice review owns the exact five-finding replay and accumulated API, graph, persistence, workflow, renderer, UI, security, and affected-selection union.`, `The complete foundation, desktop, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 release matrix remains mandatory once at W1 exit.`
+- Selection rationale: CAP-03.S05-R01-F01 showed that the previously approved internal selective-recalculation behavior lacked a production researcher path. This R04 increment affects the public generated Core client consumer, governed Audit & Lineage UI, build assembly, functional-frame checker, and task/reference evidence boundary. The credible incremental failures are API-shape drift, wrong project/revision/intent authority, retry mutation, read-only escape, hidden stale state, inaccurate impact class, non-human restoration, policy substitution, keyboard/focus/responsive regression, or reference mismatch. The selected checks exercise those exact boundaries plus the other four slice findings' narrow regressions. The selector's broad fallback is disclosed rather than automatically replayed at task level; accumulated integration and full qualification remain owned by slice review and W1 exit.
+- Prior round / replayed open findings: `R03` / -
+- Root-cause escalation: The original task review correctly proved the internal recomputation, immutable candidate, and restoration transaction boundaries, but the task evidence treated the researcher-facing API/UI handoff as slice-level follow-up and the first slice review correctly rejected that omission. The remediation composes the already-secured Core path through strict generated contracts into the approved Audit & Lineage workspace, preserving backend authority rather than reproducing it in the renderer.
+
+**Disposition / reviewer / time:** `approved` / agent:cap03-s05-t03-r04-reviewer / `2026-09-03T13:08:24+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S05.T03.review-R04.json` / `cdaf911099e3cee3691cf6e588e63e0de75490422e717844632c36e940e806c2`
+
+**Review notes:** The frozen R04 evidence, exact 98-path candidate range, strict ancestry from the prior approved candidate, direct-child two-path submission, evidence hash, and task projection authenticate. The final ten-path product subrange completes the generated-client, local Core, and governed renderer preview/schedule/compare/human-review/restore path while retaining immutable revisions, accepted-intent and exact-plan authority, byte-identical retries, read-only denial, current policy and human-decision enforcement, accessible governed states, and the corrected human-approved v1.5 UI identity. The prior integration review, corrected approval, and adopted GOV-MAINT-0010 R04 chain were independently authenticated before reuse. Four exact backend slice-finding regressions, 22 generated-client/renderer tests, the exact UI gate, reference-integrity check, and both changed-path selection checks pass. No full profile was run under the risk-based task-review policy; no blocking or non-blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `approved` by agent:t02-adversarial-preflight at `2026-09-02T00:18:14+00:00`
+**Current latest-review projection:** `approved` by agent:cap03-s05-t03-r04-reviewer at `2026-09-03T13:08:24+00:00`
 
-**Latest notes:** The strict-descendant R03 candidate, direct-child submission, exact seven-path remediation inventory, two-path submission separation, frozen evidence SHA/blob, current taskctl projection, patch hygiene, and unchanged package inventory authenticate. Forty-nine focused recalculation, workflow-contract, executor, Task Center, and package-inventory tests pass, including six independently selected real-SQLite closure tests. Every open R01/R02 finding is closed: the complete immutable attempt capability is verified before either first candidate mutation or replay; all 13 material one-field substitutions leave aggregate/artifact/provenance/outbox/completion/history authority unchanged; exact commit and post-restart replay converge; and durable non-informational impact items block restoration across started, partial, failed-attempt/recovery, cancelled, completed, restarted, and overlapping states inside the writer transaction. Fresh restoration still appends and replays. No blocking finding remains and no full profile was run.
+**Latest notes:** The frozen R04 evidence, exact 98-path candidate range, strict ancestry from the prior approved candidate, direct-child two-path submission, evidence hash, and task projection authenticate. The final ten-path product subrange completes the generated-client, local Core, and governed renderer preview/schedule/compare/human-review/restore path while retaining immutable revisions, accepted-intent and exact-plan authority, byte-identical retries, read-only denial, current policy and human-decision enforcement, accessible governed states, and the corrected human-approved v1.5 UI identity. The prior integration review, corrected approval, and adopted GOV-MAINT-0010 R04 chain were independently authenticated before reuse. Four exact backend slice-finding regressions, 22 generated-client/renderer tests, the exact UI gate, reference-integrity check, and both changed-path selection checks pass. No full profile was run under the risk-based task-review policy; no blocking or non-blocking finding remains.
 
 **Currently open findings:** -
 
