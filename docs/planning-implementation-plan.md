@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e6af64fe60ef03b301ce24e71fd106fbec62ede2614b9f4195ddcd5e70df9314
+source_sha256: 52b409a4454960fc53f03fc0367bb020c4d3e2a37754a6a7ff716169e58242a5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6024,21 +6024,21 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench, with visible progress and access to supporting tools.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T01`, `CAP-00.S06.T04`
 
-#### - [ ] CAP-03.S06.T01 - Define the versioned use-case and workflow-profile contracts
+#### - [x] CAP-03.S06.T01 - Define the versioned use-case and workflow-profile contracts
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S02.T01`, `CAP-00.S06.T04`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:workflow-profile-contract-reviewer (`approved`)
 
 **Objective:** Represent the fourteen approved use cases, ordered/optional/cyclical steps, rationale, checkpoints, expected outputs, version, migration, and relationship to the Research Intent Contract.
 
@@ -6058,23 +6058,96 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S06.T01.R01.json` at `012693e22441100f5fe778dd4d29f7667752a488`
+- `artifacts/evidence/CAP-03.S06.T01.R02.json` at `7d03065c43391f98e8648c076042e50d76e242da`
+
 ##### Review history — CAP-03.S06.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 2 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `ecf2ddd8ed7dff31e6df985a680d073fff3b76ea920077a5290baac0b659cd85`
+
+- Candidate / base / branch: `012693e22441100f5fe778dd4d29f7667752a488` / `f97003d34fc32b705195d518487bd40b79a2545d` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T19:22:47+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T01.R01.json` / `7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea` / `012693e22441100f5fe778dd4d29f7667752a488`
+- Acceptance-criteria SHA-256: `2103e66c9af91fc8108f9f717476e012c3dd2a93e9eebfef55aca601509011ae`
+- Verification-selection SHA-256: `c305046a905f413ac3d9649534385019ee4e97b758453c7c61ab0ba71b4a5244`
+- Changed paths: `artifacts/evidence/CAP-03.S06.T01.task-start.md`, `docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md`, `docs/adr/index.json`, `docs/architecture/README.md`, `docs/architecture/workflow-profile-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/package.json`, `packages/contracts/tsconfig.json`, `packages/contracts/workflow-profile/README.md`, `packages/contracts/workflow-profile/fixtures/approved-workflow-profile-catalog.v1.json`, `packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json`, `packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json`, `packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json`, `packages/contracts/workflow-profile/fixtures/valid-workflow-stage-state.v1.json`, `packages/contracts/workflow-profile/generate.mjs`, `packages/contracts/workflow-profile/generated.ts`, `packages/contracts/workflow-profile/workflow-profile.schema.json`, `packages/contracts/workflow-profile/workflow-profile.template.py.txt`, `packages/contracts/workflow-profile/workflow-profile.template.ts.txt`, `packages/contracts/workflow-profile/workflow-profile.test.ts`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T01.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/CAP-03/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/workflow_profile_contracts.py`, `tests/contracts/README.md`, `tests/contracts/test_workflow_profile_contracts.py`, `tests/packaging/test_core_sidecar_package.py`, `tools/core_sidecar_build.py`
+- Selected checks: `node packages/contracts/workflow-profile/generate.mjs --check; .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts; npx tsc -p packages/contracts/tsconfig.json --noEmit --pretty false`, `.venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py`, `.venv/Scripts/python.exe tools/adr_check.py --repo . --base f97003d34fc32b705195d518487bd40b79a2545d --head 012693e22441100f5fe778dd4d29f7667752a488; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .`, `.venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference`, `.venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py --repo .`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check f97003d34fc32b705195d518487bd40b79a2545d..012693e22441100f5fe778dd4d29f7667752a488; git diff --exit-code 37c564b740cbe98758dbf5759271e18505fd7fe1..012693e22441100f5fe778dd4d29f7667752a488`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile service --profile data --affected-base f97003d34fc32b705195d518487bd40b79a2545d --affected-head 012693e22441100f5fe778dd4d29f7667752a488 --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S06 T02-T05 and slice review own persistence, service/API, researcher-facing experience, history migration, and accumulated integration/adversarial coverage.`, `The complete service, data, foundation, security, packaging, recovery, performance, and Windows x64 qualification matrix remains mandatory once at W1 exit.`, `Repository-wide quality diagnostics currently expose unrelated pre-existing formatting and mypy failures in prior-slice files; the two new Python files pass the affected static checks and the baseline debt remains visible for its owning integration boundary.`
+- Selection rationale: T01 establishes a new portable, cross-process contract and generated decoder for governed workflow-profile identity, researcher selection authority, navigation state, and history-preserving profile migration. The credible task-level failures are catalog/reference drift, invented stage or checkpoint authority, aggregate/revision identity collapse, analytical-job state leakage, implicit supporting-tool progression, cycle/skip ambiguity, or destructive profile replacement. Verification therefore exercised exact generation in both runtimes, every contract package test, strict TypeScript, targeted Python static checks, governed reference integrity, ADR and architecture rules, package inventory, and exact-range hygiene. No persistence schema, service route, runtime executor, UI, authentication, or product data mutation changed, so complete service/data execution and cross-layer workflows are deferred to their owning tasks, slice integration review, and W1 exit. The safety-sensitive selector fallback is disclosed rather than replayed automatically at ordinary task scope.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / agent:workflow-profile-contract-reviewer / `2026-09-03T19:31:16+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T01.review-R01.json` / `9b1f36fcabeaaf9f517c04609e18b36ccf8b041ee4d8f5c55c2de142cd133230`
+
+**Review notes:** CHANGES_REQUIRED at frozen R01 submission 2332d0de3538ac652cd44336ca6cded016156681 for exact candidate 012693e22441100f5fe778dd4d29f7667752a488. Candidate/base ancestry, the exact 36-path inventory, submission-only evidence/backlog projection, evidence SHA-256 7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea and Git blob dcdce40148d374635b793ea7d517b345dd085806 authenticate. The governed RO-UI-ACADEMIC-MINIMAL-1.5 reference, exact workflow/page-catalog hashes, fourteen profile identities, all-unknown checkpoint authority, deterministic TypeScript/Python generation, strict compilation/static checks, ADR/architecture checks, package inclusion, 77 Python contract tests, 90 TypeScript contract tests, focused package assertion, packaging smoke, affected-selection report, and patch hygiene pass. Full service/data and repository suites remain appropriately deferred because T01 changes portable contracts and packaging registration but no persistence, service route, UI, runtime executor, or stored product state. Three semantic under-validation defects remain blocking: supporting-tool return does not bind the current primary stage-state identity; retain mappings can relabel history to a different stage; and a profile change is accepted against the unchanged Research Intent reference without binding an exact human-accepted migration. These gaps contradict the approved supporting-return, intent-revision, and history-preservation authority and would make downstream T02-T04 behavior depend on unstated service conventions rather than the portable contract.
+
+**Findings opened:**
+
+- `CAP-03.S06.T01-R01-F01` `high` blocking=`True` criterion=`2` — Supporting-tool return context can target any profile stage instead of the current primary stage; reproduce: At candidate packages/contracts/workflow-profile/workflow-profile.template.ts.txt:192-197 and the generated Python equivalent at services/core-api/src/research_observatory_core/workflow_profile_contracts.py:1606-1612, validation proves only that supportReturn.primaryStageKey/pageContractId name some primary stage in the selected profile. SupportReturn in workflow-profile.schema.json carries no primary stage-state aggregate/revision identity, and validation receives no current-primary state. Starting from valid-workflow-stage-state.v1.json, set navigationRole=supporting, pageContractId=application-settings.html, arbitrary stageKey=invented-support-alias, and supportReturn to source-manager-1/source-manager.html while the originating current stage is intent-contract-1. workflow_stage_state_errors returns ().; remediate: Make supportReturn bind the exact current/originating primary stage state, including stable state aggregate/revision/content-hash identity and its matching stage/page/profile/selection context, or validate against an explicit current-primary state input. Reject arbitrary aliases, non-current primary targets, stale/substituted selection or profile references, and self/incomplete returns in both generated runtimes. Add exact success plus one-field substitution and non-current-stage tests before regenerating fixtures and decoders.
+- `CAP-03.S06.T01-R01-F02` `high` blocking=`True` criterion=`3` — Retain disposition can silently relabel preserved history as a different target stage; reproduce: At workflow-profile.template.ts.txt:160 and :221, mirrored by workflow_profile_contracts.py:1525-1531 and :1644-1652, retain and map share the same rule: any non-null targetStageKey present in the target profile is accepted. Change intent-contract-1 in either the valid selection impact or full migration to disposition=retain and targetStageKey=living-monitor-1. Both validators return (), even though the governed target page contract is different and the distinct map disposition exists for that case.; remediate: Define and enforce disposition semantics consistently in the schema and both runtime validators. Retain must preserve the same governed logical/page-contract stage; a different target requires map. Define whether mark-stale/requires-review/drop permit a target and enforce that shape. Add positive retain/map cases and cross-stage retain, missing/extra target, duplicate, and substituted stage tests for both the full migration and concrete impact preview.
+- `CAP-03.S06.T01-R01-F03` `high` blocking=`True` criterion=`3` — A profile change is not bound to a new accepted Research Intent revision or an exact human-accepted migration; reproduce: The approved slice decisions require changing profile to be an intent revision with impact preview and explicit mapping. Yet valid-project-workflow-selection-change.v1.json changes systematic-review to living-review while retaining the exact initial ResearchIntentReference, and project_workflow_selection_errors returns (). ParentSelection omits the prior intent reference; ProjectWorkflowSelection contains no migration/acceptance reference. WorkflowProfileMigration uses ActorReference for createdBy and only const true for requiresHumanAcceptance, so changing createdBy.actorType to system also returns () and no acceptedBy/decision identity exists. Thus separately valid records cannot prove that the profile change follows a new accepted intent revision or that the exact migration/preview received human acceptance.; remediate: Add sufficient portable authority to bind every profile change to the new accepted Research Intent revision, the exact immediate predecessor intent/selection, and the exact migration/impact decision accepted by a human. This may be an immutable migration reference plus human decision identity/hash and prior/current intent references, with service lookup reserved for acceptance-status verification. Deny same-intent profile changes, missing/substituted migration or decision references, system-only acceptance, and mismatched from/to profiles; add valid initial selection and valid human-accepted profile-change fixtures in TypeScript and Python.
+
+**Prior finding closures:**
+
+- None
+
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `437fc2b542331509b2bddea3d7529b1d3e68e4b702c338d63643f003e7ac1e6d`
+
+- Candidate / base / branch: `7d03065c43391f98e8648c076042e50d76e242da` / `012693e22441100f5fe778dd4d29f7667752a488` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T19:49:20+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T01.R02.json` / `8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871` / `7d03065c43391f98e8648c076042e50d76e242da`
+- Acceptance-criteria SHA-256: `2103e66c9af91fc8108f9f717476e012c3dd2a93e9eebfef55aca601509011ae`
+- Verification-selection SHA-256: `2360ae96d31824556bd6b3f7424de8b93d51ed924ec7f0448416c0da0bebb125`
+- Changed paths: `artifacts/evidence/CAP-03.S06.T01.R01.json`, `artifacts/evidence/CAP-03.S06.T01.review-R01.json`, `docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md`, `docs/architecture/workflow-profile-contracts.md`, `packages/contracts/workflow-profile/README.md`, `packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json`, `packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json`, `packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json`, `packages/contracts/workflow-profile/generate.mjs`, `packages/contracts/workflow-profile/generated.ts`, `packages/contracts/workflow-profile/workflow-profile.schema.json`, `packages/contracts/workflow-profile/workflow-profile.template.py.txt`, `packages/contracts/workflow-profile/workflow-profile.template.ts.txt`, `packages/contracts/workflow-profile/workflow-profile.test.ts`, `planning/backlog.yaml`, `services/core-api/src/research_observatory_core/workflow_profile_contracts.py`, `tests/contracts/test_workflow_profile_contracts.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_stage_state_represents_navigation_not_analytical_job_state tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_profile_migration_maps_every_prior_stage_without_rewriting_history; npm test --prefix packages/contracts -- --run workflow-profile/workflow-profile.test.ts`, `node packages/contracts/workflow-profile/generate.mjs --check; .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false`, `.venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py`, `.venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py --repo .`, `.venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/adr_check.py --repo . --base 012693e22441100f5fe778dd4d29f7667752a488 --head 7d03065c43391f98e8648c076042e50d76e242da`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 012693e22441100f5fe778dd4d29f7667752a488..7d03065c43391f98e8648c076042e50d76e242da`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile service --profile data --affected-base 012693e22441100f5fe778dd4d29f7667752a488 --affected-head 7d03065c43391f98e8648c076042e50d76e242da --deferred-gate W1-exit --selection-only`
+- Deferred checks: `CAP-03.S06 T02-T05 and slice review own persistence lookup of the bound migration hash, API/service authority, researcher-facing workflow experience, restart, and accumulated integration/adversarial coverage.`, `The complete service, data, foundation, security, packaging, recovery, performance, and Windows x64 qualification matrix remains mandatory once at W1 exit.`, `The previously disclosed unrelated repository-wide Python formatting/mypy baseline remains outside this 14-file finding remediation; all affected Python files pass their selected static checks.`
+- Selection rationale: R01 found three high-severity semantic under-validation defects in the new portable contract. R02 therefore begins with exact cross-runtime adversarial replays for supporting-current-state binding, disposition meaning, immediate Research Intent lineage, and immutable human-accepted migration authority. Because the correction changes the public schema, generated TypeScript/Python decoders, fixtures, and Windows sidecar module, the selected union also includes both complete contract packages, strict TypeScript, targeted Python static checks, the real PyInstaller package boundary, package smoke, governed reference integrity, architecture/ADR rules, backlog validity, and exact-range hygiene. No persistence, route, renderer, authentication, external effect, or stored product data changes, so service/data integration beyond the contract boundary remains owned by T02-T05, slice review, and W1 exit.
+- Prior round / replayed open findings: `R01` / `CAP-03.S06.T01-R01-F01`, `CAP-03.S06.T01-R01-F02`, `CAP-03.S06.T01-R01-F03`
+- Root-cause escalation: R01 represented a supporting return only by a valid stage key/page pair, so it could not prove that the target was the actual current primary state and it left supporting aliases unconstrained. It also shared one target-existence rule across retain and map, allowing retain to relabel history. Finally, it treated a requiresHumanAcceptance boolean as sufficient authority and did not include prior intent in the predecessor or bind profile change to a new intent revision and exact accepted migration. R02 makes those identities and semantics first-class portable fields and validates them identically in both runtimes.
+
+**Disposition / reviewer / time:** `approved` / agent:workflow-profile-contract-reviewer / `2026-09-03T19:56:28+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T01.review-R02.json` / `c3c5517e8aa53ee5e7284757bddf87d18334efd5bea84fa4e8b53e6531cff930`
+
+**Review notes:** APPROVED at frozen R02 submission 5f61d79f2a2939436dcac6b14df956c29f4806e0 for exact strict-descendant candidate 7d03065c43391f98e8648c076042e50d76e242da. The candidate descends directly from prior candidate 012693e22441100f5fe778dd4d29f7667752a488 and its 17-path range exactly matches the frozen R02 evidence manifest. Evidence SHA-256 8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871 and Git blob 4d2aa01995ddc090761156d4176bbfe220f47c1d authenticate. CAP-03.S06.T01-R01-F01 through F03 are closed: supporting state validation now requires the explicit independently valid current-primary state and exact aggregate/revision/hash/project/selection/profile/stage/pass/current projection; retain preserves the same governed stage/page while map requires a different governed target and all other dispositions require no target; and every profile change binds an immediate new Research Intent revision plus the matching immutable migration and human-acceptance references. The valid selection-change and migration fixtures agree exactly on migration ID/hash, from/to profiles, prior/target intents, and acceptance identity/hash, while the selection binds the human decision maker to selectedBy. A migration may be system-prepared but its acceptance remains human-only. The portable contract intentionally does not authenticate repository existence of referenced migration or acceptance records; CAP-03.S06.T02 owns persistence lookup of the bound hashes, as the approved architecture and evidence disclose. No blocking finding remains. Full service/data integration and Wave qualification remain properly deferred.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S06.T01-R01-F01` `fixed` — Explicit currentPrimaryState validation context, complete exact return identity/context, deterministic governed support alias, and matching Python/TypeScript omission/substitution/non-current tests close the arbitrary-return boundary.
+- `CAP-03.S06.T01-R01-F02` `fixed` — Shared cross-runtime semantic mapping now distinguishes same-stage retain, different-stage map, and null-target stale/review/drop for full migration and impact preview.
+- `CAP-03.S06.T01-R01-F03` `fixed` — Immediate Research Intent lineage and matching migration/from/to/intent plus human acceptance identity/hash references are mandatory; fixtures and adversarial tests demonstrate the binding while repository lookup remains explicitly assigned to T02.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:workflow-profile-contract-reviewer at `2026-09-03T19:56:28+00:00`
+
+**Latest notes:** APPROVED at frozen R02 submission 5f61d79f2a2939436dcac6b14df956c29f4806e0 for exact strict-descendant candidate 7d03065c43391f98e8648c076042e50d76e242da. The candidate descends directly from prior candidate 012693e22441100f5fe778dd4d29f7667752a488 and its 17-path range exactly matches the frozen R02 evidence manifest. Evidence SHA-256 8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871 and Git blob 4d2aa01995ddc090761156d4176bbfe220f47c1d authenticate. CAP-03.S06.T01-R01-F01 through F03 are closed: supporting state validation now requires the explicit independently valid current-primary state and exact aggregate/revision/hash/project/selection/profile/stage/pass/current projection; retain preserves the same governed stage/page while map requires a different governed target and all other dispositions require no target; and every profile change binds an immediate new Research Intent revision plus the matching immutable migration and human-acceptance references. The valid selection-change and migration fixtures agree exactly on migration ID/hash, from/to profiles, prior/target intents, and acceptance identity/hash, while the selection binds the human decision maker to selectedBy. A migration may be system-prepared but its acceptance remains human-only. The portable contract intentionally does not authenticate repository existence of referenced migration or acceptance records; CAP-03.S06.T02 owns persistence lookup of the bound hashes, as the approved architecture and evidence disclose. No blocking finding remains. Full service/data integration and Wave qualification remain properly deferred.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T01`, `CAP-03.S02.T02`, `CAP-01.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Ask the user what scholarly objective they are pursuing, preview the ordered path and output, save it in the versioned intent contract, and permit later revision through explicit impact review.
 
