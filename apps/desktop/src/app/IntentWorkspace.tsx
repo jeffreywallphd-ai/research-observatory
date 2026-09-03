@@ -202,6 +202,23 @@ interface IntentFormState {
   readonly revisionRationale: string;
 }
 
+const IMPACT_FIELD_KEYS: ReadonlySet<keyof IntentFormState> = new Set([
+  "primaryUseCase",
+  "sourceKinds",
+  "languageCodes",
+  "startYear",
+  "endYear",
+  "includePrivateReports",
+  "evidenceTypes",
+  "noveltyStandard",
+  "autonomyLevel",
+  "stoppingConditions",
+]);
+
+export function intentFieldAffectsImpact(key: keyof IntentFormState): boolean {
+  return IMPACT_FIELD_KEYS.has(key);
+}
+
 function initialForm(current: IntentDraftProjection | null): IntentFormState {
   const guide = selectedIntentGuidance(current?.primaryUseCase ?? "theory-synthesis");
   return {
@@ -301,12 +318,12 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   const guide = selectedIntentGuidance(form.primaryUseCase);
   const selectedProfile = catalog?.profiles.find((profile) => profile.profileId === form.primaryUseCase) ?? null;
   const clearImpact = (): void => { setImpact(null); setAcknowledged(false); };
-  const update = <K extends keyof IntentFormState>(key: K, value: IntentFormState[K], affectsImpact = false): void => {
+  const update = <K extends keyof IntentFormState>(key: K, value: IntentFormState[K]): void => {
     if (acceptanceAttempt) return;
     setForm((current) => ({ ...current, [key]: value }));
     setFormDirty(true);
     setAcceptanceConfirmed(false);
-    if (affectsImpact) clearImpact();
+    if (intentFieldAffectsImpact(key)) clearImpact();
   };
   const languageCodes = (): string[] => form.languageCodes.split(",").map((value) => value.trim().toLowerCase()).filter(Boolean);
   const optionalYear = (value: string): number | null => value === "" ? null : Number(value);
@@ -324,7 +341,10 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
       startYear: optionalYear(form.startYear),
       endYear: optionalYear(form.endYear),
       includePrivateReports: form.includePrivateReports,
+      evidenceTypes: form.evidenceTypes,
       noveltyStandard: form.noveltyStandard,
+      autonomyLevel: form.autonomyLevel,
+      stoppingConditions: form.stoppingConditions,
     }).then((next) => {
       setImpact(next);
       setAcknowledged(!next.acknowledgementRequired);
@@ -466,15 +486,15 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
           </Panel>
 
           <Panel title="Scope and evidence policy">
-            <fieldset><legend>Source kinds</legend><label><input type="checkbox" checked={form.sourceKinds.includes("peer-reviewed-article")} onChange={(event) => update("sourceKinds", event.currentTarget.checked ? [...form.sourceKinds, "peer-reviewed-article"] : form.sourceKinds.filter((item) => item !== "peer-reviewed-article"), true)} /> Peer-reviewed articles</label><label><input type="checkbox" checked={form.sourceKinds.includes("technical-report")} onChange={(event) => update("sourceKinds", event.currentTarget.checked ? [...form.sourceKinds, "technical-report"] : form.sourceKinds.filter((item) => item !== "technical-report"), true)} /> Technical reports</label><label><input type="checkbox" checked={form.includePrivateReports} onChange={(event) => update("includePrivateReports", event.currentTarget.checked, true)} /> Include authorized private reports</label></fieldset>
-            <div className="intent-three-column"><label>Languages (comma-separated)<input value={form.languageCodes} onChange={(event) => update("languageCodes", event.currentTarget.value, true)} /></label><label>Start year<input type="number" min="1000" max="9999" value={form.startYear} onChange={(event) => update("startYear", event.currentTarget.value, true)} /></label><label>End year<input type="number" min="1000" max="9999" value={form.endYear} onChange={(event) => update("endYear", event.currentTarget.value, true)} /></label></div>
+            <fieldset><legend>Source kinds</legend><label><input type="checkbox" checked={form.sourceKinds.includes("peer-reviewed-article")} onChange={(event) => update("sourceKinds", event.currentTarget.checked ? [...form.sourceKinds, "peer-reviewed-article"] : form.sourceKinds.filter((item) => item !== "peer-reviewed-article"))} /> Peer-reviewed articles</label><label><input type="checkbox" checked={form.sourceKinds.includes("technical-report")} onChange={(event) => update("sourceKinds", event.currentTarget.checked ? [...form.sourceKinds, "technical-report"] : form.sourceKinds.filter((item) => item !== "technical-report"))} /> Technical reports</label><label><input type="checkbox" checked={form.includePrivateReports} onChange={(event) => update("includePrivateReports", event.currentTarget.checked)} /> Include authorized private reports</label></fieldset>
+            <div className="intent-three-column"><label>Languages (comma-separated)<input value={form.languageCodes} onChange={(event) => update("languageCodes", event.currentTarget.value)} /></label><label>Start year<input type="number" min="1000" max="9999" value={form.startYear} onChange={(event) => update("startYear", event.currentTarget.value)} /></label><label>End year<input type="number" min="1000" max="9999" value={form.endYear} onChange={(event) => update("endYear", event.currentTarget.value)} /></label></div>
             <fieldset><legend>Evidence types</legend>{EVIDENCE_TYPES.map((evidenceType) => <label key={evidenceType}><input type="checkbox" checked={form.evidenceTypes.includes(evidenceType)} onChange={(event) => update("evidenceTypes", event.currentTarget.checked ? [...form.evidenceTypes, evidenceType] : form.evidenceTypes.filter((item) => item !== evidenceType))} /> {evidenceType}</label>)}</fieldset>
             <p className="field-note">Mode recommendation: {guide.defaultEvidenceTypes.join(", ")}. Corpus-scope changes require a fresh impact preview.</p>
           </Panel>
 
           <div className="intent-two-column">
             <Panel title="AI authority profile"><label htmlFor="intent-autonomy">Maximum autonomy</label><select id="intent-autonomy" value={form.autonomyLevel} onChange={(event) => update("autonomyLevel", event.currentTarget.value as IntentDraftRequest["autonomyLevel"])}><option value="human-only">Human only</option><option value="suggest">Suggest only</option><option value="prepare-reversible">Prepare reversible work</option><option value="execute-reversible">Execute reversible work</option></select><p className="field-note">Ethics, study conduct, authorship, interpretation, final claims, and publication remain human decisions.</p></Panel>
-            <Panel title="Novelty standard"><label htmlFor="intent-novelty">Standard</label><select id="intent-novelty" value={form.noveltyStandard ?? ""} onChange={(event) => update("noveltyStandard", event.currentTarget.value ? event.currentTarget.value as NoveltyStandard : null, true)}><option value="">Not yet decided</option>{["bounded-comparative", "incremental", "theoretical", "methodological", "contextual", "critical", "interpretive", "not-claimed"].map((value) => <option key={value} value={value}>{value}</option>)}</select><label htmlFor="intent-novelty-rationale">Rationale</label><textarea id="intent-novelty-rationale" value={form.noveltyRationale} onChange={(event) => update("noveltyRationale", event.currentTarget.value)} rows={3} /></Panel>
+            <Panel title="Novelty standard"><label htmlFor="intent-novelty">Standard</label><select id="intent-novelty" value={form.noveltyStandard ?? ""} onChange={(event) => update("noveltyStandard", event.currentTarget.value ? event.currentTarget.value as NoveltyStandard : null)}><option value="">Not yet decided</option>{["bounded-comparative", "incremental", "theoretical", "methodological", "contextual", "critical", "interpretive", "not-claimed"].map((value) => <option key={value} value={value}>{value}</option>)}</select><label htmlFor="intent-novelty-rationale">Rationale</label><textarea id="intent-novelty-rationale" value={form.noveltyRationale} onChange={(event) => update("noveltyRationale", event.currentTarget.value)} rows={3} /></Panel>
           </div>
 
           <Panel title="Stopping logic"><fieldset><legend>Bounded stopping conditions</legend>{(["source-exhaustion", "coverage-threshold", "interpretive-saturation", "benchmark-complete", "nearest-prior-work-challenged", "protocol-complete", "resource-budget", "researcher-decision"] as const).map((condition) => <label key={condition}><input type="checkbox" checked={form.stoppingConditions.includes(condition)} onChange={(event) => update("stoppingConditions", event.currentTarget.checked ? [...form.stoppingConditions, condition] : form.stoppingConditions.filter((item) => item !== condition))} /> {condition}</label>)}</fieldset></Panel>

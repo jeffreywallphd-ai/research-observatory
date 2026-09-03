@@ -889,16 +889,16 @@
           "sourceKinds",
           "languageCodes",
           "includePrivateReports",
+          "evidenceTypes",
           "noveltyStandard",
+          "autonomyLevel",
+          "stoppingConditions",
           "researchObjective",
           "contributionIntent",
           "phenomenon",
           "unitOfAnalysis",
           "levelOfAnalysis",
-          "evidenceTypes",
           "noveltyRationale",
-          "autonomyLevel",
-          "stoppingConditions",
           "revisionRationale"
         ],
         "title": "IntentDraftRequest",
@@ -1101,6 +1101,16 @@
       "IntentImpactRequest": {
         "additionalProperties": false,
         "properties": {
+          "autonomyLevel": {
+            "enum": [
+              "human-only",
+              "suggest",
+              "prepare-reversible",
+              "execute-reversible"
+            ],
+            "title": "Autonomylevel",
+            "type": "string"
+          },
           "endYear": {
             "anyOf": [
               {
@@ -1113,6 +1123,26 @@
               }
             ],
             "title": "Endyear"
+          },
+          "evidenceTypes": {
+            "items": {
+              "enum": [
+                "empirical-study",
+                "systematic-review",
+                "theoretical-work",
+                "technical-evaluation",
+                "standard",
+                "dataset",
+                "interpretive-text",
+                "stakeholder-account",
+                "critical-analysis",
+                "private-report"
+              ],
+              "type": "string"
+            },
+            "maxItems": 32,
+            "title": "Evidencetypes",
+            "type": "array"
           },
           "expectedRevision": {
             "maximum": 9007199254740991.0,
@@ -1213,6 +1243,25 @@
               }
             ],
             "title": "Startyear"
+          },
+          "stoppingConditions": {
+            "items": {
+              "enum": [
+                "source-exhaustion",
+                "coverage-threshold",
+                "interpretive-saturation",
+                "benchmark-complete",
+                "nearest-prior-work-challenged",
+                "protocol-complete",
+                "resource-budget",
+                "researcher-decision"
+              ],
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Stoppingconditions",
+            "type": "array"
           }
         },
         "required": [
@@ -1222,7 +1271,10 @@
           "sourceKinds",
           "languageCodes",
           "includePrivateReports",
-          "noveltyStandard"
+          "evidenceTypes",
+          "noveltyStandard",
+          "autonomyLevel",
+          "stoppingConditions"
         ],
         "title": "IntentImpactRequest",
         "type": "object"

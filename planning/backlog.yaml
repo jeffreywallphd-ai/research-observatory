@@ -15083,6 +15083,15 @@ capabilities:
         reviewed_at: null
         notes: null
       base_sha: 288cca7cc4cd380360f10879caea619007b71088
+      experience_change:
+        kind: approved-reference-implementation
+        contract_path: artifacts/evidence/ui-change/CAP-03.S06.T02.json
+        reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
+        reference_version: '1.5'
+        reference_package_sha256: 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae
+        reference_approval_commit: 7ec1b27d72c189216d7a203586b7339202733531
+        previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.4
+        implementation_agent: agent:codex
       lease:
         claimed_by: codex
         claimed_at: '2026-09-03T19:59:59+00:00'

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-03.S06.T02",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-03.S06.T02.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "version": "1.5",
+    "packageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
+    "approvalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.4"
+  },
+  "focusedEvidence": [
+    {
+      "command": "npm test --prefix apps/desktop -- --run && npm run lint --prefix apps/desktop && apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false && npm run build --prefix apps/desktop",
+      "result": "passed",
+      "scope": "All 99 active desktop tests passed with three platform-bound cases skipped; strict TypeScript and lint passed; the production desktop bundle built. Coverage includes required project objective and workflow-profile selection, complete approved profile detail, impact acknowledgement invalidation, all-tools availability, policy denial, and persisted intent state."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check && .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "result": "passed",
+      "scope": "Twenty desktop-product and sidecar contract tests passed, and the assembled functional frame passed project, keyboard, focus, responsive, diagnostics, privacy, application-lock, and recovery checks. The browser harness exercised the exact Core-projected 14-profile catalog, required research objective, profile selection, and impact preview."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference && .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows && .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "result": "passed",
+      "scope": "The approved v1.5 reference reproduced with zero errors; 139 workflow browser cases, 390 keyboard cases, and 66 responsive and accessibility cases passed against its exact package hash."
+    },
+    {
+      "command": "configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-native-final.json",
+      "result": "passed",
+      "scope": "The real Windows-native desktop-to-Core route passed project creation, versioned workflow selection, complete impact preview and acknowledgement, stale dependency propagation, policy denial, acceptance response-loss reconciliation, restart persistence, and exact provenance-event assertions."
+    }
+  ],
+  "implementationScope": "Implement the already approved Academic Minimal v1.5 primary-use-case experience in project creation and Research Intent revision. Project creation requires a research objective and one canonical workflow profile, presents its purpose, output, process form, and ordered steps, and persists the exact immutable reference. Later changes show Core-authored schemas, checkpoints, outputs, autonomy, stopping conditions, and stale artifacts before explicit acknowledgement. The selected workflow never removes tools or weakens evidence, provenance, policy, or researcher authority."
+}

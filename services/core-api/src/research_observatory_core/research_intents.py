@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from itertools import pairwise
 from pathlib import Path
 from threading import RLock
-from typing import Any, cast
+from typing import Any, Protocol, cast
 
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .logging import emit_log_record
@@ -30,6 +30,7 @@ from .models import (
     WorkflowProfileStageProjection,
 )
 from .ports.repositories import (
+    DependencyStaleState,
     IntentAuditEvent,
     IntentPolicyAuditEvent,
     IntentPolicyDecisionRecord,
@@ -55,6 +56,13 @@ from .workflow_profile_contracts import (
 )
 
 _RepositoryFactory = Callable[[Path, str], IntentRevisionRepository]
+
+
+class _StaleStateRepository(Protocol):
+    def stale_states(self, *, output_revision_id: str | None = None) -> tuple[DependencyStaleState, ...]: ...
+
+
+_StaleStateRepositoryFactory = Callable[[Path, str], _StaleStateRepository]
 _MAX_HISTORY = 100
 
 
@@ -100,6 +108,12 @@ class _UnavailableIntentRepository(IntentRevisionRepository):
     ) -> IntentRevisionRecord:
         del expected_revision, domain_project_id, manifest_project_id, record, event, workflow_authority
         raise RepositoryProblem("research intent repository is unavailable")
+
+
+class _UnavailableStaleStateRepository:
+    def stale_states(self, *, output_revision_id: str | None = None) -> tuple[DependencyStaleState, ...]:
+        del output_revision_id
+        raise RepositoryProblem("dependency stale-state repository is unavailable")
 
 
 _USE_CASE_MODE = {
@@ -911,6 +925,46 @@ def _validated_workflow_authority(
     return selections, migrations
 
 
+def _validate_intent_authority_references(
+    revisions: tuple[Mapping[str, object], ...],
+    selections: tuple[Mapping[str, object], ...],
+    migrations: tuple[Mapping[str, object], ...],
+) -> None:
+    canonical_by_reference = {_canonical_json(_intent_reference(revision)): revision for revision in revisions}
+
+    def require_reference(value: object) -> Mapping[str, object]:
+        if not isinstance(value, Mapping):
+            raise RepositoryProblem("workflow intent reference is invalid")
+        revision = canonical_by_reference.get(_canonical_json(value))
+        if revision is None:
+            raise RepositoryProblem("workflow intent reference does not resolve to canonical history")
+        return revision
+
+    for selection in selections:
+        revision = require_reference(selection.get("researchIntent"))
+        if (
+            selection.get("projectId") != revision.get("projectId")
+            or cast(Mapping[str, object], selection["profile"]).get("profileId") != revision.get("primaryUseCase")
+            or selection.get("selectedBy") != revision.get("createdBy")
+        ):
+            raise RepositoryProblem("workflow selection differs from canonical intent authority")
+
+    for migration in migrations:
+        prior = require_reference(migration.get("priorResearchIntent"))
+        target = require_reference(migration.get("targetResearchIntent"))
+        acceptance = migration.get("acceptance")
+        if not isinstance(acceptance, Mapping):
+            raise RepositoryProblem("workflow migration acceptance is invalid")
+        if (
+            cast(int, target["revision"]) != cast(int, prior["revision"]) + 1
+            or target.get("intentId") != prior.get("intentId")
+            or target.get("projectId") != prior.get("projectId")
+            or migration.get("createdBy") != target.get("createdBy")
+            or acceptance.get("decidedBy") != target.get("createdBy")
+        ):
+            raise RepositoryProblem("workflow migration differs from canonical intent authority")
+
+
 def _scope_from_projection(projection: IntentDraftProjection) -> dict[str, object]:
     return {
         "primaryUseCase": projection.primary_use_case,
@@ -919,7 +973,10 @@ def _scope_from_projection(projection: IntentDraftProjection) -> dict[str, objec
         "startYear": projection.start_year,
         "endYear": projection.end_year,
         "includePrivateReports": projection.include_private_reports,
+        "evidenceTypes": list(projection.evidence_types),
         "noveltyStandard": projection.novelty_standard,
+        "autonomyLevel": projection.autonomy_level,
+        "stoppingConditions": list(projection.stopping_conditions),
     }
 
 
@@ -931,11 +988,19 @@ def _scope_from_request(command: IntentImpactRequest) -> dict[str, object]:
         "startYear": command.start_year,
         "endYear": command.end_year,
         "includePrivateReports": command.include_private_reports,
+        "evidenceTypes": list(command.evidence_types),
         "noveltyStandard": command.novelty_standard,
+        "autonomyLevel": command.autonomy_level,
+        "stoppingConditions": list(command.stopping_conditions),
     }
 
 
-def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest) -> IntentImpactPreview:
+def _impact(
+    current: IntentDraftProjection | None,
+    command: IntentImpactRequest,
+    *,
+    stale_artifact_ids: tuple[str, ...] = (),
+) -> IntentImpactPreview:
     if current is None:
         return IntentImpactPreview(
             expected_revision=command.expected_revision,
@@ -1035,7 +1100,7 @@ def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest)
         "categories": categories,
         "expectedRevision": command.expected_revision,
         "scope": after,
-        "staleArtifactIds": [],
+        "staleArtifactIds": list(stale_artifact_ids),
         "stoppingLogicEffects": stopping_effects,
     }
     token = hashlib.sha256(_canonical_json(token_payload).encode("utf-8")).hexdigest()
@@ -1048,7 +1113,7 @@ def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest)
         affected_checkpoints=checkpoints,
         autonomy_default_effects=autonomy_effects,
         stopping_logic_effects=stopping_effects,
-        stale_artifact_ids=(),
+        stale_artifact_ids=stale_artifact_ids,
         warnings=tuple(warnings),
         acknowledgement_required=True,
         acknowledgement_token=token,
@@ -1148,12 +1213,14 @@ class ResearchIntentService:
         projects: ProjectLifecycleService,
         *,
         repository_factory: _RepositoryFactory,
+        stale_state_repository_factory: _StaleStateRepositoryFactory,
         local_actor_id: str | None,
     ) -> None:
         if local_actor_id is not None and not is_uuid_v7(local_actor_id):
             raise ValueError("local actor identity must be a UUIDv7")
         self._projects = projects
         self._repository_factory = repository_factory
+        self._stale_state_repository_factory = stale_state_repository_factory
         self._local_actor_id = local_actor_id
         self._policy_cache: dict[str, Mapping[str, object] | None] = {}
         self._policy_cache_lock = RLock()
@@ -1163,6 +1230,7 @@ class ResearchIntentService:
         return cls(
             projects,
             repository_factory=lambda _path, _project_id: _UnavailableIntentRepository(),
+            stale_state_repository_factory=lambda _path, _project_id: _UnavailableStaleStateRepository(),
             local_actor_id=None,
         )
 
@@ -1223,6 +1291,7 @@ class ResearchIntentService:
             ).hexdigest()[:32]
             self._save(
                 self._repository_factory(path, manifest_project_id),
+                self._stale_state_repository_factory(path, manifest_project_id),
                 manifest_project_id,
                 command,
                 trace_id=trace_id,
@@ -1251,7 +1320,10 @@ class ResearchIntentService:
             root=command.root,
             require_write=False,
             action=lambda path, project_id: self._preview(
-                self._repository_factory(path, project_id), project_id, command
+                self._repository_factory(path, project_id),
+                self._stale_state_repository_factory(path, project_id),
+                project_id,
+                command,
             ),
         )
 
@@ -1277,6 +1349,7 @@ class ResearchIntentService:
             require_write=True,
             action=lambda path, project_id: self._save(
                 self._repository_factory(path, project_id),
+                self._stale_state_repository_factory(path, project_id),
                 project_id,
                 command,
                 trace_id=trace_id,
@@ -1352,7 +1425,8 @@ class ResearchIntentService:
     ) -> WorkflowAuthorityMutation:
         try:
             authority = repository.read_workflow_authority()
-            selections, _migrations = _validated_workflow_authority(authority)
+            selections, migrations = _validated_workflow_authority(authority)
+            _validate_intent_authority_references(revisions, selections, migrations)
         except RepositoryProblem as error:
             raise _problem(
                 status=500,
@@ -1395,6 +1469,7 @@ class ResearchIntentService:
     def _preview(
         self,
         repository: IntentRevisionRepository,
+        stale_state_repository: _StaleStateRepository,
         _project_id: str,
         command: IntentImpactRequest,
     ) -> IntentImpactPreview:
@@ -1410,7 +1485,27 @@ class ResearchIntentService:
                 detail="The impact preview was based on an older local intent revision.",
                 remediation="Reload the current revision, review its scope, and preview the changes again.",
             )
-        return _impact(current, command)
+        preview = _impact(current, command)
+        if not preview.acknowledgement_required:
+            return preview
+        return _impact(
+            current,
+            command,
+            stale_artifact_ids=self._stale_artifact_ids(stale_state_repository),
+        )
+
+    def _stale_artifact_ids(self, repository: _StaleStateRepository) -> tuple[str, ...]:
+        try:
+            return tuple(dict.fromkeys(state.output_revision_id for state in repository.stale_states()))
+        except RepositoryProblem as error:
+            raise _problem(
+                status=500,
+                code="RO-CORE-INTENT-IMPACT-STALE-STATE-READ-FAILED",
+                title="Intent change impact is unavailable",
+                detail="Known stale artifact state could not be validated for the impact preview.",
+                remediation="Keep the prior intent authoritative and run project health checks before retrying.",
+                retryable=True,
+            ) from error
 
     def _accept(
         self,
@@ -1640,6 +1735,7 @@ class ResearchIntentService:
     def _save(
         self,
         repository: IntentRevisionRepository,
+        stale_state_repository: _StaleStateRepository,
         manifest_project_id: str,
         command: IntentDraftRequest,
         *,
@@ -1705,6 +1801,12 @@ class ResearchIntentService:
                 remediation="Reload, compare the current revision, and reapply the intended changes.",
             )
         preview = _impact(current, command.to_impact_request())
+        if preview.acknowledgement_required:
+            preview = _impact(
+                current,
+                command.to_impact_request(),
+                stale_artifact_ids=self._stale_artifact_ids(stale_state_repository),
+            )
         if preview.acknowledgement_required and command.impact_acknowledgement != preview.acknowledgement_token:
             raise _problem(
                 status=409,

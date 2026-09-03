@@ -163,6 +163,21 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
             "diagnosticCode": "RO-CORE-STARTING",
         }
         self.assertEqual(49152, benchmark.validate_handshake(value, 42))
+        supervisor_source = (ROOT / "apps" / "desktop" / "src-tauri" / "src" / "supervisor.rs").read_text(
+            encoding="utf-8"
+        )
+        capability_block = supervisor_source.split("const EXPECTED_CORE_CAPABILITIES: &[&str] = &[", 1)[1].split(
+            "];", 1
+        )[0]
+        supervisor_capabilities = tuple(
+            line.strip().removeprefix('"').removesuffix('",')
+            for line in capability_block.splitlines()
+            if line.strip().startswith('"')
+        )
+        capabilities = value["capabilities"]
+        self.assertIsInstance(capabilities, list)
+        assert isinstance(capabilities, list)
+        self.assertEqual(tuple(capabilities), supervisor_capabilities)
         for field, invalid in (("buildId", "9.9.9"), ("pid", 41), ("host", "localhost"), ("port", 0)):
             with self.subTest(field=field):
                 changed = copy.deepcopy(value)

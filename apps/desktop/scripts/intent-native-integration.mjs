@@ -104,23 +104,30 @@ try {
     parentDirectory,
     directoryName: "intent-native",
     displayName: "Intent native integration",
-    templateId: "theory-synthesis",
+    primaryUseCase: "theory-synthesis",
+    researchObjective: "Explain how evidence-first scholarly workflows preserve researcher authority.",
   });
   const root = project.root;
   await client.openProject({ root });
-  const emptyWorkspace = await client.intent({ root });
-  if (emptyWorkspace.current !== null) throw new Error("new project unexpectedly has an intent");
+  const initialWorkspace = await client.intent({ root });
+  if (initialWorkspace.current?.revision !== 1
+    || initialWorkspace.current.primaryUseCase !== "theory-synthesis") {
+    throw new Error("new project did not restore its atomic initial intent and workflow selection");
+  }
 
   const impact = {
     root,
-    expectedRevision: 0,
-    primaryUseCase: "theory-synthesis",
+    expectedRevision: 1,
+    primaryUseCase: "systematic-review",
     sourceKinds: ["peer-reviewed-article", "conference-paper"],
+    evidenceTypes: ["empirical-study", "theoretical-work"],
     languageCodes: ["en"],
     startYear: 2015,
     endYear: 2026,
     includePrivateReports: false,
     noveltyStandard: "theoretical",
+    autonomyLevel: "suggest",
+    stoppingConditions: ["coverage-threshold"],
   };
   const preview = await client.previewIntent(impact);
   const draft = await client.saveIntentDraft({
@@ -130,15 +137,12 @@ try {
     phenomenon: "Evidence-first scholarly reasoning",
     unitOfAnalysis: "Scholarly workflow",
     levelOfAnalysis: "Conceptual system",
-    evidenceTypes: ["empirical-study", "theoretical-work"],
     noveltyRationale: "Compare explicit authority boundaries across workflow stages.",
-    autonomyLevel: "suggest",
-    stoppingConditions: ["interpretive-saturation"],
     revisionRationale: "Create the initial decision-complete intent.",
     impactAcknowledgement: preview.acknowledgementToken,
   }, "0123456789abcdef0123456789abcdef");
-  if (!draft.canRequestAcceptance || draft.revision !== 1) {
-    throw new Error("persisted draft is not decision-complete revision 1");
+  if (!draft.canRequestAcceptance || draft.revision !== 2) {
+    throw new Error("persisted draft is not decision-complete revision 2");
   }
 
   const restarted = await exchange({ control: "restart" });
@@ -176,7 +180,7 @@ try {
   }
   await client.openProject({ root });
   accepted = await client.acceptIntent(acceptanceCommand, acceptanceKey);
-  if (accepted.status !== "accepted" || accepted.revision !== 2) {
+  if (accepted.status !== "accepted" || accepted.revision !== 3) {
     throw new Error("same-key acceptance reconciliation did not return the persisted revision");
   }
   policy = await client.evaluateIntentPolicy({
@@ -214,10 +218,14 @@ try {
       env: { ...process.env, PYTHONPATH: pythonPath },
     },
   ));
-  const expectedEventTypes = ["intent.draft.saved", "intent.accepted", "intent.policy.evaluated"];
-  if (persistenceInspection.revisionRecords !== 2
-    || expectedEventTypes.some((eventType) => (
-      persistenceInspection.provenanceEvents?.[eventType]?.count !== 1
+  const expectedEventCounts = {
+    "intent.draft.saved": 2,
+    "intent.accepted": 1,
+    "intent.policy.evaluated": 1,
+  };
+  if (persistenceInspection.revisionRecords !== 3
+    || Object.entries(expectedEventCounts).some(([eventType, count]) => (
+      persistenceInspection.provenanceEvents?.[eventType]?.count !== count
       || persistenceInspection.provenanceEvents[eventType].actorBound !== true
     ))) {
     throw new Error("protected SQLite revision/provenance inspection did not match the vertical path");

@@ -9,6 +9,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import tempfile
 from collections.abc import Callable
 from html.parser import HTMLParser
@@ -205,6 +206,7 @@ def product_build_errors(repo: Path) -> list[str]:
             "CAP-03.S02.T02",
             "CAP-03.S03.T03",
             "CAP-03.S05.T03",
+            "CAP-03.S06.T02",
         ],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
@@ -831,6 +833,34 @@ def data_table_interaction_errors(repo: Path, browser_context: Any) -> tuple[lis
     return errors, details
 
 
+def core_workflow_catalog_json(repo: Path) -> str:
+    catalog_process = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "from research_observatory_core.projects import ProjectLifecycleService; "
+                "from research_observatory_core.research_intents import ResearchIntentService; "
+                "print(ResearchIntentService.unavailable(ProjectLifecycleService())"
+                ".workflow_profile_catalog().model_dump_json(by_alias=True))"
+            ),
+        ],
+        cwd=repo,
+        env={**os.environ, "PYTHONPATH": str(repo / "services" / "core-api" / "src")},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if catalog_process.returncode != 0:
+        raise ValueError("desktop workflow catalog fixture could not be projected by Core")
+    workflow_catalog_json = catalog_process.stdout.strip()
+    try:
+        json.loads(workflow_catalog_json)
+    except json.JSONDecodeError as error:
+        raise ValueError("desktop workflow catalog fixture was not canonical JSON") from error
+    return workflow_catalog_json
+
+
 def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
     errors = product_build_errors(repo)
     runtime_path = repo / PRODUCT_ROOT / "assets" / "app.js"
@@ -847,6 +877,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             "CAP-03.S02.T02",
             "CAP-03.S03.T03",
             "CAP-03.S05.T03",
+            "CAP-03.S06.T02",
         ],
         "referenceOnlyPages": 0,
         "commandFocus": False,
@@ -885,6 +916,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
     if errors:
         return errors, details
     document = inline_product_index(repo)
+    try:
+        workflow_catalog_json = core_workflow_catalog_json(repo)
+    except ValueError as error:
+        return [*errors, str(error)], details
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
         browser_context = browser.new_context()
@@ -1201,6 +1236,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       'Only the rebuildable project cache is cleared; canonical project data is excluded.'
                     ]
                   };
+                  const workflowCatalog = __WORKFLOW_CATALOG__;
                   const privacyPolicy = () => ({
                     schemaVersion: '1.0', projectId, revision: privacyRevision,
                     defaultsApplied: privacyRevision === 0, networkPolicy,
@@ -1245,6 +1281,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       } else {
                         window.__PROJECT_CALLS__.push(request);
                       }
+                      if (request?.path === '/workflow-profiles/catalog') {
+                        if (request.method !== 'GET' || request.body !== null || request.ifMatch !== null
+                          || request.idempotencyKey !== null) throw new Error('invalid catalog request');
+                        return {status: 200, contentType: 'application/json', traceId, etag: null,
+                          body: JSON.stringify(workflowCatalog)};
+                      }
                       if (request?.method !== 'POST' || request?.ifMatch !== null || request?.idempotencyKey !== null) {
                         throw new Error('invalid project request envelope');
                       }
@@ -1285,7 +1327,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                         };
                       } else if (request.path === '/projects') {
                         if (body.parentDirectory !== 'C:/Research' || body.directoryName !== 'study-one'
-                          || body.displayName !== 'Study One' || body.templateId !== 'theory-synthesis') {
+                          || body.displayName !== 'Study One' || body.primaryUseCase !== 'theory-synthesis'
+                          || body.researchObjective !== 'Explain a bounded evidence-first workflow.') {
                           throw new Error('invalid create body');
                         }
                       } else if (request.path === '/projects/open') {
@@ -1320,7 +1363,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       };
                     }
                   };
-                })()"""
+                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
             )
             projects.goto("http://tauri.localhost/index.html", wait_until="load")
             projects.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
@@ -1328,6 +1371,15 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             projects.locator("#project-parent-directory").fill("C:/Research")
             projects.locator("#project-directory-name").fill("study-one")
             projects.locator("#project-display-name").fill("Study One")
+            projects.locator("#project-research-objective").fill("Explain a bounded evidence-first workflow.")
+            projects.locator("#project-primary-use-case").select_option("theory-synthesis")
+            workflow_preview_valid = (
+                "Clarify and integrate constructs" in projects.locator("main").inner_text()
+                and "Theory architecture, construct map" in projects.locator("main").inner_text()
+                and "Linear process" in projects.locator("main").inner_text()
+                and "Research Intent" in projects.locator("main").inner_text()
+                and "Theory Map" in projects.locator("main").inner_text()
+            )
             projects.get_by_role("button", name="Create project", exact=True).click()
             projects.locator("[data-current-project]").wait_for(state="visible", timeout=5_000)
             current = projects.locator("[data-current-project]")
@@ -1407,17 +1459,26 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             project_sequence_valid = projects.evaluate(
                 """() => JSON.stringify(window.__PROJECT_CALLS__.map((request) => request.path))
-                  === JSON.stringify(['/projects','/projects/open','/projects/close','/projects/archive',
+                  === JSON.stringify(['/workflow-profiles/catalog','/projects','/projects/open',
+                    '/workflow-profiles/catalog','/projects/close','/projects/archive',
                     '/projects/restore','/projects/delete','/projects/open','/projects/close','/projects/open'])
                   && document.querySelector('[data-current-project]')?.textContent?.includes('Revision 3')
                   && !document.querySelector('[data-workflow-select], [data-workflow-nav], [data-all-tools]')"""
             )
             projects.keyboard.press("Control+K")
             projects.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
+            details["projectsWorkflowCases"] = {
+                "safeOpen": safe_open_valid,
+                "archivedIncompatible": archived_incompatible_valid,
+                "projectSequence": project_sequence_valid,
+                "workflowPreview": workflow_preview_valid,
+                "requestPaths": projects.evaluate("() => window.__PROJECT_CALLS__.map((request) => request.path)"),
+            }
             details["projectsWorkflow"] = (
                 safe_open_valid
                 and archived_incompatible_valid
                 and project_sequence_valid
+                and workflow_preview_valid
                 and projects.evaluate("document.activeElement?.id === 'shell-command'")
             )
             if project_errors:
@@ -1486,6 +1547,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       + 'this is not Windows-account isolation.',
                     retryAfterSeconds: 0, auditSequence: 1
                   };
+                  const workflowCatalog = __WORKFLOW_CATALOG__;
                   const projection = {
                     schemaVersion: '1.0', projectId: '11111111-1111-4111-8111-111111111111',
                     displayName: 'Sensitive Study', templateId: 'theory-synthesis',
@@ -1561,7 +1623,18 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                         return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
                       }
                       if (command === 'core_runtime_stop') return undefined;
+                      if (command === 'core_api_request'
+                        && args?.request?.path === '/workflow-profiles/catalog') {
+                        return {status: 200, contentType: 'application/json',
+                          traceId: '0123456789abcdef0123456789abcdef', etag: null,
+                          body: JSON.stringify(workflowCatalog)};
+                      }
                       if (command === 'core_api_request' && args?.request?.path === '/projects') {
+                        const body = JSON.parse(args.request.body);
+                        if (body.primaryUseCase !== 'theory-synthesis'
+                          || body.researchObjective !== 'Preserve a bounded sensitive workflow.') {
+                          throw new Error('invalid governed project creation');
+                        }
                         return {status: 200, contentType: 'application/json',
                           traceId: '0123456789abcdef0123456789abcdef', etag: null,
                           body: JSON.stringify(projection)};
@@ -1575,7 +1648,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       throw new Error(`unsupported lock reconciliation command: ${command}`);
                     }
                   };
-                })()"""
+                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
             )
             lock_reconciliation.goto("http://tauri.localhost/index.html", wait_until="load")
             lock_reconciliation.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
@@ -1583,6 +1656,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             lock_reconciliation.locator("#project-parent-directory").fill("C:/Private")
             lock_reconciliation.locator("#project-directory-name").fill("sensitive-study")
             lock_reconciliation.locator("#project-display-name").fill("Sensitive Study")
+            lock_reconciliation.locator("#project-research-objective").fill("Preserve a bounded sensitive workflow.")
+            lock_reconciliation.locator("#project-primary-use-case").select_option("theory-synthesis")
             lock_reconciliation.get_by_role("button", name="Create project", exact=True).click()
             lock_reconciliation.locator("[data-current-project]").wait_for(timeout=5_000)
             lock_reconciliation.get_by_role("button", name="Research intent", exact=True).click()
