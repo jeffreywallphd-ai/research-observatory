@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T02",
+  "commit": "eb7ee5746cfeb3b656c13e1bdd30c66866b91538",
+  "baseCommit": "8e522b51bb5414cb55b69cba86299262969539b0",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S06.T02.remediation-01.json",
+    "sha256": "be72b44dae32d4adfcbf14389be10e5bbd6a65f5dcd2a969803e8c0e4d425902",
+    "commit": "8e522b51bb5414cb55b69cba86299262969539b0",
+    "reason": "Mandatory R03 root-cause remediation for the still-open CAP-03.S06.T02-R01-F01 and CAP-03.S06.T02-R01-F03 findings."
+  },
+  "changedFiles": [
+    "apps/desktop/scripts/intent-native-integration.mjs",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+    "artifacts/evidence/CAP-03.S06.T02.remediation-01.json",
+    "artifacts/evidence/CAP-03.S06.T02.review-R02.json",
+    "artifacts/evidence/CAP-03.S06.T02.task-start.md",
+    "artifacts/evidence/ui-change/CAP-03.S06.T02.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T02.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/service/fixtures/native_integration_sidecar.py",
+    "tests/service/test_research_intents.py",
+    "tools/core_api_contract.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 73 service tests passed and the generated Core API contract reproduced exactly. The suite removes both the settings activation binding and all workflow-profile rows in one transaction, confirms the independent provenance witness survives and restart fails closed, denies missing or substituted witnesses, authenticates the exact schema-v10 predecessor upgrade, and recomputes the exact approved guidance hash while a one-value mutation produces a different hash."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts -- --run; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "exitCode": 0,
+      "result": "All 77 Python contract tests and all 91 TypeScript contract tests passed with strict TypeScript compilation. The generated decoder requires exact intentGuidanceVersion and intentGuidanceHash values and rejects a substituted guidance hash."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/data -p test_*.py; .venv/Scripts/python.exe -m unittest -v tests.security.test_protected_database",
+      "exitCode": 0,
+      "result": "All 116 data tests and all 11 protected-database security tests passed. The activation witness uses the existing immutable provenance ledger and remains atomic with the settings authority under plaintext test and protected Windows database boundaries."
+    },
+    {
+      "command": "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 99 active desktop tests passed with three platform-bound skips; strict TypeScript and desktop lint passed; both production and reference bundles built. Desktop fixtures carry the separately governed guidance identity and retain a single Core-projected values source."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-R03-desktop.json",
+      "exitCode": 0,
+      "result": "All 20 desktop-product and sidecar tests passed, and the assembled functional frame reported zero errors with intentStoppingEffects true. The browser continues to select systematic review, apply the exact Core guidance, and render removed and added stopping effects before acknowledgement."
+    },
+    {
+      "command": "configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-R03-native.json",
+      "exitCode": 0,
+      "result": "The real Windows-native supervisor/Core/protected-SQLite path passed project creation, profile selection, impact acknowledgement, restart, policy denial, response-loss reconciliation, and exact actor-bound provenance counts. Its persistence inspection observes one workflow.profile.activated event in addition to the expected intent and policy events."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check <7 changed Python files>; .venv/Scripts/python.exe -m ruff format --check <7 changed Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <7 changed Python files>",
+      "exitCode": 0,
+      "result": "All seven changed Python source, tool, and test files passed Ruff lint, Ruff formatting, and focused mypy."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head eb7ee5746cfeb3b656c13e1bdd30c66866b91538; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 8e522b51bb5414cb55b69cba86299262969539b0..eb7ee5746cfeb3b656c13e1bdd30c66866b91538",
+      "exitCode": 0,
+      "result": "Repository structure, architecture, CI policy, the exact approved-reference UI gate, generated backlog views, authoritative backlog, strict R02-to-R03 ancestry, and patch hygiene passed at the exact candidate. The task review page is regenerated after submission so its visible worksheet and R03 packet hashes bind the frozen review state."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base 8e522b51bb5414cb55b69cba86299262969539b0 --affected-head eb7ee5746cfeb3b656c13e1bdd30c66866b91538 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-R03-selection.json",
+      "exitCode": 0,
+      "result": "The governed affected-path selector passed for the exact R02-to-R03 range. Risk-selected service, contract, data, protected storage, desktop, native, static, architecture, UI, planning, and evidence checks were run; profile performance remains explicitly retained for W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The project-creation path still requires a scholarly objective and one exact workflow profile, and the native Windows vertical plus complete service and desktop suites pass unchanged.",
+        "Every projected default value is now part of one Core guidance document with version 1.0.0 and canonical SHA-256 2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2. The generated client requires that identity and the desktop owns no parallel values table."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "CAP-03.S06.T02-R01-F01 is remediated by an immutable workflow.profile.activated provenance event created atomically with the first binding and selection. The binding names the witness event and hashes its exact bytes; the witness independently binds the actor, time, and binding digest. Combined deletion of both the settings binding and every workflow-profile row leaves the witness and fails closed after restart.",
+        "Deleting or substituting the independent witness while settings authority remains also fails closed. Exact pre-T02 schema-v10 bytes still have neither binding nor witness, upgrade once without predecessor rewrite, survive restart, and replay idempotently.",
+        "The already closed CAP-03.S06.T02-R01-F02 remains fixed: exact retained, removed, and added autonomy and stopping effects pass service and assembled-browser replay before acknowledgement."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S06.T02-R01-F03 is remediated by separating workflow-profile identity from intent-guidance identity. The projection advertises both exact hashes, the activation binding carries both, the generated decoder rejects substitution, and a one-value guidance mutation changes the guidance hash while leaving the profile catalog identity semantically distinct.",
+        "UI evidence now calls the defaults separately versioned and content-hash-bound Core guidance rather than catalog-authored. Native stale-state claims remain narrowed to the actual boundary, and all-tools, evidence, provenance, policy, human authority, idempotency, and immutable history behavior remain green."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Mandatory R03 replay centers on CAP-03.S06.T02-R01-F01 and CAP-03.S06.T02-R01-F03. CAP-03.S06.T02-R01-F01 recurred because R02 tested activation and selection loss separately while co-locating both in settings; R03 therefore tests combined settings loss, an independently surviving provenance witness, witness deletion/substitution, atomic publication, restart, exact predecessor upgrade, and native protected-SQLite inspection. CAP-03.S06.T02-R01-F03 recurred because R02 treated Core location as governance without hashing the values; R03 therefore checks exact guidance hash recomputation, one-value mutation, generated client substitution denial, activation binding, UI evidence wording, and renderer use of the single projection. Full service/contracts/data/desktop suites, protected storage, native integration, static checks, architecture, UI gate, planning integrity, and exact-range hygiene cover the incremental shared-boundary risk. Performance is unchanged and retained for W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:ci",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "service:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "Desktop and data performance commands are gate-bound to W1 exit; R03 changes no performance budget or algorithmic workflow path.",
+      "Complete cross-capability failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, performance, primary-platform, and visual qualification remains mandatory at CAP-03.S06 slice review, integration checkpoints, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [
+      "CAP-03.S06.T02-R01-F01",
+      "CAP-03.S06.T02-R01-F03"
+    ],
+    "rootCauseAnalysis": "R01-F01 recurred because the R02 implementation treated a different settings key as independent authority and tested activation and selection deletion separately; both still vanished under one settings-ledger deletion. R01-F03 recurred because the R02 implementation treated physical centralization in Core plus key-set equality as governed value identity; it never enumerated or hashed the new guidance values. The shared root cause was substituting location and presence checks for explicit value-bearing identity plus an independent survivor invariant. R03 corrects both systemically: the first binding is witnessed in the separate immutable provenance ledger and every guidance value is covered by its own versioned canonical hash across Core, activation, generated client, desktop, tests, and evidence. Preventive tests combine settings loss, delete or substitute the witness, mutate one guidance value, and reject a substituted generated-client hash.",
+    "note": "Independently authenticate exact R03 candidate eb7ee5746cfeb3b656c13e1bdd30c66866b91538 and frozen evidence, replay CAP-03.S06.T02-R01-F01 and CAP-03.S06.T02-R01-F03 plus the closed F02 effect boundary, verify the provenance witness survives combined settings deletion and that guidance values are exactly version/hash-bound end to end, and preserve all R01/R02 history before closing either open finding."
+  }
+}
