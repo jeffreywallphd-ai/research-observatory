@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0012",
   "title": "Append later post-migration Wave amendments",
-  "status": "pending-review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -84,18 +84,26 @@
       ],
       "path": "planning/governance-migrations/GOV-MAINT-0012.review-R01.json",
       "sha256": "7e89892f7d4acf00409ff4c3bd7a3e48c685cb5f8f5f589f266f1cb465085a9a"
+    },
+    {
+      "reviewId": "GOV-MAINT-0012.R02",
+      "reviewedCommit": "1ce93bf6d4aef96639e8dbe98189fd979b70db77",
+      "reviewer": "agent:gov-maint-0011-reviewer",
+      "reviewedAt": "2026-09-03T14:36:17.6895439Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0012.review-R02.json",
+      "sha256": "b522d5a45befbb8169024338925ded65a6e9f370d830f4297d8d1d520b41ad9b"
     }
   ],
   "review": {
-    "reviewId": "GOV-MAINT-0012.R01",
-    "reviewedCommit": "da75961e3caac76e46bc42b3adc132db55baa115",
+    "reviewId": "GOV-MAINT-0012.R02",
+    "reviewedCommit": "1ce93bf6d4aef96639e8dbe98189fd979b70db77",
     "reviewer": "agent:gov-maint-0011-reviewer",
-    "reviewedAt": "2026-09-03T14:30:35.7963073Z",
-    "disposition": "CHANGES_REQUESTED",
-    "findings": [
-      "GOV-MAINT-0012.R01-F01"
-    ],
-    "path": "planning/governance-migrations/GOV-MAINT-0012.review-R01.json",
-    "sha256": "7e89892f7d4acf00409ff4c3bd7a3e48c685cb5f8f5f589f266f1cb465085a9a"
+    "reviewedAt": "2026-09-03T14:36:17.6895439Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0012.review-R02.json",
+    "sha256": "b522d5a45befbb8169024338925ded65a6e9f370d830f4297d8d1d520b41ad9b"
   }
 }
