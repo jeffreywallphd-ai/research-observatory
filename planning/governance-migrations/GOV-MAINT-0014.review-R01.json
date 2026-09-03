@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0014",
+  "reviewId": "GOV-MAINT-0014.R01",
+  "reviewedCommit": "85554c166283964084c3ccde31241133c0a34522",
+  "reviewer": "agent:ecr5-planning-authority-reviewer",
+  "reviewedAt": "2026-09-03T12:39:42.6099060-04:00",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0014.json",
+    "tests/foundation/test_taskctl_workflow.py"
+  ],
+  "findings": [],
+  "closures": [],
+  "verified": [
+    "The exact candidate 85554c166283964084c3ccde31241133c0a34522 directly and strictly descends from the adverse W1.A06.B00 review-state commit 5691d04da3917de487331479a8f07704b77c21c5 and changes only the two declared maintenance and test paths.",
+    "Historic pre-W1.A04 and pre-W1.A05 fixtures now contain exactly W1.A01 through W1.A03, while the pre-W1.A06 fixture contains exactly W1.A01 through W1.A05. Later legitimate amendments therefore cannot contaminate these frozen predecessor fixtures.",
+    "All original denial, no-save, before/after stability, post-state, revision-12, MI-0001, clean-workspace, duplicate-denial, and protected-witness assertions remain present; no assertion was removed or weakened.",
+    "All five affected tests pass, including the exact three evidence-selected bootstrap transitions, historic pre-W1.A04 submission, and protected-witness non-read behavior. Ruff check and formatting, maintenance JSON parsing, approved ECR-0005 validation, the 20-capability/117-slice/363-task/12-gate backlog, all 489 review pages, generated views, and Git hygiene also pass.",
+    "W1 remains PAUSED at Wave scope; W1.A06 remains APPROVED with W1.A06.B00 CHANGES_REQUESTED; no campaign or ordinary task is active. The protected untracked W1.A04.B00 witness was untouched.",
+    "This disposition approves only GOV-MAINT-0014. It does not approve W1.A06.B00 or grant materialization, activation, adoption, task-claim, release, or external authority."
+  ]
+}
