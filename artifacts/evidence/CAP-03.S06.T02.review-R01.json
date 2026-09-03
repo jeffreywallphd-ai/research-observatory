@@ -1,0 +1,83 @@
+{
+  "task_id": "CAP-03.S06.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "7641bbceb0fd20286d3e66ea257f6e0036fe4b87",
+  "submission_record_commit": "63b1bbc2f06be8a90d9c65be0130bcbe39ec7b38",
+  "reviewer": "agent:t02-independent-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The frozen submission, criterion-evidence bytes, exact 48-path scope, submission projection, and approved Academic Minimal v1.5 UI lineage authenticate successfully. Independent replay confirms that native/Core capability and request parity, field-bound acknowledgement tokens, real dependency-impact lookup, canonical one-field reference substitution denial, atomic project nonpublication on authority failure, immediate intent lineage, response-loss idempotency, actor-bound provenance/policy denial, and all-tools availability are materially improved and pass focused checks. Approval remains unavailable because governed workflow authority can be wholly removed and accepted as legacy state, the displayed stopping-logic effect contradicts the values saved after a profile change, and the evidence overclaims native stale propagation and several projection/registry properties.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T02.R01.json",
+      "sha256": "582ba876b4cdaed86db9d0e3e61852fa54beec06d0f91cabbae41b452a62fb92",
+      "commit": "7641bbceb0fd20286d3e66ea257f6e0036fe4b87",
+      "result": "PASS: workspace bytes, submission Git blob, and the recorded SHA-256 match exactly."
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Authenticate base, candidate, and frozen submission ancestry; compare Git, evidence manifest, and submission changed paths; validate taskctl, UI evidence, and reference lineage.",
+      "result": "PASS: the exact ordered 48-path candidate scope and frozen projection match; taskctl, the approved-reference UI gate, and v1.5 reference reproduction pass."
+    },
+    {
+      "type": "independent-check",
+      "command": "Run ten focused service tests and ten focused IntentWorkspace/ProjectsWorkspace renderer tests covering acknowledgement fields, real stale lookup, canonical reference substitution denial, atomic publication, lineage, idempotency, policy, tools, and profile presentation.",
+      "result": "PASS: all 20 focused tests passed."
+    },
+    {
+      "type": "independent-check",
+      "command": "Run the configured-Node-24 native Rust-supervisor/Core/SQLite integration.",
+      "result": "PASS: three intent revisions, response-loss reconciliation, policy denial, and actor-bound provenance counts passed through the real native boundary."
+    },
+    {
+      "type": "independent-adversarial-probe",
+      "finding_id": "CAP-03.S06.T02-R01-F01",
+      "command": "Create two governed intent/selection revisions, remove all workflow-profile authority rows, restart, and load the workspace.",
+      "result": "FAIL: four authority rows were removed, but the workspace was accepted at intent revision 2 with systematic-review because empty selection history is treated as predecessor compatibility."
+    },
+    {
+      "type": "independent-adversarial-probe",
+      "finding_id": "CAP-03.S06.T02-R01-F02",
+      "command": "Change a theory-synthesis intent from interpretive-saturation to systematic-review coverage-threshold and compare the impact response to the values the desktop saves.",
+      "result": "FAIL: acknowledgement is required, but the preview reports researcher-selected-stopping-remains even though the exact stopping value changes."
+    },
+    {
+      "type": "independent-evidence-audit",
+      "finding_id": "CAP-03.S06.T02-R01-F03",
+      "command": "Compare the frozen criterion/UI evidence to the native script, IntentImpactPreview schema, and desktop profile-default source.",
+      "result": "FAIL: the native script does not seed/assert stale dependencies, the response omits evidence types and per-stage dispositions, and IntentWorkspace retains a manually authored fourteen-profile defaults registry."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S06.T02-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Complete workflow-authority deletion is accepted as predecessor compatibility",
+      "reproduction": "At candidate 7641bbceb0fd20286d3e66ea257f6e0036fe4b87, create an initial theory-synthesis intent, preview and save a systematic-review profile change, temporarily remove the protected settings delete trigger, delete all settings rows whose key begins workflow-profile., restore the trigger, and call ResearchIntentService.workspace after restart. Four selection/migration/acceptance rows are removed, yet workspace returns revision 2 with systematic-review because _read_workflow_authority accepts an empty selection history for any intent history. The schema-v10 test creates current governed rows and deletes them, so it cannot distinguish exact legacy bytes from stripped current authority.",
+      "required_remediation": "Introduce an independently retained activation or bundle binding that makes workflow authority mandatory after its first governed commit, preserve one exact byte-authenticated pre-T02 schema-v10 upgrade path, and add restart tests for complete and partial authority deletion, exact predecessor upgrade, replay, and preservation of predecessor intent bytes."
+    },
+    {
+      "id": "CAP-03.S06.T02-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Profile-change preview falsely reports that changed stopping logic remains",
+      "reproduction": "Start from a theory-synthesis intent with stoppingConditions=['interpretive-saturation']; select systematic-review in IntentWorkspace, whose handler replaces stopping conditions with ['coverage-threshold']; then request an impact preview. The response requires acknowledgement but returns stoppingLogicEffects=['researcher-selected-stopping-remains']. The exact before and after values differ, so the researcher-facing effect is false even though the token now hashes the changed value.",
+      "required_remediation": "Compute autonomy and stopping effects from exact canonical before/after values and render truthful retained, added, removed, or defaulted changes before acknowledgement. Add service and interactive desktop tests covering theory-to-systematic and a multi-condition transition."
+    },
+    {
+      "id": "CAP-03.S06.T02-R01-F03",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Criterion and UI evidence overclaim the native and governed-profile boundaries",
+      "reproduction": "Compare the frozen evidence with candidate code. The UI-change evidence says the native script proves stale dependency propagation, but the script only previews an ordinary project and never seeds or asserts stale state. The criterion manifest says IntentImpactPreview returns evidence types and per-stage migration dispositions, but its response contract contains neither. It also claims no second desktop profile registry, while IntentWorkspace contains a manually authored fourteen-entry INTENT_FORM_DEFAULTS table used for defaults and warnings.",
+      "required_remediation": "Make the R02 evidence statements match exact machine-observed behavior, add native assertions if native stale-state coverage is claimed, and remove or canonically generate the remaining fourteen-profile defaults table so governed profile behavior has one authoritative source."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}
