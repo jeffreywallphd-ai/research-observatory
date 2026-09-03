@@ -9849,7 +9849,7 @@
           "wave": "W1",
           "title": "Use-case profiles and adaptive guided navigation",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
-          "plan_sha256": "073043f7c3e7596cf4a0ba37da62d6974f4ac235311504539ca961870f91f951",
+          "plan_sha256": "5b72d6b86bbdff9a7f2e459bcd4ad6ebad9d61792c98542671605cba6d8f955f",
           "page": "CAP-03/CAP-03.S06.html",
           "task_count": 5,
           "task_reviews": [
@@ -9934,7 +9934,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "d0c9adff471be873b068f7dae4cf84caa5629b60d5b300d8dbce22ec850514aa",
+              "plan_section_sha256": "c67793989f054e27240fbd234642e712b50fd50b0bec25cb6a0cafaa324e5022",
               "worksheet": null
             },
             {
@@ -23859,7 +23859,7 @@
         {
           "task_id": "W1.A06.T01",
           "title": "Reconcile the CAP-03.S06 workflow-profile count",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

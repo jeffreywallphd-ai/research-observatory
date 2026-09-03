@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 61d984125fd738c6b8ad29e40272ed14b5942e0ea3f6b03f6e3fb1a01440674b
+source_sha256: 4840886b7dca64f1a77cfae37a2e1715f0eee6538c63f7d2a49af5662d4dc640
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1504,7 +1504,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A06.T01 - Reconcile the CAP-03.S06 workflow-profile count
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A06.B00`
 
@@ -5977,7 +5977,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Acceptance criteria:**
 
-- Exactly eight built-in profiles match the approved workflow catalog and can be extended only through a versioned, reviewed profile pack.
+- All fourteen workflow profiles in the approved workflow catalog are represented at its governed version; additions or changes require a versioned, reviewed workflow catalog and governed reference update.
 - Ordered, optional, cyclical, supporting-tool, current, completed, attention, and stale states are represented without overloading analytical job state.
 - Changing profile preserves prior selection and stage history and produces an impact preview rather than rewriting the record.
 

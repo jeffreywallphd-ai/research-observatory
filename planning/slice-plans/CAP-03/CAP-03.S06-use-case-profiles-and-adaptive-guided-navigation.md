@@ -227,7 +227,7 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
-- Exactly eight built-in profiles match the approved workflow catalog and can be extended only through a versioned, reviewed profile pack.
+- All fourteen workflow profiles in the approved workflow catalog are represented at its governed version; additions or changes require a versioned, reviewed workflow catalog and governed reference update.
 - Ordered, optional, cyclical, supporting-tool, current, completed, attention, and stale states are represented without overloading analytical job state.
 - Changing profile preserves prior selection and stage history and produces an impact preview rather than rewriting the record.
 
