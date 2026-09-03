@@ -12881,7 +12881,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-03.S04.T03
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-03.S05.T01
       capability_id: CAP-03
@@ -14552,16 +14552,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:cap03-s05-integration-reviewer
       reviewed_at: '2026-09-02T11:54:12+00:00'
       evidence:
-      - artifacts/evidence/CAP-03.S05.integration-R01.json
-      notes: 'CHANGES_REQUESTED: exact CAP-03.S05 task artifacts and ancestry authenticate, and focused existing unions plus
-        the dependency-impact benchmark pass. Five acceptance-bound findings remain: no production researcher/API/UI path;
-        spoofable human restore authority; unbound current rights policy/status; false SCCs through non-material or ignored
-        edges; and inaccurate/truncated affected-selection evidence. The disclosed 478-test 72-failure/17-error historical
-        foundation baseline remains explicit mandatory W1-exit reconciliation rather than a separate S05 product finding.'
+      - artifacts/evidence/CAP-03.S05.integration-R02.json
+      notes: R02 replays and closes all five R01 findings with an authenticated production API/client/UI path, exact human
+        and current-policy authority, propagating-edge-only cycle classification, truthful exact-state affected selection,
+        and focused integration evidence; complete W1 qualification remains deferred to Wave exit.
   - id: CAP-03.S06
     title: Use-case profiles and adaptive guided navigation
     outcome: A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench,

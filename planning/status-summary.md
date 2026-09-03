@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: e310a03fef4d93d63628dffeaed51f089522ba6be5527fe3b91ac933b3815449
+source_sha256: cf3ba05959c9df68e9cb3b30aa4fb65de49bf652bbc41d26540e14951f9919b8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -45,8 +45,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `APPROVED` | 18 |
-| `CHANGES_REQUESTED` | 1 |
 | `PENDING` | 98 |
+| `REVIEW` | 1 |
 
 ### Task state
 
@@ -429,7 +429,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S04.T03` | `append-only v1` | 3 | `-` | approved / agent:t02-adversarial-preflight | - |
 | `CAP-03.S05.T01` | `append-only v1` | 2 | `-` | approved / agent:t02-adversarial-preflight | - |
 | `CAP-03.S05.T02` | `append-only v1` | 3 | `-` | approved / agent:t02-adversarial-preflight | - |
-| `CAP-03.S05.T03` | `append-only v1` | 3 | `-` | approved / agent:t02-adversarial-preflight | - |
+| `CAP-03.S05.T03` | `append-only v1` | 4 | `-` | approved / agent:cap03-s05-t03-r04-reviewer | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
