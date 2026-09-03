@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -36070,7 +36070,7 @@ wave_amendments:
     sha256: 244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67
     introduction_commit: 6e4581274972b7c324e5394fb317975ff063ecbe
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -36080,6 +36080,11 @@ wave_amendments:
         f48f11ed12c10d26acb1b80053e1a823c3ee5c16. Authorize only bootstrap W1.A06.B00, contribution W1.A06.S01, and task W1.A06.T01
         as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 fourteen-workflow catalog without
         changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex
+      at: '2026-09-03T18:04:41+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W1.A06.B00
     status: APPROVED
@@ -36132,7 +36137,55 @@ wave_amendments:
           state. No materialization, activation, T01, adoption, or W1 resume is approved.
     scope_base_commit: 3fe834df6212516957048db3b76594bffe71eca5
   campaign: null
-  tasks: []
+  tasks:
+  - id: W1.A06.T01
+    amendment_id: W1.A06
+    title: Reconcile the CAP-03.S06 workflow-profile count
+    objective: Replace the isolated eight-profile criterion with the already approved fourteen-workflow contract in the canonical
+      backlog and slice plan, then regenerate derived planning views without changing product code.
+    dependencies:
+    - W1.A06.B00
+    acceptance_criteria:
+    - 'Replace exactly the CAP-03.S06.T01 workflow-count criterion in planning/backlog.yaml and its slice-plan projection
+      with: All fourteen workflow profiles in the approved workflow catalog are represented at its governed version; additions
+      or changes require a versioned, reviewed workflow catalog and governed reference update.'
+    - Prove design/ui-reference/WORKFLOW_CATALOG.json contains exactly fourteen distinct profile identities and is hash-bound
+      by the approved RO-UI-ACADEMIC-MINIMAL-1.5 manifest and approval.
+    - Preserve every other CAP-03.S06 objective, criterion, task, dependency, estimate, status, architecture boundary, verification
+      duty, and W1 exit obligation byte-for-byte or through deterministic generated projection.
+    - Change no product, runtime, schema, migration, security, design-reference, release-gate, predecessor authority, or unrelated
+      planning path.
+    - Regenerate affected planning views, validate the canonical backlog and review site, and obtain independent commit-bound
+      review with no open blocking finding.
+    verification_commands:
+    - Compare the exact canonical backlog and CAP-03.S06 slice-plan criterion before and after the candidate; require the
+      declared replacement in both and deny any other hand-authored CAP-03.S06 semantic delta.
+    - Parse the approved workflow catalog, require exactly fourteen unique profile IDs, and verify the reference manifest
+      plus human approval bind the current catalog hash and fourteen-profile scope.
+    - Run taskctl backlog validation, planning review-site validation, generated backlog-view validation, targeted ECR/amendment
+      authority checks, and Git formatting/diff hygiene.
+    - Record the risk-selected task evidence and defer product/runtime/Windows-x64 qualification to ordinary CAP-03.S06 implementation,
+      slice review, checkpoints, and W1 exit.
+    - Obtain independent commit-bound planning/control review.
+    packet_task_sha256: f3df921991879300409c2a792eec68d0d3bc09fc691afb01b9c59b6541b5e761
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null

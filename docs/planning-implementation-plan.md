@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1db87d9050cb65656b865ba65a285c099bf5c04e9f21fdaff279506d67436c87
+source_sha256: 445e82cf35a697b6540efb6a3db245333cb1762c264b63408d1da92951b5231d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 7 |
+| Enabler tasks | 8 |
 | Waves | 12 |
 | Wave approval bases | 1 |
 | Wave amendments | 6 |
@@ -45,7 +45,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
-| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `APPROVED` |
+| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -1478,11 +1478,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A06.json` (`244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-03T12:11:49.1702461-04:00` by repository-owner: The repository owner approved ECR-0005/W1.A06 in direct response to the exact-commit approval request for f48f11ed12c10d26acb1b80053e1a823c3ee5c16. Authorize only bootstrap W1.A06.B00, contribution W1.A06.S01, and task W1.A06.T01 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 fourteen-workflow catalog without changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
+- `E02` `MATERIALIZED` at `2026-09-03T18:04:41+00:00` by codex: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W1.A06
 
@@ -1499,6 +1500,38 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W1.A06.T01 - Reconcile the CAP-03.S06 workflow-profile count
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A06.B00`
+
+**Objective:** Replace the isolated eight-profile criterion with the already approved fourteen-workflow contract in the canonical backlog and slice plan, then regenerate derived planning views without changing product code.
+
+**Acceptance criteria:**
+
+- Replace exactly the CAP-03.S06.T01 workflow-count criterion in planning/backlog.yaml and its slice-plan projection with: All fourteen workflow profiles in the approved workflow catalog are represented at its governed version; additions or changes require a versioned, reviewed workflow catalog and governed reference update.
+- Prove design/ui-reference/WORKFLOW_CATALOG.json contains exactly fourteen distinct profile identities and is hash-bound by the approved RO-UI-ACADEMIC-MINIMAL-1.5 manifest and approval.
+- Preserve every other CAP-03.S06 objective, criterion, task, dependency, estimate, status, architecture boundary, verification duty, and W1 exit obligation byte-for-byte or through deterministic generated projection.
+- Change no product, runtime, schema, migration, security, design-reference, release-gate, predecessor authority, or unrelated planning path.
+- Regenerate affected planning views, validate the canonical backlog and review site, and obtain independent commit-bound review with no open blocking finding.
+
+**Verification:**
+
+- Compare the exact canonical backlog and CAP-03.S06 slice-plan criterion before and after the candidate; require the declared replacement in both and deny any other hand-authored CAP-03.S06 semantic delta.
+- Parse the approved workflow catalog, require exactly fourteen unique profile IDs, and verify the reference manifest plus human approval bind the current catalog hash and fourteen-profile scope.
+- Run taskctl backlog validation, planning review-site validation, generated backlog-view validation, targeted ECR/amendment authority checks, and Git formatting/diff hygiene.
+- Record the risk-selected task evidence and defer product/runtime/Windows-x64 qualification to ordinary CAP-03.S06 implementation, slice review, checkpoints, and W1 exit.
+- Obtain independent commit-bound planning/control review.
+
+#### Review history — W1.A06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 # Capability contributions, slices, and tasks
