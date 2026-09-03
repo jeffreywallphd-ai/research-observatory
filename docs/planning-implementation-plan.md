@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0460221d89ac19dedd51278768da1b9640d4e1fc7da68d469129bf3c57ce5d89
+source_sha256: d46ed3528bdde4baa82857c2f2e0590f4a436954abfd42468c5307580bc07321
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6141,7 +6141,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6168,13 +6168,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S06.T02.R01.json` at `7641bbceb0fd20286d3e66ea257f6e0036fe4b87`
+
 ##### Review history — CAP-03.S06.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `d7cb3c5bed48a9afcb9c36d82b4210fcec71761dcbfa5fbacae610e82f644a87`
+
+- Candidate / base / branch: `7641bbceb0fd20286d3e66ea257f6e0036fe4b87` / `288cca7cc4cd380360f10879caea619007b71088` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T22:16:44+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T02.R01.json` / `582ba876b4cdaed86db9d0e3e61852fa54beec06d0f91cabbae41b452a62fb92` / `7641bbceb0fd20286d3e66ea257f6e0036fe4b87`
+- Acceptance-criteria SHA-256: `e8635297c0ce59786e23a69a58652a9d0d7865841cb2b1aa0962d6d88b0f7c89`
+- Verification-selection SHA-256: `e593178356ea57cc24a888ddaa51a5ad814641de5b4fb9dccba9f2b08cedb0a5`
+- Changed paths: `apps/desktop/scripts/assemble-application.mjs`, `apps/desktop/scripts/intent-native-integration.mjs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app/IntentWorkspace.test.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `apps/desktop/src/app/ProjectsWorkspace.test.tsx`, `apps/desktop/src/app/ProjectsWorkspace.tsx`, `artifacts/evidence/CAP-03.S06.T02.task-start.md`, `artifacts/evidence/ui-change/CAP-03.S06.T02.json`, `docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md`, `docs/adr/index.json`, `docs/architecture/workflow-profile-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/core-api/runtime-handshake.schema.json`, `packages/contracts/workflow-profile/README.md`, `packages/contracts/workflow-profile/generated.ts`, `packages/contracts/workflow-profile/workflow-profile.template.py.txt`, `packages/contracts/workflow-profile/workflow-profile.template.ts.txt`, `packages/contracts/workflow-profile/workflow-profile.test.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T01.html`, `planning/review-site/CAP-03/CAP-03.S06.T02.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/modules.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/projects.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `services/core-api/src/research_observatory_core/workflow_profile_contracts.py`, `tests/contracts/test_workflow_profile_contracts.py`, `tests/desktop/fixtures/task_center_interactions.js`, `tests/desktop/test_core_sidecar_performance_check.py`, `tests/desktop/test_desktop_app_check.py`, `tests/service/test_core_api.py`, `tests/service/test_project_lifecycle.py`, `tests/service/test_research_intents.py`, `tools/core_api_contract.py`, `tools/core_sidecar_performance_check.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check`, `.venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false`, `.venv/Scripts/python.exe -m unittest discover -s tests/data -p test_*.py`, `npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop; configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-native-final.json`, `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked --all-features`, `.venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-desktop-final.json`, `.venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head HEAD; .venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility; .venv/Scripts/python.exe tools/ui_token_check.py --repo .; .venv/Scripts/python.exe tools/ui_route_check.py --repo .`, `.venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py --repo .`, `.venv/Scripts/python.exe -m ruff check <18 changed Python files>; .venv/Scripts/python.exe -m ruff format --check <18 changed Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <18 changed Python files>`, `.venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/adr_check.py --repo . --base 288cca7cc4cd380360f10879caea619007b71088 --head 7641bbceb0fd20286d3e66ea257f6e0036fe4b87; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 288cca7cc4cd380360f10879caea619007b71088..7641bbceb0fd20286d3e66ea257f6e0036fe4b87`, `.venv/Scripts/python.exe tools/benchmark_registry.py --repo . --report artifacts/tmp/CAP-03.S06.T02-foundation-benchmarks-final.json`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base 288cca7cc4cd380360f10879caea619007b71088 --affected-head 7641bbceb0fd20286d3e66ea257f6e0036fe4b87 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-affected-selection-final.json`
+- Deferred checks: `The affected selector assigns desktop performance plus data project-lifecycle and storage-maintenance performance to the complete W1-exit matrix; this task changes no approved performance threshold.`, `Repository-wide quality remains red from the immutable base's three unrelated recalculation formatting expectations and ten mypy errors in planctl, UI conformance/tests, and selective-recalculation paths. None is in T02's changed Python surface; all 18 changed Python files pass focused Ruff and mypy.`, `The broad foundation unit suite retains a base-present hard-coded ADR expectation that omits already-registered ADR-0026. The authoritative 26-record ADR registry and exact T02 change-range check pass; correcting the unrelated fixture belongs to its owning maintenance boundary.`, `The full visual-regression runner retains two base-scope Audit & Lineage reference baseline mismatches outside T02's changed project/intent screens. Exact v1.5 reference reproduction, routes, tokens, workflow, accessibility, production build, browser product inspection, and the task UI gate pass; accumulated visual refresh remains for slice integration and W1 exit.`, `Complete cross-capability security, recovery, cancellation, migration, packaging, performance, and Windows x64 qualification remains mandatory once at CAP-03.S06 slice review, coherent integration checkpoints, and W1 exit.`
+- Selection rationale: T02 activates a public cross-process contract, immutable project/Research Intent persistence, human acknowledgement, workflow migration, provenance/outbox behavior, and two governed researcher-facing screens. Credible failures include incomplete native/Core request parity, accepting noncanonical stored references, acknowledgement replay after a decision-bearing field or stale dependency changes, partial project publication, duplicate effects after response loss, silent tool/provenance weakening, restart drift, and UI/reference divergence. The selected checks therefore span the exact generated contracts in both languages, full service and data suites, focused protected-SQLite lifecycle cases, renderer and Rust suites, a real Windows-native supervisor/Core/storage vertical, production build/browser inspection, approved UI/reference/accessibility contracts, packaging, changed-file static checks, benchmark registry, and exact-range governance. Broad failures proven identical at the immutable base are disclosed rather than relabeled as task regressions.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 

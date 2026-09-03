@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 0460221d89ac19dedd51278768da1b9640d4e1fc7da68d469129bf3c57ce5d89
+source_sha256: d46ed3528bdde4baa82857c2f2e0590f4a436954abfd42468c5307580bc07321
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,8 +52,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 257 |
-| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 61 |
 | `DEFERRED` | 36 |
 
@@ -477,6 +477,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S05.T02` | `append-only v1` | 3 | `-` | approved / agent:t02-adversarial-preflight | - |
 | `CAP-03.S05.T03` | `append-only v1` | 4 | `-` | approved / agent:cap03-s05-t03-r04-reviewer | - |
 | `CAP-03.S06.T01` | `append-only v1` | 2 | `-` | approved / agent:workflow-profile-contract-reviewer | - |
+| `CAP-03.S06.T02` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -549,5 +550,5 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S06.T02` Implement primary-use-case selection at project creation and intent revision | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S06.T02` Implement primary-use-case selection at project creation and intent revision | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
