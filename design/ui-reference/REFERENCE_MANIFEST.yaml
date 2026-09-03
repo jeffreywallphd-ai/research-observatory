@@ -1,6 +1,6 @@
 reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
 version: '1.5'
-status: proposed
+status: approved
 approval_file: APPROVAL.yaml
 canonical_token_file: assets/tokens.css
 style_guides:
@@ -71,7 +71,7 @@ governed_files:
 - technical-reports.html
 - theory-map.html
 file_hashes:
-  APPROVAL.yaml: c5fd61ff94d836f4608fbcb31187769bd0d43a196cf1ac85a656bd80a1c46037
+  APPROVAL.yaml: 7f226d1f24080dee37717cd99e6f73549c8f3dda61e113d07d3a91731d9119bc
   CAPABILITY_COVERAGE.json: d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d
   CAPABILITY_COVERAGE.md: c72444c71fd5f2f5e00c78175da57ebefc76d998f760cd6f354c544d92245bd7
   PAGE_INVENTORY.md: f943bad8eca3d669ff63f22f6c4f1821da165952aec1e25652b1ece16fb33e72
