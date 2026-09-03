@@ -29,6 +29,7 @@ const EXPECTED_CORE_CAPABILITIES: &[&str] = &[
     "intent.impact-preview",
     "intent.policy-evaluation",
     "intent.read",
+    "intent.workflow-profiles",
     "operations.cancel",
     "operations.events",
     "operations.read",
@@ -38,6 +39,10 @@ const EXPECTED_CORE_CAPABILITIES: &[&str] = &[
     "provenance.lineage.read",
     "runtime.contract",
     "runtime.status",
+    "workflows.cancel",
+    "workflows.human-decisions",
+    "workflows.read",
+    "workflows.retry",
 ];
 
 struct CapabilityToken([u8; CAPABILITY_TOKEN_BYTES]);
@@ -999,6 +1004,24 @@ fn validate_intent_impact_fields(object: &serde_json::Map<String, serde_json::Va
         "web-resource",
         "private-report",
     ];
+    const EVIDENCE_TYPES: &[&str] = &[
+        "empirical-study",
+        "systematic-review",
+        "theoretical-work",
+        "technical-evaluation",
+        "standard",
+        "dataset",
+        "interpretive-text",
+        "stakeholder-account",
+        "critical-analysis",
+        "private-report",
+    ];
+    const AUTONOMY_LEVELS: &[&str] = &[
+        "human-only",
+        "suggest",
+        "prepare-reversible",
+        "execute-reversible",
+    ];
     const NOVELTY_STANDARDS: &[&str] = &[
         "bounded-comparative",
         "incremental",
@@ -1008,6 +1031,16 @@ fn validate_intent_impact_fields(object: &serde_json::Map<String, serde_json::Va
         "critical",
         "interpretive",
         "not-claimed",
+    ];
+    const STOPPING_CONDITIONS: &[&str] = &[
+        "source-exhaustion",
+        "coverage-threshold",
+        "interpretive-saturation",
+        "benchmark-complete",
+        "nearest-prior-work-challenged",
+        "protocol-complete",
+        "resource-budget",
+        "researcher-decision",
     ];
     let Some(root) = object.get("root").and_then(serde_json::Value::as_str) else {
         return false;
@@ -1043,7 +1076,16 @@ fn validate_intent_impact_fields(object: &serde_json::Map<String, serde_json::Va
         && object
             .get("includePrivateReports")
             .is_some_and(serde_json::Value::is_boolean)
+        && object
+            .get("evidenceTypes")
+            .is_some_and(|value| unique_intent_members(value, EVIDENCE_TYPES, 0, 32))
         && novelty
+        && object
+            .get("autonomyLevel")
+            .is_some_and(|value| intent_member(value, AUTONOMY_LEVELS))
+        && object
+            .get("stoppingConditions")
+            .is_some_and(|value| unique_intent_members(value, STOPPING_CONDITIONS, 1, 3))
 }
 
 fn validate_intent_api_request(path: &str, body: &str) -> bool {
@@ -1057,25 +1099,10 @@ fn validate_intent_api_request(path: &str, body: &str) -> bool {
         "startYear",
         "endYear",
         "includePrivateReports",
+        "evidenceTypes",
         "noveltyStandard",
-    ];
-    const EVIDENCE_TYPES: &[&str] = &[
-        "empirical-study",
-        "systematic-review",
-        "theoretical-work",
-        "technical-evaluation",
-        "standard",
-        "dataset",
-        "interpretive-text",
-        "stakeholder-account",
-        "critical-analysis",
-        "private-report",
-    ];
-    const AUTONOMY_LEVELS: &[&str] = &[
-        "human-only",
-        "suggest",
-        "prepare-reversible",
-        "execute-reversible",
+        "autonomyLevel",
+        "stoppingConditions",
     ];
     const STOPPING_CONDITIONS: &[&str] = &[
         "source-exhaustion",
@@ -1121,10 +1148,7 @@ fn validate_intent_api_request(path: &str, body: &str) -> bool {
                 "phenomenon",
                 "unitOfAnalysis",
                 "levelOfAnalysis",
-                "evidenceTypes",
                 "noveltyRationale",
-                "autonomyLevel",
-                "stoppingConditions",
                 "revisionRationale",
                 "impactAcknowledgement",
             ],
@@ -1154,15 +1178,6 @@ fn validate_intent_api_request(path: &str, body: &str) -> bool {
                     .get(*key)
                     .is_some_and(|value| bounded_intent_narrative(value, 0))
             })
-            && object
-                .get("evidenceTypes")
-                .is_some_and(|value| unique_intent_members(value, EVIDENCE_TYPES, 0, 32))
-            && object
-                .get("autonomyLevel")
-                .is_some_and(|value| intent_member(value, AUTONOMY_LEVELS))
-            && object
-                .get("stoppingConditions")
-                .is_some_and(|value| unique_intent_members(value, STOPPING_CONDITIONS, 1, 3))
             && object
                 .get("revisionRationale")
                 .is_some_and(|value| bounded_intent_narrative(value, 1))
@@ -1228,13 +1243,30 @@ fn validate_intent_api_request(path: &str, body: &str) -> bool {
 
 fn validate_project_api_request(path: &str, body: &str) -> bool {
     if path == "/projects" {
+        const PRIMARY_USE_CASES: &[&str] = &[
+            "rapid-orientation",
+            "systematic-review",
+            "living-review",
+            "theory-synthesis",
+            "hermeneutic-inquiry",
+            "critical-problematization",
+            "technical-landscape",
+            "novelty-audit",
+            "empirical-study-design",
+            "empirical-study-to-article",
+            "empirical-results-to-article",
+            "theory-article-development",
+            "critical-article-development",
+            "manuscript-review-revision",
+        ];
         let Some(value) = exact_json_strings(
             body,
             &[
                 "parentDirectory",
                 "directoryName",
                 "displayName",
-                "templateId",
+                "primaryUseCase",
+                "researchObjective",
             ],
         ) else {
             return false;
@@ -1242,7 +1274,8 @@ fn validate_project_api_request(path: &str, body: &str) -> bool {
         let parent = value["parentDirectory"].as_str().unwrap_or_default();
         let directory = value["directoryName"].as_str().unwrap_or_default();
         let display = value["displayName"].as_str().unwrap_or_default();
-        let template = value["templateId"].as_str().unwrap_or_default();
+        let primary_use_case = &value["primaryUseCase"];
+        let research_objective = &value["researchObjective"];
         return canonical_project_root(parent)
             && (1..=64).contains(&directory.len())
             && directory
@@ -1257,14 +1290,8 @@ fn validate_project_api_request(path: &str, body: &str) -> bool {
                 .last()
                 .is_some_and(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit())
             && bounded_project_text(display, 1, 120)
-            && (1..=120).contains(&template.len())
-            && template.bytes().all(|byte| {
-                byte.is_ascii_lowercase() || byte.is_ascii_digit() || b".-".contains(&byte)
-            })
-            && template
-                .bytes()
-                .next()
-                .is_some_and(|byte| byte.is_ascii_lowercase());
+            && intent_member(primary_use_case, PRIMARY_USE_CASES)
+            && bounded_intent_narrative(research_objective, 1);
     }
     if matches!(
         path,
@@ -2393,7 +2420,7 @@ mod tests {
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",\"pid\":{},",
                 "\"host\":\"127.0.0.1\",\"port\":49152,",
                 "\"nonce\":\"0123456789abcdef0123456789abcdef\",",
-                "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\"],",
+                "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"intent.workflow-profiles\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\",\"workflows.cancel\",\"workflows.human-decisions\",\"workflows.read\",\"workflows.retry\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}\n"
@@ -2413,7 +2440,10 @@ mod tests {
             "startYear": 2020,
             "endYear": 2026,
             "includePrivateReports": true,
-            "noveltyStandard": "bounded-comparative"
+            "evidenceTypes": ["empirical-study"],
+            "noveltyStandard": "bounded-comparative",
+            "autonomyLevel": "suggest",
+            "stoppingConditions": ["coverage-threshold"]
         })
     }
 
@@ -2532,7 +2562,7 @@ mod tests {
         for (path, body) in [
             (
                 "/projects",
-                r#"{"parentDirectory":"C:/Research","directoryName":"study-one","displayName":"Study One","templateId":"theory-synthesis"}"#,
+                r#"{"parentDirectory":"C:/Research","directoryName":"study-one","displayName":"Study One","primaryUseCase":"theory-synthesis","researchObjective":"Explain the bounded evidence base."}"#,
             ),
             ("/projects/open", r#"{"root":"C:/Research/study-one"}"#),
             ("/projects/close", r#"{"root":"C:/Research/study-one"}"#),

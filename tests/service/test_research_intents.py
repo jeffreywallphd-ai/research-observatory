@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import sqlite3
 import sys
@@ -19,14 +20,25 @@ sys.path.insert(0, str(SERVICE_SRC))
 from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
+from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.models import (  # noqa: E402
     IntentAcceptRequest,
     IntentDraftRequest,
     IntentPolicyRequest,
 )
-from research_observatory_core.ports.repositories import RepositoryIdempotencyConflict  # noqa: E402
+from research_observatory_core.ports.repositories import (  # noqa: E402
+    AggregateRevisionDraft,
+    AtomicRepositoryEvent,
+    DependencyChange,
+    MaterialDependency,
+    RepositoryIdempotencyConflict,
+)
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
-from research_observatory_core.repositories import sqlite_intent_revision_repository  # noqa: E402
+from research_observatory_core.repositories import (  # noqa: E402
+    create_sqlite_unit_of_work_factory,
+    sqlite_dependency_impact_repository,
+    sqlite_intent_revision_repository,
+)
 from research_observatory_core.research_intents import IntentProblem, ResearchIntentService  # noqa: E402
 from research_observatory_core.storage import development_plaintext_database_fixture  # noqa: E402
 from research_observatory_core.workflow_profile_contracts import (  # noqa: E402
@@ -81,6 +93,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         self.service = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         )
 
@@ -112,6 +125,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         restarted = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         ).workspace(self.root)
         self.assertEqual(restarted.current, saved)
@@ -231,6 +245,170 @@ class ResearchIntentServiceTests(unittest.TestCase):
             migrations[0]["migrationContentHash"],
         )
 
+    def test_impact_acknowledgement_binds_evidence_autonomy_and_stopping_fields(self) -> None:
+        first = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="10" * 16)
+        changed = draft_request(
+            self.root,
+            expected_revision=first.revision,
+            primaryUseCase="systematic-review",
+            noveltyStandard="bounded-comparative",
+            stoppingConditions=["coverage-threshold"],
+        )
+        preview = self.service.preview(changed.to_impact_request())
+        assert preview.acknowledgement_token is not None
+        substitutions: tuple[dict[str, object], ...] = (
+            {"evidence_types": ("empirical-study", "dataset")},
+            {"autonomy_level": "prepare-reversible"},
+            {"stopping_conditions": ("coverage-threshold", "resource-budget")},
+        )
+        for index, substitution in enumerate(substitutions, start=1):
+            with self.subTest(substitution=substitution), self.assertRaises(IntentProblem) as denied:
+                self.service.save_draft(
+                    changed.model_copy(
+                        update={
+                            **substitution,
+                            "impact_acknowledgement": preview.acknowledgement_token,
+                        }
+                    ),
+                    trace_id=TRACE,
+                    idempotency_key=f"{index + 20:032x}",
+                )
+            self.assertEqual("RO-CORE-INTENT-IMPACT-ACK-REQUIRED", denied.exception.code)
+
+        exact = changed.model_copy(update={"stopping_conditions": ("coverage-threshold", "resource-budget")})
+        exact_preview = self.service.preview(exact.to_impact_request())
+        saved = self.service.save_draft(
+            exact.model_copy(update={"impact_acknowledgement": exact_preview.acknowledgement_token}),
+            trace_id=TRACE,
+            idempotency_key="30" * 16,
+        )
+        self.assertEqual(("coverage-threshold", "resource-budget"), saved.stopping_conditions)
+
+    def test_scope_change_reports_persisted_known_stale_artifacts(self) -> None:
+        first_intent = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="31" * 16)
+        database = Path(self.root) / "state" / "project.sqlite3"
+        factory = create_sqlite_unit_of_work_factory(database, self.project.project_id)
+        occurred_at = "2026-09-03T20:00:00.000Z"
+
+        def event(label: str) -> AtomicRepositoryEvent:
+            return AtomicRepositoryEvent(
+                event_id=new_uuid_v7(),
+                outbox_id=new_uuid_v7(),
+                event_type="evidence.created",
+                occurred_at=occurred_at,
+                available_at=occurred_at,
+                trace_id=TRACE,
+                actor_type="worker",
+                actor_id=ACTOR_ID,
+                idempotency_key=f"intent-stale-{label}",
+            )
+
+        with factory() as unit:
+            source_v1 = unit.aggregates.append(
+                AggregateRevisionDraft(
+                    revision_id=new_uuid_v7(),
+                    aggregate_id=new_uuid_v7(),
+                    aggregate_kind="evidence",
+                    created_at=occurred_at,
+                    modified_at=occurred_at,
+                    display_label_observed="Source v1",
+                    display_label_normalized=None,
+                    knowledge_status="observed",
+                    rights_status="unknown",
+                    dependency_coverage="not-applicable",
+                ),
+                event("source-v1"),
+                expected_revision=None,
+            )
+            unit.commit()
+        with factory() as unit:
+            source_v2 = unit.aggregates.append(
+                AggregateRevisionDraft(
+                    revision_id=new_uuid_v7(),
+                    aggregate_id=source_v1.aggregate_id,
+                    aggregate_kind="evidence",
+                    created_at=occurred_at,
+                    modified_at=occurred_at,
+                    display_label_observed="Source v2",
+                    display_label_normalized=None,
+                    knowledge_status="observed",
+                    rights_status="unknown",
+                    dependency_coverage="not-applicable",
+                ),
+                event("source-v2"),
+                expected_revision=0,
+            )
+            unit.commit()
+        with factory() as unit:
+            output = unit.aggregates.append(
+                AggregateRevisionDraft(
+                    revision_id=new_uuid_v7(),
+                    aggregate_id=new_uuid_v7(),
+                    aggregate_kind="evidence",
+                    created_at=occurred_at,
+                    modified_at=occurred_at,
+                    display_label_observed="Known stale synthesis",
+                    display_label_normalized=None,
+                    knowledge_status="observed",
+                    rights_status="unknown",
+                    dependency_coverage="complete",
+                    material_dependencies=(
+                        MaterialDependency(
+                            dependency_id=new_uuid_v7(),
+                            dependency_kind="source-revision",
+                            relation_type="direct",
+                            revision_id=source_v1.revision_id,
+                            configuration_id=None,
+                            configuration_version=None,
+                            fingerprint="sha256:" + "a" * 64,
+                            governing_policy_id="dependency.material.v1",
+                            governing_policy_version="1.0.0",
+                        ),
+                    ),
+                ),
+                event("output"),
+                expected_revision=None,
+            )
+            unit.commit()
+
+        impacts = sqlite_dependency_impact_repository(Path(self.root), self.project.project_id)
+        change = DependencyChange(
+            change_id=new_uuid_v7(),
+            idempotency_key="intent-stale-source-change",
+            reason="SOURCE_VERSION",
+            dependency_kind="source-revision",
+            previous_revision_id=source_v1.revision_id,
+            replacement_revision_id=source_v2.revision_id,
+            configuration_id=None,
+            previous_configuration_version=None,
+            replacement_configuration_version=None,
+            previous_fingerprint="sha256:" + "a" * 64,
+            replacement_fingerprint="sha256:" + "b" * 64,
+            propagation_policy_id="dependency.propagation.v1",
+            propagation_policy_version="1.0.0",
+            actor_id=ACTOR_ID,
+            trace_id=TRACE,
+            occurred_at=occurred_at,
+        )
+        dependency_preview = impacts.preview(change)
+        run = impacts.begin(
+            change,
+            preview_sha256=dependency_preview.preview_sha256,
+            run_id=new_uuid_v7(),
+            batch_size=8,
+        )
+        impacts.advance(run.run_id, expected_checkpoint_sha256=run.checkpoint_sha256)
+
+        change_intent = draft_request(
+            self.root,
+            expected_revision=first_intent.revision,
+            primaryUseCase="systematic-review",
+            noveltyStandard="bounded-comparative",
+            stoppingConditions=["coverage-threshold"],
+        )
+        preview = self.service.preview(change_intent.to_impact_request())
+        self.assertEqual((output.revision_id,), preview.stale_artifact_ids)
+
     def test_catalog_projection_exposes_all_governed_profiles_without_restricting_tools(self) -> None:
         projection = self.service.workflow_profile_catalog()
 
@@ -293,6 +471,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         restarted = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         )
         restarted_workspace = restarted.workspace(self.root)
@@ -347,6 +526,101 @@ class ResearchIntentServiceTests(unittest.TestCase):
         with self.assertRaises(IntentProblem) as denied:
             self.service.workspace(self.root)
         self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
+
+    def test_restart_denies_rehashed_selection_with_substituted_intent_reference(self) -> None:
+        self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="32" * 16)
+        database = Path(self.root) / "state" / "project.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            selection = json.loads(
+                connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='workflow-profile.selection' AND revision=1"
+                ).fetchone()[0]
+            )
+            selection["researchIntent"]["revisionContentHash"] = "sha256:" + "f" * 64
+            without_hash = {key: value for key, value in selection.items() if key != "revisionContentHash"}
+            selection["revisionContentHash"] = (
+                "sha256:"
+                + hashlib.sha256(
+                    json.dumps(without_hash, ensure_ascii=True, separators=(",", ":"), sort_keys=True).encode("utf-8")
+                ).hexdigest()
+            )
+            trigger_sql = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='trigger' AND name='settings_no_update'"
+            ).fetchone()[0]
+            connection.execute("DROP TRIGGER settings_no_update")
+            connection.execute(
+                "UPDATE settings SET text_value=? WHERE setting_key='workflow-profile.selection' AND revision=1",
+                (json.dumps(selection, sort_keys=True, separators=(",", ":")),),
+            )
+            connection.execute(trigger_sql)
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.assertRaises(IntentProblem) as denied:
+            self.service.workspace(self.root)
+        self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
+
+    def test_schema_v10_intent_without_selection_is_readable_and_establishes_authority(self) -> None:
+        first = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="33" * 16)
+        database = Path(self.root) / "state" / "project.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            self.assertEqual(10, connection.execute("PRAGMA user_version").fetchone()[0])
+            intent_before = connection.execute(
+                "SELECT text_value FROM settings WHERE setting_key='research-intent.revision' AND revision=1"
+            ).fetchone()[0]
+            trigger_rows = connection.execute(
+                "SELECT name, sql FROM sqlite_master WHERE type='trigger' "
+                "AND name IN ('settings_no_update', 'settings_no_delete') ORDER BY name"
+            ).fetchall()
+            self.assertEqual(2, len(trigger_rows))
+            for name, _sql in trigger_rows:
+                connection.execute(f'DROP TRIGGER "{name}"')
+            connection.execute("DELETE FROM settings WHERE setting_key LIKE 'workflow-profile.%'")
+            for _name, sql in trigger_rows:
+                connection.execute(sql)
+            connection.commit()
+        finally:
+            connection.close()
+
+        restarted = ResearchIntentService(
+            self.projects,
+            repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
+            local_actor_id=ACTOR_ID,
+        )
+        self.assertEqual(first, restarted.workspace(self.root).current)
+        second = restarted.save_draft(
+            draft_request(
+                self.root,
+                expected_revision=first.revision,
+                researchObjective="Refine the bounded evidence question without changing workflow scope.",
+                revisionRationale="Record a compatible intent-only refinement.",
+            ),
+            trace_id=TRACE,
+            idempotency_key="34" * 16,
+        )
+        self.assertEqual(2, second.revision)
+
+        connection = sqlite3.connect(database)
+        try:
+            self.assertEqual(
+                intent_before,
+                connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='research-intent.revision' AND revision=1"
+                ).fetchone()[0],
+            )
+            selection = json.loads(
+                connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='workflow-profile.selection' AND revision=1"
+                ).fetchone()[0]
+            )
+        finally:
+            connection.close()
+        self.assertEqual(second.revision_id, selection["researchIntent"]["revisionId"])
+        self.assertEqual(second.revision_content_hash, selection["researchIntent"]["revisionContentHash"])
 
     def test_api_requires_preview_acknowledgement_and_never_marks_draft_launch_ready(self) -> None:
         app = create_app(
@@ -433,6 +707,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         restarted = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         )
 
@@ -448,6 +723,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         other_actor = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=OTHER_ACTOR_ID,
         )
         with self.assertRaises(IntentProblem) as substituted:
@@ -536,6 +812,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         unavailable = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=None,
         )
         with self.assertRaises(IntentProblem) as missing:
@@ -580,6 +857,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
         restarted = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         )
         self.assertEqual(accepted, restarted.accept(command, trace_id="d" * 32, idempotency_key="c" * 32))

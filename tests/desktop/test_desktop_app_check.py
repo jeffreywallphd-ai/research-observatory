@@ -17,6 +17,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from desktop_app_check import (  # noqa: E402
     command_plan,
     component_catalog_browser_errors,
+    core_workflow_catalog_json,
     design_system_errors,
     inline_product_index,
     page_error_collector,
@@ -42,6 +43,7 @@ class DesktopAppCheckTests(unittest.TestCase):
                 "CAP-03.S02.T02",
                 "CAP-03.S03.T03",
                 "CAP-03.S05.T03",
+                "CAP-03.S06.T02",
             ],
             details["implementedCapabilities"],
         )
@@ -245,7 +247,11 @@ class TaskCenterInteractionTests(unittest.TestCase):
     def test_commands_focus_failure_and_project_switch_are_bound_to_current_projection(self) -> None:
         self.assertEqual([], product_build_errors(REPO))
         document = inline_product_index(REPO)
-        fixture = (REPO / "tests" / "desktop" / "fixtures" / "task_center_interactions.js").read_text(encoding="utf-8")
+        fixture = (
+            (REPO / "tests" / "desktop" / "fixtures" / "task_center_interactions.js")
+            .read_text(encoding="utf-8")
+            .replace("__WORKFLOW_CATALOG__", core_workflow_catalog_json(REPO))
+        )
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             context = browser.new_context()
@@ -268,6 +274,8 @@ class TaskCenterInteractionTests(unittest.TestCase):
                 page.locator("#project-parent-directory").fill("C:/Research")
                 page.locator("#project-directory-name").fill("study-one")
                 page.locator("#project-display-name").fill("Study One")
+                page.locator("#project-research-objective").fill("Explain a bounded workflow.")
+                page.locator("#project-primary-use-case").select_option("theory-synthesis")
                 page.get_by_role("button", name="Create project", exact=True).click()
                 page.get_by_label("Current project actions").get_by_role(
                     "button", name="Open project", exact=True

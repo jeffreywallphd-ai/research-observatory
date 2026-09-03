@@ -983,7 +983,10 @@ describe("generated Core API client", () => {
       startYear: 2020,
       endYear: 2026,
       includePrivateReports: false,
+      evidenceTypes: ["empirical-study"],
       noveltyStandard: "bounded-comparative",
+      autonomyLevel: "suggest",
+      stoppingConditions: ["coverage-threshold"],
     });
     await client.saveIntentDraft({
       root: "C:/Research/study-one",

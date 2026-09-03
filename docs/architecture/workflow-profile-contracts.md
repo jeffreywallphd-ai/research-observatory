@@ -44,6 +44,17 @@ binds the actual immediately preceding and target Research Intent revisions.
 Persistence must resolve the cited migration and human decision by their exact
 IDs and content hashes.
 
+The local service additionally resolves every stored selection and migration
+Research Intent reference to the exact canonical immutable intent revision
+bytes before projecting workflow authority. Rehashing a selection after
+substituting an intent, profile, project, or actor field therefore fails closed;
+a self-consistent forged workflow record cannot replace the intent ledger.
+Profile-impact acknowledgement binds the complete impact-bearing scope,
+including evidence types, autonomy, stopping conditions, and the deterministically
+ordered IDs of stale artifacts currently known to the dependency repository.
+The save path re-reads that stale state, so an acknowledgement cannot outlive a
+changed impact projection.
+
 `WorkflowStageState` has the same stable aggregate/distinct revision identity
 shape and binds the exact selection and profile independently of
 executor history. Its state vocabulary covers not-started, available, current,

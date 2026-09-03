@@ -21,7 +21,10 @@ from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
-from research_observatory_core.repositories import sqlite_intent_revision_repository  # noqa: E402
+from research_observatory_core.repositories import (  # noqa: E402
+    sqlite_dependency_impact_repository,
+    sqlite_intent_revision_repository,
+)
 from research_observatory_core.research_intents import ResearchIntentService  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
     APPLICATION_ID,
@@ -434,6 +437,7 @@ class ProjectLifecycleTests(unittest.TestCase):
         intents = ResearchIntentService(
             self.service,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         )
         app = create_app(
@@ -515,6 +519,7 @@ class ProjectLifecycleTests(unittest.TestCase):
         intents = ResearchIntentService(
             self.service,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         )
         app = create_app(

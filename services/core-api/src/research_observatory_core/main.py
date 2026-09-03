@@ -32,6 +32,7 @@ from .projects import ProjectLifecycleService
 from .provenance import ProvenanceService
 from .repositories import (
     create_sqlite_unit_of_work_factory,
+    sqlite_dependency_impact_repository,
     sqlite_intent_revision_repository,
     sqlite_material_dependency_repository,
     sqlite_privacy_policy_repository,
@@ -128,6 +129,7 @@ def create_runtime_app(
         intents=ResearchIntentService(
             projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=resolved_actor_id,
         ),
         provenance=ProvenanceService(projects, sqlite_provenance_ledger_repository),

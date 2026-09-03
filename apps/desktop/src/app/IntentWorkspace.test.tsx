@@ -15,6 +15,7 @@ import {
   IntentAcceptanceCoordinator,
   IntentWorkspace,
   acceptedIntentWorkspace,
+  intentFieldAffectsImpact,
   intentAcceptanceAvailability,
   intentAcceptanceRequest,
   intentWorkspaceAvailability,
@@ -133,6 +134,24 @@ function response(status: number, body: unknown, contentType = "application/json
 }
 
 describe("guided research intent workspace", () => {
+  it("invalidates impact acknowledgement for every preview-bound field", () => {
+    for (const field of [
+      "primaryUseCase",
+      "sourceKinds",
+      "languageCodes",
+      "startYear",
+      "endYear",
+      "includePrivateReports",
+      "evidenceTypes",
+      "noveltyStandard",
+      "autonomyLevel",
+      "stoppingConditions",
+    ] as const) {
+      expect(intentFieldAffectsImpact(field), field).toBe(true);
+    }
+    expect(intentFieldAffectsImpact("researchObjective")).toBe(false);
+  });
+
   it("keeps intent-form defaults use-case specific without duplicating profile presentation", () => {
     expect(selectedIntentGuidance("systematic-review")).toMatchObject({
       epistemicMode: "systematic",

@@ -6,6 +6,7 @@
   const runBId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d105";
   const jobAId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d006";
   const humanTaskBId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d130";
+  const workflowCatalog = __WORKFLOW_CATALOG__;
   let failNextCancel = false;
   let delayNextA = false;
   const pendingA = [];
@@ -165,6 +166,7 @@
       if (command === "core_runtime_stop") return undefined;
       if (command !== "core_api_request") throw new Error(`unsupported command ${command}`);
       const request = args.request;
+      if (request.path === "/workflow-profiles/catalog") return response(workflowCatalog);
       if (request.path === "/projects") return response(project("A", false));
       if (request.path === "/projects/open") {
         const root = JSON.parse(request.body).root;

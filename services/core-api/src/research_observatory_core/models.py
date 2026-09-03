@@ -416,7 +416,10 @@ class IntentImpactRequest(ContractModel):
     start_year: int | None = Field(default=None, ge=1000, le=9999)
     end_year: int | None = Field(default=None, ge=1000, le=9999)
     include_private_reports: bool
+    evidence_types: tuple[IntentEvidenceType, ...] = Field(max_length=32)
     novelty_standard: IntentNoveltyStandard | None
+    autonomy_level: IntentAutonomyLevel
+    stopping_conditions: tuple[IntentStoppingCondition, ...] = Field(min_length=1, max_length=3)
 
     @model_validator(mode="after")
     def validate_scope(self) -> IntentImpactRequest:
@@ -424,6 +427,10 @@ class IntentImpactRequest(ContractModel):
             raise ValueError("source kinds must be unique")
         if len(set(self.language_codes)) != len(self.language_codes):
             raise ValueError("language codes must be unique")
+        if len(set(self.evidence_types)) != len(self.evidence_types):
+            raise ValueError("evidence types must be unique")
+        if len(set(self.stopping_conditions)) != len(self.stopping_conditions):
+            raise ValueError("stopping conditions must be unique")
         if any(
             not value
             or len(value) > 100
@@ -445,19 +452,12 @@ class IntentDraftRequest(IntentImpactRequest):
     phenomenon: str = Field(max_length=4000)
     unit_of_analysis: str = Field(max_length=4000)
     level_of_analysis: str = Field(max_length=4000)
-    evidence_types: tuple[IntentEvidenceType, ...] = Field(max_length=32)
     novelty_rationale: str = Field(max_length=4000)
-    autonomy_level: IntentAutonomyLevel
-    stopping_conditions: tuple[IntentStoppingCondition, ...] = Field(min_length=1, max_length=3)
     revision_rationale: str = Field(min_length=1, max_length=4000)
     impact_acknowledgement: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
 
     @model_validator(mode="after")
     def validate_draft_collections(self) -> IntentDraftRequest:
-        if len(set(self.evidence_types)) != len(self.evidence_types):
-            raise ValueError("evidence types must be unique")
-        if len(set(self.stopping_conditions)) != len(self.stopping_conditions):
-            raise ValueError("stopping conditions must be unique")
         for value in (
             self.research_objective,
             self.contribution_intent,
@@ -481,7 +481,10 @@ class IntentDraftRequest(IntentImpactRequest):
             start_year=self.start_year,
             end_year=self.end_year,
             include_private_reports=self.include_private_reports,
+            evidence_types=self.evidence_types,
             novelty_standard=self.novelty_standard,
+            autonomy_level=self.autonomy_level,
+            stopping_conditions=self.stopping_conditions,
         )
 
 
