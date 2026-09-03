@@ -3639,6 +3639,15 @@ class TaskctlWorkflowTests(unittest.TestCase):
             packet = json.loads(
                 (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
             )
+            appended_scope_reference = {
+                "path": "planning/wave-amendment-approvals/W1.A02.B00.addendum-02.json",
+                "sha256": "1" * 64,
+                "introduction_commit": "2" * 40,
+            }
+            expected_scope_addenda = [
+                *copy.deepcopy(bootstrap["scope_addenda"]),
+                appended_scope_reference,
+            ]
 
             def git_result(command: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
                 if command[:3] == ["git", "rev-parse", "HEAD"]:
@@ -3661,6 +3670,10 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 patch("taskctl.git_commit_exists", return_value=True),
                 patch("taskctl.git_is_ancestor", return_value=True),
                 patch("taskctl.require_amendment_packet_integrity"),
+                patch(
+                    "taskctl.bootstrap_resubmission_scope_addenda",
+                    return_value=([], expected_scope_addenda),
+                ),
                 patch("taskctl.bootstrap_attempt_errors", return_value=[]),
                 patch("taskctl.subprocess.run", side_effect=git_result),
                 patch("taskctl.persist"),
@@ -3683,6 +3696,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             )
             self.assertEqual(1, len(bootstrap["attempts"]))
             self.assertEqual("R01", bootstrap["attempts"][0]["id"])
+            self.assertEqual(expected_scope_addenda, bootstrap["scope_addenda"])
             for key, value in prior_projection.items():
                 self.assertEqual(value, bootstrap["attempts"][0][key])
             self.assertEqual(evidence_sha256(evidence_path.read_bytes()), bootstrap["evidence"][0]["sha256"])
@@ -6135,6 +6149,78 @@ class TaskctlWorkflowTests(unittest.TestCase):
             ],
             patterns,
         )
+
+    def test_bootstrap_resubmission_discovers_and_freezes_new_scope_addenda_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            relative = "planning/wave-amendment-approvals/W1.A02.B00.addendum-02.json"
+            path = repo / relative
+            path.parent.mkdir(parents=True)
+            path.write_text(
+                json.dumps(
+                    {
+                        "candidateAtDecision": "c" * 40,
+                        "authorizedAdditionalPaths": ["tools/taskctl.py"],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            reference = {
+                "path": relative,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "introduction_commit": "e" * 40,
+            }
+            with (
+                patch(
+                    "taskctl.load_bootstrap_scope_addenda",
+                    return_value=(["tools/taskctl.py"], [reference]),
+                ),
+                patch("taskctl.git_is_ancestor", return_value=True),
+            ):
+                additional, frozen = taskctl_module.bootstrap_resubmission_scope_addenda(
+                    repo,
+                    "W1.A02",
+                    "W1.A02.B00",
+                    {"scope_addenda": []},
+                    "b" * 40,
+                    "d" * 40,
+                )
+            self.assertEqual(["tools/taskctl.py"], additional)
+            self.assertEqual([reference], frozen)
+
+            rewritten = {**reference, "sha256": "0" * 64}
+            with (
+                self.assertRaisesRegex(SystemExit, "frozen bootstrap scope addendum is missing or differs"),
+                patch(
+                    "taskctl.load_bootstrap_scope_addenda",
+                    return_value=(["tools/taskctl.py"], [rewritten]),
+                ),
+            ):
+                taskctl_module.bootstrap_resubmission_scope_addenda(
+                    repo,
+                    "W1.A02",
+                    "W1.A02.B00",
+                    {"scope_addenda": [reference]},
+                    "b" * 40,
+                    "d" * 40,
+                )
+
+            with (
+                self.assertRaisesRegex(SystemExit, "does not descend from the prior candidate"),
+                patch(
+                    "taskctl.load_bootstrap_scope_addenda",
+                    return_value=(["tools/taskctl.py"], [reference]),
+                ),
+                patch("taskctl.git_is_ancestor", return_value=False),
+            ):
+                taskctl_module.bootstrap_resubmission_scope_addenda(
+                    repo,
+                    "W1.A02",
+                    "W1.A02.B00",
+                    {"scope_addenda": []},
+                    "b" * 40,
+                    "d" * 40,
+                )
 
     def test_legacy_star_scope_is_bounded_to_the_declared_directory_tree(self) -> None:
         patterns = ["design/ui-reference/*"]

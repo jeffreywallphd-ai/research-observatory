@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0015",
+  "title": "Admit authenticated post-review bootstrap scope addenda",
+  "status": "pending-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "3e1119e1ef913432fa473e95e6d86283e4ed3658",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": null
+  },
+  "trigger": {
+    "denial": "Independent W1.A06.B00 scope-addendum review found that bootstrap-resubmit reads only addenda already frozen in the adverse attempt, making a valid post-review addendum operationally inert and leaving its generated ECR projection stale.",
+    "atomicity": "The bounded addendum is committed append-only and fails closed. W1.A06.B00 remains CHANGES_REQUESTED with its R01 finding preserved; W1 is paused and lease-free with no campaign or ordinary task active.",
+    "diagnosis": "Initial bootstrap submission discovers, authenticates, and freezes scope addenda, but remediation resubmission does not repeat that operation. Because the strict scope base is the prior candidate, the controller cannot consume the exact addendum intended to authorize reviewed transition history and remediation without an out-of-band backlog mutation."
+  },
+  "authority": "This maintenance changes only the generic amendment-bootstrap resubmission controller, focused tests, its maintenance record, and deterministic ECR-0005 projections. It does not expand the W1.A06 addendum path inventory, product or planning scope, security or experience authority, task state, release state, or external authority. No human approval is required under GOV-MIG-0001 because the correction preserves and enforces existing authenticated authority.",
+  "intendedDelta": {
+    "implementation": "Before validating a strict-descendant bootstrap remediation, discover all canonical scope addenda, authenticate each through the existing schema/hash/blob/introduction/ancestry checks, require every previously frozen reference to remain byte-identical, require each new addendum decision candidate to descend from the prior reviewed candidate and remain on the remediation lineage, use the merged set for scope validation, and persist it only after the complete resubmission validates.",
+    "failClosed": [
+      "Missing, rewritten, substituted, duplicated, non-ancestral, or off-lineage addenda deny resubmission before backlog mutation.",
+      "Previously frozen references remain in their original order and are never replaced; newly authenticated references append deterministically.",
+      "The strict scope base remains the prior reviewed candidate, so an addendum must explicitly authorize every intervening non-evidence path.",
+      "Generated ECR projections must include the canonical addendum set and hashes and pass the full planning-site integrity check before the maintenance candidate is reviewed.",
+      "W1 stays paused and W1.A06.B00 stays adverse until a later exact-candidate R02 independently closes W1.A06.B00-R01-F01."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0015.json",
+      "tools/taskctl.py",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tests/foundation/test_taskctl_schema.py",
+      "planning/review-site/enablers/ECR-0005.html",
+      "planning/review-site/manifest.json"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The credible risk is accepting an unauthenticated or substituted addendum, retroactively losing a frozen reference, weakening the prior-candidate scope boundary, or persisting partial state. Run focused discovery/persistence/substitution/non-ancestry tests, the original three W1.A06 bootstrap transitions, the complete taskctl schema/workflow modules, Ruff, canonical ECR/backlog/site/view validation, maintenance JSON parsing, and exact diff hygiene. Product, runtime, platform, packaging, and full Wave suites are unrelated and remain deferred.",
+    "results": [
+      {
+        "check": "focused addendum discovery and W1.A06 transition boundary",
+        "result": "passed",
+        "detail": "Five focused tests pass in 5.871 seconds: resubmission appends and persists newly authenticated addendum references, rejects frozen-reference substitution and non-ancestral decisions, and preserves the original three post-migration W1.A06 append/hold/history transitions. Direct canonical replay discovers the committed W1.A06 addendum with all seven paths without an out-of-band backlog edit."
+      },
+      {
+        "check": "complete affected taskctl schema and workflow modules",
+        "result": "passed",
+        "detail": "All 106 taskctl schema/workflow tests pass in 314.416 seconds. The first complete run exposed two mutable-live revision-9/revision-12 fixtures; their shared revision_eleven_copy now selects exactly W1.A01 through W1.A03, and both focused historical cases pass without changing any production assertion."
+      },
+      {
+        "check": "planning authority and generated projection integrity",
+        "result": "passed",
+        "detail": "ECR-0005 remains approved and history-bound; the 20-capability, 117-slice, 363-task, 12-gate backlog validates; generated backlog views are unchanged; and all 489 planning-review pages pass after deterministic regeneration of only ECR-0005.html and manifest.json."
+      },
+      {
+        "check": "quality, scope, and quiescence",
+        "result": "passed",
+        "detail": "Ruff lint and format checks pass for the three Python paths, the maintenance record parses as JSON, and patch hygiene passes. W1 remains PAUSED and lease-free; W1.A06.B00 remains CHANGES_REQUESTED with no campaign or ordinary task; no product, canonical plan, approved experience, security, packaging, platform, or release byte changed."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocker, preserve the adverse W1.A06.B00 and addendum histories, keep W1 paused, and revise only this generic authenticated discovery/persistence boundary and its focused projections.",
+  "reviewAttempts": [],
+  "review": null
+}

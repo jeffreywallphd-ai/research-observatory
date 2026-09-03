@@ -2211,6 +2211,47 @@ def bootstrap_authorized_patterns(
     return patterns
 
 
+def bootstrap_resubmission_scope_addenda(
+    repo: Path,
+    amendment_id: str,
+    bootstrap_id: str,
+    bootstrap: dict[str, Any],
+    previous_candidate: str,
+    implementation_commit: str,
+) -> tuple[list[str], list[dict[str, str]]]:
+    """Authenticate and append newly introduced scope addenda for a remediation."""
+    additional_paths, discovered = load_bootstrap_scope_addenda(repo, amendment_id, bootstrap_id)
+    frozen = list(bootstrap.get("scope_addenda") or [])
+    discovered_by_path = {str(item.get("path") or ""): item for item in discovered}
+    frozen_paths: set[str] = set()
+    for reference in frozen:
+        relative = str(reference.get("path") or "")
+        if not relative or relative in frozen_paths:
+            raise SystemExit(f"{bootstrap_id}: frozen bootstrap scope-addendum references are invalid")
+        frozen_paths.add(relative)
+        if discovered_by_path.get(relative) != reference:
+            raise SystemExit(f"{bootstrap_id}: frozen bootstrap scope addendum is missing or differs")
+
+    appended: list[dict[str, str]] = []
+    for reference in discovered:
+        relative = str(reference.get("path") or "")
+        if relative in frozen_paths:
+            continue
+        record_path = repo.joinpath(*PurePosixPath(relative).parts)
+        record = json.loads(record_path.read_text(encoding="utf-8"))
+        decision_candidate = str(record.get("candidateAtDecision") or "")
+        if decision_candidate != previous_candidate and not git_is_ancestor(
+            repo, previous_candidate, decision_candidate
+        ):
+            raise SystemExit(f"{bootstrap_id}: new scope addendum does not descend from the prior candidate")
+        if decision_candidate != implementation_commit and not git_is_ancestor(
+            repo, decision_candidate, implementation_commit
+        ):
+            raise SystemExit(f"{bootstrap_id}: new scope addendum is outside the remediation lineage")
+        appended.append(reference)
+    return additional_paths, [*frozen, *appended]
+
+
 def bootstrap_path_is_authorized(path: str, patterns: list[str], bootstrap_id: str) -> bool:
     return amendment_path_authorized(path, patterns) or path.startswith(f"artifacts/evidence/{bootstrap_id}")
 
@@ -7973,6 +8014,14 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
         raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
     agent = normalized_identity(args.agent, "Bootstrap remediation implementer")
+    _additional_paths, scope_addenda = bootstrap_resubmission_scope_addenda(
+        repo,
+        args.amendment,
+        str(bootstrap.get("id")),
+        bootstrap,
+        previous_candidate,
+        implementation_commit,
+    )
     evidence_reference = {
         "type": "criterion-manifest",
         "path": evidence_relative,
@@ -7997,7 +8046,11 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         candidate,
         expected_base=None,
         lineage_base=previous_candidate,
-        allowed_patterns=bootstrap_authorized_patterns(repo, packet, bootstrap),
+        allowed_patterns=bootstrap_authorized_patterns(
+            repo,
+            packet,
+            {**bootstrap, "scope_addenda": scope_addenda},
+        ),
         require_current_branch=True,
     )
     if errors:
@@ -8024,6 +8077,7 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         evidence=[evidence_reference],
         review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     )
+    bootstrap["scope_addenda"] = scope_addenda
     persist(args, data)
     print(f"Resubmitted {bootstrap.get('id')} as {attempt_id} -> current REVIEW")
 

@@ -51,7 +51,7 @@ class BacklogSchemaTests(unittest.TestCase):
         control["minimum_tool_revision"] = 11
         control.pop("maintenance_increments", None)
         data["wave_amendments"] = [
-            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+            amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03"}
         ]
         return data
 
