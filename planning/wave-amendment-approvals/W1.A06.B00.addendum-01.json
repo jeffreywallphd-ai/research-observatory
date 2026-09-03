@@ -1,0 +1,28 @@
+{
+  "$schema": "./bootstrap-scope-addendum.schema.json",
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-scope-addendum",
+  "amendmentId": "W1.A06",
+  "bootstrapUnit": "W1.A06.B00",
+  "status": "APPROVED",
+  "approvedBy": "authority-chain:W1.A06+GOV-MAINT-0014",
+  "approvedAt": "2026-09-03T12:42:18.2583438-04:00",
+  "decision": "Bind the already-authorized W1.A06 bootstrap submission and adverse-review projections plus the independently approved GOV-MAINT-0014 test-fixture correction into the strict-descendant R02 scope. This is a bookkeeping clarification under the approved W1.A06 packet and GOV-MIG-0001 maintenance authority; it grants no new product, planning, control, release, or external authority.",
+  "baseApprovalCommit": "6e4581274972b7c324e5394fb317975ff063ecbe",
+  "candidateAtDecision": "509962b4e52bdd3605fc32ec7160356e62e6c543",
+  "authorizedAdditionalPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0014.json",
+    "planning/governance-migrations/GOV-MAINT-0014.review-R01.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/foundation/test_taskctl_workflow.py"
+  ],
+  "constraints": [
+    "Authorization is limited to the exact controller-generated W1.A06 submission/review projections already required by the approved packet and the exact two-path GOV-MAINT-0014 candidate independently approved at 85554c166283964084c3ccde31241133c0a34522.",
+    "The original W1.A06 bootstrap authorized paths and automatic W1.A06.B00 evidence paths remain unchanged; no product/runtime path, canonical CAP-03.S06 plan, task inventory, experience reference, security authority, release gate, or external effect is added.",
+    "W1 must remain PAUSED and lease-free; W1.A06.B00 R01 remains adverse and append-only; R02 must replay W1.A06.B00-R01-F01 at the exact strict-descendant candidate before materialization.",
+    "The addendum may not be used to authorize future changes to these paths beyond the exact 3fe834df6212516957048db3b76594bffe71eca5..509962b4e52bdd3605fc32ec7160356e62e6c543 history and the mechanical R02 transition records."
+  ]
+}
