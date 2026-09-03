@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4840886b7dca64f1a77cfae37a2e1715f0eee6538c63f7d2a49af5662d4dc640
+source_sha256: 5115004a2b55f7b162e762712e24c86a7d06cccd66f2aa4971fcd375b1cecbd7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1504,7 +1504,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A06.T01 - Reconcile the CAP-03.S06 workflow-profile count
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A06.B00`
 
@@ -1526,13 +1526,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Record the risk-selected task evidence and defer product/runtime/Windows-x64 qualification to ordinary CAP-03.S06 implementation, slice review, checkpoints, and W1 exit.
 - Obtain independent commit-bound planning/control review.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A06.T01.json` at `8cfefe0249581bbf26f2bc4c97aeab0289007657`
+
 #### Review history — W1.A06.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8d56e37b828055df00004def87b0b68930602b97a667058e66af4c0a46d18ab8`
+
+- Candidate / base / branch: `8cfefe0249581bbf26f2bc4c97aeab0289007657` / `2a536f563bddaef70b800e0902d720aad4e811cd` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T18:16:54+00:00`
+- Evidence: `artifacts/evidence/W1.A06.T01.json` / `491b2ddda142f060a5285b534a1b4173f859c2873cd8e4af4957ea71129ae049` / `8cfefe0249581bbf26f2bc4c97aeab0289007657`
+- Acceptance-criteria SHA-256: `d13d47fa911db465976b35830f78fbd9db8a06df81d4fc379065d9b3e4d41a9b`
+- Verification-selection SHA-256: `f96a395d73c24a9454834aaa3f45aca7efa2d600b521dcd319f03367ee18136b`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T01.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/enablers/ECR-0005.html`, `planning/review-site/manifest.json`, `planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md`, `planning/status-summary.md`
+- Selected checks: `.venv\Scripts\python.exe -c "compare the exact parsed CAP-03.S06 backlog record and slice-plan bytes at 2a536f563bddaef70b800e0902d720aad4e811cd and 8cfefe0249581bbf26f2bc4c97aeab0289007657, permitting only the approved T01 criterion replacement"`, `.venv\Scripts\python.exe -c "verify fourteen unique WORKFLOW_CATALOG identities plus approved manifest/hash authority"; .venv\Scripts\python.exe tools/ui_reference_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/plan_review_check.py --repo .; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe -c "require_runtime_amendment_integrity for W1.A06"`, `git diff --check 2a536f563bddaef70b800e0902d720aad4e811cd..8cfefe0249581bbf26f2bc4c97aeab0289007657; git diff --exit-code 2a536f563bddaef70b800e0902d720aad4e811cd..8cfefe0249581bbf26f2bc4c97aeab0289007657 -- design/ui-reference modules apps verification-profiles.json`
+- Deferred checks: `Service/data product behavior and Windows-x64 qualification are unchanged and remain assigned to ordinary CAP-03.S06 tasks, slice review, checkpoints, and W1 exit.`, `No full repository, product, packaging, performance, accessibility, or platform suite is warranted for a two-location planning-only correction.`
+- Selection rationale: This is a planning-authority correction, not product implementation. The credible risks are changing more than the single authorized criterion, miscounting or misbinding the governed catalog, stale generated planning views, or losing the active amendment authority chain. Exact parsed/byte comparisons, the full governed-reference integrity check, canonical backlog/site/view validation, runtime amendment-integrity validation, and negative Git path checks cover those risks. The pre-activation planctl ECR readiness command is intentionally lifecycle-inapplicable after activation; runtime amendment integrity is the authoritative active-campaign check.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
