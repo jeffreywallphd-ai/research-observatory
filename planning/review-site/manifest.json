@@ -23472,9 +23472,9 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A06.json",
       "approval_sha256": "244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67",
       "approval_status": "APPROVED",
-      "lifecycle_status": "MATERIALIZED",
+      "lifecycle_status": "ACTIVE",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "NONE",
+      "campaign_status": "ACTIVE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -23859,7 +23859,7 @@
         {
           "task_id": "W1.A06.T01",
           "title": "Reconcile the CAP-03.S06 workflow-profile count",
-          "status": "NOT_STARTED",
+          "status": "READY",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

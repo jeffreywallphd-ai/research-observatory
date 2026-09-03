@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 445e82cf35a697b6540efb6a3db245333cb1762c264b63408d1da92951b5231d
+source_sha256: 61d984125fd738c6b8ad29e40272ed14b5942e0ea3f6b03f6e3fb1a01440674b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -45,7 +45,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
-| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `MATERIALIZED` |
+| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ACTIVE` |
 
 ## Waves
 
@@ -1478,12 +1478,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A06.json` (`244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67`)
 
-**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-03T12:11:49.1702461-04:00` by repository-owner: The repository owner approved ECR-0005/W1.A06 in direct response to the exact-commit approval request for f48f11ed12c10d26acb1b80053e1a823c3ee5c16. Authorize only bootstrap W1.A06.B00, contribution W1.A06.S01, and task W1.A06.T01 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 fourteen-workflow catalog without changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
 - `E02` `MATERIALIZED` at `2026-09-03T18:04:41+00:00` by codex: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-09-03T18:06:49+00:00` by codex: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W1.A06
 
@@ -1503,7 +1504,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A06.T01 - Reconcile the CAP-03.S06 workflow-profile count
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A06.B00`
 
