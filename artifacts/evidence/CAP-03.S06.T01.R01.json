@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T01",
+  "commit": "012693e22441100f5fe778dd4d29f7667752a488",
+  "baseCommit": "f97003d34fc32b705195d518487bd40b79a2545d",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S06.T01.task-start.md",
+    "docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/workflow-profile-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/package.json",
+    "packages/contracts/tsconfig.json",
+    "packages/contracts/workflow-profile/README.md",
+    "packages/contracts/workflow-profile/fixtures/approved-workflow-profile-catalog.v1.json",
+    "packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json",
+    "packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json",
+    "packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json",
+    "packages/contracts/workflow-profile/fixtures/valid-workflow-stage-state.v1.json",
+    "packages/contracts/workflow-profile/generate.mjs",
+    "packages/contracts/workflow-profile/generated.ts",
+    "packages/contracts/workflow-profile/workflow-profile.schema.json",
+    "packages/contracts/workflow-profile/workflow-profile.template.py.txt",
+    "packages/contracts/workflow-profile/workflow-profile.template.ts.txt",
+    "packages/contracts/workflow-profile/workflow-profile.test.ts",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T01.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
+    "tests/contracts/README.md",
+    "tests/contracts/test_workflow_profile_contracts.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": "node packages/contracts/workflow-profile/generate.mjs --check; .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts; npx tsc -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "exitCode": 0,
+      "result": "The generated TypeScript and Python decoders reproduce exactly. All 77 Python contract tests and all 90 TypeScript contract tests across 10 files passed, and the contracts package passed strict TypeScript compilation. The focused workflow-profile suites contributed six Python and five TypeScript boundary tests."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py",
+      "exitCode": 0,
+      "result": "The new Python decoder and its tests pass Ruff lint, Ruff formatting, and mypy. A diagnostic repository-wide quality run still reaches unrelated pre-existing formatting and typing failures outside this task; those files were not changed to conceal or absorb prior-slice debt."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/adr_check.py --repo . --base f97003d34fc32b705195d518487bd40b79a2545d --head 012693e22441100f5fe778dd4d29f7667752a488; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "result": "The exact candidate range passes ADR governance with 26 indexed ADRs and 36 changed paths. Architecture passes for 13 areas, 12 modules, five stable interfaces, and three deployment profiles, and all 12 required repository modules remain present."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference",
+      "exitCode": 0,
+      "result": "The approved Academic Minimal v1.5 reference reproduces exactly across 55 governed files, 33 registered product pages, and 14 workflow profiles. The new catalog fixture binds its exact workflow and capability-coverage hashes without changing governed experience bytes."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 24 build-manifest and packaging contract tests passed, including the focused sidecar inventory assertion for the generated workflow-profile decoder. Packaging smoke also passed."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check f97003d34fc32b705195d518487bd40b79a2545d..012693e22441100f5fe778dd4d29f7667752a488; git diff --exit-code 37c564b740cbe98758dbf5759271e18505fd7fe1..012693e22441100f5fe778dd4d29f7667752a488",
+      "exitCode": 0,
+      "result": "The backlog validates with 20 capabilities, 117 slices, 364 tasks, and 12 release gates. The exact 36-path task range has no patch errors, and the frozen candidate tree is byte-identical to the fully tested implementation tree."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile service --profile data --affected-base f97003d34fc32b705195d518487bd40b79a2545d --affected-head 012693e22441100f5fe778dd4d29f7667752a488 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passed and reported the exact task range. Planning-control paths correctly triggered the safety-sensitive broad fallback. This task ran the narrow deterministic cross-runtime contract, static, architecture, catalog-integrity, packaging, and backlog checks above; the accumulated profile union remains deferred to slice review and W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The generated governed catalog contains exactly the 14 profile identities from Academic Minimal v1.5 and binds reference RO-UI-ACADEMIC-MINIMAL-1.5, WORKFLOW_CATALOG.json SHA-256 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca, and CAPABILITY_COVERAGE.json SHA-256 d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d.",
+        "Each profile records stable identity, version and revision, source hash, ordered primary stages, optionality, cycle policy, expected outputs, supporting-tool policy, and explicit unknown checkpoint authority where the approved reference does not declare stage-specific checkpoints.",
+        "ADR-0026 makes catalog/reference review and version change the authority for additions or changes; generated decoders reject drift, duplicate identities, unregistered stages or supporting tools, and mismatched governed hashes."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "ProjectWorkflowSelection and WorkflowStageState use stable aggregate identities plus distinct UUIDv7 revision identities. Navigation states current, completed, attention, blocked, stale, and skipped-with-rationale are explicit and contain no executor job or attempt fields.",
+        "Primary sequence, optionality, revisitable-cycle passes, supporting-tool invocation, and exact return to the current primary stage are represented independently. Supporting tools must be registered outside the primary sequence, skipped states require rationale, and system actors are limited to derived stale state.",
+        "The contract keeps the Research Intent reference complete and distinct from the ADR-0025 executor workflow. Selection authority remains human-only, while analytical job execution is neither inferred nor overloaded into navigation state."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Every selection revision carries the stable selection aggregate, distinct revision ID, full Research Intent reference, exact profile reference, revision/content hash, and immediate stable-aggregate predecessor.",
+        "Changing a profile requires a complete from/to migration that maps every source stage, declares history preservation, produces a bounded impact preview, and requires human acceptance. The valid selection-change fixture preserves the prior revision rather than rewriting it.",
+        "This task defines portable TypeScript/JSON/Python contracts and frozen fixtures only. Persistence, Core API orchestration, settings UI, workflow rendering, and end-to-end migration behavior remain assigned to T02-T05 and cannot acquire authority from this contract task."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T01 establishes a new portable, cross-process contract and generated decoder for governed workflow-profile identity, researcher selection authority, navigation state, and history-preserving profile migration. The credible task-level failures are catalog/reference drift, invented stage or checkpoint authority, aggregate/revision identity collapse, analytical-job state leakage, implicit supporting-tool progression, cycle/skip ambiguity, or destructive profile replacement. Verification therefore exercised exact generation in both runtimes, every contract package test, strict TypeScript, targeted Python static checks, governed reference integrity, ADR and architecture rules, package inventory, and exact-range hygiene. No persistence schema, service route, runtime executor, UI, authentication, or product data mutation changed, so complete service/data execution and cross-layer workflows are deferred to their owning tasks, slice integration review, and W1 exit. The safety-sensitive selector fallback is disclosed rather than replayed automatically at ordinary task scope.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:adr",
+      "foundation:ui-reference",
+      "foundation:packaging-smoke",
+      "foundation:backlog",
+      "packaging:unit",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "CAP-03.S06 T02-T05 and slice review own persistence, service/API, researcher-facing experience, history migration, and accumulated integration/adversarial coverage.",
+      "The complete service, data, foundation, security, packaging, recovery, performance, and Windows x64 qualification matrix remains mandatory once at W1 exit.",
+      "Repository-wide quality diagnostics currently expose unrelated pre-existing formatting and mypy failures in prior-slice files; the two new Python files pass the affected static checks and the baseline debt remains visible for its owning integration boundary."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 012693e22441100f5fe778dd4d29f7667752a488 against base f97003d34fc32b705195d518487bd40b79a2545d. Authenticate the evidence and exact 36-path set; verify exact v1.5/14-profile binding, no invented checkpoint authority, stable aggregate versus UUIDv7 revision identities, strict separation from analytical job state, primary/optional/revisitable/supporting-tool invariants, immediate predecessor and preserved history, complete migration mapping and impact preview, human-only selection/migration acceptance, generated cross-runtime parity, and bounded task-level test selection. Do not expand into T02 persistence, T03 UI, T04 orchestration, T05 qualification, or the complete W1 matrix."
+  }
+}

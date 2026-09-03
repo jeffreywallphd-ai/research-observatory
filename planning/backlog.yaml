@@ -14636,15 +14636,20 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-03T18:46:13+00:00'
-      updated_at: '2026-09-03T18:46:13+00:00'
+      updated_at: '2026-09-03T19:22:47+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S06.T01.R01.json
+        sha256: 7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea
+        commit: 012693e22441100f5fe778dd4d29f7667752a488
+        recorded_at: '2026-09-03T19:22:47+00:00'
       review:
         reviewer: null
         result: null
@@ -14655,10 +14660,114 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-03T18:46:13+00:00'
         expires_at: '2026-09-04T02:46:13+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-03T19:22:47+00:00'
+          candidate_commit: 012693e22441100f5fe778dd4d29f7667752a488
+          base_commit: f97003d34fc32b705195d518487bd40b79a2545d
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S06.T01.R01.json
+            sha256: 7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea
+            commit: 012693e22441100f5fe778dd4d29f7667752a488
+            recorded_at: '2026-09-03T19:22:47+00:00'
+          acceptance_criteria_sha256: 2103e66c9af91fc8108f9f717476e012c3dd2a93e9eebfef55aca601509011ae
+          changed_paths:
+          - artifacts/evidence/CAP-03.S06.T01.task-start.md
+          - docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md
+          - docs/adr/index.json
+          - docs/architecture/README.md
+          - docs/architecture/workflow-profile-contracts.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/README.md
+          - packages/contracts/package.json
+          - packages/contracts/tsconfig.json
+          - packages/contracts/workflow-profile/README.md
+          - packages/contracts/workflow-profile/fixtures/approved-workflow-profile-catalog.v1.json
+          - packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json
+          - packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json
+          - packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json
+          - packages/contracts/workflow-profile/fixtures/valid-workflow-stage-state.v1.json
+          - packages/contracts/workflow-profile/generate.mjs
+          - packages/contracts/workflow-profile/generated.ts
+          - packages/contracts/workflow-profile/workflow-profile.schema.json
+          - packages/contracts/workflow-profile/workflow-profile.template.py.txt
+          - packages/contracts/workflow-profile/workflow-profile.template.ts.txt
+          - packages/contracts/workflow-profile/workflow-profile.test.ts
+          - packaging/build-inputs.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S06.T01.html
+          - planning/review-site/CAP-03/CAP-03.S06.html
+          - planning/review-site/CAP-03/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/packaging/sidecar-build.json
+          - services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+          - tests/contracts/README.md
+          - tests/contracts/test_workflow_profile_contracts.py
+          - tests/packaging/test_core_sidecar_package.py
+          - tools/core_sidecar_build.py
+          selected_checks:
+          - node packages/contracts/workflow-profile/generate.mjs --check; .venv/Scripts/python.exe -m unittest discover -s
+            tests/contracts -p test_*.py; npm test --prefix packages/contracts; npx tsc -p packages/contracts/tsconfig.json
+            --noEmit --pretty false
+          - .venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+            tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+            tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+            tests/contracts/test_workflow_profile_contracts.py
+          - .venv/Scripts/python.exe tools/adr_check.py --repo . --base f97003d34fc32b705195d518487bd40b79a2545d --head 012693e22441100f5fe778dd4d29f7667752a488;
+            .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/repository_structure_check.py
+            --repo .
+          - .venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference
+          - .venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py
+            --repo .
+          - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check f97003d34fc32b705195d518487bd40b79a2545d..012693e22441100f5fe778dd4d29f7667752a488;
+            git diff --exit-code 37c564b740cbe98758dbf5759271e18505fd7fe1..012693e22441100f5fe778dd4d29f7667752a488
+          - .venv/Scripts/python.exe tools/verify.py --repo . --profile service --profile data --affected-base f97003d34fc32b705195d518487bd40b79a2545d
+            --affected-head 012693e22441100f5fe778dd4d29f7667752a488 --deferred-gate W1-exit --selection-only
+          deferred_checks:
+          - CAP-03.S06 T02-T05 and slice review own persistence, service/API, researcher-facing experience, history migration,
+            and accumulated integration/adversarial coverage.
+          - The complete service, data, foundation, security, packaging, recovery, performance, and Windows x64 qualification
+            matrix remains mandatory once at W1 exit.
+          - Repository-wide quality diagnostics currently expose unrelated pre-existing formatting and mypy failures in prior-slice
+            files; the two new Python files pass the affected static checks and the baseline debt remains visible for its
+            owning integration boundary.
+          selection_rationale: T01 establishes a new portable, cross-process contract and generated decoder for governed workflow-profile
+            identity, researcher selection authority, navigation state, and history-preserving profile migration. The credible
+            task-level failures are catalog/reference drift, invented stage or checkpoint authority, aggregate/revision identity
+            collapse, analytical-job state leakage, implicit supporting-tool progression, cycle/skip ambiguity, or destructive
+            profile replacement. Verification therefore exercised exact generation in both runtimes, every contract package
+            test, strict TypeScript, targeted Python static checks, governed reference integrity, ADR and architecture rules,
+            package inventory, and exact-range hygiene. No persistence schema, service route, runtime executor, UI, authentication,
+            or product data mutation changed, so complete service/data execution and cross-layer workflows are deferred to
+            their owning tasks, slice integration review, and W1 exit. The safety-sensitive selector fallback is disclosed
+            rather than replayed automatically at ordinary task scope.
+          selection_sha256: c305046a905f413ac3d9649534385019ee4e97b758453c7c61ab0ba71b4a5244
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:adr
+          - foundation:ui-reference
+          - foundation:packaging-smoke
+          - foundation:backlog
+          - packaging:unit
+          - contracts:unit
+          packet_sha256: ecf2ddd8ed7dff31e6df985a680d073fff3b76ea920077a5290baac0b659cd85
     - id: CAP-03.S06.T02
       capability_id: CAP-03
       slice_id: CAP-03.S06
