@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0012",
+  "reviewId": "GOV-MAINT-0012.R01",
+  "reviewedCommit": "da75961e3caac76e46bc42b3adc132db55baa115",
+  "reviewer": "agent:gov-maint-0011-reviewer",
+  "reviewedAt": "2026-09-03T14:30:35.7963073Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0012.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "findings": [
+    {
+      "findingId": "GOV-MAINT-0012.R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "title": "A downgraded successor can recreate the one-time MI-0001 bridge",
+      "reproduction": "Start from the canonical state with W1.A05 present, remove control_plane.maintenance_increments, and set revision and minimum_tool_revision to 11. The semantic validators accept that synthetic state. At candidate da75961e, command_amendment_v4_bootstrap_submit derives first_post_migration_bootstrap only from the empty maintenance list, so W1.A06 enters the first-bridge branch and would recreate MI-0001 bound to A06 rather than rejecting the stale/downgraded state.",
+      "requiredRemediation": "Bind first-bridge eligibility to the exact original A05 authority position and canonical state in addition to an empty maintenance list. Any successor state with A05 already materialized must require exact revision 12 and the authenticated original MI-0001. Add a regression for A05-present/revision-11/no-MI denial and prove no mutation or save."
+    }
+  ],
+  "verified": [
+    "The exact diff is limited to the three declared paths; the protected untracked W1.A04.B00 witness remains untouched.",
+    "The original A05 append, active-hold denial, ordinary A06 successor, protected-witness non-read, and revision-12 semantic checks otherwise pass.",
+    "Ruff, canonical taskctl validation, generated backlog views, all 488 planning-review pages, and diff hygiene pass.",
+    "W1 remains PAUSED and quiescent with no active ordinary task, amendment campaign, or recovery hold."
+  ]
+}

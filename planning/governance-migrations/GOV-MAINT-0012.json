@@ -61,7 +61,41 @@
       }
     ]
   },
+  "remediation": {
+    "priorReviewId": "GOV-MAINT-0012.R01",
+    "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0012.review-R01.json",
+    "priorReviewSha256": "7e89892f7d4acf00409ff4c3bd7a3e48c685cb5f8f5f589f266f1cb465085a9a",
+    "openFindingIds": [
+      "GOV-MAINT-0012.R01-F01"
+    ],
+    "rootCause": "The R01 candidate used absence of the one-time maintenance ledger as a proxy for being before the first post-migration append. That inference is not fail-closed when canonical amendment history and the control revision are inconsistent: A05 can remain materialized while MI-0001 is absent and the revision is downgraded.",
+    "requiredResolution": "First-bridge eligibility must also require the exact original W1.A05 proposal and the pre-A05 canonical predecessor prefix. Any packet proposing A06 or later, or any state already containing A05, must use the revision-12 successor path and retain the authenticated MI-0001 record. The R02 regression must prove the downgraded A05-present state fails before mutation or save."
+  },
   "rollback": "If independent review finds a blocking defect, do not prepare or approve ECR-0005. Preserve W1 and the immutable MI-0001/W1.A05 authority at predecessor 836b790b, record the adverse maintenance disposition append-only, and remediate only the reproduced generic successor-bootstrap defect.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0012.R01",
+      "reviewedCommit": "da75961e3caac76e46bc42b3adc132db55baa115",
+      "reviewer": "agent:gov-maint-0011-reviewer",
+      "reviewedAt": "2026-09-03T14:30:35.7963073Z",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": [
+        "GOV-MAINT-0012.R01-F01"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0012.review-R01.json",
+      "sha256": "7e89892f7d4acf00409ff4c3bd7a3e48c685cb5f8f5f589f266f1cb465085a9a"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0012.R01",
+    "reviewedCommit": "da75961e3caac76e46bc42b3adc132db55baa115",
+    "reviewer": "agent:gov-maint-0011-reviewer",
+    "reviewedAt": "2026-09-03T14:30:35.7963073Z",
+    "disposition": "CHANGES_REQUESTED",
+    "findings": [
+      "GOV-MAINT-0012.R01-F01"
+    ],
+    "path": "planning/governance-migrations/GOV-MAINT-0012.review-R01.json",
+    "sha256": "7e89892f7d4acf00409ff4c3bd7a3e48c685cb5f8f5f589f266f1cb465085a9a"
+  }
 }
