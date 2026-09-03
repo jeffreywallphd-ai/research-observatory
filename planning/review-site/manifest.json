@@ -23473,7 +23473,7 @@
       "approval_sha256": "244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -23511,12 +23511,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "ecr5-planning-authority-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-09-03T18:01:44+00:00",
+            "notes": "APPROVED at frozen R02 state 1c9a7d318a988fa8ed3b344885f2a8d6f9446182 for candidate af7435651484b673b07c34e9ca0e664d275ed820. Evidence SHA-256 bccb7c6cb0531402bcb7fa4be4d6b9485a6afacc1c151f96391503a55a8b02a6 and exact 18-path remediation scope authenticate. W1.A06.B00-R01-F01 is closed: the original three transition tests and four addendum/planning checks pass, R01 history remains append-only, both authenticated addenda enforce ordered exact-blob authority, predecessor amendments and MI-0001 are unchanged, and W1 remains PAUSED/quiescent. Approval authorizes only B00 materialization readiness, not activation, T01, adoption, or W1 resume."
           },
-          "current_status": "REVIEW"
+          "current_status": "APPROVED"
         }
       ],
       "slice_contributions": [
