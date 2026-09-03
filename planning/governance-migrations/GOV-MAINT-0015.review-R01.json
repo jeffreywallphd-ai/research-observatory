@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0015",
+  "reviewId": "GOV-MAINT-0015.R01",
+  "reviewedCommit": "e9762975408f341cbba04ca8fa0e5c08f8cb84f7",
+  "reviewer": "agent:ecr5-planning-authority-reviewer",
+  "reviewedAt": "2026-09-03T13:17:03.4270225-04:00",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0015.json",
+    "planning/review-site/enablers/ECR-0005.html",
+    "planning/review-site/manifest.json",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0015-R01-F01",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "An older addendum path can authorize a later edit after its exact decision boundary.",
+      "evidence": "W1.A06.B00.addendum-01 limits tests/foundation/test_taskctl_workflow.py to the exact 3fe834df..509962b4 history, but candidate e9762975 changes that file later. bootstrap_authorized_patterns flattens the old path into unrestricted authorization, and direct reproduction reports the post-decision edit as authorized. Duplicate-path rejection simultaneously prevents an explicit later reauthorization.",
+      "requiredRemediation": "Permit ordered duplicate-path reauthorization by a later authenticated addendum; bind every addendum-authorized path to its blob at the latest authorizing addendum introduction commit; deny post-boundary edits until exact later reauthorization; and test denial, reauthorization, and a distinct off-lineage fork."
+    }
+  ],
+  "closures": [
+    {
+      "finding": "W1.A06.B00-addendum-R01-F01",
+      "status": "CLOSED",
+      "evidence": "The candidate generically discovers, authenticates, validates, and persists new addendum references during resubmission."
+    },
+    {
+      "finding": "W1.A06.B00-addendum-R01-F02",
+      "status": "CLOSED",
+      "evidence": "The deterministic ECR-0005 page and manifest were regenerated and all 489 planning-review pages pass."
+    }
+  ],
+  "verified": [
+    "The exact candidate is a direct child of predecessor 3e1119e1ef913432fa473e95e6d86283e4ed3658 and changes exactly the six declared paths.",
+    "Five focused tests and all 106 affected taskctl schema/workflow tests pass; Ruff, formatting, JSON, ECR, backlog, review-site, generated-view, and diff checks pass.",
+    "W1 remains PAUSED and lease-free; W1.A06.B00 remains CHANGES_REQUESTED with no campaign, task, recovery hold, product mutation, or release authority.",
+    "The protected untracked W1.A04.B00 witness was not opened, hashed, staged, modified, or deleted."
+  ]
+}
