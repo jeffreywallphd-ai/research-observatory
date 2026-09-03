@@ -41,6 +41,7 @@ from ui_conformance import (  # noqa: E402
     provenance_only_reference_ratification,
     set_page,
     wave_slice_authority_bound_approval_errors,
+    wave_slice_proposal_consumption_errors,
 )
 
 
@@ -76,6 +77,150 @@ class UiConformanceTests(unittest.TestCase):
 
     def git(self, root: Path, *args: str) -> str:
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
+
+    def wave_slice_authority_fixture(
+        self,
+        temporary: str,
+        *,
+        extra_proposal_path: bool = False,
+        substitute_slice: bool = False,
+    ) -> tuple[Path, dict[str, Any], str, str]:
+        root = Path(temporary) / "repo"
+        root.mkdir()
+        self.git(root, "init", "-b", "main")
+        self.git(root, "config", "user.name", "UI Authority Test")
+        self.git(root, "config", "user.email", "ui-authority@example.invalid")
+        self.git(root, "config", "core.autocrlf", "false")
+        approval_path = root / "design" / "ui-reference" / "APPROVAL.yaml"
+        manifest_path = root / "design" / "ui-reference" / "REFERENCE_MANIFEST.yaml"
+        slice_relative = "planning/slice-plans/CAP-03/CAP-03.S05-fixture.md"
+        slice_path = root / slice_relative
+
+        old_approval = {
+            "status": "approved",
+            "approved_by": "repository-owner",
+            "approved_at": "2026-08-01T00:00:00+00:00",
+            "approved_commit": "0" * 40,
+        }
+
+        def write_backlog(wave_approval: dict[str, Any]) -> None:
+            path = root / "planning" / "backlog.yaml"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(
+                yaml.safe_dump({"waves": [{"id": "W1", "approval": wave_approval}]}, sort_keys=False),
+                encoding="utf-8",
+                newline="\n",
+            )
+
+        def write_slice(slice_approval: dict[str, Any]) -> None:
+            metadata = {
+                "document_type": "slice-implementation-plan",
+                "capability_id": "CAP-03",
+                "slice_id": "CAP-03.S05",
+                "status": "approved",
+                "wave": "W1",
+                "approval": slice_approval,
+            }
+            slice_path.parent.mkdir(parents=True, exist_ok=True)
+            slice_path.write_text(
+                "---\n" + yaml.safe_dump(metadata, sort_keys=False) + "---\n# Stable fixture plan\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+
+        write_backlog(old_approval)
+        write_slice(old_approval)
+        approval_path.parent.mkdir(parents=True, exist_ok=True)
+        approval_path.write_text("reference_id: REF-1\nstatus: approved\n", encoding="utf-8", newline="\n")
+        manifest_path.write_text("reference_id: REF-1\nstatus: approved\n", encoding="utf-8", newline="\n")
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "freeze Wave packet")
+        packet = self.git(root, "rev-parse", "HEAD")
+
+        projected = {
+            "status": "APPROVED",
+            "approved_by": "repository-owner",
+            "approved_at": "2026-09-01T00:00:00+00:00",
+            "approved_commit": packet,
+            "slice_ids": ["CAP-03.S05"],
+        }
+        write_backlog(projected)
+        write_slice(
+            {
+                "status": "approved",
+                "approved_by": projected["approved_by"],
+                "approved_at": projected["approved_at"],
+                "approved_commit": packet,
+            }
+        )
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "materialize Wave approval projection")
+
+        if substitute_slice:
+            substituted = yaml.safe_load(slice_path.read_text(encoding="utf-8").split("---", 2)[1])
+            substituted["title"] = "Substituted after Wave approval"
+            slice_path.write_text(
+                "---\n" + yaml.safe_dump(substituted, sort_keys=False) + "---\n# Stable fixture plan\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "substitute approved slice authority")
+
+        proposal_authority = {
+            "wave_id": "W1",
+            "slice_id": "CAP-03.S05",
+            "approved_wave_commit": packet,
+            "slice_plan": slice_relative,
+        }
+        proposal = {
+            "reference_id": "REF-2",
+            "version": "2",
+            "status": "proposed",
+            "approval_kind": "pending-human",
+            "approved_by": None,
+            "approved_at": None,
+            "approval_basis": "Await exact human approval.",
+            "authority": proposal_authority,
+            "supersedes": "REF-1",
+            "scope": {"normative": ["fixture"], "illustrative": ["values"]},
+            "implementation_rule": "Approval precedes implementation.",
+            "deferred_surfaces": [],
+        }
+        approval_path.write_text(yaml.safe_dump(proposal, sort_keys=False), encoding="utf-8", newline="\n")
+        proposal_manifest = {
+            "reference_id": "REF-2",
+            "version": "2",
+            "status": "proposed",
+            "file_hashes": {"APPROVAL.yaml": hashlib.sha256(approval_path.read_bytes()).hexdigest()},
+        }
+        manifest_path.write_text(yaml.safe_dump(proposal_manifest, sort_keys=False), encoding="utf-8", newline="\n")
+        if extra_proposal_path:
+            (root / "unrelated.txt").write_text("not governance\n", encoding="utf-8", newline="\n")
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "propose reference")
+        proposal_commit = self.git(root, "rev-parse", "HEAD")
+
+        approved = {
+            **proposal,
+            "status": "approved",
+            "approval_kind": "human",
+            "approved_by": "human:repository-owner",
+            "approved_at": "2026-09-03T00:00:00+00:00",
+            "approval_basis": "Repository owner approved the exact proposal.",
+            "authority": {**proposal_authority, "proposal_commit": proposal_commit},
+        }
+        approval_path.write_text(yaml.safe_dump(approved, sort_keys=False), encoding="utf-8", newline="\n")
+        approved_manifest = {
+            **proposal_manifest,
+            "status": "approved",
+            "file_hashes": {"APPROVAL.yaml": hashlib.sha256(approval_path.read_bytes()).hexdigest()},
+        }
+        manifest_path.write_text(yaml.safe_dump(approved_manifest, sort_keys=False), encoding="utf-8", newline="\n")
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "approve reference")
+        approval_commit = self.git(root, "rev-parse", "HEAD")
+        return root, approved, proposal_commit, approval_commit
 
     def test_canonical_token_and_route_contracts_pass_with_normative_mapping(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -464,6 +609,77 @@ class UiConformanceTests(unittest.TestCase):
 
         self.assertTrue(any("approved Wave authority commit cannot be resolved" in error for error in errors), errors)
 
+    def test_wave_slice_bound_approval_accepts_exact_projection_fixture(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval, _, approval_commit = self.wave_slice_authority_fixture(temporary)
+
+            errors = wave_slice_authority_bound_approval_errors(
+                root,
+                approval,
+                approval_commit,
+                "design/ui-reference/APPROVAL.yaml",
+            )
+
+        self.assertEqual([], errors)
+
+    def test_wave_slice_bound_approval_rejects_extra_proposal_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval, _, approval_commit = self.wave_slice_authority_fixture(
+                temporary,
+                extra_proposal_path=True,
+            )
+
+            errors = wave_slice_authority_bound_approval_errors(
+                root,
+                approval,
+                approval_commit,
+                "design/ui-reference/APPROVAL.yaml",
+            )
+
+        self.assertTrue(any("proposal must change only" in error for error in errors), errors)
+
+    def test_wave_slice_bound_approval_rejects_slice_authority_substitution(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval, _, approval_commit = self.wave_slice_authority_fixture(
+                temporary,
+                substitute_slice=True,
+            )
+
+            errors = wave_slice_authority_bound_approval_errors(
+                root,
+                approval,
+                approval_commit,
+                "design/ui-reference/APPROVAL.yaml",
+            )
+
+        self.assertTrue(any("immutable slice approval projection" in error for error in errors), errors)
+
+    def test_wave_slice_proposal_consumption_rejects_sibling_approvals(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approved, proposal_commit, _ = self.wave_slice_authority_fixture(temporary)
+            approval_path = root / "design" / "ui-reference" / "APPROVAL.yaml"
+            manifest_path = root / "design" / "ui-reference" / "REFERENCE_MANIFEST.yaml"
+            self.git(root, "checkout", "-b", "sibling", proposal_commit)
+            sibling = {**approved, "approved_at": "2026-09-03T00:01:00+00:00"}
+            approval_path.write_text(yaml.safe_dump(sibling, sort_keys=False), encoding="utf-8", newline="\n")
+            manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+            manifest["status"] = "approved"
+            manifest["file_hashes"] = {"APPROVAL.yaml": hashlib.sha256(approval_path.read_bytes()).hexdigest()}
+            manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8", newline="\n")
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "approve same proposal on sibling")
+            self.git(root, "checkout", "main")
+            self.git(root, "merge", "-s", "ours", "sibling", "-m", "merge sibling approval")
+            head = self.git(root, "rev-parse", "HEAD")
+
+            errors = wave_slice_proposal_consumption_errors(
+                root,
+                head,
+                "design/ui-reference/APPROVAL.yaml",
+            )
+
+        self.assertTrue(any("multiple reachable approvals" in error for error in errors), errors)
+
     def test_actual_authority_bound_v14_approval_resolves_to_immutable_approved_record(self) -> None:
         baseline = {
             "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
@@ -487,6 +703,74 @@ class UiConformanceTests(unittest.TestCase):
         baseline = json.loads((REPO / "verification" / "baselines" / "desktop-ui.json").read_text(encoding="utf-8"))
 
         errors = baseline_history_errors(context, baseline)
+
+        self.assertEqual([], errors)
+
+    def test_adopted_maintenance_makes_exact_rejected_candidate_history_non_authoritative(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            self.git(Path(temporary), "clone", "--shared", str(REPO), str(root))
+            self.git(root, "config", "user.name", "Adopted Maintenance Test")
+            self.git(root, "config", "user.email", "adopted-maintenance@example.invalid")
+            record_path = root / "planning" / "governance-migrations" / "GOV-MAINT-0010.json"
+            record = json.loads(record_path.read_text(encoding="utf-8"))
+            if record.get("status") != "adopted":
+                candidate = self.git(root, "rev-parse", "HEAD")
+                attempts = record["reviewAttempts"]
+                review_number = len(attempts) + 1
+                review_id = f"GOV-MAINT-0010.R{review_number:02d}"
+                relative_review = f"planning/governance-migrations/GOV-MAINT-0010.review-R{review_number:02d}.json"
+                candidate_paths = self.git(
+                    root,
+                    "diff-tree",
+                    "--root",
+                    "--no-commit-id",
+                    "--name-only",
+                    "-r",
+                    candidate,
+                ).splitlines()
+                review = {
+                    "schemaVersion": "1.0",
+                    "documentType": "governance-control-maintenance-review",
+                    "maintenanceId": "GOV-MAINT-0010",
+                    "reviewId": review_id,
+                    "reviewedCommit": candidate,
+                    "reviewer": "agent:prospective-independent-reviewer",
+                    "reviewedAt": "2026-09-03T12:30:00+00:00",
+                    "disposition": "APPROVED",
+                    "authorityPreserved": True,
+                    "candidateChangedPaths": sorted(candidate_paths),
+                    "findings": [],
+                }
+                review_path = root / relative_review
+                self.write_json(review_path, review)
+                attempt = {
+                    "reviewId": review_id,
+                    "reviewedCommit": candidate,
+                    "reviewer": review["reviewer"],
+                    "reviewedAt": review["reviewedAt"],
+                    "disposition": "APPROVED",
+                    "findings": [],
+                    "path": relative_review,
+                    "sha256": hashlib.sha256(review_path.read_bytes()).hexdigest(),
+                }
+                record.update(status="adopted", reviewAttempts=[*attempts, attempt], review=attempt)
+                self.write_json(record_path, record)
+                self.git(root, "add", "--", str(record_path.relative_to(root)), relative_review)
+                self.git(root, "commit", "-m", "materialize prospective independent adoption")
+
+            config = json.loads((root / "verification" / "extensions" / "desktop-ui.json").read_text(encoding="utf-8"))
+            reference = root / "design" / "ui-reference"
+            site = json.loads((reference / "SITE_MANIFEST.json").read_text(encoding="utf-8"))
+            workflows = json.loads((reference / "WORKFLOW_CATALOG.json").read_text(encoding="utf-8"))["workflows"]
+            page_contracts = json.loads((reference / "CAPABILITY_COVERAGE.json").read_text(encoding="utf-8"))[
+                "page_contracts"
+            ]
+            pages = [str(item["file"]) for item in site["pages"]]
+            context = Context(root, config, reference, reference, site, workflows, page_contracts, pages)
+            baseline = json.loads((root / "verification" / "baselines" / "desktop-ui.json").read_text(encoding="utf-8"))
+
+            errors = baseline_history_errors(context, baseline)
 
         self.assertEqual([], errors)
 
@@ -865,6 +1149,102 @@ class UiConformanceTests(unittest.TestCase):
                 errors = baseline_history_errors(context, canonical)
 
         self.assertTrue(any("settings" in error and "not of type 'object'" in error for error in errors), errors)
+
+    def test_reference_only_mutation_and_restore_remains_visible_in_baseline_history(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            root.mkdir()
+            self.git(root, "init", "-b", "main")
+            self.git(root, "config", "user.name", "UI Baseline Test")
+            self.git(root, "config", "user.email", "ui-baseline@example.invalid")
+            self.git(root, "config", "core.autocrlf", "false")
+            reference = root / "design" / "ui-reference"
+            shutil.copytree(REFERENCE, reference)
+            schema_path = root / "verification" / "desktop-ui-baseline.schema.json"
+            schema_path.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "verification" / "desktop-ui-baseline.schema.json", schema_path)
+            approval_path = reference / "APPROVAL.yaml"
+            approval = {
+                "reference_id": "REF-1.3",
+                "version": "1.3",
+                "status": "approved",
+                "approved_by": "repository-owner",
+                "approved_at": "2026-09-01T00:00:00+00:00",
+                "approval_basis": "Exact legacy reference fixture.",
+                "supersedes": None,
+                "scope": {"normative": ["fixture"], "illustrative": ["values"]},
+                "implementation_rule": "Approval precedes implementation.",
+                "deferred_surfaces": [],
+            }
+            approval_path.write_text(yaml.safe_dump(approval, sort_keys=False), encoding="utf-8", newline="\n")
+            manifest_path = reference / "REFERENCE_MANIFEST.yaml"
+            manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+            manifest.update(reference_id="REF-1.3", version="1.3", status="approved")
+
+            def governed_hashes() -> dict[str, str]:
+                return {
+                    relative: hashlib.sha256(
+                        (reference / relative).read_bytes().replace(b"\r\n", b"\n")
+                        if (reference / relative).suffix.lower()
+                        in {".css", ".html", ".js", ".json", ".md", ".mjs", ".py", ".ts", ".tsx", ".yaml", ".yml"}
+                        else (reference / relative).read_bytes()
+                    ).hexdigest()
+                    for relative in manifest["governed_files"]
+                }
+
+            manifest["file_hashes"] = governed_hashes()
+            manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8", newline="\n")
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "approve exact reference")
+            approval_commit = self.git(root, "rev-parse", "HEAD")
+            package = hashlib.sha256(
+                json.dumps(manifest["file_hashes"], sort_keys=True, separators=(",", ":")).encode("utf-8")
+            ).hexdigest()
+            baseline_path = root / "verification" / "baselines" / "desktop-ui.json"
+            baseline = json.loads((REPO / "verification" / "baselines" / "desktop-ui.json").read_text(encoding="utf-8"))
+            baseline.update(
+                referenceId="REF-1.3",
+                referencePackageSha256=package,
+                referenceApprovalCommit=approval_commit,
+            )
+            self.write_json(baseline_path, baseline)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "record bound visual baseline")
+
+            css_path = reference / "assets" / "app.css"
+            approved_css = css_path.read_bytes()
+            approved_manifest = manifest_path.read_bytes()
+            css_path.write_bytes(approved_css + b"\n.unapproved { color: red; }\n")
+            manifest["file_hashes"] = governed_hashes()
+            manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8", newline="\n")
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "mutate reference without approval")
+            css_path.write_bytes(approved_css)
+            manifest_path.write_bytes(approved_manifest)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "restore approved reference bytes")
+            site = json.loads((reference / "SITE_MANIFEST.json").read_text(encoding="utf-8"))
+            pages = [str(item["file"]) for item in site["pages"]]
+            context = Context(
+                root,
+                {
+                    "visual": {"baselinePath": "verification/baselines/desktop-ui.json"},
+                    "normativeSources": {"style": "design/ui-reference/STYLE_GUIDE.md"},
+                },
+                reference,
+                reference,
+                site,
+                {},
+                {},
+                pages,
+            )
+
+            errors = baseline_history_errors(context, baseline)
+
+        self.assertTrue(
+            any("visual baseline does not bind the exact approved reference package" in error for error in errors),
+            errors,
+        )
 
     def test_post_approval_package_mutation_cannot_be_laundered_through_a_merge(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
