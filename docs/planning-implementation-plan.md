@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dea4a31d979b1d93515a18789d8ca478027059dd112ddce79c902265fa1aea79
+source_sha256: 406d61ff978f15c59e791b99f5bffa149136a38d5337537590b9e1832623f107
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6141,7 +6141,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6176,7 +6176,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S06.T02
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -6240,7 +6240,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `CAP-03.S06.T02-R01-F02` `fixed` — Exact canonical before/after effects are derived and rendered; focused service tests cover theory-to-systematic and multi-condition critical-to-technical transitions, and the assembled desktop check confirms removed/added stopping effects before acknowledgement.
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `e465726bbb7fb56607fe2736d76a31ec58060654ed1714a3a448a9b4d1b36624`
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `e465726bbb7fb56607fe2736d76a31ec58060654ed1714a3a448a9b4d1b36624`
 
 - Candidate / base / branch: `eb7ee5746cfeb3b656c13e1bdd30c66866b91538` / `8e522b51bb5414cb55b69cba86299262969539b0` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-03T23:25:10+00:00`
@@ -6254,11 +6256,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R02` / `CAP-03.S06.T02-R01-F01`, `CAP-03.S06.T02-R01-F03`
 - Root-cause escalation: R01-F01 recurred because the R02 implementation treated a different settings key as independent authority and tested activation and selection deletion separately; both still vanished under one settings-ledger deletion. R01-F03 recurred because the R02 implementation treated physical centralization in Core plus key-set equality as governed value identity; it never enumerated or hashed the new guidance values. The shared root cause was substituting location and presence checks for explicit value-bearing identity plus an independent survivor invariant. R03 corrects both systemically: the first binding is witnessed in the separate immutable provenance ledger and every guidance value is covered by its own versioned canonical hash across Core, activation, generated client, desktop, tests, and evidence. Preventive tests combine settings loss, delete or substitute the witness, mutate one guidance value, and reject a substituted generated-client hash.
 
-**Current latest-review projection:** `changes-requested` by agent:t02-independent-reviewer at `2026-09-03T23:08:44+00:00`
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-independent-reviewer / `2026-09-03T23:35:06+00:00`
 
-**Latest notes:** The frozen R02 submission, evidence SHA-256/Git blob, exact 24-path remediation scope, eight-path submission projection, strict-descendant ancestry, and append-only R01 history authenticate. Full service, focused project/intent persistence and restart checks, generated contracts, renderer/browser checks, governance checks, and the native Windows supervisor/Core/SQLite vertical pass. CAP-03.S06.T02-R01-F02 is fixed by exact before/after autonomy and stopping effects. Approval remains unavailable because CAP-03.S06.T02-R01-F01 still admits a post-activation database after both the activation binding and all workflow-profile authority rows are removed, and CAP-03.S06.T02-R01-F03 remains open because the fourteen-profile defaults were relocated to an ungenerated Core table whose values are not covered by the returned governed profileCatalogHash while evidence calls them catalog-authored.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T02.review-R03.json` / `adc2b29fc579c0128dd5539d0954fb15a4fd02787de29d54d24bd83d6fa143c4`
 
-**Currently open findings:** `CAP-03.S06.T02-R01-F01`, `CAP-03.S06.T02-R01-F03`
+**Review notes:** The frozen R03 submission, evidence SHA-256/Git blob, exact 22-path remediation scope, eight-path submission projection, linear ancestry, and append-only R01/R02 history authenticate. CAP-03.S06.T02-R01-F01 is fixed by the independently retained activation provenance witness, fail-closed missing/substituted witness behavior, combined settings-deletion denial, atomic publication, and exact pre-T02 compatibility. F02 remains fixed. Approval remains unavailable because CAP-03.S06.T02-R01-F03 remains open: the generated decoder checks only the advertised intent-guidance hash constant and accepts a substituted returned guidance value when that advertised hash is retained.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S06.T02-R01-F01` `fixed` — An independently persisted workflow.profile.activated provenance witness binds the canonical activation record and first-selection identity in the same transaction. Combined settings deletion leaves that witness behind and fails closed after restart; missing and substituted witnesses deny; exact schema-v10 predecessor bytes remain readable and acquire governed authority atomically on the next write.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:t02-independent-reviewer at `2026-09-03T23:35:06+00:00`
+
+**Latest notes:** The frozen R03 submission, evidence SHA-256/Git blob, exact 22-path remediation scope, eight-path submission projection, linear ancestry, and append-only R01/R02 history authenticate. CAP-03.S06.T02-R01-F01 is fixed by the independently retained activation provenance witness, fail-closed missing/substituted witness behavior, combined settings-deletion denial, atomic publication, and exact pre-T02 compatibility. F02 remains fixed. Approval remains unavailable because CAP-03.S06.T02-R01-F03 remains open: the generated decoder checks only the advertised intent-guidance hash constant and accepts a substituted returned guidance value when that advertised hash is retained.
+
+**Currently open findings:** `CAP-03.S06.T02-R01-F03`
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 

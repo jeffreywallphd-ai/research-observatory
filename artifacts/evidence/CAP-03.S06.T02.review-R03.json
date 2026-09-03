@@ -1,0 +1,55 @@
+{
+  "task_id": "CAP-03.S06.T02",
+  "attempt_id": "R03",
+  "candidate_commit": "eb7ee5746cfeb3b656c13e1bdd30c66866b91538",
+  "submission_record_commit": "8a3d02f38e2309858cc5af7e4d0e3005d64ea7ae",
+  "reviewer": "agent:t02-independent-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The frozen R03 submission, evidence SHA-256/Git blob, exact 22-path remediation scope, eight-path submission projection, linear ancestry, and append-only R01/R02 history authenticate. CAP-03.S06.T02-R01-F01 is fixed by the independently retained activation provenance witness, fail-closed missing/substituted witness behavior, combined settings-deletion denial, atomic publication, and exact pre-T02 compatibility. F02 remains fixed. Approval remains unavailable because CAP-03.S06.T02-R01-F03 remains open: the generated decoder checks only the advertised intent-guidance hash constant and accepts a substituted returned guidance value when that advertised hash is retained.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T02.remediation-02.json",
+      "sha256": "ab339cf29598148629da3591273cecb583b66c5a5c50cc9922d250c2f7abef65",
+      "git_blob": "a2ef6d97199621a7a7fb70feb6dc0eefda6fc0a3",
+      "commit": "8a3d02f38e2309858cc5af7e4d0e3005d64ea7ae"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "result": "PASS: exact linear ancestry, 22-path remediation range, eight-path submission projection, frozen evidence bytes/blob, task projection, UI lineage, prior ledger immutability, and patch hygiene authenticate."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T02-R01-F01",
+      "result": "PASS: the provenance witness survives combined deletion of the activation binding and all workflow-profile settings; restart denies combined deletion, missing witness, and substituted witness, while the exact authenticated pre-T02 fixture remains compatible."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T02-R01-F02",
+      "result": "PASS: exact before/after autonomy and stopping effects remain correct through service and desktop checks."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T02-R01-F03",
+      "result": "FAIL: changing systematic-review.defaultStoppingConditions while retaining the advertised intentGuidanceVersion and intentGuidanceHash is accepted by decodeWorkflowProfileCatalogProjection. The decoder compares the hash field to a constant but does not bind the returned guidance values to it."
+    },
+    {
+      "type": "independent-check",
+      "result": "PASS: 73 service tests; focused generated TypeScript contracts and strict compilation; native Windows supervisor/Core/SQLite integration; 10 desktop tests; architecture, UI-reference, backlog-view, task-validation, and patch-hygiene checks."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S06.T02-R01-F01",
+      "disposition": "fixed",
+      "evidence": "An independently persisted workflow.profile.activated provenance witness binds the canonical activation record and first-selection identity in the same transaction. Combined settings deletion leaves that witness behind and fails closed after restart; missing and substituted witnesses deny; exact schema-v10 predecessor bytes remain readable and acquire governed authority atomically on the next write."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S06.T02-R01-F01",
+    "CAP-03.S06.T02-R01-F02",
+    "CAP-03.S06.T02-R01-F03"
+  ]
+}
