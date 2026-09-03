@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0012",
+  "reviewId": "GOV-MAINT-0012.R02",
+  "reviewedCommit": "1ce93bf6d4aef96639e8dbe98189fd979b70db77",
+  "reviewer": "agent:gov-maint-0011-reviewer",
+  "reviewedAt": "2026-09-03T14:36:17.6895439Z",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0012.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GOV-MAINT-0012.R01-F01",
+      "disposition": "closed",
+      "notes": "First-bridge eligibility requires both an empty maintenance ledger and a genuinely missing reserved predecessor. The exact A05-present/revision-11/no-MI A06 reproduction now rejects at the supported-control-boundary check before mutation, leaves the input byte-equivalent, and never calls save. The original A05 bridge and the ordinary revision-12 A06 successor both remain valid; W1.A04 and MI-0001 are not duplicated or rewritten."
+    }
+  ],
+  "verified": [
+    "The R02 candidate is a strict descendant of da75961e and the adverse-ledger commit 17f36bca; the R01 ledger remains byte-identical at SHA-256 7e89892f7d4acf00409ff4c3bd7a3e48c685cb5f8f5f589f266f1cb465085a9a.",
+    "Five focused workflow/control tests pass independently in 7.015 seconds, including the exact R01 reproduction, original A05 bridge, ordinary A06 successor, active-hold denial, and protected-witness non-read behavior.",
+    "Ruff, canonical taskctl validation, generated backlog views, all 488 planning-review pages, and diff hygiene pass.",
+    "W1 remains PAUSED and quiescent; the protected untracked artifacts/evidence/W1.A04.B00.json remains untouched and absent from the candidate."
+  ]
+}
