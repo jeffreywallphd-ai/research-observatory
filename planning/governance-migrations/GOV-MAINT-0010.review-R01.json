@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0010",
+  "reviewId": "GOV-MAINT-0010.R01",
+  "reviewedCommit": "3130c373e912aff2d6143bd15201d69e38ab1b55",
+  "reviewer": "agent:gov-maint-0010-reviewer",
+  "reviewedAt": "2026-09-03T11:18:43.7307607Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0010.json",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0010.R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Exact approved reference lineage",
+      "evidence": "Candidate 3130c373 changes the visual baseline to reference RO-UI-ACADEMIC-MINIMAL-1.5 and package 68d71bd038158ce38b33d8474f53406ebe88550f84e776d69d32c3ce18c08f21 but preserves referenceApprovalCommit 9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b, whose approval and manifest are v1.4. The actual v1.5 approval-introduction commit is 6ed8e76fb52349780cccac913b3652553a57afbd. approval_lineage_errors and baseline_history_errors reject that inconsistent provenance.",
+      "remediation": "Bind referenceApprovalCommit to 6ed8e76fb52349780cccac913b3652553a57afbd and prove the full baseline history accepts the exact v1.5 approval lineage."
+    },
+    {
+      "id": "GOV-MAINT-0010.R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Authority-preserving verification activation",
+      "evidence": "Substituting the correct v1.5 approval commit still fails because the authoritative desktop conformance validator accepts only the older amendment/ECR authority shape. Approved v1.5 uses wave_id, slice_id, approved_wave_commit, proposal_commit, and slice_plan, so the current validator reports an invalid authority shape and cannot resolve the approval-record introduction commit. The 34 UI-change gate tests do not exercise this baseline authority lineage.",
+      "remediation": "Extend the control-only desktop conformance authority validator to authenticate the exact v1.5 wave/slice approval shape while preserving the existing v1.4 amendment/ECR path. Add focused approval-lineage and baseline-history regressions, update the maintenance envelope and evidence, and replay the UI gate suite."
+    }
+  ]
+}
