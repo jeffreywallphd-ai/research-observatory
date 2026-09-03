@@ -7289,7 +7289,7 @@ def command_amendment_v4_bootstrap_submit(
     control = data.get("control_plane") or {}
     activation = packet.get("activationBoundary") or {}
     maintenance = control.get("maintenance_increments") or []
-    first_post_migration_bootstrap = not maintenance
+    first_post_migration_bootstrap = not maintenance and bool(missing_predecessors)
     if (
         (
             first_post_migration_bootstrap

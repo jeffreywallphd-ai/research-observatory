@@ -42,12 +42,12 @@
       {
         "check": "focused v4 bootstrap transitions",
         "result": "passed",
-        "detail": "Three focused taskctl workflow tests pass in 4.404 seconds: original A05 reservation/bootstrap behavior, active recovery-hold denial, and later A06 append over interleaved A04/A05 history with omitted-A05 denial and immutable MI-0001 preservation."
+        "detail": "Three focused taskctl workflow tests pass in 4.432 seconds: original A05 reservation/bootstrap behavior, active recovery-hold denial, and later A06 append over interleaved A04/A05 history with omitted-A05 denial, A05-present/revision-11/no-MI denial before mutation or save, and immutable MI-0001 preservation."
       },
       {
         "check": "focused schema and control invariants",
         "result": "passed",
-        "detail": "The canonical backlog and revision-12 bounded-maintenance semantic tests both pass in 3.846 seconds. An initial selector named a nonexistent test class and executed no test; the corrected BacklogSchemaTests selectors passed."
+        "detail": "The canonical backlog and revision-12 bounded-maintenance semantic tests both pass in 3.910 seconds. An initial selector named a nonexistent test class and executed no test; the corrected BacklogSchemaTests selectors passed."
       },
       {
         "check": "Python quality and planning integrity",
@@ -65,11 +65,11 @@
     "priorReviewId": "GOV-MAINT-0012.R01",
     "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0012.review-R01.json",
     "priorReviewSha256": "7e89892f7d4acf00409ff4c3bd7a3e48c685cb5f8f5f589f266f1cb465085a9a",
-    "openFindingIds": [
+    "resolvedFindingIds": [
       "GOV-MAINT-0012.R01-F01"
     ],
     "rootCause": "The R01 candidate used absence of the one-time maintenance ledger as a proxy for being before the first post-migration append. That inference is not fail-closed when canonical amendment history and the control revision are inconsistent: A05 can remain materialized while MI-0001 is absent and the revision is downgraded.",
-    "requiredResolution": "First-bridge eligibility must also require the exact original W1.A05 proposal and the pre-A05 canonical predecessor prefix. Any packet proposing A06 or later, or any state already containing A05, must use the revision-12 successor path and retain the authenticated MI-0001 record. The R02 regression must prove the downgraded A05-present state fails before mutation or save."
+    "resolution": "First-bridge eligibility now requires both an empty maintenance ledger and at least one genuinely missing predecessor that the earlier chain checks prove is reserved. With A05 already present, W1.A06 has no missing predecessor, so the successor path requires exact revision 12 and the existing authenticated MI-0001. The R02 regression constructs the reviewer’s A05-present/revision-11/no-MI state, proves rejection at the supported-control-boundary check, and proves the input document is byte-equivalent and save is never called."
   },
   "rollback": "If independent review finds a blocking defect, do not prepare or approve ECR-0005. Preserve W1 and the immutable MI-0001/W1.A05 authority at predecessor 836b790b, record the adverse maintenance disposition append-only, and remediate only the reproduced generic successor-bootstrap defect.",
   "reviewAttempts": [
