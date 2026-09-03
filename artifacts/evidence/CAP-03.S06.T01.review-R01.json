@@ -1,0 +1,78 @@
+{
+  "task_id": "CAP-03.S06.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "012693e22441100f5fe778dd4d29f7667752a488",
+  "submission_record_commit": "2332d0de3538ac652cd44336ca6cded016156681",
+  "reviewer": "agent:workflow-profile-contract-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "CHANGES_REQUIRED at frozen R01 submission 2332d0de3538ac652cd44336ca6cded016156681 for exact candidate 012693e22441100f5fe778dd4d29f7667752a488. Candidate/base ancestry, the exact 36-path inventory, submission-only evidence/backlog projection, evidence SHA-256 7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea and Git blob dcdce40148d374635b793ea7d517b345dd085806 authenticate. The governed RO-UI-ACADEMIC-MINIMAL-1.5 reference, exact workflow/page-catalog hashes, fourteen profile identities, all-unknown checkpoint authority, deterministic TypeScript/Python generation, strict compilation/static checks, ADR/architecture checks, package inclusion, 77 Python contract tests, 90 TypeScript contract tests, focused package assertion, packaging smoke, affected-selection report, and patch hygiene pass. Full service/data and repository suites remain appropriately deferred because T01 changes portable contracts and packaging registration but no persistence, service route, UI, runtime executor, or stored product state. Three semantic under-validation defects remain blocking: supporting-tool return does not bind the current primary stage-state identity; retain mappings can relabel history to a different stage; and a profile change is accepted against the unchanged Research Intent reference without binding an exact human-accepted migration. These gaps contradict the approved supporting-return, intent-revision, and history-preservation authority and would make downstream T02-T04 behavior depend on unstated service conventions rather than the portable contract.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T01.R01.json",
+      "sha256": "7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea",
+      "git_blob": "dcdce40148d374635b793ea7d517b345dd085806",
+      "commit": "012693e22441100f5fe778dd4d29f7667752a488"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base, candidate, and frozen submission SHAs; compare manifest changedFiles to git diff --name-only; verify candidate/evidence separation, frozen evidence Git blob, candidate tree identity to the fully tested implementation tree, and git diff --check.",
+      "result": "PASS: f97003d34fc32b705195d518487bd40b79a2545d..012693e22441100f5fe778dd4d29f7667752a488 contains exactly the declared 36 paths; 2332d0de3538ac652cd44336ca6cded016156681 is the candidate's direct child and adds only the frozen evidence plus backlog submission projection; the evidence is absent from the candidate and reproduces the expected SHA/blob; 37c564b740cbe98758dbf5759271e18505fd7fe1 and the candidate trees are byte-identical; patch hygiene passes."
+    },
+    {
+      "type": "independent-check",
+      "command": "node packages/contracts/workflow-profile/generate.mjs --check; Python workflow-profile contract module; TypeScript workflow-profile test; full affected contracts suites; strict contracts TypeScript; affected Python Ruff/mypy; UI-reference, ADR, architecture, repository-structure, focused package, packaging-smoke, and affected-selection checks.",
+      "result": "PASS: generator drift check; 6/6 focused Python and 5/5 focused TypeScript tests; 77/77 Python contract tests and 90/90 TypeScript contract tests; strict TypeScript, Ruff check/format and mypy; governed reference with 14 workflows/55 files; 26-ADR registry; architecture/repository structure; sidecar module inventory; packaging smoke; and selection-only affected-profile inventory all pass. A first root-level npx tsc attempt resolved the wrong tsconfig and failed as an invocation error; rerunning from packages/contracts passed."
+    },
+    {
+      "type": "independent-adversarial-probe",
+      "finding_id": "CAP-03.S06.T01-R01-F01",
+      "command": "Load the valid systematic-review selection and stage fixture; convert the state to a supporting application-settings tool with arbitrary stageKey invented-support-alias and supportReturn source-manager-1/source-manager.html instead of the fixture's current intent-contract-1 stage; call workflow_stage_state_errors.",
+      "result": "FAIL: the canonical decoder returns (), accepting a registered support tool that returns to a different valid profile stage without any current primary stage-state ID/revision/hash binding."
+    },
+    {
+      "type": "independent-adversarial-probe",
+      "finding_id": "CAP-03.S06.T01-R01-F02",
+      "command": "Load valid migration and changed-selection fixtures; change the first intent-contract-1 disposition to retain while setting targetStageKey to living-monitor-1; call workflow_profile_migration_errors and project_workflow_selection_errors.",
+      "result": "FAIL: both canonical decoders return (), accepting retain as a semantic relabel to a different governed page-contract stage."
+    },
+    {
+      "type": "independent-adversarial-probe",
+      "finding_id": "CAP-03.S06.T01-R01-F03",
+      "command": "Compare valid initial and changed selections and validate the changed record; inspect migration authority fields, set migration.createdBy.actorType to system while leaving requiresHumanAcceptance=true, and validate it.",
+      "result": "FAIL: the approved fixture changes systematic-review to living-review while retaining a byte-identical Research Intent reference and validates with (); ProjectWorkflowSelection has no migration or acceptance binding. WorkflowProfileMigration has no acceptedBy/decision reference, and a system-created document carrying only the constant obligation flag also validates with ()."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S06.T01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Supporting-tool return context can target any profile stage instead of the current primary stage",
+      "reproduction": "At candidate packages/contracts/workflow-profile/workflow-profile.template.ts.txt:192-197 and the generated Python equivalent at services/core-api/src/research_observatory_core/workflow_profile_contracts.py:1606-1612, validation proves only that supportReturn.primaryStageKey/pageContractId name some primary stage in the selected profile. SupportReturn in workflow-profile.schema.json carries no primary stage-state aggregate/revision identity, and validation receives no current-primary state. Starting from valid-workflow-stage-state.v1.json, set navigationRole=supporting, pageContractId=application-settings.html, arbitrary stageKey=invented-support-alias, and supportReturn to source-manager-1/source-manager.html while the originating current stage is intent-contract-1. workflow_stage_state_errors returns ().",
+      "required_remediation": "Make supportReturn bind the exact current/originating primary stage state, including stable state aggregate/revision/content-hash identity and its matching stage/page/profile/selection context, or validate against an explicit current-primary state input. Reject arbitrary aliases, non-current primary targets, stale/substituted selection or profile references, and self/incomplete returns in both generated runtimes. Add exact success plus one-field substitution and non-current-stage tests before regenerating fixtures and decoders."
+    },
+    {
+      "id": "CAP-03.S06.T01-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Retain disposition can silently relabel preserved history as a different target stage",
+      "reproduction": "At workflow-profile.template.ts.txt:160 and :221, mirrored by workflow_profile_contracts.py:1525-1531 and :1644-1652, retain and map share the same rule: any non-null targetStageKey present in the target profile is accepted. Change intent-contract-1 in either the valid selection impact or full migration to disposition=retain and targetStageKey=living-monitor-1. Both validators return (), even though the governed target page contract is different and the distinct map disposition exists for that case.",
+      "required_remediation": "Define and enforce disposition semantics consistently in the schema and both runtime validators. Retain must preserve the same governed logical/page-contract stage; a different target requires map. Define whether mark-stale/requires-review/drop permit a target and enforce that shape. Add positive retain/map cases and cross-stage retain, missing/extra target, duplicate, and substituted stage tests for both the full migration and concrete impact preview."
+    },
+    {
+      "id": "CAP-03.S06.T01-R01-F03",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "A profile change is not bound to a new accepted Research Intent revision or an exact human-accepted migration",
+      "reproduction": "The approved slice decisions require changing profile to be an intent revision with impact preview and explicit mapping. Yet valid-project-workflow-selection-change.v1.json changes systematic-review to living-review while retaining the exact initial ResearchIntentReference, and project_workflow_selection_errors returns (). ParentSelection omits the prior intent reference; ProjectWorkflowSelection contains no migration/acceptance reference. WorkflowProfileMigration uses ActorReference for createdBy and only const true for requiresHumanAcceptance, so changing createdBy.actorType to system also returns () and no acceptedBy/decision identity exists. Thus separately valid records cannot prove that the profile change follows a new accepted intent revision or that the exact migration/preview received human acceptance.",
+      "required_remediation": "Add sufficient portable authority to bind every profile change to the new accepted Research Intent revision, the exact immediate predecessor intent/selection, and the exact migration/impact decision accepted by a human. This may be an immutable migration reference plus human decision identity/hash and prior/current intent references, with service lookup reserved for acceptance-status verification. Deny same-intent profile changes, missing/substituted migration or decision references, system-only acceptance, and mismatched from/to profiles; add valid initial selection and valid human-accepted profile-change fixtures in TypeScript and Python."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}
