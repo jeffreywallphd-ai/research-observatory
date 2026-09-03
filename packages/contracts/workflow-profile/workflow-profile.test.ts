@@ -79,16 +79,49 @@ describe("workflow profile contract", () => {
     supporting.supportReturn = null;
     expect(workflowStageStateErrors(catalog, selection, supporting)).toContain("supporting-tool-return-is-explicit");
     const governedSupporting = clone(stage);
+    governedSupporting.stageStateId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d070";
+    governedSupporting.stageStateRevisionId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d071";
+    governedSupporting.revisionContentHash = `sha256:${"f".repeat(64)}`;
     governedSupporting.stageKey = "application-settings-1";
     governedSupporting.pageContractId = "application-settings.html";
     governedSupporting.navigationRole = "supporting";
     governedSupporting.supportReturn = {
-      primaryStageKey: stage.stageKey,
-      primaryPageContractId: stage.pageContractId,
+      currentPrimaryState: {
+        stageStateId: stage.stageStateId,
+        stageStateRevisionId: stage.stageStateRevisionId,
+        revision: stage.revision,
+        revisionContentHash: stage.revisionContentHash,
+        projectId: stage.projectId,
+        selection: clone(stage.selection),
+        profile: clone(stage.profile),
+        stageKey: stage.stageKey,
+        pageContractId: stage.pageContractId,
+        passNumber: stage.passNumber,
+        status: stage.status,
+      },
     };
-    expect(workflowStageStateErrors(catalog, selection, governedSupporting)).toEqual([]);
-    governedSupporting.pageContractId = "unregistered-tool.html";
+    expect(workflowStageStateErrors(catalog, selection, governedSupporting, stage)).toEqual([]);
     expect(workflowStageStateErrors(catalog, selection, governedSupporting)).toContain(
+      "supporting-tool-return-is-explicit",
+    );
+    const substitutedStateHash = clone(governedSupporting);
+    substitutedStateHash.supportReturn.currentPrimaryState.revisionContentHash = `sha256:${"9".repeat(64)}`;
+    expect(workflowStageStateErrors(catalog, selection, substitutedStateHash, stage)).toContain(
+      "supporting-tool-return-is-explicit",
+    );
+    const inventedAlias = clone(governedSupporting);
+    inventedAlias.stageKey = "invented-support-alias";
+    expect(workflowStageStateErrors(catalog, selection, inventedAlias, stage)).toContain(
+      "supporting-tool-identity-is-governed",
+    );
+    const nonCurrentReturn = clone(governedSupporting);
+    nonCurrentReturn.supportReturn.currentPrimaryState.stageKey = "source-manager-1";
+    nonCurrentReturn.supportReturn.currentPrimaryState.pageContractId = "source-manager.html";
+    expect(workflowStageStateErrors(catalog, selection, nonCurrentReturn, stage)).toContain(
+      "supporting-tool-return-is-explicit",
+    );
+    governedSupporting.pageContractId = "unregistered-tool.html";
+    expect(workflowStageStateErrors(catalog, selection, governedSupporting, stage)).toContain(
       "supporting-tool-is-governed-and-outside-primary-sequence",
     );
   });
@@ -101,6 +134,55 @@ describe("workflow profile contract", () => {
     const missing = clone(migration);
     missing.stageMappings.pop();
     expect(workflowProfileMigrationErrors(catalog, missing)).toContain("migration-covers-prior-stages");
+    const relabeledRetain = clone(migration);
+    relabeledRetain.stageMappings[0].targetStageKey = "living-monitor-1";
+    expect(workflowProfileMigrationErrors(catalog, relabeledRetain)).toContain(
+      "migration-disposition-is-semantic",
+    );
+    const changed = fixture("valid-project-workflow-selection-change.v1.json");
+    changed.impactPreview.priorStageStates[0].targetStageKey = "living-monitor-1";
+    expect(projectWorkflowSelectionErrors(catalog, changed)).toContain("migration-disposition-is-semantic");
+    const explicitMap = clone(migration);
+    explicitMap.stageMappings[0].disposition = "map";
+    explicitMap.stageMappings[0].targetStageKey = "living-monitor-1";
+    expect(workflowProfileMigrationErrors(catalog, explicitMap)).toEqual([]);
+    const missingRetainTarget = clone(migration);
+    missingRetainTarget.stageMappings[0].targetStageKey = null;
+    expect(workflowProfileMigrationErrors(catalog, missingRetainTarget)).toContain(
+      "migration-disposition-is-semantic",
+    );
+    const reviewWithTarget = clone(migration);
+    reviewWithTarget.stageMappings[1].targetStageKey = "living-monitor-1";
+    expect(workflowProfileMigrationErrors(catalog, reviewWithTarget)).toContain(
+      "migration-disposition-is-semantic",
+    );
+    const unchangedIntent = fixture("valid-project-workflow-selection-change.v1.json");
+    unchangedIntent.researchIntent = clone(unchangedIntent.parentSelection.researchIntent);
+    expect(projectWorkflowSelectionErrors(catalog, unchangedIntent)).toContain(
+      "profile-change-binds-intent-and-human-acceptance",
+    );
+    const nonHumanAcceptance = clone(migration);
+    nonHumanAcceptance.acceptance.decidedBy.actorType = "system";
+    expect(decodeWorkflowProfileMigration(catalog, nonHumanAcceptance)).toBeNull();
+    const missingAcceptance = clone(migration);
+    delete missingAcceptance.acceptance;
+    expect(decodeWorkflowProfileMigration(catalog, missingAcceptance)).toBeNull();
+    const systemPrepared = clone(migration);
+    systemPrepared.createdBy.actorType = "system";
+    expect(workflowProfileMigrationErrors(catalog, systemPrepared)).toEqual([]);
+    expect(changed.acceptedMigration.migrationId).toBe(migration.migrationId);
+    expect(changed.acceptedMigration.migrationContentHash).toBe(migration.migrationContentHash);
+    expect(changed.acceptedMigration.acceptance).toEqual(migration.acceptance);
+    const substitutedMigration = fixture("valid-project-workflow-selection-change.v1.json");
+    substitutedMigration.acceptedMigration.fromProfile = clone(substitutedMigration.profile);
+    expect(projectWorkflowSelectionErrors(catalog, substitutedMigration)).toContain(
+      "profile-change-binds-intent-and-human-acceptance",
+    );
+    const substitutedHuman = fixture("valid-project-workflow-selection-change.v1.json");
+    substitutedHuman.acceptedMigration.acceptance.decidedBy.actorId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d099";
+    expect(projectWorkflowSelectionErrors(catalog, substitutedHuman)).toContain(
+      "profile-change-binds-intent-and-human-acceptance",
+    );
     expect(migration.historyPolicy).toBe("preserve");
     expect(migration.requiresHumanAcceptance).toBe(true);
   });

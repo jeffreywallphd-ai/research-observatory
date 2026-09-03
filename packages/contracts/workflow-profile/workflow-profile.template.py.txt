@@ -227,6 +227,51 @@ def _exact_profile(catalog: Mapping[str, Any], value: object) -> Mapping[str, An
     )
 
 
+def _immediate_intent_revision(prior_value: object, target_value: object) -> bool:
+    prior = _record(prior_value)
+    target = _record(target_value)
+    return bool(
+        prior is not None
+        and target is not None
+        and prior["intentId"] == target["intentId"]
+        and target["revision"] == prior["revision"] + 1
+        and target["revisionId"] != prior["revisionId"]
+        and target["revisionContentHash"] != prior["revisionContentHash"]
+    )
+
+
+def _semantic_stage_mapping(
+    from_profile: Mapping[str, Any], to_profile: Mapping[str, Any], item: Mapping[str, Any]
+) -> bool:
+    source = next(
+        (
+            stage
+            for stage in cast(Sequence[Mapping[str, Any]], from_profile["stages"])
+            if stage["stageKey"] == item["fromStageKey"]
+        ),
+        None,
+    )
+    target = next(
+        (
+            stage
+            for stage in cast(Sequence[Mapping[str, Any]], to_profile["stages"])
+            if stage["stageKey"] == item["targetStageKey"]
+        ),
+        None,
+    )
+    if source is None:
+        return False
+    if item["disposition"] == "retain":
+        return bool(
+            target is not None
+            and target["stageKey"] == source["stageKey"]
+            and target["pageContractId"] == source["pageContractId"]
+        )
+    if item["disposition"] == "map":
+        return bool(target is not None and target["stageKey"] != source["stageKey"])
+    return target is None and item["targetStageKey"] is None
+
+
 def workflow_profile_catalog_errors(value: object) -> tuple[str, ...]:
     try:
         errors = _validation_errors(value, _definition("WorkflowProfileCatalog"), "$")
@@ -292,6 +337,23 @@ def project_workflow_selection_errors(catalog_value: object, value: object) -> t
             )
         ):
             errors.append("profile-change-binds-impact-preview")
+        accepted_migration = _record(selection["acceptedMigration"])
+        if revision == 1:
+            if accepted_migration is not None:
+                errors.append("profile-change-binds-intent-and-human-acceptance")
+        elif (
+            parent is None
+            or accepted_migration is None
+            or _stable_json(parent["profile"]) == _stable_json(selection["profile"])
+            or not _immediate_intent_revision(parent["researchIntent"], selection["researchIntent"])
+            or _stable_json(accepted_migration["fromProfile"]) != _stable_json(parent["profile"])
+            or _stable_json(accepted_migration["toProfile"]) != _stable_json(selection["profile"])
+            or _stable_json(accepted_migration["priorResearchIntent"]) != _stable_json(parent["researchIntent"])
+            or _stable_json(accepted_migration["targetResearchIntent"]) != _stable_json(selection["researchIntent"])
+            or _stable_json(cast(Mapping[str, Any], accepted_migration["acceptance"])["decidedBy"])
+            != _stable_json(selection["selectedBy"])
+        ):
+            errors.append("profile-change-binds-intent-and-human-acceptance")
         if impact is not None and parent is not None:
             prior_profile = _exact_profile(catalog, parent["profile"])
             target_profile = _exact_profile(catalog, selection["profile"])
@@ -314,12 +376,23 @@ def project_workflow_selection_errors(catalog_value: object, value: object) -> t
                 for item in items
             ):
                 errors.append("impact-preview-preserves-stage-history")
+            if (
+                prior_profile is not None
+                and target_profile is not None
+                and any(not _semantic_stage_mapping(prior_profile, target_profile, item) for item in items)
+            ):
+                errors.append("migration-disposition-is-semantic")
         return tuple(dict.fromkeys(errors))
     except KeyError, TypeError, ValueError:
         return ("project-workflow-selection-structure-invalid",)
 
 
-def workflow_stage_state_errors(catalog_value: object, selection_value: object, value: object) -> tuple[str, ...]:
+def workflow_stage_state_errors(
+    catalog_value: object,
+    selection_value: object,
+    value: object,
+    current_primary_state_value: object | None = None,
+) -> tuple[str, ...]:
     if project_workflow_selection_errors(catalog_value, selection_value):
         return ("project-workflow-selection-invalid",)
     try:
@@ -387,13 +460,50 @@ def workflow_stage_state_errors(catalog_value: object, selection_value: object, 
                 errors.append("stage-state-binds-selection-and-profile")
         else:
             support = _record(state["supportReturn"])
-            primary = stages.get(support["primaryStageKey"]) if support is not None else None
-            if support is None or primary is None or primary["pageContractId"] != support["primaryPageContractId"]:
+            current = _record(support["currentPrimaryState"]) if support is not None else None
+            primary = stages.get(current["stageKey"]) if current is not None else None
+            provided_current = _record(current_primary_state_value)
+            expected_current = (
+                {
+                    "stageStateId": provided_current["stageStateId"],
+                    "stageStateRevisionId": provided_current["stageStateRevisionId"],
+                    "revision": provided_current["revision"],
+                    "revisionContentHash": provided_current["revisionContentHash"],
+                    "projectId": provided_current["projectId"],
+                    "selection": provided_current["selection"],
+                    "profile": provided_current["profile"],
+                    "stageKey": provided_current["stageKey"],
+                    "pageContractId": provided_current["pageContractId"],
+                    "passNumber": provided_current["passNumber"],
+                    "status": provided_current["status"],
+                }
+                if provided_current is not None
+                else None
+            )
+            if (
+                current is None
+                or primary is None
+                or primary["pageContractId"] != current["pageContractId"]
+                or provided_current is None
+                or provided_current["navigationRole"] != "primary"
+                or provided_current["status"] != "current"
+                or workflow_stage_state_errors(catalog_value, selection_value, provided_current)
+                or _stable_json(current) != _stable_json(expected_current)
+                or current["stageStateId"] == current["stageStateRevisionId"]
+                or current["stageStateId"] == state["stageStateId"]
+                or current["stageStateRevisionId"] == state["stageStateRevisionId"]
+                or current["projectId"] != state["projectId"]
+                or _stable_json(current["selection"]) != _stable_json(expected_selection)
+                or _stable_json(current["profile"]) != _stable_json(state["profile"])
+                or (current["passNumber"] > 1 and (profile is None or profile["cyclePolicy"] != "revisitable"))
+            ):
                 errors.append("supporting-tool-return-is-explicit")
             registered = set(cast(Sequence[str], catalog["registeredToolPageContractIds"]))
             primary_pages = {stage["pageContractId"] for stage in stages.values()}
             if state["pageContractId"] not in registered or state["pageContractId"] in primary_pages:
                 errors.append("supporting-tool-is-governed-and-outside-primary-sequence")
+            if state["stageKey"] != f"{cast(str, state['pageContractId'])[:-5]}-1":
+                errors.append("supporting-tool-identity-is-governed")
         return tuple(dict.fromkeys(errors))
     except KeyError, TypeError, ValueError:
         return ("workflow-stage-state-structure-invalid",)
@@ -416,6 +526,7 @@ def workflow_profile_migration_errors(catalog_value: object, value: object) -> t
             or _stable_json(migration["fromProfile"]) == _stable_json(migration["toProfile"])
             or migration["historyPolicy"] != "preserve"
             or migration["requiresHumanAcceptance"] is not True
+            or not _immediate_intent_revision(migration["priorResearchIntent"], migration["targetResearchIntent"])
         ):
             errors.append("migration-binds-exact-profile-revisions")
         if from_profile is not None and to_profile is not None:
@@ -436,6 +547,8 @@ def workflow_profile_migration_errors(catalog_value: object, value: object) -> t
                 )
             ):
                 errors.append("migration-covers-prior-stages")
+            if any(not _semantic_stage_mapping(from_profile, to_profile, item) for item in mappings):
+                errors.append("migration-disposition-is-semantic")
         return tuple(dict.fromkeys(errors))
     except KeyError, TypeError, ValueError:
         return ("workflow-profile-migration-structure-invalid",)
@@ -459,13 +572,20 @@ def decode_project_workflow_selection(catalog: object, value: object) -> Project
     )
 
 
-def decode_workflow_stage_state(catalog: object, selection: object, value: object) -> WorkflowStageStateSnapshot | None:
+def decode_workflow_stage_state(
+    catalog: object,
+    selection: object,
+    value: object,
+    current_primary_state: object | None = None,
+) -> WorkflowStageStateSnapshot | None:
     try:
         owned = _owned_frozen(value)
     except ValueError:
         return None
     return (
-        cast(WorkflowStageStateSnapshot, owned) if not workflow_stage_state_errors(catalog, selection, owned) else None
+        cast(WorkflowStageStateSnapshot, owned)
+        if not workflow_stage_state_errors(catalog, selection, owned, current_primary_state)
+        else None
     )
 
 

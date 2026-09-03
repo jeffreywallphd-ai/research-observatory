@@ -28,9 +28,13 @@ governed reference, followed by an explicit contract/catalog version.
 Intent reference, and an exact governed profile reference. It is an append-only
 revision with a stable aggregate ID and distinct UUIDv7 revision ID: the first
 revision has no predecessor; each later revision retains the aggregate ID,
-names its immediate predecessor, and includes the matching impact preview. The
-preview names affected prior stage-state revisions and their retain, map, stale,
-review, or explicit drop disposition. It does not mutate those prior records.
+names its immediate predecessor, binds an immediate new revision of the same
+Research Intent aggregate, and includes both the matching impact preview and an
+immutable accepted-migration reference. That reference carries exact source and
+target profiles, prior and target intents, migration identity/content hash, and
+the human acceptance decision identity/content hash. The preview names affected
+prior stage-state revisions and their retain, map, stale, review, or explicit
+drop disposition. It does not mutate those prior records.
 
 `WorkflowStageState` has the same stable aggregate/distinct revision identity
 shape and binds the exact selection and profile independently of
@@ -39,7 +43,12 @@ in-progress, attention-required, blocked, completed, stale, and skipped with
 rationale. Completed, attention, and stale states carry their corresponding
 evidence or cause. A `passNumber` represents revisiting a cyclical stage without
 erasing earlier passes. Primary state binds an approved stage/page contract;
-supporting state binds an explicit return to a valid primary stage.
+supporting state binds an explicit return reference to the exact current primary
+stage-state aggregate, revision, content hash, project, selection, profile,
+stage/page, pass, and current status. Portable validation receives that current
+primary state explicitly and rejects an omitted or one-field-substituted return.
+Supporting state keys are deterministically derived from their registered page
+contract, so an arbitrary alias cannot acquire navigation authority.
 
 This contract contains no workflow run, logical job, physical attempt, queue,
 worker lease, executor, database, filesystem, URL, credential, or inline
@@ -51,9 +60,14 @@ boundaries, but cannot collapse them into one state machine.
 
 `WorkflowProfileMigration` names exact source and target profile references,
 preserves history, requires human acceptance, and covers every source stage
-exactly once. Retain/map dispositions must name a valid target stage; unmapped
-work remains explicit through stale, review, or reasoned drop dispositions.
-Project selection changes use the same semantics in a concrete impact preview.
+exactly once. `retain` means the same stage key and page contract in the target;
+`map` means an explicit different valid target; `mark-stale`,
+`requires-review`, and `drop-with-rationale` preserve the prior record without a
+target. A migration binds consecutive revisions of one Research Intent and a
+human `accepted` decision. Project selection changes use the same disposition
+semantics in a concrete impact preview and reference the exact accepted
+migration; a service may look up the bound migration hash but cannot substitute
+its authority.
 
 No workflow-profile records predate v1, so T01 creates no SQLite migration.
 CAP-03.S06.T02-T04 own persistence, atomic commands/events, process-restart

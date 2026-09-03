@@ -79,23 +79,31 @@ reference, including the governed reference, catalog, profile, revision, and
 content hashes. Revision one has no predecessor or impact preview. A later
 revision retains the aggregate ID, binds its immediate predecessor, and carries
 a matching impact preview that enumerates affected prior stage-state revisions.
+It also binds an immediate new revision of the same Research Intent aggregate
+and the exact immutable migration plus human-acceptance decision references.
 Historical selection and stage records remain immutable.
 
 `WorkflowStageState` is navigation and scholarly-gate state only. It binds the
 exact project, selection, and profile plus one primary or supporting route,
 stable aggregate/revision identity, pass number, status, completion evidence,
 attention/blocking reason, skip rationale, and staleness causes. A
-supporting route must retain an exact return to the current primary stage. The
-contract rejects analytical job/attempt/queue fields; ADR-0025 remains the sole
-execution-history authority. A completed stage requires evidence identity,
-attention requires an explicit reason, and stale requires explicit causes.
+supporting route must retain an exact return to the current primary stage-state
+aggregate, revision, content hash, project, selection, profile, stage, and pass.
+The decoder requires that current primary state as explicit validation context,
+so an arbitrary alias or substituted return fails closed. The contract rejects
+analytical job/attempt/queue fields; ADR-0025 remains the sole execution-history
+authority. A completed stage requires evidence identity, attention requires an
+explicit reason, and stale requires explicit causes.
 
 `WorkflowProfileMigration` binds exact source and target profiles, preserves
-history, requires human acceptance, and supplies exactly one disposition for
-every source stage. Additions or changes to a profile require a versioned,
-reviewed workflow catalog and governed reference update. Unknown major versions
-and unknown fields fail closed. Matching generated TypeScript and Python
-decoders return owned immutable snapshots and deterministic canonical hashes.
+history, binds consecutive revisions of one Research Intent and an exact human
+acceptance decision, and supplies exactly one disposition for every source
+stage. Retain preserves the same governed stage/page; map names a different
+valid target; stale, review, and explicit-drop dispositions have no target.
+Additions or changes to a profile require a versioned, reviewed workflow catalog
+and governed reference update. Unknown major versions and unknown fields fail
+closed. Matching generated TypeScript and Python decoders return owned immutable
+snapshots and deterministic canonical hashes.
 
 ## Consequences
 
@@ -124,11 +132,12 @@ reader or a reviewed migration; accepted history is never rewritten.
   supporting-tool, and output fixtures;
 - TypeScript/Python parity, strict decoding, owned immutable snapshots, and
   stable canonical hashes;
-- immediate selection lineage and impact-preview substitution denials;
+- immediate selection/Research Intent lineage, accepted-migration binding, and
+  impact/acceptance substitution denials;
 - navigation-versus-job separation, status/evidence consistency, and explicit
-  supporting-tool return denials;
-- complete migration coverage, duplicate/missing mapping denials, and preserved
-  history/human acceptance;
+  supporting-tool alias, omitted-current-state, and one-field return denials;
+- complete migration coverage, semantic retain/map/null-target denials, and
+  preserved history with exact human acceptance;
 - contract-package typecheck, architecture/ADR/quality checks, and frozen
   sidecar/build-input inventory tests.
 

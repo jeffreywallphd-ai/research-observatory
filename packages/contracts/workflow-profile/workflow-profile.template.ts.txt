@@ -119,6 +119,23 @@ const exactProfile = (catalog: Record<string, any>, value: unknown): Record<stri
   return profile !== undefined && stableJson(reference) === stableJson(expectedProfileReference(catalog, profile)) ? profile : null;
 };
 const unique = (values: unknown[]): boolean => new Set(values).size === values.length;
+const immediateIntentRevision = (priorValue: unknown, targetValue: unknown): boolean => {
+  const prior = record(priorValue);
+  const target = record(targetValue);
+  return prior !== null && target !== null
+    && prior.intentId === target.intentId
+    && target.revision === prior.revision + 1
+    && target.revisionId !== prior.revisionId
+    && target.revisionContentHash !== prior.revisionContentHash;
+};
+const semanticStageMapping = (fromProfile: Record<string, any>, toProfile: Record<string, any>, item: Record<string, any>): boolean => {
+  const source = (fromProfile.stages as Record<string, any>[]).find((stage) => stage.stageKey === item.fromStageKey);
+  const target = item.targetStageKey === null ? undefined : (toProfile.stages as Record<string, any>[]).find((stage) => stage.stageKey === item.targetStageKey);
+  if (source === undefined) return false;
+  if (item.disposition === "retain") return target !== undefined && target.stageKey === source.stageKey && target.pageContractId === source.pageContractId;
+  if (item.disposition === "map") return target !== undefined && target.stageKey !== source.stageKey;
+  return target === undefined && item.targetStageKey === null;
+};
 
 export function workflowProfileCatalogErrors(value: unknown): readonly string[] {
   try {
@@ -151,6 +168,19 @@ export function projectWorkflowSelectionErrors(catalogValue: unknown, value: unk
     if ((selection.revision === 1 && parent !== null) || (selection.revision > 1 && (parent === null || parent.revision !== selection.revision - 1 || parent.selectionId !== selection.selectionId || parent.selectionRevisionId === selection.selectionRevisionId || parent.revisionContentHash === selection.revisionContentHash || exactProfile(catalog, parent.profile) === null))) errors.push("selection-lineage-is-immediate");
     const impact = record(selection.impactPreview);
     if ((selection.revision === 1 && impact !== null) || (selection.revision > 1 && (impact === null || parent === null || stableJson(impact.priorSelection) !== stableJson(parent) || stableJson(impact.targetProfile) !== stableJson(selection.profile) || impact.historyPolicy !== "preserve"))) errors.push("profile-change-binds-impact-preview");
+    const acceptedMigration = record(selection.acceptedMigration);
+    if (selection.revision === 1) {
+      if (acceptedMigration !== null) errors.push("profile-change-binds-intent-and-human-acceptance");
+    } else if (parent === null || acceptedMigration === null
+      || stableJson(parent.profile) === stableJson(selection.profile)
+      || !immediateIntentRevision(parent.researchIntent, selection.researchIntent)
+      || stableJson(acceptedMigration.fromProfile) !== stableJson(parent.profile)
+      || stableJson(acceptedMigration.toProfile) !== stableJson(selection.profile)
+      || stableJson(acceptedMigration.priorResearchIntent) !== stableJson(parent.researchIntent)
+      || stableJson(acceptedMigration.targetResearchIntent) !== stableJson(selection.researchIntent)
+      || stableJson(acceptedMigration.acceptance.decidedBy) !== stableJson(selection.selectedBy)) {
+      errors.push("profile-change-binds-intent-and-human-acceptance");
+    }
     if (impact !== null && parent !== null) {
       const priorProfile = exactProfile(catalog, parent.profile);
       const targetProfile = exactProfile(catalog, selection.profile);
@@ -158,6 +188,7 @@ export function projectWorkflowSelectionErrors(catalogValue: unknown, value: unk
       const priorKeys = new Set((priorProfile?.stages ?? []).map((stage: Record<string, any>) => stage.stageKey));
       const targetKeys = new Set((targetProfile?.stages ?? []).map((stage: Record<string, any>) => stage.stageKey));
       if (!unique(items.map((item) => `${item.stageStateId}:${item.stageStateRevisionId}`)) || items.some((item) => item.stageStateId === item.stageStateRevisionId || !priorKeys.has(item.fromStageKey) || (item.targetStageKey !== null && !targetKeys.has(item.targetStageKey)) || (["retain", "map"].includes(item.disposition) && item.targetStageKey === null))) errors.push("impact-preview-preserves-stage-history");
+      if (priorProfile !== null && targetProfile !== null && items.some((item) => !semanticStageMapping(priorProfile, targetProfile, item))) errors.push("migration-disposition-is-semantic");
     }
     return [...new Set(errors)];
   } catch {
@@ -165,7 +196,7 @@ export function projectWorkflowSelectionErrors(catalogValue: unknown, value: unk
   }
 }
 
-export function workflowStageStateErrors(catalogValue: unknown, selectionValue: unknown, value: unknown): readonly string[] {
+export function workflowStageStateErrors(catalogValue: unknown, selectionValue: unknown, value: unknown, currentPrimaryStateValue?: unknown): readonly string[] {
   if (projectWorkflowSelectionErrors(catalogValue, selectionValue).length > 0) return ["project-workflow-selection-invalid"];
   try {
     const errors = validationErrors(value, definition("WorkflowStageState"), "$");
@@ -190,11 +221,39 @@ export function workflowStageStateErrors(catalogValue: unknown, selectionValue: 
       if (stage === undefined || stage.pageContractId !== state.pageContractId || state.supportReturn !== null) errors.push("stage-state-binds-selection-and-profile");
     } else {
       const support = record(state.supportReturn);
-      const primary = support === null ? undefined : stages.get(support.primaryStageKey) as Record<string, any> | undefined;
-      if (support === null || primary === undefined || primary.pageContractId !== support.primaryPageContractId) errors.push("supporting-tool-return-is-explicit");
+      const current = support === null ? null : record(support.currentPrimaryState);
+      const primary = current === null ? undefined : stages.get(current.stageKey) as Record<string, any> | undefined;
+      const providedCurrent = record(currentPrimaryStateValue);
+      const expectedCurrent = providedCurrent === null ? null : {
+        stageStateId: providedCurrent.stageStateId,
+        stageStateRevisionId: providedCurrent.stageStateRevisionId,
+        revision: providedCurrent.revision,
+        revisionContentHash: providedCurrent.revisionContentHash,
+        projectId: providedCurrent.projectId,
+        selection: providedCurrent.selection,
+        profile: providedCurrent.profile,
+        stageKey: providedCurrent.stageKey,
+        pageContractId: providedCurrent.pageContractId,
+        passNumber: providedCurrent.passNumber,
+        status: providedCurrent.status,
+      };
+      if (current === null || primary === undefined || primary.pageContractId !== current.pageContractId
+        || providedCurrent === null
+        || providedCurrent.navigationRole !== "primary"
+        || providedCurrent.status !== "current"
+        || workflowStageStateErrors(catalogValue, selectionValue, providedCurrent).length > 0
+        || stableJson(current) !== stableJson(expectedCurrent)
+        || current.stageStateId === current.stageStateRevisionId
+        || current.stageStateId === state.stageStateId
+        || current.stageStateRevisionId === state.stageStateRevisionId
+        || current.projectId !== state.projectId
+        || stableJson(current.selection) !== stableJson(expectedSelection)
+        || stableJson(current.profile) !== stableJson(state.profile)
+        || (current.passNumber > 1 && profile?.cyclePolicy !== "revisitable")) errors.push("supporting-tool-return-is-explicit");
       const registered = new Set(catalog.registeredToolPageContractIds as string[]);
       const primaryPages = new Set((profile?.stages ?? []).map((stage: Record<string, any>) => stage.pageContractId));
       if (!registered.has(state.pageContractId) || primaryPages.has(state.pageContractId)) errors.push("supporting-tool-is-governed-and-outside-primary-sequence");
+      if (state.stageKey !== `${state.pageContractId.slice(0, -5)}-1`) errors.push("supporting-tool-identity-is-governed");
     }
     return [...new Set(errors)];
   } catch {
@@ -212,13 +271,14 @@ export function workflowProfileMigrationErrors(catalogValue: unknown, value: unk
     const fromProfile = exactProfile(catalog, migration.fromProfile);
     const toProfile = exactProfile(catalog, migration.toProfile);
     if (fromProfile === null || toProfile === null || stableJson(migration.fromProfile) === stableJson(migration.toProfile)) errors.push("migration-binds-exact-profile-revisions");
-    if (migration.historyPolicy !== "preserve" || migration.requiresHumanAcceptance !== true) errors.push("migration-binds-exact-profile-revisions");
+    if (migration.historyPolicy !== "preserve" || migration.requiresHumanAcceptance !== true || !immediateIntentRevision(migration.priorResearchIntent, migration.targetResearchIntent)) errors.push("migration-binds-exact-profile-revisions");
     if (fromProfile !== null && toProfile !== null) {
       const mappings = migration.stageMappings as Record<string, any>[];
       const sourceKeys = (fromProfile.stages as Record<string, any>[]).map((stage) => stage.stageKey);
       const mappedKeys = mappings.map((item) => item.fromStageKey);
       const targetKeys = new Set((toProfile.stages as Record<string, any>[]).map((stage) => stage.stageKey));
       if (!unique(mappedKeys) || stableJson([...mappedKeys].sort()) !== stableJson([...sourceKeys].sort()) || mappings.some((item) => (["retain", "map"].includes(item.disposition) && (item.targetStageKey === null || !targetKeys.has(item.targetStageKey))) || (item.targetStageKey !== null && !targetKeys.has(item.targetStageKey)))) errors.push("migration-covers-prior-stages");
+      if (mappings.some((item) => !semanticStageMapping(fromProfile, toProfile, item))) errors.push("migration-disposition-is-semantic");
     }
     return [...new Set(errors)];
   } catch {
@@ -232,8 +292,8 @@ export function decodeWorkflowProfileCatalog(value: unknown): WorkflowProfileCat
 export function decodeProjectWorkflowSelection(catalog: unknown, value: unknown): ProjectWorkflowSelectionSnapshot | null {
   try { const owned = ownedFrozen(value); return projectWorkflowSelectionErrors(catalog, owned).length === 0 ? owned : null; } catch { return null; }
 }
-export function decodeWorkflowStageState(catalog: unknown, selection: unknown, value: unknown): WorkflowStageStateSnapshot | null {
-  try { const owned = ownedFrozen(value); return workflowStageStateErrors(catalog, selection, owned).length === 0 ? owned : null; } catch { return null; }
+export function decodeWorkflowStageState(catalog: unknown, selection: unknown, value: unknown, currentPrimaryState?: unknown): WorkflowStageStateSnapshot | null {
+  try { const owned = ownedFrozen(value); return workflowStageStateErrors(catalog, selection, owned, currentPrimaryState).length === 0 ? owned : null; } catch { return null; }
 }
 export function decodeWorkflowProfileMigration(catalog: unknown, value: unknown): WorkflowProfileMigrationSnapshot | null {
   try { const owned = ownedFrozen(value); return workflowProfileMigrationErrors(catalog, owned).length === 0 ? owned : null; } catch { return null; }

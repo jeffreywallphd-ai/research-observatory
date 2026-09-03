@@ -19,7 +19,15 @@ leases, executor settings, database types, paths, URLs, research content, or
 credentials.
 
 Changing a selected profile creates an immediate immutable selection revision
-and a bound impact preview. Migration declares an exact from/to profile and a
-disposition for every prior stage while preserving history and requiring human
-acceptance. CAP-03.S06.T02-T04 own service persistence, commands, progress, and
-desktop navigation; this task supplies the portable contract and fixtures.
+and Research Intent revision, a bound impact preview, and an exact immutable
+migration/acceptance reference. Migration declares exact from/to profiles and
+intents, a disposition for every prior stage, preserved history, and a human
+acceptance decision. `retain` keeps the same governed stage, `map` names a
+different governed stage, and stale/review/drop dispositions have no target.
+
+A supporting-stage record is decoded only with the explicit current primary
+stage state. Its return reference binds that state's aggregate/revision/hash and
+project/selection/profile/stage context; arbitrary support aliases and
+substituted returns fail closed. CAP-03.S06.T02-T04 own service lookup,
+persistence, commands, progress, and desktop navigation; this task supplies the
+portable contract and fixtures.

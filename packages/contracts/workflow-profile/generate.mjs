@@ -127,6 +127,28 @@ const researchIntent = {
   revision: 1,
   revisionContentHash: `sha256:${"1".repeat(64)}`,
 };
+const revisedResearchIntent = {
+  ...researchIntent,
+  revisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+  revision: 2,
+  revisionContentHash: `sha256:${"2".repeat(64)}`,
+};
+const migrationAcceptance = {
+  decisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d060",
+  decisionContentHash: `sha256:${"d".repeat(64)}`,
+  decision: "accepted",
+  decidedAt: "2026-09-03T19:05:00Z",
+  decidedBy: actor,
+};
+const migrationAcceptanceReference = {
+  migrationId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d050",
+  migrationContentHash: `sha256:${"e".repeat(64)}`,
+  fromProfile: profileReference("systematic-review"),
+  toProfile: profileReference("living-review"),
+  priorResearchIntent: researchIntent,
+  targetResearchIntent: revisedResearchIntent,
+  acceptance: migrationAcceptance,
+};
 const initialSelection = {
   schemaVersion: "1.0",
   documentType: "research-observatory-project-workflow-selection",
@@ -142,12 +164,14 @@ const initialSelection = {
   profile: profileReference("systematic-review"),
   parentSelection: null,
   impactPreview: null,
+  acceptedMigration: null,
 };
 const parentSelection = {
   selectionId: initialSelection.selectionId,
   selectionRevisionId: initialSelection.selectionRevisionId,
   revision: initialSelection.revision,
   revisionContentHash: initialSelection.revisionContentHash,
+  researchIntent: initialSelection.researchIntent,
   profile: initialSelection.profile,
 };
 const changedSelection = {
@@ -156,6 +180,7 @@ const changedSelection = {
   revision: 2,
   revisionContentHash: `sha256:${"b".repeat(64)}`,
   createdAt: "2026-09-03T19:05:00Z",
+  researchIntent: revisedResearchIntent,
   profile: profileReference("living-review"),
   parentSelection,
   impactPreview: {
@@ -176,6 +201,7 @@ const changedSelection = {
     ],
     summary: "Preview the move to living review while retaining the prior selection and stage-state history.",
   },
+  acceptedMigration: migrationAcceptanceReference,
 };
 const stageState = {
   schemaVersion: "1.0",
@@ -214,9 +240,7 @@ const migration = {
   schemaVersion: "1.0",
   documentType: "research-observatory-workflow-profile-migration",
   contractVersion: "1.0.0",
-  migrationId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d050",
-  fromProfile: profileReference("systematic-review"),
-  toProfile: profileReference("living-review"),
+  ...migrationAcceptanceReference,
   createdAt: "2026-09-03T19:04:00Z",
   createdBy: actor,
   historyPolicy: "preserve",

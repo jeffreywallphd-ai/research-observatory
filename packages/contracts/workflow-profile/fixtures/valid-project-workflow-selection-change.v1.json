@@ -17,9 +17,9 @@
     "documentType": "research-observatory-research-intent-reference",
     "contractVersion": "1.0.0",
     "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
-    "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
-    "revision": 1,
-    "revisionContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+    "revision": 2,
+    "revisionContentHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
   },
   "profile": {
     "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
@@ -38,6 +38,15 @@
     "selectionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d011",
     "revision": 1,
     "revisionContentHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "researchIntent": {
+      "schemaVersion": "1.0",
+      "documentType": "research-observatory-research-intent-reference",
+      "contractVersion": "1.0.0",
+      "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
+      "revision": 1,
+      "revisionContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
     "profile": {
       "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
       "referenceVersion": "1.5",
@@ -57,6 +66,15 @@
       "selectionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d011",
       "revision": 1,
       "revisionContentHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "researchIntent": {
+        "schemaVersion": "1.0",
+        "documentType": "research-observatory-research-intent-reference",
+        "contractVersion": "1.0.0",
+        "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+        "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
+        "revision": 1,
+        "revisionContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      },
       "profile": {
         "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
         "referenceVersion": "1.5",
@@ -96,5 +114,61 @@
       }
     ],
     "summary": "Preview the move to living review while retaining the prior selection and stage-state history."
+  },
+  "acceptedMigration": {
+    "migrationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d050",
+    "migrationContentHash": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "fromProfile": {
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+      "referenceVersion": "1.5",
+      "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+      "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+      "profileCatalogVersion": "1.0.0",
+      "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+      "profileId": "systematic-review",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:2cf5f09818ec1b16c393feac898b42d484e6e0b18f44a33da7411db2fbf6150d"
+    },
+    "toProfile": {
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+      "referenceVersion": "1.5",
+      "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+      "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+      "profileCatalogVersion": "1.0.0",
+      "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+      "profileId": "living-review",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:2da7db63f33f5bcdae06218ac348b3b4efe9a96ca8a0a98daa372d2d392e97b2"
+    },
+    "priorResearchIntent": {
+      "schemaVersion": "1.0",
+      "documentType": "research-observatory-research-intent-reference",
+      "contractVersion": "1.0.0",
+      "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
+      "revision": 1,
+      "revisionContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "targetResearchIntent": {
+      "schemaVersion": "1.0",
+      "documentType": "research-observatory-research-intent-reference",
+      "contractVersion": "1.0.0",
+      "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+      "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+      "revision": 2,
+      "revisionContentHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "acceptance": {
+      "decisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d060",
+      "decisionContentHash": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "decision": "accepted",
+      "decidedAt": "2026-09-03T19:05:00Z",
+      "decidedBy": {
+        "actorType": "human",
+        "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d030"
+      }
+    }
   }
 }

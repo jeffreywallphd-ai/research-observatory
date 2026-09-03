@@ -34,5 +34,6 @@
     "sourceWorkflowHash": "sha256:2cf5f09818ec1b16c393feac898b42d484e6e0b18f44a33da7411db2fbf6150d"
   },
   "parentSelection": null,
-  "impactPreview": null
+  "impactPreview": null,
+  "acceptedMigration": null
 }
