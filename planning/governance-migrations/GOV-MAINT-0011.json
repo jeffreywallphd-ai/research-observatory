@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0011",
+  "title": "Validate interleaved Wave amendment authority",
+  "status": "pending-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "2165f86d264fd414e7d2b9c429d3edbf316fd6fd",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": null
+  },
+  "trigger": {
+    "denial": "The generic ECR v4 authority validator assumes every reserved amendment identity follows every adopted identity. W1 truthfully contains adopted W1.A01 through W1.A03, terminal reserved W1.A04, and later adopted W1.A05, so the next W1 amendment cannot be represented without falsely classifying or omitting predecessor authority.",
+    "atomicity": "W1 is paused at a clean Wave boundary after CAP-03.S05, no ordinary task is IN_PROGRESS or REVIEW, no amendment campaign is active, and no CAP-03.S06 task has been claimed. The unrelated untracked W1.A04.B00 evidence file is outside this increment and remains untouched.",
+    "diagnosis": "The v4 packet separates adopted and reserved records correctly but derives numeric positions from the lengths of those arrays rather than from immutable amendment IDs. It also pairs adopted packet records to backlog entries by list position, which becomes false after a reserved identity is interleaved. This is a generic evidence-control defect, not a product-authority decision."
+  },
+  "authority": "This maintenance changes only generic validation of already recorded Wave amendment identity and predecessor history. It accepts a complete, numerically consecutive authority chain whose adopted and reserved records are each ordered and disjoint, while retaining exact approval, adoption-transition, migration, materialization, ancestry, quiescence, and packet checks. It does not create or approve an ECR, materialize or adopt an amendment, change W1 scope, alter CAP-03.S06 acceptance, resume W1, claim a task, implement product behavior, weaken a safety invariant, approve G1, integrate main, or authorize a remote action.",
+  "intendedDelta": {
+    "implementation": "Derive predecessor order from the immutable numeric amendment IDs across adopted and reserved arrays, validate adopted records by identity rather than positional zip, preserve atomic terminal-reservation materialization, and permit historical packets to remain valid after consecutive successors materialize.",
+    "failClosed": [
+      "Adopted and reserved predecessor arrays must each remain numerically ordered and must not share an identity.",
+      "Their combined identities must be exactly consecutive from A01 through the immediate predecessor of the proposed amendment.",
+      "The canonical backlog authority must remain globally consecutive, contain every adopted predecessor, and match the packet authority prefix.",
+      "A terminal reservation immediately preceding the proposal cannot materialize without that proposal; an older reservation followed by an adopted successor remains valid history.",
+      "Omitted adopted authority, duplicates, gaps, reordering, status substitution, approval substitution, adoption-transition substitution, forked ancestry, and skipped proposed identities remain denied.",
+      "No packet schema, product source, canonical backlog, task state, Wave state, approval record, or release gate may change in this increment."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0011.json",
+      "tools/planctl.py",
+      "tests/foundation/test_planctl_amendments.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The credible regression surface is limited to v4 authority-chain ordering, pre-bootstrap reservation atomicity, exact adopted-record lookup, and validation of historical packets after successors. Selected checks exercise the existing complete v4 amendment module plus explicit interleaved, omitted, duplicated, reordered, skipped, pre-bootstrap, partial-materialization, and later-successor cases. Formatting, static quality, JSON parsing, diff hygiene, canonical backlog validation, and generated planning views are also selected because planctl is shared governance infrastructure. Product, renderer, persistence, packaging, platform, and security runtime suites are deferred because no such byte or contract changes.",
+    "results": [
+      {
+        "check": "focused authority-chain regressions",
+        "result": "passed",
+        "detail": "All 10 tests in tests.foundation.test_planctl_amendments pass in 173.102 seconds. The existing v4 compatibility cases and the new interleaved-successor, adverse-chain, and historical-successor cases use real Git approval and adoption boundaries."
+      },
+      {
+        "check": "Python quality",
+        "result": "passed",
+        "detail": "Ruff check and format verification pass for tools/planctl.py and tests/foundation/test_planctl_amendments.py."
+      },
+      {
+        "check": "canonical planning controls",
+        "result": "passed",
+        "detail": "taskctl validates 20 capabilities, 117 slices, 363 tasks, and 12 release gates; all 488 planning-review HTML pages pass; generated backlog views are unchanged."
+      },
+      {
+        "check": "bounded maintenance artifact and Git hygiene",
+        "result": "passed",
+        "detail": "The GOV-MAINT-0011 record parses as JSON and git diff --check passes. The candidate changes exactly the declared maintenance record, validator, and focused test module; product and canonical planning bytes are unchanged."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocking defect, do not prepare or approve ECR-0005. Preserve W1 at predecessor 2165f86d264fd414e7d2b9c429d3edbf316fd6fd with CAP-03.S06 unclaimed, record the adverse maintenance disposition append-only, and remediate only the reproduced generic validator defect.",
+  "reviewAttempts": [],
+  "review": null
+}
