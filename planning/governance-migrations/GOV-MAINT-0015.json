@@ -20,10 +20,11 @@
   },
   "authority": "This maintenance changes only the generic amendment-bootstrap resubmission controller, focused tests, its maintenance record, and deterministic ECR-0005 projections. It does not expand the W1.A06 addendum path inventory, product or planning scope, security or experience authority, task state, release state, or external authority. No human approval is required under GOV-MIG-0001 because the correction preserves and enforces existing authenticated authority.",
   "intendedDelta": {
-    "implementation": "Before validating a strict-descendant bootstrap remediation, discover all canonical scope addenda, authenticate each through the existing schema/hash/blob/introduction/ancestry checks, require every previously frozen reference to remain byte-identical, require each new addendum decision candidate to descend from the prior reviewed candidate and remain on the remediation lineage, use the merged set for scope validation, and persist it only after the complete resubmission validates.",
+    "implementation": "Before validating a strict-descendant bootstrap remediation, discover all canonical scope addenda, authenticate each through the existing schema/hash/blob/introduction/ancestry checks, require every previously frozen reference to remain byte-identical, and require each new addendum decision candidate to descend from the prior reviewed candidate and remain on the remediation lineage. For every candidate, apply only addenda already introduced on that candidate's ancestry, require the candidate blob for each addendum-authorized path to equal the blob at its latest authorizing addendum introduction, allow a later ordered addendum to reauthorize the same path, and persist the merged reference set only after the complete resubmission validates.",
     "failClosed": [
       "Missing, rewritten, substituted, duplicated, non-ancestral, or off-lineage addenda deny resubmission before backlog mutation.",
       "Previously frozen references remain in their original order and are never replaced; newly authenticated references append deterministically.",
+      "An older addendum cannot authorize a later edit: duplicate paths are allowed only as ordered exact reauthorization, and the latest applicable introduction-commit blob must equal the candidate blob.",
       "The strict scope base remains the prior reviewed candidate, so an addendum must explicitly authorize every intervening non-evidence path.",
       "Generated ECR projections must include the canonical addendum set and hashes and pass the full planning-site integrity check before the maintenance candidate is reviewed.",
       "W1 stays paused and W1.A06.B00 stays adverse until a later exact-candidate R02 independently closes W1.A06.B00-R01-F01."
@@ -43,7 +44,7 @@
       {
         "check": "focused addendum discovery and W1.A06 transition boundary",
         "result": "passed",
-        "detail": "Five focused tests pass in 5.871 seconds: resubmission appends and persists newly authenticated addendum references, rejects frozen-reference substitution and non-ancestral decisions, and preserves the original three post-migration W1.A06 append/hold/history transitions. Direct canonical replay discovers the committed W1.A06 addendum with all seven paths without an out-of-band backlog edit."
+        "detail": "The focused boundary passes: resubmission appends and persists newly authenticated addendum references, rejects frozen-reference substitution, non-ancestral decisions, and an off-lineage fork, while candidate authorization denies a post-boundary edit and accepts only a later ordered addendum whose introduction blob exactly reauthorizes the path. The original post-migration W1.A06 append/history transition remains green, and direct canonical replay discovers the committed W1.A06 addendum without an out-of-band backlog edit."
       },
       {
         "check": "complete affected taskctl schema and workflow modules",
@@ -63,6 +64,30 @@
     ]
   },
   "rollback": "If independent review finds a blocker, preserve the adverse W1.A06.B00 and addendum histories, keep W1 paused, and revise only this generic authenticated discovery/persistence boundary and its focused projections.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0015.R01",
+      "reviewedCommit": "e9762975408f341cbba04ca8fa0e5c08f8cb84f7",
+      "reviewer": "agent:ecr5-planning-authority-reviewer",
+      "reviewedAt": "2026-09-03T13:17:03.4270225-04:00",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": [
+        "GOV-MAINT-0015-R01-F01"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0015.review-R01.json",
+      "sha256": "845b6cb7fe0743f09238d0741865b7df203ac893a8782074c9d18e91c1282e79"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0015.R01",
+    "reviewedCommit": "e9762975408f341cbba04ca8fa0e5c08f8cb84f7",
+    "reviewer": "agent:ecr5-planning-authority-reviewer",
+    "reviewedAt": "2026-09-03T13:17:03.4270225-04:00",
+    "disposition": "CHANGES_REQUESTED",
+    "findings": [
+      "GOV-MAINT-0015-R01-F01"
+    ],
+    "path": "planning/governance-migrations/GOV-MAINT-0015.review-R01.json",
+    "sha256": "845b6cb7fe0743f09238d0741865b7df203ac893a8782074c9d18e91c1282e79"
+  }
 }

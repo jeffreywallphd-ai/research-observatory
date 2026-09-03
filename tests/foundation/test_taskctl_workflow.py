@@ -3674,6 +3674,10 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     "taskctl.bootstrap_resubmission_scope_addenda",
                     return_value=([], expected_scope_addenda),
                 ),
+                patch(
+                    "taskctl.bootstrap_candidate_authorization",
+                    return_value=(["tests/foundation/test_taskctl_workflow.py"], []),
+                ),
                 patch("taskctl.bootstrap_attempt_errors", return_value=[]),
                 patch("taskctl.subprocess.run", side_effect=git_result),
                 patch("taskctl.persist"),
@@ -6221,6 +6225,88 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     "b" * 40,
                     "d" * 40,
                 )
+
+            def forked_ancestry(_repo: Path, ancestor: str, descendant: str = "HEAD") -> bool:
+                return ancestor == "b" * 40 and descendant == "c" * 40
+
+            with (
+                self.assertRaisesRegex(SystemExit, "outside the remediation lineage"),
+                patch(
+                    "taskctl.load_bootstrap_scope_addenda",
+                    return_value=(["tools/taskctl.py"], [reference]),
+                ),
+                patch("taskctl.git_is_ancestor", side_effect=forked_ancestry),
+            ):
+                taskctl_module.bootstrap_resubmission_scope_addenda(
+                    repo,
+                    "W1.A02",
+                    "W1.A02.B00",
+                    {"scope_addenda": []},
+                    "b" * 40,
+                    "d" * 40,
+                )
+
+    def test_bootstrap_candidate_authorization_binds_latest_reauthorization_blob(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            approval_dir = repo / "planning/wave-amendment-approvals"
+            approval_dir.mkdir(parents=True)
+            governed_path = "tests/foundation/test_taskctl_workflow.py"
+            references = []
+            for number, introduction in ((1, "e" * 40), (2, "f" * 40)):
+                relative = f"planning/wave-amendment-approvals/W1.A02.B00.addendum-0{number}.json"
+                path = repo / relative
+                path.write_text(
+                    json.dumps({"authorizedAdditionalPaths": [governed_path]}),
+                    encoding="utf-8",
+                )
+                references.append(
+                    {
+                        "path": relative,
+                        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                        "introduction_commit": introduction,
+                    }
+                )
+
+            def changed_after_first(_repo: Path, commit: str, path: str) -> bytes | None:
+                if path != governed_path:
+                    return None
+                return b"later bytes" if commit == "d" * 40 else b"first authority bytes"
+
+            with (
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch("taskctl.git_blob", side_effect=changed_after_first),
+            ):
+                _patterns, errors = taskctl_module.bootstrap_candidate_authorization(
+                    repo,
+                    {"bootstrapUnit": {"authorizedPaths": []}},
+                    references[:1],
+                    "d" * 40,
+                    "W1.A02.B00",
+                )
+            self.assertEqual(
+                ["W1.A02.B00: addendum-authorized path changed after its latest authority boundary: " + governed_path],
+                errors,
+            )
+
+            def exactly_reauthorized(_repo: Path, commit: str, path: str) -> bytes | None:
+                if path != governed_path:
+                    return None
+                return b"second authority bytes" if commit in {"d" * 40, "f" * 40} else b"first authority bytes"
+
+            with (
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch("taskctl.git_blob", side_effect=exactly_reauthorized),
+            ):
+                patterns, errors = taskctl_module.bootstrap_candidate_authorization(
+                    repo,
+                    {"bootstrapUnit": {"authorizedPaths": []}},
+                    references,
+                    "d" * 40,
+                    "W1.A02.B00",
+                )
+            self.assertEqual([], errors)
+            self.assertIn(governed_path, patterns)
 
     def test_legacy_star_scope_is_bounded_to_the_declared_directory_tree(self) -> None:
         patterns = ["design/ui-reference/*"]

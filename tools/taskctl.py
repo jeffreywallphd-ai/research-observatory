@@ -2159,8 +2159,6 @@ def load_bootstrap_scope_addenda(
         record = json.loads(payload)
         additional_paths.extend(str(item) for item in record.get("authorizedAdditionalPaths", []))
         references.append(reference)
-    if len(additional_paths) != len(set(additional_paths)):
-        raise SystemExit("Bootstrap scope addenda contain duplicate authorized paths")
     return additional_paths, references
 
 
@@ -2209,6 +2207,56 @@ def bootstrap_authorized_patterns(
             continue
         patterns.extend(str(item) for item in record.get("authorizedAdditionalPaths", []))
     return patterns
+
+
+def bootstrap_candidate_authorization(
+    repo: Path,
+    packet: dict[str, Any],
+    references: list[dict[str, str]],
+    candidate: str,
+    bootstrap_id: str,
+) -> tuple[list[str], list[str]]:
+    """Bind addendum path authority to the latest applicable introduction blob."""
+    errors: list[str] = []
+    applicable: list[dict[str, str]] = []
+    prior_introduction: str | None = None
+    for reference in references:
+        introduction = str(reference.get("introduction_commit") or "")
+        if (
+            prior_introduction
+            and introduction != prior_introduction
+            and not git_is_ancestor(repo, prior_introduction, introduction)
+        ):
+            errors.append(f"{bootstrap_id}: bootstrap scope addenda are not in one ordered history")
+        prior_introduction = introduction
+        if introduction == candidate or git_is_ancestor(repo, introduction, candidate):
+            applicable.append(reference)
+
+    latest_authority: dict[str, str] = {}
+    for reference in applicable:
+        relative = str(reference.get("path") or "")
+        path = repo.joinpath(*PurePosixPath(relative).parts)
+        try:
+            record = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            errors.append(f"{bootstrap_id}: cannot read authenticated bootstrap scope addendum: {exc}")
+            continue
+        introduction = str(reference.get("introduction_commit") or "")
+        for authorized_path in record.get("authorizedAdditionalPaths", []):
+            latest_authority[str(authorized_path)] = introduction
+
+    for authorized_path, introduction in latest_authority.items():
+        if git_blob(repo, candidate, authorized_path) != git_blob(repo, introduction, authorized_path):
+            errors.append(
+                f"{bootstrap_id}: addendum-authorized path changed after its latest authority boundary: "
+                f"{authorized_path}"
+            )
+    patterns = bootstrap_authorized_patterns(
+        repo,
+        packet,
+        {"scope_addenda": applicable},
+    )
+    return patterns, errors
 
 
 def bootstrap_resubmission_scope_addenda(
@@ -2396,7 +2444,6 @@ def bootstrap_packet_errors(
     expected_attempt_ids = [f"R{index:02d}" for index in range(1, len(attempts) + 1)]
     if [str(item.get("id")) for item in attempts] != expected_attempt_ids:
         errors.append(f"{bootstrap_id}: bootstrap attempt IDs are not sequential")
-    allowed_patterns = bootstrap_authorized_patterns(repo, packet, bootstrap)
     approval_commit = str(amendment.get("approval_reference", {}).get("introduction_commit") or "")
     lineage_base = approval_commit
     seen_evidence: set[tuple[str, str, str]] = set()
@@ -2418,6 +2465,14 @@ def bootstrap_packet_errors(
             )
         )
         candidate = str(attempt.get("implementation_commit") or "")
+        allowed_patterns, authorization_errors = bootstrap_candidate_authorization(
+            repo,
+            packet,
+            list(bootstrap.get("scope_addenda") or []),
+            candidate,
+            bootstrap_id,
+        )
+        errors.extend(authorization_errors)
         evidence = attempt.get("evidence") or []
         if evidence and isinstance(evidence[0], dict):
             identity = (
@@ -7413,7 +7468,7 @@ def command_amendment_v4_bootstrap_submit(
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
         raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
     bootstrap_unit = packet.get("bootstrapUnit") or {}
-    scope_addenda, addendum_references = load_bootstrap_scope_addenda(
+    _additional_paths, addendum_references = load_bootstrap_scope_addenda(
         repo, args.amendment, str(bootstrap_unit.get("id"))
     )
     agent = normalized_identity(args.agent, "Bootstrap implementer")
@@ -7435,22 +7490,27 @@ def command_amendment_v4_bootstrap_submit(
         ],
         "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     }
-    errors = bootstrap_attempt_errors(
+    allowed_patterns, authorization_errors = bootstrap_candidate_authorization(
         repo,
-        args.amendment,
+        packet,
+        addendum_references,
+        implementation_commit,
         str(bootstrap_unit.get("id")),
-        [str(item) for item in bootstrap_unit.get("requiredOutcomes", [])],
-        candidate,
-        expected_base=approval_commit,
-        lineage_base=approval_commit,
-        allowed_patterns=[
-            *map(str, bootstrap_unit.get("authorizedPaths", [])),
-            *scope_addenda,
-            *(str(reference.get("path") or "") for reference in addendum_references),
-            *([BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH] if addendum_references else []),
-        ],
-        require_current_branch=True,
     )
+    errors = [
+        *authorization_errors,
+        *bootstrap_attempt_errors(
+            repo,
+            args.amendment,
+            str(bootstrap_unit.get("id")),
+            [str(item) for item in bootstrap_unit.get("requiredOutcomes", [])],
+            candidate,
+            expected_base=approval_commit,
+            lineage_base=approval_commit,
+            allowed_patterns=allowed_patterns,
+            require_current_branch=True,
+        ),
+    ]
     if errors:
         raise SystemExit("Invalid post-migration amendment bootstrap evidence:\n- " + "\n- ".join(errors))
     frozen_waves = exact_record_snapshot(data, "waves", identities={wave_id})
@@ -7663,7 +7723,7 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
             )
     agent = normalized_identity(args.agent, "Bootstrap implementer")
     bootstrap_unit = packet.get("bootstrapUnit") or {}
-    scope_addenda, addendum_references = load_bootstrap_scope_addenda(
+    _additional_paths, addendum_references = load_bootstrap_scope_addenda(
         repo, args.amendment, str(bootstrap_unit.get("id"))
     )
     candidate = {
@@ -7684,17 +7744,27 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         ],
         "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     }
-    errors = bootstrap_attempt_errors(
+    allowed_patterns, authorization_errors = bootstrap_candidate_authorization(
         repo,
-        args.amendment,
+        packet,
+        addendum_references,
+        implementation_commit,
         str(bootstrap_unit.get("id")),
-        [str(item) for item in bootstrap_unit.get("requiredOutcomes", [])],
-        candidate,
-        expected_base=approval_commit,
-        lineage_base=approval_commit,
-        allowed_patterns=[*map(str, bootstrap_unit.get("authorizedPaths", [])), *scope_addenda],
-        require_current_branch=True,
     )
+    errors = [
+        *authorization_errors,
+        *bootstrap_attempt_errors(
+            repo,
+            args.amendment,
+            str(bootstrap_unit.get("id")),
+            [str(item) for item in bootstrap_unit.get("requiredOutcomes", [])],
+            candidate,
+            expected_base=approval_commit,
+            lineage_base=approval_commit,
+            allowed_patterns=allowed_patterns,
+            require_current_branch=True,
+        ),
+    ]
     if errors:
         raise SystemExit("Invalid appended amendment bootstrap evidence:\n- " + "\n- ".join(errors))
     amendment = {
@@ -7778,7 +7848,7 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
         raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
     bootstrap_unit = packet.get("bootstrapUnit") or {}
-    additional_paths, scope_addenda = load_bootstrap_scope_addenda(
+    _additional_paths, scope_addenda = load_bootstrap_scope_addenda(
         repo,
         args.amendment,
         str(bootstrap_unit.get("id")),
@@ -7808,7 +7878,14 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
         check=False,
     )
     changed_files = [line for line in actual.stdout.splitlines() if line]
-    patterns = [str(item) for item in bootstrap_unit.get("authorizedPaths", [])] + additional_paths
+    patterns, authorization_errors = bootstrap_candidate_authorization(
+        repo,
+        packet,
+        scope_addenda,
+        implementation_commit,
+        str(bootstrap_unit.get("id")),
+    )
+    evidence_errors.extend(authorization_errors)
     outside = [path for path in changed_files if not amendment_path_authorized(path, patterns)]
     if actual.returncode != 0:
         evidence_errors.append("cannot resolve bootstrap changed-file scope")
@@ -8038,21 +8115,27 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         "evidence": [evidence_reference],
         "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     }
-    errors = bootstrap_attempt_errors(
+    allowed_patterns, authorization_errors = bootstrap_candidate_authorization(
         repo,
-        args.amendment,
+        packet,
+        scope_addenda,
+        implementation_commit,
         str(bootstrap.get("id")),
-        [str(item) for item in (packet.get("bootstrapUnit") or {}).get("requiredOutcomes", [])],
-        candidate,
-        expected_base=None,
-        lineage_base=previous_candidate,
-        allowed_patterns=bootstrap_authorized_patterns(
-            repo,
-            packet,
-            {**bootstrap, "scope_addenda": scope_addenda},
-        ),
-        require_current_branch=True,
     )
+    errors = [
+        *authorization_errors,
+        *bootstrap_attempt_errors(
+            repo,
+            args.amendment,
+            str(bootstrap.get("id")),
+            [str(item) for item in (packet.get("bootstrapUnit") or {}).get("requiredOutcomes", [])],
+            candidate,
+            expected_base=None,
+            lineage_base=previous_candidate,
+            allowed_patterns=allowed_patterns,
+            require_current_branch=True,
+        ),
+    ]
     if errors:
         raise SystemExit("Invalid bootstrap remediation evidence:\n- " + "\n- ".join(errors))
     prior_review = copy.deepcopy(bootstrap.get("review") or {})
