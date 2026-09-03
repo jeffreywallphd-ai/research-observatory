@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 60f3144df4328f0655b35cb593c3ef46d8092f0177f74562c61db9dc53bfd525
+source_sha256: dea4a31d979b1d93515a18789d8ca478027059dd112ddce79c902265fa1aea79
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6141,7 +6141,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6172,6 +6172,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S06.T02.R01.json` at `7641bbceb0fd20286d3e66ea257f6e0036fe4b87`
 - `artifacts/evidence/CAP-03.S06.T02.remediation-01.json` at `8e522b51bb5414cb55b69cba86299262969539b0`
+- `artifacts/evidence/CAP-03.S06.T02.remediation-02.json` at `eb7ee5746cfeb3b656c13e1bdd30c66866b91538`
 
 ##### Review history — CAP-03.S06.T02
 
@@ -6239,7 +6240,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `CAP-03.S06.T02-R01-F02` `fixed` — Exact canonical before/after effects are derived and rendered; focused service tests cover theory-to-systematic and multi-condition critical-to-technical transitions, and the assembled desktop check confirms removed/added stopping effects before acknowledgement.
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `e465726bbb7fb56607fe2736d76a31ec58060654ed1714a3a448a9b4d1b36624`
+
+- Candidate / base / branch: `eb7ee5746cfeb3b656c13e1bdd30c66866b91538` / `8e522b51bb5414cb55b69cba86299262969539b0` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T23:25:10+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T02.remediation-02.json` / `ab339cf29598148629da3591273cecb583b66c5a5c50cc9922d250c2f7abef65` / `eb7ee5746cfeb3b656c13e1bdd30c66866b91538`
+- Acceptance-criteria SHA-256: `e8635297c0ce59786e23a69a58652a9d0d7865841cb2b1aa0962d6d88b0f7c89`
+- Verification-selection SHA-256: `3c7614e74cbd28f729d40864f0b22737a9d31966753ae67d5f5558c7d75902ec`
+- Changed paths: `apps/desktop/scripts/intent-native-integration.mjs`, `apps/desktop/src/app/IntentWorkspace.test.tsx`, `apps/desktop/src/app/ProjectsWorkspace.test.tsx`, `artifacts/evidence/CAP-03.S06.T02.remediation-01.json`, `artifacts/evidence/CAP-03.S06.T02.review-R02.json`, `artifacts/evidence/CAP-03.S06.T02.task-start.md`, `artifacts/evidence/ui-change/CAP-03.S06.T02.json`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T02.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `tests/service/fixtures/native_integration_sidecar.py`, `tests/service/test_research_intents.py`, `tools/core_api_contract.py`
+- Selected checks: `.venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check`, `.venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts -- --run; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false`, `.venv/Scripts/python.exe -m unittest discover -s tests/data -p test_*.py; .venv/Scripts/python.exe -m unittest -v tests.security.test_protected_database`, `npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop`, `.venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-R03-desktop.json`, `configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-R03-native.json`, `.venv/Scripts/python.exe -m ruff check <7 changed Python files>; .venv/Scripts/python.exe -m ruff format --check <7 changed Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <7 changed Python files>`, `.venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head eb7ee5746cfeb3b656c13e1bdd30c66866b91538; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 8e522b51bb5414cb55b69cba86299262969539b0..eb7ee5746cfeb3b656c13e1bdd30c66866b91538`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base 8e522b51bb5414cb55b69cba86299262969539b0 --affected-head eb7ee5746cfeb3b656c13e1bdd30c66866b91538 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-R03-selection.json`
+- Deferred checks: `Desktop and data performance commands are gate-bound to W1 exit; R03 changes no performance budget or algorithmic workflow path.`, `Complete cross-capability failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, performance, primary-platform, and visual qualification remains mandatory at CAP-03.S06 slice review, integration checkpoints, and W1 exit.`
+- Selection rationale: Mandatory R03 replay centers on CAP-03.S06.T02-R01-F01 and CAP-03.S06.T02-R01-F03. CAP-03.S06.T02-R01-F01 recurred because R02 tested activation and selection loss separately while co-locating both in settings; R03 therefore tests combined settings loss, an independently surviving provenance witness, witness deletion/substitution, atomic publication, restart, exact predecessor upgrade, and native protected-SQLite inspection. CAP-03.S06.T02-R01-F03 recurred because R02 treated Core location as governance without hashing the values; R03 therefore checks exact guidance hash recomputation, one-value mutation, generated client substitution denial, activation binding, UI evidence wording, and renderer use of the single projection. Full service/contracts/data/desktop suites, protected storage, native integration, static checks, architecture, UI gate, planning integrity, and exact-range hygiene cover the incremental shared-boundary risk. Performance is unchanged and retained for W1 exit.
+- Prior round / replayed open findings: `R02` / `CAP-03.S06.T02-R01-F01`, `CAP-03.S06.T02-R01-F03`
+- Root-cause escalation: R01-F01 recurred because the R02 implementation treated a different settings key as independent authority and tested activation and selection deletion separately; both still vanished under one settings-ledger deletion. R01-F03 recurred because the R02 implementation treated physical centralization in Core plus key-set equality as governed value identity; it never enumerated or hashed the new guidance values. The shared root cause was substituting location and presence checks for explicit value-bearing identity plus an independent survivor invariant. R03 corrects both systemically: the first binding is witnessed in the separate immutable provenance ledger and every guidance value is covered by its own versioned canonical hash across Core, activation, generated client, desktop, tests, and evidence. Preventive tests combine settings loss, delete or substitute the witness, mutate one guidance value, and reject a substituted generated-client hash.
 
 **Current latest-review projection:** `changes-requested` by agent:t02-independent-reviewer at `2026-09-03T23:08:44+00:00`
 
