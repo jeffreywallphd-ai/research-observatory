@@ -1,0 +1,42 @@
+{
+  "documentType": "wave-amendment-adoption-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A06",
+  "targetWave": "W1",
+  "candidateCommit": "9f898a52e63dad798aa6ddbe60d00b0bb0519f55",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewedCompletionCommit": "9f898a52e63dad798aa6ddbe60d00b0bb0519f55",
+  "approvedExitAttempt": "R01",
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W1.A06.exit-review-R01.json",
+    "sha256": "32251688ab6e6f3419fc8e28bfafc408cc8b249eeae54314dafe1c379b8001c5"
+  },
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W1.A06.exit.json",
+    "sha256": "6ba4285abda8779670b9c37b8e4c702a32314c67b485f3437b823d699bdfb988"
+  },
+  "waveDisposition": {
+    "status": "PAUSED",
+    "scopeAfterAdoption": "wave",
+    "ordinaryResumeAuthorized": false,
+    "gateApprovalAuthorized": false
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "adopts": [
+      "the exact fourteen-workflow CAP-03.S06.T01 planning criterion in the canonical backlog and approved slice plan",
+      "the unchanged RO-UI-ACADEMIC-MINIMAL-1.5 governed workflow catalog authority",
+      "the zero-refactor planning correction against the immutable 194-point W1 baseline"
+    ],
+    "retains": [
+      "all ordinary CAP-03.S06 product implementation and task/slice review obligations",
+      "the complete W1 Windows x64 and cross-capability qualification matrix at W1 exit",
+      "G1 as a later human approval gate"
+    ]
+  },
+  "requiredNextTransitions": [
+    "explicitly resume W1 through taskctl",
+    "identify only the next dependency-eligible READY W1 task through taskctl",
+    "claim that task through taskctl before implementation"
+  ]
+}
