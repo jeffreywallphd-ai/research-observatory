@@ -418,14 +418,16 @@ def provenance_reference_handoff_errors(
         return ["pre-UI gate maintenance reference handoff lacks exact approved governance records"]
     authority = approved.get("authority")
     proposal_authority = proposal.get("authority")
-    stable_approval_fields = {
-        "reference_id",
-        "version",
-        "supersedes",
-        "scope",
-        "implementation_rule",
-        "deferred_surfaces",
+    mutable_approval_fields = {
+        "status",
+        "approval_kind",
+        "approved_by",
+        "approved_at",
+        "approval_basis",
+        "authority",
     }
+    proposal_stable_approval = {key: value for key, value in proposal.items() if key not in mutable_approval_fields}
+    approved_stable_approval = {key: value for key, value in approved.items() if key not in mutable_approval_fields}
     stable_manifest = {key: value for key, value in approved_manifest.items() if key not in {"status", "file_hashes"}}
     proposal_stable_manifest = {
         key: value for key, value in proposal_manifest.items() if key not in {"status", "file_hashes"}
@@ -446,7 +448,7 @@ def provenance_reference_handoff_errors(
         or authority.get("proposal_commit") != proposal_commit
         or not isinstance(proposal_authority, dict)
         or proposal_authority != {key: value for key, value in authority.items() if key != "proposal_commit"}
-        or any(proposal.get(field) != approved.get(field) for field in stable_approval_fields)
+        or proposal_stable_approval != approved_stable_approval
         or stable_manifest != proposal_stable_manifest
         or not isinstance(approved_hashes, dict)
         or not isinstance(proposal_hashes, dict)
