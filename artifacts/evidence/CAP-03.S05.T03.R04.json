@@ -1,0 +1,207 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S05.T03",
+  "commit": "ab0844204768f2282d694c9df2caa931a7e8fcf3",
+  "baseCommit": "6869a9e3d7b01b72c7e440aecb9571a878456ffd",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S05.T03.R03.json",
+    "sha256": "298618de9767e4ba2c60bda0ff7b25c0a18fc749b353326edc6fcdd714d5d666",
+    "commit": "6869a9e3d7b01b72c7e440aecb9571a878456ffd",
+    "reason": "Reopens the completed task only to close CAP-03.S05-R01-F01 at slice review with the exact human-approved v1.5 production experience; all prior task findings remain closed."
+  },
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+    "apps/desktop/src/app/audit-lineage.conformance.json",
+    "artifacts/evidence/CAP-03.S05.T03.R03.json",
+    "artifacts/evidence/CAP-03.S05.T03.review-R03.json",
+    "artifacts/evidence/CAP-03.S05.integration-R01.json",
+    "artifacts/evidence/CAP-03.S05.integration.review-R01.json",
+    "artifacts/evidence/ui-change/CAP-03.S05.T03.json",
+    "design/ui-reference/APPROVAL.yaml",
+    "design/ui-reference/CAPABILITY_COVERAGE.json",
+    "design/ui-reference/CAPABILITY_COVERAGE.md",
+    "design/ui-reference/README.md",
+    "design/ui-reference/REFERENCE_MANIFEST.yaml",
+    "design/ui-reference/SITE_MANIFEST.json",
+    "design/ui-reference/STYLE_GUIDE.md",
+    "design/ui-reference/STYLE_GUIDE_SOURCE.md",
+    "design/ui-reference/WORKFLOW_CATALOG.json",
+    "design/ui-reference/WORKFLOW_CATALOG.md",
+    "design/ui-reference/application-settings.html",
+    "design/ui-reference/audit-lineage.html",
+    "design/ui-reference/claim-graph.html",
+    "design/ui-reference/corpus-canvas.html",
+    "design/ui-reference/critical-lens.html",
+    "design/ui-reference/document-reader.html",
+    "design/ui-reference/evidence-matrix.html",
+    "design/ui-reference/help-onboarding.html",
+    "design/ui-reference/index.html",
+    "design/ui-reference/ingestion-reconciliation.html",
+    "design/ui-reference/intent-contract.html",
+    "design/ui-reference/living-monitor.html",
+    "design/ui-reference/manuscript-blueprint.html",
+    "design/ui-reference/manuscript-studio.html",
+    "design/ui-reference/model-center.html",
+    "design/ui-reference/new-project.html",
+    "design/ui-reference/novelty-audit.html",
+    "design/ui-reference/opportunity-radar.html",
+    "design/ui-reference/parsing-quality.html",
+    "design/ui-reference/project-settings.html",
+    "design/ui-reference/projects.html",
+    "design/ui-reference/prototype-index.html",
+    "design/ui-reference/research-notebook.html",
+    "design/ui-reference/reviewer-simulation.html",
+    "design/ui-reference/revision-response.html",
+    "design/ui-reference/schema-manager.html",
+    "design/ui-reference/screening.html",
+    "design/ui-reference/scripts/build_mockups.py",
+    "design/ui-reference/search-studio.html",
+    "design/ui-reference/source-manager.html",
+    "design/ui-reference/study-design.html",
+    "design/ui-reference/style-guide.html",
+    "design/ui-reference/synthesis-studio.html",
+    "design/ui-reference/task-center.html",
+    "design/ui-reference/technical-reports.html",
+    "design/ui-reference/theory-map.html",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0010.json",
+    "planning/governance-migrations/GOV-MAINT-0010.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0010.review-R02.json",
+    "planning/governance-migrations/GOV-MAINT-0010.review-R03.json",
+    "planning/governance-migrations/GOV-MAINT-0010.review-R04.json",
+    "planning/review-site/CAP-03/CAP-03.S05.T03.html",
+    "planning/review-site/CAP-03/CAP-03.S05.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/dependency_impacts.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/recalculation_contracts.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/selective_recalculation.py",
+    "tests/data/test_object_envelope_upgrades.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/e2e/test_selective_recalculation.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tests/graph/test_dependency_impacts.py",
+    "tests/security/test_protected_database.py",
+    "tests/service/test_recalculation_api.py",
+    "tools/core_api_contract.py",
+    "tools/dependency_impact_performance_check.py",
+    "tools/desktop_app_check.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py",
+    "verification-profiles.json",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "checks": [
+    {
+      "command": "apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm test --prefix apps/desktop -- --run src/app/ApplicationRuntime.test.tsx src/app/AuditLineageWorkspace.test.tsx",
+      "exitCode": 0,
+      "result": "Strict desktop types and lint passed; both focused renderer/runtime files passed all 16 tests in 638 ms. The coordinator drives all five generated Core operations, preserves byte-identical retry authority, denies read-only mutation, and renders the bounded impact, policy, comparison, deferral, and human-gated restoration states."
+    },
+    {
+      "command": "npm run build --prefix apps/desktop; .venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "exitCode": 0,
+      "result": "The production and reference bundles built successfully. All eight desktop-product checker tests passed in 35.021 seconds, and the assembled functional frame passed with CAP-03.S05.T03 advertised as implemented while keyboard, focus, responsive, privacy, application-lock, and recovery protections remained intact."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo . --base 5ff2ff8de64513ced687153cebe53b5eebeed32f --head ab0844204768f2282d694c9df2caa931a7e8fcf3",
+      "exitCode": 0,
+      "result": "The exact UI implementation range passed with zero errors. The contract, active task ownership/base, reference approval commit, v1.5 identity, and package SHA-256 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae all bind exactly."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "The human-approved v1.5 package reproduced across 55 governed files with zero errors; 139 workflow browser cases, 390 keyboard cases, and 66 responsive/accessibility cases passed."
+    },
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -B -m unittest tests.service.test_recalculation_api.RecalculationApiTests.test_routes_expose_complete_flow_without_accepting_actor_or_policy_authority tests.e2e.test_selective_recalculation.SelectiveRecalculationE2ETests.test_restore_requires_exact_completed_human_decision_and_current_policy tests.e2e.test_selective_recalculation.SelectiveRecalculationE2ETests.test_enqueue_fails_without_queue_write_when_privacy_policy_changes_after_planning tests.graph.test_dependency_impacts.DependencyImpactPlannerTests.test_cycle_groups_include_only_edges_that_propagate",
+      "exitCode": 0,
+      "result": "All four exact slice-finding regressions passed. The production API exposes the complete flow without accepting actor or policy authority from the caller; restore requires the exact completed human decision and current policy; enqueue denies a changed policy without a queue write; and non-propagating edges cannot create false cycle authority."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 5ff2ff8de64513ced687153cebe53b5eebeed32f..ab0844204768f2282d694c9df2caa931a7e8fcf3",
+      "exitCode": 0,
+      "result": "The backlog validates with 20 capabilities, 117 slices, 363 tasks, and 12 release gates. The exact ten-path remediation range has no patch errors, preserves all prior review attempts, and binds the reopened task to the exact approved reference."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile e2e-local --affected-base 5ff2ff8de64513ced687153cebe53b5eebeed32f --affected-head ab0844204768f2282d694c9df2caa931a7e8fcf3 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passed and reported the exact ten changed paths. The new UI evidence path is truthfully reported as unknown, producing a safety-sensitive broad fallback. This task ran the narrow deterministic UI, desktop, API, restoration-policy, and cycle checks above; the accumulated slice union and complete fallback/profile matrix remain deferred to slice review and W1 exit."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile e2e-local --profile graph --profile data --profile security-local --affected-base 6869a9e3d7b01b72c7e440aecb9571a878456ffd --affected-head ab0844204768f2282d694c9df2caa931a7e8fcf3 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "The required prior-candidate-to-R04 selection passed and reported the exact 98-path descendant range. It truthfully includes the independently reviewed slice R01 record, human-approved v1.5 reference package, backend/API remediation, four-round adopted UI-control maintenance, generated planning views, and final ten-path renderer increment. Five evidence paths remain explicitly unknown and trigger the safety-sensitive fallback. Their immutable review records and focused risk checks are reused; the complete selected profile union is deferred to CAP-03.S05 integration review and W1 exit rather than replayed automatically at this task boundary."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The production Audit & Lineage workspace now obtains a Core-authored stale/impact preview, distinguishes automatic, review-required, blocked, and reusable effects, and keeps staleness visible when work is deferred.",
+        "A researcher can schedule one selected change under the exact accepted intent and immutable plan hash, compare two immutable revisions, request a restore review, and create a new restoration revision only by supplying the exact completed human decision returned through Task Center authority.",
+        "The production API and committed Core service deny caller-supplied actor or policy authority, re-evaluate current rights/policy at mutation boundaries, and preserve all prior adjudicated revisions."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Sixteen renderer/runtime tests cover the complete generated-client path, stable retries, impact classification, accepted-intent binding, and read-only denial.",
+        "Four exact backend regressions cover API reachability, spoof-resistant human restoration, current-policy change denial with no queue write, and truthful SCC construction; the assembled frame adds keyboard, focus, responsive, privacy, and recovery coverage."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The implementation reuses the approved Audit & Lineage surface, generated Core client, existing Task Center human-decision authority, and Academic Minimal v1.5 reference. No new schema, dependency, remote service, egress authority, destructive overwrite, or unrelated product capability is introduced.",
+        "The task was formally reopened after the slice review exposed the missing production path; its earlier immutable approved attempts remain intact, and the new UI evidence is bound to the exact approved reference and remediation base."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-03.S05-R01-F01 showed that the previously approved internal selective-recalculation behavior lacked a production researcher path. This R04 increment affects the public generated Core client consumer, governed Audit & Lineage UI, build assembly, functional-frame checker, and task/reference evidence boundary. The credible incremental failures are API-shape drift, wrong project/revision/intent authority, retry mutation, read-only escape, hidden stale state, inaccurate impact class, non-human restoration, policy substitution, keyboard/focus/responsive regression, or reference mismatch. The selected checks exercise those exact boundaries plus the other four slice findings' narrow regressions. The selector's broad fallback is disclosed rather than automatically replayed at task level; accumulated integration and full qualification remain owned by slice review and W1 exit.",
+    "selectedCommandIds": [
+      "foundation:ui-change",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "service:unit",
+      "graph:unit",
+      "e2e-local:system"
+    ],
+    "deferred": [
+      "CAP-03.S05 R02 slice review owns the exact five-finding replay and accumulated API, graph, persistence, workflow, renderer, UI, security, and affected-selection union.",
+      "The complete foundation, desktop, service, e2e-local, security, data, graph, packaging, performance, recovery, and Windows x64 release matrix remains mandatory once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [],
+    "rootCauseAnalysis": "The original task review correctly proved the internal recomputation, immutable candidate, and restoration transaction boundaries, but the task evidence treated the researcher-facing API/UI handoff as slice-level follow-up and the first slice review correctly rejected that omission. The remediation composes the already-secured Core path through strict generated contracts into the approved Audit & Lineage workspace, preserving backend authority rather than reproducing it in the renderer.",
+    "note": "Independently review exact candidate ab0844204768f2282d694c9df2caa931a7e8fcf3 as the 98-path strict descendant of prior approved candidate 6869a9e3d7b01b72c7e440aecb9571a878456ffd. Authenticate and reuse the intervening immutable slice review, exact human v1.5 approval, and independently adopted GOV-MAINT-0010 chain; inspect the final ten-path product subrange from 5ff2ff8de64513ced687153cebe53b5eebeed32f for exact UI gate authority, complete production API/client/renderer flow, read-only and policy/human-decision denials, stable retry bodies, governed accessible states, and preservation of prior task review history. No full repository profile is required at this task boundary."
+  }
+}
