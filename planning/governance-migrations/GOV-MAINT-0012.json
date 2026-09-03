@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0012",
+  "title": "Append later post-migration Wave amendments",
+  "status": "pending-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "836b790b75b64981e035fb75e39a416dd0354d78",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": null
+  },
+  "trigger": {
+    "denial": "After GOV-MAINT-0011 makes a later v4 packet truthfully validatable, taskctl still rejects its bootstrap because the append path requires revision 11, an empty MI-0001 ledger, and a backlog containing only adopted packet records before reservations. The current truthful state is revision 12 with immutable MI-0001 and interleaved terminal W1.A04 history followed by adopted W1.A05.",
+    "atomicity": "W1 remains paused at a clean Wave boundary with no ordinary task in progress or review, no active amendment campaign, and no active recovery hold. ECR-0005/W1.A06 has not been created or approved, CAP-03.S06 remains unclaimed, and the protected W1.A04.B00 witness remains unrelated and untouched.",
+    "diagnosis": "The bootstrap command combines a one-time revision-11-to-12 migration with all future v4 amendment appends. Its predecessor comparison ignores interleaved reserved identities, always rematerializes every reservation, and treats the already authenticated MI-0001 record as a blocker. The stable behavior should preserve that one-time record while appending only missing reserved predecessors and the next approved amendment."
+  },
+  "authority": "This maintenance generalizes only the existing post-migration v4 bootstrap mutation path. It preserves the first revision-11 bootstrap behavior and immutable MI-0001 record, requires current supported control revision and all existing authority checks for later appends, and adds no new lifecycle, controller, approval, product, security, experience, or release authority. It does not create or approve ECR-0005, materialize W1.A06, change CAP-03.S06, resume W1, claim a task, modify product code, integrate main, approve G1, or authorize remote action.",
+  "intendedDelta": {
+    "implementation": "Order adopted and reserved v4 predecessors by immutable amendment ID, require the canonical backlog to be their exact consecutive prefix, permit only missing reserved records to be terminally materialized, append exactly the next proposed amendment, and retain the one-time revision-12/MI-0001 state unchanged on later appends.",
+    "failClosed": [
+      "The ECR must first pass exact planctl validation and immutable approval validation exactly as before.",
+      "Combined predecessor identities must be unique, ordered within each classification, and consecutive from A01; every adopted predecessor must already exist in the canonical backlog.",
+      "The canonical backlog must be an exact prefix of packet authority, and any missing predecessor may be reserved only; omitted adopted authority and fabricated gaps remain denied before mutation.",
+      "Only missing terminal reservations may be added; an already materialized reservation such as W1.A04 cannot be duplicated or rewritten.",
+      "The proposal must be the single next numeric identity, the append-only before/after snapshot must match exactly, and existing predecessor bytes remain frozen.",
+      "The first post-migration append still requires revision 11 and creates MI-0001/revision 12 exactly once; every later append requires the supported revision-12 boundary and preserves MI-0001 byte-for-byte.",
+      "Quiescence, no active hold or amendment campaign, exact Git approval ancestry, scoped bootstrap evidence, independent review, and protected-witness non-reading remain enforced."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0012.json",
+      "tools/taskctl.py",
+      "tests/foundation/test_taskctl_workflow.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The credible regression surface is the v4 append transition, immutable predecessor projection, one-time revision bridge, preserved maintenance authority, and protected-witness admission. Selected tests replay the original first post-migration append, active-hold denial, and a later interleaved successor with omitted-adopted denial and exact before/after assertions. Focused schema/control validation, taskctl/backlog validation, planning-site/view checks, Python quality, JSON parsing, and Git hygiene cover the shared controller boundary. Product, runtime, persistence, UI, packaging, and Wave suites are deferred because no product or canonical planning byte changes.",
+    "results": [
+      {
+        "check": "focused v4 bootstrap transitions",
+        "result": "passed",
+        "detail": "Three focused taskctl workflow tests pass in 4.404 seconds: original A05 reservation/bootstrap behavior, active recovery-hold denial, and later A06 append over interleaved A04/A05 history with omitted-A05 denial and immutable MI-0001 preservation."
+      },
+      {
+        "check": "focused schema and control invariants",
+        "result": "passed",
+        "detail": "The canonical backlog and revision-12 bounded-maintenance semantic tests both pass in 3.846 seconds. An initial selector named a nonexistent test class and executed no test; the corrected BacklogSchemaTests selectors passed."
+      },
+      {
+        "check": "Python quality and planning integrity",
+        "result": "passed",
+        "detail": "Ruff check and format verification pass. taskctl validates 20 capabilities, 117 slices, 363 tasks, and 12 release gates; all 488 planning-review pages pass; generated backlog views remain unchanged."
+      },
+      {
+        "check": "maintenance artifact and Git hygiene",
+        "result": "passed",
+        "detail": "GOV-MAINT-0012 parses as JSON and git diff --check passes. The candidate changes only the declared maintenance record, generic taskctl append path, and focused workflow tests; product and canonical planning bytes remain unchanged."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocking defect, do not prepare or approve ECR-0005. Preserve W1 and the immutable MI-0001/W1.A05 authority at predecessor 836b790b, record the adverse maintenance disposition append-only, and remediate only the reproduced generic successor-bootstrap defect.",
+  "reviewAttempts": [],
+  "review": null
+}

@@ -4372,7 +4372,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             patch("taskctl.load_amendment_authority", return_value=(approval, packet, approval_payload)),
             patch("taskctl.subprocess.run", return_value=subprocess.CompletedProcess([], 0, "", "")),
             patch("taskctl.save_validated") as save,
-            self.assertRaisesRegex(SystemExit, "exact released revision-11 control boundary"),
+            self.assertRaisesRegex(SystemExit, "exact released supported control boundary"),
         ):
             taskctl_module.command_amendment_append_bootstrap_submit(
                 args,
@@ -4384,6 +4384,111 @@ class TaskctlWorkflowTests(unittest.TestCase):
             )
         self.assertEqual(before, json.dumps(data, sort_keys=True))
         save.assert_not_called()
+
+    def test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment(self) -> None:
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
+        data = copy.deepcopy(data)
+        before_amendments = copy.deepcopy(data["wave_amendments"])
+        before_maintenance = copy.deepcopy(data["control_plane"]["maintenance_increments"])
+        approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A05.json").read_bytes())
+        approval = json.loads(json.dumps(approval).replace("ECR-0004", "ECR-0005").replace("W1.A05", "W1.A06"))
+        packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0004.packet.json").read_bytes())
+        packet = json.loads(json.dumps(packet).replace("ECR-0004", "ECR-0005").replace("W1.A05", "W1.A06"))
+        prior_approval_path = REPO / "planning/wave-amendment-approvals/W1.A05.json"
+        packet["authorityChain"]["orderedAmendments"].append(
+            {
+                "id": "W1.A05",
+                "changeRequestId": "ECR-0004",
+                "status": "ADOPTED",
+                "packetCommit": "25584d82ce5d6bd55e476cd746100eef0790a33d",
+                "approvalReference": {
+                    "path": prior_approval_path.relative_to(REPO).as_posix(),
+                    "sha256": hashlib.sha256(prior_approval_path.read_bytes()).hexdigest(),
+                    "introductionCommit": "1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b",
+                },
+                "effectiveStateCommit": "9a56ed8d25d4747d0ad6741255ea5c7514e08fc7",
+            }
+        )
+        approval_payload = json.dumps(approval).encode("utf-8")
+        approval_commit = "a" * 40
+        candidate = "b" * 40
+        original_run = subprocess.run
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence_path = Path(temporary) / "W1.A06.B00.json"
+            evidence_path.write_text("{}\n", encoding="utf-8", newline="\n")
+            args = Namespace(
+                amendment="W1.A06",
+                approval_commit=approval_commit,
+                implementation_commit=candidate,
+                evidence="artifacts/evidence/W1.A06.B00.json",
+                agent="codex",
+                file=str(REPO / "planning/backlog.yaml"),
+            )
+
+            omitted = copy.deepcopy(packet)
+            omitted["authorityChain"]["orderedAmendments"].pop()
+            frozen = json.dumps(data, sort_keys=True)
+            with (
+                patch("taskctl.discover_repository", return_value=REPO),
+                patch("taskctl.recovery_hold_errors", return_value=[]),
+                patch("taskctl.load_amendment_authority", return_value=(approval, omitted, approval_payload)),
+                patch("taskctl.subprocess.run", return_value=subprocess.CompletedProcess([], 0, "", "")),
+                self.assertRaisesRegex(SystemExit, "predecessor authority differs"),
+            ):
+                taskctl_module.command_amendment_append_bootstrap_submit(
+                    args,
+                    data,
+                    capabilities,
+                    slices,
+                    tasks,
+                    gates,
+                )
+            self.assertEqual(frozen, json.dumps(data, sort_keys=True))
+
+            def ecr_only(command: list[str], *run_args: Any, **run_kwargs: Any) -> subprocess.CompletedProcess[Any]:
+                if len(command) > 1 and str(command[1]).endswith("planctl.py"):
+                    return subprocess.CompletedProcess(command, 0, "ECR-0005 is approved\n", "")
+                return original_run(command, *run_args, **run_kwargs)
+
+            with (
+                patch("taskctl.discover_repository", return_value=REPO),
+                patch("taskctl.recovery_hold_errors", return_value=[]),
+                patch("taskctl.load_amendment_authority", return_value=(approval, packet, approval_payload)),
+                patch("taskctl.approval_introduction_commit", return_value=approval_commit),
+                patch("taskctl.git_head_branch", return_value=(candidate, "codex/w1-windows-local-runtime")),
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch(
+                    "taskctl.canonical_control_artifact_path",
+                    return_value=("artifacts/evidence/W1.A06.B00.json", evidence_path),
+                ),
+                patch("taskctl.require_clean_repository") as clean,
+                patch("taskctl.load_bootstrap_scope_addenda", return_value=([], [])),
+                patch("taskctl.bootstrap_attempt_errors", return_value=[]),
+                patch("taskctl.subprocess.run", side_effect=ecr_only),
+                patch("taskctl.save_validated") as save,
+            ):
+                taskctl_module.command_amendment_append_bootstrap_submit(
+                    args,
+                    data,
+                    capabilities,
+                    slices,
+                    tasks,
+                    gates,
+                )
+
+        self.assertEqual(before_amendments, data["wave_amendments"][:-1])
+        self.assertEqual("W1.A06", data["wave_amendments"][-1]["id"])
+        self.assertEqual(1, sum(item["id"] == "W1.A04" for item in data["wave_amendments"]))
+        self.assertEqual(before_maintenance, data["control_plane"]["maintenance_increments"])
+        self.assertEqual(12, data["control_plane"]["revision"])
+        clean.assert_called_once_with(
+            REPO,
+            allowed_untracked={
+                "artifacts/evidence/W1.A04.B00.json",
+                "artifacts/evidence/W1.A06.B00.json",
+            },
+        )
+        save.assert_called_once()
 
     def test_superseded_w1_a04_witness_is_admitted_without_reading_it(self) -> None:
         data = {"wave_amendments": [{"id": "W1.A04", "lifecycle": {"status": "SUPERSEDED"}}]}
