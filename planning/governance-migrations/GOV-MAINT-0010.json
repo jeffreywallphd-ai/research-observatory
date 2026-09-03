@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0010",
   "title": "Activate approved desktop UI reference 1.5",
-  "status": "changes-requested",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -125,7 +125,26 @@
       ],
       "path": "planning/governance-migrations/GOV-MAINT-0010.review-R03.json",
       "sha256": "01cf9f8eea73bb4c8614d9bc44ae036faa0116c4d1d76756654a1cc6788afdfb"
+    },
+    {
+      "reviewId": "GOV-MAINT-0010.R04",
+      "reviewedCommit": "d3ebea89d3520b4f7b560a60f16457bc5300ecd5",
+      "reviewer": "agent:gov-maint-0010-reviewer",
+      "reviewedAt": "2026-09-03T12:43:32.9891760Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0010.review-R04.json",
+      "sha256": "51939694b552fefa49b10fa34c449dd4a37c5516712eb86036a192f59c192061"
     }
   ],
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0010.R04",
+    "reviewedCommit": "d3ebea89d3520b4f7b560a60f16457bc5300ecd5",
+    "reviewer": "agent:gov-maint-0010-reviewer",
+    "reviewedAt": "2026-09-03T12:43:32.9891760Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0010.review-R04.json",
+    "sha256": "51939694b552fefa49b10fa34c449dd4a37c5516712eb86036a192f59c192061"
+  }
 }
