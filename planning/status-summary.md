@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: cf3ba05959c9df68e9cb3b30aa4fb65de49bf652bbc41d26540e14951f9919b8
+source_sha256: 295af5c99f2b523f98cb443ab8f1e3f4744c981b39adac1751c1efd795a49466
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -45,8 +45,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `APPROVED` | 18 |
+| `CHANGES_REQUESTED` | 1 |
 | `PENDING` | 98 |
-| `REVIEW` | 1 |
 
 ### Task state
 

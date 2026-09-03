@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-03.S05",
+  "attemptId": "R02",
+  "stateCommit": "90bebf3e0e51753ead2c4d300f65b9d8b6359284",
+  "evidenceCommit": "803d445de4049eeeff8b2b604f15ea0fdc2c9a54",
+  "submissionCommit": "096b38631a53311c660d68529c194de1e58d3010",
+  "productCandidateCommit": "ab0844204768f2282d694c9df2caa931a7e8fcf3",
+  "reviewer": "agent:cap03-s05-integration-reviewer",
+  "reviewedAt": "2026-09-03T13:21:26.794Z",
+  "disposition": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The exact state/evidence/submission chain, approved W1 and CAP-03.S05 authority, final task ledgers, product path, API/client/UI authority, policy and human-decision denials, propagating-edge SCC behavior, v1.5 reference, contract parity, and focused security scan authenticate. All five R01 findings are closed on their original defects. Approval remains unavailable because the frozen R02 evidence twice claims an exact 87-path bc9441a..90beb selection while both Git and exact selector replay enumerate 89 paths. This distinct incremental evidence defect is CAP-03.S05-R02-F01. The disclosed 72-failure/17-error historical foundation baseline remains mandatory W1-exit work, not a waived result or an additional slice product finding.",
+  "evidenceAuthentication": {
+    "integrationEvidence": {
+      "path": "artifacts/evidence/CAP-03.S05.integration-R02.json",
+      "sha256": "5341946ef3bbbf918d47f4374141412a28e3e29ef049fe3c57b808552a9486e1",
+      "gitBlob": "d7328da5ab09e8a1812754637adc2b095f89a881",
+      "result": "passed"
+    },
+    "ancestryAndScope": {
+      "result": "passed",
+      "details": "90bebf3 is the direct child of task submission 05965d31 and strictly descends from product candidate ab084420. It changes only the T03 R04 evidence, T03 R04 review ledger, and backlog approval projection. Evidence commit 803d445 is the direct child of 90bebf3 and adds only CAP-03.S05.integration-R02.json. Submission 096b386 is the direct child of 803d445 and changes only docs/planning-implementation-plan.md, planning/backlog.yaml, planning/review-site/CAP-03/CAP-03.S05.T03.html, planning/review-site/manifest.json, planning/review-site/waves/W1.html, and planning/status-summary.md. Diff hygiene passes."
+    },
+    "authority": {
+      "result": "passed",
+      "details": "Approved W1/CAP-03.S05 packet c5bbd97c0cdc665eecb973f5862478ef7be97752, its recorded approval a223a6fcd5730d4ed6d0081673e6192c6977e25c, corrected v1.5 approval 7ec1b27d72c189216d7a203586b7339202733531, and all final task candidates are ancestors of state commit 90bebf3."
+    },
+    "finalTaskLedgers": {
+      "result": "passed",
+      "details": "All six T01 R02, T02 R03, and T03 R04 evidence/review SHA-256 values reproduce exactly: 36c863a1..., 995e75d5..., d1aa357d..., e2154a80..., 12e744c8..., and cdaf9110.... Their ledgers are approved, commit-bound, ancestral, and have no open task finding."
+    }
+  },
+  "checks": [
+    {
+      "check": "Focused Core API, material dependency, graph, and selective recalculation union",
+      "result": "passed",
+      "details": "32/32 tests passed in 5.085 seconds, including the exact production-route, current-policy/no-queue-write, exact completed-human-decision restore, and propagating-edge-only cycle regressions."
+    },
+    {
+      "check": "Generated client and Audit & Lineage renderer",
+      "result": "passed",
+      "details": "22/22 tests passed in 332 ms, covering preview, deferral, enqueue, byte-identical retries, immutable comparison, read-only denial, human review, and restore."
+    },
+    {
+      "check": "Core API contract and governed UI authority",
+      "result": "passed",
+      "details": "Core API contract parity passed. The exact UI gate passed for 5ff2ff8..ab084420 with RO-UI-ACADEMIC-MINIMAL-1.5 and package SHA-256 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae. Reference integrity reproduced across 55 governed files with no errors."
+    },
+    {
+      "check": "Focused security scan",
+      "result": "passed",
+      "details": "Software supply-chain scan passed with 601 packages, 152 findings, and zero blocking findings."
+    },
+    {
+      "check": "Backlog/control validation",
+      "result": "passed",
+      "details": "taskctl validate and git diff --check passed; the pre-existing untracked W1.A04.B00 witness remained untouched."
+    },
+    {
+      "check": "Exact-state affected selection truth",
+      "result": "failed",
+      "details": "Exact selector replay and git diff --name-only for bc9441a23faa1df44f80a823f432ca5988e394d6..90bebf3e0e51753ead2c4d300f65b9d8b6359284 both return 89 changed paths, five unknown evidence paths, and safety-sensitive fallback. The frozen packet calls this an exact/all 87-path selection at integrationChecks[9].result and findingReplay.closures[4].evidence. The 87 count is the product range through ab084420; the two state-only additions are CAP-03.S05.T03.R04.json and CAP-03.S05.T03.review-R04.json."
+    }
+  ],
+  "findings": [
+    {
+      "findingId": "CAP-03.S05-R02-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion": "Slice evidence must truthfully bind the selected checks, all changed paths, and the exact state candidate under review; this directly replays CAP-03.S05-R01-F05.",
+      "finding": "The frozen R02 evidence misstates the exact-state affected selection as 87 paths. The immutable state range has 89 paths, so the claimed exact result is not truthful even though its five unknown-path names and safety-sensitive fallback otherwise match replay.",
+      "reproduction": "Run `git diff --name-only bc9441a23faa1df44f80a823f432ca5988e394d6 90bebf3e0e51753ead2c4d300f65b9d8b6359284` and count the output: 89. Replay the packet's verify.py --selection-only command: selection.changedPaths has 89 entries and unknownPaths has five. Compare with integration-R02.json lines containing `exact 87-path` and `all 87 paths`. Running the same Git count only through ab084420 returns 87; the missing two are the final T03 R04 evidence/review ledgers added in 90bebf3.",
+      "requiredRemediation": "Preserve R02 immutably. Create an append-only next attempt whose evidence recomputes and binds the selector output against that attempt's actual state candidate, reports the machine-derived changed-path count and complete path/unknown/fallback data truthfully, and submits it through a clean evidence-only commit plus REVIEW projection. Replay this evidence finding; no full product/profile rerun is required unless the remediation changes product or verification code."
+    }
+  ],
+  "priorFindingReplay": [
+    {
+      "findingId": "CAP-03.S05-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Production Core API, strict generated client, and governed Audit & Lineage UI expose preview, deferral, enqueue, immutable comparison, human review, and restoration; 32 backend plus 22 client/renderer tests pass."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Restore now requires the Core-minted authenticated principal and exact completed S04 human task/decision authority; substitution and stale/wrong authority are denied in focused SQLite replay."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F03",
+      "disposition": "fixed",
+      "evidence": "Enqueue/restore bind current rights-policy authority; policy change after planning denies without queue write, and restore requires current policy."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F04",
+      "disposition": "fixed",
+      "evidence": "SCC authority is constructed only from edges that propagate; non-material and conditional-ignore closing edges do not form cycle groups."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F05",
+      "disposition": "fixed-with-new-incremental-finding",
+      "evidence": "R02 selects through exact state 90bebf3 and truthfully names all five unknown paths plus the safety-sensitive fallback, closing the original truncated-head and undisclosed-fallback defect. The distinct false changed-path count is recorded as new blocking CAP-03.S05-R02-F01."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "CAP-03.S05-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Authenticated end-to-end Core API/generated-client/Audit & Lineage path and passing 32+22 focused tests."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Authenticated principal plus exact completed S04 human-decision binding and denial replay."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F03",
+      "disposition": "fixed",
+      "evidence": "Current-policy binding and no-queue-write denial replay."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F04",
+      "disposition": "fixed",
+      "evidence": "Propagating-edge-only SCC implementation and regression replay."
+    },
+    {
+      "findingId": "CAP-03.S05-R01-F05",
+      "disposition": "fixed",
+      "evidence": "R02 selects through exact state 90bebf3 and truthfully names all five unknown paths plus safety-sensitive fallback. The distinct false changed-path count is recorded as new blocking CAP-03.S05-R02-F01."
+    }
+  ],
+  "openFindingIds": [
+    "CAP-03.S05-R02-F01"
+  ],
+  "foundationDisclosure": {
+    "classification": "mandatory-wave-exit-reconciliation-not-a-separate-slice-finding",
+    "details": "The preserved historical foundation baseline is 72 failures and 17 errors. No current focused evidence connects it to CAP-03.S05 product behavior. It is not waived and remains mandatory W1-exit reconciliation and qualification."
+  },
+  "residuals": [
+    {
+      "severity": "non-blocking",
+      "item": "The dependency-impact threshold is a same-machine planner regression guard, not a persistent/cross-machine release SLA.",
+      "disposition": "Retain for W1 exit."
+    },
+    {
+      "severity": "non-blocking",
+      "item": "The complete Windows x64 cross-capability/deployment and historical-foundation matrix remains outstanding.",
+      "disposition": "Mandatory at W1 exit; not waived."
+    }
+  ],
+  "taskctlSliceReviewNote": "CHANGES_REQUESTED exact CAP-03.S05 R02 submission 096b38631a53311c660d68529c194de1e58d3010: authority, final task ledgers, production API/client/UI, exact human/current-policy controls, SCC behavior, UI/reference, contract, and security checks pass; all five R01 findings are closed. MEDIUM blocking CAP-03.S05-R02-F01: frozen evidence claims 87 changed paths for bc9441a..90bebf3 while Git and exact selector return 89. Preserve the disclosed 72-failure/17-error foundation baseline and full W1 qualification for W1 exit."
+}
