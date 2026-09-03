@@ -1,0 +1,85 @@
+{
+  "task_id": "CAP-03.S06.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "7d03065c43391f98e8648c076042e50d76e242da",
+  "submission_record_commit": "5f61d79f2a2939436dcac6b14df956c29f4806e0",
+  "reviewer": "agent:workflow-profile-contract-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "APPROVED at frozen R02 submission 5f61d79f2a2939436dcac6b14df956c29f4806e0 for exact strict-descendant candidate 7d03065c43391f98e8648c076042e50d76e242da. The candidate descends directly from prior candidate 012693e22441100f5fe778dd4d29f7667752a488 and its 17-path range exactly matches the frozen R02 evidence manifest. Evidence SHA-256 8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871 and Git blob 4d2aa01995ddc090761156d4176bbfe220f47c1d authenticate. CAP-03.S06.T01-R01-F01 through F03 are closed: supporting state validation now requires the explicit independently valid current-primary state and exact aggregate/revision/hash/project/selection/profile/stage/pass/current projection; retain preserves the same governed stage/page while map requires a different governed target and all other dispositions require no target; and every profile change binds an immediate new Research Intent revision plus the matching immutable migration and human-acceptance references. The valid selection-change and migration fixtures agree exactly on migration ID/hash, from/to profiles, prior/target intents, and acceptance identity/hash, while the selection binds the human decision maker to selectedBy. A migration may be system-prepared but its acceptance remains human-only. The portable contract intentionally does not authenticate repository existence of referenced migration or acceptance records; CAP-03.S06.T02 owns persistence lookup of the bound hashes, as the approved architecture and evidence disclose. No blocking finding remains. Full service/data integration and Wave qualification remain properly deferred.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T01.R02.json",
+      "sha256": "8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871",
+      "git_blob": "4d2aa01995ddc090761156d4176bbfe220f47c1d",
+      "commit": "7d03065c43391f98e8648c076042e50d76e242da"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Verify 012693e22441100f5fe778dd4d29f7667752a488 is an ancestor of 7d03065c43391f98e8648c076042e50d76e242da; compare git diff --name-only to evidence changedFiles; verify the frozen submission is the candidate's direct child and adds only R02 evidence plus backlog projection; verify evidence SHA/blob and git diff --check.",
+      "result": "PASS: strict-descendant ancestry, the exact 17-path manifest, the two-path submission projection, evidence SHA/blob, and patch hygiene all authenticate. The immutable R01 evidence and adverse review ledger are retained in the range."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T01-R01-F01",
+      "command": "Run the focused TypeScript/Python stage-state tests and inspect workflow_stage_state_errors/decodeWorkflowStageState with a valid explicit current primary state, omitted context, substituted state hash, substituted non-current stage, and invented supporting alias.",
+      "result": "PASS: the exact valid supporting return succeeds; omitted current state, one-field hash substitution, a different valid profile stage, and arbitrary support alias all fail closed. The return contains and exactly matches current primary aggregate/revision/content hash, project, selection, profile, stage/page, pass, and current status."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T01-R01-F02",
+      "command": "Run the focused TypeScript/Python migration and selection-impact tests for valid retain/map plus relabeled retain, missing retain target, and target-bearing review disposition.",
+      "result": "PASS: retain succeeds only for the same governed stage key and page, map succeeds only for a distinct governed target, and mark-stale/requires-review/drop-with-rationale require a null target in both full migration and concrete impact validation."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T01-R01-F03",
+      "command": "Run the focused TypeScript/Python selection and migration tests; compare valid change/migration fixture authority; probe unchanged intent, target-intent substitution, from-profile substitution, non-human/missing acceptance, substituted human selector, and system-prepared migration.",
+      "result": "PASS: changed selection requires the immediate next revision of the same Research Intent aggregate and exact internal from/to/prior/target relationships. The fixtures agree on migration ID/hash and human decision identity/hash; missing, non-human, mismatched intent/profile, and selector substitution fail. System preparation remains allowed only with a separately explicit human accepted decision."
+    },
+    {
+      "type": "independent-check",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_stage_state_represents_navigation_not_analytical_job_state tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_profile_migration_maps_every_prior_stage_without_rewriting_history; npm test --prefix packages/contracts -- --run workflow-profile/workflow-profile.test.ts",
+      "result": "PASS: 3/3 focused Python boundary tests and 5/5 TypeScript workflow-profile tests."
+    },
+    {
+      "type": "independent-check",
+      "command": "node packages/contracts/workflow-profile/generate.mjs --check; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts; packages\\contracts\\node_modules\\.bin\\tsc.cmd -p packages\\contracts\\tsconfig.json --noEmit --pretty false",
+      "result": "PASS: deterministic generation; 77/77 Python contract tests; 90/90 TypeScript contract tests; strict TypeScript compilation."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv\\Scripts\\python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; focused sidecar build-contract test; packaging smoke",
+      "result": "PASS: Ruff check/format, mypy, 1/1 focused package-boundary test, and locked-input packaging smoke."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 012693e22441100f5fe778dd4d29f7667752a488 --head 7d03065c43391f98e8648c076042e50d76e242da; .venv\\Scripts\\python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference",
+      "result": "PASS: architecture contract (13 areas, 12 modules, five stable interfaces, three deployment profiles), 26-ADR registry over the exact 17-path range, and unchanged approved Academic Minimal v1.5 reference with 55 governed files and 14 workflow profiles."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S06.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Explicit currentPrimaryState validation context, complete exact return identity/context, deterministic governed support alias, and matching Python/TypeScript omission/substitution/non-current tests close the arbitrary-return boundary."
+    },
+    {
+      "finding_id": "CAP-03.S06.T01-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Shared cross-runtime semantic mapping now distinguishes same-stage retain, different-stage map, and null-target stale/review/drop for full migration and impact preview."
+    },
+    {
+      "finding_id": "CAP-03.S06.T01-R01-F03",
+      "disposition": "fixed",
+      "evidence": "Immediate Research Intent lineage and matching migration/from/to/intent plus human acceptance identity/hash references are mandatory; fixtures and adversarial tests demonstrate the binding while repository lookup remains explicitly assigned to T02."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S06.T01-R01-F01",
+    "CAP-03.S06.T01-R01-F02",
+    "CAP-03.S06.T01-R01-F03"
+  ]
+}
