@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e224419e0e3391cc70df839416cc23a691c1bfcad01c6a20fc85a512562cbe0b
+source_sha256: e93d80b08cd72209afc0cb5995fe07f25faa8e26a5a3aded96d25734e760c75e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5460,7 +5460,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Changes to evidence, models, schemas, or decisions identify and safely refresh affected outputs.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5890,7 +5890,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench, with visible progress and access to supporting tools.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -5898,7 +5898,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T01 - Define the versioned use-case and workflow-profile contracts
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
