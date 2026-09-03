@@ -23473,7 +23473,7 @@
       "approval_sha256": "244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -23490,12 +23490,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "ecr5-planning-authority-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-09-03T16:27:34+00:00",
+            "notes": "CHANGES_REQUESTED at exact frozen state 3b70072a7b7e2bd5916e1ee2f28d335f842ef253. Candidate/evidence/scope, append-only W1.A06 projection, predecessor/MI-0001 preservation, paused quiescent W1 state, approved ECR/GOV-MAINT authority, generated views, and canonical validators pass. W1.A06.B00-R01-F01 remains open because the three evidence-selected bootstrap transition tests inherit live W1.A06 and fail 0/3 at the frozen post-submit state (one error, two failures). Replace mutable-live amendment fixtures with explicit pre-A05/pre-A06 states and replay at candidate and resubmission state. No materialization, activation, T01, adoption, or W1 resume is approved."
           },
-          "current_status": "REVIEW"
+          "current_status": "CHANGES_REQUESTED"
         }
       ],
       "slice_contributions": [

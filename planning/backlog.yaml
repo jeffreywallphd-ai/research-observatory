@@ -36082,7 +36082,7 @@ wave_amendments:
         changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A06.B00
-    status: REVIEW
+    status: CHANGES_REQUESTED
     implementer: codex
     implementation_commit: 3fe834df6212516957048db3b76594bffe71eca5
     submission_branch: codex/w1-windows-local-runtime
@@ -36094,10 +36094,15 @@ wave_amendments:
       commit: 3fe834df6212516957048db3b76594bffe71eca5
       recorded_at: '2026-09-03T16:19:23+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: ecr5-planning-authority-reviewer
+      result: changes-requested
+      reviewed_at: '2026-09-03T16:27:34+00:00'
+      notes: CHANGES_REQUESTED at exact frozen state 3b70072a7b7e2bd5916e1ee2f28d335f842ef253. Candidate/evidence/scope, append-only
+        W1.A06 projection, predecessor/MI-0001 preservation, paused quiescent W1 state, approved ECR/GOV-MAINT authority,
+        generated views, and canonical validators pass. W1.A06.B00-R01-F01 remains open because the three evidence-selected
+        bootstrap transition tests inherit live W1.A06 and fail 0/3 at the frozen post-submit state (one error, two failures).
+        Replace mutable-live amendment fixtures with explicit pre-A05/pre-A06 states and replay at candidate and resubmission
+        state. No materialization, activation, T01, adoption, or W1 resume is approved.
   campaign: null
   tasks: []
   completion:
