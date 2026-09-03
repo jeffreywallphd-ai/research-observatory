@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-project-workflow-selection",
+  "contractVersion": "1.0.0",
+  "selectionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d010",
+  "selectionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d012",
+  "projectId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d001",
+  "revision": 2,
+  "revisionContentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "createdAt": "2026-09-03T19:05:00Z",
+  "selectedBy": {
+    "actorType": "human",
+    "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d030"
+  },
+  "researchIntent": {
+    "schemaVersion": "1.0",
+    "documentType": "research-observatory-research-intent-reference",
+    "contractVersion": "1.0.0",
+    "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+    "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
+    "revision": 1,
+    "revisionContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "profile": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "referenceVersion": "1.5",
+    "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+    "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+    "profileCatalogVersion": "1.0.0",
+    "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+    "profileId": "living-review",
+    "profileVersion": "1.5",
+    "profileRevision": 1,
+    "sourceWorkflowHash": "sha256:2da7db63f33f5bcdae06218ac348b3b4efe9a96ca8a0a98daa372d2d392e97b2"
+  },
+  "parentSelection": {
+    "selectionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d010",
+    "selectionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d011",
+    "revision": 1,
+    "revisionContentHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "profile": {
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+      "referenceVersion": "1.5",
+      "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+      "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+      "profileCatalogVersion": "1.0.0",
+      "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+      "profileId": "systematic-review",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:2cf5f09818ec1b16c393feac898b42d484e6e0b18f44a33da7411db2fbf6150d"
+    }
+  },
+  "impactPreview": {
+    "priorSelection": {
+      "selectionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d010",
+      "selectionRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d011",
+      "revision": 1,
+      "revisionContentHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "profile": {
+        "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+        "referenceVersion": "1.5",
+        "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+        "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+        "profileCatalogVersion": "1.0.0",
+        "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+        "profileId": "systematic-review",
+        "profileVersion": "1.5",
+        "profileRevision": 1,
+        "sourceWorkflowHash": "sha256:2cf5f09818ec1b16c393feac898b42d484e6e0b18f44a33da7411db2fbf6150d"
+      }
+    },
+    "targetProfile": {
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+      "referenceVersion": "1.5",
+      "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+      "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+      "profileCatalogVersion": "1.0.0",
+      "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+      "profileId": "living-review",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:2da7db63f33f5bcdae06218ac348b3b4efe9a96ca8a0a98daa372d2d392e97b2"
+    },
+    "historyPolicy": "preserve",
+    "priorStageStates": [
+      {
+        "stageStateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d040",
+        "stageStateRevisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d041",
+        "stageStateRevision": 1,
+        "stageStateRevisionContentHash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "fromStageKey": "intent-contract-1",
+        "disposition": "retain",
+        "targetStageKey": "intent-contract-1",
+        "rationale": "The accepted intent stage remains applicable and its prior state remains immutable."
+      }
+    ],
+    "summary": "Preview the move to living review while retaining the prior selection and stage-state history."
+  }
+}

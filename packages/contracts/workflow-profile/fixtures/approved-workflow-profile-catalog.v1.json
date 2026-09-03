@@ -1,0 +1,1981 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-workflow-profile-catalog",
+  "contractVersion": "1.0.0",
+  "profileCatalogVersion": "1.0.0",
+  "governedReference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "referenceVersion": "1.5",
+    "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+    "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d"
+  },
+  "registeredToolPageContractIds": [
+    "index.html",
+    "projects.html",
+    "new-project.html",
+    "intent-contract.html",
+    "help-onboarding.html",
+    "search-studio.html",
+    "source-manager.html",
+    "ingestion-reconciliation.html",
+    "corpus-canvas.html",
+    "screening.html",
+    "document-reader.html",
+    "research-notebook.html",
+    "parsing-quality.html",
+    "evidence-matrix.html",
+    "schema-manager.html",
+    "claim-graph.html",
+    "theory-map.html",
+    "critical-lens.html",
+    "opportunity-radar.html",
+    "novelty-audit.html",
+    "synthesis-studio.html",
+    "living-monitor.html",
+    "task-center.html",
+    "audit-lineage.html",
+    "model-center.html",
+    "application-settings.html",
+    "project-settings.html",
+    "study-design.html",
+    "manuscript-blueprint.html",
+    "technical-reports.html",
+    "manuscript-studio.html",
+    "reviewer-simulation.html",
+    "revision-response.html"
+  ],
+  "profiles": [
+    {
+      "profileId": "rapid-orientation",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:66f041f863b3edcecb8ba090510e10090ea1bb79b00ae05589115d5c0190bb7a",
+      "title": "Rapid field orientation",
+      "purpose": "Establish vocabulary, seminal work, schools, and current debates without claiming systematic completeness.",
+      "expectedOutputs": [
+        "Field map, reading path, and contested claims"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "document-reader-1",
+          "order": 4,
+          "pageContractId": "document-reader.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "theory-map-1",
+          "order": 5,
+          "pageContractId": "theory-map.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Theory use, definitions, operationalizations, mechanisms, drift, and integration.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "claim-graph-1",
+          "order": 6,
+          "pageContractId": "claim-graph.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Claims, evidence, support, contradiction, qualification, and dispute review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 7,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "systematic-review",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:2cf5f09818ec1b16c393feac898b42d484e6e0b18f44a33da7411db2fbf6150d",
+      "title": "Systematic / scoping review",
+      "purpose": "Construct and report a reproducible evidence corpus.",
+      "expectedOutputs": [
+        "Protocol, corpus, evidence table, cited synthesis, and audit bundle"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "source-manager-1",
+          "order": 2,
+          "pageContractId": "source-manager.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Open, local, licensed, and reference-manager adapters with rights, permissions, and health.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 3,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "ingestion-reconciliation-1",
+          "order": 4,
+          "pageContractId": "ingestion-reconciliation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 5,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "screening-1",
+          "order": 6,
+          "pageContractId": "screening.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "parsing-quality-1",
+          "order": 7,
+          "pageContractId": "parsing-quality.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structure, page anchors, tables, figures, references, manual corrections, and selective reprocessing.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 8,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 9,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 10,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "living-review",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:2da7db63f33f5bcdae06218ac348b3b4efe9a96ca8a0a98daa372d2d392e97b2",
+      "title": "Living review",
+      "purpose": "Maintain an existing synthesis as evidence and corrections arrive.",
+      "expectedOutputs": [
+        "Change report, updated synthesis, and affected-claim alerts"
+      ],
+      "cyclePolicy": "revisitable",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "living-monitor-1",
+          "order": 2,
+          "pageContractId": "living-monitor.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Differential retrieval, field changes, impact analysis, and selective recalculation.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 3,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "ingestion-reconciliation-1",
+          "order": 4,
+          "pageContractId": "ingestion-reconciliation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "screening-1",
+          "order": 5,
+          "pageContractId": "screening.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 6,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 7,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 8,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "theory-synthesis",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:7836e1f71c62819d1a27a62d99eb939b53d035b5299e812230b80bf81d7ebd8c",
+      "title": "Theory synthesis",
+      "purpose": "Clarify and integrate constructs, mechanisms, theory use, relationships, and boundaries.",
+      "expectedOutputs": [
+        "Theory architecture, construct map, mechanisms, and integration opportunities"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "document-reader-1",
+          "order": 4,
+          "pageContractId": "document-reader.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "schema-manager-1",
+          "order": 5,
+          "pageContractId": "schema-manager.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Versioned domain packs, fields, relations, constraints, and change-impact preview.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 6,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "theory-map-1",
+          "order": 7,
+          "pageContractId": "theory-map.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Theory use, definitions, operationalizations, mechanisms, drift, and integration.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "claim-graph-1",
+          "order": 8,
+          "pageContractId": "claim-graph.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Claims, evidence, support, contradiction, qualification, and dispute review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 9,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 10,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "hermeneutic-inquiry",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:fb03aa5e0c52d6d35550d9930f8b0b3e083d1253d6bdd5e5b73ddaab105224e2",
+      "title": "Hermeneutic inquiry",
+      "purpose": "Deepen understanding through iterative search-read-interpret-memo cycles.",
+      "expectedOutputs": [
+        "Interpretive map, evolving questions, and rationale trail"
+      ],
+      "cyclePolicy": "revisitable",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "document-reader-1",
+          "order": 3,
+          "pageContractId": "document-reader.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "research-notebook-1",
+          "order": 4,
+          "pageContractId": "research-notebook.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Researcher-owned memos, evolving questions, interpretive history, alternative readings, and linked evidence.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 5,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "theory-map-1",
+          "order": 6,
+          "pageContractId": "theory-map.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Theory use, definitions, operationalizations, mechanisms, drift, and integration.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 7,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "critical-problematization",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:d58ceeaf3f2f281b787efd9fad74b5485015a48466921ac9651a9aa545782c80",
+      "title": "Critical problematization",
+      "purpose": "Surface and challenge assumptions, exclusions, authority arrangements, and foreclosed alternatives.",
+      "expectedOutputs": [
+        "Problematization dossier and competing framings"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "document-reader-1",
+          "order": 4,
+          "pageContractId": "document-reader.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "research-notebook-1",
+          "order": 5,
+          "pageContractId": "research-notebook.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Researcher-owned memos, evolving questions, interpretive history, alternative readings, and linked evidence.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 6,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "critical-lens-1",
+          "order": 7,
+          "pageContractId": "critical-lens.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Assumptions, authority, dependency, stakeholder silence, and competing readings.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "claim-graph-1",
+          "order": 8,
+          "pageContractId": "claim-graph.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Claims, evidence, support, contradiction, qualification, and dispute review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 9,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 10,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "technical-landscape",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:bc3f099d34c303fb6a690ef8d674324e87e852a52e73915b1a12e308b6a8d5eb",
+      "title": "Technical landscape / benchmark audit",
+      "purpose": "Audit methods, baselines, datasets, compute, controls, and evaluation quality.",
+      "expectedOutputs": [
+        "Benchmark map, missing controls, and study-design opportunities"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "source-manager-1",
+          "order": 2,
+          "pageContractId": "source-manager.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Open, local, licensed, and reference-manager adapters with rights, permissions, and health.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 3,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "ingestion-reconciliation-1",
+          "order": 4,
+          "pageContractId": "ingestion-reconciliation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 5,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "screening-1",
+          "order": 6,
+          "pageContractId": "screening.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 7,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 8,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 9,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "novelty-audit",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:b79a356a48501f2f82694abdcb2ba1b7eca65b407d9a0d41471e8af9bb57e65d",
+      "title": "Novelty & research-opportunity audit",
+      "purpose": "Test a proposed contribution against the closest prior work.",
+      "expectedOutputs": [
+        "Bounded novelty statement and opportunity dossier"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 4,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 5,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "novelty-audit-1",
+          "order": 6,
+          "pageContractId": "novelty-audit.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "synthesis-studio-1",
+          "order": 7,
+          "pageContractId": "synthesis-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "empirical-study-design",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:549a3b36c0befce6eef28818a6415e989d05412988cac9c04483b36c6b00915b",
+      "title": "Empirical study design",
+      "purpose": "Turn a corroborated research opportunity and literature evidence into an ethical, feasible, reproducible empirical design.",
+      "expectedOutputs": [
+        "Study-design dossier, protocol skeleton, validity and ethics review, and analysis plan"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 4,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 5,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "novelty-audit-1",
+          "order": 6,
+          "pageContractId": "novelty-audit.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "study-design-1",
+          "order": 7,
+          "pageContractId": "study-design.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Compare and formalize evidence-grounded empirical study alternatives, protocol, validity, ethics, analysis, and reproducibility.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-blueprint-1",
+          "order": 8,
+          "pageContractId": "manuscript-blueprint.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Create venue- and research-type-aware conference or journal article skeletons, claim plans, word budgets, exhibits, and evidence prerequisites.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 9,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "empirical-study-to-article",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:7a88be5157656acff05a1f8ad7f73b39cf5d8f7b5e26a13302a931065a8e58d5",
+      "title": "Empirical study to article",
+      "purpose": "Move from literature-grounded opportunity through study design and verified study results to an article and adversarial review.",
+      "expectedOutputs": [
+        "Study protocol, verified result package, full empirical manuscript, simulated reviews, revision, and audit bundle"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "screening-1",
+          "order": 4,
+          "pageContractId": "screening.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 5,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 6,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "novelty-audit-1",
+          "order": 7,
+          "pageContractId": "novelty-audit.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "study-design-1",
+          "order": 8,
+          "pageContractId": "study-design.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Compare and formalize evidence-grounded empirical study alternatives, protocol, validity, ethics, analysis, and reproducibility.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-blueprint-1",
+          "order": 9,
+          "pageContractId": "manuscript-blueprint.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Create venue- and research-type-aware conference or journal article skeletons, claim plans, word budgets, exhibits, and evidence prerequisites.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "technical-reports-1",
+          "order": 10,
+          "pageContractId": "technical-reports.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Upload private technical reports and study outputs, extract and verify methods and results, reconcile versions, and map study outputs to manuscript claims.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-studio-1",
+          "order": 11,
+          "pageContractId": "manuscript-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "reviewer-simulation-1",
+          "order": 12,
+          "pageContractId": "reviewer-simulation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Run extended role-separated simulated reviews over generated or uploaded article drafts and synthesize evidence-linked editorial guidance.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "revision-response-1",
+          "order": 13,
+          "pageContractId": "revision-response.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Triage simulated or uploaded review comments, govern author dispositions, revise manuscript passages, draft responses, and run targeted re-review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 14,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "empirical-results-to-article",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:81ff94ec76da7dcb57659dd16163b162d22ddb9d5beb48f50ecad421a9998e50",
+      "title": "Empirical results to article",
+      "purpose": "Begin from completed empirical work and technical reports, reconstruct the evidence context, and produce a source-grounded article.",
+      "expectedOutputs": [
+        "Verified result package, literature-grounded empirical manuscript, simulated review, revision, and audit bundle"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "technical-reports-1",
+          "order": 2,
+          "pageContractId": "technical-reports.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Upload private technical reports and study outputs, extract and verify methods and results, reconcile versions, and map study outputs to manuscript claims.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 3,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 4,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 5,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "novelty-audit-1",
+          "order": 6,
+          "pageContractId": "novelty-audit.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-blueprint-1",
+          "order": 7,
+          "pageContractId": "manuscript-blueprint.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Create venue- and research-type-aware conference or journal article skeletons, claim plans, word budgets, exhibits, and evidence prerequisites.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-studio-1",
+          "order": 8,
+          "pageContractId": "manuscript-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "reviewer-simulation-1",
+          "order": 9,
+          "pageContractId": "reviewer-simulation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Run extended role-separated simulated reviews over generated or uploaded article drafts and synthesize evidence-linked editorial guidance.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "revision-response-1",
+          "order": 10,
+          "pageContractId": "revision-response.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Triage simulated or uploaded review comments, govern author dispositions, revise manuscript passages, draft responses, and run targeted re-review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 11,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "theory-article-development",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:3243059f43be3d8e88f85ba387f7a67fa02883239461fa9fa4fc5feee3b52835",
+      "title": "Theory article development",
+      "purpose": "Develop a theory paper from evidence-linked integration, problem framing, and bounded contribution through full manuscript and review.",
+      "expectedOutputs": [
+        "Theory architecture, article blueprint, full theory manuscript, simulated reviews, revision, and audit bundle"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "document-reader-1",
+          "order": 4,
+          "pageContractId": "document-reader.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "schema-manager-1",
+          "order": 5,
+          "pageContractId": "schema-manager.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Versioned domain packs, fields, relations, constraints, and change-impact preview.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 6,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "theory-map-1",
+          "order": 7,
+          "pageContractId": "theory-map.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Theory use, definitions, operationalizations, mechanisms, drift, and integration.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "claim-graph-1",
+          "order": 8,
+          "pageContractId": "claim-graph.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Claims, evidence, support, contradiction, qualification, and dispute review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 9,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "novelty-audit-1",
+          "order": 10,
+          "pageContractId": "novelty-audit.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-blueprint-1",
+          "order": 11,
+          "pageContractId": "manuscript-blueprint.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Create venue- and research-type-aware conference or journal article skeletons, claim plans, word budgets, exhibits, and evidence prerequisites.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-studio-1",
+          "order": 12,
+          "pageContractId": "manuscript-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "reviewer-simulation-1",
+          "order": 13,
+          "pageContractId": "reviewer-simulation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Run extended role-separated simulated reviews over generated or uploaded article drafts and synthesize evidence-linked editorial guidance.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "revision-response-1",
+          "order": 14,
+          "pageContractId": "revision-response.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Triage simulated or uploaded review comments, govern author dispositions, revise manuscript passages, draft responses, and run targeted re-review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 15,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "critical-article-development",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:9ebc8105d7b6b2f1c02d139df65f2971798b2b60b82d6b59a7d2b6b7ecd674d5",
+      "title": "Critical article development",
+      "purpose": "Develop an evidence-grounded critical article that challenges assumptions, power relations, exclusions, or dominant problem formulations.",
+      "expectedOutputs": [
+        "Problematization architecture, critical article blueprint, full manuscript, simulated reviews, revision, and audit bundle"
+      ],
+      "cyclePolicy": "linear",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 2,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "corpus-canvas-1",
+          "order": 3,
+          "pageContractId": "corpus-canvas.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "document-reader-1",
+          "order": 4,
+          "pageContractId": "document-reader.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "research-notebook-1",
+          "order": 5,
+          "pageContractId": "research-notebook.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Researcher-owned memos, evolving questions, interpretive history, alternative readings, and linked evidence.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "evidence-matrix-1",
+          "order": 6,
+          "pageContractId": "evidence-matrix.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "critical-lens-1",
+          "order": 7,
+          "pageContractId": "critical-lens.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Assumptions, authority, dependency, stakeholder silence, and competing readings.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "claim-graph-1",
+          "order": 8,
+          "pageContractId": "claim-graph.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Claims, evidence, support, contradiction, qualification, and dispute review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "opportunity-radar-1",
+          "order": 9,
+          "pageContractId": "opportunity-radar.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Plural opportunity types and visible multi-objective comparison.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "novelty-audit-1",
+          "order": 10,
+          "pageContractId": "novelty-audit.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-blueprint-1",
+          "order": 11,
+          "pageContractId": "manuscript-blueprint.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Create venue- and research-type-aware conference or journal article skeletons, claim plans, word budgets, exhibits, and evidence prerequisites.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-studio-1",
+          "order": 12,
+          "pageContractId": "manuscript-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "reviewer-simulation-1",
+          "order": 13,
+          "pageContractId": "reviewer-simulation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Run extended role-separated simulated reviews over generated or uploaded article drafts and synthesize evidence-linked editorial guidance.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "revision-response-1",
+          "order": 14,
+          "pageContractId": "revision-response.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Triage simulated or uploaded review comments, govern author dispositions, revise manuscript passages, draft responses, and run targeted re-review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 15,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    },
+    {
+      "profileId": "manuscript-review-revision",
+      "profileVersion": "1.5",
+      "profileRevision": 1,
+      "sourceWorkflowHash": "sha256:e8878ea9ba01eb69f72995e2112216165b5851712d51d578c56d272109e8832e",
+      "title": "Manuscript review & revision",
+      "purpose": "Challenge an uploaded or generated article draft, locate omitted evidence, synthesize independent reviews, and govern revision.",
+      "expectedOutputs": [
+        "Review package, editorial synthesis, revision plan, revised manuscript, response document, and audit bundle"
+      ],
+      "cyclePolicy": "revisitable",
+      "stages": [
+        {
+          "stageKey": "intent-contract-1",
+          "order": 1,
+          "pageContractId": "intent-contract.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-studio-1",
+          "order": 2,
+          "pageContractId": "manuscript-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "search-studio-1",
+          "order": 3,
+          "pageContractId": "search-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "novelty-audit-1",
+          "order": 4,
+          "pageContractId": "novelty-audit.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "reviewer-simulation-1",
+          "order": 5,
+          "pageContractId": "reviewer-simulation.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Run extended role-separated simulated reviews over generated or uploaded article drafts and synthesize evidence-linked editorial guidance.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "revision-response-1",
+          "order": 6,
+          "pageContractId": "revision-response.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Triage simulated or uploaded review comments, govern author dispositions, revise manuscript passages, draft responses, and run targeted re-review.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "manuscript-studio-2",
+          "order": 7,
+          "pageContractId": "manuscript-studio.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        },
+        {
+          "stageKey": "audit-lineage-1",
+          "order": 8,
+          "pageContractId": "audit-lineage.html",
+          "role": "primary",
+          "optional": false,
+          "rationale": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+          "checkpoint": {
+            "state": "unknown",
+            "rationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority."
+          }
+        }
+      ],
+      "supportingToolPolicy": {
+        "allRegisteredToolsAccessible": true,
+        "returnBehavior": "return-to-current-primary-stage"
+      }
+    }
+  ]
+}

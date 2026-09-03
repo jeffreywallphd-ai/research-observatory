@@ -57,6 +57,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.research_intent_contracts",
                     "research_observatory_core.selective_recalculation",
                     "research_observatory_core.workflow_contracts",
+                    "research_observatory_core.workflow_profile_contracts",
                     "research_observatory_core.workflow_executor",
                     "research_observatory_core.migrations.runner",
                     "research_observatory_core.migrations.versions.v0007_provenance_ledger",
@@ -84,6 +85,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         self.assertIn("research_observatory_core.provenance", contract["requiredModules"])
         self.assertIn("research_observatory_core.provenance_contracts", contract["requiredModules"])
         self.assertIn("research_observatory_core.workflow_contracts", contract["requiredModules"])
+        self.assertIn("research_observatory_core.workflow_profile_contracts", contract["requiredModules"])
         self.assertIn("research_observatory_core.workflow_executor", contract["requiredModules"])
         self.assertIn(
             "research_observatory_core.migrations.versions.v0007_provenance_ledger",

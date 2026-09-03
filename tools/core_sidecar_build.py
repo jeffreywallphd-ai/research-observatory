@@ -127,6 +127,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.research_intent_contracts",
             "research_observatory_core.selective_recalculation",
             "research_observatory_core.workflow_contracts",
+            "research_observatory_core.workflow_profile_contracts",
             "research_observatory_core.workflow_executor",
             "research_observatory_core.migrations.runner",
             "research_observatory_core.migrations.versions.v0007_provenance_ledger",

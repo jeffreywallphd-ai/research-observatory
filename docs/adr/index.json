@@ -240,6 +240,15 @@
       "linkedTasks": [
         "CAP-03.S04.T01"
       ]
+    },
+    {
+      "id": "ADR-0026",
+      "path": "docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md",
+      "title": "Adopt governed workflow profiles and history-preserving navigation state",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-03.S06.T01"
+      ]
     }
   ]
 }
