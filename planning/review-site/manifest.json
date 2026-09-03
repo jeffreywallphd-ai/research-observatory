@@ -23803,7 +23803,23 @@
         ],
         "referenceApprovalStatus": "approved"
       },
-      "scope_addenda": [],
+      "scope_addenda": [
+        {
+          "path": "planning/wave-amendment-approvals/W1.A06.B00.addendum-01.json",
+          "sha256": "b15f158109b1cab9f7334ccd6b4cd1b08d2dbce87e8fe9d955df46870ca36740",
+          "approved_by": "authority-chain:W1.A06+GOV-MAINT-0014",
+          "approved_at": "2026-09-03T12:42:18.2583438-04:00",
+          "authorized_additional_paths": [
+            "docs/planning-implementation-plan.md",
+            "planning/backlog.yaml",
+            "planning/governance-migrations/GOV-MAINT-0014.json",
+            "planning/governance-migrations/GOV-MAINT-0014.review-R01.json",
+            "planning/review-site/waves/W1.html",
+            "planning/status-summary.md",
+            "tests/foundation/test_taskctl_workflow.py"
+          ]
+        }
+      ],
       "task_reviews": [],
       "exit_review": {
         "amendment_id": "W1.A06",
