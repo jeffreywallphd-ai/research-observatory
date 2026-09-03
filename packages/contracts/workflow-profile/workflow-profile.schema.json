@@ -10,11 +10,14 @@
     "selection-binds-catalog-profile-and-intent",
     "selection-lineage-is-immediate",
     "profile-change-binds-impact-preview",
+    "profile-change-binds-intent-and-human-acceptance",
     "impact-preview-preserves-stage-history",
+    "migration-disposition-is-semantic",
     "stage-state-binds-selection-and-profile",
     "stage-state-status-shape-is-consistent",
     "stage-state-pass-matches-cycle-policy",
     "supporting-tool-return-is-explicit",
+    "supporting-tool-identity-is-governed",
     "supporting-tool-is-governed-and-outside-primary-sequence",
     "migration-binds-exact-profile-revisions",
     "migration-covers-prior-stages"
@@ -195,6 +198,18 @@
         "actorId": { "$ref": "#/$defs/UuidV7" }
       }
     },
+    "HumanAcceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decisionId", "decisionContentHash", "decision", "decidedAt", "decidedBy"],
+      "properties": {
+        "decisionId": { "$ref": "#/$defs/UuidV7" },
+        "decisionContentHash": { "$ref": "#/$defs/ContentHash" },
+        "decision": { "const": "accepted" },
+        "decidedAt": { "$ref": "#/$defs/UtcInstant" },
+        "decidedBy": { "$ref": "#/$defs/HumanActorReference" }
+      }
+    },
     "SelectionReference": {
       "type": "object",
       "additionalProperties": false,
@@ -209,13 +224,28 @@
     "ParentSelection": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["selectionId", "selectionRevisionId", "revision", "revisionContentHash", "profile"],
+      "required": ["selectionId", "selectionRevisionId", "revision", "revisionContentHash", "researchIntent", "profile"],
       "properties": {
         "selectionId": { "$ref": "#/$defs/UuidV7" },
         "selectionRevisionId": { "$ref": "#/$defs/UuidV7" },
         "revision": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
         "revisionContentHash": { "$ref": "#/$defs/ContentHash" },
+        "researchIntent": { "$ref": "#/$defs/ResearchIntentReference" },
         "profile": { "$ref": "#/$defs/ProfileReference" }
+      }
+    },
+    "MigrationAcceptanceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["migrationId", "migrationContentHash", "fromProfile", "toProfile", "priorResearchIntent", "targetResearchIntent", "acceptance"],
+      "properties": {
+        "migrationId": { "$ref": "#/$defs/UuidV7" },
+        "migrationContentHash": { "$ref": "#/$defs/ContentHash" },
+        "fromProfile": { "$ref": "#/$defs/ProfileReference" },
+        "toProfile": { "$ref": "#/$defs/ProfileReference" },
+        "priorResearchIntent": { "$ref": "#/$defs/ResearchIntentReference" },
+        "targetResearchIntent": { "$ref": "#/$defs/ResearchIntentReference" },
+        "acceptance": { "$ref": "#/$defs/HumanAcceptance" }
       }
     },
     "PriorStageImpact": {
@@ -253,7 +283,7 @@
     "ProjectWorkflowSelection": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schemaVersion", "documentType", "contractVersion", "selectionId", "selectionRevisionId", "projectId", "revision", "revisionContentHash", "createdAt", "selectedBy", "researchIntent", "profile", "parentSelection", "impactPreview"],
+      "required": ["schemaVersion", "documentType", "contractVersion", "selectionId", "selectionRevisionId", "projectId", "revision", "revisionContentHash", "createdAt", "selectedBy", "researchIntent", "profile", "parentSelection", "impactPreview", "acceptedMigration"],
       "properties": {
         "schemaVersion": { "const": "1.0" },
         "documentType": { "const": "research-observatory-project-workflow-selection" },
@@ -278,6 +308,12 @@
             { "type": "null" },
             { "$ref": "#/$defs/ProfileChangeImpact" }
           ]
+        },
+        "acceptedMigration": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/MigrationAcceptanceReference" }
+          ]
         }
       }
     },
@@ -290,13 +326,30 @@
         "rationale": { "$ref": "#/$defs/Narrative" }
       }
     },
+    "CurrentPrimaryStageReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stageStateId", "stageStateRevisionId", "revision", "revisionContentHash", "projectId", "selection", "profile", "stageKey", "pageContractId", "passNumber", "status"],
+      "properties": {
+        "stageStateId": { "$ref": "#/$defs/UuidV7" },
+        "stageStateRevisionId": { "$ref": "#/$defs/UuidV7" },
+        "revision": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "revisionContentHash": { "$ref": "#/$defs/ContentHash" },
+        "projectId": { "$ref": "#/$defs/UuidV7" },
+        "selection": { "$ref": "#/$defs/SelectionReference" },
+        "profile": { "$ref": "#/$defs/ProfileReference" },
+        "stageKey": { "$ref": "#/$defs/ShortCode" },
+        "pageContractId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,99}\\.html(?![\\s\\S])" },
+        "passNumber": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "status": { "const": "current" }
+      }
+    },
     "SupportReturn": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["primaryStageKey", "primaryPageContractId"],
+      "required": ["currentPrimaryState"],
       "properties": {
-        "primaryStageKey": { "$ref": "#/$defs/ShortCode" },
-        "primaryPageContractId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,99}\\.html(?![\\s\\S])" }
+        "currentPrimaryState": { "$ref": "#/$defs/CurrentPrimaryStageReference" }
       }
     },
     "ParentStageState": {
@@ -379,18 +432,22 @@
     "WorkflowProfileMigration": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["schemaVersion", "documentType", "contractVersion", "migrationId", "fromProfile", "toProfile", "createdAt", "createdBy", "historyPolicy", "requiresHumanAcceptance", "stageMappings"],
+      "required": ["schemaVersion", "documentType", "contractVersion", "migrationId", "migrationContentHash", "fromProfile", "toProfile", "priorResearchIntent", "targetResearchIntent", "createdAt", "createdBy", "historyPolicy", "requiresHumanAcceptance", "acceptance", "stageMappings"],
       "properties": {
         "schemaVersion": { "const": "1.0" },
         "documentType": { "const": "research-observatory-workflow-profile-migration" },
         "contractVersion": { "$ref": "#/$defs/ContractVersion" },
         "migrationId": { "$ref": "#/$defs/UuidV7" },
+        "migrationContentHash": { "$ref": "#/$defs/ContentHash" },
         "fromProfile": { "$ref": "#/$defs/ProfileReference" },
         "toProfile": { "$ref": "#/$defs/ProfileReference" },
+        "priorResearchIntent": { "$ref": "#/$defs/ResearchIntentReference" },
+        "targetResearchIntent": { "$ref": "#/$defs/ResearchIntentReference" },
         "createdAt": { "$ref": "#/$defs/UtcInstant" },
         "createdBy": { "$ref": "#/$defs/ActorReference" },
         "historyPolicy": { "const": "preserve" },
         "requiresHumanAcceptance": { "const": true },
+        "acceptance": { "$ref": "#/$defs/HumanAcceptance" },
         "stageMappings": { "type": "array", "minItems": 1, "maxItems": 256, "items": { "$ref": "#/$defs/StageMigration" } }
       }
     }

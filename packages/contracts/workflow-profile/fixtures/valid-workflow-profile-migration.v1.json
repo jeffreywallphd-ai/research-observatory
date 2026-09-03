@@ -3,6 +3,7 @@
   "documentType": "research-observatory-workflow-profile-migration",
   "contractVersion": "1.0.0",
   "migrationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d050",
+  "migrationContentHash": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
   "fromProfile": {
     "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
     "referenceVersion": "1.5",
@@ -26,6 +27,34 @@
     "profileVersion": "1.5",
     "profileRevision": 1,
     "sourceWorkflowHash": "sha256:2da7db63f33f5bcdae06218ac348b3b4efe9a96ca8a0a98daa372d2d392e97b2"
+  },
+  "priorResearchIntent": {
+    "schemaVersion": "1.0",
+    "documentType": "research-observatory-research-intent-reference",
+    "contractVersion": "1.0.0",
+    "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+    "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d021",
+    "revision": 1,
+    "revisionContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "targetResearchIntent": {
+    "schemaVersion": "1.0",
+    "documentType": "research-observatory-research-intent-reference",
+    "contractVersion": "1.0.0",
+    "intentId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d020",
+    "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d022",
+    "revision": 2,
+    "revisionContentHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "acceptance": {
+    "decisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d060",
+    "decisionContentHash": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "decision": "accepted",
+    "decidedAt": "2026-09-03T19:05:00Z",
+    "decidedBy": {
+      "actorType": "human",
+      "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d030"
+    }
   },
   "createdAt": "2026-09-03T19:04:00Z",
   "createdBy": {

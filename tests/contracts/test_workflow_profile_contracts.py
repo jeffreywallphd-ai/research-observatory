@@ -174,18 +174,55 @@ class WorkflowProfileContractTests(unittest.TestCase):
         )
 
         supporting = copy.deepcopy(stage)
+        supporting["stageStateId"] = "018f47a2-4d6b-7f78-9f2e-7fb76c86d070"
+        supporting["stageStateRevisionId"] = "018f47a2-4d6b-7f78-9f2e-7fb76c86d071"
+        supporting["revisionContentHash"] = f"sha256:{'f' * 64}"
         supporting["stageKey"] = "application-settings-1"
         supporting["pageContractId"] = "application-settings.html"
         supporting["navigationRole"] = "supporting"
         supporting["supportReturn"] = {
-            "primaryStageKey": stage["stageKey"],
-            "primaryPageContractId": stage["pageContractId"],
+            "currentPrimaryState": {
+                "stageStateId": stage["stageStateId"],
+                "stageStateRevisionId": stage["stageStateRevisionId"],
+                "revision": stage["revision"],
+                "revisionContentHash": stage["revisionContentHash"],
+                "projectId": stage["projectId"],
+                "selection": copy.deepcopy(stage["selection"]),
+                "profile": copy.deepcopy(stage["profile"]),
+                "stageKey": stage["stageKey"],
+                "pageContractId": stage["pageContractId"],
+                "passNumber": stage["passNumber"],
+                "status": stage["status"],
+            }
         }
-        self.assertEqual((), workflow_stage_state_errors(self.catalog, self.selection, supporting))
+        self.assertEqual((), workflow_stage_state_errors(self.catalog, self.selection, supporting, stage))
+        self.assertIn(
+            "supporting-tool-return-is-explicit",
+            workflow_stage_state_errors(self.catalog, self.selection, supporting),
+        )
+        substituted_state_hash = copy.deepcopy(supporting)
+        substituted_state_hash["supportReturn"]["currentPrimaryState"]["revisionContentHash"] = f"sha256:{'9' * 64}"
+        self.assertIn(
+            "supporting-tool-return-is-explicit",
+            workflow_stage_state_errors(self.catalog, self.selection, substituted_state_hash, stage),
+        )
+        invented_alias = copy.deepcopy(supporting)
+        invented_alias["stageKey"] = "invented-support-alias"
+        self.assertIn(
+            "supporting-tool-identity-is-governed",
+            workflow_stage_state_errors(self.catalog, self.selection, invented_alias, stage),
+        )
+        non_current_return = copy.deepcopy(supporting)
+        non_current_return["supportReturn"]["currentPrimaryState"]["stageKey"] = "source-manager-1"
+        non_current_return["supportReturn"]["currentPrimaryState"]["pageContractId"] = "source-manager.html"
+        self.assertIn(
+            "supporting-tool-return-is-explicit",
+            workflow_stage_state_errors(self.catalog, self.selection, non_current_return, stage),
+        )
         supporting["pageContractId"] = "unregistered-tool.html"
         self.assertIn(
             "supporting-tool-is-governed-and-outside-primary-sequence",
-            workflow_stage_state_errors(self.catalog, self.selection, supporting),
+            workflow_stage_state_errors(self.catalog, self.selection, supporting, stage),
         )
 
     def test_profile_migration_maps_every_prior_stage_without_rewriting_history(self) -> None:
@@ -201,6 +238,67 @@ class WorkflowProfileContractTests(unittest.TestCase):
         duplicate = copy.deepcopy(migration)
         duplicate["stageMappings"][1]["fromStageKey"] = duplicate["stageMappings"][0]["fromStageKey"]
         self.assertIn("migration-covers-prior-stages", workflow_profile_migration_errors(self.catalog, duplicate))
+        relabeled_retain = copy.deepcopy(migration)
+        relabeled_retain["stageMappings"][0]["targetStageKey"] = "living-monitor-1"
+        self.assertIn(
+            "migration-disposition-is-semantic",
+            workflow_profile_migration_errors(self.catalog, relabeled_retain),
+        )
+        changed = fixture("valid-project-workflow-selection-change.v1.json")
+        changed["impactPreview"]["priorStageStates"][0]["targetStageKey"] = "living-monitor-1"
+        self.assertIn(
+            "migration-disposition-is-semantic",
+            project_workflow_selection_errors(self.catalog, changed),
+        )
+        explicit_map = copy.deepcopy(migration)
+        explicit_map["stageMappings"][0]["disposition"] = "map"
+        explicit_map["stageMappings"][0]["targetStageKey"] = "living-monitor-1"
+        self.assertEqual((), workflow_profile_migration_errors(self.catalog, explicit_map))
+        missing_retain_target = copy.deepcopy(migration)
+        missing_retain_target["stageMappings"][0]["targetStageKey"] = None
+        self.assertIn(
+            "migration-disposition-is-semantic",
+            workflow_profile_migration_errors(self.catalog, missing_retain_target),
+        )
+        review_with_target = copy.deepcopy(migration)
+        review_with_target["stageMappings"][1]["targetStageKey"] = "living-monitor-1"
+        self.assertIn(
+            "migration-disposition-is-semantic",
+            workflow_profile_migration_errors(self.catalog, review_with_target),
+        )
+        unchanged_intent = fixture("valid-project-workflow-selection-change.v1.json")
+        unchanged_intent["researchIntent"] = copy.deepcopy(unchanged_intent["parentSelection"]["researchIntent"])
+        self.assertIn(
+            "profile-change-binds-intent-and-human-acceptance",
+            project_workflow_selection_errors(self.catalog, unchanged_intent),
+        )
+        non_human_acceptance = copy.deepcopy(migration)
+        non_human_acceptance["acceptance"]["decidedBy"]["actorType"] = "system"
+        self.assertIsNone(decode_workflow_profile_migration(self.catalog, non_human_acceptance))
+        missing_acceptance = copy.deepcopy(migration)
+        del missing_acceptance["acceptance"]
+        self.assertIsNone(decode_workflow_profile_migration(self.catalog, missing_acceptance))
+        system_prepared = copy.deepcopy(migration)
+        system_prepared["createdBy"]["actorType"] = "system"
+        self.assertEqual((), workflow_profile_migration_errors(self.catalog, system_prepared))
+        accepted_migration = fixture("valid-project-workflow-selection-change.v1.json")["acceptedMigration"]
+        self.assertEqual(migration["migrationId"], accepted_migration["migrationId"])
+        self.assertEqual(migration["migrationContentHash"], accepted_migration["migrationContentHash"])
+        self.assertEqual(migration["acceptance"], accepted_migration["acceptance"])
+        substituted_migration = fixture("valid-project-workflow-selection-change.v1.json")
+        substituted_migration["acceptedMigration"]["fromProfile"] = copy.deepcopy(substituted_migration["profile"])
+        self.assertIn(
+            "profile-change-binds-intent-and-human-acceptance",
+            project_workflow_selection_errors(self.catalog, substituted_migration),
+        )
+        substituted_human = fixture("valid-project-workflow-selection-change.v1.json")
+        substituted_human["acceptedMigration"]["acceptance"]["decidedBy"]["actorId"] = (
+            "018f47a2-4d6b-7f78-9f2e-7fb76c86d099"
+        )
+        self.assertIn(
+            "profile-change-binds-intent-and-human-acceptance",
+            project_workflow_selection_errors(self.catalog, substituted_human),
+        )
 
     def test_canonical_hashes_are_stable_across_reload(self) -> None:
         for value in (
