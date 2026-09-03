@@ -4088,7 +4088,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
         data["wave_amendments"] = [
-            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+            amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03"}
         ]
         data["control_plane"].pop("maintenance_increments", None)
         data["control_plane"]["revision"] = 11
@@ -4254,7 +4254,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
         data["wave_amendments"] = [
-            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+            amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03"}
         ]
         data["control_plane"].pop("maintenance_increments", None)
         data["control_plane"]["revision"] = 11
@@ -4345,7 +4345,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
         data["wave_amendments"] = [
-            amendment for amendment in data["wave_amendments"] if amendment["id"] not in {"W1.A04", "W1.A05"}
+            amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03"}
         ]
         data["control_plane"].pop("maintenance_increments", None)
         data["control_plane"]["revision"] = 11
@@ -4388,6 +4388,11 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment(self) -> None:
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
+        data["wave_amendments"] = [
+            amendment
+            for amendment in data["wave_amendments"]
+            if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03", "W1.A04", "W1.A05"}
+        ]
         before_amendments = copy.deepcopy(data["wave_amendments"])
         before_maintenance = copy.deepcopy(data["control_plane"]["maintenance_increments"])
         approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A05.json").read_bytes())

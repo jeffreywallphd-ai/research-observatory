@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0014",
+  "title": "Stabilize post-migration bootstrap fixtures",
+  "status": "pending-review",
+  "riskTier": 1,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "5691d04da3917de487331479a8f07704b77c21c5",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": null
+  },
+  "trigger": {
+    "denial": "W1.A06.B00 independent R01 review reproduced zero passes across the three evidence-selected bootstrap transition tests after W1.A06 was legitimately appended.",
+    "atomicity": "The adverse B00 review is recorded append-only at predecessor state. W1.A06 remains APPROVED with B00 CHANGES_REQUESTED, no campaign or tasks, and ordinary W1 remains paused and quiescent.",
+    "diagnosis": "The tests deep-copy the mutable canonical backlog but remove only amendments known when they were authored. Once W1.A06 exists, pre-A05 fixtures retain A06 and the pre-A06 fixture attempts a duplicate append, so failures occur before the intended assertions."
+  },
+  "authority": "This maintenance changes test fixtures only. It does not change taskctl, the backlog, product code, planning authority, approval, experience, security, evidence semantics, lifecycle state, release state, or Git history. It grants no B00 approval, amendment materialization/activation/adoption, task claim, W1 resume, or external authority.",
+  "intendedDelta": {
+    "implementation": "Define the pre-A04 and pre-A05 fixtures as exactly W1.A01-W1.A03 and the pre-A06 fixture as exactly W1.A01-W1.A05. Preserve every existing transition, denial, atomic no-save, post-state, MI-0001, protected-witness, and quiescence assertion.",
+    "failClosed": [
+      "Fixtures use explicit immutable identity allowlists rather than subtracting the amendments currently known.",
+      "No production controller or canonical state byte changes.",
+      "The exact three-test suite must pass both before B00 resubmission and again at the frozen resubmission state.",
+      "The adverse W1.A06.B00 R01 disposition remains append-only and must be explicitly closed by independent R02 review."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0014.json",
+      "tests/foundation/test_taskctl_workflow.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The credible risk is accidental removal of predecessor fixtures or weakening of denial/post-state assertions. Run the exact three failing tests plus the protected-witness test, Ruff check/format, taskctl and ECR validation, planning-site/view checks, JSON parsing, and diff hygiene. Product and platform suites are irrelevant to a test-fixture-only change.",
+    "results": [
+      {
+        "check": "reviewer reproduction and red-to-green fixture replay",
+        "result": "passed",
+        "detail": "The reviewer reproduced the original three-test selection at zero passes from the legitimate post-A06 backlog. The first bounded patch left the active-hold fixture stale and reproduced its predecessor-authority failure; the corrected explicit fixtures then passed all five affected tests in 6.355 seconds, including the exact three selected transitions, historic pre-A04 submission, and protected-witness non-read behavior."
+      },
+      {
+        "check": "assertion preservation",
+        "result": "passed",
+        "detail": "Inspection confirms only fixture amendment selection changed. Original active-hold denial, omitted-authority denial, revision downgrade/no-save denial, exact appended states, immutable MI-0001, clean-workspace, and protected-witness assertions remain present."
+      },
+      {
+        "check": "quality and governance integrity",
+        "result": "passed",
+        "detail": "Ruff check and formatting pass. ECR-0005 remains approved and history-bound; taskctl validates 20 capabilities, 117 slices, 363 tasks, and 12 gates; all 489 review pages and generated backlog views pass; GOV-MAINT-0014 parses as JSON and diff hygiene passes."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocker, preserve the adverse B00 review and this candidate, keep W1.A06 unmaterialized and W1 paused, and revise only the explicit fixture construction.",
+  "reviewAttempts": [],
+  "review": null
+}
