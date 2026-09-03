@@ -38,6 +38,13 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def amendment_identity_sort_key(identity: str) -> int:
+    """Return the immutable numeric sequence for a canonical Wave amendment ID."""
+
+    match = re.fullmatch(r"W\d+\.A(\d+)", identity)
+    return int(match.group(1)) if match else 10**9
+
+
 def read_frontmatter(path: Path) -> tuple[dict[str, Any], str]:
     text = path.read_text(encoding="utf-8")
     if not text.startswith("---\n"):
@@ -676,6 +683,7 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
 
         governed_experience = dict(packet.get("governedExperience") or {})
         governed_experience_files: list[dict[str, Any]] = []
+        reference_approval_status = "not-bound"
         for item in governed_experience.get("files") or []:
             relative = str(item.get("path") or "")
             source = repository_file(repo, relative, label=f"{change_id} governed experience")
@@ -684,7 +692,14 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
             if actual != expected:
                 raise ValueError(f"{change_id} governed experience hash mismatch: {relative}")
             governed_experience_files.append({"path": relative, "sha256": actual})
+            if source.name == "APPROVAL.yaml":
+                approval_record = yaml.safe_load(source.read_text(encoding="utf-8"))
+                if isinstance(approval_record, dict) and approval_record.get("reference_id") == governed_experience.get(
+                    "referenceId"
+                ):
+                    reference_approval_status = str(approval_record.get("status") or "unknown").lower()
         governed_experience["files"] = governed_experience_files
+        governed_experience["referenceApprovalStatus"] = reference_approval_status
 
         packet_relative = packet_path.relative_to(repo).as_posix()
         packet_hash = sha256(packet_path)
@@ -1230,30 +1245,44 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "Original complete Wave packet",
                 )
             ]
+            predecessor_authority_rows: list[tuple[str, tuple[Any, Any, Any, str]]] = []
             for predecessor in authority_chain.get("orderedAmendments") or []:
                 approval_reference = predecessor.get("approvalReference") or {}
-                enabler_authority_rows.append(
+                predecessor_authority_rows.append(
                     (
-                        predecessor.get("id"),
-                        predecessor.get("packetCommit"),
-                        approval_reference.get("introductionCommit") or approval_reference.get("sha256"),
-                        "Adopted predecessor authority; preserved unchanged",
+                        str(predecessor.get("id") or ""),
+                        (
+                            predecessor.get("id"),
+                            predecessor.get("packetCommit"),
+                            approval_reference.get("introductionCommit") or approval_reference.get("sha256"),
+                            "Adopted predecessor authority; preserved unchanged",
+                        ),
                     )
                 )
             for reservation in authority_chain.get("reservedAmendments") or []:
                 approval_reference = reservation.get("approvalReference") or {}
                 supersession = reservation.get("supersededByMigration") or {}
-                enabler_authority_rows.append(
+                predecessor_authority_rows.append(
                     (
-                        f"{reservation.get('id')} · reserved",
-                        reservation.get("packetCommit"),
-                        approval_reference.get("introductionCommit") or approval_reference.get("sha256"),
+                        str(reservation.get("id") or ""),
                         (
-                            "Approved but unmaterialized; superseded by "
-                            f"{supersession.get('id') or 'recorded migration'} and never executable here"
+                            f"{reservation.get('id')} · reserved",
+                            reservation.get("packetCommit"),
+                            approval_reference.get("introductionCommit") or approval_reference.get("sha256"),
+                            (
+                                "Approved but unmaterialized; superseded by "
+                                f"{supersession.get('id') or 'recorded migration'} and never executable here"
+                            ),
                         ),
                     )
                 )
+            enabler_authority_rows.extend(
+                row
+                for _, row in sorted(
+                    predecessor_authority_rows,
+                    key=lambda item: amendment_identity_sort_key(item[0]),
+                )
+            )
             migration_authority = record.get("migration_authority") or {}
             if migration_authority:
                 enabler_authority_rows.append(
@@ -1334,6 +1363,15 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             f'<li><a href="{esc((repo / str(item.get("path"))).resolve().as_uri())}">'
             f"{esc(item.get('path'))}</a> — <code>{esc(item.get('sha256'))}</code></li>"
             for item in governed_experience.get("files", [])
+        )
+        governed_experience_summary = (
+            f"Reference <code>{esc(governed_experience.get('referenceId'))}</code> is already human-approved. "
+            "Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve "
+            "a new reference or authorize bootstrap materialization of reference approval."
+            if governed_experience.get("referenceApprovalStatus") == "approved"
+            else f"Reference <code>{esc(governed_experience.get('referenceId'))}</code> requires human approval: "
+            f"{esc(governed_experience.get('approvalRequired'))}. Approval reserves the reference; bootstrap must "
+            "materialize its canonical approval before renderer implementation."
         )
         task_count = len(record["task_inventory"])
         task_completion = (
@@ -1473,7 +1511,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 {
             f'''<section class="review-toolbar">
   <h2>Governed experience proposal</h2>
-  <p>Reference <code>{esc(governed_experience.get("referenceId"))}</code> requires human approval: {esc(governed_experience.get("approvalRequired"))}. Approval reserves the reference; bootstrap must materialize its canonical approval before renderer implementation.</p>
+  <p>{governed_experience_summary}</p>
   <ul class="gate-criteria">{governed_experience_rows}</ul>
 </section>'''
             if governed_experience

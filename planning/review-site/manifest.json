@@ -20326,7 +20326,8 @@
       ],
       "refactor_budget": {},
       "governed_experience": {
-        "files": []
+        "files": [],
+        "referenceApprovalStatus": "not-bound"
       },
       "scope_addenda": [
         {
@@ -21275,7 +21276,8 @@
       ],
       "refactor_budget": {},
       "governed_experience": {
-        "files": []
+        "files": [],
+        "referenceApprovalStatus": "not-bound"
       },
       "scope_addenda": [],
       "task_reviews": [
@@ -21691,7 +21693,8 @@
       ],
       "refactor_budget": {},
       "governed_experience": {
-        "files": []
+        "files": [],
+        "referenceApprovalStatus": "not-bound"
       },
       "scope_addenda": [],
       "task_reviews": [],
@@ -22175,7 +22178,8 @@
             "path": "planning/enabler-change-requests/ECR-0004-application-settings-reference.html",
             "sha256": "ee93250bdbd6719d940fc6c82c7d7263b9a9c235c53d5ab18b07f99c6dbc9106"
           }
-        ]
+        ],
+        "referenceApprovalStatus": "not-bound"
       },
       "scope_addenda": [
         {
@@ -23773,7 +23777,8 @@
             "path": "design/ui-reference/WORKFLOW_CATALOG.json",
             "sha256": "2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca"
           }
-        ]
+        ],
+        "referenceApprovalStatus": "approved"
       },
       "scope_addenda": [],
       "task_reviews": [],

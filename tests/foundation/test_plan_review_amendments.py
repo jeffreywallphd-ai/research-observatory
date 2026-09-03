@@ -407,13 +407,13 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         approval_section = proposal.split(approval_heading, 1)[1]
         self.assertIn("Approve ECR-0002 as W1.A03 at packet commit", approval_section)
 
-    def test_pending_v4_product_amendment_renders_dynamic_slices_budget_and_experience(self) -> None:
+    def test_v4_product_amendment_renders_dynamic_slices_budget_and_experience(self) -> None:
         entry = next(
             item for item in self.manifest["enabler_change_requests"] if item["change_request_id"] == "ECR-0004"
         )
         detail = (self.site / "enablers/ECR-0004.html").read_text(encoding="utf-8")
 
-        self.assertEqual("PENDING", entry["approval_status"])
+        self.assertEqual("APPROVED", entry["approval_status"])
         self.assertEqual(
             ["W1.A05.S01", "W1.A05.S02"],
             [item["id"] for item in entry["slice_contributions"]],
@@ -448,9 +448,38 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             "signed-in session alone cannot remove protection",
             "every valid persisted v1 lock profile migrates to Windows password",
             "ECR-0004-R01-F01",
-            "Pending, non-executable proposal; no bootstrap/task authority",
+            "Human-approved bootstrap/task scope; adoption remains separate",
         ):
             self.assertIn(marker, detail)
+
+        self.assertFalse([line for line in detail.splitlines() if line.rstrip() != line])
+
+    def test_pending_v4_successor_orders_interleaved_authority_and_reuses_approved_experience(self) -> None:
+        entry = next(
+            item for item in self.manifest["enabler_change_requests"] if item["change_request_id"] == "ECR-0005"
+        )
+        pending_entry = next(
+            item for item in self.manifest["enabler_change_requests"] if item["change_request_id"] == "ECR-0004"
+        )
+        detail = (self.site / "enablers/ECR-0005.html").read_text(encoding="utf-8")
+        pending_detail = (self.site / "enablers/ECR-0004.html").read_text(encoding="utf-8")
+        authority_section = detail.split("<h2>Ordered Wave authority chain</h2>", 1)[1].split("</section>", 1)[0]
+        experience_section = detail.split("<h2>Governed experience proposal</h2>", 1)[1].split("</section>", 1)[0]
+        pending_experience_section = pending_detail.split("<h2>Governed experience proposal</h2>", 1)[1].split(
+            "</section>", 1
+        )[0]
+
+        self.assertLess(authority_section.index("W1.A03"), authority_section.index("W1.A04 · reserved"))
+        self.assertLess(authority_section.index("W1.A04 · reserved"), authority_section.index("W1.A05"))
+        self.assertLess(authority_section.index("W1.A05"), authority_section.index("W1.A06"))
+        self.assertEqual("approved", entry["governed_experience"]["referenceApprovalStatus"])
+        self.assertIn("already human-approved", experience_section)
+        self.assertIn("reaffirms and binds that existing authority unchanged", experience_section)
+        self.assertNotIn("Approval reserves the reference", experience_section)
+        self.assertNotIn("materialize its canonical approval", experience_section)
+        self.assertEqual("not-bound", pending_entry["governed_experience"]["referenceApprovalStatus"])
+        self.assertIn("Approval reserves the reference", pending_experience_section)
+        self.assertIn("materialize its canonical approval", pending_experience_section)
 
         self.assertFalse([line for line in detail.splitlines() if line.rstrip() != line])
 

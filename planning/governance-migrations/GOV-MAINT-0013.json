@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0013",
+  "title": "Render truthful interleaved amendment and experience authority",
+  "status": "pending-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "6f3145c6a11ab6aee9fe2611a0907fc32173aea6",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": null
+  },
+  "trigger": {
+    "denial": "Independent ECR-0005 R01 review found that the generated human decision page orders adopted W1.A05 before terminal reserved W1.A04 and falsely describes already approved RO-UI-ACADEMIC-MINIMAL-1.5 as awaiting reference reservation and bootstrap materialization.",
+    "atomicity": "The adverse ECR-0005 R01 ledger is committed append-only. W1 remains paused and lease-free with no active ordinary task, amendment campaign, or recovery hold; CAP-03.S06.T01 remains READY and unclaimed.",
+    "diagnosis": "The review-site renderer emits adopted and reserved predecessors as separate groups instead of one immutable-ID sequence. Its governed-experience prose is unconditional and does not distinguish a hash-bound approved canonical APPROVAL.yaml for the same reference from a proposed unapproved experience package."
+  },
+  "authority": "This maintenance changes only the generic read-only review-site projection and focused tests. It adds no product, planning, security, experience, amendment, task, Wave-resume, release, merge, push, or external authority. It does not approve ECR-0005 or W1.A06 and does not alter any approved experience byte.",
+  "intendedDelta": {
+    "implementation": "Merge adopted and reserved predecessor rows by canonical WN.ANN numeric identity while retaining their distinct meanings. When a governed-experience file inventory binds a canonical APPROVAL.yaml whose approved reference_id equals the packet referenceId, render the reference as already approved and the ECR action as unchanged reaffirmation/binding; otherwise retain the pending-reference language.",
+    "failClosed": [
+      "Repository-safe path resolution and exact governed-experience hashes remain prerequisites before any approval status is read.",
+      "Only an approval document with the exact packet reference identity and status approved may select existing-authority wording; missing, mismatched, or non-approved records retain pending wording.",
+      "Authority rows preserve packet commits, approval bindings, reservation/supersession meaning, migration authority, and current proposed amendment state while changing presentation order only.",
+      "ECR-0005 remains non-executable and unavailable for human approval until strict-descendant independent R02 review closes both R01 findings."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0013.json",
+      "tools/plan_review_site.py",
+      "tests/foundation/test_plan_review_amendments.py",
+      "planning/review-site/enablers/ECR-0005.html",
+      "planning/review-site/manifest.json"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The credible surface is limited to ECR dynamic rendering, repository-bound experience approval classification, immutable amendment ordering, generated-site integrity, and preservation of the pending decision state. A focused red-to-green regression, the complete amendment review-site test module, canonical site validation, planctl ECR validation, backlog/view validation, Python quality, JSON parsing, and Git hygiene are sufficient. Product, runtime, packaging, Windows, and full Wave suites remain deferred because no product or canonical planning behavior changes.",
+    "results": [
+      {
+        "check": "focused red-to-green authority projection regression",
+        "result": "passed",
+        "detail": "The new ECR-0005 regression first failed because W1.A04 rendered after W1.A05. After the generic correction, it proves A03 < reserved A04 < A05 < proposed A06, approved v1.5 reaffirmation wording, and conservative pending-reference wording for an unbound proposal."
+      },
+      {
+        "check": "complete amendment review-site module",
+        "result": "passed",
+        "detail": "All 16 amendment review-site tests pass in 18.295 seconds, including repository-file hash-tamper denial, generated-site validation, append-only review history, and the new interleaved/existing-authority case. One stale ECR-0004 assertion discovered on the first run was corrected from pending to its current approved immutable state; no coverage was removed."
+      },
+      {
+        "check": "planning and generated-view integrity",
+        "result": "passed",
+        "detail": "planctl validates ECR-0005 structurally and historically; taskctl validates 20 capabilities, 117 slices, 363 tasks, and 12 release gates; all 489 planning-review pages pass; generated backlog views remain unchanged."
+      },
+      {
+        "check": "quality and scope hygiene",
+        "result": "passed",
+        "detail": "Ruff check and format verification pass for both Python paths, GOV-MAINT-0013 parses as JSON, and git diff --check passes. The working delta is limited to the five declared maintenance/generated paths; product and canonical planning bytes remain unchanged."
+      }
+    ]
+  },
+  "rollback": "If independent maintenance review finds a blocker, preserve this candidate and ECR-0005 R01 history, keep W1 paused, and remediate only the reproduced generic projection defect. Do not approve or bootstrap ECR-0005 while either finding is open.",
+  "reviewAttempts": [],
+  "review": null
+}
