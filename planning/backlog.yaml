@@ -36082,7 +36082,7 @@ wave_amendments:
         changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A06.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex
     implementation_commit: af7435651484b673b07c34e9ca0e664d275ed820
     submission_branch: codex/w1-windows-local-runtime
@@ -36100,10 +36100,15 @@ wave_amendments:
       commit: af7435651484b673b07c34e9ca0e664d275ed820
       recorded_at: '2026-09-03T17:53:07+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: ecr5-planning-authority-reviewer
+      result: approved
+      reviewed_at: '2026-09-03T18:01:44+00:00'
+      notes: 'APPROVED at frozen R02 state 1c9a7d318a988fa8ed3b344885f2a8d6f9446182 for candidate af7435651484b673b07c34e9ca0e664d275ed820.
+        Evidence SHA-256 bccb7c6cb0531402bcb7fa4be4d6b9485a6afacc1c151f96391503a55a8b02a6 and exact 18-path remediation scope
+        authenticate. W1.A06.B00-R01-F01 is closed: the original three transition tests and four addendum/planning checks
+        pass, R01 history remains append-only, both authenticated addenda enforce ordered exact-blob authority, predecessor
+        amendments and MI-0001 are unchanged, and W1 remains PAUSED/quiescent. Approval authorizes only B00 materialization
+        readiness, not activation, T01, adoption, or W1 resume.'
     attempts:
     - id: R01
       implementer: codex
