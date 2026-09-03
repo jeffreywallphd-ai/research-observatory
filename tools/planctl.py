@@ -1441,15 +1441,36 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     actual_by_id = {str(item.get("id")): item for item in actual}
     frozen_ids = [str(_json_object(item).get("id")) for item in frozen]
     reserved_ids = [str(_json_object(item).get("id")) for item in reserved]
-    expected_frozen = [f"{wave_id}.A{index:02d}" for index in range(1, len(frozen) + 1)]
-    expected_reserved = [f"{wave_id}.A{index:02d}" for index in range(len(frozen) + 1, len(frozen) + len(reserved) + 1)]
-    expected_post_suffix = [*reserved_ids, proposed]
-    actual_suffix = actual_ids[len(frozen) :]
+
+    def amendment_ordinal(amendment_id: str) -> int | None:
+        match = re.fullmatch(rf"{re.escape(wave_id)}\.A(\d{{2}})", amendment_id)
+        return int(match.group(1)) if match else None
+
+    predecessor_ids = [*frozen_ids, *reserved_ids]
+    predecessor_ordinals = [amendment_ordinal(item) for item in predecessor_ids]
+    ordered_predecessors = sorted(
+        predecessor_ids,
+        key=lambda item: amendment_ordinal(item) if amendment_ordinal(item) is not None else math.inf,
+    )
+    expected_predecessors = [f"{wave_id}.A{index:02d}" for index in range(1, len(predecessor_ids) + 1)]
+    expected_actual = [f"{wave_id}.A{index:02d}" for index in range(1, len(actual_ids) + 1)]
+    authority_prefix = [*ordered_predecessors, proposed]
+    shared_length = min(len(actual_ids), len(authority_prefix))
     if (
-        frozen_ids != expected_frozen
-        or reserved_ids != expected_reserved
-        or actual_ids[: len(frozen)] != frozen_ids
-        or actual_suffix not in ([], expected_post_suffix)
+        any(ordinal is None for ordinal in predecessor_ordinals)
+        or len(predecessor_ids) != len(set(predecessor_ids))
+        or frozen_ids != sorted(frozen_ids, key=lambda item: amendment_ordinal(item) or math.inf)
+        or reserved_ids != sorted(reserved_ids, key=lambda item: amendment_ordinal(item) or math.inf)
+        or ordered_predecessors != expected_predecessors
+        or actual_ids != expected_actual
+        or any(item not in actual_by_id for item in frozen_ids)
+        or actual_ids[:shared_length] != authority_prefix[:shared_length]
+        or (
+            bool(ordered_predecessors)
+            and ordered_predecessors[-1] in reserved_ids
+            and ordered_predecessors[-1] in actual_by_id
+            and proposed not in actual_by_id
+        )
     ):
         errors.append("ECR v4 adopted predecessor chain is incomplete, gapped, reordered, or forked")
 
@@ -1458,8 +1479,9 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         str(wave_base.get("approvalRecordCommit") or ""),
     ]
     ancestry_pairs: list[tuple[str, str]] = [(ordered_commits[0], ordered_commits[1])]
-    for packet_item, backlog_item in zip(frozen, actual[: len(frozen)], strict=False):
+    for packet_item in frozen:
         item = _json_object(packet_item)
+        backlog_item = _json_object(actual_by_id.get(str(item.get("id"))))
         reference = _json_object(item.get("approvalReference"))
         backlog_reference = _json_object(backlog_item.get("approval_reference"))
         expected = (

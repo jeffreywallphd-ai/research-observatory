@@ -197,6 +197,29 @@ class PlanctlAmendmentTests(unittest.TestCase):
             ],
         }
 
+    def _successor_post_migration_v4_packet(self) -> dict[str, Any]:
+        packet = json.loads(
+            json.dumps(self._post_migration_v4_packet()).replace("ECR-0004", "ECR-0005").replace("W1.A05", "W1.A06")
+        )
+        approval_path = REPO / "planning/wave-amendment-approvals/W1.A05.json"
+        packet["authorityChain"]["orderedAmendments"].append(
+            {
+                "id": "W1.A05",
+                "changeRequestId": "ECR-0004",
+                "status": "ADOPTED",
+                "packetCommit": "25584d82ce5d6bd55e476cd746100eef0790a33d",
+                "approvalReference": {
+                    "path": approval_path.relative_to(REPO).as_posix(),
+                    "sha256": hashlib.sha256(approval_path.read_bytes()).hexdigest(),
+                    "introductionCommit": _approval_introduction_commit(
+                        REPO, approval_path.relative_to(REPO).as_posix()
+                    ),
+                },
+                "effectiveStateCommit": "9a56ed8d25d4747d0ad6741255ea5c7514e08fc7",
+            }
+        )
+        return packet
+
     def _copy_ecr_fixture(self, root: Path, *, include_approval: bool) -> Path:
         shutil.copytree(
             REPO / "planning" / "enabler-change-requests",
@@ -322,6 +345,53 @@ class PlanctlAmendmentTests(unittest.TestCase):
         self.assertTrue(
             any("refactor budget" in error for error in _authority_chain_v4_errors(REPO, overbroad_exception))
         )
+
+    def test_v4_successor_accepts_interleaved_adopted_and_reserved_authority(self) -> None:
+        packet = self._successor_post_migration_v4_packet()
+        schema = REPO / "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
+        self.assertEqual([], _schema_errors(packet, schema, "successor ECR v4 fixture"))
+        self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+
+        omitted_adopted = copy.deepcopy(packet)
+        omitted_adopted["authorityChain"]["orderedAmendments"].pop()
+        self.assertTrue(
+            any("predecessor chain" in error for error in _authority_chain_v4_errors(REPO, omitted_adopted))
+        )
+
+        reordered_adopted = copy.deepcopy(packet)
+        reordered_adopted["authorityChain"]["orderedAmendments"][-2:] = reversed(
+            reordered_adopted["authorityChain"]["orderedAmendments"][-2:]
+        )
+        self.assertTrue(
+            any("predecessor chain" in error for error in _authority_chain_v4_errors(REPO, reordered_adopted))
+        )
+
+        duplicated_reservation = copy.deepcopy(packet)
+        duplicated_reservation["authorityChain"]["orderedAmendments"].append(
+            copy.deepcopy(duplicated_reservation["authorityChain"]["reservedAmendments"][0])
+        )
+        self.assertTrue(
+            any("predecessor chain" in error for error in _authority_chain_v4_errors(REPO, duplicated_reservation))
+        )
+
+        skipped_identity = copy.deepcopy(packet)
+        skipped_identity["proposedAmendmentId"] = "W1.A07"
+        self.assertTrue(
+            any(
+                "proposed amendment" in error or "predecessor chain" in error
+                for error in _authority_chain_v4_errors(REPO, skipped_identity)
+            )
+        )
+
+    def test_v4_historical_packet_remains_valid_after_a_successor_materializes(self) -> None:
+        packet = self._post_migration_v4_packet()
+        backlog, path = load_backlog(REPO)
+        successor_backlog = copy.deepcopy(backlog)
+        successor = copy.deepcopy(next(item for item in successor_backlog["wave_amendments"] if item["id"] == "W1.A05"))
+        successor["id"] = "W1.A06"
+        successor_backlog["wave_amendments"].append(successor)
+        with patch("planctl.load_backlog", return_value=(successor_backlog, path)):
+            self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
 
     def test_v4_schema_allows_truthful_empty_predecessor_and_reservation_sets(self) -> None:
         packet = self._post_migration_v4_packet()
