@@ -162,8 +162,7 @@
         "W2"
       ],
       "interrupting_change_request_ids": [
-        "ECR-0003",
-        "ECR-0005"
+        "ECR-0003"
       ],
       "interrupting_recovery_request_ids": []
     },
@@ -23472,7 +23471,7 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A06.json",
       "approval_sha256": "244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "ADOPTED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
@@ -24026,7 +24025,24 @@
           "current_submission": null
         }
       },
-      "adoption_checkpoints": [],
+      "adoption_checkpoints": [
+        {
+          "id": "W1.CP04",
+          "kind": "security",
+          "recorded_by": "codex",
+          "recorded_at": "2026-09-03T18:39:35+00:00",
+          "notes": "Adopt independently approved W1.A06 planning-authority alignment as a W1 security checkpoint; retain all ordinary CAP-03.S06 implementation, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.",
+          "evidence_references": [
+            {
+              "type": "amendment-adoption-evidence",
+              "amendment_id": "W1.A06",
+              "path": "artifacts/evidence/W1.A06.adoption.json",
+              "sha256": "afc1b6cf6b56a51d8674daf8204b65e5592f41e4f8920dd73a7ce7af1b66ed9d",
+              "commit": "ecd0fee90a58a3dffdc7cb955906856372968753"
+            }
+          ]
+        }
+      ],
       "page": "enablers/ECR-0005.html"
     }
   ],
