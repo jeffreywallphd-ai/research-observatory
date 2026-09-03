@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 90e1d6d8e1968670fb454d21eb71d8234dbacd9407477e9ed9f92b2173ad3fa4
+source_sha256: 60f3144df4328f0655b35cb593c3ef46d8092f0177f74562c61db9dc53bfd525
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6141,7 +6141,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6175,7 +6175,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S06.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -6209,7 +6209,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `fcb835b0efb8b7ff26fdee0b8a6df186532f8779559f0b016f7c9eba14d6253c`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `fcb835b0efb8b7ff26fdee0b8a6df186532f8779559f0b016f7c9eba14d6253c`
 
 - Candidate / base / branch: `8e522b51bb5414cb55b69cba86299262969539b0` / `7641bbceb0fd20286d3e66ea257f6e0036fe4b87` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-03T22:53:39+00:00`
@@ -6223,11 +6225,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-03.S06.T02-R01-F01`, `CAP-03.S06.T02-R01-F02`, `CAP-03.S06.T02-R01-F03`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:t02-independent-reviewer at `2026-09-03T22:27:18+00:00`
+**Disposition / reviewer / time:** `changes-requested` / agent:t02-independent-reviewer / `2026-09-03T23:08:44+00:00`
 
-**Latest notes:** The frozen submission, criterion-evidence bytes, exact 48-path scope, submission projection, and approved Academic Minimal v1.5 UI lineage authenticate successfully. Independent replay confirms that native/Core capability and request parity, field-bound acknowledgement tokens, real dependency-impact lookup, canonical one-field reference substitution denial, atomic project nonpublication on authority failure, immediate intent lineage, response-loss idempotency, actor-bound provenance/policy denial, and all-tools availability are materially improved and pass focused checks. Approval remains unavailable because governed workflow authority can be wholly removed and accepted as legacy state, the displayed stopping-logic effect contradicts the values saved after a profile change, and the evidence overclaims native stale propagation and several projection/registry properties.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T02.review-R02.json` / `98eb445cbb3ce42890e0d3936caf9b6bcc674cd04c8f41e6b95388c3f3e00acb`
 
-**Currently open findings:** `CAP-03.S06.T02-R01-F01`, `CAP-03.S06.T02-R01-F02`, `CAP-03.S06.T02-R01-F03`
+**Review notes:** The frozen R02 submission, evidence SHA-256/Git blob, exact 24-path remediation scope, eight-path submission projection, strict-descendant ancestry, and append-only R01 history authenticate. Full service, focused project/intent persistence and restart checks, generated contracts, renderer/browser checks, governance checks, and the native Windows supervisor/Core/SQLite vertical pass. CAP-03.S06.T02-R01-F02 is fixed by exact before/after autonomy and stopping effects. Approval remains unavailable because CAP-03.S06.T02-R01-F01 still admits a post-activation database after both the activation binding and all workflow-profile authority rows are removed, and CAP-03.S06.T02-R01-F03 remains open because the fourteen-profile defaults were relocated to an ungenerated Core table whose values are not covered by the returned governed profileCatalogHash while evidence calls them catalog-authored.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S06.T02-R01-F02` `fixed` — Exact canonical before/after effects are derived and rendered; focused service tests cover theory-to-systematic and multi-condition critical-to-technical transitions, and the assembled desktop check confirms removed/added stopping effects before acknowledgement.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:t02-independent-reviewer at `2026-09-03T23:08:44+00:00`
+
+**Latest notes:** The frozen R02 submission, evidence SHA-256/Git blob, exact 24-path remediation scope, eight-path submission projection, strict-descendant ancestry, and append-only R01 history authenticate. Full service, focused project/intent persistence and restart checks, generated contracts, renderer/browser checks, governance checks, and the native Windows supervisor/Core/SQLite vertical pass. CAP-03.S06.T02-R01-F02 is fixed by exact before/after autonomy and stopping effects. Approval remains unavailable because CAP-03.S06.T02-R01-F01 still admits a post-activation database after both the activation binding and all workflow-profile authority rows are removed, and CAP-03.S06.T02-R01-F03 remains open because the fourteen-profile defaults were relocated to an ungenerated Core table whose values are not covered by the returned governed profileCatalogHash while evidence calls them catalog-authored.
+
+**Currently open findings:** `CAP-03.S06.T02-R01-F01`, `CAP-03.S06.T02-R01-F03`
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
