@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0014",
   "title": "Stabilize post-migration bootstrap fixtures",
-  "status": "pending-review",
+  "status": "adopted",
   "riskTier": 1,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -53,6 +53,34 @@
     ]
   },
   "rollback": "If independent review finds a blocker, preserve the adverse B00 review and this candidate, keep W1.A06 unmaterialized and W1 paused, and revise only the explicit fixture construction.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0014.R01",
+      "reviewedCommit": "85554c166283964084c3ccde31241133c0a34522",
+      "reviewer": "agent:ecr5-planning-authority-reviewer",
+      "reviewedAt": "2026-09-03T12:39:42.6099060-04:00",
+      "disposition": "APPROVED",
+      "authorityPreserved": true,
+      "findings": [],
+      "ledger": {
+        "path": "planning/governance-migrations/GOV-MAINT-0014.review-R01.json",
+        "sha256": "d9a3532a4527b2fe5e5d9784ac05988e52eefd377ad45eba05c27cbdc5ef7c39",
+        "introductionCommit": "d3fcced95d9651868f4a377e0a3e9e93f5c9500d"
+      }
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0014.R01",
+    "reviewedCommit": "85554c166283964084c3ccde31241133c0a34522",
+    "reviewer": "agent:ecr5-planning-authority-reviewer",
+    "reviewedAt": "2026-09-03T12:39:42.6099060-04:00",
+    "disposition": "APPROVED",
+    "authorityPreserved": true,
+    "findings": [],
+    "ledger": {
+      "path": "planning/governance-migrations/GOV-MAINT-0014.review-R01.json",
+      "sha256": "d9a3532a4527b2fe5e5d9784ac05988e52eefd377ad45eba05c27cbdc5ef7c39",
+      "introductionCommit": "d3fcced95d9651868f4a377e0a3e9e93f5c9500d"
+    }
+  }
 }
