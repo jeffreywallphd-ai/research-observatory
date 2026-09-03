@@ -35,7 +35,7 @@
     ]
   },
   "verification": {
-    "riskAnalysis": "The remediation changes evidence-authority validation, immutable baseline-history interpretation, and the two reference provenance scalars after the corrected exact package was human-approved. Selected checks cover both supported approval grammars, immutable Wave-to-slice approval projection, exact proposal path and approval ancestry, single-use proposal consumption across reachable branches, fail-closed interleaving, rejected-candidate lineage and transition edges, temporary reference corruption, malformed-history retention, the full focused UI gate module, reference reproducibility, JSON/Git hygiene, and unchanged product behavior. Product runtime, persistence, API, security policy, and packaging behavior remain unchanged and are covered by the later renderer implementation and slice review.",
+    "riskAnalysis": "The R04 remediation changes evidence-authority validation at the Wave projection Git boundary after R03 proved that a merge's first parent could masquerade as an only parent. Selected checks cover both supported approval grammars, the proposal's first-parent authority chain, the projection's complete parent list, multi-parent injection denial, exact proposal path and approval ancestry, single-use proposal consumption across reachable branches, rejected-candidate lineage and transition edges, temporary reference corruption, malformed-history retention, the full focused UI gate module, reference reproducibility, JSON/Git hygiene, and unchanged product behavior. Product runtime, persistence, API, security policy, and packaging behavior remain unchanged and are covered by the later renderer implementation and slice review.",
     "results": [
       {
         "check": "approved reference integrity",
@@ -45,7 +45,7 @@
       {
         "check": "full focused UI gate regression",
         "result": "passed",
-        "detail": "All 36 tests in tests.foundation.test_ui_change_gate pass on the final R03 remediation in 59.573 seconds, including exact provenance handoff acceptance, unrelated-interleaving denial, adverse-review preservation, substitution denial, and existing activation paths."
+        "detail": "All 36 tests in tests.foundation.test_ui_change_gate pass on the R04 remediation in 60.358 seconds, including exact provenance handoff acceptance, unrelated-interleaving denial, adverse-review preservation, substitution denial, and existing activation paths."
       },
       {
         "check": "approval authority regressions",
@@ -55,7 +55,7 @@
       {
         "check": "baseline history regressions",
         "result": "passed",
-        "detail": "Fourteen focused R03 authority/history tests pass in 37.795 seconds. Every distinct reachable governed state is validated, reference-only corruption remains visible after byte restoration, exact adopted adverse-review attestation is required, unattested suppression fails closed, and authority substitution/reuse cases are denied."
+        "detail": "Fourteen directly executable focused R04 authority/history tests pass in 38.480 seconds. The new real-Git merge-injection fixture is denied; every distinct reachable governed state is validated; reference-only corruption remains visible after byte restoration; exact adopted adverse-review attestation is required; unattested suppression fails closed; and authority substitution/reuse cases are denied. The prospective-adoption case is exercised separately against the complete candidate because the adverse R03 projection is intentionally not adoptable."
       },
       {
         "check": "bounded activation delta",
@@ -65,7 +65,7 @@
       {
         "check": "prospective adopted repository baseline history",
         "result": "passed",
-        "detail": "A disposable real-Git candidate with the exact R03 remediation bytes materialized the structurally exact prospective independent adoption and passed the full reachable baseline-history test in 61.139 seconds. The canonical repository remains fail-closed until actual R03 adoption and must pass the same history check again before product implementation is committed."
+        "detail": "A disposable real-Git candidate with the exact R04 remediation bytes materialized the structurally exact prospective independent adoption and passed the full reachable baseline-history test in 62.748 seconds. The canonical repository remains fail-closed until actual R04 adoption and must pass the same history check again before product implementation is committed."
       }
     ]
   },
@@ -78,11 +78,12 @@
       "GOV-MAINT-0010.R01-F02",
       "GOV-MAINT-0010.R02-F01",
       "GOV-MAINT-0010.R02-F02",
-      "GOV-MAINT-0010.R02-F03"
+      "GOV-MAINT-0010.R02-F03",
+      "GOV-MAINT-0010.R03-F01"
     ],
-    "rootCause": "The initial candidate treated the new reference ID and package hash as sufficient provenance, retained the stale 1.4 approval commit, and relied on a conformance validator that supported only the older amendment/ECR authority grammar. The first 1.5 approval also contained a mistyped Wave packet SHA. R02 then modeled the rejected snapshot only at its introduction, omitted its transition-edge exception, over-broadened a performance optimization from identical rejected bytes to all unchanged baselines, trusted approval metadata from the mutable proposal instead of the immutable direct Wave projection, and searched only proposal ancestors for prior consumption.",
-    "resolution": "A provenance-only proposal and explicit human approval corrected the Wave packet binding without changing the governed experience. The baseline binds that exact approval commit and package. The validator authenticates both exact legacy and Wave/slice authority forms; requires the proposal and approval commits to change only their two governance files; binds the proposal's Wave approval and unchanged slice bytes to the packet's direct immutable approval projection; and detects multiple proposal consumers across reachable branches. Baseline lineage again validates every reachable commit. Only exact adopted maintenance handoff commits and descendants that retain both the rejected baseline bytes and the rejected reference tree are exempted, with the rejected introduction's transition edge handled explicitly. Any temporary reference mutation changes that tree and therefore fails per-commit validation even if later restored.",
-    "recurrenceControl": "Focused real-Git tests cover corrected authority, immutable projection acceptance, extra proposal-path denial, slice-authority substitution, sibling proposal reuse, unresolvable authority, exact provenance interleaving, unrelated interleaving, adopted adverse-review attestation, unattested suppression, temporary reference mutation and restoration, same-reference rewrite denial, and malformed history. A prospective exact-adoption fixture and the authoritative repository history test prove the rejected candidate becomes non-authoritative only after complete independent adoption."
+    "rootCause": "The initial candidate treated the new reference ID and package hash as sufficient provenance, retained the stale 1.4 approval commit, and relied on a conformance validator that supported only the older amendment/ECR authority grammar. The first 1.5 approval also contained a mistyped Wave packet SHA. R02 then modeled the rejected snapshot only at its introduction, omitted its transition-edge exception, over-broadened a performance optimization from identical rejected bytes to all unchanged baselines, trusted approval metadata from the mutable proposal instead of the immutable direct Wave projection, and searched only proposal ancestors for prior consumption. R03 authenticated the projection content but used Git's <commit>^ shorthand, which proves only the first parent and cannot exclude a second merge parent carrying injected authority state.",
+    "resolution": "A provenance-only proposal and explicit human approval corrected the Wave packet binding without changing the governed experience. The baseline binds that exact approval commit and package. The validator authenticates both exact legacy and Wave/slice authority forms; requires the proposal and approval commits to change only their two governance files; follows the proposal's first-parent authority chain to the Wave projection; requires the projection's complete parent list to equal exactly the approved packet; binds the proposal's Wave approval and unchanged slice bytes to that immutable projection; and detects multiple proposal consumers across reachable branches. Baseline lineage validates every distinct governed state. Only exact adopted maintenance handoff commits and descendants that retain both the rejected baseline bytes and the rejected reference tree are exempted, with the rejected introduction's transition edge handled explicitly. Any temporary reference mutation changes that tree and therefore fails validation even if later restored.",
+    "recurrenceControl": "Focused real-Git tests cover corrected authority, immutable projection acceptance, multi-parent projection injection denial, extra proposal-path denial, slice-authority substitution, sibling proposal reuse, unresolvable authority, exact provenance interleaving, unrelated interleaving, adopted adverse-review attestation, unattested suppression, temporary reference mutation and restoration, same-reference rewrite denial, and malformed history. The prospective exact-adoption fixture and authoritative repository history test prove the rejected candidate becomes non-authoritative only after complete independent adoption."
   },
   "rollback": "If independent review finds a blocking defect, do not implement the 1.5 renderer. Return to predecessor 6ed8e76fb52349780cccac913b3652553a57afbd, which retains the approved 1.5 reference while desktop product verification remains bound to the previously active 1.4 package.",
   "reviewAttempts": [
