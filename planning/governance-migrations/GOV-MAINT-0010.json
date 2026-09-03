@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0010",
+  "title": "Activate approved desktop UI reference 1.5",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "6ed8e76fb52349780cccac913b3652553a57afbd",
+    "activeTask": "CAP-03.S05.T03",
+    "taskStatus": "DONE",
+    "productCandidateCommit": "5f2ccb4823176d8b401a890051852f6473f09e4e"
+  },
+  "trigger": {
+    "denial": "The governed desktop verification activation and baseline still name Academic Minimal 1.4 after the repository owner approved the immutable Academic Minimal 1.5 package. A renderer implementation against 1.5 would therefore be measured against stale verification authority.",
+    "atomicity": "The exact 1.5 reference is approved at predecessor 6ed8e76fb52349780cccac913b3652553a57afbd. No 1.5 product implementation is present in that predecessor, CAP-03.S05 remains in slice remediation, and the unrelated W1.A04.B00 evidence file remains untracked and untouched.",
+    "diagnosis": "Reference identity and package hash are evidence-control inputs. They must move to the already approved immutable package in a control-only commit before product code adopts that reference, with independent review of the exact two-field projection change."
+  },
+  "authority": "This maintenance activates only the exact human-approved RO-UI-ACADEMIC-MINIMAL-1.5 identity and package hash for existing desktop verification. It preserves the verification mode, target and application roots, schemas, commands, baseline measurements, implementation inventory, W1 packet, CAP-03.S05 scope, task and slice states, security authority, and release gate. It does not implement UI behavior, approve a task or slice, change product scope, weaken a check, authorize egress, or approve G1.",
+  "intendedDelta": {
+    "implementation": "Replace only referenceId and referencePackageSha256 in the desktop UI activation and baseline with the exact values from the approved 1.5 manifest. Preserve every other JSON value and commit the maintenance record with those two control files before any 1.5 renderer implementation.",
+    "failClosed": [
+      "The activation and baseline must bind the same reference identity and package hash.",
+      "The identity and hash must equal the immutable human-approved reference manifest.",
+      "No verification mode, path, command, threshold, viewport, implementation root, or baseline observation may change.",
+      "No product, build, planning, task-state, or release-gate file may enter the candidate commit.",
+      "The renderer implementation remains inadmissible until an independent reviewer approves this exact candidate."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0010.json",
+      "verification/baselines/desktop-ui.json",
+      "verification/extensions/desktop-ui.json"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "This changes two evidence-authority scalars after their exact reference package was human-approved. Selected checks verify reference reproducibility, JSON and Git hygiene, the full focused UI-change gate regression suite, and byte-for-byte preservation of every non-reference activation and baseline field. Product, runtime, security, persistence, API, and packaging behavior are unchanged and remain covered by the later renderer implementation and slice review.",
+    "results": [
+      {
+        "check": "approved reference integrity",
+        "result": "passed",
+        "detail": "The reference checker reports approved Academic Minimal 1.5, package SHA-256 68d71bd038158ce38b33d8474f53406ebe88550f84e776d69d32c3ce18c08f21, reproducible generation, and zero errors."
+      },
+      {
+        "check": "UI gate regression",
+        "result": "passed",
+        "detail": "All 34 focused UI-change gate tests pass, including independent pre-implementation maintenance ordering, substitution denial, and exact reference lineage cases."
+      },
+      {
+        "check": "bounded activation delta",
+        "result": "passed",
+        "detail": "Both JSON files parse, their reference identity and hash equal the approved manifest, and the candidate changes no field other than those two exact scalars."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocking defect, do not implement the 1.5 renderer. Return to predecessor 6ed8e76fb52349780cccac913b3652553a57afbd, which retains the approved 1.5 reference while desktop product verification remains bound to the previously active 1.4 package.",
+  "reviewAttempts": [],
+  "review": null
+}

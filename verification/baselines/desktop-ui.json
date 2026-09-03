@@ -468,8 +468,8 @@
   "platform": "windows-x64",
   "playwrightVersion": "1.58.0",
   "referenceApprovalCommit": "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b",
-  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
-  "referencePackageSha256": "034d592ea97c35113ac802f885a469f89f9c72ad2548740347bef00f7484310e",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "referencePackageSha256": "68d71bd038158ce38b33d8474f53406ebe88550f84e776d69d32c3ce18c08f21",
   "schemaVersion": "1.0",
   "settings": {
     "animations": "disabled",
