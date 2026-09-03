@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T01",
+  "commit": "7d03065c43391f98e8648c076042e50d76e242da",
+  "baseCommit": "012693e22441100f5fe778dd4d29f7667752a488",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S06.T01.R01.json",
+    "sha256": "7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea",
+    "commit": "012693e22441100f5fe778dd4d29f7667752a488",
+    "reason": "Remediates CAP-03.S06.T01-R01-F01 through F03 without expanding the approved T01 contract surface."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S06.T01.R01.json",
+    "artifacts/evidence/CAP-03.S06.T01.review-R01.json",
+    "docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md",
+    "docs/architecture/workflow-profile-contracts.md",
+    "packages/contracts/workflow-profile/README.md",
+    "packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json",
+    "packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json",
+    "packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json",
+    "packages/contracts/workflow-profile/generate.mjs",
+    "packages/contracts/workflow-profile/generated.ts",
+    "packages/contracts/workflow-profile/workflow-profile.schema.json",
+    "packages/contracts/workflow-profile/workflow-profile.template.py.txt",
+    "packages/contracts/workflow-profile/workflow-profile.template.ts.txt",
+    "packages/contracts/workflow-profile/workflow-profile.test.ts",
+    "planning/backlog.yaml",
+    "services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
+    "tests/contracts/test_workflow_profile_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_stage_state_represents_navigation_not_analytical_job_state tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_profile_migration_maps_every_prior_stage_without_rewriting_history; npm test --prefix packages/contracts -- --run workflow-profile/workflow-profile.test.ts",
+      "exitCode": 0,
+      "result": "All three focused Python boundary tests and all five TypeScript workflow-profile tests pass. They replay R01-F01 through F03 and add omitted-current-state, current-state hash/stage substitution, arbitrary support alias, cross-stage retain, valid cross-stage map, missing retain target, forbidden review target, unchanged Research Intent, substituted migration/profile/human, missing or non-human acceptance, and system-prepared-but-human-accepted cases."
+    },
+    {
+      "command": "node packages/contracts/workflow-profile/generate.mjs --check; .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "exitCode": 0,
+      "result": "Generation reproduces exactly. All 77 Python contract tests and all 90 TypeScript contract tests across 10 files pass, and the contracts package passes strict TypeScript compilation."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/contracts/test_workflow_profile_contracts.py",
+      "exitCode": 0,
+      "result": "The regenerated Python decoder and affected test pass Ruff lint and format plus mypy."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py --repo .",
+      "exitCode": 0,
+      "result": "All six packaging tests passed with one expected environment skip, including a real Windows x64 PyInstaller sidecar build that imports the remediated generated decoder. Packaging smoke passed against locked source inputs."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/adr_check.py --repo . --base 012693e22441100f5fe778dd4d29f7667752a488 --head 7d03065c43391f98e8648c076042e50d76e242da",
+      "exitCode": 0,
+      "result": "The exact unchanged Academic Minimal v1.5 package passes with 55 governed files, 33 product pages, and 14 profiles. Architecture passes for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; repository structure passes; and the 26-ADR registry accepts the exact 17-path R02 range."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 012693e22441100f5fe778dd4d29f7667752a488..7d03065c43391f98e8648c076042e50d76e242da",
+      "exitCode": 0,
+      "result": "The backlog validates with 20 capabilities, 117 slices, 364 tasks, and 12 release gates. The exact 17-path remediation range has no patch errors and preserves the immutable R01 submission and finding ledger."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile service --profile data --affected-base 012693e22441100f5fe778dd4d29f7667752a488 --affected-head 7d03065c43391f98e8648c076042e50d76e242da --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Affected selection passes and correctly chooses its safety-sensitive fallback because the immutable review and planning-control paths are part of the strict-descendant range. The focused finding replay, complete contract packages, static checks, real package boundary, reference/architecture, and exact-range checks above were selected; the complete profile union remains deferred to slice review and W1 exit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact 14-profile governed catalog, Academic Minimal v1.5 reference, and workflow/page catalog hashes remain unchanged; R02 changes only portable selection, return-context, and migration authority within the unapproved T01 contract.",
+        "Generation remains deterministic across TypeScript and Python and unknown fields or unreviewed catalog drift still fail closed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "CAP-03.S06.T01-R01-F01 is closed by requiring a supporting-state validator to receive the explicit current primary WorkflowStageState and by carrying that state's stable aggregate ID, revision ID, revision/content hash, project, selection, profile, stage/page, pass, and current status in SupportReturn.",
+        "The decoder verifies the supplied primary state independently, requires a byte-exact projected return reference, rejects omitted context and one-field substitutions, keeps supporting state identity distinct, and derives the supporting stage key from its registered page contract so an invented alias cannot pass.",
+        "Navigation state remains independent of analytical job/attempt state; the new context adds no executor fields or inferred completion authority."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S06.T01-R01-F02 is closed by one shared cross-runtime disposition rule: retain requires the identical governed stage key and page contract, map requires a different valid target, and mark-stale/requires-review/drop-with-rationale preserve the prior record with a null target. Both full migration and concrete impact preview enforce it.",
+        "CAP-03.S06.T01-R01-F03 is closed by requiring each profile change to bind an immediate new revision of the same Research Intent aggregate and an immutable migration reference containing exact migration ID/content hash, from/to profiles, prior/target intents, and exact accepted human decision identity/content hash.",
+        "Initial selections explicitly carry no migration. Changed selections reject unchanged or skipped intent lineage, missing/substituted migration authority, mismatched profiles/intents, and a decision maker different from the human selector. A migration may be prepared by a system but cannot be accepted without the exact human decision."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 found three high-severity semantic under-validation defects in the new portable contract. R02 therefore begins with exact cross-runtime adversarial replays for supporting-current-state binding, disposition meaning, immediate Research Intent lineage, and immutable human-accepted migration authority. Because the correction changes the public schema, generated TypeScript/Python decoders, fixtures, and Windows sidecar module, the selected union also includes both complete contract packages, strict TypeScript, targeted Python static checks, the real PyInstaller package boundary, package smoke, governed reference integrity, architecture/ADR rules, backlog validity, and exact-range hygiene. No persistence, route, renderer, authentication, external effect, or stored product data changes, so service/data integration beyond the contract boundary remains owned by T02-T05, slice review, and W1 exit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:adr",
+      "foundation:ui-reference",
+      "foundation:packaging-smoke",
+      "foundation:backlog",
+      "packaging:unit",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "CAP-03.S06 T02-T05 and slice review own persistence lookup of the bound migration hash, API/service authority, researcher-facing workflow experience, restart, and accumulated integration/adversarial coverage.",
+      "The complete service, data, foundation, security, packaging, recovery, performance, and Windows x64 qualification matrix remains mandatory once at W1 exit.",
+      "The previously disclosed unrelated repository-wide Python formatting/mypy baseline remains outside this 14-file finding remediation; all affected Python files pass their selected static checks."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [
+      "CAP-03.S06.T01-R01-F01",
+      "CAP-03.S06.T01-R01-F02",
+      "CAP-03.S06.T01-R01-F03"
+    ],
+    "rootCauseAnalysis": "R01 represented a supporting return only by a valid stage key/page pair, so it could not prove that the target was the actual current primary state and it left supporting aliases unconstrained. It also shared one target-existence rule across retain and map, allowing retain to relabel history. Finally, it treated a requiresHumanAcceptance boolean as sufficient authority and did not include prior intent in the predecessor or bind profile change to a new intent revision and exact accepted migration. R02 makes those identities and semantics first-class portable fields and validates them identically in both runtimes.",
+    "note": "Independently re-review exact strict-descendant candidate 7d03065c43391f98e8648c076042e50d76e242da against prior candidate 012693e22441100f5fe778dd4d29f7667752a488. Authenticate the exact 17-path range and replay CAP-03.S06.T01-R01-F01 through F03. Verify explicit current-primary input and full return identity/context, support alias denial, one-field substitution denial, semantic retain/map/null-target rules in migration and impact, immediate Research Intent lineage, immutable migration hash/from/to/intent binding, exact human acceptance and system-prepared distinction, generated cross-runtime parity, package inclusion, and bounded test selection. Do not expand into T02-T05 or the W1 exit matrix."
+  }
+}
