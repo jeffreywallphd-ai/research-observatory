@@ -35,24 +35,51 @@
     ]
   },
   "verification": {
-    "riskAnalysis": "This changes two evidence-authority scalars after their exact reference package was human-approved. Selected checks verify reference reproducibility, JSON and Git hygiene, the full focused UI-change gate regression suite, and byte-for-byte preservation of every non-reference activation and baseline field. Product, runtime, security, persistence, API, and packaging behavior are unchanged and remain covered by the later renderer implementation and slice review.",
+    "riskAnalysis": "The remediation changes evidence-authority validation, immutable baseline-history interpretation, and the two reference provenance scalars after the corrected exact package was human-approved. Selected checks cover both supported approval grammars, exact proposal-to-approval ancestry, fail-closed interleaving, rejected-candidate history, malformed-history retention, the full focused UI gate module, reference reproducibility, JSON/Git hygiene, and unchanged product behavior. Product runtime, persistence, API, security policy, and packaging behavior remain unchanged and are covered by the later renderer implementation and slice review.",
     "results": [
       {
         "check": "approved reference integrity",
         "result": "passed",
-        "detail": "The reference checker reports approved Academic Minimal 1.5, package SHA-256 68d71bd038158ce38b33d8474f53406ebe88550f84e776d69d32c3ce18c08f21, reproducible generation, and zero errors."
+        "detail": "The corrected human approval is commit 7ec1b27d72c189216d7a203586b7339202733531 and its reproducible Academic Minimal 1.5 package SHA-256 is 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae."
       },
       {
-        "check": "UI gate regression",
+        "check": "full focused UI gate regression",
         "result": "passed",
-        "detail": "All 34 focused UI-change gate tests pass, including independent pre-implementation maintenance ordering, substitution denial, and exact reference lineage cases."
+        "detail": "All 36 tests in tests.foundation.test_ui_change_gate pass in 70.661 seconds, including exact provenance handoff acceptance, unrelated-interleaving denial, adverse-review preservation, substitution denial, and existing activation paths."
+      },
+      {
+        "check": "approval authority regressions",
+        "result": "passed",
+        "detail": "Focused desktop-conformance tests accept the historical 1.4 amendment/ECR authority, authenticate the exact 1.5 Wave/slice proposal and approval, and reject an unresolvable Wave authority commit."
+      },
+      {
+        "check": "baseline history regressions",
+        "result": "passed",
+        "detail": "Five focused history tests pass in 2.859 seconds: only introduced baseline bytes trigger lineage work, an exact adopted adverse-review attestation is required to retain a rejected candidate, unattested suppression fails closed, same-ID rewrites remain denied, and malformed history remains visible."
       },
       {
         "check": "bounded activation delta",
         "result": "passed",
-        "detail": "Both JSON files parse, their reference identity and hash equal the approved manifest, and the candidate changes no field other than those two exact scalars."
+        "detail": "Both activation JSON files parse and bind the same corrected 1.5 package hash; the visual baseline additionally binds corrected approval commit 7ec1b27d72c189216d7a203586b7339202733531. No product or baseline measurement value changed."
+      },
+      {
+        "check": "adopted repository baseline history",
+        "result": "deferred",
+        "detail": "The authoritative repository-history check intentionally remains fail-closed while this remediation is only a changes-requested candidate; it must pass against the exact adopted R02 projection before product implementation is committed."
       }
     ]
+  },
+  "remediation": {
+    "priorReviewId": "GOV-MAINT-0010.R01",
+    "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0010.review-R01.json",
+    "priorReviewSha256": "3d6d13a68ddc026cc1605ef663380103fe4bffb6ab002c4199b5f4ecdd15f962",
+    "resolvedFindingIds": [
+      "GOV-MAINT-0010.R01-F01",
+      "GOV-MAINT-0010.R01-F02"
+    ],
+    "rootCause": "The initial candidate treated the new reference ID and package hash as sufficient provenance, retained the stale 1.4 approval commit, and relied on a conformance validator that supported only the older amendment/ECR authority grammar. The first 1.5 approval also contained a mistyped Wave packet SHA, so its immutable bytes could not be made truthful in place.",
+    "resolution": "A provenance-only proposal and explicit human approval corrected the Wave packet binding without changing the governed experience. The baseline now binds that exact approval commit and package. The conformance validator authenticates both exact legacy amendment/ECR and Wave/slice authority forms, verifies immutable proposal consumption and Wave/slice approval ancestry, and validates baseline lineage only where bytes are introduced. The UI gate permits the two intervening reference-governance commits only when they form that exact human-approved transition; the rejected initial candidate remains visible and non-authoritative until this remediation is independently adopted.",
+    "recurrenceControl": "Focused real-Git tests cover exact corrected authority, unresolvable authority denial, exact provenance-only interleaving, unrelated interleaving denial, adopted adverse-review attestation, unattested suppression denial, same-reference rewrite denial, and malformed historical snapshot retention. The complete focused UI gate module is replayed before R02, and authoritative repository baseline history is replayed after adoption."
   },
   "rollback": "If independent review finds a blocking defect, do not implement the 1.5 renderer. Return to predecessor 6ed8e76fb52349780cccac913b3652553a57afbd, which retains the approved 1.5 reference while desktop product verification remains bound to the previously active 1.4 package.",
   "reviewAttempts": [
