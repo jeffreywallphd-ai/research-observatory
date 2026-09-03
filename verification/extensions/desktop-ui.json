@@ -7,7 +7,7 @@
   "applicationRoot": "apps/desktop",
   "applicationManifestPath": "apps/desktop/dist/application-manifest.json",
   "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
-  "referencePackageSha256": "68d71bd038158ce38b33d8474f53406ebe88550f84e776d69d32c3ce18c08f21",
+  "referencePackageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
   "implementationRoots": [
     "apps/desktop/src",
     "modules/ui",

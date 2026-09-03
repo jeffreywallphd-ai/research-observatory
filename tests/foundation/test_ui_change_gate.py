@@ -20,6 +20,7 @@ from ui_change_gate import (  # noqa: E402
     additive_preimplementation_quality_scope_errors,
     automatic_base,
     independent_review_hardening_errors,
+    provenance_reference_handoff_errors,
     reviewed_historical_hardening_errors,
     validate,
 )
@@ -563,6 +564,88 @@ class UiChangeGateTests(unittest.TestCase):
         record.update(status="adopted", reviewAttempts=[first_attempt, second_attempt], review=second_attempt)
         self.write_json(root / record_path, record)
         self.commit(root, "adopt remediated maintenance")
+
+    def install_provenance_reference_handoff(self, root: Path) -> tuple[str, str]:
+        marker = root / "planning" / "review-marker.txt"
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text("adverse review\n", encoding="utf-8", newline="\n")
+        prior_review = self.commit(root, "record adverse review marker")
+
+        approval_path = root / "design" / "ui-reference" / "APPROVAL.yaml"
+        manifest_path = root / "design" / "ui-reference" / "REFERENCE_MANIFEST.yaml"
+        approval = yaml.safe_load(approval_path.read_text(encoding="utf-8"))
+        proposal_authority = {
+            "wave_id": "W1",
+            "slice_id": "CAP-03.S05",
+            "approved_wave_commit": "1" * 40,
+            "slice_plan": "planning/slice-plans/CAP-03/CAP-03.S05-fixture.md",
+        }
+        approval.update(
+            {
+                "status": "proposed",
+                "approval_kind": "pending-human",
+                "approved_by": None,
+                "approved_at": None,
+                "authority": proposal_authority,
+            }
+        )
+        self.write_yaml(approval_path, approval)
+        manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+        manifest["status"] = "proposed"
+        self.write_yaml(manifest_path, manifest)
+        self.reference_package(root)
+        proposal = self.commit(root, "propose corrected reference provenance")
+
+        approval.update(
+            {
+                "status": "approved",
+                "approval_kind": "human",
+                "approved_by": "human:repository-owner",
+                "approved_at": "2026-09-03T12:00:00+00:00",
+                "authority": {**proposal_authority, "proposal_commit": proposal},
+            }
+        )
+        self.write_yaml(approval_path, approval)
+        manifest["status"] = "approved"
+        self.write_yaml(manifest_path, manifest)
+        self.reference_package(root)
+        self.commit(root, "approve corrected reference provenance")
+
+        schema_path = root / "design" / "ui-change.schema.json"
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        schema["$comment"] = "remediated after corrected reference provenance"
+        self.write_json(schema_path, schema)
+        remediation = self.commit(root, "remediate reviewed control")
+        return prior_review, remediation
+
+    def test_provenance_reference_handoff_accepts_exact_human_approval_between_review_rounds(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, _, _ = self.prepare(temporary)
+            prior_review, remediation = self.install_provenance_reference_handoff(root)
+
+            errors = provenance_reference_handoff_errors(root, prior_review, remediation)
+
+        self.assertEqual([], errors)
+
+    def test_provenance_reference_handoff_rejects_non_governance_intervening_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, _, _ = self.prepare(temporary)
+            marker = root / "planning" / "review-marker.txt"
+            marker.parent.mkdir(parents=True, exist_ok=True)
+            marker.write_text("adverse review\n", encoding="utf-8", newline="\n")
+            prior_review = self.commit(root, "record adverse review marker")
+            token = root / "design" / "ui-reference" / "assets" / "tokens.css"
+            token.write_text(":root { --surface: red; }\n", encoding="utf-8", newline="\n")
+            self.commit(root, "mutate governed product reference")
+            schema_path = root / "design" / "ui-change.schema.json"
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+            schema["$comment"] = "attempt remediation after unrelated mutation"
+            self.write_json(schema_path, schema)
+            remediation = self.commit(root, "attempt reviewed control remediation")
+
+            errors = provenance_reference_handoff_errors(root, prior_review, remediation)
+
+        self.assertTrue(any("unauthorized intervening commit" in error for error in errors), errors)
 
     def test_approved_reference_implementation_and_defect_restoration_pass(self) -> None:
         for kind in ("approved-reference-implementation", "defect-restoration"):

@@ -98,6 +98,12 @@ MAINTENANCE_CONTROL_PATHS = GATE_CONTROL_PATHS | frozenset(
     }
 )
 MAINTENANCE_CONTROL_ENVELOPE_CUTOVER = "07cecd999e84e1e6096df5fbbefe044c4789893f"
+PROVENANCE_REFERENCE_HANDOFF_PATHS = frozenset(
+    {
+        "design/ui-reference/APPROVAL.yaml",
+        "design/ui-reference/REFERENCE_MANIFEST.yaml",
+    }
+)
 APPLICATION_ACTIVATION_PATHS = frozenset(
     {
         "quality-scope.json",
@@ -367,6 +373,92 @@ def reviewed_historical_hardening_errors(
     return []
 
 
+def provenance_reference_handoff_errors(
+    repo: Path,
+    prior_review_commit: str,
+    remediation_commit: str,
+) -> list[str]:
+    sequence = (
+        git(
+            repo,
+            "rev-list",
+            "--reverse",
+            "--ancestry-path",
+            f"{prior_review_commit}..{remediation_commit}",
+        )
+        .decode("ascii")
+        .splitlines()
+    )
+    if len(sequence) != 3 or sequence[-1] != remediation_commit:
+        return ["pre-UI gate maintenance remediation has an unauthorized intervening commit"]
+    proposal_commit, approval_commit, _ = sequence
+    if (
+        resolve_commit(repo, f"{proposal_commit}^") != prior_review_commit
+        or resolve_commit(repo, f"{approval_commit}^") != proposal_commit
+        or resolve_commit(repo, f"{remediation_commit}^") != approval_commit
+        or commit_paths(repo, proposal_commit) != PROVENANCE_REFERENCE_HANDOFF_PATHS
+        or commit_paths(repo, approval_commit) != PROVENANCE_REFERENCE_HANDOFF_PATHS
+    ):
+        return ["pre-UI gate maintenance remediation has an invalid provenance-only reference handoff"]
+    approval_path = "design/ui-reference/APPROVAL.yaml"
+    manifest_path = "design/ui-reference/REFERENCE_MANIFEST.yaml"
+    try:
+        proposal = yaml_object(blob(repo, proposal_commit, approval_path), approval_path)
+        proposal_manifest = yaml_object(blob(repo, proposal_commit, manifest_path), manifest_path)
+        policy = json_object(blob(repo, approval_commit, "ui-change-policy.json"), "ui-change-policy.json")
+        require_canonical_policy(policy)
+        approved_state, state_errors = reference_state(repo, approval_commit, policy)
+    except (KeyError, UnicodeDecodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        return [f"pre-UI gate maintenance reference handoff is unreadable: {exc}"]
+    if state_errors:
+        return [f"pre-UI gate maintenance reference handoff is invalid: {state_errors[0]}"]
+    approved = approved_state.get("approval")
+    approved_manifest = approved_state.get("manifest")
+    if not isinstance(approved, dict) or not isinstance(approved_manifest, dict):
+        return ["pre-UI gate maintenance reference handoff lacks exact approved governance records"]
+    authority = approved.get("authority")
+    proposal_authority = proposal.get("authority")
+    stable_approval_fields = {
+        "reference_id",
+        "version",
+        "supersedes",
+        "scope",
+        "implementation_rule",
+        "deferred_surfaces",
+    }
+    stable_manifest = {key: value for key, value in approved_manifest.items() if key not in {"status", "file_hashes"}}
+    proposal_stable_manifest = {
+        key: value for key, value in proposal_manifest.items() if key not in {"status", "file_hashes"}
+    }
+    approved_hashes = approved_manifest.get("file_hashes")
+    proposal_hashes = proposal_manifest.get("file_hashes")
+    if (
+        proposal.get("status") != "proposed"
+        or proposal.get("approval_kind") != "pending-human"
+        or proposal.get("approved_by") is not None
+        or proposal.get("approved_at") is not None
+        or proposal_manifest.get("status") != "proposed"
+        or approved.get("status") != "approved"
+        or approved.get("approval_kind") != "human"
+        or not isinstance(approved.get("approved_by"), str)
+        or HUMAN_ID.fullmatch(str(approved["approved_by"])) is None
+        or not isinstance(authority, dict)
+        or authority.get("proposal_commit") != proposal_commit
+        or not isinstance(proposal_authority, dict)
+        or proposal_authority != {key: value for key, value in authority.items() if key != "proposal_commit"}
+        or any(proposal.get(field) != approved.get(field) for field in stable_approval_fields)
+        or stable_manifest != proposal_stable_manifest
+        or not isinstance(approved_hashes, dict)
+        or not isinstance(proposal_hashes, dict)
+        or {key: value for key, value in approved_hashes.items() if key != "APPROVAL.yaml"}
+        != {key: value for key, value in proposal_hashes.items() if key != "APPROVAL.yaml"}
+        or proposal_hashes.get("APPROVAL.yaml")
+        != hashlib.sha256(canonical_payload("APPROVAL.yaml", blob(repo, proposal_commit, approval_path))).hexdigest()
+    ):
+        return ["pre-UI gate maintenance reference handoff is not an exact human-approved provenance-only transition"]
+    return []
+
+
 def reviewed_preimplementation_maintenance_errors(
     repo: Path,
     commit: str,
@@ -451,6 +543,7 @@ def reviewed_preimplementation_maintenance_errors(
         prior_review_commit: str | None = None
         final_review_introduction: str | None = None
         open_findings: set[str] = set()
+        authorized_intermediate_paths: set[str] = set()
         for index, attempt in enumerate(attempts, start=1):
             if not isinstance(attempt, dict):
                 errors.append("pre-UI gate maintenance review attempt is not an object")
@@ -482,7 +575,10 @@ def reviewed_preimplementation_maintenance_errors(
                 errors.append("pre-UI gate maintenance review sequence is not canonical and independent")
                 continue
             if prior_review_commit is not None and resolve_commit(repo, f"{reviewed_commit}^") != prior_review_commit:
-                errors.append("pre-UI gate maintenance remediation is not the direct child of its adverse review")
+                handoff_errors = provenance_reference_handoff_errors(repo, prior_review_commit, reviewed_commit)
+                errors.extend(handoff_errors)
+                if not handoff_errors:
+                    authorized_intermediate_paths.update(PROVENANCE_REFERENCE_HANDOFF_PATHS)
             review_payload = blob(repo, head, review_path)
             if hashlib.sha256(review_payload).hexdigest() != attempt["sha256"]:
                 errors.append("pre-UI gate maintenance review hash differs from its adopted record")
@@ -572,6 +668,7 @@ def reviewed_preimplementation_maintenance_errors(
             path
             for path in changed_paths(repo, predecessor, final_candidate)
             if path not in maintenance_control_paths
+            and path not in authorized_intermediate_paths
             and maintenance_path_semantics_changed(repo, predecessor, final_candidate, path)
         )
         if net_non_control_paths:

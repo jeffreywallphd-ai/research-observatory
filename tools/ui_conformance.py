@@ -1074,6 +1074,15 @@ APPROVAL_AUTHORITY_KEYS = frozenset(
         "approval_record_introduction_commit",
     }
 )
+WAVE_SLICE_APPROVAL_AUTHORITY_KEYS = frozenset(
+    {
+        "wave_id",
+        "slice_id",
+        "approved_wave_commit",
+        "proposal_commit",
+        "slice_plan",
+    }
+)
 REFERENCE_MANIFEST_KEYS = frozenset(
     {
         "reference_id",
@@ -1145,16 +1154,31 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
             r"human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?", str(value["approved_by"])
         ):
             errors.append(f"{label}: authority-bound approval must identify an explicit human approver")
-        if not isinstance(authority, dict) or set(authority) != APPROVAL_AUTHORITY_KEYS:
-            errors.append(f"{label}: authority must contain the exact amendment approval fields")
-        elif (
-            not re.fullmatch(r"W[0-9]+\.A[0-9]{2}", str(authority["amendment_id"]))
-            or not re.fullmatch(r"ECR-[0-9]{4}", str(authority["change_request_id"]))
-            or authority["approval_record"] != f"planning/wave-amendment-approvals/{authority['amendment_id']}.json"
-            or not re.fullmatch(r"[0-9a-f]{64}", str(authority["approval_record_sha256"]))
-            or not re.fullmatch(r"[0-9a-f]{40}", str(authority["approval_record_introduction_commit"]))
-        ):
-            errors.append(f"{label}: authority-bound approval fields are malformed or inconsistent")
+        if not isinstance(authority, dict):
+            errors.append(f"{label}: authority must be an object")
+        elif set(authority) == APPROVAL_AUTHORITY_KEYS:
+            if (
+                not re.fullmatch(r"W[0-9]+\.A[0-9]{2}", str(authority["amendment_id"]))
+                or not re.fullmatch(r"ECR-[0-9]{4}", str(authority["change_request_id"]))
+                or authority["approval_record"] != f"planning/wave-amendment-approvals/{authority['amendment_id']}.json"
+                or not re.fullmatch(r"[0-9a-f]{64}", str(authority["approval_record_sha256"]))
+                or not re.fullmatch(r"[0-9a-f]{40}", str(authority["approval_record_introduction_commit"]))
+            ):
+                errors.append(f"{label}: authority-bound approval fields are malformed or inconsistent")
+        elif set(authority) == WAVE_SLICE_APPROVAL_AUTHORITY_KEYS:
+            slice_id = str(authority["slice_id"])
+            capability_id = slice_id.split(".", 1)[0]
+            if (
+                not re.fullmatch(r"W[0-9]+", str(authority["wave_id"]))
+                or not re.fullmatch(r"CAP-[0-9]+\.S[0-9]+", slice_id)
+                or not re.fullmatch(r"[0-9a-f]{40}", str(authority["approved_wave_commit"]))
+                or not re.fullmatch(r"[0-9a-f]{40}", str(authority["proposal_commit"]))
+                or not str(authority["slice_plan"]).startswith(f"planning/slice-plans/{capability_id}/{slice_id}-")
+                or not str(authority["slice_plan"]).endswith(".md")
+            ):
+                errors.append(f"{label}: wave/slice authority fields are malformed or inconsistent")
+        else:
+            errors.append(f"{label}: authority must contain one exact supported authority field set")
     return errors
 
 
@@ -1171,7 +1195,7 @@ def commit_is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
     return completed.returncode == 0
 
 
-def authority_bound_approval_errors(
+def amendment_authority_bound_approval_errors(
     repo: Path,
     approval: dict[str, Any],
     approval_commit: str,
@@ -1308,6 +1332,184 @@ def authority_bound_approval_errors(
             errors.append(f"{label}: authority was already consumed by a prior reference approval")
             break
     return errors
+
+
+def wave_slice_authority_bound_approval_errors(
+    repo: Path,
+    approval: dict[str, Any],
+    approval_commit: str,
+    approval_path: str,
+) -> list[str]:
+    authority = approval.get("authority")
+    if not isinstance(authority, dict) or set(authority) != WAVE_SLICE_APPROVAL_AUTHORITY_KEYS:
+        return []
+    label = f"{approval_commit}:{approval_path}"
+    errors: list[str] = []
+    wave_id = str(authority["wave_id"])
+    slice_id = str(authority["slice_id"])
+    approved_wave_commit = str(authority["approved_wave_commit"])
+    proposal_commit = str(authority["proposal_commit"])
+    slice_plan = str(authority["slice_plan"])
+
+    resolved: dict[str, str] = {}
+    for field, commit in (("approved Wave", approved_wave_commit), ("proposal", proposal_commit)):
+        try:
+            resolved[field] = git(repo, "rev-parse", "--verify", f"{commit}^{{commit}}")
+        except ValueError:
+            errors.append(f"{label}: {field} authority commit cannot be resolved")
+    if errors:
+        return errors
+    if resolved["approved Wave"] != approved_wave_commit or resolved["proposal"] != proposal_commit:
+        return [f"{label}: wave/slice authority must use exact full commit SHAs"]
+    if not commit_is_ancestor(repo, approved_wave_commit, proposal_commit):
+        errors.append(f"{label}: approved Wave packet must precede the reference proposal")
+    approval_parents = git(repo, "rev-list", "--parents", "-n", "1", approval_commit).split()[1:]
+    if approval_parents != [proposal_commit]:
+        errors.append(f"{label}: reference approval must be the direct child of its exact proposal")
+
+    proposal_changed = set(
+        git(
+            repo,
+            "diff-tree",
+            "--root",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            proposal_commit,
+        ).splitlines()
+    )
+    approval_changed = set(
+        git(
+            repo,
+            "diff-tree",
+            "--root",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            approval_commit,
+        ).splitlines()
+    )
+    manifest_path = "design/ui-reference/REFERENCE_MANIFEST.yaml"
+    expected_handoff_paths = {approval_path, manifest_path}
+    if approval_path not in proposal_changed:
+        errors.append(f"{label}: exact proposal commit did not change the approval record")
+    if approval_changed != expected_handoff_paths:
+        errors.append(f"{label}: approval materialization must change only approval and manifest governance files")
+
+    proposal_payload, proposal_error = git_blob_at(repo, proposal_commit, approval_path)
+    proposal_manifest_payload, proposal_manifest_error = git_blob_at(repo, proposal_commit, manifest_path)
+    if proposal_error or proposal_payload is None or proposal_manifest_error or proposal_manifest_payload is None:
+        return [*errors, f"{label}: exact proposal governance package is unavailable"]
+    try:
+        proposal = yaml.safe_load(proposal_payload.decode("utf-8"))
+        proposal_manifest = yaml.safe_load(proposal_manifest_payload.decode("utf-8"))
+    except UnicodeDecodeError, yaml.YAMLError:
+        return [*errors, f"{label}: exact proposal governance package is unreadable"]
+    proposal_authority = proposal.get("authority") if isinstance(proposal, dict) else None
+    expected_proposal_authority = {key: value for key, value in authority.items() if key != "proposal_commit"}
+    stable_fields = {
+        "reference_id",
+        "version",
+        "supersedes",
+        "scope",
+        "implementation_rule",
+        "deferred_surfaces",
+    }
+    if (
+        not isinstance(proposal, dict)
+        or set(proposal) != AUTHORITY_APPROVAL_KEYS
+        or proposal.get("status") != "proposed"
+        or proposal.get("approval_kind") != "pending-human"
+        or proposal.get("approved_by") is not None
+        or proposal.get("approved_at") is not None
+        or not isinstance(proposal.get("approval_basis"), str)
+        or not proposal["approval_basis"].strip()
+        or proposal_authority != expected_proposal_authority
+        or any(proposal.get(field) != approval.get(field) for field in stable_fields)
+    ):
+        errors.append(f"{label}: approved reference does not exactly materialize its cited proposal")
+    if (
+        not isinstance(proposal_manifest, dict)
+        or proposal_manifest.get("reference_id") != approval.get("reference_id")
+        or proposal_manifest.get("version") != approval.get("version")
+        or proposal_manifest.get("status") != "proposed"
+        or (proposal_manifest.get("file_hashes") or {}).get("APPROVAL.yaml")
+        != hashlib.sha256(canonical_payload("APPROVAL.yaml", proposal_payload)).hexdigest()
+    ):
+        errors.append(f"{label}: proposal manifest does not bind the exact proposed approval bytes")
+
+    backlog_payload, backlog_error = git_blob_at(repo, proposal_commit, "planning/backlog.yaml")
+    slice_payload, slice_error = git_blob_at(repo, proposal_commit, slice_plan)
+    if backlog_error or backlog_payload is None or slice_error or slice_payload is None:
+        return [*errors, f"{label}: Wave or slice authority source is unavailable at the proposal"]
+    try:
+        backlog = yaml.safe_load(backlog_payload.decode("utf-8"))
+        slice_text = slice_payload.decode("utf-8")
+        slice_parts = slice_text.split("---", 2)
+        slice_meta = yaml.safe_load(slice_parts[1]) if len(slice_parts) == 3 else None
+    except UnicodeDecodeError, yaml.YAMLError:
+        return [*errors, f"{label}: Wave or slice authority source is unreadable"]
+    waves = backlog.get("waves") if isinstance(backlog, dict) else None
+    wave = next(
+        (item for item in waves or [] if isinstance(item, dict) and item.get("id") == wave_id),
+        None,
+    )
+    wave_approval = wave.get("approval") if isinstance(wave, dict) else None
+    slice_approval = slice_meta.get("approval") if isinstance(slice_meta, dict) else None
+    if (
+        not isinstance(wave_approval, dict)
+        or wave_approval.get("status") != "APPROVED"
+        or wave_approval.get("approved_commit") != approved_wave_commit
+        or slice_id not in (wave_approval.get("slice_ids") or [])
+        or not isinstance(slice_meta, dict)
+        or slice_meta.get("slice_id") != slice_id
+        or slice_meta.get("capability_id") != slice_id.split(".", 1)[0]
+        or slice_meta.get("wave") != wave_id
+        or slice_meta.get("status") != "approved"
+        or not isinstance(slice_approval, dict)
+        or slice_approval.get("status") != "approved"
+        or slice_approval.get("approved_commit") != approved_wave_commit
+    ):
+        errors.append(f"{label}: Wave packet and slice-plan approval authority do not match")
+
+    prior_approval_commits = git(
+        repo,
+        "log",
+        "--full-history",
+        "--format=%H",
+        f"{approval_commit}^",
+        "--",
+        approval_path,
+    ).splitlines()
+    for prior_commit in prior_approval_commits:
+        prior_payload, prior_error = git_blob_at(repo, prior_commit, approval_path)
+        if prior_error or prior_payload is None:
+            continue
+        try:
+            prior_approval = yaml.safe_load(prior_payload.decode("utf-8"))
+        except UnicodeDecodeError, yaml.YAMLError:
+            continue
+        prior_authority = prior_approval.get("authority") if isinstance(prior_approval, dict) else None
+        if isinstance(prior_authority, dict) and prior_authority.get("proposal_commit") == proposal_commit:
+            errors.append(f"{label}: proposal authority was already consumed by a prior reference approval")
+            break
+    return errors
+
+
+def authority_bound_approval_errors(
+    repo: Path,
+    approval: dict[str, Any],
+    approval_commit: str,
+    approval_path: str,
+) -> list[str]:
+    authority = approval.get("authority")
+    if not isinstance(authority, dict):
+        return []
+    if set(authority) == APPROVAL_AUTHORITY_KEYS:
+        return amendment_authority_bound_approval_errors(repo, approval, approval_commit, approval_path)
+    if set(authority) == WAVE_SLICE_APPROVAL_AUTHORITY_KEYS:
+        return wave_slice_authority_bound_approval_errors(repo, approval, approval_commit, approval_path)
+    return []
 
 
 def reference_package_at(
@@ -1613,6 +1815,50 @@ def baseline_contract_key(value: dict[str, Any]) -> tuple[str, str, str]:
     )
 
 
+def independently_rejected_maintenance_baseline_snapshot(
+    repo: Path,
+    commit: str,
+    head: str,
+    relative: str,
+) -> bool:
+    """Recognize a rejected control candidate without erasing its adverse history."""
+    try:
+        from ui_change_gate import commit_paths, reviewed_preimplementation_maintenance_errors
+
+        paths = commit_paths(repo, commit)
+        if relative not in paths or reviewed_preimplementation_maintenance_errors(repo, commit, head, paths, []):
+            return False
+        inventory = git(
+            repo,
+            "ls-tree",
+            "-r",
+            "--name-only",
+            head,
+            "--",
+            "planning/governance-migrations",
+        ).splitlines()
+        matches = []
+        for record_path in inventory:
+            if not re.fullmatch(r"planning/governance-migrations/GOV-MAINT-[0-9]{4}\.json", record_path):
+                continue
+            record, _, read_error = git_json_at(repo, head, record_path)
+            if read_error or not isinstance(record, dict):
+                continue
+            attempts = record.get("reviewAttempts")
+            if not isinstance(attempts, list):
+                continue
+            matches.extend(
+                attempt
+                for attempt in attempts
+                if isinstance(attempt, dict)
+                and attempt.get("reviewedCommit") == commit
+                and attempt.get("disposition") == "CHANGES_REQUESTED"
+            )
+        return len(matches) == 1
+    except OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError:
+        return False
+
+
 def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     relative = str(context.config["visual"]["baselinePath"])
@@ -1718,18 +1964,26 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
             )
             errors.extend(document_errors)
             valid_snapshots[commit] = not document_errors
-            if not document_errors and commit not in ratification_handoff_commits:
-                errors.extend(
-                    approval_lineage_errors(
-                        context.repo,
-                        current,
-                        commit,
-                        package_cache,
-                        verify_package_at_original_approval=(
-                            baseline_contract_key(current) not in ratified_legacy_contracts
-                        ),
-                    )
+            lineage_introduction = not parents or not any(snapshot(parent)[1] == current_payload for parent in parents)
+            if not document_errors and lineage_introduction and commit not in ratification_handoff_commits:
+                rejected_maintenance_snapshot = independently_rejected_maintenance_baseline_snapshot(
+                    context.repo,
+                    commit,
+                    head,
+                    relative,
                 )
+                if not rejected_maintenance_snapshot:
+                    errors.extend(
+                        approval_lineage_errors(
+                            context.repo,
+                            current,
+                            commit,
+                            package_cache,
+                            verify_package_at_original_approval=(
+                                baseline_contract_key(current) not in ratified_legacy_contracts
+                            ),
+                        )
+                    )
             identity = (str(current.get("referenceId", "")), str(current.get("referenceApprovalCommit", "")))
             if current_payload is not None:
                 blob = hashlib.sha256(current_payload).hexdigest()

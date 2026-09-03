@@ -34,11 +34,13 @@ from ui_conformance import (  # noqa: E402
     file_inventory,
     font_face_available,
     implementation_files,
+    independently_rejected_maintenance_baseline_snapshot,
     load_context,
     new_page,
     open_browser,
     provenance_only_reference_ratification,
     set_page,
+    wave_slice_authority_bound_approval_errors,
 )
 
 
@@ -400,7 +402,13 @@ class UiConformanceTests(unittest.TestCase):
         self.assertTrue(any("approval fields must be exact" in error for error in approval_errors))
 
     def test_actual_authority_bound_v14_approval_shape_is_exact(self) -> None:
-        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+        approval = yaml.safe_load(
+            self.git(
+                REPO,
+                "show",
+                "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b:design/ui-reference/APPROVAL.yaml",
+            )
+        )
 
         errors = approval_record_errors(approval, "v1.4-approval", "RO-UI-ACADEMIC-MINIMAL-1.4")
 
@@ -413,6 +421,48 @@ class UiConformanceTests(unittest.TestCase):
             "RO-UI-ACADEMIC-MINIMAL-1.4",
         )
         self.assertTrue(any("approval fields must be exact" in error for error in malformed_errors), malformed_errors)
+
+    def test_actual_wave_slice_bound_v15_approval_shape_is_exact(self) -> None:
+        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+
+        errors = approval_record_errors(approval, "v1.5-approval", "RO-UI-ACADEMIC-MINIMAL-1.5")
+
+        self.assertEqual([], errors)
+        self.assertEqual(
+            {
+                "wave_id",
+                "slice_id",
+                "approved_wave_commit",
+                "proposal_commit",
+                "slice_plan",
+            },
+            set(approval["authority"]),
+        )
+
+    def test_actual_wave_slice_bound_v15_approval_resolves_exact_authority(self) -> None:
+        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+
+        errors = wave_slice_authority_bound_approval_errors(
+            REPO,
+            approval,
+            "7ec1b27d72c189216d7a203586b7339202733531",
+            "design/ui-reference/APPROVAL.yaml",
+        )
+
+        self.assertEqual([], errors)
+
+    def test_wave_slice_bound_approval_rejects_unresolvable_wave_authority(self) -> None:
+        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+        approval["authority"]["approved_wave_commit"] = "0" * 40
+
+        errors = wave_slice_authority_bound_approval_errors(
+            REPO,
+            approval,
+            "7ec1b27d72c189216d7a203586b7339202733531",
+            "design/ui-reference/APPROVAL.yaml",
+        )
+
+        self.assertTrue(any("approved Wave authority commit cannot be resolved" in error for error in errors), errors)
 
     def test_actual_authority_bound_v14_approval_resolves_to_immutable_approved_record(self) -> None:
         baseline = {
@@ -439,6 +489,52 @@ class UiConformanceTests(unittest.TestCase):
         errors = baseline_history_errors(context, baseline)
 
         self.assertEqual([], errors)
+
+    def test_rejected_maintenance_snapshot_requires_exact_adopted_attestation(self) -> None:
+        relative = "verification/baselines/desktop-ui.json"
+        record = {
+            "reviewAttempts": [
+                {
+                    "reviewedCommit": "1" * 40,
+                    "disposition": "CHANGES_REQUESTED",
+                }
+            ]
+        }
+        with (
+            mock.patch("ui_change_gate.commit_paths", return_value={relative}),
+            mock.patch("ui_change_gate.reviewed_preimplementation_maintenance_errors", return_value=[]),
+            mock.patch(
+                "ui_conformance.git",
+                return_value="planning/governance-migrations/GOV-MAINT-0001.json",
+            ),
+            mock.patch("ui_conformance.git_json_at", return_value=(record, b"{}", None)),
+        ):
+            accepted = independently_rejected_maintenance_baseline_snapshot(
+                REPO,
+                "1" * 40,
+                "2" * 40,
+                relative,
+            )
+
+        self.assertTrue(accepted)
+
+    def test_unattested_maintenance_snapshot_cannot_suppress_lineage_failure(self) -> None:
+        relative = "verification/baselines/desktop-ui.json"
+        with (
+            mock.patch("ui_change_gate.commit_paths", return_value={relative}),
+            mock.patch(
+                "ui_change_gate.reviewed_preimplementation_maintenance_errors",
+                return_value=["missing adopted independent review"],
+            ),
+        ):
+            accepted = independently_rejected_maintenance_baseline_snapshot(
+                REPO,
+                "1" * 40,
+                "2" * 40,
+                relative,
+            )
+
+        self.assertFalse(accepted)
 
     def test_authority_bound_reference_cannot_reuse_a_prior_approval(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
