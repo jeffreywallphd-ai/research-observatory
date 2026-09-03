@@ -23818,6 +23818,20 @@
             "planning/status-summary.md",
             "tests/foundation/test_taskctl_workflow.py"
           ]
+        },
+        {
+          "path": "planning/wave-amendment-approvals/W1.A06.B00.addendum-02.json",
+          "sha256": "d6deed7d9db5371bc49b8831f2763ec645ca26abd4e9bf4ae8dac788eec06046",
+          "approved_by": "authority-chain:W1.A06+GOV-MIG-0001+GOV-MAINT-0015",
+          "approved_at": "2026-09-03T13:46:45.1386633-04:00",
+          "authorized_additional_paths": [
+            "planning/governance-migrations/GOV-MAINT-0015.json",
+            "planning/governance-migrations/GOV-MAINT-0015.review-R01.json",
+            "planning/governance-migrations/GOV-MAINT-0015.review-R02.json",
+            "tests/foundation/test_taskctl_schema.py",
+            "tests/foundation/test_taskctl_workflow.py",
+            "tools/taskctl.py"
+          ]
         }
       ],
       "task_reviews": [],
