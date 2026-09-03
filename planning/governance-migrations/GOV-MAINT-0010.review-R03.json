@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0010",
+  "reviewId": "GOV-MAINT-0010.R03",
+  "reviewedCommit": "ee1c15e4c09f08d4c5dbebae7fea1d87d796f5e7",
+  "reviewer": "agent:gov-maint-0010-reviewer",
+  "reviewedAt": "2026-09-03T12:29:21.9658777Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0010.json",
+    "tests/desktop/test_ui_conformance.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0010.R03-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Immutable direct Wave approval projection",
+      "evidence": "The candidate selects the first ancestry-path commit as the Wave projection, then checks git rev-parse <projection>^ against the approved Wave commit. For a merge, ^ resolves only the first parent. Reachable merge c9260e1e981fea84a651dd59104aad12e1fb8d8e has parents 8a4d8be and 25f4fe4 while <merge>^ returns only 8a4d8be, proving a second parent can inject approval or slice-projection state while the purported direct-child check passes. This leaves GOV-MAINT-0010.R02-F03 only partially closed.",
+      "remediation": "Select the projection on the proposal's first-parent authority chain, obtain its complete parent list with git rev-list --parents -n 1, require that list to equal exactly [approved_wave_commit], and add a real-Git multi-parent projection-injection rejection fixture."
+    }
+  ]
+}
