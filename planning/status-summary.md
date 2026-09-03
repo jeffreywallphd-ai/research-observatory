@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 406d61ff978f15c59e791b99f5bffa149136a38d5337537590b9e1832623f107
+source_sha256: 8143dea7bb1a5abd89b436d29126fea02607a149514f726672a3f472e220c954
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,8 +52,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 257 |
-| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 61 |
 | `DEFERRED` | 36 |
 
@@ -477,7 +477,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S05.T02` | `append-only v1` | 3 | `-` | approved / agent:t02-adversarial-preflight | - |
 | `CAP-03.S05.T03` | `append-only v1` | 4 | `-` | approved / agent:cap03-s05-t03-r04-reviewer | - |
 | `CAP-03.S06.T01` | `append-only v1` | 2 | `-` | approved / agent:workflow-profile-contract-reviewer | - |
-| `CAP-03.S06.T02` | `append-only v1` | 3 | `-` | changes-requested / agent:t02-independent-reviewer | `CAP-03.S06.T02-R01-F03` |
+| `CAP-03.S06.T02` | `append-only v1` | 3 | `R04` | changes-requested / agent:t02-independent-reviewer | `CAP-03.S06.T02-R01-F03` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -550,5 +550,5 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S06.T02` Implement primary-use-case selection at project creation and intent revision | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S06.T02` Implement primary-use-case selection at project creation and intent revision | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |

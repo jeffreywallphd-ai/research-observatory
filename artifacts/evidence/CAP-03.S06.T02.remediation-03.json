@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T02",
+  "commit": "e38117d044b22138ee79a5d9d836ce963d5adce7",
+  "baseCommit": "eb7ee5746cfeb3b656c13e1bdd30c66866b91538",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S06.T02.remediation-02.json",
+    "sha256": "ab339cf29598148629da3591273cecb583b66c5a5c50cc9922d250c2f7abef65",
+    "commit": "eb7ee5746cfeb3b656c13e1bdd30c66866b91538",
+    "reason": "Mandatory R04 remediation for the sole open CAP-03.S06.T02-R01-F03 value-to-guidance-identity finding."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S06.T02.remediation-02.json",
+    "artifacts/evidence/CAP-03.S06.T02.review-R03.json",
+    "artifacts/evidence/CAP-03.S06.T02.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T02.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tools/core_api_contract.py"
+  ],
+  "checks": [
+    {
+      "command": "npm test --prefix packages/contracts -- --run core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "exitCode": 0,
+      "result": "The focused generated-client suite first reproduced the independent R03 finding, then all 13 focused tests passed after generation. The positive fixture carries the exact fourteen-profile guidance values; substituting systematic-review.defaultStoppingConditions while retaining the approved guidance version and hash now returns null. Generated output reproduces exactly and strict TypeScript compilation passes."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts -- --run",
+      "exitCode": 0,
+      "result": "All 73 service tests, 77 Python contract tests, and 91 TypeScript contract tests passed. Existing activation witness, exact predecessor, atomic persistence, policy, and generated-client boundaries remain green while the full TypeScript contract package exercises the new synchronous canonical hashing implementation."
+    },
+    {
+      "command": "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 99 active desktop tests passed with three platform-bound skips; strict TypeScript and lint passed; production and reference bundles built. The browser-targeted bundle accepts the authentic Core guidance projection with the synchronous value-to-hash verification enabled."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-R04-desktop.json",
+      "exitCode": 0,
+      "result": "All 20 desktop-product and sidecar tests passed. The assembled functional frame reported zero errors, retained the full projects workflow, and kept intentStoppingEffects true while consuming the authenticated catalog projection."
+    },
+    {
+      "command": "configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-R04-native.json",
+      "exitCode": 0,
+      "result": "The configured Node 24 Windows-native supervisor/Core/protected-SQLite vertical passed project creation, profile selection, impact acknowledgement, restart, policy denial, response-loss reconciliation, and exact actor-bound provenance counts. The host's unrelated Node 20 runtime cannot import TypeScript directly and was not used as qualification evidence."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check tools/core_api_contract.py; .venv/Scripts/python.exe -m ruff format --check tools/core_api_contract.py; MYPYPATH=services/core-api/src .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/core_api_contract.py",
+      "exitCode": 0,
+      "result": "The changed Python generator passed Ruff lint, Ruff formatting, and focused mypy with the Core source import root configured. The initial environment-free mypy probe lacked that local import root; the configured repository check is clean."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head e38117d044b22138ee79a5d9d836ce963d5adce7; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check eb7ee5746cfeb3b656c13e1bdd30c66866b91538..e38117d044b22138ee79a5d9d836ce963d5adce7",
+      "exitCode": 0,
+      "result": "Repository structure, architecture, CI policy, approved-reference UI lineage, generated backlog views, authoritative backlog, exact R03-to-R04 ancestry, and patch hygiene pass at the exact candidate. The task review page is regenerated after submission so the visible R04 packet is bound to the frozen review state."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base eb7ee5746cfeb3b656c13e1bdd30c66866b91538 --affected-head e38117d044b22138ee79a5d9d836ce963d5adce7 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-R04-selection.json",
+      "exitCode": 0,
+      "result": "The governed affected-path selector passed for the exact R03-to-R04 range. The shared generated-client contract, service compatibility, desktop assembly, configured native boundary, static analysis, architecture, UI lineage, planning integrity, and evidence hygiene were selected; unchanged persistence and performance matrices remain explicitly deferred."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The project-creation and exact fourteen-profile preview paths remain green across the complete service, generated-contract, desktop, assembled-frame, and configured native suites.",
+        "The generated client now authenticates the Core-projected examples, evidence defaults, novelty defaults, autonomy defaults, stopping defaults, and warnings against the separately approved guidance identity before any caller can consume them."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The independently reviewed R03 closure of CAP-03.S06.T02-R01-F01 remains unchanged: activation authority is witnessed outside the settings ledger and fails closed after combined settings loss, missing witness, or substituted witness.",
+        "The R02 closure of CAP-03.S06.T02-R01-F02 remains unchanged: exact before/after autonomy and stopping effects continue to pass service and assembled-desktop replay."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S06.T02-R01-F03 is remediated at the generated-client trust boundary. The decoder reconstructs the exact guidance document from every returned profile field, recursively sorts and compactly serializes the JSON with ASCII-safe string encoding, computes synchronous SHA-256, and compares the result with the advertised approved hash.",
+        "The independent review's exact substitution now fails: changing systematic-review.defaultStoppingConditions from coverage-threshold to researcher-decision while retaining intentGuidanceVersion 1.0.0 and the approved intentGuidanceHash returns null. Authentic fourteen-profile guidance reproduces and is accepted."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R04 addresses only CAP-03.S06.T02-R01-F03. The credible defect is a generated-client trust-boundary substitution: a valid advertised hash was compared to a constant but not derived from the payload values it purported to authenticate. The selected checks therefore lead with the exact retained-hash value mutation, positive fourteen-profile recomputation, generator determinism, strict TypeScript, full contract packages, browser production build, assembled frame, configured Node 24 native integration, service compatibility, static analysis, architecture, UI lineage, planning integrity, and exact-range hygiene. Persistence, activation-witness, migration, data-security, performance, and broader accessibility behavior are unchanged; prior green evidence and the complete W1-exit matrix remain authoritative for those boundaries.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:ci",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "service:unit",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "Data and protected-database suites are unchanged by this generated-client-only correction; the exact R03 persistence evidence and independent F01 closure remain applicable.",
+      "Desktop and data performance commands are gate-bound to W1 exit; R04 adds bounded synchronous hashing over fourteen small profile-guidance records and changes no governed performance budget.",
+      "Complete cross-capability failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, performance, primary-platform, and visual qualification remains mandatory at CAP-03.S06 slice review, integration checkpoints, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [
+      "CAP-03.S06.T02-R01-F03"
+    ],
+    "rootCauseAnalysis": "R03 correctly gave the guidance payload a separate version and canonical hash, but its generated decoder authenticated only the received identity field against a compiled constant. It never recomputed the identity from the received guidance values, so payload substitution remained possible while the valid field was retained. This repeated the broader mistake of treating identity presence as value binding at a trust boundary. R04 makes the binding executable: the decoder reconstructs every hash-covered field, applies Core-equivalent canonical JSON rules, computes SHA-256 synchronously, and rejects a mismatch. The exact retained-hash substitution is a permanent generated-client regression.",
+    "note": "Independently authenticate exact R04 candidate e38117d044b22138ee79a5d9d836ce963d5adce7 and frozen evidence, replay CAP-03.S06.T02-R01-F03 with the exact retained-hash stopping-condition substitution, confirm authentic Core guidance derives the approved hash, verify F01 and F02 remain closed, and preserve all R01-R03 history before disposition."
+  }
+}
