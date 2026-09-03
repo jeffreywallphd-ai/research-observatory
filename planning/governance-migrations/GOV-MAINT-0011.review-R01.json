@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0011",
+  "reviewId": "GOV-MAINT-0011.R01",
+  "reviewedCommit": "515fa32cb7439ca9f6718b3832a1980942e0a64e",
+  "reviewer": "agent:gov-maint-0011-reviewer",
+  "reviewedAt": "2026-09-03T14:20:28.9627252Z",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0011.json",
+    "tests/foundation/test_planctl_amendments.py",
+    "tools/planctl.py"
+  ],
+  "verified": [
+    "The exact predecessor-to-candidate diff changes only the three declared maintenance paths; the protected untracked artifacts/evidence/W1.A04.B00.json is absent from the candidate and remains untouched.",
+    "W1 remains PAUSED at Wave scope with no ordinary task in IN_PROGRESS or REVIEW, no active amendment campaign, and no active recovery hold.",
+    "All 10 focused planctl amendment tests pass independently in 172.306 seconds, including truthful interleaving, historical successors, and denial of omissions, duplicates, reordering, skipped proposals, partial terminal-reservation materialization, substitutions, and ancestry forks.",
+    "Ruff check and format verification, canonical taskctl validation, generated backlog view validation, all 488 planning-review pages, maintenance JSON parsing, and Git diff hygiene pass.",
+    "Full product, runtime, security, packaging, and Wave suites are correctly deferred because no product, runtime, schema, canonical backlog, or release byte changed."
+  ],
+  "findings": []
+}
