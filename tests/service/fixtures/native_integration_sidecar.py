@@ -27,7 +27,9 @@ def inspect_project(profile_vault_root: Path, project_root: Path, project_id: st
             "SELECT event_type, COUNT(*), "
             "SUM(CASE WHEN actor_id IS NOT NULL AND actor_id <> '' THEN 1 ELSE 0 END) "
             "FROM provenance_events "
-            "WHERE event_type IN ('intent.draft.saved','intent.accepted','intent.policy.evaluated') "
+            "WHERE event_type IN ("
+            "'intent.draft.saved','intent.accepted','intent.policy.evaluated','workflow.profile.activated'"
+            ") "
             "GROUP BY event_type ORDER BY event_type"
         ).fetchall()
     events = {

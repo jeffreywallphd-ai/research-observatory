@@ -594,6 +594,8 @@ class WorkflowProfileCatalogProjection(ContractModel):
     reference_version: Literal["1.5"]
     profile_catalog_version: Literal["1.0.0"]
     profile_catalog_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    intent_guidance_version: Literal["1.0.0"]
+    intent_guidance_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     all_tools_accessible: Literal[True] = True
     evidence_requirements_unchanged: Literal[True] = True
     provenance_requirements_unchanged: Literal[True] = True

@@ -3345,6 +3345,16 @@
             "title": "Evidencerequirementsunchanged",
             "type": "boolean"
           },
+          "intentGuidanceHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Intentguidancehash",
+            "type": "string"
+          },
+          "intentGuidanceVersion": {
+            "const": "1.0.0",
+            "title": "Intentguidanceversion",
+            "type": "string"
+          },
           "profileCatalogHash": {
             "pattern": "^sha256:[0-9a-f]{64}$",
             "title": "Profilecataloghash",
@@ -3400,6 +3410,8 @@
           "referenceVersion",
           "profileCatalogVersion",
           "profileCatalogHash",
+          "intentGuidanceVersion",
+          "intentGuidanceHash",
           "registeredToolPageContractIds",
           "profiles"
         ],

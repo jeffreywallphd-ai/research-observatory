@@ -74,6 +74,7 @@ from .ports.repositories import (
     UnitOfWorkFactory,
     WorkflowAuthorityMutation,
     WorkflowAuthorityRecord,
+    WorkflowAuthorityWitness,
 )
 from .ports.workflow_executor import (
     ConcurrencyClass,
@@ -475,6 +476,31 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     ):
                         raise ValueError("workflow authority activation is invalid")
                     activation = WorkflowAuthorityRecord(revision=revision, content_json=content_json)
+                witness_rows = connection.execute(
+                    "SELECT event_id, occurred_at, actor_type, actor_id, record_sha256 "
+                    "FROM provenance_events WHERE project_id=? AND event_type='workflow.profile.activated'",
+                    (self._project_id,),
+                ).fetchall()
+                if len(witness_rows) > 1:
+                    raise ValueError("workflow authority witness is ambiguous")
+                activation_witness: WorkflowAuthorityWitness | None = None
+                if witness_rows:
+                    event_id, occurred_at, actor_type, actor_id, record_sha256 = witness_rows[0]
+                    if (
+                        not is_uuid_v7(event_id)
+                        or not isinstance(occurred_at, str)
+                        or actor_type != "human"
+                        or not is_uuid_v7(actor_id)
+                        or not isinstance(record_sha256, str)
+                        or len(record_sha256) != 64
+                    ):
+                        raise ValueError("workflow authority witness is invalid")
+                    activation_witness = WorkflowAuthorityWitness(
+                        event_id=event_id,
+                        occurred_at=occurred_at,
+                        actor_id=actor_id,
+                        record_sha256=record_sha256,
+                    )
                 values: dict[str, tuple[WorkflowAuthorityRecord, ...]] = {}
                 for key in (_WORKFLOW_SELECTION_KEY, _WORKFLOW_MIGRATION_KEY, _WORKFLOW_ACCEPTANCE_KEY):
                     rows = connection.execute(
@@ -503,6 +529,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             raise _transaction_failure("workflow profile authority read failed") from None
         return WorkflowAuthorityMutation(
             activation=activation,
+            activation_witness=activation_witness,
             selections=values[_WORKFLOW_SELECTION_KEY],
             migrations=values[_WORKFLOW_MIGRATION_KEY],
             decisions=values[_WORKFLOW_ACCEPTANCE_KEY],
@@ -708,6 +735,19 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                 or not isinstance(json.loads(workflow.activation.content_json), dict)
             ):
                 raise ValueError("workflow authority activation is invalid")
+            if (workflow.activation is None) != (workflow.activation_witness is None):
+                raise ValueError("workflow authority witness is inconsistent")
+            if workflow.activation_witness is not None and (
+                not is_uuid_v7(workflow.activation_witness.event_id)
+                or not is_uuid_v7(workflow.activation_witness.actor_id)
+                or len(workflow.activation_witness.record_sha256) != 64
+                or any(value not in "0123456789abcdef" for value in workflow.activation_witness.record_sha256)
+                or workflow.activation_witness.record_sha256
+                != hashlib.sha256(
+                    cast(WorkflowAuthorityRecord, workflow.activation).content_json.encode("utf-8")
+                ).hexdigest()
+            ):
+                raise ValueError("workflow authority witness is invalid")
             for authority_record in (*workflow.selections, *workflow.migrations, *workflow.decisions):
                 if (
                     authority_record.revision < 1
@@ -786,6 +826,11 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     "SELECT text_value FROM settings WHERE project_id=? AND setting_key=? AND revision=0",
                     (self._project_id, _INTENT_WORKFLOW_AUTHORITY_KEY),
                 ).fetchone()
+                activation_witness = connection.execute(
+                    "SELECT event_id FROM provenance_events "
+                    "WHERE project_id=? AND event_type='workflow.profile.activated'",
+                    (self._project_id,),
+                ).fetchone()
                 latest_selection = int(
                     connection.execute(
                         "SELECT COALESCE(MAX(revision), 0) FROM settings WHERE project_id=? AND setting_key=?",
@@ -793,7 +838,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     ).fetchone()[0]
                 )
                 if workflow.activation is not None:
-                    if activation is not None or latest_selection != 0:
+                    if activation is not None or activation_witness is not None or latest_selection != 0:
                         raise RepositoryConflict("workflow authority activation changed")
                     self._insert_text_setting(
                         connection,
@@ -803,7 +848,25 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                         occurred_at=event.occurred_at,
                     )
                     activation = (workflow.activation.content_json,)
-                if workflow.selections and latest_selection == 0 and activation is None:
+                    witness = cast(WorkflowAuthorityWitness, workflow.activation_witness)
+                    connection.execute(
+                        """
+                        INSERT INTO provenance_events (
+                            event_id, project_id, revision_id, event_type, occurred_at,
+                            trace_id, actor_type, actor_id, record_sha256
+                        ) VALUES (?, ?, NULL, 'workflow.profile.activated', ?, ?, 'human', ?, ?)
+                        """,
+                        (
+                            witness.event_id,
+                            self._project_id,
+                            witness.occurred_at,
+                            event.trace_id,
+                            witness.actor_id,
+                            witness.record_sha256,
+                        ),
+                    )
+                    activation_witness = (witness.event_id,)
+                if workflow.selections and latest_selection == 0 and (activation is None or activation_witness is None):
                     raise RepositoryConflict("workflow authority activation is missing")
                 if workflow.selections and (
                     workflow.selections[0].revision != latest_selection + 1

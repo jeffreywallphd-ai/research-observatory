@@ -363,10 +363,21 @@ class WorkflowAuthorityRecord:
 
 
 @dataclass(frozen=True, slots=True)
+class WorkflowAuthorityWitness:
+    """Independent immutable provenance witness for workflow authority activation."""
+
+    event_id: str
+    occurred_at: str
+    actor_id: str
+    record_sha256: str
+
+
+@dataclass(frozen=True, slots=True)
 class WorkflowAuthorityMutation:
     """Workflow authority records committed with one Research Intent revision."""
 
     activation: WorkflowAuthorityRecord | None = None
+    activation_witness: WorkflowAuthorityWitness | None = None
     selections: tuple[WorkflowAuthorityRecord, ...] = ()
     migrations: tuple[WorkflowAuthorityRecord, ...] = ()
     decisions: tuple[WorkflowAuthorityRecord, ...] = ()

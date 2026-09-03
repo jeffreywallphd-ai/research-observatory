@@ -222,6 +222,7 @@ try {
     "intent.draft.saved": 2,
     "intent.accepted": 1,
     "intent.policy.evaluated": 1,
+    "workflow.profile.activated": 1,
   };
   if (persistenceInspection.revisionRecords !== 3
     || Object.entries(expectedEventCounts).some(([eventType, count]) => (
