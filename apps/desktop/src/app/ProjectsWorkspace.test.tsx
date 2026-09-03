@@ -28,6 +28,8 @@ const catalog: WorkflowProfileCatalogProjection = {
   referenceVersion: "1.5",
   profileCatalogVersion: "1.0.0",
   profileCatalogHash: `sha256:${"a".repeat(64)}`,
+  intentGuidanceVersion: "1.0.0",
+  intentGuidanceHash: "sha256:2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2",
   allToolsAccessible: true,
   evidenceRequirementsUnchanged: true,
   provenanceRequirementsUnchanged: true,

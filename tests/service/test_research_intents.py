@@ -39,7 +39,13 @@ from research_observatory_core.repositories import (  # noqa: E402
     sqlite_dependency_impact_repository,
     sqlite_intent_revision_repository,
 )
-from research_observatory_core.research_intents import IntentProblem, ResearchIntentService  # noqa: E402
+from research_observatory_core.research_intents import (  # noqa: E402
+    APPROVED_INTENT_PROFILE_GUIDANCE_SHA256,
+    IntentProblem,
+    ResearchIntentService,
+    approved_intent_profile_guidance,
+    intent_profile_guidance_sha256,
+)
 from research_observatory_core.storage import development_plaintext_database_fixture  # noqa: E402
 from research_observatory_core.workflow_profile_contracts import (  # noqa: E402
     approved_workflow_profile_catalog,
@@ -454,6 +460,13 @@ class ResearchIntentServiceTests(unittest.TestCase):
         projection = self.service.workflow_profile_catalog()
 
         self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.5", projection.reference_id)
+        self.assertEqual("1.0.0", projection.intent_guidance_version)
+        self.assertEqual(APPROVED_INTENT_PROFILE_GUIDANCE_SHA256, projection.intent_guidance_hash)
+        guidance = approved_intent_profile_guidance()
+        self.assertEqual(projection.intent_guidance_hash, intent_profile_guidance_sha256(guidance))
+        mutated = json.loads(json.dumps(guidance))
+        mutated["profiles"]["systematic-review"]["stoppingConditions"] = ["researcher-decision"]
+        self.assertNotEqual(projection.intent_guidance_hash, intent_profile_guidance_sha256(mutated))
         self.assertEqual(14, len(projection.profiles))
         systematic = next(profile for profile in projection.profiles if profile.profile_id == "systematic-review")
         self.assertTrue(systematic.purpose)
@@ -612,12 +625,17 @@ class ResearchIntentServiceTests(unittest.TestCase):
                 "SELECT sql FROM sqlite_master WHERE type='trigger' AND name='settings_no_delete'"
             ).fetchone()[0]
             connection.execute("DROP TRIGGER settings_no_delete")
-            connection.execute("DELETE FROM settings WHERE setting_key LIKE 'workflow-profile.%'")
+            removed = connection.execute(
+                "DELETE FROM settings "
+                "WHERE setting_key='research-intent.workflow-authority-binding' "
+                "OR setting_key LIKE 'workflow-profile.%'"
+            ).rowcount
             connection.execute(trigger_sql)
             connection.commit()
         finally:
             connection.close()
 
+        self.assertEqual(2, removed)
         with self.assertRaises(IntentProblem) as denied:
             self.service.workspace(self.root)
         self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
@@ -632,6 +650,59 @@ class ResearchIntentServiceTests(unittest.TestCase):
             ).fetchone()[0]
             connection.execute("DROP TRIGGER settings_no_delete")
             connection.execute("DELETE FROM settings WHERE setting_key='research-intent.workflow-authority-binding'")
+            connection.execute(trigger_sql)
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.assertRaises(IntentProblem) as denied:
+            self.service.workspace(self.root)
+        self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
+
+    def test_restart_denies_activation_witness_deletion_while_settings_remain(self) -> None:
+        self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="38" * 16)
+        database = Path(self.root) / "state" / "project.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            binding_json = connection.execute(
+                "SELECT text_value FROM settings "
+                "WHERE setting_key='research-intent.workflow-authority-binding' AND revision=0"
+            ).fetchone()[0]
+            binding = json.loads(binding_json)
+            witness = connection.execute(
+                "SELECT event_id, actor_id, record_sha256 FROM provenance_events "
+                "WHERE event_type='workflow.profile.activated'"
+            ).fetchone()
+            self.assertEqual(binding["activationWitnessEventId"], witness[0])
+            self.assertEqual(ACTOR_ID, witness[1])
+            self.assertEqual(hashlib.sha256(binding_json.encode("utf-8")).hexdigest(), witness[2])
+            trigger_sql = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='trigger' AND name='provenance_events_no_delete'"
+            ).fetchone()[0]
+            connection.execute("DROP TRIGGER provenance_events_no_delete")
+            connection.execute("DELETE FROM provenance_events WHERE event_type='workflow.profile.activated'")
+            connection.execute(trigger_sql)
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.assertRaises(IntentProblem) as denied:
+            self.service.workspace(self.root)
+        self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
+
+    def test_restart_denies_substituted_activation_witness_hash(self) -> None:
+        self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="39" * 16)
+        database = Path(self.root) / "state" / "project.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            trigger_sql = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='trigger' AND name='provenance_events_no_update'"
+            ).fetchone()[0]
+            connection.execute("DROP TRIGGER provenance_events_no_update")
+            connection.execute(
+                "UPDATE provenance_events SET record_sha256=? WHERE event_type='workflow.profile.activated'",
+                ("f" * 64,),
+            )
             connection.execute(trigger_sql)
             connection.commit()
         finally:

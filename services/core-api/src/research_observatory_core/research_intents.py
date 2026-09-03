@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from itertools import pairwise
 from pathlib import Path
 from threading import RLock
-from typing import Any, Protocol, cast
+from typing import Any, Literal, Protocol, cast
 
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .logging import emit_log_record
@@ -41,6 +41,7 @@ from .ports.repositories import (
     RepositoryProblem,
     WorkflowAuthorityMutation,
     WorkflowAuthorityRecord,
+    WorkflowAuthorityWitness,
 )
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .research_intent_contracts import (
@@ -256,6 +257,36 @@ _INTENT_GUIDANCE_BY_PROFILE: Mapping[str, Mapping[str, object]] = {
 }
 if set(_INTENT_GUIDANCE_BY_PROFILE) != set(_PROFILE_BY_ID):
     raise RuntimeError("workflow profile intent guidance does not match the governed catalog")
+INTENT_PROFILE_GUIDANCE_VERSION: Literal["1.0.0"] = "1.0.0"
+_INTENT_PROFILE_GUIDANCE_DOCUMENT: Mapping[str, object] = {
+    "schemaVersion": "1.0",
+    "documentType": "research-observatory-intent-profile-guidance",
+    "guidanceVersion": INTENT_PROFILE_GUIDANCE_VERSION,
+    "profileCatalogHash": APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256,
+    "profiles": _INTENT_GUIDANCE_BY_PROFILE,
+}
+
+
+def intent_profile_guidance_sha256(value: object) -> str:
+    """Hash the exact canonical guidance bytes exposed across the Core boundary."""
+
+    return (
+        "sha256:"
+        + hashlib.sha256(
+            json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+    )
+
+
+APPROVED_INTENT_PROFILE_GUIDANCE_SHA256 = "sha256:2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2"
+if intent_profile_guidance_sha256(_INTENT_PROFILE_GUIDANCE_DOCUMENT) != APPROVED_INTENT_PROFILE_GUIDANCE_SHA256:
+    raise RuntimeError("intent profile guidance differs from its approved content hash")
+
+
+def approved_intent_profile_guidance() -> Mapping[str, object]:
+    """Return detached exact guidance bytes for contract and substitution checks."""
+
+    return cast(Mapping[str, object], json.loads(json.dumps(_INTENT_PROFILE_GUIDANCE_DOCUMENT)))
 
 
 def _stage_label(page_contract_id: str) -> str:
@@ -321,6 +352,8 @@ def _workflow_catalog_projection() -> WorkflowProfileCatalogProjection:
         reference_version=cast(Any, governed["referenceVersion"]),
         profile_catalog_version=cast(Any, _WORKFLOW_CATALOG["profileCatalogVersion"]),
         profile_catalog_hash=APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256,
+        intent_guidance_version=INTENT_PROFILE_GUIDANCE_VERSION,
+        intent_guidance_hash=APPROVED_INTENT_PROFILE_GUIDANCE_SHA256,
         registered_tool_page_contract_ids=tuple(
             cast(Sequence[str], _WORKFLOW_CATALOG["registeredToolPageContractIds"])
         ),
@@ -741,6 +774,7 @@ def _workflow_authority_mutation(
     added_migrations: list[WorkflowAuthorityRecord] = []
     added_decisions: list[WorkflowAuthorityRecord] = []
     activation: WorkflowAuthorityRecord | None = None
+    activation_witness: WorkflowAuthorityWitness | None = None
     parent = selections[-1] if selections else None
     profile_changed = bool(
         prior_intent is not None and prior_intent["primaryUseCase"] != target_intent["primaryUseCase"]
@@ -772,8 +806,9 @@ def _workflow_authority_mutation(
     if existing.activation is None and added_selections:
         first_selection = json.loads(added_selections[0].content_json)
         first_intent = cast(Mapping[str, object], first_selection["researchIntent"])
+        witness_event_id = new_uuid_v7()
         binding: dict[str, object] = {
-            "schemaVersion": "1.0",
+            "schemaVersion": "1.1",
             "documentType": "research-observatory-workflow-authority-binding",
             "authority": "ADR-0026",
             "domainProjectId": first_selection["projectId"],
@@ -781,12 +816,23 @@ def _workflow_authority_mutation(
             "firstSelectionRevisionId": first_selection["selectionRevisionId"],
             "firstSelectionContentHash": first_selection["revisionContentHash"],
             "profileCatalogHash": APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256,
+            "intentGuidanceVersion": INTENT_PROFILE_GUIDANCE_VERSION,
+            "intentGuidanceHash": APPROVED_INTENT_PROFILE_GUIDANCE_SHA256,
+            "activationWitnessEventId": witness_event_id,
             "bindingContentHash": "sha256:" + "0" * 64,
         }
         binding["bindingContentHash"] = _authority_content_hash(binding, "bindingContentHash")
-        activation = WorkflowAuthorityRecord(revision=0, content_json=_canonical_json(binding))
+        activation_json = _canonical_json(binding)
+        activation = WorkflowAuthorityRecord(revision=0, content_json=activation_json)
+        activation_witness = WorkflowAuthorityWitness(
+            event_id=witness_event_id,
+            occurred_at=selected_at,
+            actor_id=actor_id,
+            record_sha256=hashlib.sha256(activation_json.encode("utf-8")).hexdigest(),
+        )
     return WorkflowAuthorityMutation(
         activation=activation,
+        activation_witness=activation_witness,
         selections=tuple(added_selections),
         migrations=tuple(added_migrations),
         decisions=tuple(added_decisions),
@@ -1011,13 +1057,14 @@ def _validated_workflow_authority(
     migrations = _authority_records(authority.migrations)
     decisions = _authority_records(authority.decisions)
     if authority.activation is None:
-        if selections:
+        if selections or authority.activation_witness is not None:
             raise RepositoryProblem("workflow authority activation is missing")
     else:
         activation_records = _authority_records((authority.activation,))
         activation = activation_records[0]
         first_selection = selections[0] if selections else None
         first_intent = first_selection.get("researchIntent") if first_selection is not None else None
+        first_selector = first_selection.get("selectedBy") if first_selection is not None else None
         expected_fields = {
             "schemaVersion",
             "documentType",
@@ -1027,23 +1074,35 @@ def _validated_workflow_authority(
             "firstSelectionRevisionId",
             "firstSelectionContentHash",
             "profileCatalogHash",
+            "intentGuidanceVersion",
+            "intentGuidanceHash",
+            "activationWitnessEventId",
             "bindingContentHash",
         }
+        witness = authority.activation_witness
         if (
             authority.activation.revision != 0
             or not selections
+            or witness is None
             or set(activation) != expected_fields
-            or activation.get("schemaVersion") != "1.0"
+            or activation.get("schemaVersion") != "1.1"
             or activation.get("documentType") != "research-observatory-workflow-authority-binding"
             or activation.get("authority") != "ADR-0026"
             or activation.get("profileCatalogHash") != APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256
+            or activation.get("intentGuidanceVersion") != INTENT_PROFILE_GUIDANCE_VERSION
+            or activation.get("intentGuidanceHash") != APPROVED_INTENT_PROFILE_GUIDANCE_SHA256
             or activation.get("bindingContentHash") != _authority_content_hash(activation, "bindingContentHash")
             or first_selection is None
             or not isinstance(first_intent, Mapping)
+            or not isinstance(first_selector, Mapping)
             or activation.get("domainProjectId") != first_selection.get("projectId")
             or activation.get("activatedAtIntentRevision") != first_intent.get("revision")
             or activation.get("firstSelectionRevisionId") != first_selection.get("selectionRevisionId")
             or activation.get("firstSelectionContentHash") != first_selection.get("revisionContentHash")
+            or activation.get("activationWitnessEventId") != witness.event_id
+            or witness.occurred_at != first_selection.get("createdAt")
+            or witness.actor_id != first_selector.get("actorId")
+            or witness.record_sha256 != hashlib.sha256(authority.activation.content_json.encode("utf-8")).hexdigest()
         ):
             raise RepositoryProblem("workflow authority activation is invalid")
     if [record.revision for record in authority.selections] != list(range(1, len(authority.selections) + 1)):

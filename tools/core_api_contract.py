@@ -646,12 +646,15 @@ export function decodeWorkflowProfileCatalogProjection(value: unknown): Workflow
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
     "schemaVersion", "referenceId", "referenceVersion", "profileCatalogVersion", "profileCatalogHash",
+    "intentGuidanceVersion", "intentGuidanceHash",
     "allToolsAccessible", "evidenceRequirementsUnchanged", "provenanceRequirementsUnchanged",
     "registeredToolPageContractIds", "profiles",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || candidate.referenceId !== "RO-UI-ACADEMIC-MINIMAL-1.5"
     || candidate.referenceVersion !== "1.5" || candidate.profileCatalogVersion !== "1.0.0"
     || candidate.profileCatalogHash !== "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49"
+    || candidate.intentGuidanceVersion !== "1.0.0"
+    || candidate.intentGuidanceHash !== "sha256:2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2"
     || candidate.allToolsAccessible !== true || candidate.evidenceRequirementsUnchanged !== true
     || candidate.provenanceRequirementsUnchanged !== true || !stringList(candidate.registeredToolPageContractIds, 256)
     || candidate.registeredToolPageContractIds.length < 1 || !Array.isArray(candidate.profiles)
