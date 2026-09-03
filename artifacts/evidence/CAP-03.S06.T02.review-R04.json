@@ -1,0 +1,55 @@
+{
+  "task_id": "CAP-03.S06.T02",
+  "attempt_id": "R04",
+  "candidate_commit": "e38117d044b22138ee79a5d9d836ce963d5adce7",
+  "submission_record_commit": "4ab6d55e9b45dfb0de58518f3750a5a42414e084",
+  "reviewer": "agent:t02-independent-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "The frozen R04 submission, evidence SHA-256/Git blob, exact eleven-path prior-candidate scope, four-path post-R03-review implementation delta, eight-path submission projection, linear ancestry, and append-only R01-R03 history authenticate. CAP-03.S06.T02-R01-F03 is fixed: authentic fourteen-profile guidance derives the approved hash and is accepted, while the exact systematic-review stopping-condition substitution with the valid advertised version/hash retained is rejected. Prior F01 and F02 closures remain valid. No blocking finding remains.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T02.remediation-03.json",
+      "sha256": "b21c290db8df295e33f866938ca5d7048e0c1476b5b033494a43d1336a6992c0",
+      "git_blob": "710f88e67d3130a0dcb9c62cbec8997b4da6b7d2",
+      "commit": "4ab6d55e9b45dfb0de58518f3750a5a42414e084"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "result": "PASS: exact linear R03-to-R04 ancestry, eleven-path prior-candidate range, four-path implementation delta, eight-path submission projection, frozen evidence bytes/blob, task projection, immutable prior ledgers, and patch hygiene authenticate."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T02-R01-F03",
+      "result": "PASS: the generated decoder accepts the authentic fourteen-profile guidance whose canonical values derive sha256:2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2, and rejects changing systematic-review.defaultStoppingConditions to researcher-decision while retaining that advertised hash."
+    },
+    {
+      "type": "prior-closure-regression",
+      "finding_id": "CAP-03.S06.T02-R01-F01",
+      "result": "PASS: combined settings deletion, missing/substituted witness, restart denial, and exact pre-T02 predecessor compatibility remain green."
+    },
+    {
+      "type": "prior-closure-regression",
+      "finding_id": "CAP-03.S06.T02-R01-F02",
+      "result": "PASS: exact retained, removed, and added stopping effects remain green."
+    },
+    {
+      "type": "independent-check",
+      "result": "PASS: 13 focused generated-contract tests, exact generator reproduction, strict TypeScript, six focused service tests, 10 desktop tests, production browser build, task projection, and patch hygiene."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S06.T02-R01-F03",
+      "disposition": "fixed",
+      "evidence": "The generated decoder reconstructs the complete guidance document from every returned profile's example, evidence types, novelty standard, autonomy level, stopping conditions, and warning; applies Core-equivalent canonical JSON and SHA-256; and compares the derived identity with the advertised approved hash. The authentic fourteen-profile payload is accepted and the exact retained-valid-hash stopping-condition substitution is rejected."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S06.T02-R01-F01",
+    "CAP-03.S06.T02-R01-F02",
+    "CAP-03.S06.T02-R01-F03"
+  ]
+}

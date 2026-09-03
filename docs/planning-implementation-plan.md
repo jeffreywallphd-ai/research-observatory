@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8143dea7bb1a5abd89b436d29126fea02607a149514f726672a3f472e220c954
+source_sha256: a58419d022a0bcc91ff6ec9b81130270db1349fd74efea45ef78b854bf1a6b65
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6139,15 +6139,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
+#### - [x] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T01`, `CAP-03.S02.T02`, `CAP-01.S01.T02`
 
-**Owner / review:** codex / agent:t02-independent-reviewer (`changes-requested`)
+**Owner / review:** codex / agent:t02-independent-reviewer (`approved`)
 
 **Objective:** Ask the user what scholarly objective they are pursuing, preview the ordered path and output, save it in the versioned intent contract, and permit later revision through explicit impact review.
 
@@ -6177,7 +6177,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S06.T02
 
-**Review mode:** `append-only v1` / 3 completed round(s)
+**Review mode:** `append-only v1` / 4 completed round(s)
 
 ###### Round R01
 
@@ -6271,7 +6271,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `CAP-03.S06.T02-R01-F01` `fixed` — An independently persisted workflow.profile.activated provenance witness binds the canonical activation record and first-selection identity in the same transaction. Combined settings deletion leaves that witness behind and fails closed after restart; missing and substituted witnesses deny; exact schema-v10 predecessor bytes remain readable and acquire governed authority atomically on the next write.
 
-**Current immutable submission awaiting review:** `R04` / packet SHA-256 `950786b6dd860b497c6d3d399a9c57702d3af1ff591e99bc581a9afaf118f618`
+###### Round R04
+
+**Immutable submission packet:** `R04` / packet SHA-256 `950786b6dd860b497c6d3d399a9c57702d3af1ff591e99bc581a9afaf118f618`
 
 - Candidate / base / branch: `e38117d044b22138ee79a5d9d836ce963d5adce7` / `eb7ee5746cfeb3b656c13e1bdd30c66866b91538` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-03T23:45:54+00:00`
@@ -6285,15 +6287,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R03` / `CAP-03.S06.T02-R01-F03`
 - Root-cause escalation: R03 correctly gave the guidance payload a separate version and canonical hash, but its generated decoder authenticated only the received identity field against a compiled constant. It never recomputed the identity from the received guidance values, so payload substitution remained possible while the valid field was retained. This repeated the broader mistake of treating identity presence as value binding at a trust boundary. R04 makes the binding executable: the decoder reconstructs every hash-covered field, applies Core-equivalent canonical JSON rules, computes SHA-256 synchronously, and rejects a mismatch. The exact retained-hash substitution is a permanent generated-client regression.
 
-**Current latest-review projection:** `changes-requested` by agent:t02-independent-reviewer at `2026-09-03T23:35:06+00:00`
+**Disposition / reviewer / time:** `approved` / agent:t02-independent-reviewer / `2026-09-03T23:54:16+00:00`
 
-**Latest notes:** The frozen R03 submission, evidence SHA-256/Git blob, exact 22-path remediation scope, eight-path submission projection, linear ancestry, and append-only R01/R02 history authenticate. CAP-03.S06.T02-R01-F01 is fixed by the independently retained activation provenance witness, fail-closed missing/substituted witness behavior, combined settings-deletion denial, atomic publication, and exact pre-T02 compatibility. F02 remains fixed. Approval remains unavailable because CAP-03.S06.T02-R01-F03 remains open: the generated decoder checks only the advertised intent-guidance hash constant and accepts a substituted returned guidance value when that advertised hash is retained.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T02.review-R04.json` / `96f8792e43ecbff7d7300092e669d32cd7852c7056a52fa7e9330ef925708d26`
 
-**Currently open findings:** `CAP-03.S06.T02-R01-F03`
+**Review notes:** The frozen R04 submission, evidence SHA-256/Git blob, exact eleven-path prior-candidate scope, four-path post-R03-review implementation delta, eight-path submission projection, linear ancestry, and append-only R01-R03 history authenticate. CAP-03.S06.T02-R01-F03 is fixed: authentic fourteen-profile guidance derives the approved hash and is accepted, while the exact systematic-review stopping-condition substitution with the valid advertised version/hash retained is rejected. Prior F01 and F02 closures remain valid. No blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S06.T02-R01-F03` `fixed` — The generated decoder reconstructs the complete guidance document from every returned profile's example, evidence types, novelty standard, autonomy level, stopping conditions, and warning; applies Core-equivalent canonical JSON and SHA-256; and compares the derived identity with the advertised approved hash. The authentic fourteen-profile payload is accepted and the exact retained-valid-hash stopping-condition substitution is rejected.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t02-independent-reviewer at `2026-09-03T23:54:16+00:00`
+
+**Latest notes:** The frozen R04 submission, evidence SHA-256/Git blob, exact eleven-path prior-candidate scope, four-path post-R03-review implementation delta, eight-path submission projection, linear ancestry, and append-only R01-R03 history authenticate. CAP-03.S06.T02-R01-F03 is fixed: authentic fourteen-profile guidance derives the approved hash and is accepted, while the exact systematic-review stopping-condition substitution with the valid advertised version/hash retained is rejected. Prior F01 and F02 closures remain valid. No blocking finding remains.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

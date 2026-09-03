@@ -10170,13 +10170,13 @@
             {
               "task_id": "CAP-03.S06.T02",
               "title": "Implement primary-use-case selection at project creation and intent revision",
-              "status": "REVIEW",
+              "status": "DONE",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "agent:t02-independent-reviewer",
-                "result": "changes-requested",
-                "reviewed_at": "2026-09-03T23:35:06+00:00",
-                "notes": "The frozen R03 submission, evidence SHA-256/Git blob, exact 22-path remediation scope, eight-path submission projection, linear ancestry, and append-only R01/R02 history authenticate. CAP-03.S06.T02-R01-F01 is fixed by the independently retained activation provenance witness, fail-closed missing/substituted witness behavior, combined settings-deletion denial, atomic publication, and exact pre-T02 compatibility. F02 remains fixed. Approval remains unavailable because CAP-03.S06.T02-R01-F03 remains open: the generated decoder checks only the advertised intent-guidance hash constant and accepts a substituted returned guidance value when that advertised hash is retained."
+                "result": "approved",
+                "reviewed_at": "2026-09-03T23:54:16+00:00",
+                "notes": "The frozen R04 submission, evidence SHA-256/Git blob, exact eleven-path prior-candidate scope, four-path post-R03-review implementation delta, eight-path submission projection, linear ancestry, and append-only R01-R03 history authenticate. CAP-03.S06.T02-R01-F03 is fixed: authentic fourteen-profile guidance derives the approved hash and is accepted, while the exact systematic-review stopping-condition substitution with the valid advertised version/hash retained is rejected. Prior F01 and F02 closures remain valid. No blocking finding remains."
               },
               "review_control": {
                 "version": 1,
@@ -10666,79 +10666,139 @@
                         ]
                       }
                     }
+                  },
+                  {
+                    "submission": {
+                      "id": "R04",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-03T23:45:54+00:00",
+                      "candidate_commit": "e38117d044b22138ee79a5d9d836ce963d5adce7",
+                      "base_commit": "eb7ee5746cfeb3b656c13e1bdd30c66866b91538",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S06.T02.remediation-03.json",
+                        "sha256": "b21c290db8df295e33f866938ca5d7048e0c1476b5b033494a43d1336a6992c0",
+                        "commit": "e38117d044b22138ee79a5d9d836ce963d5adce7",
+                        "recorded_at": "2026-09-03T23:45:54+00:00"
+                      },
+                      "acceptance_criteria_sha256": "e8635297c0ce59786e23a69a58652a9d0d7865841cb2b1aa0962d6d88b0f7c89",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-03.S06.T02.remediation-02.json",
+                        "artifacts/evidence/CAP-03.S06.T02.review-R03.json",
+                        "artifacts/evidence/CAP-03.S06.T02.task-start.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-03/CAP-03.S06.T02.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md",
+                        "tools/core_api_contract.py"
+                      ],
+                      "selected_checks": [
+                        "npm test --prefix packages/contracts -- --run core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false",
+                        ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts -- --run",
+                        "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+                        ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-R04-desktop.json",
+                        "configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-R04-native.json",
+                        ".venv/Scripts/python.exe -m ruff check tools/core_api_contract.py; .venv/Scripts/python.exe -m ruff format --check tools/core_api_contract.py; MYPYPATH=services/core-api/src .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/core_api_contract.py",
+                        ".venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head e38117d044b22138ee79a5d9d836ce963d5adce7; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check eb7ee5746cfeb3b656c13e1bdd30c66866b91538..e38117d044b22138ee79a5d9d836ce963d5adce7",
+                        ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base eb7ee5746cfeb3b656c13e1bdd30c66866b91538 --affected-head e38117d044b22138ee79a5d9d836ce963d5adce7 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-R04-selection.json"
+                      ],
+                      "deferred_checks": [
+                        "Data and protected-database suites are unchanged by this generated-client-only correction; the exact R03 persistence evidence and independent F01 closure remain applicable.",
+                        "Desktop and data performance commands are gate-bound to W1 exit; R04 adds bounded synchronous hashing over fourteen small profile-guidance records and changes no governed performance budget.",
+                        "Complete cross-capability failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, performance, primary-platform, and visual qualification remains mandatory at CAP-03.S06 slice review, integration checkpoints, and W1 exit."
+                      ],
+                      "selection_rationale": "R04 addresses only CAP-03.S06.T02-R01-F03. The credible defect is a generated-client trust-boundary substitution: a valid advertised hash was compared to a constant but not derived from the payload values it purported to authenticate. The selected checks therefore lead with the exact retained-hash value mutation, positive fourteen-profile recomputation, generator determinism, strict TypeScript, full contract packages, browser production build, assembled frame, configured Node 24 native integration, service compatibility, static analysis, architecture, UI lineage, planning integrity, and exact-range hygiene. Persistence, activation-witness, migration, data-security, performance, and broader accessibility behavior are unchanged; prior green evidence and the complete W1-exit matrix remain authoritative for those boundaries.",
+                      "selection_sha256": "9b946435bdb3b79820ed09a5ad330c3fa9783f8876dd0dbc3d1bba5d2d1f6c9a",
+                      "prior_attempt_id": "R03",
+                      "open_finding_ids": [
+                        "CAP-03.S06.T02-R01-F03"
+                      ],
+                      "root_cause_analysis": "R03 correctly gave the guidance payload a separate version and canonical hash, but its generated decoder authenticated only the received identity field against a compiled constant. It never recomputed the identity from the received guidance values, so payload substitution remained possible while the valid field was retained. This repeated the broader mistake of treating identity presence as value binding at a trust boundary. R04 makes the binding executable: the decoder reconstructs every hash-covered field, applies Core-equivalent canonical JSON rules, computes SHA-256 synchronously, and rejects a mismatch. The exact retained-hash substitution is a permanent generated-client regression.",
+                      "selected_command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-change",
+                        "foundation:ci",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "packet_sha256": "950786b6dd860b497c6d3d399a9c57702d3af1ff591e99bc581a9afaf118f618"
+                    },
+                    "review": {
+                      "reviewer": "agent:t02-independent-reviewer",
+                      "result": "approved",
+                      "reviewed_at": "2026-09-03T23:54:16+00:00",
+                      "notes": "The frozen R04 submission, evidence SHA-256/Git blob, exact eleven-path prior-candidate scope, four-path post-R03-review implementation delta, eight-path submission projection, linear ancestry, and append-only R01-R03 history authenticate. CAP-03.S06.T02-R01-F03 is fixed: authentic fourteen-profile guidance derives the approved hash and is accepted, while the exact systematic-review stopping-condition substitution with the valid advertised version/hash retained is rejected. Prior F01 and F02 closures remain valid. No blocking finding remains."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S06.T02.review-R04.json",
+                      "sha256": "96f8792e43ecbff7d7300092e669d32cd7852c7056a52fa7e9330ef925708d26"
+                    },
+                    "findings": [],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-03.S06.T02-R01-F03",
+                        "disposition": "fixed",
+                        "evidence": "The generated decoder reconstructs the complete guidance document from every returned profile's example, evidence types, novelty standard, autonomy level, stopping conditions, and warning; applies Core-equivalent canonical JSON and SHA-256; and compares the derived identity with the advertised approved hash. The authentic fourteen-profile payload is accepted and the exact retained-valid-hash stopping-condition substitution is rejected."
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-03.S06.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R04",
+                      "submitted_at": "2026-09-03T23:45:54+00:00",
+                      "reviewed_at": "2026-09-03T23:54:16+00:00",
+                      "duration_seconds": 502,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-change",
+                        "foundation:ci",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R03",
+                        "replayed_finding_ids": [
+                          "CAP-03.S06.T02-R01-F03"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-03.S06.T02-R01-F03"
+                        ]
+                      }
+                    }
                   }
                 ],
-                "current_submission": {
-                  "id": "R04",
-                  "submitted_by": "codex",
-                  "submitted_at": "2026-09-03T23:45:54+00:00",
-                  "candidate_commit": "e38117d044b22138ee79a5d9d836ce963d5adce7",
-                  "base_commit": "eb7ee5746cfeb3b656c13e1bdd30c66866b91538",
-                  "branch": "codex/w1-windows-local-runtime",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-03.S06.T02.remediation-03.json",
-                    "sha256": "b21c290db8df295e33f866938ca5d7048e0c1476b5b033494a43d1336a6992c0",
-                    "commit": "e38117d044b22138ee79a5d9d836ce963d5adce7",
-                    "recorded_at": "2026-09-03T23:45:54+00:00"
-                  },
-                  "acceptance_criteria_sha256": "e8635297c0ce59786e23a69a58652a9d0d7865841cb2b1aa0962d6d88b0f7c89",
-                  "changed_paths": [
-                    "artifacts/evidence/CAP-03.S06.T02.remediation-02.json",
-                    "artifacts/evidence/CAP-03.S06.T02.review-R03.json",
-                    "artifacts/evidence/CAP-03.S06.T02.task-start.md",
-                    "docs/planning-implementation-plan.md",
-                    "packages/contracts/core-api/generated.test.ts",
-                    "packages/contracts/core-api/generated.ts",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-03/CAP-03.S06.T02.html",
-                    "planning/review-site/manifest.json",
-                    "planning/status-summary.md",
-                    "tools/core_api_contract.py"
-                  ],
-                  "selected_checks": [
-                    "npm test --prefix packages/contracts -- --run core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false",
-                    ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts -- --run",
-                    "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
-                    ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-R04-desktop.json",
-                    "configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-R04-native.json",
-                    ".venv/Scripts/python.exe -m ruff check tools/core_api_contract.py; .venv/Scripts/python.exe -m ruff format --check tools/core_api_contract.py; MYPYPATH=services/core-api/src .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/core_api_contract.py",
-                    ".venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head e38117d044b22138ee79a5d9d836ce963d5adce7; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check eb7ee5746cfeb3b656c13e1bdd30c66866b91538..e38117d044b22138ee79a5d9d836ce963d5adce7",
-                    ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base eb7ee5746cfeb3b656c13e1bdd30c66866b91538 --affected-head e38117d044b22138ee79a5d9d836ce963d5adce7 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-R04-selection.json"
-                  ],
-                  "deferred_checks": [
-                    "Data and protected-database suites are unchanged by this generated-client-only correction; the exact R03 persistence evidence and independent F01 closure remain applicable.",
-                    "Desktop and data performance commands are gate-bound to W1 exit; R04 adds bounded synchronous hashing over fourteen small profile-guidance records and changes no governed performance budget.",
-                    "Complete cross-capability failure, denial, cancellation, migration, restart, recovery, security, accessibility, packaging, performance, primary-platform, and visual qualification remains mandatory at CAP-03.S06 slice review, integration checkpoints, and W1 exit."
-                  ],
-                  "selection_rationale": "R04 addresses only CAP-03.S06.T02-R01-F03. The credible defect is a generated-client trust-boundary substitution: a valid advertised hash was compared to a constant but not derived from the payload values it purported to authenticate. The selected checks therefore lead with the exact retained-hash value mutation, positive fourteen-profile recomputation, generator determinism, strict TypeScript, full contract packages, browser production build, assembled frame, configured Node 24 native integration, service compatibility, static analysis, architecture, UI lineage, planning integrity, and exact-range hygiene. Persistence, activation-witness, migration, data-security, performance, and broader accessibility behavior are unchanged; prior green evidence and the complete W1-exit matrix remain authoritative for those boundaries.",
-                  "selection_sha256": "9b946435bdb3b79820ed09a5ad330c3fa9783f8876dd0dbc3d1bba5d2d1f6c9a",
-                  "prior_attempt_id": "R03",
-                  "open_finding_ids": [
-                    "CAP-03.S06.T02-R01-F03"
-                  ],
-                  "root_cause_analysis": "R03 correctly gave the guidance payload a separate version and canonical hash, but its generated decoder authenticated only the received identity field against a compiled constant. It never recomputed the identity from the received guidance values, so payload substitution remained possible while the valid field was retained. This repeated the broader mistake of treating identity presence as value binding at a trust boundary. R04 makes the binding executable: the decoder reconstructs every hash-covered field, applies Core-equivalent canonical JSON rules, computes SHA-256 synchronously, and rejects a mismatch. The exact retained-hash substitution is a permanent generated-client regression.",
-                  "selected_command_ids": [
-                    "foundation:repository-structure",
-                    "foundation:architecture",
-                    "foundation:backlog-views",
-                    "foundation:build-manifest",
-                    "foundation:ui-change",
-                    "foundation:ci",
-                    "foundation:backlog",
-                    "desktop:application",
-                    "desktop:unit",
-                    "service:unit",
-                    "contracts:unit"
-                  ],
-                  "packet_sha256": "950786b6dd860b497c6d3d399a9c57702d3af1ff591e99bc581a9afaf118f618"
-                }
+                "current_submission": null
               }
             },
             {
               "task_id": "CAP-03.S06.T03",
               "title": "Implement adaptive ordered navigation and workflow context",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -10799,7 +10859,7 @@
             {
               "task_id": "CAP-03.S06.T02",
               "title": "Implement primary-use-case selection at project creation and intent revision",
-              "status": "REVIEW",
+              "status": "DONE",
               "page": "CAP-03/CAP-03.S06.T02.html",
               "dependencies": [
                 "CAP-03.S06.T01",
@@ -10820,7 +10880,7 @@
             {
               "task_id": "CAP-03.S06.T03",
               "title": "Implement adaptive ordered navigation and workflow context",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-03/CAP-03.S06.T03.html",
               "dependencies": [
                 "CAP-03.S06.T02",
