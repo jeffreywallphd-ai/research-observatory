@@ -12881,7 +12881,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-03.S04.T03
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-03.S05.T01
       capability_id: CAP-03
@@ -14552,14 +14552,16 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: agent:cap03-s05-integration-reviewer
-      reviewed_at: '2026-09-03T13:23:46+00:00'
+      reviewed_at: '2026-09-03T13:31:43+00:00'
       evidence:
       - artifacts/evidence/CAP-03.S05.integration-R03.json
-      notes: 'R03 is an evidence-only remediation of CAP-03.S05-R02-F01: the exact bc9441a-to-f05eeb state selection is bound
-        as 93 ordered paths, seven named unknown evidence paths, and safety-sensitive fallback; R02 product, authority, contract,
-        UI, and security results remain unchanged and independently authenticated.'
+      notes: 'APPROVED exact CAP-03.S05 R03 submission 0956eb7157ae002c8704fe3538a29b28b380d493: evidence-only remediation
+        authenticates, with all 93 ordered paths matching Git and fresh selector output; exact base/head, seven unknown paths,
+        safety-sensitive fallback, and W1-exit deferrals match. CAP-03.S05-R02-F01 is fixed, no finding remains, and independently
+        authenticated R02 product/API/UI/security/authority results remain unchanged. Preserve the 72-failure/17-error foundation
+        reconciliation and complete W1 qualification for W1 exit.'
   - id: CAP-03.S06
     title: Use-case profiles and adaptive guided navigation
     outcome: A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench,
@@ -14573,7 +14575,7 @@ capabilities:
     depends_on:
     - CAP-03.S02.T01
     - CAP-00.S06.T04
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-03.S06.T01
       capability_id: CAP-03
@@ -14610,11 +14612,11 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-09-03T13:31:43+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

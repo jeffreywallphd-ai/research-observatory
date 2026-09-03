@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-review",
+  "sliceId": "CAP-03.S05",
+  "attemptId": "R03",
+  "stateCommit": "f05eebeb402b890abef604c209c7766822906f42",
+  "evidenceCommit": "18f97702629573cc9f8536d4b89d02fa869f4776",
+  "submissionCommit": "0956eb7157ae002c8704fe3538a29b28b380d493",
+  "productCandidateCommit": "ab0844204768f2282d694c9df2caa931a7e8fcf3",
+  "reviewer": "agent:cap03-s05-integration-reviewer",
+  "reviewedAt": "2026-09-03T13:30:40.801Z",
+  "disposition": "approved",
+  "approvalAvailable": true,
+  "notes": "The R03 state, evidence-only commit, and frozen REVIEW submission authenticate as a strict direct-parent chain. No product, test, contract, schema, migration, security-policy, experience-reference, or verification-control file changed after the independently reviewed R02 submission. The manifest's 93 ordered changed paths match Git and fresh selector output exactly; its base/head, seven unknown paths, safety-sensitive fallback, deferred owner, and three W1-exit deferrals also match. CAP-03.S05-R02-F01 is fixed. The authenticated R02 product, API, UI, authority, contract, and security results remain reusable. No blocking or non-blocking finding remains.",
+  "evidenceAuthentication": {
+    "integrationEvidence": {
+      "path": "artifacts/evidence/CAP-03.S05.integration-R03.json",
+      "sha256": "6dbfaca7674f03532adad8bac262f654999a7125323bc1eec6232f4a7b1c5ace",
+      "gitBlob": "e9045512a812585d1d9c5064b75fff5f67492d6d",
+      "result": "passed"
+    },
+    "priorReview": {
+      "path": "artifacts/evidence/CAP-03.S05.integration.review-R02.json",
+      "sha256": "689bae9650b013d6ed5bcf08bc934ce94a262cc1a441b4f762597ef58ed758eb",
+      "gitBlob": "7198f0f60338d5c64e5d24edb1688ea13f9e2d0d",
+      "result": "passed"
+    },
+    "ancestryAndScope": {
+      "result": "passed",
+      "details": "State f05eebeb is a strict descendant of R02 submission 096b3863 and changes only the immutable R02 review ledger plus docs/planning-implementation-plan.md, planning/backlog.yaml, planning/review-site/waves/W1.html, and planning/status-summary.md. Evidence commit 18f97702 is the direct child of f05eebeb and adds only CAP-03.S05.integration-R03.json. Submission 0956eb71 is the direct child of 18f97702 and changes only the same four generated planning/status projections. Diff hygiene passes."
+    }
+  },
+  "checks": [
+    {
+      "check": "Manifest versus Git ordered path inventory",
+      "result": "passed",
+      "details": "Declared count, manifest array length, and Git diff count are all 93. The ordered manifest and Git arrays have zero positional mismatches."
+    },
+    {
+      "check": "Manifest versus fresh selector replay",
+      "result": "passed",
+      "details": "The selector returned PASS and 93 ordered paths with zero positional mismatches against the manifest."
+    },
+    {
+      "check": "Selection authority fields",
+      "result": "passed",
+      "details": "Base bc9441a23faa1df44f80a823f432ca5988e394d6 and head f05eebeb402b890abef604c209c7766822906f42 match exactly. All seven unknown paths match in order. The safety-sensitive fallback, W1-exit deferred owner, and desktop, project-lifecycle, and storage-maintenance performance deferrals match."
+    },
+    {
+      "check": "Incremental change boundary",
+      "result": "passed",
+      "details": "No product, test, contract, schema, migration, security-policy, experience-reference, or verification-control file changed after R02."
+    },
+    {
+      "check": "Inherited R02 results",
+      "result": "passed",
+      "details": "The independently authenticated R02 product/API/UI/security/authority results remain applicable and were reused without rerunning the full profile."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "CAP-03.S05-R02-F01",
+      "disposition": "fixed",
+      "evidence": "The R03 manifest records 93 paths, and its ordered array exactly equals both git diff --name-only and fresh verify.py selection-only output. It also records the exact base/head, all seven unknown paths, safety-sensitive fallback, W1-exit owner, and all three gate-bound deferrals."
+    }
+  ],
+  "openFindingIds": [],
+  "residuals": [
+    {
+      "severity": "non-blocking",
+      "item": "The historical foundation baseline of 72 failures and 17 errors remains unresolved.",
+      "disposition": "Mandatory W1-exit reconciliation; it is neither represented as passing nor waived."
+    },
+    {
+      "severity": "non-blocking",
+      "item": "Complete W1 deployment, cross-capability, performance, recovery, and release-authoritative Windows x64 qualification remains outstanding.",
+      "disposition": "Mandatory at W1 exit."
+    }
+  ],
+  "taskctlSliceReviewNote": "APPROVED exact CAP-03.S05 R03 submission 0956eb7157ae002c8704fe3538a29b28b380d493: evidence-only remediation authenticates, with all 93 ordered paths matching Git and fresh selector output; exact base/head, seven unknown paths, safety-sensitive fallback, and W1-exit deferrals match. CAP-03.S05-R02-F01 is fixed, no finding remains, and independently authenticated R02 product/API/UI/security/authority results remain unchanged. Preserve the 72-failure/17-error foundation reconciliation and complete W1 qualification for W1 exit."
+}
