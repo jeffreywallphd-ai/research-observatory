@@ -124,3 +124,13 @@ implementation details, and security-lock auto-resume. The legacy `op-*`
 record is an exact compatibility projection onto a UUIDv7 workflow run, never
 canonical workflow authority. SQLite persistence and real worker restart are
 owned by `CAP-03.S04.T02`.
+
+`workflow-profile/` defines the governed scholarly-path catalog separately from
+executor history. It deterministically projects all fourteen exact profiles in
+`RO-UI-ACADEMIC-MINIMAL-1.5`, binds each selected profile to an accepted
+Research Intent reference, and represents primary/supporting navigation state
+without adding analytical job fields. Profile changes retain an immutable
+predecessor and require a complete, researcher-visible impact preview;
+cross-version migration maps every prior stage and never rewrites stage
+history. Persistence, commands, and application navigation belong to the later
+CAP-03.S06 tasks.

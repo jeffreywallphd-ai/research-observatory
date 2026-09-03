@@ -149,3 +149,9 @@ checkpoint/artifact/human-task identities, append-only replay history,
 at-least-once idempotency, security-lock interruption, and legacy operation
 projection bridge are documented in
 [`workflow-contracts.md`](workflow-contracts.md) and governed by ADR-0025.
+The exact fourteen-profile scholarly-path catalog, immutable intent-bound
+profile selections, separate navigation-stage revisions, explicit supporting-
+tool return context, and history-preserving profile migration are documented in
+[`workflow-profile-contracts.md`](workflow-profile-contracts.md) and governed by
+ADR-0026. These records never substitute for ADR-0025 analytical execution
+history.

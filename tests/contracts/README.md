@@ -19,3 +19,11 @@ committed artifact disposition, immutable human decisions, security-lock
 denial, and the exact legacy operation projection bridge in both generated
 runtimes. Real SQLite/process restart remains an integration responsibility of
 `CAP-03.S04.T02`.
+
+Workflow-profile coverage authenticates the exact fourteen-profile governed
+catalog, immutable Research Intent/profile selection lineage, ordered and
+cyclical stage metadata, primary versus supporting navigation state, current,
+completed, attention, and stale projections, and complete history-preserving
+profile migration in both generated runtimes. It deliberately rejects
+analytical job state at this boundary; CAP-03.S06.T02-T04 own persistence and
+application behavior.

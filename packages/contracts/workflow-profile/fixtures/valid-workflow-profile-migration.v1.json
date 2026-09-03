@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-workflow-profile-migration",
+  "contractVersion": "1.0.0",
+  "migrationId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d050",
+  "fromProfile": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "referenceVersion": "1.5",
+    "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+    "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+    "profileCatalogVersion": "1.0.0",
+    "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+    "profileId": "systematic-review",
+    "profileVersion": "1.5",
+    "profileRevision": 1,
+    "sourceWorkflowHash": "sha256:2cf5f09818ec1b16c393feac898b42d484e6e0b18f44a33da7411db2fbf6150d"
+  },
+  "toProfile": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "referenceVersion": "1.5",
+    "workflowCatalogHash": "sha256:2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+    "pageContractsHash": "sha256:d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+    "profileCatalogVersion": "1.0.0",
+    "profileCatalogHash": "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+    "profileId": "living-review",
+    "profileVersion": "1.5",
+    "profileRevision": 1,
+    "sourceWorkflowHash": "sha256:2da7db63f33f5bcdae06218ac348b3b4efe9a96ca8a0a98daa372d2d392e97b2"
+  },
+  "createdAt": "2026-09-03T19:04:00Z",
+  "createdBy": {
+    "actorType": "human",
+    "actorId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d030"
+  },
+  "historyPolicy": "preserve",
+  "requiresHumanAcceptance": true,
+  "stageMappings": [
+    {
+      "fromStageKey": "intent-contract-1",
+      "disposition": "retain",
+      "targetStageKey": "intent-contract-1",
+      "rationale": "The governed target profile retains the same page-contract stage; retain immutable prior history."
+    },
+    {
+      "fromStageKey": "source-manager-1",
+      "disposition": "requires-review",
+      "targetStageKey": null,
+      "rationale": "The target profile has no equivalent primary stage; retain history and require researcher review."
+    },
+    {
+      "fromStageKey": "search-studio-1",
+      "disposition": "retain",
+      "targetStageKey": "search-studio-1",
+      "rationale": "The governed target profile retains the same page-contract stage; retain immutable prior history."
+    },
+    {
+      "fromStageKey": "ingestion-reconciliation-1",
+      "disposition": "retain",
+      "targetStageKey": "ingestion-reconciliation-1",
+      "rationale": "The governed target profile retains the same page-contract stage; retain immutable prior history."
+    },
+    {
+      "fromStageKey": "corpus-canvas-1",
+      "disposition": "requires-review",
+      "targetStageKey": null,
+      "rationale": "The target profile has no equivalent primary stage; retain history and require researcher review."
+    },
+    {
+      "fromStageKey": "screening-1",
+      "disposition": "retain",
+      "targetStageKey": "screening-1",
+      "rationale": "The governed target profile retains the same page-contract stage; retain immutable prior history."
+    },
+    {
+      "fromStageKey": "parsing-quality-1",
+      "disposition": "requires-review",
+      "targetStageKey": null,
+      "rationale": "The target profile has no equivalent primary stage; retain history and require researcher review."
+    },
+    {
+      "fromStageKey": "evidence-matrix-1",
+      "disposition": "retain",
+      "targetStageKey": "evidence-matrix-1",
+      "rationale": "The governed target profile retains the same page-contract stage; retain immutable prior history."
+    },
+    {
+      "fromStageKey": "synthesis-studio-1",
+      "disposition": "retain",
+      "targetStageKey": "synthesis-studio-1",
+      "rationale": "The governed target profile retains the same page-contract stage; retain immutable prior history."
+    },
+    {
+      "fromStageKey": "audit-lineage-1",
+      "disposition": "retain",
+      "targetStageKey": "audit-lineage-1",
+      "rationale": "The governed target profile retains the same page-contract stage; retain immutable prior history."
+    }
+  ]
+}
