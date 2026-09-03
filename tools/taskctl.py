@@ -7258,26 +7258,55 @@ def command_amendment_v4_bootstrap_submit(
     chain = packet.get("authorityChain") or {}
     ordered = chain.get("orderedAmendments") or []
     reserved = chain.get("reservedAmendments") or []
-    if [item.get("id") for item in existing] != [item.get("id") for item in ordered]:
+    adopted_ids = [str(item.get("id") or "") for item in ordered]
+    reserved_ids = [str(item.get("id") or "") for item in reserved]
+
+    def amendment_ordinal(amendment_id: str) -> int:
+        match = re.fullmatch(rf"{re.escape(wave_id)}\.A(\d{{2}})", amendment_id)
+        return int(match.group(1)) if match else 100
+
+    predecessor_ids = sorted(
+        [*adopted_ids, *reserved_ids],
+        key=amendment_ordinal,
+    )
+    expected_predecessors = [f"{wave_id}.A{index:02d}" for index in range(1, len(predecessor_ids) + 1)]
+    existing_ids = [str(item.get("id") or "") for item in existing]
+    missing_predecessors = predecessor_ids[len(existing_ids) :]
+    if (
+        len(predecessor_ids) != len(set(predecessor_ids))
+        or any(amendment_ordinal(item) == 100 for item in predecessor_ids)
+        or adopted_ids != sorted(adopted_ids, key=amendment_ordinal)
+        or reserved_ids != sorted(reserved_ids, key=amendment_ordinal)
+        or predecessor_ids != expected_predecessors
+        or existing_ids != predecessor_ids[: len(existing_ids)]
+        or any(item not in existing_ids for item in adopted_ids)
+        or any(item not in reserved_ids for item in missing_predecessors)
+    ):
         raise SystemExit("Post-migration amendment predecessor authority differs from the canonical backlog")
-    expected_reserved = [
-        f"{wave_id}.A{index:02d}" for index in range(len(existing) + 1, len(existing) + len(reserved) + 1)
-    ]
-    if [item.get("id") for item in reserved] != expected_reserved:
-        raise SystemExit("Post-migration reserved amendments are not the exact next consecutive identities")
-    expected_id = f"{wave_id}.A{len(existing) + len(reserved) + 1:02d}"
+    expected_id = f"{wave_id}.A{len(predecessor_ids) + 1:02d}"
     if args.amendment != expected_id or packet.get("proposedAmendmentId") != expected_id:
         raise SystemExit(f"Only the next post-migration Wave amendment may be appended: {expected_id}")
     control = data.get("control_plane") or {}
     activation = packet.get("activationBoundary") or {}
+    maintenance = control.get("maintenance_increments") or []
+    first_post_migration_bootstrap = not maintenance
     if (
-        control.get("revision") != 11
-        or control.get("minimum_tool_revision") != 11
+        (
+            first_post_migration_bootstrap
+            and (control.get("revision") != 11 or control.get("minimum_tool_revision") != 11)
+        )
+        or (
+            not first_post_migration_bootstrap
+            and (
+                control.get("revision") != CONTROL_TOOL_REVISION
+                or control.get("minimum_tool_revision") != CONTROL_TOOL_REVISION
+            )
+        )
         or control.get("active_amendment") is not None
         or active_recovery_holds(data)
         or activation.get("activeRecoveryHolds") != []
     ):
-        raise SystemExit("Post-migration amendment requires the exact released revision-11 control boundary")
+        raise SystemExit("Post-migration amendment requires the exact released supported control boundary")
     wave = get(wave_map(data), wave_id, "wave")
     campaign = wave.get("campaign") or {}
     if (
@@ -7385,7 +7414,8 @@ def command_amendment_v4_bootstrap_submit(
         raise SystemExit("Invalid post-migration amendment bootstrap evidence:\n- " + "\n- ".join(errors))
     frozen_waves = exact_record_snapshot(data, "waves", identities={wave_id})
     before_snapshot = amendment_identity_snapshot(data)
-    for reservation in reserved:
+    missing_reservations = [reservation for reservation in reserved if reservation.get("id") in missing_predecessors]
+    for reservation in missing_reservations:
         data.setdefault("wave_amendments", []).append(
             materialized_superseded_reservation(repo, wave_id, reservation, migration)
         )
@@ -7425,35 +7455,33 @@ def command_amendment_v4_bootstrap_submit(
         }
     )
     after_snapshot = amendment_identity_snapshot(data)
-    expected_suffix = tuple((item, ()) for item in [*expected_reserved, args.amendment])
+    expected_suffix = tuple((item, ()) for item in [*missing_predecessors, args.amendment])
     if (
         after_snapshot[: len(before_snapshot)] != before_snapshot
         or after_snapshot[len(before_snapshot) :] != expected_suffix
     ):
         raise SystemExit("Post-migration append would replace, reorder, or fork predecessor amendment authority")
-    maintenance = control.setdefault("maintenance_increments", [])
-    if maintenance:
-        raise SystemExit("Post-migration control maintenance increment has already been recorded")
-    maintenance.append(
-        {
-            "id": "MI-0001",
-            "kind": "post-migration-amendment-bootstrap",
-            "predecessor_revision": 11,
-            "successor_revision": CONTROL_TOOL_REVISION,
-            "change_request_id": approval.get("changeRequestId"),
-            "amendment_id": args.amendment,
-            "approval_reference": {
-                "path": approval_relative,
-                "sha256": hashlib.sha256(approval_payload).hexdigest(),
-                "introduction_commit": introduction,
-            },
-            "migration_reference": copy.deepcopy(migration_reference),
-            "applied_by": agent,
-            "applied_at": utc_now(),
-        }
-    )
-    control["revision"] = CONTROL_TOOL_REVISION
-    control["minimum_tool_revision"] = CONTROL_TOOL_REVISION
+    if first_post_migration_bootstrap:
+        control.setdefault("maintenance_increments", []).append(
+            {
+                "id": "MI-0001",
+                "kind": "post-migration-amendment-bootstrap",
+                "predecessor_revision": 11,
+                "successor_revision": CONTROL_TOOL_REVISION,
+                "change_request_id": approval.get("changeRequestId"),
+                "amendment_id": args.amendment,
+                "approval_reference": {
+                    "path": approval_relative,
+                    "sha256": hashlib.sha256(approval_payload).hexdigest(),
+                    "introduction_commit": introduction,
+                },
+                "migration_reference": copy.deepcopy(migration_reference),
+                "applied_by": agent,
+                "applied_at": utc_now(),
+            }
+        )
+        control["revision"] = CONTROL_TOOL_REVISION
+        control["minimum_tool_revision"] = CONTROL_TOOL_REVISION
     control["active_amendment"] = None
     save_validated(
         args.file,
