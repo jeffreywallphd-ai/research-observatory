@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0013",
+  "reviewId": "GOV-MAINT-0013.R01",
+  "reviewedCommit": "66d16f625ac3189a91906f65825b32b86c2b00a0",
+  "reviewer": "agent:ecr5-planning-authority-reviewer",
+  "reviewedAt": "2026-09-03T11:06:58.9224009-04:00",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0013.json",
+    "planning/review-site/enablers/ECR-0005.html",
+    "planning/review-site/manifest.json",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tools/plan_review_site.py"
+  ],
+  "findings": [],
+  "closures": [],
+  "verified": [
+    "The exact candidate 66d16f625ac3189a91906f65825b32b86c2b00a0 directly and strictly descends from ECR-0005 adverse-ledger commit 6f3145c6a11ab6aee9fe2611a0907fc32173aea6 and changes only the five declared maintenance and generated-view paths.",
+    "The generated authority sequence is base, W1.A01, W1.A02, W1.A03, reserved W1.A04, W1.A05, GOV-MIG-0001, and proposed W1.A06. Reservation meaning, packet bindings, approval bindings, and all predecessor bytes remain unchanged.",
+    "The exact-hash canonical APPROVAL.yaml matches reference_id RO-UI-ACADEMIC-MINIMAL-1.5 and status approved, selecting truthful existing-authority wording. ECR-0004 remains unbound and retains pending-reference wording.",
+    "Adversarial read-only replay proves an exact governed-file hash mismatch is denied before approval parsing; a mismatched reference identity or non-approved status cannot select approved wording.",
+    "All 16 amendment review-site tests pass in 18.261 seconds. Ruff check and formatting, JSON parsing, ECR-0005 structural and historical validation, canonical backlog validation for 20 capabilities, 117 slices, 363 tasks, and 12 gates, 489-page site validation, generated backlog views, ancestry, and diff hygiene pass.",
+    "W1 remains PAUSED at Wave scope and lease-free with no active task, amendment campaign, or recovery hold. CAP-03.S06.T01 remains READY and unclaimed. No product, canonical planning, ECR authority, approval, task-state, or governed-experience byte changed.",
+    "The protected untracked artifacts/evidence/W1.A04.B00.json witness was not opened, hashed, staged, modified, or deleted during review."
+  ]
+}
