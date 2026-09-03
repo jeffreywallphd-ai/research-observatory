@@ -4445,6 +4445,30 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 )
             self.assertEqual(frozen, json.dumps(data, sort_keys=True))
 
+            downgraded = copy.deepcopy(data)
+            downgraded["control_plane"].pop("maintenance_increments")
+            downgraded["control_plane"]["revision"] = 11
+            downgraded["control_plane"]["minimum_tool_revision"] = 11
+            frozen_downgraded = json.dumps(downgraded, sort_keys=True)
+            with (
+                patch("taskctl.discover_repository", return_value=REPO),
+                patch("taskctl.recovery_hold_errors", return_value=[]),
+                patch("taskctl.load_amendment_authority", return_value=(approval, packet, approval_payload)),
+                patch("taskctl.subprocess.run", return_value=subprocess.CompletedProcess([], 0, "", "")),
+                patch("taskctl.save_validated") as rejected_save,
+                self.assertRaisesRegex(SystemExit, "exact released supported control boundary"),
+            ):
+                taskctl_module.command_amendment_append_bootstrap_submit(
+                    args,
+                    downgraded,
+                    capabilities,
+                    slices,
+                    tasks,
+                    gates,
+                )
+            self.assertEqual(frozen_downgraded, json.dumps(downgraded, sort_keys=True))
+            rejected_save.assert_not_called()
+
             def ecr_only(command: list[str], *run_args: Any, **run_kwargs: Any) -> subprocess.CompletedProcess[Any]:
                 if len(command) > 1 and str(command[1]).endswith("planctl.py"):
                     return subprocess.CompletedProcess(command, 0, "ECR-0005 is approved\n", "")
