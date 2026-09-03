@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0010",
+  "reviewId": "GOV-MAINT-0010.R02",
+  "reviewedCommit": "715a20572de1c18cb9e8cf97c20fc4633e84a77a",
+  "reviewer": "agent:gov-maint-0010-reviewer",
+  "reviewedAt": "2026-09-03T11:51:43.1822801Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0010.json",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0010.R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Truthful adopted baseline history",
+      "evidence": "The rejected-baseline attestation suppresses only approval_lineage_errors. At reachable edge 3130c373e912aff2d6143bd15201d69e38ab1b55<-6ed8e76fb52349780cccac913b3652553a57afbd, baseline bytes changed while referenceApprovalCommit remained 9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b, so baseline_history_errors still reports that changing a visual baseline requires a new reference approval commit after adoption. The exact candidate history test produced six errors; adoption could suppress five lineage errors but not this transition-edge error.",
+      "remediation": "Apply the independently reviewed rejected-candidate exemption narrowly to the invalid candidate's transition edge as well, while retaining its adverse history, and add a real-Git adopted-state regression that proves the exact repository baseline history becomes clean only after adoption."
+    },
+    {
+      "id": "GOV-MAINT-0010.R02-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Every reachable baseline remains bound to its exact reference package",
+      "evidence": "Lineage validation runs only when baseline bytes are introduced. A reachable commit can mutate the governed reference, manifest, or approval while baseline bytes remain unchanged and a later commit can restore it; the invalid historical package/approval binding is never evaluated. This makes ADR-0004's every-reachable-baseline exact binding repairable in later history.",
+      "remediation": "Restore per-commit lineage validation by default, exempt only authenticated provenance-only proposal/approval handoff commits, and add a real-Git reference-only mutation-and-restore regression proving temporary corruption remains visible."
+    },
+    {
+      "id": "GOV-MAINT-0010.R02-F03",
+      "severity": "high",
+      "blocking": true,
+      "criterion": "Immutable and single-use Wave/slice approval authority",
+      "evidence": "The proposal validator permits arbitrary extra proposal paths and reads backlog/slice approval metadata from that mutable proposal without binding those authority-source bytes to the immutable approved Wave chain. The actual slice-plan blob differs between approved Wave commit c5bbd97c0cdc665eecb973f5862478ef7be97752 and proposal 68d47cbc77de910484939419ee890e68e50e7a1d because its approval projection arrived later, but that projection ancestry and content are not authenticated. The reuse scan searches ancestors of the proposal, so two sibling direct-child approvals consuming the same proposal can each evade detection.",
+      "remediation": "Forbid authority-source substitution or authenticate the exact post-Wave slice approval projection and bytes; constrain proposal paths to the intended provenance handoff; detect proposal consumption across reachable descendant/ledger history, including sibling approvals; and add substitution and sibling-reuse regressions."
+    }
+  ]
+}
