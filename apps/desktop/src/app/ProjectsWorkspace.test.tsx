@@ -34,10 +34,17 @@ const catalog: WorkflowProfileCatalogProjection = {
   registeredToolPageContractIds: ["intent-contract.html", "theory-map.html"],
   profiles: [{
     profileId: "theory-synthesis",
+    epistemicMode: "theory",
     title: "Theory synthesis",
     purpose: "Reconcile competing mechanisms into a bounded conceptual model.",
+    example: "Reconcile competing mechanisms into a bounded conceptual model.",
     expectedOutputs: ["Theory map", "Traceable synthesis"],
     processForm: "revisitable",
+    defaultEvidenceTypes: ["theoretical-work", "empirical-study"],
+    defaultNoveltyStandard: "theoretical",
+    defaultAutonomyLevel: "suggest",
+    defaultStoppingConditions: ["interpretive-saturation"],
+    warning: "Conceptual integration must preserve disagreements and evidentiary limits.",
     stages: [
       { stageKey: "intent-contract-1", order: 1, pageContractId: "intent-contract.html", label: "Research Intent", optional: false, rationale: "Set authority.", checkpointState: "unknown", checkpointRationale: "Not specified." },
       { stageKey: "theory-map-1", order: 2, pageContractId: "theory-map.html", label: "Theory Map", optional: false, rationale: "Map theory.", checkpointState: "unknown", checkpointRationale: "Not specified." },

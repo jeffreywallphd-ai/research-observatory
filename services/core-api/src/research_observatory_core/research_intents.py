@@ -138,6 +138,125 @@ _PROFILE_BY_ID = {
     for profile in cast(Sequence[Mapping[str, object]], _WORKFLOW_CATALOG["profiles"])
 }
 
+_INTENT_GUIDANCE_BY_PROFILE: Mapping[str, Mapping[str, object]] = {
+    "rapid-orientation": {
+        "example": "Map the main approaches and unresolved questions in a new field.",
+        "evidenceTypes": ("empirical-study", "systematic-review"),
+        "noveltyStandard": "not-claimed",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("coverage-threshold",),
+        "warning": "Rapid orientation supports bounded understanding; it does not claim exhaustive coverage.",
+    },
+    "systematic-review": {
+        "example": "Estimate and explain an intervention effect from eligible studies.",
+        "evidenceTypes": ("empirical-study", "systematic-review"),
+        "noveltyStandard": "bounded-comparative",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("coverage-threshold",),
+        "warning": "Coverage claims remain bounded by the recorded protocol, sources, dates, and languages.",
+    },
+    "living-review": {
+        "example": "Maintain an evidence synthesis as qualifying studies appear.",
+        "evidenceTypes": ("empirical-study", "systematic-review"),
+        "noveltyStandard": "incremental",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("coverage-threshold",),
+        "warning": "Every update preserves its search boundary and prior synthesis revision.",
+    },
+    "theory-synthesis": {
+        "example": "Reconcile competing mechanisms into a bounded conceptual model.",
+        "evidenceTypes": ("theoretical-work", "empirical-study"),
+        "noveltyStandard": "theoretical",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("interpretive-saturation",),
+        "warning": "Conceptual integration must preserve disagreements and evidentiary limits.",
+    },
+    "hermeneutic-inquiry": {
+        "example": "Develop a situated interpretation across a bounded textual corpus.",
+        "evidenceTypes": ("interpretive-text",),
+        "noveltyStandard": "interpretive",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("interpretive-saturation", "researcher-decision"),
+        "warning": "Interpretations remain researcher-authored and tied to the recorded corpus and frame.",
+    },
+    "critical-problematization": {
+        "example": "Surface exclusions and consequences within a dominant framing.",
+        "evidenceTypes": ("critical-analysis", "stakeholder-account"),
+        "noveltyStandard": "critical",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("interpretive-saturation", "researcher-decision"),
+        "warning": "The workflow must preserve standpoint, counter-evidence, and affected voices.",
+    },
+    "technical-landscape": {
+        "example": "Compare architectures and evaluated capabilities for a technical domain.",
+        "evidenceTypes": ("technical-evaluation", "standard", "dataset"),
+        "noveltyStandard": "bounded-comparative",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("benchmark-complete",),
+        "warning": "Comparisons are limited to compatible evidence, versions, and benchmark conditions.",
+    },
+    "novelty-audit": {
+        "example": "Challenge a proposed contribution against the closest documented alternatives.",
+        "evidenceTypes": ("empirical-study", "theoretical-work", "technical-evaluation"),
+        "noveltyStandard": "bounded-comparative",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("nearest-prior-work-challenged",),
+        "warning": (
+            "A novelty claim is provisional until nearest prior work and plausible counterexamples are challenged."
+        ),
+    },
+    "empirical-study-design": {
+        "example": "Design a study without inventing participants, results, or feasibility evidence.",
+        "evidenceTypes": ("empirical-study", "systematic-review"),
+        "noveltyStandard": "methodological",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("protocol-complete",),
+        "warning": "The researcher retains authority over ethics, recruitment, conduct, and interpretation.",
+    },
+    "empirical-study-to-article": {
+        "example": "Develop a manuscript from a documented study and analysis plan.",
+        "evidenceTypes": ("empirical-study", "dataset"),
+        "noveltyStandard": "contextual",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("protocol-complete", "researcher-decision"),
+        "warning": "Unreported or missing results remain unreported or missing.",
+    },
+    "empirical-results-to-article": {
+        "example": "Develop an article from completed, traceable empirical results.",
+        "evidenceTypes": ("empirical-study", "dataset"),
+        "noveltyStandard": "incremental",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("researcher-decision",),
+        "warning": "No result, statistic, or participant detail may be inferred when absent.",
+    },
+    "theory-article-development": {
+        "example": "Develop a theory article from traceable concepts and propositions.",
+        "evidenceTypes": ("theoretical-work", "empirical-study"),
+        "noveltyStandard": "theoretical",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("interpretive-saturation", "researcher-decision"),
+        "warning": "The system can prepare arguments; the researcher owns interpretation and claims.",
+    },
+    "critical-article-development": {
+        "example": "Develop a critical article with explicit standpoint and counter-evidence.",
+        "evidenceTypes": ("critical-analysis", "stakeholder-account", "interpretive-text"),
+        "noveltyStandard": "critical",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("interpretive-saturation", "researcher-decision"),
+        "warning": "The article must not erase contested positions or affected perspectives.",
+    },
+    "manuscript-review-revision": {
+        "example": "Address reviewer comments without silently broadening claims.",
+        "evidenceTypes": ("empirical-study", "theoretical-work", "technical-evaluation"),
+        "noveltyStandard": "not-claimed",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ("researcher-decision",),
+        "warning": "Reviewer responses and claim changes remain explicit, traceable researcher decisions.",
+    },
+}
+if set(_INTENT_GUIDANCE_BY_PROFILE) != set(_PROFILE_BY_ID):
+    raise RuntimeError("workflow profile intent guidance does not match the governed catalog")
+
 
 def _stage_label(page_contract_id: str) -> str:
     if page_contract_id == "intent-contract.html":
@@ -166,6 +285,7 @@ def _workflow_catalog_projection() -> WorkflowProfileCatalogProjection:
     governed = cast(Mapping[str, object], _WORKFLOW_CATALOG["governedReference"])
     profiles: list[WorkflowProfileProjection] = []
     for profile in cast(Sequence[Mapping[str, object]], _WORKFLOW_CATALOG["profiles"]):
+        guidance = _INTENT_GUIDANCE_BY_PROFILE[cast(str, profile["profileId"])]
         stages = tuple(
             WorkflowProfileStageProjection(
                 stage_key=cast(str, stage["stageKey"]),
@@ -182,10 +302,17 @@ def _workflow_catalog_projection() -> WorkflowProfileCatalogProjection:
         profiles.append(
             WorkflowProfileProjection(
                 profile_id=cast(Any, profile["profileId"]),
+                epistemic_mode=cast(Any, _USE_CASE_MODE[cast(str, profile["profileId"])]),
                 title=cast(str, profile["title"]),
                 purpose=cast(str, profile["purpose"]),
+                example=cast(str, guidance["example"]),
                 expected_outputs=tuple(cast(Sequence[str], profile["expectedOutputs"])),
                 process_form=cast(Any, profile["cyclePolicy"]),
+                default_evidence_types=tuple(cast(Sequence[Any], guidance["evidenceTypes"])),
+                default_novelty_standard=cast(Any, guidance["noveltyStandard"]),
+                default_autonomy_level=cast(Any, guidance["autonomyLevel"]),
+                default_stopping_conditions=tuple(cast(Sequence[Any], guidance["stoppingConditions"])),
+                warning=cast(str, guidance["warning"]),
                 stages=stages,
             )
         )
@@ -613,6 +740,7 @@ def _workflow_authority_mutation(
     added_selections: list[WorkflowAuthorityRecord] = []
     added_migrations: list[WorkflowAuthorityRecord] = []
     added_decisions: list[WorkflowAuthorityRecord] = []
+    activation: WorkflowAuthorityRecord | None = None
     parent = selections[-1] if selections else None
     profile_changed = bool(
         prior_intent is not None and prior_intent["primaryUseCase"] != target_intent["primaryUseCase"]
@@ -641,7 +769,24 @@ def _workflow_authority_mutation(
         added_decisions.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(decision)))
     if not added_selections and not added_migrations and not added_decisions:
         return None
+    if existing.activation is None and added_selections:
+        first_selection = json.loads(added_selections[0].content_json)
+        first_intent = cast(Mapping[str, object], first_selection["researchIntent"])
+        binding: dict[str, object] = {
+            "schemaVersion": "1.0",
+            "documentType": "research-observatory-workflow-authority-binding",
+            "authority": "ADR-0026",
+            "domainProjectId": first_selection["projectId"],
+            "activatedAtIntentRevision": first_intent["revision"],
+            "firstSelectionRevisionId": first_selection["selectionRevisionId"],
+            "firstSelectionContentHash": first_selection["revisionContentHash"],
+            "profileCatalogHash": APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256,
+            "bindingContentHash": "sha256:" + "0" * 64,
+        }
+        binding["bindingContentHash"] = _authority_content_hash(binding, "bindingContentHash")
+        activation = WorkflowAuthorityRecord(revision=0, content_json=_canonical_json(binding))
     return WorkflowAuthorityMutation(
+        activation=activation,
         selections=tuple(added_selections),
         migrations=tuple(added_migrations),
         decisions=tuple(added_decisions),
@@ -865,6 +1010,42 @@ def _validated_workflow_authority(
     selections = _authority_records(authority.selections)
     migrations = _authority_records(authority.migrations)
     decisions = _authority_records(authority.decisions)
+    if authority.activation is None:
+        if selections:
+            raise RepositoryProblem("workflow authority activation is missing")
+    else:
+        activation_records = _authority_records((authority.activation,))
+        activation = activation_records[0]
+        first_selection = selections[0] if selections else None
+        first_intent = first_selection.get("researchIntent") if first_selection is not None else None
+        expected_fields = {
+            "schemaVersion",
+            "documentType",
+            "authority",
+            "domainProjectId",
+            "activatedAtIntentRevision",
+            "firstSelectionRevisionId",
+            "firstSelectionContentHash",
+            "profileCatalogHash",
+            "bindingContentHash",
+        }
+        if (
+            authority.activation.revision != 0
+            or not selections
+            or set(activation) != expected_fields
+            or activation.get("schemaVersion") != "1.0"
+            or activation.get("documentType") != "research-observatory-workflow-authority-binding"
+            or activation.get("authority") != "ADR-0026"
+            or activation.get("profileCatalogHash") != APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256
+            or activation.get("bindingContentHash") != _authority_content_hash(activation, "bindingContentHash")
+            or first_selection is None
+            or not isinstance(first_intent, Mapping)
+            or activation.get("domainProjectId") != first_selection.get("projectId")
+            or activation.get("activatedAtIntentRevision") != first_intent.get("revision")
+            or activation.get("firstSelectionRevisionId") != first_selection.get("selectionRevisionId")
+            or activation.get("firstSelectionContentHash") != first_selection.get("revisionContentHash")
+        ):
+            raise RepositoryProblem("workflow authority activation is invalid")
     if [record.revision for record in authority.selections] != list(range(1, len(authority.selections) + 1)):
         raise RepositoryProblem("workflow selection history is discontinuous")
     for record, selection in zip(authority.selections, selections, strict=True):
@@ -1075,8 +1256,32 @@ def _impact(
                 if old_positions.get(cast(str, stage["stageKey"])) != new_positions.get(cast(str, stage["stageKey"]))
             )
         )
-        autonomy_effects = ("researcher-selected-autonomy-remains",)
-        stopping_effects = ("researcher-selected-stopping-remains",)
+        if before["autonomyLevel"] == after["autonomyLevel"]:
+            autonomy_effects = (f"retained autonomy level: {after['autonomyLevel']}",)
+        else:
+            autonomy_effects = (
+                f"removed autonomy level: {before['autonomyLevel']}",
+                f"added autonomy level: {after['autonomyLevel']}",
+            )
+        before_stopping = cast(Sequence[str], before["stoppingConditions"])
+        after_stopping = cast(Sequence[str], after["stoppingConditions"])
+        stopping_effects = tuple(
+            [
+                f"retained stopping condition: {condition}"
+                for condition in before_stopping
+                if condition in after_stopping
+            ]
+            + [
+                f"removed stopping condition: {condition}"
+                for condition in before_stopping
+                if condition not in after_stopping
+            ]
+            + [
+                f"added stopping condition: {condition}"
+                for condition in after_stopping
+                if condition not in before_stopping
+            ]
+        )
     warnings: list[str] = []
     if "primary-use-case" in categories:
         warnings.append(

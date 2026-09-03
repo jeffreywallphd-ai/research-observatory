@@ -366,6 +366,7 @@ class WorkflowAuthorityRecord:
 class WorkflowAuthorityMutation:
     """Workflow authority records committed with one Research Intent revision."""
 
+    activation: WorkflowAuthorityRecord | None = None
     selections: tuple[WorkflowAuthorityRecord, ...] = ()
     migrations: tuple[WorkflowAuthorityRecord, ...] = ()
     decisions: tuple[WorkflowAuthorityRecord, ...] = ()

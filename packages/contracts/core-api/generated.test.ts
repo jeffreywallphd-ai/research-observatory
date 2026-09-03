@@ -721,10 +721,17 @@ describe("generated Core API client", () => {
       registeredToolPageContractIds: ["intent-contract.html"],
       profiles: profileIds.map((profileId) => ({
         profileId,
+        epistemicMode: "theory" as const,
         title: profileId,
         purpose: `Purpose for ${profileId}`,
+        example: `Example for ${profileId}`,
         expectedOutputs: ["Bounded output"],
         processForm: "linear" as const,
+        defaultEvidenceTypes: ["theoretical-work" as const],
+        defaultNoveltyStandard: "theoretical" as const,
+        defaultAutonomyLevel: "suggest" as const,
+        defaultStoppingConditions: ["interpretive-saturation" as const],
+        warning: `Warning for ${profileId}`,
         stages: [{
           stageKey: "intent-contract-1",
           order: 1,

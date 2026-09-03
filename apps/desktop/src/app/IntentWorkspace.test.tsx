@@ -16,6 +16,7 @@ import {
   IntentWorkspace,
   acceptedIntentWorkspace,
   intentFieldAffectsImpact,
+  intentProfileSelectionDefaults,
   intentAcceptanceAvailability,
   intentAcceptanceRequest,
   intentWorkspaceAvailability,
@@ -58,13 +59,36 @@ const catalog: WorkflowProfileCatalogProjection = {
   registeredToolPageContractIds: ["intent-contract.html", "theory-map.html"],
   profiles: [{
     profileId: "theory-synthesis",
+    epistemicMode: "theory",
     title: "Theory synthesis",
     purpose: "Integrate theories while retaining boundaries and disagreements.",
+    example: "Reconcile competing mechanisms into a bounded conceptual model.",
     expectedOutputs: ["Theory architecture and integration opportunities"],
     processForm: "revisitable",
+    defaultEvidenceTypes: ["theoretical-work", "empirical-study"],
+    defaultNoveltyStandard: "theoretical",
+    defaultAutonomyLevel: "suggest",
+    defaultStoppingConditions: ["interpretive-saturation"],
+    warning: "Conceptual integration must preserve disagreements and evidentiary limits.",
     stages: [
       { stageKey: "intent-contract-1", order: 1, pageContractId: "intent-contract.html", label: "Research Intent", optional: false, rationale: "Set authority.", checkpointState: "unknown", checkpointRationale: "Not specified." },
       { stageKey: "theory-map-1", order: 2, pageContractId: "theory-map.html", label: "Theory Map", optional: false, rationale: "Map theory.", checkpointState: "unknown", checkpointRationale: "Not specified." },
+    ],
+  }, {
+    profileId: "systematic-review",
+    epistemicMode: "systematic",
+    title: "Systematic / scoping review",
+    purpose: "Construct and report a reproducible evidence corpus.",
+    example: "Estimate and explain an intervention effect from eligible studies.",
+    expectedOutputs: ["Protocol, corpus, evidence table, cited synthesis, and audit bundle"],
+    processForm: "linear",
+    defaultEvidenceTypes: ["empirical-study", "systematic-review"],
+    defaultNoveltyStandard: "bounded-comparative",
+    defaultAutonomyLevel: "human-only",
+    defaultStoppingConditions: ["coverage-threshold"],
+    warning: "Coverage claims remain bounded by the recorded protocol, sources, dates, and languages.",
+    stages: [
+      { stageKey: "intent-contract-1", order: 1, pageContractId: "intent-contract.html", label: "Research Intent", optional: false, rationale: "Set authority.", checkpointState: "unknown", checkpointRationale: "Not specified." },
     ],
   }],
 };
@@ -152,12 +176,19 @@ describe("guided research intent workspace", () => {
     expect(intentFieldAffectsImpact("researchObjective")).toBe(false);
   });
 
-  it("keeps intent-form defaults use-case specific without duplicating profile presentation", () => {
-    expect(selectedIntentGuidance("systematic-review")).toMatchObject({
+  it("uses only Core-projected profile guidance and applies exact profile-selection defaults", () => {
+    expect(selectedIntentGuidance(catalog, "systematic-review")).toMatchObject({
       epistemicMode: "systematic",
       defaultStoppingConditions: ["coverage-threshold"],
     });
-    expect(selectedIntentGuidance("novelty-audit").warning).toContain("nearest prior work");
+    expect(intentProfileSelectionDefaults(catalog, "systematic-review")).toEqual({
+      primaryUseCase: "systematic-review",
+      evidenceTypes: ["empirical-study", "systematic-review"],
+      noveltyStandard: "bounded-comparative",
+      autonomyLevel: "human-only",
+      stoppingConditions: ["coverage-threshold"],
+    });
+    expect(() => selectedIntentGuidance(catalog, "novelty-audit")).toThrow("RO-CORE-INTENT-MODE-INVALID");
   });
 
   it("requires an open compatible writable project and exposes safe boundary states", () => {
