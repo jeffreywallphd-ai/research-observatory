@@ -31675,7 +31675,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: W1.A06
+  active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -36070,7 +36070,7 @@ wave_amendments:
     sha256: 244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67
     introduction_commit: 6e4581274972b7c324e5394fb317975ff063ecbe
   lifecycle:
-    status: ACTIVE
+    status: REVIEW
     history:
     - id: E01
       status: APPROVED
@@ -36090,6 +36090,12 @@ wave_amendments:
       actor: codex
       at: '2026-09-03T18:06:49+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E04
+      status: REVIEW
+      actor: codex
+      at: '2026-09-03T18:28:57+00:00'
+      rationale: W1.A06.B00 and W1.A06.T01 are independently approved with no open findings; submit the bounded planning-authority
+        correction for independent amendment-exit review while W1 remains paused.
   bootstrap:
     id: W1.A06.B00
     status: APPROVED
@@ -36142,7 +36148,7 @@ wave_amendments:
           state. No materialization, activation, T01, adoption, or W1 resume is approved.
     scope_base_commit: 3fe834df6212516957048db3b76594bffe71eca5
   campaign:
-    status: ACTIVE
+    status: REVIEW
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -36151,12 +36157,9 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-03T18:06:49+00:00'
-    updated_at: '2026-09-03T18:06:49+00:00'
+    updated_at: '2026-09-03T18:28:57+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-03T18:06:49+00:00'
-      expires_at: '2026-09-04T18:06:49+00:00'
+    lease: null
   tasks:
   - id: W1.A06.T01
     amendment_id: W1.A06
@@ -36306,8 +36309,40 @@ wave_amendments:
             closed_finding_ids: []
       current_submission: null
   completion:
-    status: PENDING
+    status: REVIEW
     reviewer: null
     reviewed_at: null
-    evidence: []
-    notes: null
+    evidence:
+    - artifacts/evidence/W1.A06.exit.json
+    notes: W1.A06.B00 and W1.A06.T01 are independently approved with no open findings; submit the bounded planning-authority
+      correction for independent amendment-exit review while W1 remains paused.
+    exit_review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-09-03T18:28:57+00:00'
+        candidate_commit: a149bae9474ac37188014cc26ed872d939f3cfb2
+        declared_candidate_commit: e4d1556d4f090427143f890153f73ca1c9e12a61
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: amendment-exit-evidence
+          amendment_id: W1.A06
+          path: artifacts/evidence/W1.A06.exit.json
+          sha256: 6ba4285abda8779670b9c37b8e4c702a32314c67b485f3437b823d699bdfb988
+          commit: a149bae9474ac37188014cc26ed872d939f3cfb2
+        acceptance_criteria_sha256: 75e9eb9460eaf21f83432958babac4c02e7ceb4b41fff339b5214b14b76f1a0f
+        selected_checks:
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .
+        - .venv\Scripts\python.exe tools\backlog_views.py --repo . --check
+        - .venv\Scripts\python.exe tools\ui_reference_check.py --repo .
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml amendment status W1.A06
+        - git diff --check 2a536f563bddaef70b800e0902d720aad4e811cd..e4d1556d4f090427143f890153f73ca1c9e12a61
+        - git diff --exit-code 2a536f563bddaef70b800e0902d720aad4e811cd..e4d1556d4f090427143f890153f73ca1c9e12a61 -- design/ui-reference
+          modules apps verification-profiles.json
+        selected_checks_sha256: b5a64df294a06bc7228685a38e2acca4dd79f324f3b5c59c77ea6d58fd457127
+        prior_attempt_id: null
+        open_finding_ids: []
+        packet_sha256: 54ced4a6cd0a295eb845a55900e8ebdd6085b2eea6a873a14d48eeb4d7e5d332

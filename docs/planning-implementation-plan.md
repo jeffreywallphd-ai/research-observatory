@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4ca335019465f1fdf9f3db0a1d24c83c94268a9d41f830721df3256ed4c043cc
+source_sha256: e1367e25146047aa6476d30598910757759b390babbb3694321ef00dcea982db
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -45,7 +45,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
-| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ACTIVE` |
+| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `REVIEW` |
 
 ## Waves
 
@@ -1478,23 +1478,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A06.json` (`244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-03T12:11:49.1702461-04:00` by repository-owner: The repository owner approved ECR-0005/W1.A06 in direct response to the exact-commit approval request for f48f11ed12c10d26acb1b80053e1a823c3ee5c16. Authorize only bootstrap W1.A06.B00, contribution W1.A06.S01, and task W1.A06.T01 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 fourteen-workflow catalog without changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
 - `E02` `MATERIALIZED` at `2026-09-03T18:04:41+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-09-03T18:06:49+00:00` by codex: Activated the bounded amendment campaign.
+- `E04` `REVIEW` at `2026-09-03T18:28:57+00:00` by codex: W1.A06.B00 and W1.A06.T01 are independently approved with no open findings; submit the bounded planning-authority correction for independent amendment-exit review while W1 remains paused.
 
 ### Amendment-exit review and adoption — W1.A06
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `54ced4a6cd0a295eb845a55900e8ebdd6085b2eea6a873a14d48eeb4d7e5d332`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `a149bae9474ac37188014cc26ed872d939f3cfb2` / `e4d1556d4f090427143f890153f73ca1c9e12a61` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T18:28:57+00:00`
+- Bound exit evidence: amendment `W1.A06` / `artifacts/evidence/W1.A06.exit.json` / `6ba4285abda8779670b9c37b8e4c702a32314c67b485f3437b823d699bdfb988` / `a149bae9474ac37188014cc26ed872d939f3cfb2`
+- Acceptance-criteria SHA-256: `75e9eb9460eaf21f83432958babac4c02e7ceb4b41fff339b5214b14b76f1a0f`
+- Selected-check SHA-256: `b5a64df294a06bc7228685a38e2acca4dd79f324f3b5c59c77ea6d58fd457127`
+- Selected checks: `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\ui_reference_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml amendment status W1.A06`, `git diff --check 2a536f563bddaef70b800e0902d720aad4e811cd..e4d1556d4f090427143f890153f73ca1c9e12a61`, `git diff --exit-code 2a536f563bddaef70b800e0902d720aad4e811cd..e4d1556d4f090427143f890153f73ca1c9e12a61 -- design/ui-reference modules apps verification-profiles.json`
+- Prior round / replayed open findings: `-` / -
 
-**Latest completion notes:** -
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A06.exit.json`
+
+**Latest completion notes:** W1.A06.B00 and W1.A06.T01 are independently approved with no open findings; submit the bounded planning-authority correction for independent amendment-exit review while W1 remains paused.
 
 **Bound amendment-adoption checkpoints:**
 
