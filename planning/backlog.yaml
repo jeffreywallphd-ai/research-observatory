@@ -14636,12 +14636,12 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-03T18:46:13+00:00'
-      updated_at: '2026-09-03T19:49:20+00:00'
-      completed_at: null
+      updated_at: '2026-09-03T19:56:28+00:00'
+      completed_at: '2026-09-03T19:56:28+00:00'
       blocker: null
       implementation_notes: ''
       evidence:
@@ -14657,27 +14657,24 @@ capabilities:
         recorded_at: '2026-09-03T19:49:20+00:00'
       review: &id038
         reviewer: agent:workflow-profile-contract-reviewer
-        result: changes-requested
-        reviewed_at: '2026-09-03T19:31:16+00:00'
-        notes: 'CHANGES_REQUIRED at frozen R01 submission 2332d0de3538ac652cd44336ca6cded016156681 for exact candidate 012693e22441100f5fe778dd4d29f7667752a488.
-          Candidate/base ancestry, the exact 36-path inventory, submission-only evidence/backlog projection, evidence SHA-256
-          7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea and Git blob dcdce40148d374635b793ea7d517b345dd085806
-          authenticate. The governed RO-UI-ACADEMIC-MINIMAL-1.5 reference, exact workflow/page-catalog hashes, fourteen profile
-          identities, all-unknown checkpoint authority, deterministic TypeScript/Python generation, strict compilation/static
-          checks, ADR/architecture checks, package inclusion, 77 Python contract tests, 90 TypeScript contract tests, focused
-          package assertion, packaging smoke, affected-selection report, and patch hygiene pass. Full service/data and repository
-          suites remain appropriately deferred because T01 changes portable contracts and packaging registration but no persistence,
-          service route, UI, runtime executor, or stored product state. Three semantic under-validation defects remain blocking:
-          supporting-tool return does not bind the current primary stage-state identity; retain mappings can relabel history
-          to a different stage; and a profile change is accepted against the unchanged Research Intent reference without binding
-          an exact human-accepted migration. These gaps contradict the approved supporting-return, intent-revision, and history-preservation
-          authority and would make downstream T02-T04 behavior depend on unstated service conventions rather than the portable
-          contract.'
+        result: approved
+        reviewed_at: '2026-09-03T19:56:28+00:00'
+        notes: 'APPROVED at frozen R02 submission 5f61d79f2a2939436dcac6b14df956c29f4806e0 for exact strict-descendant candidate
+          7d03065c43391f98e8648c076042e50d76e242da. The candidate descends directly from prior candidate 012693e22441100f5fe778dd4d29f7667752a488
+          and its 17-path range exactly matches the frozen R02 evidence manifest. Evidence SHA-256 8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871
+          and Git blob 4d2aa01995ddc090761156d4176bbfe220f47c1d authenticate. CAP-03.S06.T01-R01-F01 through F03 are closed:
+          supporting state validation now requires the explicit independently valid current-primary state and exact aggregate/revision/hash/project/selection/profile/stage/pass/current
+          projection; retain preserves the same governed stage/page while map requires a different governed target and all
+          other dispositions require no target; and every profile change binds an immediate new Research Intent revision plus
+          the matching immutable migration and human-acceptance references. The valid selection-change and migration fixtures
+          agree exactly on migration ID/hash, from/to profiles, prior/target intents, and acceptance identity/hash, while
+          the selection binds the human decision maker to selectedBy. A migration may be system-prepared but its acceptance
+          remains human-only. The portable contract intentionally does not authenticate repository existence of referenced
+          migration or acceptance records; CAP-03.S06.T02 owns persistence lookup of the bound hashes, as the approved architecture
+          and evidence disclose. No blocking finding remains. Full service/data integration and Wave qualification remain
+          properly deferred.'
       base_sha: f97003d34fc32b705195d518487bd40b79a2545d
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-09-03T19:31:16+00:00'
-        expires_at: '2026-09-04T03:31:16+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -14786,7 +14783,25 @@ capabilities:
             - packaging:unit
             - contracts:unit
             packet_sha256: ecf2ddd8ed7dff31e6df985a680d073fff3b76ea920077a5290baac0b659cd85
-          review: *id038
+          review:
+            reviewer: agent:workflow-profile-contract-reviewer
+            result: changes-requested
+            reviewed_at: '2026-09-03T19:31:16+00:00'
+            notes: 'CHANGES_REQUIRED at frozen R01 submission 2332d0de3538ac652cd44336ca6cded016156681 for exact candidate
+              012693e22441100f5fe778dd4d29f7667752a488. Candidate/base ancestry, the exact 36-path inventory, submission-only
+              evidence/backlog projection, evidence SHA-256 7677dca3542b46157f8e6e317a2b3283f1a5720092177b62085834fb5d8ed6ea
+              and Git blob dcdce40148d374635b793ea7d517b345dd085806 authenticate. The governed RO-UI-ACADEMIC-MINIMAL-1.5
+              reference, exact workflow/page-catalog hashes, fourteen profile identities, all-unknown checkpoint authority,
+              deterministic TypeScript/Python generation, strict compilation/static checks, ADR/architecture checks, package
+              inclusion, 77 Python contract tests, 90 TypeScript contract tests, focused package assertion, packaging smoke,
+              affected-selection report, and patch hygiene pass. Full service/data and repository suites remain appropriately
+              deferred because T01 changes portable contracts and packaging registration but no persistence, service route,
+              UI, runtime executor, or stored product state. Three semantic under-validation defects remain blocking: supporting-tool
+              return does not bind the current primary stage-state identity; retain mappings can relabel history to a different
+              stage; and a profile change is accepted against the unchanged Research Intent reference without binding an exact
+              human-accepted migration. These gaps contradict the approved supporting-return, intent-revision, and history-preservation
+              authority and would make downstream T02-T04 behavior depend on unstated service conventions rather than the
+              portable contract.'
           ledger:
             path: artifacts/evidence/CAP-03.S06.T01.review-R01.json
             sha256: 9b1f36fcabeaaf9f517c04609e18b36ccf8b041ee4d8f5c55c2de142cd133230
@@ -14871,96 +14886,152 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission:
-          id: R02
-          submitted_by: codex
-          submitted_at: '2026-09-03T19:49:20+00:00'
-          candidate_commit: 7d03065c43391f98e8648c076042e50d76e242da
-          base_commit: 012693e22441100f5fe778dd4d29f7667752a488
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S06.T01.R02.json
-            sha256: 8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871
-            commit: 7d03065c43391f98e8648c076042e50d76e242da
-            recorded_at: '2026-09-03T19:49:20+00:00'
-          acceptance_criteria_sha256: 2103e66c9af91fc8108f9f717476e012c3dd2a93e9eebfef55aca601509011ae
-          changed_paths:
-          - artifacts/evidence/CAP-03.S06.T01.R01.json
-          - artifacts/evidence/CAP-03.S06.T01.review-R01.json
-          - docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md
-          - docs/architecture/workflow-profile-contracts.md
-          - packages/contracts/workflow-profile/README.md
-          - packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json
-          - packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json
-          - packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json
-          - packages/contracts/workflow-profile/generate.mjs
-          - packages/contracts/workflow-profile/generated.ts
-          - packages/contracts/workflow-profile/workflow-profile.schema.json
-          - packages/contracts/workflow-profile/workflow-profile.template.py.txt
-          - packages/contracts/workflow-profile/workflow-profile.template.ts.txt
-          - packages/contracts/workflow-profile/workflow-profile.test.ts
-          - planning/backlog.yaml
-          - services/core-api/src/research_observatory_core/workflow_profile_contracts.py
-          - tests/contracts/test_workflow_profile_contracts.py
-          selected_checks:
-          - $env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor
-            tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_stage_state_represents_navigation_not_analytical_job_state
-            tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_profile_migration_maps_every_prior_stage_without_rewriting_history;
-            npm test --prefix packages/contracts -- --run workflow-profile/workflow-profile.test.ts
-          - node packages/contracts/workflow-profile/generate.mjs --check; .venv/Scripts/python.exe -m unittest discover -s
-            tests/contracts -p test_*.py; npm test --prefix packages/contracts; packages/contracts/node_modules/.bin/tsc.cmd
-            -p packages/contracts/tsconfig.json --noEmit --pretty false
-          - .venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py
-            tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py
-            tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py
-            tests/contracts/test_workflow_profile_contracts.py
-          - .venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py
-            --repo .
-          - .venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe
-            tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe
-            tools/adr_check.py --repo . --base 012693e22441100f5fe778dd4d29f7667752a488 --head 7d03065c43391f98e8648c076042e50d76e242da
-          - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 012693e22441100f5fe778dd4d29f7667752a488..7d03065c43391f98e8648c076042e50d76e242da
-          - .venv/Scripts/python.exe tools/verify.py --repo . --profile service --profile data --affected-base 012693e22441100f5fe778dd4d29f7667752a488
-            --affected-head 7d03065c43391f98e8648c076042e50d76e242da --deferred-gate W1-exit --selection-only
-          deferred_checks:
-          - CAP-03.S06 T02-T05 and slice review own persistence lookup of the bound migration hash, API/service authority,
-            researcher-facing workflow experience, restart, and accumulated integration/adversarial coverage.
-          - The complete service, data, foundation, security, packaging, recovery, performance, and Windows x64 qualification
-            matrix remains mandatory once at W1 exit.
-          - The previously disclosed unrelated repository-wide Python formatting/mypy baseline remains outside this 14-file
-            finding remediation; all affected Python files pass their selected static checks.
-          selection_rationale: R01 found three high-severity semantic under-validation defects in the new portable contract.
-            R02 therefore begins with exact cross-runtime adversarial replays for supporting-current-state binding, disposition
-            meaning, immediate Research Intent lineage, and immutable human-accepted migration authority. Because the correction
-            changes the public schema, generated TypeScript/Python decoders, fixtures, and Windows sidecar module, the selected
-            union also includes both complete contract packages, strict TypeScript, targeted Python static checks, the real
-            PyInstaller package boundary, package smoke, governed reference integrity, architecture/ADR rules, backlog validity,
-            and exact-range hygiene. No persistence, route, renderer, authentication, external effect, or stored product data
-            changes, so service/data integration beyond the contract boundary remains owned by T02-T05, slice review, and
-            W1 exit.
-          selection_sha256: 2360ae96d31824556bd6b3f7424de8b93d51ed924ec7f0448416c0da0bebb125
-          prior_attempt_id: R01
-          open_finding_ids:
-          - CAP-03.S06.T01-R01-F01
-          - CAP-03.S06.T01-R01-F02
-          - CAP-03.S06.T01-R01-F03
-          root_cause_analysis: R01 represented a supporting return only by a valid stage key/page pair, so it could not prove
-            that the target was the actual current primary state and it left supporting aliases unconstrained. It also shared
-            one target-existence rule across retain and map, allowing retain to relabel history. Finally, it treated a requiresHumanAcceptance
-            boolean as sufficient authority and did not include prior intent in the predecessor or bind profile change to
-            a new intent revision and exact accepted migration. R02 makes those identities and semantics first-class portable
-            fields and validates them identically in both runtimes.
-          selected_command_ids:
-          - foundation:repository-structure
-          - foundation:architecture
-          - foundation:adr
-          - foundation:ui-reference
-          - foundation:packaging-smoke
-          - foundation:backlog
-          - packaging:unit
-          - contracts:unit
-          packet_sha256: 437fc2b542331509b2bddea3d7529b1d3e68e4b702c338d63643f003e7ac1e6d
+        - submission:
+            id: R02
+            submitted_by: codex
+            submitted_at: '2026-09-03T19:49:20+00:00'
+            candidate_commit: 7d03065c43391f98e8648c076042e50d76e242da
+            base_commit: 012693e22441100f5fe778dd4d29f7667752a488
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S06.T01.R02.json
+              sha256: 8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871
+              commit: 7d03065c43391f98e8648c076042e50d76e242da
+              recorded_at: '2026-09-03T19:49:20+00:00'
+            acceptance_criteria_sha256: 2103e66c9af91fc8108f9f717476e012c3dd2a93e9eebfef55aca601509011ae
+            changed_paths:
+            - artifacts/evidence/CAP-03.S06.T01.R01.json
+            - artifacts/evidence/CAP-03.S06.T01.review-R01.json
+            - docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md
+            - docs/architecture/workflow-profile-contracts.md
+            - packages/contracts/workflow-profile/README.md
+            - packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json
+            - packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json
+            - packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json
+            - packages/contracts/workflow-profile/generate.mjs
+            - packages/contracts/workflow-profile/generated.ts
+            - packages/contracts/workflow-profile/workflow-profile.schema.json
+            - packages/contracts/workflow-profile/workflow-profile.template.py.txt
+            - packages/contracts/workflow-profile/workflow-profile.template.ts.txt
+            - packages/contracts/workflow-profile/workflow-profile.test.ts
+            - planning/backlog.yaml
+            - services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+            - tests/contracts/test_workflow_profile_contracts.py
+            selected_checks:
+            - $env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor
+              tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_stage_state_represents_navigation_not_analytical_job_state
+              tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_profile_migration_maps_every_prior_stage_without_rewriting_history;
+              npm test --prefix packages/contracts -- --run workflow-profile/workflow-profile.test.ts
+            - node packages/contracts/workflow-profile/generate.mjs --check; .venv/Scripts/python.exe -m unittest discover
+              -s tests/contracts -p test_*.py; npm test --prefix packages/contracts; packages/contracts/node_modules/.bin/tsc.cmd
+              -p packages/contracts/tsconfig.json --noEmit --pretty false
+            - .venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+              tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+              tests/contracts/test_workflow_profile_contracts.py; .venv/Scripts/python.exe -m mypy services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+              tests/contracts/test_workflow_profile_contracts.py
+            - .venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py; .venv/Scripts/python.exe tools/packaging_smoke_check.py
+              --repo .
+            - .venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv/Scripts/python.exe
+              tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .;
+              .venv/Scripts/python.exe tools/adr_check.py --repo . --base 012693e22441100f5fe778dd4d29f7667752a488 --head
+              7d03065c43391f98e8648c076042e50d76e242da
+            - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 012693e22441100f5fe778dd4d29f7667752a488..7d03065c43391f98e8648c076042e50d76e242da
+            - .venv/Scripts/python.exe tools/verify.py --repo . --profile service --profile data --affected-base 012693e22441100f5fe778dd4d29f7667752a488
+              --affected-head 7d03065c43391f98e8648c076042e50d76e242da --deferred-gate W1-exit --selection-only
+            deferred_checks:
+            - CAP-03.S06 T02-T05 and slice review own persistence lookup of the bound migration hash, API/service authority,
+              researcher-facing workflow experience, restart, and accumulated integration/adversarial coverage.
+            - The complete service, data, foundation, security, packaging, recovery, performance, and Windows x64 qualification
+              matrix remains mandatory once at W1 exit.
+            - The previously disclosed unrelated repository-wide Python formatting/mypy baseline remains outside this 14-file
+              finding remediation; all affected Python files pass their selected static checks.
+            selection_rationale: R01 found three high-severity semantic under-validation defects in the new portable contract.
+              R02 therefore begins with exact cross-runtime adversarial replays for supporting-current-state binding, disposition
+              meaning, immediate Research Intent lineage, and immutable human-accepted migration authority. Because the correction
+              changes the public schema, generated TypeScript/Python decoders, fixtures, and Windows sidecar module, the selected
+              union also includes both complete contract packages, strict TypeScript, targeted Python static checks, the real
+              PyInstaller package boundary, package smoke, governed reference integrity, architecture/ADR rules, backlog validity,
+              and exact-range hygiene. No persistence, route, renderer, authentication, external effect, or stored product
+              data changes, so service/data integration beyond the contract boundary remains owned by T02-T05, slice review,
+              and W1 exit.
+            selection_sha256: 2360ae96d31824556bd6b3f7424de8b93d51ed924ec7f0448416c0da0bebb125
+            prior_attempt_id: R01
+            open_finding_ids:
+            - CAP-03.S06.T01-R01-F01
+            - CAP-03.S06.T01-R01-F02
+            - CAP-03.S06.T01-R01-F03
+            root_cause_analysis: R01 represented a supporting return only by a valid stage key/page pair, so it could not
+              prove that the target was the actual current primary state and it left supporting aliases unconstrained. It
+              also shared one target-existence rule across retain and map, allowing retain to relabel history. Finally, it
+              treated a requiresHumanAcceptance boolean as sufficient authority and did not include prior intent in the predecessor
+              or bind profile change to a new intent revision and exact accepted migration. R02 makes those identities and
+              semantics first-class portable fields and validates them identically in both runtimes.
+            selected_command_ids:
+            - foundation:repository-structure
+            - foundation:architecture
+            - foundation:adr
+            - foundation:ui-reference
+            - foundation:packaging-smoke
+            - foundation:backlog
+            - packaging:unit
+            - contracts:unit
+            packet_sha256: 437fc2b542331509b2bddea3d7529b1d3e68e4b702c338d63643f003e7ac1e6d
+          review: *id038
+          ledger:
+            path: artifacts/evidence/CAP-03.S06.T01.review-R02.json
+            sha256: c3c5517e8aa53ee5e7284757bddf87d18334efd5bea84fa4e8b53e6531cff930
+          findings: []
+          closures:
+          - finding_id: CAP-03.S06.T01-R01-F01
+            disposition: fixed
+            evidence: Explicit currentPrimaryState validation context, complete exact return identity/context, deterministic
+              governed support alias, and matching Python/TypeScript omission/substitution/non-current tests close the arbitrary-return
+              boundary.
+          - finding_id: CAP-03.S06.T01-R01-F02
+            disposition: fixed
+            evidence: Shared cross-runtime semantic mapping now distinguishes same-stage retain, different-stage map, and
+              null-target stale/review/drop for full migration and impact preview.
+          - finding_id: CAP-03.S06.T01-R01-F03
+            disposition: fixed
+            evidence: Immediate Research Intent lineage and matching migration/from/to/intent plus human acceptance identity/hash
+              references are mandatory; fixtures and adversarial tests demonstrate the binding while repository lookup remains
+              explicitly assigned to T02.
+          telemetry:
+            task_id: CAP-03.S06.T01
+            amendment_id: null
+            attempt_id: R02
+            submitted_at: '2026-09-03T19:49:20+00:00'
+            reviewed_at: '2026-09-03T19:56:28+00:00'
+            duration_seconds: 428
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - foundation:repository-structure
+            - foundation:architecture
+            - foundation:adr
+            - foundation:ui-reference
+            - foundation:packaging-smoke
+            - foundation:backlog
+            - packaging:unit
+            - contracts:unit
+            remediation:
+              prior_attempt_id: R01
+              replayed_finding_ids:
+              - CAP-03.S06.T01-R01-F01
+              - CAP-03.S06.T01-R01-F02
+              - CAP-03.S06.T01-R01-F03
+              closed_finding_ids:
+              - CAP-03.S06.T01-R01-F01
+              - CAP-03.S06.T01-R01-F02
+              - CAP-03.S06.T01-R01-F03
+        current_submission: null
     - id: CAP-03.S06.T02
       capability_id: CAP-03
       slice_id: CAP-03.S06
@@ -14997,11 +15068,11 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-09-03T19:56:28+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
