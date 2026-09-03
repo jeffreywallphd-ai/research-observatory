@@ -1,19 +1,17 @@
 reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
 version: '1.5'
-status: approved
-approval_kind: human
-approved_by: human:repository-owner
-approved_at: '2026-09-03T06:48:53-04:00'
-approval_basis: The repository owner explicitly approved RO-UI-ACADEMIC-MINIMAL-1.5
-  at exact proposal commit a6967261234cb5d8c87430e2338842a61bba02f1 on
-  2026-09-03. This approval authorizes application implementation against the
-  governed reference; it does not represent task, slice, Wave, release, or remote-push
-  approval.
+status: proposed
+approval_kind: pending-human
+approved_by: null
+approved_at: null
+approval_basis: Human reapproval is pending for this provenance-only correction.
+  The governed Academic Minimal 1.5 experience bytes and implementation authority
+  are unchanged; this proposal replaces one mistyped W1 packet SHA in the prior
+  approval authority with the exact immutable approved W1 packet commit.
 authority:
   wave_id: W1
   slice_id: CAP-03.S05
-  approved_wave_commit: c5bbd97e2ef660693fec7926002b4dfb75a7c684
-  proposal_commit: a6967261234cb5d8c87430e2338842a61bba02f1
+  approved_wave_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
   slice_plan: planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md
 supersedes: RO-UI-ACADEMIC-MINIMAL-1.4
 scope:
