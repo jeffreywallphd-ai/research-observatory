@@ -162,7 +162,8 @@
         "W2"
       ],
       "interrupting_change_request_ids": [
-        "ECR-0003"
+        "ECR-0003",
+        "ECR-0005"
       ],
       "interrupting_recovery_request_ids": []
     },
@@ -23471,10 +23472,32 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A06.json",
       "approval_sha256": "244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67",
       "approval_status": "APPROVED",
-      "lifecycle_status": "NOT_MATERIALIZED",
-      "bootstrap_status": "NOT_SUBMITTED",
+      "lifecycle_status": "APPROVED",
+      "bootstrap_status": "REVIEW",
       "campaign_status": "NONE",
-      "bootstrap_attempts": [],
+      "bootstrap_attempts": [
+        {
+          "id": "R01",
+          "implementer": "codex",
+          "implementation_commit": "3fe834df6212516957048db3b76594bffe71eca5",
+          "evidence": [
+            {
+              "type": "criterion-manifest",
+              "path": "artifacts/evidence/W1.A06.B00.json",
+              "sha256": "16344e3a86e7221945ef910865a1d7fe773c5f293d2c7447853c63dccd582032",
+              "commit": "3fe834df6212516957048db3b76594bffe71eca5",
+              "recorded_at": "2026-09-03T16:19:23+00:00"
+            }
+          ],
+          "review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "current_status": "REVIEW"
+        }
+      ],
       "slice_contributions": [
         {
           "id": "W1.A06.S01",
@@ -23786,10 +23809,10 @@
         "amendment_id": "W1.A06",
         "mode": "latest-completion-only",
         "latest_completion": {
-          "status": null,
+          "status": "PENDING",
           "reviewer": null,
           "reviewed_at": null,
-          "evidence": null,
+          "evidence": [],
           "notes": null
         },
         "exit_review_control": null
