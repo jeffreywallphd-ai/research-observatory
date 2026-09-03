@@ -709,6 +709,120 @@ describe("generated Core API client", () => {
       "empirical-study-design", "empirical-study-to-article", "empirical-results-to-article",
       "theory-article-development", "critical-article-development", "manuscript-review-revision",
     ] as const;
+    const guidanceByProfile = {
+      "rapid-orientation": {
+        example: "Map the main approaches and unresolved questions in a new field.",
+        evidenceTypes: ["empirical-study", "systematic-review"],
+        noveltyStandard: "not-claimed",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["coverage-threshold"],
+        warning: "Rapid orientation supports bounded understanding; it does not claim exhaustive coverage.",
+      },
+      "systematic-review": {
+        example: "Estimate and explain an intervention effect from eligible studies.",
+        evidenceTypes: ["empirical-study", "systematic-review"],
+        noveltyStandard: "bounded-comparative",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["coverage-threshold"],
+        warning: "Coverage claims remain bounded by the recorded protocol, sources, dates, and languages.",
+      },
+      "living-review": {
+        example: "Maintain an evidence synthesis as qualifying studies appear.",
+        evidenceTypes: ["empirical-study", "systematic-review"],
+        noveltyStandard: "incremental",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["coverage-threshold"],
+        warning: "Every update preserves its search boundary and prior synthesis revision.",
+      },
+      "theory-synthesis": {
+        example: "Reconcile competing mechanisms into a bounded conceptual model.",
+        evidenceTypes: ["theoretical-work", "empirical-study"],
+        noveltyStandard: "theoretical",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["interpretive-saturation"],
+        warning: "Conceptual integration must preserve disagreements and evidentiary limits.",
+      },
+      "hermeneutic-inquiry": {
+        example: "Develop a situated interpretation across a bounded textual corpus.",
+        evidenceTypes: ["interpretive-text"],
+        noveltyStandard: "interpretive",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["interpretive-saturation", "researcher-decision"],
+        warning: "Interpretations remain researcher-authored and tied to the recorded corpus and frame.",
+      },
+      "critical-problematization": {
+        example: "Surface exclusions and consequences within a dominant framing.",
+        evidenceTypes: ["critical-analysis", "stakeholder-account"],
+        noveltyStandard: "critical",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["interpretive-saturation", "researcher-decision"],
+        warning: "The workflow must preserve standpoint, counter-evidence, and affected voices.",
+      },
+      "technical-landscape": {
+        example: "Compare architectures and evaluated capabilities for a technical domain.",
+        evidenceTypes: ["technical-evaluation", "standard", "dataset"],
+        noveltyStandard: "bounded-comparative",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["benchmark-complete"],
+        warning: "Comparisons are limited to compatible evidence, versions, and benchmark conditions.",
+      },
+      "novelty-audit": {
+        example: "Challenge a proposed contribution against the closest documented alternatives.",
+        evidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"],
+        noveltyStandard: "bounded-comparative",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["nearest-prior-work-challenged"],
+        warning: "A novelty claim is provisional until nearest prior work and plausible counterexamples are challenged.",
+      },
+      "empirical-study-design": {
+        example: "Design a study without inventing participants, results, or feasibility evidence.",
+        evidenceTypes: ["empirical-study", "systematic-review"],
+        noveltyStandard: "methodological",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["protocol-complete"],
+        warning: "The researcher retains authority over ethics, recruitment, conduct, and interpretation.",
+      },
+      "empirical-study-to-article": {
+        example: "Develop a manuscript from a documented study and analysis plan.",
+        evidenceTypes: ["empirical-study", "dataset"],
+        noveltyStandard: "contextual",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["protocol-complete", "researcher-decision"],
+        warning: "Unreported or missing results remain unreported or missing.",
+      },
+      "empirical-results-to-article": {
+        example: "Develop an article from completed, traceable empirical results.",
+        evidenceTypes: ["empirical-study", "dataset"],
+        noveltyStandard: "incremental",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["researcher-decision"],
+        warning: "No result, statistic, or participant detail may be inferred when absent.",
+      },
+      "theory-article-development": {
+        example: "Develop a theory article from traceable concepts and propositions.",
+        evidenceTypes: ["theoretical-work", "empirical-study"],
+        noveltyStandard: "theoretical",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["interpretive-saturation", "researcher-decision"],
+        warning: "The system can prepare arguments; the researcher owns interpretation and claims.",
+      },
+      "critical-article-development": {
+        example: "Develop a critical article with explicit standpoint and counter-evidence.",
+        evidenceTypes: ["critical-analysis", "stakeholder-account", "interpretive-text"],
+        noveltyStandard: "critical",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["interpretive-saturation", "researcher-decision"],
+        warning: "The article must not erase contested positions or affected perspectives.",
+      },
+      "manuscript-review-revision": {
+        example: "Address reviewer comments without silently broadening claims.",
+        evidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"],
+        noveltyStandard: "not-claimed",
+        autonomyLevel: "suggest",
+        stoppingConditions: ["researcher-decision"],
+        warning: "Reviewer responses and claim changes remain explicit, traceable researcher decisions.",
+      },
+    } as const;
     const catalog = {
       schemaVersion: "1.0",
       referenceId: "RO-UI-ACADEMIC-MINIMAL-1.5",
@@ -721,30 +835,33 @@ describe("generated Core API client", () => {
       evidenceRequirementsUnchanged: true,
       provenanceRequirementsUnchanged: true,
       registeredToolPageContractIds: ["intent-contract.html"],
-      profiles: profileIds.map((profileId) => ({
-        profileId,
-        epistemicMode: "theory" as const,
-        title: profileId,
-        purpose: `Purpose for ${profileId}`,
-        example: `Example for ${profileId}`,
-        expectedOutputs: ["Bounded output"],
-        processForm: "linear" as const,
-        defaultEvidenceTypes: ["theoretical-work" as const],
-        defaultNoveltyStandard: "theoretical" as const,
-        defaultAutonomyLevel: "suggest" as const,
-        defaultStoppingConditions: ["interpretive-saturation" as const],
-        warning: `Warning for ${profileId}`,
-        stages: [{
-          stageKey: "intent-contract-1",
-          order: 1,
-          pageContractId: "intent-contract.html",
-          label: "Research Intent",
-          optional: false,
-          rationale: "Establish authority.",
-          checkpointState: "unknown" as const,
-          checkpointRationale: "No checkpoint authority is declared.",
-        }],
-      })),
+      profiles: profileIds.map((profileId) => {
+        const guidance = guidanceByProfile[profileId];
+        return {
+          profileId,
+          epistemicMode: "theory" as const,
+          title: profileId,
+          purpose: `Purpose for ${profileId}`,
+          example: guidance.example,
+          expectedOutputs: ["Bounded output"],
+          processForm: "linear" as const,
+          defaultEvidenceTypes: guidance.evidenceTypes,
+          defaultNoveltyStandard: guidance.noveltyStandard,
+          defaultAutonomyLevel: guidance.autonomyLevel,
+          defaultStoppingConditions: guidance.stoppingConditions,
+          warning: guidance.warning,
+          stages: [{
+            stageKey: "intent-contract-1",
+            order: 1,
+            pageContractId: "intent-contract.html",
+            label: "Research Intent",
+            optional: false,
+            rationale: "Establish authority.",
+            checkpointState: "unknown" as const,
+            checkpointRationale: "No checkpoint authority is declared.",
+          }],
+        };
+      }),
     };
     expect(decodeWorkflowProfileCatalogProjection(catalog)).toEqual(catalog);
     expect(decodeWorkflowProfileCatalogProjection({
@@ -753,6 +870,12 @@ describe("generated Core API client", () => {
     })).toBeNull();
     expect(decodeWorkflowProfileCatalogProjection({ ...catalog, allToolsAccessible: false })).toBeNull();
     expect(decodeWorkflowProfileCatalogProjection({ ...catalog, profiles: catalog.profiles.slice(1) })).toBeNull();
+    expect(decodeWorkflowProfileCatalogProjection({
+      ...catalog,
+      profiles: catalog.profiles.map((profile) => profile.profileId === "systematic-review"
+        ? { ...profile, defaultStoppingConditions: ["researcher-decision"] }
+        : profile),
+    })).toBeNull();
     const requests: unknown[] = [];
     const client = createCoreApiClient(async (request) => {
       requests.push(request);
