@@ -36082,27 +36082,50 @@ wave_amendments:
         changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
   bootstrap:
     id: W1.A06.B00
-    status: CHANGES_REQUESTED
+    status: REVIEW
     implementer: codex
-    implementation_commit: 3fe834df6212516957048db3b76594bffe71eca5
+    implementation_commit: af7435651484b673b07c34e9ca0e664d275ed820
     submission_branch: codex/w1-windows-local-runtime
-    scope_addenda: []
+    scope_addenda:
+    - path: planning/wave-amendment-approvals/W1.A06.B00.addendum-01.json
+      sha256: b15f158109b1cab9f7334ccd6b4cd1b08d2dbce87e8fe9d955df46870ca36740
+      introduction_commit: 3e1119e1ef913432fa473e95e6d86283e4ed3658
+    - path: planning/wave-amendment-approvals/W1.A06.B00.addendum-02.json
+      sha256: d6deed7d9db5371bc49b8831f2763ec645ca26abd4e9bf4ae8dac788eec06046
+      introduction_commit: af7435651484b673b07c34e9ca0e664d275ed820
     evidence:
     - type: criterion-manifest
-      path: artifacts/evidence/W1.A06.B00.json
-      sha256: 16344e3a86e7221945ef910865a1d7fe773c5f293d2c7447853c63dccd582032
-      commit: 3fe834df6212516957048db3b76594bffe71eca5
-      recorded_at: '2026-09-03T16:19:23+00:00'
+      path: artifacts/evidence/W1.A06.B00.remediation-01.json
+      sha256: bccb7c6cb0531402bcb7fa4be4d6b9485a6afacc1c151f96391503a55a8b02a6
+      commit: af7435651484b673b07c34e9ca0e664d275ed820
+      recorded_at: '2026-09-03T17:53:07+00:00'
     review:
-      reviewer: ecr5-planning-authority-reviewer
-      result: changes-requested
-      reviewed_at: '2026-09-03T16:27:34+00:00'
-      notes: CHANGES_REQUESTED at exact frozen state 3b70072a7b7e2bd5916e1ee2f28d335f842ef253. Candidate/evidence/scope, append-only
-        W1.A06 projection, predecessor/MI-0001 preservation, paused quiescent W1 state, approved ECR/GOV-MAINT authority,
-        generated views, and canonical validators pass. W1.A06.B00-R01-F01 remains open because the three evidence-selected
-        bootstrap transition tests inherit live W1.A06 and fail 0/3 at the frozen post-submit state (one error, two failures).
-        Replace mutable-live amendment fixtures with explicit pre-A05/pre-A06 states and replay at candidate and resubmission
-        state. No materialization, activation, T01, adoption, or W1 resume is approved.
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+    attempts:
+    - id: R01
+      implementer: codex
+      implementation_commit: 3fe834df6212516957048db3b76594bffe71eca5
+      submission_branch: codex/w1-windows-local-runtime
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W1.A06.B00.json
+        sha256: 16344e3a86e7221945ef910865a1d7fe773c5f293d2c7447853c63dccd582032
+        commit: 3fe834df6212516957048db3b76594bffe71eca5
+        recorded_at: '2026-09-03T16:19:23+00:00'
+      review:
+        reviewer: ecr5-planning-authority-reviewer
+        result: changes-requested
+        reviewed_at: '2026-09-03T16:27:34+00:00'
+        notes: CHANGES_REQUESTED at exact frozen state 3b70072a7b7e2bd5916e1ee2f28d335f842ef253. Candidate/evidence/scope,
+          append-only W1.A06 projection, predecessor/MI-0001 preservation, paused quiescent W1 state, approved ECR/GOV-MAINT
+          authority, generated views, and canonical validators pass. W1.A06.B00-R01-F01 remains open because the three evidence-selected
+          bootstrap transition tests inherit live W1.A06 and fail 0/3 at the frozen post-submit state (one error, two failures).
+          Replace mutable-live amendment fixtures with explicit pre-A05/pre-A06 states and replay at candidate and resubmission
+          state. No materialization, activation, T01, adoption, or W1 resume is approved.
+    scope_base_commit: 3fe834df6212516957048db3b76594bffe71eca5
   campaign: null
   tasks: []
   completion:

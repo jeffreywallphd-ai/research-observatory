@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A06.B00",
+  "commit": "af7435651484b673b07c34e9ca0e664d275ed820",
+  "baseCommit": "3fe834df6212516957048db3b76594bffe71eca5",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A06.B00.json",
+    "sha256": "16344e3a86e7221945ef910865a1d7fe773c5f293d2c7447853c63dccd582032",
+    "commit": "3fe834df6212516957048db3b76594bffe71eca5"
+  },
+  "changedFiles": [
+    "artifacts/evidence/W1.A06.B00.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0014.json",
+    "planning/governance-migrations/GOV-MAINT-0014.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0015.json",
+    "planning/governance-migrations/GOV-MAINT-0015.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0015.review-R02.json",
+    "planning/review-site/enablers/ECR-0005.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "planning/wave-amendment-approvals/W1.A06.B00.addendum-01.json",
+    "planning/wave-amendment-approvals/W1.A06.B00.addendum-02.json",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "rootCauseAnalysis": {
+    "cause": "The original three W1.A06 bootstrap tests constructed historic predecessor states by subtracting only amendments known when each fixture was authored. The legitimate W1.A06 append therefore contaminated the older fixtures. During bounded remediation, bootstrap-resubmit was also found unable to discover post-review scope addenda, and its first generic correction allowed an older addendum to authorize a later path edit.",
+    "correction": "GOV-MAINT-0014 defines explicit immutable predecessor fixture inventories. GOV-MAINT-0015 makes resubmission discover and freeze authenticated new addenda, restricts each candidate to addenda on its ancestry, and binds every W1.A06-and-later authorized path to the latest applicable addendum-introduction blob while allowing exact ordered reauthorization.",
+    "recurrenceControl": "The exact original transition tests now run with focused discovery, substitution, non-ancestry, off-lineage, post-boundary denial, exact reauthorization, and historical-cutover regressions. The complete affected taskctl schema/workflow modules passed at the frozen controller candidate and independent review, and addendum-02 was independently replayed against the live repository before resubmission."
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_append_records_reserved_history_and_bounded_maintenance tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_append_denies_an_active_recovery_hold tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_resubmission_discovers_and_freezes_new_scope_addenda_fail_closed tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_candidate_authorization_binds_latest_reauthorization_blob tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_pending_v4_successor_orders_interleaved_authority_and_reuses_approved_experience tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_review_checker_validates_enabler_hashes_pages_and_links",
+      "exitCode": 0,
+      "result": "All seven exact-candidate boundary tests passed at af7435651484b673b07c34e9ca0e664d275ed820 in 20.371 seconds. This includes the original three B00 selections, authenticated resubmit discovery, temporal reauthorization, ordered authority, governed-experience reuse, and the 489-page review-site integrity check."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 107 affected taskctl schema/workflow tests passed at exact controller candidate 5cf44d21fae8e3448f7980953b78f5bba9db5fcd in 309.420 seconds and again during independent R02 review in 310.003 seconds. The only later candidate changes are the reviewed immutable addendum-02 and its two deterministic generated projections; the tested controller and test blobs are byte-identical at af743565."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0005 --require-approved; .venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "ECR-0005 remains approved and history-bound; the canonical backlog validates with 20 capabilities, 117 slices, 363 tasks, and 12 gates; all 489 planning-review pages pass; generated backlog views are current."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff check tools/taskctl.py tests/foundation/test_taskctl_workflow.py tests/foundation/test_taskctl_schema.py; .venv\\Scripts\\python.exe -m ruff format --check tools/taskctl.py tests/foundation/test_taskctl_workflow.py tests/foundation/test_taskctl_schema.py",
+      "exitCode": 0,
+      "result": "All three affected Python paths are lint-clean and formatted."
+    },
+    {
+      "command": "git diff --check 3fe834df6212516957048db3b76594bffe71eca5 af7435651484b673b07c34e9ca0e664d275ed820 --; git diff --name-only 3fe834df6212516957048db3b76594bffe71eca5 af7435651484b673b07c34e9ca0e664d275ed820 --",
+      "exitCode": 0,
+      "result": "Patch hygiene passes and the exact remediation range contains the 18 declared paths: append-only B00 transition/evidence projections, two independently approved maintenance increments and reviews, their affected controller/tests, two authenticated addenda, and authorized ECR generated views."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "ECR-0005 validation authenticates the immutable W1 base, adopted W1.A01-W1.A03, terminal reserved W1.A04, adopted W1.A05, GOV-MIG-0001, immutable MI-0001, approved ECR-0005 packet, W1.A06 approval, and both authenticated B00 scope addenda.",
+        "GOV-MAINT-0014 and GOV-MAINT-0015 each have immutable independent approval ledgers; the latter closes its prior HIGH temporal-authority finding at exact candidate 5cf44d21."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The existing append-only W1.A06 record and adverse R01 projection are preserved. Resubmission freezes a strict descendant, archives the prior attempt, appends addenda 01 and 02 deterministically, and leaves every predecessor amendment plus MI-0001 unchanged.",
+        "The original three transition tests now pass against explicit predecessor fixtures, including active-hold denial and interleaved W1.A04/W1.A05 history preservation."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "W1 remains PAUSED at Wave scope with no lease, amendment campaign, amendment task, ordinary task in progress/review, or active recovery hold; CAP-03.S06.T01 remains READY and unclaimed.",
+        "The strict descendant changes no product/runtime, canonical CAP-03.S06 plan, approved experience, security policy, packaging, platform, or release-gate byte. Both addenda explicitly deny such expansion."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The deterministic ECR-0005 page and manifest include both canonical scope addenda with exact hashes and truthfully retain the approved-but-not-materialized lifecycle and paused Wave boundary.",
+        "All additional non-generated paths are bounded bootstrap transition history or independently reviewed GOV-MIG-0001 maintenance necessary to make the R02 evidence and scope controls truthful."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "W1.A06.B00-R01-F01 concerned mutable historic fixtures and failure of all evidence-selected bootstrap transitions. Remediation also exposed two material controller risks: inert post-review scope addenda and temporally unbounded path authority. Selected checks therefore replay the original three failures, addendum discovery/freeze/substitution/ancestry behavior, post-boundary denial, ordered exact reauthorization, governed experience reuse, the complete affected taskctl module at the unchanged controller blob, canonical authority/site/view validation, lint/format, and exact Git scope. Product, runtime, packaging, and platform suites have no credible failure path from this planning-control remediation.",
+    "deferred": [
+      "Canonical CAP-03.S06 planning reconciliation remains W1.A06.T01 after bootstrap approval, materialization, and activation.",
+      "Product workflow profiles plus security, accessibility, packaging, performance, Windows-x64, recovery, and complete Wave qualification remain assigned to ordinary CAP-03.S06 work or W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-bootstrap-control-review",
+    "openFindingIds": [
+      "W1.A06.B00-R01-F01"
+    ],
+    "note": "Review exact candidate af7435651484b673b07c34e9ca0e664d275ed820 and the frozen R02 resubmission. Replay W1.A06.B00-R01-F01, both authenticated addenda, the GOV-MAINT-0014/0015 authority chain, original required outcomes, prior adverse history, exact changed scope, W1 pause/quiescence, and absence of product or canonical CAP-03.S06 changes before approving bootstrap materialization."
+  }
+}
