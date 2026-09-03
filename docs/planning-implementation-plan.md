@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5115004a2b55f7b162e762712e24c86a7d06cccd66f2aa4971fcd375b1cecbd7
+source_sha256: 4ca335019465f1fdf9f3db0a1d24c83c94268a9d41f830721df3256ed4c043cc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1502,9 +1502,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W1.A06.T01 - Reconcile the CAP-03.S06 workflow-profile count
+### - [x] W1.A06.T01 - Reconcile the CAP-03.S06 workflow-profile count
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `DONE` / codex / ecr5-planning-authority-reviewer (`approved`)
 
 **Dependencies:** `W1.A06.B00`
 
@@ -1532,9 +1532,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A06.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8d56e37b828055df00004def87b0b68930602b97a667058e66af4c0a46d18ab8`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `8d56e37b828055df00004def87b0b68930602b97a667058e66af4c0a46d18ab8`
 
 - Candidate / base / branch: `8cfefe0249581bbf26f2bc4c97aeab0289007657` / `2a536f563bddaef70b800e0902d720aad4e811cd` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-03T18:16:54+00:00`
@@ -1548,9 +1550,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / ecr5-planning-authority-reviewer / `2026-09-03T18:22:37+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/task-reviews/W1.A06.T01/R01.json` / `70c8476da4e6b3c1328ab948dfe8d1200217d20a79b7a7ac72aa49e3b6dd8b74`
+
+**Review notes:** APPROVED at frozen R01 state 966598fc9a6e50b19914bc0911918425bd0fc8fd for candidate 8cfefe0249581bbf26f2bc4c97aeab0289007657. Evidence SHA-256 491b2ddda142f060a5285b534a1b4173f859c2873cd8e4af4957ea71129ae049 and the exact eight-path inventory authenticate. The backlog and CAP-03.S06 slice plan contain exactly the packet-authorized one-for-one criterion replacement; every other CAP-03.S06 semantic field is preserved. The approved RO-UI-ACADEMIC-MINIMAL-1.5 catalog contains 14 unique hash-bound workflows. Runtime W1.A06 authority, backlog, 489-page review site, generated views, UI reference, and Git scope all pass. No product, security, experience, release, predecessor, or unrelated planning authority changed. Product/full suites remain appropriately deferred. This approves only W1.A06.T01; it does not approve amendment exit, adoption, ordinary W1 resume, W1 qualification, or release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by ecr5-planning-authority-reviewer at `2026-09-03T18:22:37+00:00`
+
+**Latest notes:** APPROVED at frozen R01 state 966598fc9a6e50b19914bc0911918425bd0fc8fd for candidate 8cfefe0249581bbf26f2bc4c97aeab0289007657. Evidence SHA-256 491b2ddda142f060a5285b534a1b4173f859c2873cd8e4af4957ea71129ae049 and the exact eight-path inventory authenticate. The backlog and CAP-03.S06 slice plan contain exactly the packet-authorized one-for-one criterion replacement; every other CAP-03.S06 semantic field is preserved. The approved RO-UI-ACADEMIC-MINIMAL-1.5 catalog contains 14 unique hash-bound workflows. Runtime W1.A06 authority, backlog, 489-page review site, generated views, UI reference, and Git scope all pass. No product, security, experience, release, predecessor, or unrelated planning authority changed. Product/full suites remain appropriately deferred. This approves only W1.A06.T01; it does not approve amendment exit, adoption, ordinary W1 resume, W1 qualification, or release.
 
 **Currently open findings:** -
 

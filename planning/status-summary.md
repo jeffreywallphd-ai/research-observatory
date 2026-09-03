@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5115004a2b55f7b162e762712e24c86a7d06cccd66f2aa4971fcd375b1cecbd7
+source_sha256: 4ca335019465f1fdf9f3db0a1d24c83c94268a9d41f830721df3256ed4c043cc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,8 +69,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `REVIEW` | 1 |
-| `DONE` | 7 |
+| `DONE` | 8 |
 
 ## Wave authority and append-only amendments
 
@@ -455,7 +454,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A05.T02` | `append-only v1` | 1 | `-` | approved / codex-independent-windows-hello-security-reviewer | - |
 | `W1.A05.T03` | `append-only v1` | 2 | `-` | approved / codex-independent-sign-in-policy-security-reviewer | - |
 | `W1.A05.T04` | `append-only v1` | 3 | `-` | approved / agent:t04-r03-independent-reviewer | - |
-| `W1.A06.T01` | `append-only v1` | 0 | `R01` | - / - | - |
+| `W1.A06.T01` | `append-only v1` | 1 | `-` | approved / ecr5-planning-authority-reviewer | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -520,4 +519,3 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A06.T01` Reconcile the CAP-03.S06 workflow-profile count | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
