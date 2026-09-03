@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-03.S05",
+  "attemptId": "R02",
+  "stateCommit": "90bebf3e0e51753ead2c4d300f65b9d8b6359284",
+  "productCandidateCommit": "ab0844204768f2282d694c9df2caa931a7e8fcf3",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": [
+    {
+      "path": "artifacts/evidence/CAP-03.S05.integration-R01.json",
+      "sha256": "78f3286cd2d6a20f690d1c9789578c13ea29cee8924c93177de134cfa40ca29b"
+    },
+    {
+      "path": "artifacts/evidence/CAP-03.S05.integration.review-R01.json",
+      "sha256": "dc3f96f6456731e1116ecc07a9e8b147fbfc3049ef5212b87e75f57068c771e8"
+    }
+  ],
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "outcome": "CAP-03.S05 now provides the approved end-to-end controlled recalculation path: exact material-dependency registration, deterministic and bounded impact planning, truthful cycle authority, current-policy-fenced scheduling, durable stale causes, selective candidate commit and historical retention, and authenticated human-gated restoration. The production Core API, generated client, and approved Audit & Lineage workspace expose preview, deferral, enqueue, comparison, review, and restoration without transferring actor or policy authority to the renderer.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-03.S05.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T01.R02.json",
+          "sha256": "36c863a1bae06ccac908f38b8050649241f46259f6d33c121c272c940b2a2519"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T01.review-R02.json",
+          "sha256": "995e75d58d3a87afccbcd258c4cc2575369885e896ccb3bc4768320993eddfd7"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S05.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T02.R03.json",
+          "sha256": "d1aa357d7838cb0ef703260e552c03fe9cd68b4650c393bf9b822e6d8f19de50"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T02.review-R03.json",
+          "sha256": "e2154a80452c8d535b66a940551d7ffbb5b94d05733cb6336a87b739d59dd1db"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S05.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T03.R04.json",
+          "sha256": "12e744c87352d8586a077c726d2cc11054692aff0c6902008cd9e27dd449088f"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S05.T03.review-R04.json",
+          "sha256": "cdaf911099e3cee3691cf6e588e63e0de75490422e717844632c36e940e806c2"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -B -m unittest tests.service.test_recalculation_api tests.data.test_material_dependencies tests.graph.test_dependency_impacts tests.e2e.test_selective_recalculation",
+      "exitCode": 0,
+      "result": "All 32 selected API, material-dependency, impact-planning, propagation, selective-recalculation, recovery, denial, and exact slice-finding regression tests passed in 5.258 seconds."
+    },
+    {
+      "command": "apps/desktop/node_modules/.bin/vitest.CMD run packages/contracts/core-api/generated.test.ts apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+      "exitCode": 0,
+      "result": "All 22 generated-client and renderer tests passed in 473 ms, including preview, deferral, enqueue, immutable retry, comparison, read-only denial, human review, and restore behavior."
+    },
+    {
+      "command": "npm run build --prefix apps/desktop; .venv\\Scripts\\python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "exitCode": 0,
+      "result": "The functional application and reference bundles built successfully with 4 functional artifacts and 42 reference artifacts. All 8 desktop checker tests and the assembled functional-frame check passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 5ff2ff8de64513ced687153cebe53b5eebeed32f --head ab0844204768f2282d694c9df2caa931a7e8fcf3",
+      "exitCode": 0,
+      "result": "The exact ten-path product remediation range passed with zero errors and binds RO-UI-ACADEMIC-MINIMAL-1.5 to human approval commit 7ec1b27d72c189216d7a203586b7339202733531 and package SHA-256 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check workflows; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "The approved v1.5 package reproduced across 55 governed files and 35 HTML files with 33 product pages and 14 workflows. All 139 workflow browser cases, 390 keyboard cases, and 66 responsive/accessibility cases passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/security_check.py --repo . --report artifacts/tmp/CAP-03.S05-R02-security.json",
+      "exitCode": 0,
+      "result": "The focused dependency and secret scan passed after the scanner was allowed its required execution boundary: 601 packages, 152 findings, zero blocking findings."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/dependency_impact_performance_check.py --repo . --report artifacts/tmp/CAP-03.S05-R02-dependency-impact-performance.json",
+      "exitCode": 0,
+      "result": "PASS for the dependency-impact-scc-v1 deterministic fixture at nearest-rank p95 21.263 ms, including exact propagating-edge SCC membership and stable preview authority."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "The canonical OpenAPI contract and checked-in generated TypeScript client are synchronized."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check bc9441a23faa1df44f80a823f432ca5988e394d6..90bebf3e0e51753ead2c4d300f65b9d8b6359284",
+      "exitCode": 0,
+      "result": "The backlog validates with 20 capabilities, 117 slices, 363 tasks, and 12 release gates. The complete R01-state-to-R02-state range has no patch errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile service --profile e2e-local --profile graph --profile data --profile security-local --affected-base bc9441a23faa1df44f80a823f432ca5988e394d6 --affected-head 90bebf3e0e51753ead2c4d300f65b9d8b6359284 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "The exact 87-path remediation-state selection passed. It truthfully reports five evidence paths as unknown and selects the safety-sensitive fallback across the requested desktop, service, data, graph, e2e-local, and security-local inventories. The task- and slice-risk checks recorded above passed; gate-bound performance and the complete selected profile matrix remain deferred to W1 exit rather than represented as executed here."
+    }
+  ],
+  "findingReplay": {
+    "closures": [
+      {
+        "findingId": "CAP-03.S05-R01-F01",
+        "result": "closed",
+        "evidence": "The production Core API, generated client, and governed Audit & Lineage workspace now expose project-scoped preview, deferral, enqueue, comparison, review, and restoration. The exact API regression, 22 client/renderer tests, build, functional-frame check, UI gate, workflow, keyboard, and accessibility checks pass."
+      },
+      {
+        "findingId": "CAP-03.S05-R01-F02",
+        "result": "closed",
+        "evidence": "Restoration requires the Core-minted authenticated principal and exact completed S04 human task/decision authority; the focused restore test denies substituted authority and proves the accepted path."
+      },
+      {
+        "findingId": "CAP-03.S05-R01-F03",
+        "result": "closed",
+        "evidence": "Enqueue and restoration bind and re-evaluate the current rights-policy fingerprint at mutation boundaries; the focused policy-change test proves denial without a queue write."
+      },
+      {
+        "findingId": "CAP-03.S05-R01-F04",
+        "result": "closed",
+        "evidence": "Cycle authority is built only from edges that actually propagate. The exact intersection regression excludes non-material and ignored closing edges while retaining true propagating cycles."
+      },
+      {
+        "findingId": "CAP-03.S05-R01-F05",
+        "result": "closed",
+        "evidence": "Affected selection is recomputed through exact R02 state commit 90bebf3e0e51753ead2c4d300f65b9d8b6359284. It reports all 87 paths, names the five unknown evidence paths, and preserves the safety-sensitive fallback; this packet does not claim that selection-only output executed the full profile."
+      }
+    ],
+    "openFindingIds": [],
+    "result": "Every blocking R01 slice finding has an acceptance-bound remediation and focused replay. Final closure remains subject to independent R02 slice review."
+  },
+  "profileSelection": {
+    "selected": "R02 replays the five prior slice findings and the incremental public API, generated-client, renderer, governed-experience, policy, authenticated-human-authority, propagating-cycle, security, contract, and performance boundaries. It reuses the previously authenticated T01/T02 task packets and independently approved T03 R04 packet rather than restarting their audits.",
+    "deferredToWaveExit": "The complete foundation, desktop, service, contracts, data, graph, e2e-local, security-local, packaging, cross-capability, recovery, and release-authoritative Windows x64 matrix remains mandatory once at W1 exit. The gate-bound desktop, project-lifecycle, and storage-maintenance performance commands also remain assigned to W1 exit."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "priorBlockingFindingsReplayed": [
+      "CAP-03.S05-R01-F01",
+      "CAP-03.S05-R01-F02",
+      "CAP-03.S05-R01-F03",
+      "CAP-03.S05-R01-F04",
+      "CAP-03.S05-R01-F05"
+    ],
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The complete foundation inventory retains the disclosed historical-controller fixture baseline of 72 failures and 17 errors from R01. It is not represented as passing and remains mandatory W1-exit reconciliation; no reproduced failure entered the CAP-03.S05 product paths.",
+      "The dependency-impact threshold is a same-machine regression guard, not a cross-machine release SLA.",
+      "The complete W1 deployment and release qualification matrix remains due after all W1 slices close.",
+      "The pre-existing protected untracked W1.A04.B00 witness remains untouched and unstaged."
+    ]
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-03.S06 and later artifact-producing capabilities",
+      "contract": "exact dependency coverage, deterministic bounded impact preview, durable stale causes, current-policy authority, and current-revision freshness enforcement",
+      "readyPendingSliceApproval": true
+    },
+    {
+      "consumer": "CAP-05, CAP-08, CAP-12, CAP-17, and CAP-18 recalculable scholarly outputs",
+      "contract": "graph-snapshot-fenced propagation, explicit conditional decisions, exact completed-attempt and human-decision authority, selective candidate commit, historical retention, and restart-safe non-destructive restoration",
+      "readyPendingSliceApproval": true
+    }
+  ]
+}
