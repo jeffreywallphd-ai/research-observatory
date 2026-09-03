@@ -1,0 +1,31 @@
+{
+  "task_id": "CAP-03.S05.T03",
+  "attempt_id": "R04",
+  "candidate_commit": "ab0844204768f2282d694c9df2caa931a7e8fcf3",
+  "submission_record_commit": "05965d3162ba88852129f37e2e6bb481ddcb25c7",
+  "reviewer": "agent:cap03-s05-t03-r04-reviewer",
+  "reviewed_at": "2026-09-03T13:07:19.937Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "The frozen R04 evidence, exact 98-path candidate range, strict ancestry from the prior approved candidate, direct-child two-path submission, evidence hash, and task projection authenticate. The final ten-path product subrange completes the generated-client, local Core, and governed renderer preview/schedule/compare/human-review/restore path while retaining immutable revisions, accepted-intent and exact-plan authority, byte-identical retries, read-only denial, current policy and human-decision enforcement, accessible governed states, and the corrected human-approved v1.5 UI identity. The prior integration review, corrected approval, and adopted GOV-MAINT-0010 R04 chain were independently authenticated before reuse. Four exact backend slice-finding regressions, 22 generated-client/renderer tests, the exact UI gate, reference-integrity check, and both changed-path selection checks pass. No full profile was run under the risk-based task-review policy; no blocking or non-blocking finding remains.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S05.T03.R04.json",
+      "sha256": "12e744c87352d8586a077c726d2cc11054692aff0c6902008cd9e27dd449088f",
+      "commit": "ab0844204768f2282d694c9df2caa931a7e8fcf3"
+    },
+    {
+      "type": "independent-check",
+      "command": "Replay the four exact backend slice-finding regressions and the generated-client plus renderer test union.",
+      "result": "PASS: 4/4 backend regressions and 22/22 generated-client/renderer tests passed."
+    },
+    {
+      "type": "authority-check",
+      "command": "Authenticate the v1.5 human approval, adopted GOV-MAINT-0010 chain, exact UI gate, reference integrity, candidate paths, and submission ancestry.",
+      "result": "PASS: the exact ten-path product subrange and 98-path task descendant range are authenticated; the reference reproduced across 55 governed files at package SHA-256 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}
