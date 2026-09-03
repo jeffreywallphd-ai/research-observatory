@@ -1,16 +1,19 @@
 reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
 version: '1.5'
-status: proposed
-approval_kind: pending-human
-approved_by: null
-approved_at: null
-approval_basis: Human approval is pending for the controlled-recalculation experience
-  required by the already-approved CAP-03.S05 slice plan. This proposal does not
-  authorize renderer implementation or represent release approval.
+status: approved
+approval_kind: human
+approved_by: human:repository-owner
+approved_at: '2026-09-03T06:48:53-04:00'
+approval_basis: The repository owner explicitly approved RO-UI-ACADEMIC-MINIMAL-1.5
+  at exact proposal commit a6967261234cb5d8c87430e2338842a61bba02f1 on
+  2026-09-03. This approval authorizes application implementation against the
+  governed reference; it does not represent task, slice, Wave, release, or remote-push
+  approval.
 authority:
   wave_id: W1
   slice_id: CAP-03.S05
   approved_wave_commit: c5bbd97e2ef660693fec7926002b4dfb75a7c684
+  proposal_commit: a6967261234cb5d8c87430e2338842a61bba02f1
   slice_plan: planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md
 supersedes: RO-UI-ACADEMIC-MINIMAL-1.4
 scope:
