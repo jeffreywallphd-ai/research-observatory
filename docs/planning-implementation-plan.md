@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 693dbbc0ba92aa4eb83def6e37bfb5e6aaf6185bde149e446fe3406fdbd06aa3
+source_sha256: f24b9536d2e76c3ee50ffe9277f7b3086686e32a313c7387ef863c9511431251
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -45,7 +45,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
-| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `REVIEW` |
+| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 
 ## Waves
 
@@ -1478,7 +1478,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A06.json` (`244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -1486,6 +1486,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-09-03T18:04:41+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-09-03T18:06:49+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `REVIEW` at `2026-09-03T18:28:57+00:00` by codex: W1.A06.B00 and W1.A06.T01 are independently approved with no open findings; submit the bounded planning-authority correction for independent amendment-exit review while W1 remains paused.
+- `E05` `ADOPTED` at `2026-09-03T18:39:35+00:00` by codex: Adopt independently approved W1.A06 planning-authority alignment as a W1 security checkpoint; retain all ordinary CAP-03.S06 implementation, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
 
 ### Amendment-exit review and adoption — W1.A06
 
@@ -1529,7 +1530,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP04` `security` by codex at `2026-09-03T18:39:35+00:00` — Adopt independently approved W1.A06 planning-authority alignment as a W1 security checkpoint; retain all ordinary CAP-03.S06 implementation, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
+  - amendment `W1.A06` / `artifacts/evidence/W1.A06.adoption.json` / `afc1b6cf6b56a51d8674daf8204b65e5592f41e4f8920dd73a7ce7af1b66ed9d` / `ecd0fee90a58a3dffdc7cb955906856372968753`
 
 **Bounded tasks:**
 

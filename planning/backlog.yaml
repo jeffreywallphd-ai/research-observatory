@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -218,6 +218,18 @@ waves:
       commit: 29cb181d524dd99e0ee92de3c5121c566b43600b
     notes: Adopt independently approved W1.A05 security and experience outcomes as a W1 security checkpoint; retain conditional
       configured-Hello and full W1-exit qualification obligations; leave W1 PAUSED pending explicit ordinary resume.
+  - id: W1.CP04
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-09-03T18:39:35+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W1.A06
+      path: artifacts/evidence/W1.A06.adoption.json
+      sha256: afc1b6cf6b56a51d8674daf8204b65e5592f41e4f8920dd73a7ce7af1b66ed9d
+      commit: ecd0fee90a58a3dffdc7cb955906856372968753
+    notes: Adopt independently approved W1.A06 planning-authority alignment as a W1 security checkpoint; retain all ordinary
+      CAP-03.S06 implementation, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
   completion:
     status: PAUSED
     reviewer: null
@@ -36070,7 +36082,7 @@ wave_amendments:
     sha256: 244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67
     introduction_commit: 6e4581274972b7c324e5394fb317975ff063ecbe
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -36096,6 +36108,13 @@ wave_amendments:
       at: '2026-09-03T18:28:57+00:00'
       rationale: W1.A06.B00 and W1.A06.T01 are independently approved with no open findings; submit the bounded planning-authority
         correction for independent amendment-exit review while W1 remains paused.
+    - id: E05
+      status: ADOPTED
+      actor: codex
+      at: '2026-09-03T18:39:35+00:00'
+      rationale: Adopt independently approved W1.A06 planning-authority alignment as a W1 security checkpoint; retain all
+        ordinary CAP-03.S06 implementation, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl
+        resume.
   bootstrap:
     id: W1.A06.B00
     status: APPROVED
