@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0005",
+  "proposedAmendmentId": "W1.A06",
+  "attemptId": "R02",
+  "candidateCommit": "f48f11ed12c10d26acb1b80053e1a823c3ee5c16",
+  "packetSha256": "788de5365d145439817d0d79024056c5438d3ed858b918ea1725026da7b01034",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr5-planning-authority-reviewer",
+  "reviewedAt": "2026-09-03T12:07:43.0519482-04:00",
+  "result": "approved",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "ECR-0005-R01-F01",
+      "disposition": "closed",
+      "notes": "GOV-MAINT-0013 renders one canonical identity-ordered chain: base, W1.A01, W1.A02, W1.A03, reserved W1.A04, W1.A05, GOV-MIG-0001, and proposed W1.A06. The W1.A04 reservation/supersession meaning and all predecessor packet and approval bindings remain unchanged."
+    },
+    {
+      "findingId": "ECR-0005-R01-F02",
+      "disposition": "closed",
+      "notes": "The exact-hash canonical APPROVAL.yaml proves RO-UI-ACADEMIC-MINIMAL-1.5 is already human-approved. The generated page states that ECR approval reaffirms and binds this existing authority unchanged and does not reserve or materialize a reference; unbound proposed references retain conservative pending language."
+    }
+  ],
+  "verified": [
+    "The exact R02 candidate f48f11ed12c10d26acb1b80053e1a823c3ee5c16 strictly descends from rejected R01 candidate 5cd1e03b2665389c40fe711b00c2968bcaa8b9e4 through immutable adverse-ledger commit 6f3145c6a11ab6aee9fe2611a0907fc32173aea6 and independently approved/adopted GOV-MAINT-0013.",
+    "The immutable R01 ledger remains byte-identical with SHA-256 7c29221c650d5cb28787d1e794e17f68edfdb810f4ff805f8e5f7791ca51a133. GOV-MAINT-0013 candidate 66d16f625ac3189a91906f65825b32b86c2b00a0, review-ledger introduction d11a3f23d0e1b5a7877b1679fdcefb4e411b5aea, ledger SHA-256 3bc4ff58f1e3c4c64587ebbcb78b24628d16334922c7dac47f44a177039221bc, and adoption are exact, ordered, and ancestral.",
+    "ECR-0005 packet SHA-256 is 788de5365d145439817d0d79024056c5438d3ed858b918ea1725026da7b01034. Its canonical proposal, v4 schema, static review, and all three governed-reference hashes match exact candidate bytes.",
+    "ECR-0005 and W1.A06 are the next valid identities. The complete base, amendment, reservation, migration, maintenance, revision-12, and MI-0001 authority remains hash-bound, ancestral, and unchanged.",
+    "RO-UI-ACADEMIC-MINIMAL-1.5 remains approved and its catalog contains fourteen unique workflows with no built-in, extension, or profile-pack split. The exact criterion replacement resolves the isolated conflict without hidden product, security, architecture, experience, or refactor authority.",
+    "The approved-W1 baseline contains 48 unique tasks and 194 points; W1.A06 allocates zero refactor points. No product, backlog, task-state, experience, or approval file changed in the remediation.",
+    "All 16 amendment review-site tests, Ruff check and formatting, planctl ECR validation, taskctl validation for 20 capabilities, 117 slices, 363 tasks, and 12 gates, 489-page site validation, generated backlog views, ancestry, source/hash, and diff hygiene pass.",
+    "W1 remains PAUSED at Wave scope and lease-free with no active ordinary task, amendment, or hold. CAP-03.S06.T01 remains READY and unclaimed. Human approval may authorize only the hash-bound ECR/W1.A06 decision; bootstrap, materialization, activation, adoption, ordinary W1 resume, task claim, W1 qualification, and G1 approval remain separate.",
+    "The protected untracked artifacts/evidence/W1.A04.B00.json witness was not opened, hashed, staged, modified, or deleted during R02."
+  ],
+  "approvalAvailable": true
+}
