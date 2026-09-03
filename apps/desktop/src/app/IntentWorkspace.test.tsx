@@ -8,10 +8,10 @@ import {
   type IntentDraftProjection,
   type ProjectProjection,
   type IntentWorkspaceProjection,
+  type WorkflowProfileCatalogProjection,
 } from "@research-observatory/contracts/core-api";
 
 import {
-  INTENT_MODE_GUIDANCE,
   IntentAcceptanceCoordinator,
   IntentWorkspace,
   acceptedIntentWorkspace,
@@ -43,6 +43,29 @@ const emptyWorkspace: IntentWorkspaceProjection = {
   projectId: project.projectId,
   current: null,
   history: [],
+};
+
+const catalog: WorkflowProfileCatalogProjection = {
+  schemaVersion: "1.0",
+  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.5",
+  referenceVersion: "1.5",
+  profileCatalogVersion: "1.0.0",
+  profileCatalogHash: `sha256:${"a".repeat(64)}`,
+  allToolsAccessible: true,
+  evidenceRequirementsUnchanged: true,
+  provenanceRequirementsUnchanged: true,
+  registeredToolPageContractIds: ["intent-contract.html", "theory-map.html"],
+  profiles: [{
+    profileId: "theory-synthesis",
+    title: "Theory synthesis",
+    purpose: "Integrate theories while retaining boundaries and disagreements.",
+    expectedOutputs: ["Theory architecture and integration opportunities"],
+    processForm: "revisitable",
+    stages: [
+      { stageKey: "intent-contract-1", order: 1, pageContractId: "intent-contract.html", label: "Research Intent", optional: false, rationale: "Set authority.", checkpointState: "unknown", checkpointRationale: "Not specified." },
+      { stageKey: "theory-map-1", order: 2, pageContractId: "theory-map.html", label: "Theory Map", optional: false, rationale: "Map theory.", checkpointState: "unknown", checkpointRationale: "Not specified." },
+    ],
+  }],
 };
 
 const decisionCompleteDraft: IntentDraftProjection = {
@@ -110,14 +133,11 @@ function response(status: number, body: unknown, contentType = "application/json
 }
 
 describe("guided research intent workspace", () => {
-  it("keeps the governed fourteen-use-case catalog mode specific", () => {
-    expect(INTENT_MODE_GUIDANCE).toHaveLength(14);
-    expect(new Set(INTENT_MODE_GUIDANCE.map((item) => item.id)).size).toBe(14);
+  it("keeps intent-form defaults use-case specific without duplicating profile presentation", () => {
     expect(selectedIntentGuidance("systematic-review")).toMatchObject({
       epistemicMode: "systematic",
       defaultStoppingConditions: ["coverage-threshold"],
     });
-    expect(selectedIntentGuidance("theory-synthesis").workflow).toContain("Theory Map");
     expect(selectedIntentGuidance("novelty-audit").warning).toContain("nearest prior work");
   });
 
@@ -144,6 +164,7 @@ describe("guided research intent workspace", () => {
         project={project}
         announce={vi.fn()}
         initialWorkspace={emptyWorkspace}
+        initialCatalog={catalog}
       />,
     );
     expect(markup).toContain('data-intent-workspace="true"');
@@ -156,6 +177,10 @@ describe("guided research intent workspace", () => {
     expect(markup).toContain("Stopping logic");
     expect(markup).toContain("Preview revision effects");
     expect(markup).toContain("Workflow change has downstream effects");
+    expect(markup).toContain("Integrate theories while retaining boundaries");
+    expect(markup).toContain("Theory architecture and integration opportunities");
+    expect(markup).toContain("Revisitable process");
+    expect(markup).toContain("All tools remain available");
     expect(markup).toContain("Save draft revision");
     expect(markup).toContain("Launch gated analysis");
     expect(markup).toMatch(/disabled=""[^>]*>Launch gated analysis/);
@@ -235,7 +260,7 @@ describe("guided research intent workspace", () => {
     expect(nextWorkspace.current).toEqual(acceptedRevision);
     expect(nextWorkspace.history.filter((item) => item.status === "accepted")).toHaveLength(1);
     const markup = renderToStaticMarkup(
-      <IntentWorkspace project={project} announce={vi.fn()} initialWorkspace={nextWorkspace} />,
+      <IntentWorkspace project={project} announce={vi.fn()} initialWorkspace={nextWorkspace} initialCatalog={catalog} />,
     );
     expect(markup).toContain("Revision 4 · accepted");
     expect(markup).toMatch(/disabled=""[^>]*>Launch gated analysis/);

@@ -247,7 +247,8 @@
       "title": "Adopt governed workflow profiles and history-preserving navigation state",
       "status": "Accepted",
       "linkedTasks": [
-        "CAP-03.S06.T01"
+        "CAP-03.S06.T01",
+        "CAP-03.S06.T02"
       ]
     }
   ]

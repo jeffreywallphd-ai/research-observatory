@@ -6,7 +6,9 @@ import {
   type CoreApiRequest,
   type CoreApiResponse,
   type CoreApiTransport,
+  type ProjectCreateRequest,
   type ProjectProjection,
+  type WorkflowProfileCatalogProjection,
 } from "@research-observatory/contracts/core-api";
 import { invoke } from "@tauri-apps/api/core";
 import { Button, Field, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
@@ -16,6 +18,7 @@ export interface ProjectsWorkspaceProps {
   readonly transport?: CoreApiTransport;
   readonly selectedProject?: ProjectProjection | null;
   readonly onProjectChange?: (project: ProjectProjection) => void;
+  readonly initialCatalog?: WorkflowProfileCatalogProjection | null;
 }
 
 function hasTauriRuntime(): boolean {
@@ -79,18 +82,40 @@ export function ProjectsWorkspace({
   transport = packagedProjectTransport,
   selectedProject = null,
   onProjectChange,
+  initialCatalog = null,
 }: ProjectsWorkspaceProps): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
   const [project, setProject] = useState<ProjectProjection | null>(selectedProject);
   const [parentDirectory, setParentDirectory] = useState("");
   const [directoryName, setDirectoryName] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [researchObjective, setResearchObjective] = useState("");
+  const [primaryUseCase, setPrimaryUseCase] = useState<ProjectCreateRequest["primaryUseCase"] | "">(
+    initialCatalog?.profiles[0]?.profileId ?? "",
+  );
+  const [catalog, setCatalog] = useState<WorkflowProfileCatalogProjection | null>(initialCatalog);
   const [openRoot, setOpenRoot] = useState("");
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
 
   useEffect(() => setProject(selectedProject), [selectedProject]);
+
+  useEffect(() => {
+    if (initialCatalog) {
+      setCatalog(initialCatalog);
+      return;
+    }
+    let cancelled = false;
+    void client.workflowProfileCatalog().then((next) => {
+      if (!cancelled) setCatalog(next);
+    }).catch((error: unknown) => {
+      if (!cancelled) setFailure(safeFailure(error));
+    });
+    return () => { cancelled = true; };
+  }, [client, initialCatalog]);
+
+  const selectedProfile = catalog?.profiles.find((profile) => profile.profileId === primaryUseCase) ?? null;
 
   const run = async (label: string, action: () => Promise<ProjectProjection>): Promise<void> => {
     setBusy(label);
@@ -113,11 +138,13 @@ export function ProjectsWorkspace({
 
   const createProject = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    if (!primaryUseCase || !researchObjective.trim()) return;
     void run("Create project", () => client.createProject({
       parentDirectory,
       directoryName,
       displayName,
-      templateId: "theory-synthesis",
+      primaryUseCase,
+      researchObjective: researchObjective.trim(),
     }));
   };
 
@@ -157,8 +184,39 @@ export function ProjectsWorkspace({
               label="Project name"
               input={{ value: displayName, onChange: (event) => setDisplayName(event.currentTarget.value), required: true, maxLength: 120 }}
             />
-            <p className="field-note"><strong>Template:</strong> Theory synthesis. More templates arrive in their governed slices.</p>
-            <Button tone="primary" type="submit" disabled={busy !== null}>Create project</Button>
+            <label htmlFor="project-research-objective">Research objective</label>
+            <textarea
+              id="project-research-objective"
+              value={researchObjective}
+              onChange={(event) => setResearchObjective(event.currentTarget.value)}
+              rows={3}
+              maxLength={4000}
+              required
+            />
+            <label htmlFor="project-primary-use-case">Primary use case</label>
+            <select
+              id="project-primary-use-case"
+              value={primaryUseCase}
+              onChange={(event) => setPrimaryUseCase(event.currentTarget.value as ProjectCreateRequest["primaryUseCase"])}
+              required
+              disabled={!catalog}
+            >
+              <option value="" disabled>{catalog ? "Select a governed use case" : "Loading governed use cases…"}</option>
+              {catalog?.profiles.map((profile) => (
+                <option key={profile.profileId} value={profile.profileId}>{profile.title}</option>
+              ))}
+            </select>
+            {selectedProfile ? (
+              <div className="workflow-profile-preview" aria-live="polite">
+                <Typography as="h3" variant="section-title">{selectedProfile.title}</Typography>
+                <p>{selectedProfile.purpose}</p>
+                <p><strong>Expected output:</strong> {selectedProfile.expectedOutputs.join(", ")}</p>
+                <p><strong>Process form:</strong> {selectedProfile.processForm === "revisitable" ? "Revisitable process" : "Linear process"}</p>
+                <ol>{selectedProfile.stages.map((stage) => <li key={stage.stageKey}>{stage.label}{stage.optional ? " (optional)" : ""}</li>)}</ol>
+                <p className="field-note">All tools remain available. The selected workflow does not weaken evidence or provenance requirements.</p>
+              </div>
+            ) : null}
+            <Button tone="primary" type="submit" disabled={busy !== null || !catalog || !primaryUseCase || !researchObjective.trim()}>Create project</Button>
           </form>
         </Panel>
 

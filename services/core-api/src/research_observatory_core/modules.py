@@ -59,6 +59,7 @@ def default_module_registry() -> ModuleRegistry:
                     "intent.impact-preview",
                     "intent.policy-evaluation",
                     "intent.read",
+                    "intent.workflow-profiles",
                 ),
             ),
             ModuleDefinition(

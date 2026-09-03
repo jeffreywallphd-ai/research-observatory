@@ -583,18 +583,80 @@ export function decodeIntentPolicyDecision(value: unknown): IntentPolicyDecision
 export function decodeIntentImpactPreview(value: unknown): IntentImpactPreview | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
-    "schemaVersion", "expectedRevision", "changeCategories", "affectedWorkflows", "affectedOutputs", "warnings",
-    "acknowledgementRequired", "acknowledgementToken",
+    "schemaVersion", "expectedRevision", "changeCategories", "affectedWorkflows", "affectedOutputs", "affectedSchemas",
+    "affectedCheckpoints", "autonomyDefaultEffects", "stoppingLogicEffects", "staleArtifactIds", "allToolsAccessible",
+    "evidenceRequirementsUnchanged", "provenanceRequirementsUnchanged", "warnings", "acknowledgementRequired",
+    "acknowledgementToken",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !integer(candidate.expectedRevision, 0, Number.MAX_SAFE_INTEGER)
     || !uniqueMembers(candidate.changeCategories, INTENT_CHANGE_CATEGORIES, 3)
     || !stringList(candidate.affectedWorkflows, 32) || !stringList(candidate.affectedOutputs, 32)
+    || !stringList(candidate.affectedSchemas, 16) || !stringList(candidate.affectedCheckpoints, 256)
+    || !stringList(candidate.autonomyDefaultEffects, 8) || !stringList(candidate.stoppingLogicEffects, 8)
+    || !stringList(candidate.staleArtifactIds, 256) || candidate.allToolsAccessible !== true
+    || candidate.evidenceRequirementsUnchanged !== true || candidate.provenanceRequirementsUnchanged !== true
     || !stringList(candidate.warnings, 8) || typeof candidate.acknowledgementRequired !== "boolean"
     || (candidate.acknowledgementToken !== null
       && (typeof candidate.acknowledgementToken !== "string" || !/^[0-9a-f]{64}$/.test(candidate.acknowledgementToken)))) return null;
   if (candidate.acknowledgementRequired !== (candidate.acknowledgementToken !== null)
     || candidate.acknowledgementRequired !== (candidate.changeCategories.length > 0)) return null;
   return candidate as unknown as IntentImpactPreview;
+}
+
+function decodeWorkflowProfileStageProjection(value: unknown): WorkflowProfileStageProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "stageKey", "order", "pageContractId", "label", "optional", "rationale", "checkpointState", "checkpointRationale",
+  ])) return null;
+  if (typeof candidate.stageKey !== "string" || !/^[a-z0-9][a-z0-9._-]{0,99}$/.test(candidate.stageKey)
+    || !integer(candidate.order, 1, 256) || typeof candidate.pageContractId !== "string"
+    || !/^[a-z0-9][a-z0-9-]*\.html$/.test(candidate.pageContractId) || !boundedText(candidate.label, 1, 120)
+    || typeof candidate.optional !== "boolean" || !boundedText(candidate.rationale, 1, 4000)
+    || !member(candidate.checkpointState, ["unknown", "optional-human", "required-human", "not-applicable"] as const)
+    || !boundedText(candidate.checkpointRationale, 1, 4000)) return null;
+  return candidate as unknown as WorkflowProfileStageProjection;
+}
+
+function decodeWorkflowProfileProjection(value: unknown): WorkflowProfileProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "profileId", "title", "purpose", "expectedOutputs", "processForm", "stages",
+  ])) return null;
+  if (!member(candidate.profileId, INTENT_PRIMARY_USE_CASES) || !boundedText(candidate.title, 1, 200)
+    || !boundedText(candidate.purpose, 1, 4000) || !stringList(candidate.expectedOutputs, 32)
+    || candidate.expectedOutputs.length < 1 || !member(candidate.processForm, ["linear", "revisitable"] as const)
+    || !Array.isArray(candidate.stages) || candidate.stages.length < 1 || candidate.stages.length > 256) return null;
+  const stages = candidate.stages.map(decodeWorkflowProfileStageProjection);
+  if (stages.some((stage) => stage === null)) return null;
+  const decoded = stages as WorkflowProfileStageProjection[];
+  if (new Set(decoded.map((stage) => stage.stageKey)).size !== decoded.length
+    || decoded.some((stage, index) => stage.order !== index + 1)) return null;
+  return { ...candidate, stages: decoded } as unknown as WorkflowProfileProjection;
+}
+
+export function decodeWorkflowProfileCatalogProjection(value: unknown): WorkflowProfileCatalogProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "referenceId", "referenceVersion", "profileCatalogVersion", "profileCatalogHash",
+    "allToolsAccessible", "evidenceRequirementsUnchanged", "provenanceRequirementsUnchanged",
+    "registeredToolPageContractIds", "profiles",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || candidate.referenceId !== "RO-UI-ACADEMIC-MINIMAL-1.5"
+    || candidate.referenceVersion !== "1.5" || candidate.profileCatalogVersion !== "1.0.0"
+    || candidate.profileCatalogHash !== "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49"
+    || candidate.allToolsAccessible !== true || candidate.evidenceRequirementsUnchanged !== true
+    || candidate.provenanceRequirementsUnchanged !== true || !stringList(candidate.registeredToolPageContractIds, 256)
+    || candidate.registeredToolPageContractIds.length < 1 || !Array.isArray(candidate.profiles)
+    || candidate.profiles.length !== INTENT_PRIMARY_USE_CASES.length) return null;
+  const profiles = candidate.profiles.map(decodeWorkflowProfileProjection);
+  if (profiles.some((profile) => profile === null)) return null;
+  const decoded = profiles as WorkflowProfileProjection[];
+  const profileIds = decoded.map((profile) => profile.profileId);
+  const registered = new Set(candidate.registeredToolPageContractIds);
+  if (new Set(profileIds).size !== INTENT_PRIMARY_USE_CASES.length
+    || INTENT_PRIMARY_USE_CASES.some((profileId) => !profileIds.includes(profileId))
+    || decoded.some((profile) => profile.stages.some((stage) => !registered.has(stage.pageContractId)))) return null;
+  return { ...candidate, profiles: decoded } as unknown as WorkflowProfileCatalogProjection;
 }
 
 function decodeRecalculationCause(value: unknown): RecalculationCauseProjection | null {
@@ -1116,18 +1178,25 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         || typeof command.directoryName !== "string"
         || !/^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/.test(command.directoryName)
         || !boundedText(command.displayName, 1, 120)
-        || typeof command.templateId !== "string"
-        || !/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/.test(command.templateId)) {
+        || !member(command.primaryUseCase, INTENT_PRIMARY_USE_CASES)
+        || !boundedText(command.researchObjective, 1, 4000)
+        || !command.researchObjective.trim()) {
         throw new Error("RO-CORE-REQUEST-INVALID");
       }
       return await requestJson(transport, {
         method: "POST", path: "/projects",
         body: JSON.stringify({
           parentDirectory: command.parentDirectory, directoryName: command.directoryName,
-          displayName: command.displayName, templateId: command.templateId,
+          displayName: command.displayName, primaryUseCase: command.primaryUseCase,
+          researchObjective: command.researchObjective,
         }),
         ifMatch: null, idempotencyKey: null,
       }, decodeProjectProjection);
+    },
+    async workflowProfileCatalog(): Promise<WorkflowProfileCatalogProjection> {
+      return await requestJson(transport, {
+        method: "GET", path: "/workflow-profiles/catalog", body: null, ifMatch: null, idempotencyKey: null,
+      }, decodeWorkflowProfileCatalogProjection);
     },
     async openProject(command: ProjectRootRequest): Promise<ProjectProjection> {
       return await requestJson(transport, {
@@ -1431,6 +1500,7 @@ def render_typescript(openapi_bytes: bytes) -> bytes:
         "cancel_operation_runtime_operations__operation_id__cancel_post",
         "operation_events_runtime_operations__operation_id__events_get",
         "create_project_projects_post",
+        "workflow_profile_catalog_workflow_profiles_catalog_get",
         "open_project_projects_open_post",
         "close_project_projects_close_post",
         "archive_project_projects_archive_post",

@@ -26,6 +26,7 @@ import {
   decodeVersionResponse,
   decodeWorkflowTaskCenterPage,
   decodeWorkflowTaskCenterRun,
+  decodeWorkflowProfileCatalogProjection,
   evaluateCoreApiCompatibility,
   parseOperationEventStream,
   type CoreApiResponse,
@@ -680,7 +681,8 @@ describe("generated Core API client", () => {
       parentDirectory: "C:/Research",
       directoryName: "study-one",
       displayName: "Study One",
-      templateId: "theory-synthesis",
+      primaryUseCase: "theory-synthesis",
+      researchObjective: "Explain a bounded phenomenon.",
     });
     await client.archiveProject({ root: projection.root });
     await client.deleteProject({ root: projection.root, confirmation: projection.deleteConfirmation });
@@ -691,12 +693,66 @@ describe("generated Core API client", () => {
       parentDirectory: "C:/Research",
       directoryName: "study-one",
       displayName: "Study One",
-      templateId: "theory-synthesis",
+      primaryUseCase: "theory-synthesis",
+      researchObjective: "Explain a bounded phenomenon.",
     });
     await expect(client.openProject({ root: "relative/project" })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
     await expect(client.deleteProject({ root: projection.root, confirmation: "delete:wrong" })).rejects.toThrow(
       "RO-CORE-REQUEST-INVALID",
     );
+  });
+
+  it("strictly decodes and requests the governed workflow profile catalog", async () => {
+    const profileIds = [
+      "rapid-orientation", "systematic-review", "living-review", "theory-synthesis",
+      "hermeneutic-inquiry", "critical-problematization", "technical-landscape", "novelty-audit",
+      "empirical-study-design", "empirical-study-to-article", "empirical-results-to-article",
+      "theory-article-development", "critical-article-development", "manuscript-review-revision",
+    ] as const;
+    const catalog = {
+      schemaVersion: "1.0",
+      referenceId: "RO-UI-ACADEMIC-MINIMAL-1.5",
+      referenceVersion: "1.5",
+      profileCatalogVersion: "1.0.0",
+      profileCatalogHash: "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+      allToolsAccessible: true,
+      evidenceRequirementsUnchanged: true,
+      provenanceRequirementsUnchanged: true,
+      registeredToolPageContractIds: ["intent-contract.html"],
+      profiles: profileIds.map((profileId) => ({
+        profileId,
+        title: profileId,
+        purpose: `Purpose for ${profileId}`,
+        expectedOutputs: ["Bounded output"],
+        processForm: "linear" as const,
+        stages: [{
+          stageKey: "intent-contract-1",
+          order: 1,
+          pageContractId: "intent-contract.html",
+          label: "Research Intent",
+          optional: false,
+          rationale: "Establish authority.",
+          checkpointState: "unknown" as const,
+          checkpointRationale: "No checkpoint authority is declared.",
+        }],
+      })),
+    };
+    expect(decodeWorkflowProfileCatalogProjection(catalog)).toEqual(catalog);
+    expect(decodeWorkflowProfileCatalogProjection({ ...catalog, allToolsAccessible: false })).toBeNull();
+    expect(decodeWorkflowProfileCatalogProjection({ ...catalog, profiles: catalog.profiles.slice(1) })).toBeNull();
+    const requests: unknown[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return response(200, catalog);
+    });
+    await expect(client.workflowProfileCatalog()).resolves.toEqual(catalog);
+    expect(requests).toEqual([{
+      method: "GET",
+      path: "/workflow-profiles/catalog",
+      body: null,
+      ifMatch: null,
+      idempotencyKey: null,
+    }]);
   });
 
   it("keeps privacy changes consent-bound and cache deletion disclosure exact", async () => {
@@ -853,6 +909,14 @@ describe("generated Core API client", () => {
       changeCategories: ["corpus-scope"],
       affectedWorkflows: ["Search Studio"],
       affectedOutputs: ["Evidence Matrix"],
+      affectedSchemas: ["research-intent-revision"],
+      affectedCheckpoints: [],
+      autonomyDefaultEffects: [],
+      stoppingLogicEffects: [],
+      staleArtifactIds: [],
+      allToolsAccessible: true,
+      evidenceRequirementsUnchanged: true,
+      provenanceRequirementsUnchanged: true,
       warnings: ["Prior work is retained."],
       acknowledgementRequired: true,
       acknowledgementToken: "b".repeat(64),

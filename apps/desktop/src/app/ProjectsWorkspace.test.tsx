@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import type { ProjectProjection } from "@research-observatory/contracts/core-api";
+import type { ProjectProjection, WorkflowProfileCatalogProjection } from "@research-observatory/contracts/core-api";
 
 import { projectActionLabels, projectCompatibilityGuidance, ProjectsWorkspace } from "./ProjectsWorkspace";
 
@@ -22,14 +22,46 @@ const project: ProjectProjection = {
   deleteConfirmation: "delete:11111111-1111-4111-8111-111111111111",
 };
 
+const catalog: WorkflowProfileCatalogProjection = {
+  schemaVersion: "1.0",
+  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.5",
+  referenceVersion: "1.5",
+  profileCatalogVersion: "1.0.0",
+  profileCatalogHash: `sha256:${"a".repeat(64)}`,
+  allToolsAccessible: true,
+  evidenceRequirementsUnchanged: true,
+  provenanceRequirementsUnchanged: true,
+  registeredToolPageContractIds: ["intent-contract.html", "theory-map.html"],
+  profiles: [{
+    profileId: "theory-synthesis",
+    title: "Theory synthesis",
+    purpose: "Reconcile competing mechanisms into a bounded conceptual model.",
+    expectedOutputs: ["Theory map", "Traceable synthesis"],
+    processForm: "revisitable",
+    stages: [
+      { stageKey: "intent-contract-1", order: 1, pageContractId: "intent-contract.html", label: "Research Intent", optional: false, rationale: "Set authority.", checkpointState: "unknown", checkpointRationale: "Not specified." },
+      { stageKey: "theory-map-1", order: 2, pageContractId: "theory-map.html", label: "Theory Map", optional: false, rationale: "Map theory.", checkpointState: "unknown", checkpointRationale: "Not specified." },
+    ],
+  }],
+};
+
 describe("functional local projects workspace", () => {
   it("renders implemented create and open workflows without reference-only application pages", () => {
-    const markup = renderToStaticMarkup(<ProjectsWorkspace announce={vi.fn()} />);
+    const markup = renderToStaticMarkup(<ProjectsWorkspace announce={vi.fn()} initialCatalog={catalog} />);
     expect(markup).toContain('data-projects-workspace="true"');
     expect(markup).toContain("Create a local project");
     expect(markup).toContain("Open an existing project");
     expect(markup).toContain('id="project-parent-directory"');
     expect(markup).toContain('id="project-root"');
+    expect(markup).toContain('id="project-research-objective"');
+    expect(markup).toContain('id="project-primary-use-case"');
+    expect(markup).toContain("Theory synthesis");
+    expect(markup).toContain("Reconcile competing mechanisms");
+    expect(markup).toContain("Theory map, Traceable synthesis");
+    expect(markup).toContain("Revisitable process");
+    expect(markup).toContain("Research Intent");
+    expect(markup).toContain("Theory Map");
+    expect(markup).toContain("All tools remain available");
     expect(markup).toContain("No project is selected");
     expect(markup).not.toContain("ui-reference");
     expect(markup).not.toContain("illustrative research");

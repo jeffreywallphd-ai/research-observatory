@@ -36,6 +36,14 @@ the human acceptance decision identity/content hash. The preview names affected
 prior stage-state revisions and their retain, map, stale, review, or explicit
 drop disposition. It does not mutate those prior records.
 
+Selection lineage and Research Intent lineage are independent append-only
+chains. The parent selection is the immediately preceding *selection* revision
+and may therefore cite an older same-profile intent after intervening intent-only
+revisions. On a profile change, the accepted migration—not the parent selection—
+binds the actual immediately preceding and target Research Intent revisions.
+Persistence must resolve the cited migration and human decision by their exact
+IDs and content hashes.
+
 `WorkflowStageState` has the same stable aggregate/distinct revision identity
 shape and binds the exact selection and profile independently of
 executor history. Its state vocabulary covers not-started, available, current,

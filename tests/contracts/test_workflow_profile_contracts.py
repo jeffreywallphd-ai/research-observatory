@@ -272,6 +272,25 @@ class WorkflowProfileContractTests(unittest.TestCase):
             "profile-change-binds-intent-and-human-acceptance",
             project_workflow_selection_errors(self.catalog, unchanged_intent),
         )
+        advanced_intent = fixture("valid-project-workflow-selection-change.v1.json")
+        advanced_prior = advanced_intent["acceptedMigration"]["priorResearchIntent"]
+        advanced_prior.update(
+            {
+                "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d023",
+                "revision": 3,
+                "revisionContentHash": "sha256:" + "3" * 64,
+            }
+        )
+        advanced_target = advanced_intent["acceptedMigration"]["targetResearchIntent"]
+        advanced_target.update(
+            {
+                "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d024",
+                "revision": 4,
+                "revisionContentHash": "sha256:" + "4" * 64,
+            }
+        )
+        advanced_intent["researchIntent"] = copy.deepcopy(advanced_target)
+        self.assertEqual((), project_workflow_selection_errors(self.catalog, advanced_intent))
         non_human_acceptance = copy.deepcopy(migration)
         non_human_acceptance["acceptance"]["decidedBy"]["actorType"] = "system"
         self.assertIsNone(decode_workflow_profile_migration(self.catalog, non_human_acceptance))

@@ -25,6 +25,9 @@ from .models import (
     IntentPolicyRequest,
     IntentRevisionSummary,
     IntentWorkspaceProjection,
+    WorkflowProfileCatalogProjection,
+    WorkflowProfileProjection,
+    WorkflowProfileStageProjection,
 )
 from .ports.repositories import (
     IntentAuditEvent,
@@ -35,12 +38,20 @@ from .ports.repositories import (
     RepositoryConflict,
     RepositoryIdempotencyConflict,
     RepositoryProblem,
+    WorkflowAuthorityMutation,
+    WorkflowAuthorityRecord,
 )
-from .projects import ProjectLifecycleService
+from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .research_intent_contracts import (
     decode_research_intent_revision,
     governing_research_intent_reference,
     research_intent_snapshot_json,
+)
+from .workflow_profile_contracts import (
+    APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256,
+    approved_workflow_profile_catalog,
+    decode_project_workflow_selection,
+    decode_workflow_profile_migration,
 )
 
 _RepositoryFactory = Callable[[Path, str], IntentRevisionRepository]
@@ -52,6 +63,9 @@ class _UnavailableIntentRepository(IntentRevisionRepository):
 
     def read(self) -> tuple[IntentRevisionRecord, ...]:
         raise RepositoryProblem("research intent repository is unavailable")
+
+    def read_workflow_authority(self) -> WorkflowAuthorityMutation:
+        raise RepositoryProblem("workflow profile repository is unavailable")
 
     def replay(
         self,
@@ -82,8 +96,9 @@ class _UnavailableIntentRepository(IntentRevisionRepository):
         manifest_project_id: str,
         record: IntentRevisionRecord,
         event: IntentAuditEvent,
+        workflow_authority: WorkflowAuthorityMutation | None = None,
     ) -> IntentRevisionRecord:
-        del expected_revision, domain_project_id, manifest_project_id, record, event
+        del expected_revision, domain_project_id, manifest_project_id, record, event, workflow_authority
         raise RepositoryProblem("research intent repository is unavailable")
 
 
@@ -103,74 +118,74 @@ _USE_CASE_MODE = {
     "critical-article-development": "critical",
     "manuscript-review-revision": "empirical",
 }
-_WORKFLOWS = {
-    "rapid-orientation": ("Search Studio", "Corpus Canvas", "Document Reader", "Claim Graph", "Synthesis Studio"),
-    "systematic-review": (
-        "Source Manager",
-        "Search Studio",
-        "Screening",
-        "Evidence Matrix",
-        "Synthesis Studio",
-        "Audit & Lineage",
-    ),
-    "living-review": ("Living Monitor", "Search Studio", "Screening", "Evidence Matrix", "Synthesis Studio"),
-    "theory-synthesis": (
-        "Search Studio",
-        "Evidence Matrix",
-        "Theory Map",
-        "Claim Graph",
-        "Opportunity Radar",
-        "Synthesis Studio",
-    ),
-    "hermeneutic-inquiry": ("Search Studio", "Document Reader", "Research Notebook", "Synthesis Studio"),
-    "critical-problematization": (
-        "Search Studio",
-        "Research Notebook",
-        "Evidence Matrix",
-        "Critical Lens",
-        "Claim Graph",
-    ),
-    "technical-landscape": ("Search Studio", "Corpus Canvas", "Screening", "Evidence Matrix", "Opportunity Radar"),
-    "novelty-audit": ("Research Intent", "Search Studio", "Evidence Matrix", "Opportunity Radar", "Novelty Audit"),
-    "empirical-study-design": ("Research Intent", "Opportunity Radar", "Study Design Studio", "Audit & Lineage"),
-    "empirical-study-to-article": (
-        "Study Design Studio",
-        "Technical Reports",
-        "Evidence Matrix",
-        "Manuscript Blueprint",
-        "Manuscript Studio",
-    ),
-    "empirical-results-to-article": (
-        "Technical Reports",
-        "Evidence Matrix",
-        "Manuscript Blueprint",
-        "Manuscript Studio",
-    ),
-    "theory-article-development": ("Theory Map", "Claim Graph", "Manuscript Blueprint", "Manuscript Studio"),
-    "critical-article-development": ("Critical Lens", "Claim Graph", "Manuscript Blueprint", "Manuscript Studio"),
-    "manuscript-review-revision": (
-        "Reviewer Simulation",
-        "Revision & Response",
-        "Manuscript Studio",
-        "Audit & Lineage",
-    ),
+_WORKFLOW_CATALOG = approved_workflow_profile_catalog()
+_PROFILE_BY_ID = {
+    cast(str, profile["profileId"]): profile
+    for profile in cast(Sequence[Mapping[str, object]], _WORKFLOW_CATALOG["profiles"])
 }
-_OUTPUTS = {
-    "rapid-orientation": ("Orientation synthesis", "Field vocabulary", "Seminal-work reading list"),
-    "systematic-review": ("Screening protocol", "Evidence matrix", "Review synthesis", "Audit trail"),
-    "living-review": ("Monitoring plan", "Differential screening queue", "Updated synthesis"),
-    "theory-synthesis": ("Theory map", "Claim graph", "Boundary-condition synthesis"),
-    "hermeneutic-inquiry": ("Interpretive notebook", "Reframing history", "Interpretive synthesis"),
-    "critical-problematization": ("Critical lens", "Stakeholder account", "Problematization dossier"),
-    "technical-landscape": ("Benchmark comparison", "Technical evidence matrix", "Landscape synthesis"),
-    "novelty-audit": ("Nearest-prior-work challenge", "Novelty dossier", "Bounded opportunity statement"),
-    "empirical-study-design": ("Study protocol", "Validity review", "Analysis plan"),
-    "empirical-study-to-article": ("Verified result set", "Manuscript blueprint", "Evidence-grounded manuscript"),
-    "empirical-results-to-article": ("Result reconciliation", "Manuscript blueprint", "Evidence-grounded manuscript"),
-    "theory-article-development": ("Theory article blueprint", "Claim-evidence plan", "Manuscript"),
-    "critical-article-development": ("Critical article blueprint", "Reflexivity record", "Manuscript"),
-    "manuscript-review-revision": ("Reviewer issue map", "Revision record", "Response letter"),
-}
+
+
+def _stage_label(page_contract_id: str) -> str:
+    if page_contract_id == "intent-contract.html":
+        return "Research Intent"
+    return page_contract_id.removesuffix(".html").replace("-", " ").title().replace(" And ", " & ")
+
+
+def _profile_reference(profile_id: str) -> dict[str, object]:
+    profile = _PROFILE_BY_ID[profile_id]
+    governed = cast(Mapping[str, object], _WORKFLOW_CATALOG["governedReference"])
+    return {
+        "referenceId": governed["referenceId"],
+        "referenceVersion": governed["referenceVersion"],
+        "workflowCatalogHash": governed["workflowCatalogHash"],
+        "pageContractsHash": governed["pageContractsHash"],
+        "profileCatalogVersion": _WORKFLOW_CATALOG["profileCatalogVersion"],
+        "profileCatalogHash": APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256,
+        "profileId": profile["profileId"],
+        "profileVersion": profile["profileVersion"],
+        "profileRevision": profile["profileRevision"],
+        "sourceWorkflowHash": profile["sourceWorkflowHash"],
+    }
+
+
+def _workflow_catalog_projection() -> WorkflowProfileCatalogProjection:
+    governed = cast(Mapping[str, object], _WORKFLOW_CATALOG["governedReference"])
+    profiles: list[WorkflowProfileProjection] = []
+    for profile in cast(Sequence[Mapping[str, object]], _WORKFLOW_CATALOG["profiles"]):
+        stages = tuple(
+            WorkflowProfileStageProjection(
+                stage_key=cast(str, stage["stageKey"]),
+                order=cast(int, stage["order"]),
+                page_contract_id=cast(str, stage["pageContractId"]),
+                label=_stage_label(cast(str, stage["pageContractId"])),
+                optional=cast(bool, stage["optional"]),
+                rationale=cast(str, stage["rationale"]),
+                checkpoint_state=cast(Any, cast(Mapping[str, object], stage["checkpoint"])["state"]),
+                checkpoint_rationale=cast(str, cast(Mapping[str, object], stage["checkpoint"])["rationale"]),
+            )
+            for stage in cast(Sequence[Mapping[str, object]], profile["stages"])
+        )
+        profiles.append(
+            WorkflowProfileProjection(
+                profile_id=cast(Any, profile["profileId"]),
+                title=cast(str, profile["title"]),
+                purpose=cast(str, profile["purpose"]),
+                expected_outputs=tuple(cast(Sequence[str], profile["expectedOutputs"])),
+                process_form=cast(Any, profile["cyclePolicy"]),
+                stages=stages,
+            )
+        )
+    return WorkflowProfileCatalogProjection(
+        reference_id=cast(Any, governed["referenceId"]),
+        reference_version=cast(Any, governed["referenceVersion"]),
+        profile_catalog_version=cast(Any, _WORKFLOW_CATALOG["profileCatalogVersion"]),
+        profile_catalog_hash=APPROVED_WORKFLOW_PROFILE_CATALOG_SHA256,
+        registered_tool_page_contract_ids=tuple(
+            cast(Sequence[str], _WORKFLOW_CATALOG["registeredToolPageContractIds"])
+        ),
+        profiles=tuple(profiles),
+    )
+
 
 _GATE_ACTIONS = {
     "accept-intent": "intent-acceptance",
@@ -399,6 +414,226 @@ def _content_hash(revision: Mapping[str, object]) -> str:
     return "sha256:" + hashlib.sha256(_canonical_json(without_hash).encode("utf-8")).hexdigest()
 
 
+def _authority_content_hash(value: Mapping[str, object], field: str) -> str:
+    without_hash = {key: item for key, item in value.items() if key != field}
+    return "sha256:" + hashlib.sha256(_canonical_json(without_hash).encode("utf-8")).hexdigest()
+
+
+def _intent_reference(revision: Mapping[str, object]) -> dict[str, object]:
+    return {
+        "schemaVersion": "1.0",
+        "documentType": "research-observatory-research-intent-reference",
+        "contractVersion": revision["contractVersion"],
+        "intentId": revision["intentId"],
+        "revisionId": revision["revisionId"],
+        "revision": revision["revision"],
+        "revisionContentHash": revision["revisionContentHash"],
+    }
+
+
+def _initial_workflow_selection(
+    intent: Mapping[str, object],
+    *,
+    actor_id: str,
+    selected_at: str,
+) -> dict[str, object]:
+    selection: dict[str, object] = {
+        "schemaVersion": "1.0",
+        "documentType": "research-observatory-project-workflow-selection",
+        "contractVersion": "1.0.0",
+        "selectionId": new_uuid_v7(),
+        "selectionRevisionId": new_uuid_v7(),
+        "projectId": intent["projectId"],
+        "revision": 1,
+        "revisionContentHash": "sha256:" + "0" * 64,
+        "createdAt": selected_at,
+        "selectedBy": {"actorType": "human", "actorId": actor_id},
+        "researchIntent": _intent_reference(intent),
+        "profile": _profile_reference(cast(str, intent["primaryUseCase"])),
+        "parentSelection": None,
+        "impactPreview": None,
+        "acceptedMigration": None,
+    }
+    selection["revisionContentHash"] = _authority_content_hash(selection, "revisionContentHash")
+    if decode_project_workflow_selection(_WORKFLOW_CATALOG, selection) is None:
+        raise RepositoryProblem("initial workflow selection contract is invalid")
+    return selection
+
+
+def _parent_selection(selection: Mapping[str, object]) -> dict[str, object]:
+    return {
+        "selectionId": selection["selectionId"],
+        "selectionRevisionId": selection["selectionRevisionId"],
+        "revision": selection["revision"],
+        "revisionContentHash": selection["revisionContentHash"],
+        "researchIntent": selection["researchIntent"],
+        "profile": selection["profile"],
+    }
+
+
+def _migration_stage_mappings(from_profile_id: str, to_profile_id: str) -> list[dict[str, object]]:
+    source = cast(Sequence[Mapping[str, object]], _PROFILE_BY_ID[from_profile_id]["stages"])
+    target = cast(Sequence[Mapping[str, object]], _PROFILE_BY_ID[to_profile_id]["stages"])
+    target_by_key = {cast(str, stage["stageKey"]): stage for stage in target}
+    target_by_page = {cast(str, stage["pageContractId"]): stage for stage in target}
+    mappings: list[dict[str, object]] = []
+    for stage in source:
+        stage_key = cast(str, stage["stageKey"])
+        page_contract_id = cast(str, stage["pageContractId"])
+        exact = target_by_key.get(stage_key)
+        equivalent = target_by_page.get(page_contract_id)
+        if exact is not None and exact["pageContractId"] == page_contract_id:
+            disposition = "retain"
+            target_stage_key: str | None = stage_key
+            rationale = "The governed target profile retains the same stage and immutable prior history."
+        elif equivalent is not None:
+            disposition = "map"
+            target_stage_key = cast(str, equivalent["stageKey"])
+            rationale = "The governed target profile uses a different stage key for the same page contract."
+        else:
+            disposition = "requires-review"
+            target_stage_key = None
+            rationale = "The target profile has no equivalent governed stage; retain history and require review."
+        mappings.append(
+            {
+                "fromStageKey": stage_key,
+                "disposition": disposition,
+                "targetStageKey": target_stage_key,
+                "rationale": rationale,
+            }
+        )
+    return mappings
+
+
+def _changed_workflow_authority(
+    parent: Mapping[str, object],
+    prior_intent_revision: Mapping[str, object],
+    target_intent: Mapping[str, object],
+    *,
+    actor_id: str,
+    selected_at: str,
+) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
+    parent_reference = _parent_selection(parent)
+    prior_intent = _intent_reference(prior_intent_revision)
+    from_profile = cast(Mapping[str, object], parent["profile"])
+    to_profile = _profile_reference(cast(str, target_intent["primaryUseCase"]))
+    decision: dict[str, object] = {
+        "decisionId": new_uuid_v7(),
+        "decisionContentHash": "sha256:" + "0" * 64,
+        "decision": "accepted",
+        "decidedAt": selected_at,
+        "decidedBy": {"actorType": "human", "actorId": actor_id},
+    }
+    decision["decisionContentHash"] = _authority_content_hash(decision, "decisionContentHash")
+    migration: dict[str, object] = {
+        "schemaVersion": "1.0",
+        "documentType": "research-observatory-workflow-profile-migration",
+        "contractVersion": "1.0.0",
+        "migrationId": new_uuid_v7(),
+        "migrationContentHash": "sha256:" + "0" * 64,
+        "fromProfile": from_profile,
+        "toProfile": to_profile,
+        "priorResearchIntent": prior_intent,
+        "targetResearchIntent": _intent_reference(target_intent),
+        "createdAt": selected_at,
+        "createdBy": {"actorType": "human", "actorId": actor_id},
+        "historyPolicy": "preserve",
+        "requiresHumanAcceptance": True,
+        "acceptance": decision,
+        "stageMappings": _migration_stage_mappings(
+            cast(str, from_profile["profileId"]), cast(str, to_profile["profileId"])
+        ),
+    }
+    migration["migrationContentHash"] = _authority_content_hash(migration, "migrationContentHash")
+    accepted_migration = {
+        "migrationId": migration["migrationId"],
+        "migrationContentHash": migration["migrationContentHash"],
+        "fromProfile": from_profile,
+        "toProfile": to_profile,
+        "priorResearchIntent": prior_intent,
+        "targetResearchIntent": migration["targetResearchIntent"],
+        "acceptance": decision,
+    }
+    selection: dict[str, object] = {
+        "schemaVersion": "1.0",
+        "documentType": "research-observatory-project-workflow-selection",
+        "contractVersion": "1.0.0",
+        "selectionId": parent["selectionId"],
+        "selectionRevisionId": new_uuid_v7(),
+        "projectId": target_intent["projectId"],
+        "revision": cast(int, parent["revision"]) + 1,
+        "revisionContentHash": "sha256:" + "0" * 64,
+        "createdAt": selected_at,
+        "selectedBy": {"actorType": "human", "actorId": actor_id},
+        "researchIntent": migration["targetResearchIntent"],
+        "profile": to_profile,
+        "parentSelection": parent_reference,
+        "impactPreview": {
+            "priorSelection": parent_reference,
+            "targetProfile": to_profile,
+            "historyPolicy": "preserve",
+            "priorStageStates": [],
+            "summary": (
+                "Preserve the prior workflow selection and stage history while applying the accepted profile change."
+            ),
+        },
+        "acceptedMigration": accepted_migration,
+    }
+    selection["revisionContentHash"] = _authority_content_hash(selection, "revisionContentHash")
+    if decode_workflow_profile_migration(_WORKFLOW_CATALOG, migration) is None:
+        raise RepositoryProblem("workflow profile migration contract is invalid")
+    if decode_project_workflow_selection(_WORKFLOW_CATALOG, selection) is None:
+        raise RepositoryProblem("changed workflow selection contract is invalid")
+    return selection, migration, decision
+
+
+def _workflow_authority_mutation(
+    existing: WorkflowAuthorityMutation,
+    *,
+    prior_intent: Mapping[str, object] | None,
+    target_intent: Mapping[str, object],
+    actor_id: str,
+) -> WorkflowAuthorityMutation | None:
+    selections, _migrations = _validated_workflow_authority(existing)
+    selected_at = cast(str, target_intent["createdAt"])
+    added_selections: list[WorkflowAuthorityRecord] = []
+    added_migrations: list[WorkflowAuthorityRecord] = []
+    added_decisions: list[WorkflowAuthorityRecord] = []
+    parent = selections[-1] if selections else None
+    profile_changed = bool(
+        prior_intent is not None and prior_intent["primaryUseCase"] != target_intent["primaryUseCase"]
+    )
+    if parent is None and profile_changed:
+        if prior_intent is None:
+            raise RepositoryProblem("workflow selection predecessor intent is unavailable")
+        parent = _initial_workflow_selection(prior_intent, actor_id=actor_id, selected_at=selected_at)
+        added_selections.append(WorkflowAuthorityRecord(revision=1, content_json=_canonical_json(parent)))
+    if parent is None:
+        initial = _initial_workflow_selection(target_intent, actor_id=actor_id, selected_at=selected_at)
+        added_selections.append(WorkflowAuthorityRecord(revision=1, content_json=_canonical_json(initial)))
+    elif profile_changed:
+        if prior_intent is None:
+            raise RepositoryProblem("workflow migration predecessor intent is unavailable")
+        changed, migration, decision = _changed_workflow_authority(
+            parent,
+            prior_intent,
+            target_intent,
+            actor_id=actor_id,
+            selected_at=selected_at,
+        )
+        revision = cast(int, changed["revision"])
+        added_selections.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(changed)))
+        added_migrations.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(migration)))
+        added_decisions.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(decision)))
+    if not added_selections and not added_migrations and not added_decisions:
+        return None
+    return WorkflowAuthorityMutation(
+        selections=tuple(added_selections),
+        migrations=tuple(added_migrations),
+        decisions=tuple(added_decisions),
+    )
+
+
 def _build_revision(
     command: IntentDraftRequest,
     *,
@@ -597,6 +832,85 @@ def _decoded_records(records: tuple[IntentRevisionRecord, ...]) -> tuple[Mapping
     return tuple(decoded)
 
 
+def _authority_records(records: tuple[WorkflowAuthorityRecord, ...]) -> tuple[Mapping[str, object], ...]:
+    decoded: list[Mapping[str, object]] = []
+    for record in records:
+        try:
+            value = json.loads(record.content_json)
+        except json.JSONDecodeError, TypeError:
+            raise RepositoryProblem("workflow authority JSON is invalid") from None
+        if not isinstance(value, dict):
+            raise RepositoryProblem("workflow authority record is invalid")
+        decoded.append(value)
+    return tuple(decoded)
+
+
+def _validated_workflow_authority(
+    authority: WorkflowAuthorityMutation,
+) -> tuple[tuple[Mapping[str, object], ...], tuple[Mapping[str, object], ...]]:
+    selections = _authority_records(authority.selections)
+    migrations = _authority_records(authority.migrations)
+    decisions = _authority_records(authority.decisions)
+    if [record.revision for record in authority.selections] != list(range(1, len(authority.selections) + 1)):
+        raise RepositoryProblem("workflow selection history is discontinuous")
+    for record, selection in zip(authority.selections, selections, strict=True):
+        if selection.get("revision") != record.revision:
+            raise RepositoryProblem("workflow selection revision differs")
+        if selection.get("revisionContentHash") != _authority_content_hash(selection, "revisionContentHash"):
+            raise RepositoryProblem("workflow selection content hash differs")
+        if decode_project_workflow_selection(_WORKFLOW_CATALOG, selection) is None:
+            raise RepositoryProblem("workflow selection contract is invalid")
+    for previous, current in pairwise(selections):
+        if _canonical_json(current["parentSelection"]) != _canonical_json(_parent_selection(previous)):
+            raise RepositoryProblem("workflow selection predecessor lookup differs")
+    for record, migration in zip(authority.migrations, migrations, strict=True):
+        if migration.get("migrationContentHash") != _authority_content_hash(migration, "migrationContentHash"):
+            raise RepositoryProblem("workflow migration content hash differs")
+        if decode_workflow_profile_migration(_WORKFLOW_CATALOG, migration) is None:
+            raise RepositoryProblem("workflow migration contract is invalid")
+        if record.revision < 2:
+            raise RepositoryProblem("workflow migration revision is invalid")
+    for record, decision in zip(authority.decisions, decisions, strict=True):
+        if (
+            set(decision) != {"decisionId", "decisionContentHash", "decision", "decidedAt", "decidedBy"}
+            or decision.get("decision") != "accepted"
+            or decision.get("decisionContentHash") != _authority_content_hash(decision, "decisionContentHash")
+            or record.revision < 2
+        ):
+            raise RepositoryProblem("workflow acceptance decision is invalid")
+    if (
+        len(migrations) != max(0, len(selections) - 1)
+        or len(decisions) != len(migrations)
+        or [record.revision for record in authority.migrations]
+        != [cast(int, selection["revision"]) for selection in selections[1:]]
+        or [record.revision for record in authority.decisions]
+        != [cast(int, selection["revision"]) for selection in selections[1:]]
+    ):
+        raise RepositoryProblem("workflow migration or acceptance history is discontinuous")
+    for selection in selections[1:]:
+        accepted = cast(Mapping[str, object], selection["acceptedMigration"])
+        matching_migrations = [
+            migration
+            for migration in migrations
+            if migration["migrationId"] == accepted["migrationId"]
+            and migration["migrationContentHash"] == accepted["migrationContentHash"]
+        ]
+        acceptance = cast(Mapping[str, object], accepted["acceptance"])
+        matching_decisions = [
+            decision
+            for decision in decisions
+            if decision["decisionId"] == acceptance["decisionId"]
+            and decision["decisionContentHash"] == acceptance["decisionContentHash"]
+        ]
+        if (
+            len(matching_migrations) != 1
+            or len(matching_decisions) != 1
+            or _canonical_json(matching_migrations[0]["acceptance"]) != _canonical_json(matching_decisions[0])
+        ):
+            raise RepositoryProblem("workflow migration or acceptance lookup differs")
+    return selections, migrations
+
+
 def _scope_from_projection(projection: IntentDraftProjection) -> dict[str, object]:
     return {
         "primaryUseCase": projection.primary_use_case,
@@ -628,6 +942,11 @@ def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest)
             change_categories=(),
             affected_workflows=(),
             affected_outputs=(),
+            affected_schemas=(),
+            affected_checkpoints=(),
+            autonomy_default_effects=(),
+            stopping_logic_effects=(),
+            stale_artifact_ids=(),
             warnings=(),
             acknowledgement_required=False,
             acknowledgement_token=None,
@@ -650,14 +969,49 @@ def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest)
             change_categories=(),
             affected_workflows=(),
             affected_outputs=(),
+            affected_schemas=(),
+            affected_checkpoints=(),
+            autonomy_default_effects=(),
+            stopping_logic_effects=(),
+            stale_artifact_ids=(),
             warnings=(),
             acknowledgement_required=False,
             acknowledgement_token=None,
         )
     old_case = current.primary_use_case
     new_case = command.primary_use_case
-    workflows = tuple(dict.fromkeys((*_WORKFLOWS[old_case], *_WORKFLOWS[new_case])))
-    outputs = tuple(dict.fromkeys((*_OUTPUTS[old_case], *_OUTPUTS[new_case])))
+    old_profile = _PROFILE_BY_ID[old_case]
+    new_profile = _PROFILE_BY_ID[new_case]
+    old_stages = cast(Sequence[Mapping[str, object]], old_profile["stages"])
+    new_stages = cast(Sequence[Mapping[str, object]], new_profile["stages"])
+    workflows = tuple(
+        dict.fromkeys(_stage_label(cast(str, stage["pageContractId"])) for stage in (*old_stages, *new_stages))
+    )
+    outputs = tuple(
+        dict.fromkeys(
+            (
+                *cast(Sequence[str], old_profile["expectedOutputs"]),
+                *cast(Sequence[str], new_profile["expectedOutputs"]),
+            )
+        )
+    )
+    schemas = ["research-intent-revision"]
+    checkpoints: tuple[str, ...] = ()
+    autonomy_effects: tuple[str, ...] = ()
+    stopping_effects: tuple[str, ...] = ()
+    if "primary-use-case" in categories:
+        schemas.extend(("project-workflow-selection", "workflow-profile-migration"))
+        old_positions = {cast(str, stage["stageKey"]): cast(int, stage["order"]) for stage in old_stages}
+        new_positions = {cast(str, stage["stageKey"]): cast(int, stage["order"]) for stage in new_stages}
+        checkpoints = tuple(
+            dict.fromkeys(
+                _stage_label(cast(str, stage["pageContractId"]))
+                for stage in (*old_stages, *new_stages)
+                if old_positions.get(cast(str, stage["stageKey"])) != new_positions.get(cast(str, stage["stageKey"]))
+            )
+        )
+        autonomy_effects = ("researcher-selected-autonomy-remains",)
+        stopping_effects = ("researcher-selected-stopping-remains",)
     warnings: list[str] = []
     if "primary-use-case" in categories:
         warnings.append(
@@ -674,10 +1028,15 @@ def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest)
             "prior conclusions are not deleted."
         )
     token_payload = {
+        "affectedCheckpoints": checkpoints,
+        "affectedSchemas": schemas,
+        "autonomyDefaultEffects": autonomy_effects,
         "baseRevisionContentHash": current.revision_content_hash,
         "categories": categories,
         "expectedRevision": command.expected_revision,
         "scope": after,
+        "staleArtifactIds": [],
+        "stoppingLogicEffects": stopping_effects,
     }
     token = hashlib.sha256(_canonical_json(token_payload).encode("utf-8")).hexdigest()
     return IntentImpactPreview(
@@ -685,6 +1044,11 @@ def _impact(current: IntentDraftProjection | None, command: IntentImpactRequest)
         change_categories=cast(Any, tuple(categories)),
         affected_workflows=workflows,
         affected_outputs=outputs,
+        affected_schemas=tuple(schemas),
+        affected_checkpoints=checkpoints,
+        autonomy_default_effects=autonomy_effects,
+        stopping_logic_effects=stopping_effects,
+        stale_artifact_ids=(),
         warnings=tuple(warnings),
         acknowledgement_required=True,
         acknowledgement_token=token,
@@ -802,6 +1166,79 @@ class ResearchIntentService:
             local_actor_id=None,
         )
 
+    def workflow_profile_catalog(self) -> WorkflowProfileCatalogProjection:
+        return _workflow_catalog_projection()
+
+    def initialize_created_project(
+        self,
+        path: Path,
+        manifest_project_id: str,
+        *,
+        primary_use_case: str,
+        research_objective: str,
+        trace_id: str,
+    ) -> None:
+        actor_id = self._local_actor_id
+        if actor_id is None:
+            raise ProjectLifecycleProblem(
+                status=503,
+                code="RO-CORE-INTENT-ACTOR-UNAVAILABLE",
+                title="Local researcher identity is unavailable",
+                detail="Project creation stopped before publication because local actor authority is unavailable.",
+                remediation="Restore the current-user profile vault and retry project creation.",
+                retryable=True,
+            )
+        try:
+            command = IntentDraftRequest(
+                root=str(path),
+                expected_revision=0,
+                primary_use_case=cast(Any, primary_use_case),
+                research_objective=research_objective.strip(),
+                contribution_intent="",
+                phenomenon="",
+                unit_of_analysis="",
+                level_of_analysis="",
+                source_kinds=(),
+                language_codes=(),
+                start_year=None,
+                end_year=None,
+                include_private_reports=False,
+                evidence_types=(),
+                novelty_standard=None,
+                novelty_rationale="",
+                autonomy_level="human-only",
+                stopping_conditions=("researcher-decision",),
+                revision_rationale="Project creation selected the initial governed workflow profile.",
+                impact_acknowledgement=None,
+            )
+            idempotency_key = hashlib.sha256(
+                _canonical_json(
+                    {
+                        "actorId": actor_id,
+                        "manifestProjectId": manifest_project_id,
+                        "primaryUseCase": primary_use_case,
+                        "researchObjective": research_objective.strip(),
+                    }
+                ).encode("utf-8")
+            ).hexdigest()[:32]
+            self._save(
+                self._repository_factory(path, manifest_project_id),
+                manifest_project_id,
+                command,
+                trace_id=trace_id,
+                idempotency_key=idempotency_key,
+                actor_id=actor_id,
+            )
+        except IntentProblem as error:
+            raise ProjectLifecycleProblem(
+                status=error.status,
+                code=error.code,
+                title=error.title,
+                detail=error.detail,
+                remediation=error.remediation,
+                retryable=error.retryable,
+            ) from error
+
     def workspace(self, root: str) -> IntentWorkspaceProjection:
         return self._projects.perform_open_project_action(
             root=root,
@@ -908,12 +1345,47 @@ class ResearchIntentService:
                 retryable=True,
             ) from error
 
+    def _read_workflow_authority(
+        self,
+        repository: IntentRevisionRepository,
+        revisions: tuple[Mapping[str, object], ...],
+    ) -> WorkflowAuthorityMutation:
+        try:
+            authority = repository.read_workflow_authority()
+            selections, _migrations = _validated_workflow_authority(authority)
+        except RepositoryProblem as error:
+            raise _problem(
+                status=500,
+                code="RO-CORE-WORKFLOW-PROFILE-READ-FAILED",
+                title="Workflow profile authority is unavailable",
+                detail="The immutable workflow selection, migration, or acceptance history could not be validated.",
+                remediation="Keep navigation stopped and run project health checks before retrying.",
+                retryable=True,
+            ) from error
+        if selections and revisions:
+            latest_selection = selections[-1]
+            latest_intent = revisions[0]
+            if (
+                latest_selection["projectId"] != latest_intent["projectId"]
+                or cast(Mapping[str, object], latest_selection["profile"])["profileId"]
+                != latest_intent["primaryUseCase"]
+            ):
+                raise _problem(
+                    status=500,
+                    code="RO-CORE-WORKFLOW-PROFILE-READ-FAILED",
+                    title="Workflow profile authority is unavailable",
+                    detail="The latest workflow selection does not match the current Research Intent authority.",
+                    remediation="Keep navigation stopped and run project health checks before retrying.",
+                )
+        return authority
+
     def _workspace(
         self,
         repository: IntentRevisionRepository,
         project_id: str,
     ) -> IntentWorkspaceProjection:
         revisions = self._read(repository)
+        self._read_workflow_authority(repository, revisions)
         return IntentWorkspaceProjection(
             project_id=project_id,
             current=_projection(revisions[0]) if revisions else None,
@@ -927,6 +1399,7 @@ class ResearchIntentService:
         command: IntentImpactRequest,
     ) -> IntentImpactPreview:
         revisions = self._read(repository)
+        self._read_workflow_authority(repository, revisions)
         current = _projection(revisions[0]) if revisions else None
         current_revision = current.revision if current is not None else 0
         if command.expected_revision != current_revision:
@@ -1010,6 +1483,7 @@ class ResearchIntentService:
         if replay is not None:
             replayed = _decoded_records((replay,))[0]
             revisions = self._read(repository)
+            self._read_workflow_authority(repository, revisions)
             self._policy_cache[manifest_project_id] = next(
                 (revision for revision in revisions if revision["status"] == "accepted"),
                 None,
@@ -1017,6 +1491,7 @@ class ResearchIntentService:
             return _projection(replayed)
 
         revisions = self._read(repository)
+        self._read_workflow_authority(repository, revisions)
         if not revisions:
             raise _problem(
                 status=409,
@@ -1213,9 +1688,12 @@ class ResearchIntentService:
                     detail="The committed idempotent result could not be validated.",
                     remediation="Keep the prior revision authoritative and run project health checks.",
                 ) from error
+            revisions = self._read(repository)
+            self._read_workflow_authority(repository, revisions)
             return _projection(decoded)
 
         revisions = self._read(repository)
+        existing_workflow_authority = self._read_workflow_authority(repository, revisions)
         current = _projection(revisions[0]) if revisions else None
         current_revision = current.revision if current is not None else 0
         if command.expected_revision != current_revision:
@@ -1253,6 +1731,21 @@ class ResearchIntentService:
             domain_project_id=domain_project_id,
             actor_id=actor_id,
         )
+        try:
+            workflow_authority = _workflow_authority_mutation(
+                existing_workflow_authority,
+                prior_intent=prior,
+                target_intent=revision,
+                actor_id=actor_id,
+            )
+        except RepositoryProblem as error:
+            raise _problem(
+                status=500,
+                code="RO-CORE-WORKFLOW-PROFILE-WRITE-FAILED",
+                title="Workflow profile selection was not saved",
+                detail="The intent-bound workflow selection or migration could not satisfy its governed contract.",
+                remediation="The prior intent and workflow selection remain authoritative. Run project health checks.",
+            ) from error
         content_json = _canonical_json(revision)
         digest = hashlib.sha256(content_json.encode("utf-8")).hexdigest()
         now = cast(str, revision["createdAt"])
@@ -1275,6 +1768,7 @@ class ResearchIntentService:
                 manifest_project_id=manifest_project_id,
                 record=IntentRevisionRecord(revision=current_revision + 1, content_json=content_json),
                 event=event,
+                workflow_authority=workflow_authority,
             )
         except RepositoryIdempotencyConflict as error:
             raise _problem(
@@ -1306,6 +1800,7 @@ class ResearchIntentService:
             level="INFO",
             fields={"reasonCode": "intent-draft-saved", "traceId": trace_id},
         )
+        self._read_workflow_authority(repository, (revision, *revisions))
         decoded = _decoded_records((committed,))[0]
         return _projection(decoded)
 

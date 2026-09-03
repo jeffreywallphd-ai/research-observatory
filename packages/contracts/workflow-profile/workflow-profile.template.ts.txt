@@ -173,11 +173,12 @@ export function projectWorkflowSelectionErrors(catalogValue: unknown, value: unk
       if (acceptedMigration !== null) errors.push("profile-change-binds-intent-and-human-acceptance");
     } else if (parent === null || acceptedMigration === null
       || stableJson(parent.profile) === stableJson(selection.profile)
-      || !immediateIntentRevision(parent.researchIntent, selection.researchIntent)
       || stableJson(acceptedMigration.fromProfile) !== stableJson(parent.profile)
       || stableJson(acceptedMigration.toProfile) !== stableJson(selection.profile)
-      || stableJson(acceptedMigration.priorResearchIntent) !== stableJson(parent.researchIntent)
       || stableJson(acceptedMigration.targetResearchIntent) !== stableJson(selection.researchIntent)
+      || !immediateIntentRevision(acceptedMigration.priorResearchIntent, acceptedMigration.targetResearchIntent)
+      || acceptedMigration.priorResearchIntent.intentId !== parent.researchIntent.intentId
+      || acceptedMigration.priorResearchIntent.revision < parent.researchIntent.revision
       || stableJson(acceptedMigration.acceptance.decidedBy) !== stableJson(selection.selectedBy)) {
       errors.push("profile-change-binds-intent-and-human-acceptance");
     }

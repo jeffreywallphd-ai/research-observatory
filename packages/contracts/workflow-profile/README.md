@@ -24,6 +24,10 @@ migration/acceptance reference. Migration declares exact from/to profiles and
 intents, a disposition for every prior stage, preserved history, and a human
 acceptance decision. `retain` keeps the same governed stage, `map` names a
 different governed stage, and stale/review/drop dispositions have no target.
+The parent selection remains the immediate selection predecessor even when its
+intent reference predates intervening same-profile intent revisions; the
+migration itself must bind the actual consecutive prior and target intent
+revisions. T02 persistence resolves the migration and acceptance IDs/hashes.
 
 A supporting-stage record is decoded only with the explicit current primary
 stage state. Its return reference binds that state's aggregate/revision/hash and
