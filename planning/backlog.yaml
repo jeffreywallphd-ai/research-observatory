@@ -13826,7 +13826,7 @@ capabilities:
           commit and post-restart replay converge; and durable non-informational impact items block restoration across started,
           partial, failed-attempt/recovery, cancelled, completed, restarted, and overlapping states inside the writer transaction.
           Fresh restoration still appends and replays. No blocking finding remains and no full profile was run.'
-      base_sha: b5a941d7d907561c7d7f5d1a03162155b8fe7b5f
+      base_sha: 5ff2ff8de64513ced687153cebe53b5eebeed32f
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-03.S05.T03.json
