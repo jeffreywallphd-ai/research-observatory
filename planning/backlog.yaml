@@ -14587,8 +14587,8 @@ capabilities:
       - Typed domain/API contracts and migrations for WorkflowProfile, ProjectWorkflowSelection, WorkflowStageState, and reference/version
         linkage.
       acceptance_criteria:
-      - Exactly eight built-in profiles match the approved workflow catalog and can be extended only through a versioned,
-        reviewed profile pack.
+      - All fourteen workflow profiles in the approved workflow catalog are represented at its governed version; additions
+        or changes require a versioned, reviewed workflow catalog and governed reference update.
       - Ordered, optional, cyclical, supporting-tool, current, completed, attention, and stale states are represented without
         overloading analytical job state.
       - Changing profile preserves prior selection and stage history and produces an impact preview rather than rewriting
@@ -36188,14 +36188,17 @@ wave_amendments:
       slice review, checkpoints, and W1 exit.
     - Obtain independent commit-bound planning/control review.
     packet_task_sha256: f3df921991879300409c2a792eec68d0d3bc09fc691afb01b9c59b6541b5e761
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-09-03T18:06:49+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 2a536f563bddaef70b800e0902d720aad4e811cd
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-03T18:08:48+00:00'
+      expires_at: '2026-09-04T02:08:48+00:00'
+    started_at: '2026-09-03T18:08:48+00:00'
+    updated_at: '2026-09-03T18:08:48+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
