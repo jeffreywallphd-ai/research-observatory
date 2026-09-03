@@ -13789,12 +13789,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: DONE
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T23:19:02+00:00'
-      updated_at: '2026-09-02T00:18:14+00:00'
-      completed_at: '2026-09-02T00:18:14+00:00'
+      updated_at: '2026-09-03T12:49:48+00:00'
+      completed_at: null
       blocker: null
       implementation_notes: ''
       evidence:
@@ -13827,8 +13827,20 @@ capabilities:
           partial, failed-attempt/recovery, cancelled, completed, restarted, and overlapping states inside the writer transaction.
           Fresh restoration still appends and replays. No blocking finding remains and no full profile was run.'
       base_sha: b5a941d7d907561c7d7f5d1a03162155b8fe7b5f
-      lease: null
-      verification_state: passed
+      experience_change:
+        kind: approved-reference-implementation
+        contract_path: artifacts/evidence/ui-change/CAP-03.S05.T03.json
+        reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
+        reference_version: '1.5'
+        reference_package_sha256: 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae
+        reference_approval_commit: 7ec1b27d72c189216d7a203586b7339202733531
+        previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.4
+        implementation_agent: agent:codex
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-03T12:49:48+00:00'
+        expires_at: '2026-09-03T20:49:48+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -14317,6 +14329,7 @@ capabilities:
               - CAP-03.S05.T03-R02-F01
               - CAP-03.S05.T03-R02-F02
         current_submission: null
+      cancellation: null
     platform_targets:
     - windows-x64
     completion:
