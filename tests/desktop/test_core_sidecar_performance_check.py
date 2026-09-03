@@ -144,6 +144,7 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
                 "intent.impact-preview",
                 "intent.policy-evaluation",
                 "intent.read",
+                "intent.workflow-profiles",
                 "operations.cancel",
                 "operations.events",
                 "operations.read",

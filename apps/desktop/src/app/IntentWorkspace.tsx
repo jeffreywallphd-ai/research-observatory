@@ -10,6 +10,7 @@ import {
   type IntentImpactPreview,
   type IntentWorkspaceProjection,
   type ProjectProjection,
+  type WorkflowProfileCatalogProjection,
 } from "@research-observatory/contracts/core-api";
 import { Button, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 
@@ -27,10 +28,7 @@ const EVIDENCE_TYPES: readonly EvidenceType[] = [
 
 export interface IntentModeGuidance {
   readonly id: PrimaryUseCase;
-  readonly label: string;
-  readonly group: "Evidence synthesis" | "Inquiry" | "Study and article development";
   readonly epistemicMode: IntentDraftProjection["epistemicMode"];
-  readonly workflow: string;
   readonly example: string;
   readonly defaultEvidenceTypes: readonly EvidenceType[];
   readonly defaultNoveltyStandard: NoveltyStandard;
@@ -38,25 +36,25 @@ export interface IntentModeGuidance {
   readonly warning: string;
 }
 
-export const INTENT_MODE_GUIDANCE: readonly IntentModeGuidance[] = Object.freeze([
-  { id: "rapid-orientation", label: "Rapid orientation", group: "Evidence synthesis", epistemicMode: "systematic", workflow: "Question Framing → Search Brief → Evidence Map", example: "Map the main approaches and unresolved questions in a new field.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "not-claimed", defaultStoppingConditions: ["coverage-threshold"], warning: "Rapid orientation supports bounded understanding; it does not claim exhaustive coverage." },
-  { id: "systematic-review", label: "Systematic review", group: "Evidence synthesis", epistemicMode: "systematic", workflow: "Protocol → Search → Screening → Extraction → Synthesis", example: "Estimate and explain an intervention effect from eligible studies.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["coverage-threshold"], warning: "Coverage claims remain bounded by the recorded protocol, sources, dates, and languages." },
-  { id: "living-review", label: "Living review", group: "Evidence synthesis", epistemicMode: "systematic", workflow: "Protocol → Monitored Search → Screening → Versioned Synthesis", example: "Maintain an evidence synthesis as qualifying studies appear.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "incremental", defaultStoppingConditions: ["coverage-threshold", "researcher-decision"], warning: "Every update preserves its search boundary and prior synthesis revision." },
-  { id: "theory-synthesis", label: "Theory synthesis", group: "Inquiry", epistemicMode: "theory", workflow: "Concept Inventory → Proposition Ledger → Theory Map → Synthesis", example: "Reconcile competing mechanisms into a bounded conceptual model.", defaultEvidenceTypes: ["theoretical-work", "empirical-study"], defaultNoveltyStandard: "theoretical", defaultStoppingConditions: ["interpretive-saturation"], warning: "Conceptual integration must preserve disagreements and evidentiary limits." },
-  { id: "hermeneutic-inquiry", label: "Hermeneutic inquiry", group: "Inquiry", epistemicMode: "hermeneutic", workflow: "Interpretive Frame → Reading Cycle → Meaning Ledger → Account", example: "Develop a situated interpretation across a bounded textual corpus.", defaultEvidenceTypes: ["interpretive-text"], defaultNoveltyStandard: "interpretive", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "Interpretations remain researcher-authored and tied to the recorded corpus and frame." },
-  { id: "critical-problematization", label: "Critical problematization", group: "Inquiry", epistemicMode: "critical", workflow: "Assumption Inventory → Tension Analysis → Counter-position → Critique", example: "Surface exclusions and consequences within a dominant framing.", defaultEvidenceTypes: ["critical-analysis", "stakeholder-account"], defaultNoveltyStandard: "critical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The workflow must preserve standpoint, counter-evidence, and affected voices." },
-  { id: "technical-landscape", label: "Technical landscape", group: "Evidence synthesis", epistemicMode: "technical", workflow: "Capability Frame → Artifact Inventory → Benchmark Map → Landscape", example: "Compare architectures and evaluated capabilities for a technical domain.", defaultEvidenceTypes: ["technical-evaluation", "standard", "dataset"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["benchmark-complete"], warning: "Comparisons are limited to compatible evidence, versions, and benchmark conditions." },
-  { id: "novelty-audit", label: "Novelty audit", group: "Evidence synthesis", epistemicMode: "novelty", workflow: "Claim Decomposition → Nearest Prior Work → Difference Ledger → Audit", example: "Challenge a proposed contribution against the closest documented alternatives.", defaultEvidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["nearest-prior-work-challenged"], warning: "A novelty claim is provisional until nearest prior work and plausible counterexamples are challenged." },
-  { id: "empirical-study-design", label: "Empirical study design", group: "Study and article development", epistemicMode: "empirical", workflow: "Question → Construct Map → Design Alternatives → Protocol", example: "Design a study without inventing participants, results, or feasibility evidence.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "methodological", defaultStoppingConditions: ["protocol-complete"], warning: "The researcher retains authority over ethics, recruitment, conduct, and interpretation." },
-  { id: "empirical-study-to-article", label: "Empirical study to article", group: "Study and article development", epistemicMode: "empirical", workflow: "Study Record → Analysis Plan → Claim Ledger → Article", example: "Develop a manuscript from a documented study and analysis plan.", defaultEvidenceTypes: ["empirical-study", "dataset"], defaultNoveltyStandard: "contextual", defaultStoppingConditions: ["protocol-complete", "researcher-decision"], warning: "Unreported or missing results remain unreported or missing." },
-  { id: "empirical-results-to-article", label: "Empirical results to article", group: "Study and article development", epistemicMode: "empirical", workflow: "Result Import → Robustness Review → Claim Ledger → Article", example: "Develop an article from completed, traceable empirical results.", defaultEvidenceTypes: ["empirical-study", "dataset"], defaultNoveltyStandard: "incremental", defaultStoppingConditions: ["researcher-decision"], warning: "No result, statistic, or participant detail may be inferred when absent." },
-  { id: "theory-article-development", label: "Theory article development", group: "Study and article development", epistemicMode: "theory", workflow: "Contribution Frame → Theory Map → Argument Ledger → Article", example: "Develop a theory article from traceable concepts and propositions.", defaultEvidenceTypes: ["theoretical-work", "empirical-study"], defaultNoveltyStandard: "theoretical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The system can prepare arguments; the researcher owns interpretation and claims." },
-  { id: "critical-article-development", label: "Critical article development", group: "Study and article development", epistemicMode: "critical", workflow: "Problem Frame → Assumption Ledger → Counter-position → Article", example: "Develop a critical article with explicit standpoint and counter-evidence.", defaultEvidenceTypes: ["critical-analysis", "stakeholder-account", "interpretive-text"], defaultNoveltyStandard: "critical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The article must not erase contested positions or affected perspectives." },
-  { id: "manuscript-review-revision", label: "Manuscript review and revision", group: "Study and article development", epistemicMode: "technical", workflow: "Review Intake → Response Ledger → Revision Plan → Verified Draft", example: "Address reviewer comments without silently broadening claims.", defaultEvidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"], defaultNoveltyStandard: "not-claimed", defaultStoppingConditions: ["researcher-decision"], warning: "Reviewer responses and claim changes remain explicit, traceable researcher decisions." },
+const INTENT_FORM_DEFAULTS: readonly IntentModeGuidance[] = Object.freeze([
+  { id: "rapid-orientation", epistemicMode: "systematic", example: "Map the main approaches and unresolved questions in a new field.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "not-claimed", defaultStoppingConditions: ["coverage-threshold"], warning: "Rapid orientation supports bounded understanding; it does not claim exhaustive coverage." },
+  { id: "systematic-review", epistemicMode: "systematic", example: "Estimate and explain an intervention effect from eligible studies.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["coverage-threshold"], warning: "Coverage claims remain bounded by the recorded protocol, sources, dates, and languages." },
+  { id: "living-review", epistemicMode: "systematic", example: "Maintain an evidence synthesis as qualifying studies appear.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "incremental", defaultStoppingConditions: ["coverage-threshold", "researcher-decision"], warning: "Every update preserves its search boundary and prior synthesis revision." },
+  { id: "theory-synthesis", epistemicMode: "theory", example: "Reconcile competing mechanisms into a bounded conceptual model.", defaultEvidenceTypes: ["theoretical-work", "empirical-study"], defaultNoveltyStandard: "theoretical", defaultStoppingConditions: ["interpretive-saturation"], warning: "Conceptual integration must preserve disagreements and evidentiary limits." },
+  { id: "hermeneutic-inquiry", epistemicMode: "hermeneutic", example: "Develop a situated interpretation across a bounded textual corpus.", defaultEvidenceTypes: ["interpretive-text"], defaultNoveltyStandard: "interpretive", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "Interpretations remain researcher-authored and tied to the recorded corpus and frame." },
+  { id: "critical-problematization", epistemicMode: "critical", example: "Surface exclusions and consequences within a dominant framing.", defaultEvidenceTypes: ["critical-analysis", "stakeholder-account"], defaultNoveltyStandard: "critical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The workflow must preserve standpoint, counter-evidence, and affected voices." },
+  { id: "technical-landscape", epistemicMode: "technical", example: "Compare architectures and evaluated capabilities for a technical domain.", defaultEvidenceTypes: ["technical-evaluation", "standard", "dataset"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["benchmark-complete"], warning: "Comparisons are limited to compatible evidence, versions, and benchmark conditions." },
+  { id: "novelty-audit", epistemicMode: "novelty", example: "Challenge a proposed contribution against the closest documented alternatives.", defaultEvidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["nearest-prior-work-challenged"], warning: "A novelty claim is provisional until nearest prior work and plausible counterexamples are challenged." },
+  { id: "empirical-study-design", epistemicMode: "empirical", example: "Design a study without inventing participants, results, or feasibility evidence.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "methodological", defaultStoppingConditions: ["protocol-complete"], warning: "The researcher retains authority over ethics, recruitment, conduct, and interpretation." },
+  { id: "empirical-study-to-article", epistemicMode: "empirical", example: "Develop a manuscript from a documented study and analysis plan.", defaultEvidenceTypes: ["empirical-study", "dataset"], defaultNoveltyStandard: "contextual", defaultStoppingConditions: ["protocol-complete", "researcher-decision"], warning: "Unreported or missing results remain unreported or missing." },
+  { id: "empirical-results-to-article", epistemicMode: "empirical", example: "Develop an article from completed, traceable empirical results.", defaultEvidenceTypes: ["empirical-study", "dataset"], defaultNoveltyStandard: "incremental", defaultStoppingConditions: ["researcher-decision"], warning: "No result, statistic, or participant detail may be inferred when absent." },
+  { id: "theory-article-development", epistemicMode: "theory", example: "Develop a theory article from traceable concepts and propositions.", defaultEvidenceTypes: ["theoretical-work", "empirical-study"], defaultNoveltyStandard: "theoretical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The system can prepare arguments; the researcher owns interpretation and claims." },
+  { id: "critical-article-development", epistemicMode: "critical", example: "Develop a critical article with explicit standpoint and counter-evidence.", defaultEvidenceTypes: ["critical-analysis", "stakeholder-account", "interpretive-text"], defaultNoveltyStandard: "critical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The article must not erase contested positions or affected perspectives." },
+  { id: "manuscript-review-revision", epistemicMode: "technical", example: "Address reviewer comments without silently broadening claims.", defaultEvidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"], defaultNoveltyStandard: "not-claimed", defaultStoppingConditions: ["researcher-decision"], warning: "Reviewer responses and claim changes remain explicit, traceable researcher decisions." },
 ]);
 
 export function selectedIntentGuidance(useCase: PrimaryUseCase): IntentModeGuidance {
-  const guidance = INTENT_MODE_GUIDANCE.find((candidate) => candidate.id === useCase);
+  const guidance = INTENT_FORM_DEFAULTS.find((candidate) => candidate.id === useCase);
   if (!guidance) throw new Error("RO-CORE-INTENT-MODE-INVALID");
   return guidance;
 }
@@ -181,6 +179,7 @@ interface IntentWorkspaceProps {
   readonly announce: (message: string) => void;
   readonly transport?: CoreApiTransport;
   readonly initialWorkspace?: IntentWorkspaceProjection;
+  readonly initialCatalog?: WorkflowProfileCatalogProjection;
 }
 
 interface IntentFormState {
@@ -237,11 +236,12 @@ function idempotencyKey(): string {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export function IntentWorkspace({ project, announce, transport = packagedProjectTransport, initialWorkspace }: IntentWorkspaceProps): ReactNode {
+export function IntentWorkspace({ project, announce, transport = packagedProjectTransport, initialWorkspace, initialCatalog }: IntentWorkspaceProps): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
   const acceptanceCoordinator = useMemo(() => new IntentAcceptanceCoordinator(client), [client]);
   const availability = intentWorkspaceAvailability(project);
   const [workspace, setWorkspace] = useState<IntentWorkspaceProjection | null>(initialWorkspace ?? null);
+  const [catalog, setCatalog] = useState<WorkflowProfileCatalogProjection | null>(initialCatalog ?? null);
   const [form, setForm] = useState<IntentFormState>(() => initialForm(initialWorkspace?.current ?? null));
   const [impact, setImpact] = useState<IntentImpactPreview | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
@@ -252,6 +252,20 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   const [showHistory, setShowHistory] = useState(false);
   const [busy, setBusy] = useState<"load" | "preview" | "save" | "accept" | null>(null);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
+
+  useEffect(() => {
+    if (initialCatalog) {
+      setCatalog(initialCatalog);
+      return;
+    }
+    let cancelled = false;
+    void client.workflowProfileCatalog().then((next) => {
+      if (!cancelled) setCatalog(next);
+    }).catch((error: unknown) => {
+      if (!cancelled) setFailure(safeFailure(error));
+    });
+    return () => { cancelled = true; };
+  }, [client, initialCatalog]);
 
   useEffect(() => {
     setImpact(null);
@@ -285,6 +299,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   }, [acceptanceCoordinator, availability.available, client, initialWorkspace, project]);
 
   const guide = selectedIntentGuidance(form.primaryUseCase);
+  const selectedProfile = catalog?.profiles.find((profile) => profile.profileId === form.primaryUseCase) ?? null;
   const clearImpact = (): void => { setImpact(null); setAcknowledged(false); };
   const update = <K extends keyof IntentFormState>(key: K, value: IntentFormState[K], affectsImpact = false): void => {
     if (acceptanceAttempt) return;
@@ -313,7 +328,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
     }).then((next) => {
       setImpact(next);
       setAcknowledged(!next.acknowledgementRequired);
-      announce(next.acknowledgementRequired ? "Revision impact preview ready. Review and acknowledge every affected workflow and output." : "Revision preview found no governed downstream scope change.");
+      announce(next.acknowledgementRequired ? "Revision impact preview ready. Review and acknowledge the affected workflow authority." : "Revision preview found no governed downstream scope change.");
     }).catch((error: unknown) => setFailure(safeFailure(error))).finally(() => setBusy(null));
   };
 
@@ -437,9 +452,17 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
               setAcceptanceConfirmed(false);
               clearImpact();
             }}>
-              {(["Evidence synthesis", "Inquiry", "Study and article development"] as const).map((group) => <optgroup key={group} label={group}>{INTENT_MODE_GUIDANCE.filter((item) => item.group === group).map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</optgroup>)}
+              {catalog?.profiles.map((profile) => <option key={profile.profileId} value={profile.profileId}>{profile.title}</option>)}
             </select>
-            <div className="intent-guidance"><p><strong>Workflow:</strong> {guide.workflow}</p><p><strong>Example:</strong> {guide.example}</p><Notification tone="warning" title="Workflow change has downstream effects">{guide.warning}</Notification></div>
+            <div className="intent-guidance">
+              <p><strong>Purpose:</strong> {selectedProfile?.purpose ?? "Loading governed workflow profile…"}</p>
+              <p><strong>Expected output:</strong> {selectedProfile?.expectedOutputs.join(", ") ?? "Unavailable"}</p>
+              <p><strong>Process form:</strong> {selectedProfile ? selectedProfile.processForm === "revisitable" ? "Revisitable process" : "Linear process" : "Unavailable"}</p>
+              {selectedProfile ? <ol>{selectedProfile.stages.map((stage) => <li key={stage.stageKey}>{stage.label}{stage.optional ? " (optional)" : ""}</li>)}</ol> : null}
+              <p><strong>Example:</strong> {guide.example}</p>
+              <Notification tone="warning" title="Workflow change has downstream effects">{guide.warning}</Notification>
+              <p className="field-note">All tools remain available. Evidence and provenance requirements do not change with the selected profile.</p>
+            </div>
           </Panel>
 
           <Panel title="Scope and evidence policy">
@@ -459,7 +482,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
           <Panel title="Preview revision effects" tone={impact?.acknowledgementRequired ? "warning" : "neutral"}>
             <p>Review changes to the primary workflow, corpus boundary, or novelty scope before saving a new immutable revision.</p>
             <Button type="button" disabled={busy !== null || acceptanceAttempt !== null} onClick={preview}>{busy === "preview" ? "Preparing preview…" : "Preview revision effects"}</Button>
-            {impact ? <div className="intent-impact" aria-live="polite"><p><strong>Affected workflows:</strong> {impact.affectedWorkflows.join(", ") || "None"}</p><p><strong>Affected outputs:</strong> {impact.affectedOutputs.join(", ") || "None"}</p>{impact.warnings.map((warning) => <p key={warning}>{warning}</p>)}{impact.acknowledgementRequired ? <label className="consent-boundary"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.currentTarget.checked)} /><span>I reviewed the exact affected workflows and outputs and authorize this draft revision.</span></label> : null}</div> : null}
+            {impact ? <div className="intent-impact" aria-live="polite"><p><strong>Affected workflows:</strong> {impact.affectedWorkflows.join(", ") || "None"}</p><p><strong>Affected schemas:</strong> {impact.affectedSchemas.join(", ") || "None"}</p><p><strong>Affected checkpoints:</strong> {impact.affectedCheckpoints.join(", ") || "None"}</p><p><strong>Affected outputs:</strong> {impact.affectedOutputs.join(", ") || "None"}</p><p><strong>Autonomy defaults:</strong> {impact.autonomyDefaultEffects.join(", ") || "No effect"}</p><p><strong>Stopping logic:</strong> {impact.stoppingLogicEffects.join(", ") || "No effect"}</p><p><strong>Stale artifacts:</strong> {impact.staleArtifactIds.join(", ") || "None currently identified"}</p><p>All tools remain {impact.allToolsAccessible ? "available" : "restricted"}; evidence requirements {impact.evidenceRequirementsUnchanged ? "remain unchanged" : "changed"}; provenance requirements {impact.provenanceRequirementsUnchanged ? "remain unchanged" : "changed"}.</p>{impact.warnings.map((warning) => <p key={warning}>{warning}</p>)}{impact.acknowledgementRequired ? <label className="consent-boundary"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.currentTarget.checked)} /><span>I reviewed the exact schemas, checkpoints, outputs, autonomy, stopping, and staleness effects and authorize this draft revision.</span></label> : null}</div> : null}
           </Panel>
 
           <Panel title="Save or accept intent revision">

@@ -8,15 +8,30 @@ deciders:
   - ECR-0005/W1.A06 repository-owner approval at f48f11ed12c10d26acb1b80053e1a823c3ee5c16
 linked_tasks:
   - CAP-03.S06.T01
+  - CAP-03.S06.T02
 decision_scope: Exact governed workflow-profile catalog projection, immutable project selection lineage, navigation-stage state separate from analytical execution, supporting-tool return context, and history-preserving profile migration.
 affected_paths:
   - packages/contracts/workflow-profile/**
+  - packages/contracts/core-api/**
   - packages/contracts/README.md
   - packages/contracts/package.json
   - packages/contracts/tsconfig.json
   - packaging/build-inputs.json
   - services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+  - services/core-api/src/research_observatory_core/app.py
+  - services/core-api/src/research_observatory_core/models.py
+  - services/core-api/src/research_observatory_core/modules.py
+  - services/core-api/src/research_observatory_core/ports/repositories.py
+  - services/core-api/src/research_observatory_core/projects.py
+  - services/core-api/src/research_observatory_core/repositories.py
+  - services/core-api/src/research_observatory_core/research_intents.py
   - services/core-api/packaging/sidecar-build.json
+  - apps/desktop/src/app/IntentWorkspace.tsx
+  - apps/desktop/src/app/IntentWorkspace.test.tsx
+  - apps/desktop/src/app/ProjectsWorkspace.tsx
+  - apps/desktop/src/app/ProjectsWorkspace.test.tsx
+  - tools/core_api_contract.py
+  - tools/core_sidecar_performance_check.py
   - tools/core_sidecar_build.py
   - tests/contracts/README.md
   - tests/contracts/test_workflow_profile_contracts.py
@@ -118,12 +133,16 @@ governed reference/version workflow; this is intentional because it changes
 the scholarly path shown to researchers. Supporting tools stay available and
 cannot grant authority beyond the selected intent or project policy.
 
-This task adds no database migration because no workflow-profile selection or
-stage-state rows exist. CAP-03.S06.T02-T04 own commands, persistence,
-provenance/outbox integration, restart behavior, and desktop projections. Until
-then the new contract is unused by production state and can be rolled back by
-removing the package. Once v1 records exist, rollback must retain an exact v1
-reader or a reviewed migration; accepted history is never rewritten.
+T01 adds no database migration because no workflow-profile selection or
+stage-state rows existed. T02 activates selection and migration authority by
+storing immutable, hash-bound records in the existing append-only project
+settings boundary in the same transaction as Research Intent, provenance, and
+outbox state. Project creation publishes its directory only after the initial
+Intent and selection have committed. The Core API and desktop consume the exact
+generated catalog rather than maintaining another presentation registry.
+T03-T04 continue to own navigation-stage commands and projections. Once v1
+records exist, rollback must retain an exact v1 reader or a reviewed migration;
+accepted history is never rewritten.
 
 ## Verification
 
@@ -140,7 +159,11 @@ reader or a reviewed migration; accepted history is never rewritten.
   preserved history with exact human acceptance;
 - contract-package typecheck, architecture/ADR/quality checks, and frozen
   sidecar/build-input inventory tests.
+- atomic project bootstrap and profile-change persistence, exact hash lookup,
+  restart reconstruction, tamper denial, strict Core API decoding, and
+  catalog-driven desktop creation and impact-review projections.
 
 ## Task links
 
 - `CAP-03.S06.T01`
+- `CAP-03.S06.T02`

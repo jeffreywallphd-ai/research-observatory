@@ -17,13 +17,13 @@ import stat
 import sys
 import threading
 import uuid
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from .logging import emit_log_record
 from .models import (
@@ -35,6 +35,7 @@ from .models import (
 )
 from .ports.object_store import ObjectKeyUnavailable, ObjectStoreProblem
 from .storage import StorageProblem, initialize_database, validate_canonical_database
+from .workflow_profile_contracts import approved_workflow_profile_catalog
 
 _DIRECTORY_NAME = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 _TEMPLATE_ID = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
@@ -58,7 +59,8 @@ _MANIFEST_KEYS = {
 }
 _PROFILE_KEYS = {"schemaVersion", "documentType", "displayName", "templateId"}
 _PROJECT_DIRECTORIES = ("state", "objects", "indexes", "cache", "models", "config", "exports", "logs", ".locks", ".tmp")
-_IMPLEMENTED_TEMPLATES = {"theory-synthesis"}
+_WORKFLOW_PROFILES = cast(Sequence[Mapping[str, object]], approved_workflow_profile_catalog()["profiles"])
+_IMPLEMENTED_TEMPLATES = frozenset(cast(str, profile["profileId"]) for profile in _WORKFLOW_PROFILES)
 _MAX_SAFE_INTEGER = 9_007_199_254_740_991
 _MAX_AUDIT_BYTES = 8 * 1024 * 1024
 _MAX_PROJECT_DOCUMENT_BYTES = 256 * 1024
@@ -567,7 +569,10 @@ class ProjectLifecycleService:
         display_name: str,
         template_id: str,
         trace_id: str,
+        initialize_authority: Callable[[Path, str], None] | None = None,
     ) -> ProjectProjection:
+        if initialize_authority is not None and not callable(initialize_authority):
+            raise TypeError("project authority initializer must be callable")
         parent = _canonical_directory(parent_directory)
         if not _DIRECTORY_NAME.fullmatch(directory_name):
             raise ProjectLifecycleProblem.invalid_path()
@@ -595,6 +600,7 @@ class ProjectLifecycleService:
                 display_name=clean_name,
                 template_id=template_id,
                 trace_id=trace_id,
+                initialize_authority=initialize_authority,
             )
 
     def _create_at(
@@ -605,6 +611,7 @@ class ProjectLifecycleService:
         display_name: str,
         template_id: str,
         trace_id: str,
+        initialize_authority: Callable[[Path, str], None] | None,
     ) -> ProjectProjection:
         target = parent / directory_name
         if target.exists() or _redirect(target):
@@ -651,6 +658,20 @@ class ProjectLifecycleService:
                         project_id=project_id,
                         project_created_at=now,
                     )
+                    if initialize_authority is not None:
+                        try:
+                            initialize_authority(staging, project_id)
+                        except ProjectLifecycleProblem:
+                            raise
+                        except Exception as error:
+                            raise ProjectLifecycleProblem(
+                                status=500,
+                                code="RO-CORE-PROJECT-CREATE-FAILED",
+                                title="Project creation did not complete",
+                                detail="Creation stopped before workflow and Research Intent authority were published.",
+                                remediation="Inspect and retry after restoring the local project authority boundary.",
+                                retryable=True,
+                            ) from error
                     self._audit(staging, "project.created", "active", trace_id)
                 rename_staging(target)
         except ProjectLifecycleProblem:

@@ -72,6 +72,8 @@ from .ports.repositories import (
     StalenessReason,
     UnitOfWork,
     UnitOfWorkFactory,
+    WorkflowAuthorityMutation,
+    WorkflowAuthorityRecord,
 )
 from .ports.workflow_executor import (
     ConcurrencyClass,
@@ -380,6 +382,9 @@ _INTENT_BRIDGE_KEY = "research-intent.project-id-bridge"
 _INTENT_IDEMPOTENCY_KEY = "research-intent.idempotency"
 _INTENT_POLICY_DECISION_KEY = "research-intent.policy-decision"
 _INTENT_REVISION_KEY = "research-intent.revision"
+_WORKFLOW_SELECTION_KEY = "workflow-profile.selection"
+_WORKFLOW_MIGRATION_KEY = "workflow-profile.migration"
+_WORKFLOW_ACCEPTANCE_KEY = "workflow-profile.acceptance"
 
 
 class _SqliteIntentRevisionRepository(IntentRevisionRepository):
@@ -445,6 +450,42 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         ):
             raise _transaction_failure("research intent revision history is discontinuous")
         return tuple(records)
+
+    def read_workflow_authority(self) -> WorkflowAuthorityMutation:
+        try:
+            connection = self._open()
+            try:
+                values: dict[str, tuple[WorkflowAuthorityRecord, ...]] = {}
+                for key in (_WORKFLOW_SELECTION_KEY, _WORKFLOW_MIGRATION_KEY, _WORKFLOW_ACCEPTANCE_KEY):
+                    rows = connection.execute(
+                        "SELECT revision, value_type, text_value FROM settings "
+                        "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                        (self._project_id, key),
+                    ).fetchall()
+                    records: list[WorkflowAuthorityRecord] = []
+                    for revision, value_type, content_json in rows:
+                        if (
+                            not isinstance(revision, int)
+                            or revision < 1
+                            or value_type != "text"
+                            or not isinstance(content_json, str)
+                            or len(content_json.encode("utf-8")) > 262_144
+                        ):
+                            raise ValueError("workflow authority record is invalid")
+                        value = json.loads(content_json)
+                        if not isinstance(value, dict):
+                            raise ValueError("workflow authority record is invalid")
+                        records.append(WorkflowAuthorityRecord(revision=revision, content_json=content_json))
+                    values[key] = tuple(records)
+            finally:
+                connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
+            raise _transaction_failure("workflow profile authority read failed") from None
+        return WorkflowAuthorityMutation(
+            selections=values[_WORKFLOW_SELECTION_KEY],
+            migrations=values[_WORKFLOW_MIGRATION_KEY],
+            decisions=values[_WORKFLOW_ACCEPTANCE_KEY],
+        )
 
     def replay(
         self,
@@ -606,6 +647,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         manifest_project_id: str,
         record: IntentRevisionRecord,
         event: IntentAuditEvent,
+        workflow_authority: WorkflowAuthorityMutation | None = None,
     ) -> IntentRevisionRecord:
         if (
             manifest_project_id != self._project_id
@@ -636,6 +678,27 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             or (event.event_type == "intent.accepted" and revision_value.get("status") != "accepted")
         ):
             raise _transaction_failure("research intent append authority differs")
+        workflow = workflow_authority or WorkflowAuthorityMutation()
+        try:
+            for authority_record in (*workflow.selections, *workflow.migrations, *workflow.decisions):
+                if (
+                    authority_record.revision < 1
+                    or not authority_record.content_json
+                    or len(authority_record.content_json.encode("utf-8")) > 262_144
+                    or not isinstance(json.loads(authority_record.content_json), dict)
+                ):
+                    raise ValueError("workflow authority mutation is invalid")
+            selection_revisions = [item.revision for item in workflow.selections]
+            migration_revisions = [item.revision for item in workflow.migrations]
+            decision_revisions = [item.revision for item in workflow.decisions]
+            if (
+                selection_revisions != sorted(set(selection_revisions))
+                or migration_revisions != decision_revisions
+                or any(revision not in selection_revisions for revision in migration_revisions)
+            ):
+                raise ValueError("workflow authority mutation is inconsistent")
+        except json.JSONDecodeError, TypeError, ValueError:
+            raise _transaction_failure("workflow authority mutation is invalid") from None
         bridge_json = json.dumps(
             {
                 "authority": "ADR-0013",
@@ -691,6 +754,30 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     value=record.content_json,
                     occurred_at=event.occurred_at,
                 )
+                if workflow.selections:
+                    latest_selection = int(
+                        connection.execute(
+                            "SELECT COALESCE(MAX(revision), 0) FROM settings WHERE project_id=? AND setting_key=?",
+                            (self._project_id, _WORKFLOW_SELECTION_KEY),
+                        ).fetchone()[0]
+                    )
+                    if workflow.selections[0].revision != latest_selection + 1 or [
+                        item.revision for item in workflow.selections
+                    ] != list(range(latest_selection + 1, latest_selection + len(workflow.selections) + 1)):
+                        raise RepositoryConflict("workflow selection revision changed")
+                for key, records in (
+                    (_WORKFLOW_SELECTION_KEY, workflow.selections),
+                    (_WORKFLOW_MIGRATION_KEY, workflow.migrations),
+                    (_WORKFLOW_ACCEPTANCE_KEY, workflow.decisions),
+                ):
+                    for authority_record in records:
+                        self._insert_text_setting(
+                            connection,
+                            key=key,
+                            revision=authority_record.revision,
+                            value=authority_record.content_json,
+                            occurred_at=event.occurred_at,
+                        )
                 idempotency_json = json.dumps(
                     {
                         "actorId": event.actor_id,

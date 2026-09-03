@@ -355,6 +355,23 @@ class IntentRevisionRecord:
 
 
 @dataclass(frozen=True, slots=True)
+class WorkflowAuthorityRecord:
+    """One immutable workflow selection or migration document."""
+
+    revision: int
+    content_json: str
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowAuthorityMutation:
+    """Workflow authority records committed with one Research Intent revision."""
+
+    selections: tuple[WorkflowAuthorityRecord, ...] = ()
+    migrations: tuple[WorkflowAuthorityRecord, ...] = ()
+    decisions: tuple[WorkflowAuthorityRecord, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
 class IntentAuditEvent:
     """Content-free provenance and outbox fact committed with one intent revision."""
 
@@ -476,6 +493,8 @@ class PrivacyPolicyRepository(Protocol):
 class IntentRevisionRepository(Protocol):
     def read(self) -> tuple[IntentRevisionRecord, ...]: ...
 
+    def read_workflow_authority(self) -> WorkflowAuthorityMutation: ...
+
     def replay(
         self,
         *,
@@ -494,6 +513,7 @@ class IntentRevisionRepository(Protocol):
         manifest_project_id: str,
         record: IntentRevisionRecord,
         event: IntentAuditEvent,
+        workflow_authority: WorkflowAuthorityMutation | None = None,
     ) -> IntentRevisionRecord: ...
 
     def append_policy_decision(
@@ -637,4 +657,6 @@ __all__ = [
     "StalenessReason",
     "UnitOfWork",
     "UnitOfWorkFactory",
+    "WorkflowAuthorityMutation",
+    "WorkflowAuthorityRecord",
 ]

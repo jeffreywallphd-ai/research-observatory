@@ -16,6 +16,7 @@
 - The desktop intent workspace duplicates fourteen use-case labels, workflows, and defaults rather than consuming the exact governed T01 catalog.
 - No service persistence currently stores or authenticates T01 `ProjectWorkflowSelection` and `WorkflowProfileMigration` records. Exact lookup of their referenced hashes was intentionally assigned to T02 by the T01 R02 review.
 - Exact predecessors are the T01 approved catalog and valid initial/change/migration fixtures, existing Research Intent revisions in the append-only `settings` ledger, and schema-v10 project databases that contain no workflow-selection rows.
+- Implementation preflight exposed one validator defect rather than a new authority decision: T01 compared a profile-change target intent directly with the older intent cited by the parent *selection*. That makes a later profile change impossible after valid same-profile intent-only revisions. ADR-0026 requires immediate selection lineage and an immediate prior/target intent pair in the migration, not identical revision cadence across those independent chains. T02 therefore corrects both generated decoders to bind the migration's actual consecutive intent revisions while retaining the immediate parent selection and exact lookup. Cross-runtime regression tests cover the intervening-intent case.
 
 ## Material acceptance rows
 

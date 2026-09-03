@@ -975,6 +975,14 @@
             ],
             "title": "Acknowledgementtoken"
           },
+          "affectedCheckpoints": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 256,
+            "title": "Affectedcheckpoints",
+            "type": "array"
+          },
           "affectedOutputs": {
             "items": {
               "type": "string"
@@ -983,12 +991,34 @@
             "title": "Affectedoutputs",
             "type": "array"
           },
+          "affectedSchemas": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 16,
+            "title": "Affectedschemas",
+            "type": "array"
+          },
           "affectedWorkflows": {
             "items": {
               "type": "string"
             },
             "maxItems": 32,
             "title": "Affectedworkflows",
+            "type": "array"
+          },
+          "allToolsAccessible": {
+            "const": true,
+            "default": true,
+            "title": "Alltoolsaccessible",
+            "type": "boolean"
+          },
+          "autonomyDefaultEffects": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Autonomydefaulteffects",
             "type": "array"
           },
           "changeCategories": {
@@ -1004,16 +1034,44 @@
             "title": "Changecategories",
             "type": "array"
           },
+          "evidenceRequirementsUnchanged": {
+            "const": true,
+            "default": true,
+            "title": "Evidencerequirementsunchanged",
+            "type": "boolean"
+          },
           "expectedRevision": {
             "maximum": 9007199254740991.0,
             "minimum": 0.0,
             "title": "Expectedrevision",
             "type": "integer"
           },
+          "provenanceRequirementsUnchanged": {
+            "const": true,
+            "default": true,
+            "title": "Provenancerequirementsunchanged",
+            "type": "boolean"
+          },
           "schemaVersion": {
             "default": "1.0",
             "title": "Schemaversion",
             "type": "string"
+          },
+          "staleArtifactIds": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 256,
+            "title": "Staleartifactids",
+            "type": "array"
+          },
+          "stoppingLogicEffects": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Stoppinglogiceffects",
+            "type": "array"
           },
           "warnings": {
             "items": {
@@ -1029,6 +1087,11 @@
           "changeCategories",
           "affectedWorkflows",
           "affectedOutputs",
+          "affectedSchemas",
+          "affectedCheckpoints",
+          "autonomyDefaultEffects",
+          "stoppingLogicEffects",
+          "staleArtifactIds",
           "warnings",
           "acknowledgementRequired"
         ],
@@ -1924,9 +1987,30 @@
             "title": "Parentdirectory",
             "type": "string"
           },
-          "templateId": {
-            "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
-            "title": "Templateid",
+          "primaryUseCase": {
+            "enum": [
+              "rapid-orientation",
+              "systematic-review",
+              "living-review",
+              "theory-synthesis",
+              "hermeneutic-inquiry",
+              "critical-problematization",
+              "technical-landscape",
+              "novelty-audit",
+              "empirical-study-design",
+              "empirical-study-to-article",
+              "empirical-results-to-article",
+              "theory-article-development",
+              "critical-article-development",
+              "manuscript-review-revision"
+            ],
+            "title": "Primaryusecase",
+            "type": "string"
+          },
+          "researchObjective": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Researchobjective",
             "type": "string"
           }
         },
@@ -1934,7 +2018,8 @@
           "parentDirectory",
           "directoryName",
           "displayName",
-          "templateId"
+          "primaryUseCase",
+          "researchObjective"
         ],
         "title": "ProjectCreateRequest",
         "type": "object"
@@ -3193,6 +3278,220 @@
         "title": "WorkflowHumanDecisionRequest",
         "type": "object"
       },
+      "WorkflowProfileCatalogProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "allToolsAccessible": {
+            "const": true,
+            "default": true,
+            "title": "Alltoolsaccessible",
+            "type": "boolean"
+          },
+          "evidenceRequirementsUnchanged": {
+            "const": true,
+            "default": true,
+            "title": "Evidencerequirementsunchanged",
+            "type": "boolean"
+          },
+          "profileCatalogHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Profilecataloghash",
+            "type": "string"
+          },
+          "profileCatalogVersion": {
+            "const": "1.0.0",
+            "title": "Profilecatalogversion",
+            "type": "string"
+          },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowProfileProjection"
+            },
+            "maxItems": 14,
+            "minItems": 14,
+            "title": "Profiles",
+            "type": "array"
+          },
+          "provenanceRequirementsUnchanged": {
+            "const": true,
+            "default": true,
+            "title": "Provenancerequirementsunchanged",
+            "type": "boolean"
+          },
+          "referenceId": {
+            "const": "RO-UI-ACADEMIC-MINIMAL-1.5",
+            "title": "Referenceid",
+            "type": "string"
+          },
+          "referenceVersion": {
+            "const": "1.5",
+            "title": "Referenceversion",
+            "type": "string"
+          },
+          "registeredToolPageContractIds": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 256,
+            "minItems": 1,
+            "title": "Registeredtoolpagecontractids",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "referenceId",
+          "referenceVersion",
+          "profileCatalogVersion",
+          "profileCatalogHash",
+          "registeredToolPageContractIds",
+          "profiles"
+        ],
+        "title": "WorkflowProfileCatalogProjection",
+        "type": "object"
+      },
+      "WorkflowProfileProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedOutputs": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Expectedoutputs",
+            "type": "array"
+          },
+          "processForm": {
+            "enum": [
+              "linear",
+              "revisitable"
+            ],
+            "title": "Processform",
+            "type": "string"
+          },
+          "profileId": {
+            "enum": [
+              "rapid-orientation",
+              "systematic-review",
+              "living-review",
+              "theory-synthesis",
+              "hermeneutic-inquiry",
+              "critical-problematization",
+              "technical-landscape",
+              "novelty-audit",
+              "empirical-study-design",
+              "empirical-study-to-article",
+              "empirical-results-to-article",
+              "theory-article-development",
+              "critical-article-development",
+              "manuscript-review-revision"
+            ],
+            "title": "Profileid",
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Purpose",
+            "type": "string"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowProfileStageProjection"
+            },
+            "maxItems": 256,
+            "minItems": 1,
+            "title": "Stages",
+            "type": "array"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "profileId",
+          "title",
+          "purpose",
+          "expectedOutputs",
+          "processForm",
+          "stages"
+        ],
+        "title": "WorkflowProfileProjection",
+        "type": "object"
+      },
+      "WorkflowProfileStageProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "checkpointRationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Checkpointrationale",
+            "type": "string"
+          },
+          "checkpointState": {
+            "enum": [
+              "unknown",
+              "optional-human",
+              "required-human",
+              "not-applicable"
+            ],
+            "title": "Checkpointstate",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "optional": {
+            "title": "Optional",
+            "type": "boolean"
+          },
+          "order": {
+            "maximum": 256.0,
+            "minimum": 1.0,
+            "title": "Order",
+            "type": "integer"
+          },
+          "pageContractId": {
+            "pattern": "^[a-z0-9][a-z0-9-]*\\.html$",
+            "title": "Pagecontractid",
+            "type": "string"
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Rationale",
+            "type": "string"
+          },
+          "stageKey": {
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,99}$",
+            "title": "Stagekey",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stageKey",
+          "order",
+          "pageContractId",
+          "label",
+          "optional",
+          "rationale",
+          "checkpointState",
+          "checkpointRationale"
+        ],
+        "title": "WorkflowProfileStageProjection",
+        "type": "object"
+      },
       "WorkflowProgress": {
         "additionalProperties": false,
         "properties": {
@@ -3896,6 +4195,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
           }
         },
         "summary": "Create Project",
@@ -6072,6 +6381,28 @@
         "summary": "Version",
         "tags": [
           "runtime"
+        ]
+      }
+    },
+    "/workflow-profiles/catalog": {
+      "get": {
+        "operationId": "workflow_profile_catalog_workflow_profiles_catalog_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowProfileCatalogProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Workflow Profile Catalog",
+        "tags": [
+          "projects",
+          "intent"
         ]
       }
     }

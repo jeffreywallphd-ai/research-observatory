@@ -29,6 +29,11 @@ from research_observatory_core.projects import ProjectLifecycleService  # noqa: 
 from research_observatory_core.repositories import sqlite_intent_revision_repository  # noqa: E402
 from research_observatory_core.research_intents import IntentProblem, ResearchIntentService  # noqa: E402
 from research_observatory_core.storage import development_plaintext_database_fixture  # noqa: E402
+from research_observatory_core.workflow_profile_contracts import (  # noqa: E402
+    approved_workflow_profile_catalog,
+    decode_project_workflow_selection,
+    decode_workflow_profile_migration,
+)
 
 TOKEN = "0123456789abcdef" * 4
 AUTHORITY = "127.0.0.1:49152"
@@ -157,8 +162,16 @@ class ResearchIntentServiceTests(unittest.TestCase):
             set(preview.change_categories),
             {"primary-use-case", "corpus-scope", "novelty-scope"},
         )
-        self.assertIn("Screening protocol", preview.affected_outputs)
+        self.assertIn("Protocol, corpus, evidence table, cited synthesis, and audit bundle", preview.affected_outputs)
         self.assertIn("Theory Map", preview.affected_workflows)
+        self.assertIn("research-intent-revision", preview.affected_schemas)
+        self.assertTrue(preview.affected_checkpoints)
+        self.assertEqual(preview.autonomy_default_effects, ("researcher-selected-autonomy-remains",))
+        self.assertEqual(preview.stopping_logic_effects, ("researcher-selected-stopping-remains",))
+        self.assertEqual(preview.stale_artifact_ids, ())
+        self.assertTrue(preview.all_tools_accessible)
+        self.assertTrue(preview.evidence_requirements_unchanged)
+        self.assertTrue(preview.provenance_requirements_unchanged)
 
         with self.assertRaises(IntentProblem) as denied:
             self.service.save_draft(changed, trace_id=TRACE, idempotency_key="3" * 32)
@@ -191,10 +204,149 @@ class ResearchIntentServiceTests(unittest.TestCase):
                     "SELECT actor_id FROM provenance_events WHERE event_type='intent.draft.saved' ORDER BY occurred_at"
                 )
             )
+            selections = tuple(
+                json.loads(row[0])
+                for row in connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='workflow-profile.selection' ORDER BY revision"
+                )
+            )
+            migrations = tuple(
+                json.loads(row[0])
+                for row in connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='workflow-profile.migration' ORDER BY revision"
+                )
+            )
         finally:
             connection.close()
         self.assertEqual((ACTOR_ID, ACTOR_ID), revision_actors)
         self.assertEqual((ACTOR_ID, ACTOR_ID), audit_actors)
+        catalog = approved_workflow_profile_catalog()
+        self.assertEqual([1, 2], [selection["revision"] for selection in selections])
+        self.assertTrue(all(decode_project_workflow_selection(catalog, selection) for selection in selections))
+        self.assertEqual(1, len(migrations))
+        self.assertIsNotNone(decode_workflow_profile_migration(catalog, migrations[0]))
+        self.assertEqual(selections[1]["acceptedMigration"]["migrationId"], migrations[0]["migrationId"])
+        self.assertEqual(
+            selections[1]["acceptedMigration"]["migrationContentHash"],
+            migrations[0]["migrationContentHash"],
+        )
+
+    def test_catalog_projection_exposes_all_governed_profiles_without_restricting_tools(self) -> None:
+        projection = self.service.workflow_profile_catalog()
+
+        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.5", projection.reference_id)
+        self.assertEqual(14, len(projection.profiles))
+        systematic = next(profile for profile in projection.profiles if profile.profile_id == "systematic-review")
+        self.assertTrue(systematic.purpose)
+        self.assertTrue(systematic.expected_outputs)
+        self.assertEqual("linear", systematic.process_form)
+        self.assertEqual(list(range(1, len(systematic.stages) + 1)), [stage.order for stage in systematic.stages])
+        self.assertTrue(projection.all_tools_accessible)
+        self.assertTrue(projection.evidence_requirements_unchanged)
+        self.assertTrue(projection.provenance_requirements_unchanged)
+
+    def test_profile_change_after_same_profile_intent_revision_binds_the_immediate_intent_predecessor(self) -> None:
+        first = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="a" * 32)
+        second_command = draft_request(
+            self.root,
+            expected_revision=first.revision,
+            revisionRationale="Clarify the same-profile intent without changing workflow authority.",
+        )
+        second = self.service.save_draft(second_command, trace_id=TRACE, idempotency_key="b" * 32)
+        change = draft_request(
+            self.root,
+            expected_revision=second.revision,
+            primaryUseCase="living-review",
+            noveltyStandard="incremental",
+            stoppingConditions=["coverage-threshold"],
+            revisionRationale="Adopt the living-review workflow after impact review.",
+        )
+        preview = self.service.preview(change.to_impact_request())
+        third = self.service.save_draft(
+            change.model_copy(update={"impact_acknowledgement": preview.acknowledgement_token}),
+            trace_id=TRACE,
+            idempotency_key="c" * 32,
+        )
+
+        self.assertEqual(3, third.revision)
+        database = Path(self.root) / "state" / "project.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            selections = [
+                json.loads(row[0])
+                for row in connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='workflow-profile.selection' ORDER BY revision"
+                )
+            ]
+            migration = json.loads(
+                connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='workflow-profile.migration' AND revision=2"
+                ).fetchone()[0]
+            )
+        finally:
+            connection.close()
+        self.assertEqual([1, 2], [selection["revision"] for selection in selections])
+        self.assertEqual(1, selections[1]["parentSelection"]["researchIntent"]["revision"])
+        self.assertEqual(2, migration["priorResearchIntent"]["revision"])
+        self.assertEqual(3, migration["targetResearchIntent"]["revision"])
+        self.assertEqual(migration["targetResearchIntent"], selections[1]["researchIntent"])
+        restarted = ResearchIntentService(
+            self.projects,
+            repository_factory=sqlite_intent_revision_repository,
+            local_actor_id=ACTOR_ID,
+        )
+        restarted_workspace = restarted.workspace(self.root)
+        self.assertIsNotNone(restarted_workspace.current)
+        assert restarted_workspace.current is not None
+        self.assertEqual("living-review", restarted_workspace.current.primary_use_case)
+
+    def test_restart_denies_tampered_workflow_acceptance_lookup(self) -> None:
+        first = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="d" * 32)
+        change = draft_request(
+            self.root,
+            expected_revision=first.revision,
+            primaryUseCase="systematic-review",
+            noveltyStandard="bounded-comparative",
+            stoppingConditions=["coverage-threshold"],
+        )
+        preview = self.service.preview(change.to_impact_request())
+        changed = self.service.save_draft(
+            change.model_copy(update={"impact_acknowledgement": preview.acknowledgement_token}),
+            trace_id=TRACE,
+            idempotency_key="e" * 32,
+        )
+        database = Path(self.root) / "state" / "project.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            decision = json.loads(
+                connection.execute(
+                    "SELECT text_value FROM settings WHERE setting_key='workflow-profile.acceptance' AND revision=2"
+                ).fetchone()[0]
+            )
+            decision["decisionContentHash"] = "sha256:" + "f" * 64
+            trigger_sql = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='trigger' AND name='settings_no_update'"
+            ).fetchone()[0]
+            connection.execute("DROP TRIGGER settings_no_update")
+            connection.execute(
+                "UPDATE settings SET text_value=? WHERE setting_key='workflow-profile.acceptance' AND revision=2",
+                (json.dumps(decision, sort_keys=True, separators=(",", ":")),),
+            )
+            connection.execute(trigger_sql)
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.assertRaises(IntentProblem) as acceptance_denied:
+            self.service.accept(
+                accept_request(changed).model_copy(update={"root": self.root}),
+                trace_id=TRACE,
+                idempotency_key="f" * 32,
+            )
+        self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", acceptance_denied.exception.code)
+        with self.assertRaises(IntentProblem) as denied:
+            self.service.workspace(self.root)
+        self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
 
     def test_api_requires_preview_acknowledgement_and_never_marks_draft_launch_ready(self) -> None:
         app = create_app(
@@ -210,6 +362,7 @@ class ResearchIntentServiceTests(unittest.TestCase):
             headers=HEADERS,
             client=("127.0.0.1", 50000),
         ) as client:
+            catalog = client.get("/workflow-profiles/catalog")
             initial = client.post("/projects/intent", json={"root": self.root})
             missing_key = client.post(
                 "/projects/intent/drafts", json=draft_request(self.root).model_dump(by_alias=True)
@@ -253,6 +406,9 @@ class ResearchIntentServiceTests(unittest.TestCase):
                 },
             )
 
+        self.assertEqual(catalog.status_code, 200)
+        self.assertEqual(14, len(catalog.json()["profiles"]))
+        self.assertTrue(catalog.json()["allToolsAccessible"])
         self.assertEqual(initial.status_code, 200)
         self.assertIsNone(initial.json()["current"])
         self.assertEqual(missing_key.status_code, 422)

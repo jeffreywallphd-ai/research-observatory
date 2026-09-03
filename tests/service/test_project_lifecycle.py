@@ -21,6 +21,8 @@ from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
+from research_observatory_core.repositories import sqlite_intent_revision_repository  # noqa: E402
+from research_observatory_core.research_intents import ResearchIntentService  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
     APPLICATION_ID,
     database_integrity_report,
@@ -31,6 +33,7 @@ from research_observatory_core.storage import (  # noqa: E402
 TOKEN = "0123456789abcdef" * 4
 AUTHORITY = "127.0.0.1:49152"
 TRACE = "a" * 32
+ACTOR_ID = "018f0000-0000-7000-8000-000000000001"
 
 
 class ProjectLifecycleTests(unittest.TestCase):
@@ -428,11 +431,17 @@ class ProjectLifecycleTests(unittest.TestCase):
             target.rename(config)
 
     def test_authenticated_api_exposes_functional_lifecycle_and_secret_safe_conflicts(self) -> None:
+        intents = ResearchIntentService(
+            self.service,
+            repository_factory=sqlite_intent_revision_repository,
+            local_actor_id=ACTOR_ID,
+        )
         app = create_app(
             settings=CoreSettings(),
             capability_digest=capability_token_digest(TOKEN),
             expected_authority=AUTHORITY,
             projects=self.service,
+            intents=intents,
         )
         with TestClient(
             app,
@@ -446,11 +455,37 @@ class ProjectLifecycleTests(unittest.TestCase):
                     "parentDirectory": str(self.parent),
                     "directoryName": "api-study",
                     "displayName": "API Study",
-                    "templateId": "theory-synthesis",
+                    "primaryUseCase": "theory-synthesis",
+                    "researchObjective": "Explain how evidence is used in bounded theory development.",
                 },
             )
             self.assertEqual(created.status_code, 200, created.text)
             projection = created.json()
+            database = Path(projection["root"]) / "state" / "project.sqlite3"
+            connection = sqlite3.connect(database)
+            try:
+                initial_intent = json.loads(
+                    connection.execute(
+                        "SELECT text_value FROM settings WHERE setting_key='research-intent.revision' AND revision=1"
+                    ).fetchone()[0]
+                )
+                initial_selection = json.loads(
+                    connection.execute(
+                        "SELECT text_value FROM settings WHERE setting_key='workflow-profile.selection' AND revision=1"
+                    ).fetchone()[0]
+                )
+            finally:
+                connection.close()
+            self.assertEqual("theory-synthesis", initial_intent["primaryUseCase"])
+            self.assertEqual(
+                "Explain how evidence is used in bounded theory development.",
+                initial_intent["researchQuestion"]["value"],
+            )
+            self.assertEqual(initial_intent["projectId"], initial_selection["projectId"])
+            self.assertEqual(
+                initial_intent["revisionContentHash"],
+                initial_selection["researchIntent"]["revisionContentHash"],
+            )
             opened = client.post("/projects/open", json={"root": projection["root"]})
             self.assertEqual(opened.status_code, 200)
             duplicate = client.post("/projects/open", json={"root": projection["root"]})
@@ -475,6 +510,81 @@ class ProjectLifecycleTests(unittest.TestCase):
                 json={"root": projection["root"], "confirmation": projection["deleteConfirmation"]},
             )
             self.assertEqual(deleted.json()["lifecycleState"], "trash")
+
+    def test_api_requires_objective_and_governed_primary_use_case_before_publication(self) -> None:
+        intents = ResearchIntentService(
+            self.service,
+            repository_factory=sqlite_intent_revision_repository,
+            local_actor_id=ACTOR_ID,
+        )
+        app = create_app(
+            settings=CoreSettings(),
+            capability_digest=capability_token_digest(TOKEN),
+            expected_authority=AUTHORITY,
+            projects=self.service,
+            intents=intents,
+        )
+        with TestClient(
+            app,
+            base_url=f"http://{AUTHORITY}",
+            headers={"Authorization": f"Bearer {TOKEN}", "X-Trace-Id": TRACE},
+            client=("127.0.0.1", 50000),
+        ) as client:
+            missing_objective = client.post(
+                "/projects",
+                json={
+                    "parentDirectory": str(self.parent),
+                    "directoryName": "missing-objective",
+                    "displayName": "Missing objective",
+                    "primaryUseCase": "systematic-review",
+                    "researchObjective": "",
+                },
+            )
+            unknown_profile = client.post(
+                "/projects",
+                json={
+                    "parentDirectory": str(self.parent),
+                    "directoryName": "unknown-profile",
+                    "displayName": "Unknown profile",
+                    "primaryUseCase": "invented-review",
+                    "researchObjective": "Review a bounded evidence base.",
+                },
+            )
+
+        self.assertEqual(422, missing_objective.status_code)
+        self.assertEqual(422, unknown_profile.status_code)
+        self.assertFalse((self.parent / "missing-objective").exists())
+        self.assertFalse((self.parent / "unknown-profile").exists())
+        self.assertFalse(any("ro-staging" in path.name for path in self.parent.iterdir()))
+
+    def test_api_does_not_publish_a_project_when_intent_authority_is_unavailable(self) -> None:
+        app = create_app(
+            settings=CoreSettings(),
+            capability_digest=capability_token_digest(TOKEN),
+            expected_authority=AUTHORITY,
+            projects=self.service,
+        )
+        with TestClient(
+            app,
+            base_url=f"http://{AUTHORITY}",
+            headers={"Authorization": f"Bearer {TOKEN}", "X-Trace-Id": TRACE},
+            client=("127.0.0.1", 50000),
+        ) as client:
+            response = client.post(
+                "/projects",
+                json={
+                    "parentDirectory": str(self.parent),
+                    "directoryName": "no-authority",
+                    "displayName": "No authority",
+                    "primaryUseCase": "systematic-review",
+                    "researchObjective": "Review a bounded evidence base.",
+                },
+            )
+
+        self.assertEqual(503, response.status_code)
+        self.assertEqual("RO-CORE-INTENT-ACTOR-UNAVAILABLE", response.json()["code"])
+        self.assertFalse((self.parent / "no-authority").exists())
+        self.assertFalse(any("ro-staging" in path.name for path in self.parent.iterdir()))
 
     def test_clean_core_shutdown_releases_only_its_owned_project_lock(self) -> None:
         project = self.create("shutdown-study")

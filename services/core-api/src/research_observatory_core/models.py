@@ -142,11 +142,38 @@ class ProblemDetail(ContractModel):
     remediation: str = Field(min_length=1, max_length=240)
 
 
+WorkflowProfileId = Literal[
+    "rapid-orientation",
+    "systematic-review",
+    "living-review",
+    "theory-synthesis",
+    "hermeneutic-inquiry",
+    "critical-problematization",
+    "technical-landscape",
+    "novelty-audit",
+    "empirical-study-design",
+    "empirical-study-to-article",
+    "empirical-results-to-article",
+    "theory-article-development",
+    "critical-article-development",
+    "manuscript-review-revision",
+]
+
+
 class ProjectCreateRequest(ContractModel):
     parent_directory: str = Field(min_length=1, max_length=4096)
     directory_name: str = Field(pattern=r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
     display_name: str = Field(min_length=1, max_length=120)
-    template_id: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
+    primary_use_case: WorkflowProfileId
+    research_objective: str = Field(min_length=1, max_length=4000)
+
+    @model_validator(mode="after")
+    def validate_objective(self) -> ProjectCreateRequest:
+        if not self.research_objective.strip():
+            raise ValueError("research objective must contain visible content")
+        if any(ord(character) < 32 and character not in "\n\r\t" for character in self.research_objective):
+            raise ValueError("research objective contains unsupported control characters")
+        return self
 
 
 class ProjectRootRequest(ContractModel):
@@ -293,22 +320,7 @@ class ProjectProjection(ContractModel):
         return self
 
 
-IntentPrimaryUseCase = Literal[
-    "rapid-orientation",
-    "systematic-review",
-    "living-review",
-    "theory-synthesis",
-    "hermeneutic-inquiry",
-    "critical-problematization",
-    "technical-landscape",
-    "novelty-audit",
-    "empirical-study-design",
-    "empirical-study-to-article",
-    "empirical-results-to-article",
-    "theory-article-development",
-    "critical-article-development",
-    "manuscript-review-revision",
-]
+IntentPrimaryUseCase = WorkflowProfileId
 IntentEpistemicMode = Literal["systematic", "theory", "technical", "hermeneutic", "critical", "novelty", "empirical"]
 IntentSourceKind = Literal[
     "peer-reviewed-article",
@@ -527,6 +539,14 @@ class IntentImpactPreview(ContractModel):
     change_categories: tuple[IntentChangeCategory, ...] = Field(max_length=3)
     affected_workflows: tuple[str, ...] = Field(max_length=32)
     affected_outputs: tuple[str, ...] = Field(max_length=32)
+    affected_schemas: tuple[str, ...] = Field(max_length=16)
+    affected_checkpoints: tuple[str, ...] = Field(max_length=256)
+    autonomy_default_effects: tuple[str, ...] = Field(max_length=8)
+    stopping_logic_effects: tuple[str, ...] = Field(max_length=8)
+    stale_artifact_ids: tuple[str, ...] = Field(max_length=256)
+    all_tools_accessible: Literal[True] = True
+    evidence_requirements_unchanged: Literal[True] = True
+    provenance_requirements_unchanged: Literal[True] = True
     warnings: tuple[str, ...] = Field(max_length=8)
     acknowledgement_required: bool
     acknowledgement_token: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -536,6 +556,39 @@ class IntentImpactPreview(ContractModel):
         if self.acknowledgement_required != (self.acknowledgement_token is not None):
             raise ValueError("impact acknowledgement state is inconsistent")
         return self
+
+
+class WorkflowProfileStageProjection(ContractModel):
+    stage_key: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,99}$")
+    order: int = Field(ge=1, le=256)
+    page_contract_id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]*\.html$")
+    label: str = Field(min_length=1, max_length=120)
+    optional: bool
+    rationale: str = Field(min_length=1, max_length=4000)
+    checkpoint_state: Literal["unknown", "optional-human", "required-human", "not-applicable"]
+    checkpoint_rationale: str = Field(min_length=1, max_length=4000)
+
+
+class WorkflowProfileProjection(ContractModel):
+    profile_id: WorkflowProfileId
+    title: str = Field(min_length=1, max_length=200)
+    purpose: str = Field(min_length=1, max_length=4000)
+    expected_outputs: tuple[str, ...] = Field(min_length=1, max_length=32)
+    process_form: Literal["linear", "revisitable"]
+    stages: tuple[WorkflowProfileStageProjection, ...] = Field(min_length=1, max_length=256)
+
+
+class WorkflowProfileCatalogProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    reference_id: Literal["RO-UI-ACADEMIC-MINIMAL-1.5"]
+    reference_version: Literal["1.5"]
+    profile_catalog_version: Literal["1.0.0"]
+    profile_catalog_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    all_tools_accessible: Literal[True] = True
+    evidence_requirements_unchanged: Literal[True] = True
+    provenance_requirements_unchanged: Literal[True] = True
+    registered_tool_page_contract_ids: tuple[str, ...] = Field(min_length=1, max_length=256)
+    profiles: tuple[WorkflowProfileProjection, ...] = Field(min_length=14, max_length=14)
 
 
 class IntentDraftProjection(ContractModel):

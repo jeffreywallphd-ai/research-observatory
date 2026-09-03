@@ -92,9 +92,9 @@ python tools/taskctl.py validate
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-03.S06.T02" data-worksheet-sha256="50bfaea3c5cc1448edec0b25348c8c5454bc0709fae345fabba41f9501163cac">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-03.S06.T02" data-worksheet-sha256="f5276a59f9b2478b35cfac87c029a581cbf4402fb9282c9f5391616e6afda786">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-03.S06.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>50bfaea3c5cc1448edec0b25348c8c5454bc0709fae345fabba41f9501163cac</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-03.S06.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>f5276a59f9b2478b35cfac87c029a581cbf4402fb9282c9f5391616e6afda786</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-03.S06.T02 task-start acceptance closure
 
 ## Frozen authority
@@ -113,6 +113,7 @@ python tools/taskctl.py validate
 - The desktop intent workspace duplicates fourteen use-case labels, workflows, and defaults rather than consuming the exact governed T01 catalog.
 - No service persistence currently stores or authenticates T01 `ProjectWorkflowSelection` and `WorkflowProfileMigration` records. Exact lookup of their referenced hashes was intentionally assigned to T02 by the T01 R02 review.
 - Exact predecessors are the T01 approved catalog and valid initial/change/migration fixtures, existing Research Intent revisions in the append-only `settings` ledger, and schema-v10 project databases that contain no workflow-selection rows.
+- Implementation preflight exposed one validator defect rather than a new authority decision: T01 compared a profile-change target intent directly with the older intent cited by the parent *selection*. That makes a later profile change impossible after valid same-profile intent-only revisions. ADR-0026 requires immediate selection lineage and an immediate prior/target intent pair in the migration, not identical revision cadence across those independent chains. T02 therefore corrects both generated decoders to bind the migration&#x27;s actual consecutive intent revisions while retaining the immediate parent selection and exact lookup. Cross-runtime regression tests cover the intervening-intent case.
 
 ## Material acceptance rows
 

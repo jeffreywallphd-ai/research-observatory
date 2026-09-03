@@ -161,6 +161,19 @@ describe("workflow profile contract", () => {
     expect(projectWorkflowSelectionErrors(catalog, unchangedIntent)).toContain(
       "profile-change-binds-intent-and-human-acceptance",
     );
+    const advancedIntent = fixture("valid-project-workflow-selection-change.v1.json");
+    Object.assign(advancedIntent.acceptedMigration.priorResearchIntent, {
+      revisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d023",
+      revision: 3,
+      revisionContentHash: `sha256:${"3".repeat(64)}`,
+    });
+    Object.assign(advancedIntent.acceptedMigration.targetResearchIntent, {
+      revisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d024",
+      revision: 4,
+      revisionContentHash: `sha256:${"4".repeat(64)}`,
+    });
+    advancedIntent.researchIntent = clone(advancedIntent.acceptedMigration.targetResearchIntent);
+    expect(projectWorkflowSelectionErrors(catalog, advancedIntent)).toEqual([]);
     const nonHumanAcceptance = clone(migration);
     nonHumanAcceptance.acceptance.decidedBy.actorType = "system";
     expect(decodeWorkflowProfileMigration(catalog, nonHumanAcceptance)).toBeNull();

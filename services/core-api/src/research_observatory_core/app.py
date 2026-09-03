@@ -64,6 +64,7 @@ from .models import (
     VersionResponse,
     WorkflowCancelRequest,
     WorkflowHumanDecisionRequest,
+    WorkflowProfileCatalogProjection,
     WorkflowRetryRequest,
     WorkflowTaskCenterPage,
     WorkflowTaskCenterRun,
@@ -492,7 +493,12 @@ def create_app(
     @app.post(
         "/projects",
         response_model=ProjectProjection,
-        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        responses={
+            409: {"model": ProblemDetail},
+            422: {"model": ProblemDetail},
+            500: {"model": ProblemDetail},
+            503: {"model": ProblemDetail},
+        },
         tags=["projects"],
     )
     def create_project(request: Request, command: ProjectCreateRequest) -> ProjectProjection:
@@ -502,10 +508,25 @@ def create_app(
                 parent_directory=command.parent_directory,
                 directory_name=command.directory_name,
                 display_name=command.display_name,
-                template_id=command.template_id,
+                template_id=command.primary_use_case,
                 trace_id=request.state.trace_id,
+                initialize_authority=lambda path, project_id: runtime(request).intents.initialize_created_project(
+                    path,
+                    project_id,
+                    primary_use_case=command.primary_use_case,
+                    research_objective=command.research_objective,
+                    trace_id=request.state.trace_id,
+                ),
             ),
         )
+
+    @app.get(
+        "/workflow-profiles/catalog",
+        response_model=WorkflowProfileCatalogProjection,
+        tags=["projects", "intent"],
+    )
+    def workflow_profile_catalog(request: Request) -> WorkflowProfileCatalogProjection:
+        return runtime(request).intents.workflow_profile_catalog()
 
     @app.post(
         "/projects/open",

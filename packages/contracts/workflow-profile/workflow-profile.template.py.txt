@@ -345,11 +345,16 @@ def project_workflow_selection_errors(catalog_value: object, value: object) -> t
             parent is None
             or accepted_migration is None
             or _stable_json(parent["profile"]) == _stable_json(selection["profile"])
-            or not _immediate_intent_revision(parent["researchIntent"], selection["researchIntent"])
             or _stable_json(accepted_migration["fromProfile"]) != _stable_json(parent["profile"])
             or _stable_json(accepted_migration["toProfile"]) != _stable_json(selection["profile"])
-            or _stable_json(accepted_migration["priorResearchIntent"]) != _stable_json(parent["researchIntent"])
             or _stable_json(accepted_migration["targetResearchIntent"]) != _stable_json(selection["researchIntent"])
+            or not _immediate_intent_revision(
+                accepted_migration["priorResearchIntent"], accepted_migration["targetResearchIntent"]
+            )
+            or cast(Mapping[str, Any], accepted_migration["priorResearchIntent"])["intentId"]
+            != cast(Mapping[str, Any], parent["researchIntent"])["intentId"]
+            or cast(Mapping[str, Any], accepted_migration["priorResearchIntent"])["revision"]
+            < cast(Mapping[str, Any], parent["researchIntent"])["revision"]
             or _stable_json(cast(Mapping[str, Any], accepted_migration["acceptance"])["decidedBy"])
             != _stable_json(selection["selectedBy"])
         ):
@@ -560,6 +565,15 @@ def decode_workflow_profile_catalog(value: object) -> WorkflowProfileCatalogSnap
     except ValueError:
         return None
     return cast(WorkflowProfileCatalogSnapshot, owned) if not workflow_profile_catalog_errors(owned) else None
+
+
+def approved_workflow_profile_catalog() -> WorkflowProfileCatalogSnapshot:
+    """Return a detached immutable snapshot of the generated governed catalog."""
+
+    owned = _owned_frozen(_APPROVED_CATALOG)
+    if workflow_profile_catalog_errors(owned):
+        raise RuntimeError("generated approved workflow profile catalog is invalid")
+    return cast(WorkflowProfileCatalogSnapshot, owned)
 
 
 def decode_project_workflow_selection(catalog: object, value: object) -> ProjectWorkflowSelectionSnapshot | None:
