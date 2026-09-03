@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T02",
+  "commit": "8e522b51bb5414cb55b69cba86299262969539b0",
+  "baseCommit": "7641bbceb0fd20286d3e66ea257f6e0036fe4b87",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S06.T02.R01.json",
+    "sha256": "582ba876b4cdaed86db9d0e3e61852fa54beec06d0f91cabbae41b452a62fb92",
+    "commit": "7641bbceb0fd20286d3e66ea257f6e0036fe4b87",
+    "reason": "Bounded R02 remediation for CAP-03.S06.T02-R01-F01, CAP-03.S06.T02-R01-F02, and CAP-03.S06.T02-R01-F03."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+    "artifacts/evidence/CAP-03.S06.T02.R01.json",
+    "artifacts/evidence/CAP-03.S06.T02.review-R01.json",
+    "artifacts/evidence/CAP-03.S06.T02.task-start.md",
+    "artifacts/evidence/ui-change/CAP-03.S06.T02.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T02.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/service/fixtures/schema-v10-pre-t02-intent.json",
+    "tests/service/test_research_intents.py",
+    "tools/core_api_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 71 service tests passed and the generated Core API contract reproduced exactly. Focused cases deny complete workflow-row deletion and binding deletion after activation, authenticate and upgrade exact pre-T02 schema-v10 intent bytes without rewriting them, replay the upgraded command idempotently, and verify exact theory-to-systematic plus multi-condition stopping effects."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts -- --run; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false",
+      "exitCode": 0,
+      "result": "All 77 Python contract tests and all 91 TypeScript contract tests passed, and the contracts package passed strict TypeScript compilation. The workflow catalog projection strictly decodes Core-owned examples, evidence/novelty/autonomy/stopping defaults, warnings, modes, and existing governed presentation fields."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/data -p test_*.py; .venv/Scripts/python.exe -m unittest -v tests.security.test_protected_database",
+      "exitCode": 0,
+      "result": "All 116 data tests and all 11 protected-database security tests passed, preserving schema-v10 migration, immutable settings, encrypted restart/backup/recovery, provenance/outbox, and dependency-impact persistence boundaries."
+    },
+    {
+      "command": "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 99 active desktop tests passed with three platform-bound skips; strict TypeScript and desktop lint passed; both production and reference bundles built. Renderer tests prove profile defaults come only from the decoded Core projection and apply systematic-review evidence, novelty, autonomy, and stopping values exactly."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-R02-desktop.json",
+      "exitCode": 0,
+      "result": "All 20 desktop-product/sidecar tests passed and the assembled functional frame reported zero errors. The browser selected systematic review, observed the catalog-authored coverage-threshold default replacing interpretive-saturation, requested preview, and rendered both exact removed and added stopping effects before acknowledgement."
+    },
+    {
+      "command": "configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-R02-native.json",
+      "exitCode": 0,
+      "result": "The real Windows-native supervisor/Core/storage integration passed project creation, workflow-profile selection, preview/acknowledgement, restart persistence, policy denial, exact actor-bound provenance, and byte-equivalent acceptance response-loss reconciliation without duplicate effects. This scenario does not claim stale-state seeding or assertion."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check <7 changed Python files>; .venv/Scripts/python.exe -m ruff format --check <7 changed Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <7 changed Python files>",
+      "exitCode": 0,
+      "result": "All seven changed Python source/tool/test files passed Ruff lint, Ruff formatting, and focused mypy with established imports skipped."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head HEAD; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 7641bbceb0fd20286d3e66ea257f6e0036fe4b87..8e522b51bb5414cb55b69cba86299262969539b0",
+      "exitCode": 0,
+      "result": "Repository structure, architecture, CI policy, the approved-reference UI gate, generated backlog views, the authoritative backlog, and exact remediation-range patch hygiene passed. R01 candidate 7641bbce is an ancestor of R02 candidate 8e522b51."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base 7641bbceb0fd20286d3e66ea257f6e0036fe4b87 --affected-head 8e522b51bb5414cb55b69cba86299262969539b0 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-R02-selection.json",
+      "exitCode": 0,
+      "result": "The governed affected-path selector passed for the exact R01-to-R02 range and retained desktop/data performance checks at W1 exit. R02 replayed the three review findings and their incremental service, storage, generated-contract, renderer, browser, native, security, static, governance, and patch boundaries."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The public creation contract still requires one scholarly objective and canonical primary use case; the real native/Core/storage path and complete service/desktop contract suites pass unchanged atomic project publication and restart behavior.",
+        "Core now projects the sole application-owned fourteen-profile form guidance alongside each governed profile. The strict generated decoder carries purpose, output, process form, ordered steps, example, evidence/novelty/autonomy/stopping defaults, and warning; the desktop has no parallel profile-default table."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "CAP-03.S06.T02-R01-F01 is remediated by the immutable revision-zero research-intent.workflow-authority-binding outside workflow-profile.*. It hash-binds ADR-0026, the domain project, approved catalog, first selection identity/content, and activation intent revision; complete workflow-row deletion or binding deletion fails closed after restart.",
+        "The committed schema-v10 fixture authenticates exact pre-T02 intent-revision bytes and their source commit. The next governed save preserves those bytes, establishes binding plus selection atomically, restarts successfully, and returns the exact committed result on replay.",
+        "CAP-03.S06.T02-R01-F02 is remediated by exact canonical before/after effects. Theory-to-systematic reports removed interpretive-saturation and added coverage-threshold; a critical-to-technical multi-condition transition reports retained researcher-decision, removed interpretive-saturation, and added benchmark-complete. The assembled browser renders the first transition before acknowledgement.",
+        "Impact preview truthfully exposes affected schemas, checkpoints, outputs, autonomy, stopping conditions, and stale artifact IDs from the service/SQLite dependency boundary. It does not expose or claim evidence-type or per-stage migration-disposition response fields."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S06.T02-R01-F03 is remediated: native evidence is limited to the lifecycle it actually executes, persisted stale-state coverage is attributed to service/SQLite tests, and the desktop consumes Core-projected defaults rather than a second fourteen-profile registry.",
+        "All-tools, evidence, provenance, human-gate, policy-denial, actor-binding, idempotency, and immutable intent/selection/migration behavior remain green. No tool restriction, executor authority, external effect, or governed-reference change entered R02."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 is bounded to the three adverse R01 findings. Root causes were an ambiguous empty-authority compatibility state, constant human-readable impact strings disconnected from exact saved values, and evidence/UI ownership claims broader than executable behavior. The remediation creates an independently keyed activation witness, authenticates one exact predecessor fixture, derives effects from canonical values, moves form guidance to the strict Core projection, and narrows evidence. Incremental risks are partial/complete authority deletion, false legacy admission, predecessor-byte rewrite, response-loss duplication, invalid defaults, generated-decoder drift, incorrect effect ordering, catalog-load fallback drift, and overstatement. The selected service, contract, data, protected-storage, renderer, assembled-browser, native, static, governance, and exact-range checks directly cover those risks and replay all three findings without restarting the complete Wave audit.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:ci",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "service:unit",
+      "contracts:unit",
+      "data:unit"
+    ],
+    "deferred": [
+      "The exact R01 candidate already passed approved-reference integrity, workflow/accessibility/token/route checks, packaging, Rust, benchmark registry, and its full changed-file static surface. R02 replays the product browser, native vertical, full service/contracts/data/desktop suites, affected protected-storage security, changed-file static checks, and governance relevant to the findings.",
+      "The immutable base's disclosed repository-quality, hard-coded ADR fixture, and Audit & Lineage visual-baseline debt remain outside this remediation and unchanged.",
+      "Complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, primary-platform, and accumulated visual qualification remains mandatory at CAP-03.S06 slice review, integration checkpoints, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [
+      "CAP-03.S06.T02-R01-F01",
+      "CAP-03.S06.T02-R01-F02",
+      "CAP-03.S06.T02-R01-F03"
+    ],
+    "note": "Replay the three R01 findings against exact range 7641bbceb0fd20286d3e66ea257f6e0036fe4b87..8e522b51bb5414cb55b69cba86299262969539b0. Authenticate the independent activation binding and exact pre-T02 fixture/upgrade/replay; verify exact single- and multi-condition effects in service and the assembled desktop; confirm Core is the sole owner of fourteen-profile form guidance; compare UI/native evidence with machine-observed scope; preserve R01 history and all passing atomicity, policy, provenance, idempotency, all-tools, and approved-reference boundaries."
+  }
+}

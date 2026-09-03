@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fc4db86216d4248dfe3f7ab16fda7433d231536a41f23b39048a91fc7b9ca024
+source_sha256: 90e1d6d8e1968670fb454d21eb71d8234dbacd9407477e9ed9f92b2173ad3fa4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6141,7 +6141,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6171,6 +6171,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S06.T02.R01.json` at `7641bbceb0fd20286d3e66ea257f6e0036fe4b87`
+- `artifacts/evidence/CAP-03.S06.T02.remediation-01.json` at `8e522b51bb5414cb55b69cba86299262969539b0`
 
 ##### Review history — CAP-03.S06.T02
 
@@ -6208,7 +6209,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `fcb835b0efb8b7ff26fdee0b8a6df186532f8779559f0b016f7c9eba14d6253c`
+
+- Candidate / base / branch: `8e522b51bb5414cb55b69cba86299262969539b0` / `7641bbceb0fd20286d3e66ea257f6e0036fe4b87` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-03T22:53:39+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T02.remediation-01.json` / `be72b44dae32d4adfcbf14389be10e5bbd6a65f5dcd2a969803e8c0e4d425902` / `8e522b51bb5414cb55b69cba86299262969539b0`
+- Acceptance-criteria SHA-256: `e8635297c0ce59786e23a69a58652a9d0d7865841cb2b1aa0962d6d88b0f7c89`
+- Verification-selection SHA-256: `41f6400150c0d003f53ef3d3d691c0287da07e416d65662a06fa0e6a51aeb5b0`
+- Changed paths: `apps/desktop/src/app/IntentWorkspace.test.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `apps/desktop/src/app/ProjectsWorkspace.test.tsx`, `artifacts/evidence/CAP-03.S06.T02.R01.json`, `artifacts/evidence/CAP-03.S06.T02.review-R01.json`, `artifacts/evidence/CAP-03.S06.T02.task-start.md`, `artifacts/evidence/ui-change/CAP-03.S06.T02.json`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T02.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `tests/service/fixtures/schema-v10-pre-t02-intent.json`, `tests/service/test_research_intents.py`, `tools/core_api_contract.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check`, `.venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; npm test --prefix packages/contracts -- --run; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false`, `.venv/Scripts/python.exe -m unittest discover -s tests/data -p test_*.py; .venv/Scripts/python.exe -m unittest -v tests.security.test_protected_database`, `npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop`, `.venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T02-R02-desktop.json`, `configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-R02-native.json`, `.venv/Scripts/python.exe -m ruff check <7 changed Python files>; .venv/Scripts/python.exe -m ruff format --check <7 changed Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <7 changed Python files>`, `.venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .; .venv/Scripts/python.exe tools/ci_check.py --repo .; .venv/Scripts/python.exe tools/ui_change_gate.py --repo . --head HEAD; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check 7641bbceb0fd20286d3e66ea257f6e0036fe4b87..8e522b51bb5414cb55b69cba86299262969539b0`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base 7641bbceb0fd20286d3e66ea257f6e0036fe4b87 --affected-head 8e522b51bb5414cb55b69cba86299262969539b0 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-03.S06.T02-R02-selection.json`
+- Deferred checks: `The exact R01 candidate already passed approved-reference integrity, workflow/accessibility/token/route checks, packaging, Rust, benchmark registry, and its full changed-file static surface. R02 replays the product browser, native vertical, full service/contracts/data/desktop suites, affected protected-storage security, changed-file static checks, and governance relevant to the findings.`, `The immutable base's disclosed repository-quality, hard-coded ADR fixture, and Audit & Lineage visual-baseline debt remain outside this remediation and unchanged.`, `Complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, primary-platform, and accumulated visual qualification remains mandatory at CAP-03.S06 slice review, integration checkpoints, and W1 exit.`
+- Selection rationale: R02 is bounded to the three adverse R01 findings. Root causes were an ambiguous empty-authority compatibility state, constant human-readable impact strings disconnected from exact saved values, and evidence/UI ownership claims broader than executable behavior. The remediation creates an independently keyed activation witness, authenticates one exact predecessor fixture, derives effects from canonical values, moves form guidance to the strict Core projection, and narrows evidence. Incremental risks are partial/complete authority deletion, false legacy admission, predecessor-byte rewrite, response-loss duplication, invalid defaults, generated-decoder drift, incorrect effect ordering, catalog-load fallback drift, and overstatement. The selected service, contract, data, protected-storage, renderer, assembled-browser, native, static, governance, and exact-range checks directly cover those risks and replay all three findings without restarting the complete Wave audit.
+- Prior round / replayed open findings: `R01` / `CAP-03.S06.T02-R01-F01`, `CAP-03.S06.T02-R01-F02`, `CAP-03.S06.T02-R01-F03`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by agent:t02-independent-reviewer at `2026-09-03T22:27:18+00:00`
 
