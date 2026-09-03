@@ -26,7 +26,7 @@
     {
       "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check tests.desktop.test_core_sidecar_performance_check && .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
       "result": "passed",
-      "scope": "Twenty desktop-product and sidecar contract tests passed, and the assembled functional frame passed project, keyboard, focus, responsive, diagnostics, privacy, application-lock, and recovery checks. The browser harness exercised the exact Core-projected 14-profile catalog, required research objective, profile selection, and impact preview."
+      "scope": "The desktop-product and sidecar contract tests passed, and the assembled functional frame passed project, keyboard, focus, responsive, diagnostics, privacy, application-lock, and recovery checks. The browser harness exercised the exact Core-projected 14-profile catalog, required research objective, profile selection, catalog-authored stopping defaults, and rendered exact removed/added stopping effects."
     },
     {
       "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference && .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows && .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
@@ -36,7 +36,7 @@
     {
       "command": "configured Node 24 apps/desktop/scripts/intent-native-integration.mjs --report artifacts/tmp/CAP-03.S06.T02-native-final.json",
       "result": "passed",
-      "scope": "The real Windows-native desktop-to-Core route passed project creation, versioned workflow selection, complete impact preview and acknowledgement, stale dependency propagation, policy denial, acceptance response-loss reconciliation, restart persistence, and exact provenance-event assertions."
+      "scope": "The real Windows-native desktop-to-Core route passed project creation, versioned workflow selection, impact preview and acknowledgement, policy denial, acceptance response-loss reconciliation, restart persistence, and exact provenance-event assertions. Persisted stale dependency lookup is covered by the service/SQLite boundary, not claimed by this native scenario."
     }
   ],
   "implementationScope": "Implement the already approved Academic Minimal v1.5 primary-use-case experience in project creation and Research Intent revision. Project creation requires a research objective and one canonical workflow profile, presents its purpose, output, process form, and ordered steps, and persists the exact immutable reference. Later changes show Core-authored schemas, checkpoints, outputs, autonomy, stopping conditions, and stale artifacts before explicit acknowledgement. The selected workflow never removes tools or weakens evidence, provenance, policy, or researcher authority."

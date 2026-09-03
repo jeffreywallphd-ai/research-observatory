@@ -382,6 +382,7 @@ _INTENT_BRIDGE_KEY = "research-intent.project-id-bridge"
 _INTENT_IDEMPOTENCY_KEY = "research-intent.idempotency"
 _INTENT_POLICY_DECISION_KEY = "research-intent.policy-decision"
 _INTENT_REVISION_KEY = "research-intent.revision"
+_INTENT_WORKFLOW_AUTHORITY_KEY = "research-intent.workflow-authority-binding"
 _WORKFLOW_SELECTION_KEY = "workflow-profile.selection"
 _WORKFLOW_MIGRATION_KEY = "workflow-profile.migration"
 _WORKFLOW_ACCEPTANCE_KEY = "workflow-profile.acceptance"
@@ -455,6 +456,25 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         try:
             connection = self._open()
             try:
+                activation_rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, _INTENT_WORKFLOW_AUTHORITY_KEY),
+                ).fetchall()
+                if len(activation_rows) > 1:
+                    raise ValueError("workflow authority activation is ambiguous")
+                activation: WorkflowAuthorityRecord | None = None
+                if activation_rows:
+                    revision, value_type, content_json = activation_rows[0]
+                    if (
+                        revision != 0
+                        or value_type != "text"
+                        or not isinstance(content_json, str)
+                        or len(content_json.encode("utf-8")) > 262_144
+                        or not isinstance(json.loads(content_json), dict)
+                    ):
+                        raise ValueError("workflow authority activation is invalid")
+                    activation = WorkflowAuthorityRecord(revision=revision, content_json=content_json)
                 values: dict[str, tuple[WorkflowAuthorityRecord, ...]] = {}
                 for key in (_WORKFLOW_SELECTION_KEY, _WORKFLOW_MIGRATION_KEY, _WORKFLOW_ACCEPTANCE_KEY):
                     rows = connection.execute(
@@ -482,6 +502,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
             raise _transaction_failure("workflow profile authority read failed") from None
         return WorkflowAuthorityMutation(
+            activation=activation,
             selections=values[_WORKFLOW_SELECTION_KEY],
             migrations=values[_WORKFLOW_MIGRATION_KEY],
             decisions=values[_WORKFLOW_ACCEPTANCE_KEY],
@@ -680,6 +701,13 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             raise _transaction_failure("research intent append authority differs")
         workflow = workflow_authority or WorkflowAuthorityMutation()
         try:
+            if workflow.activation is not None and (
+                workflow.activation.revision != 0
+                or not workflow.activation.content_json
+                or len(workflow.activation.content_json.encode("utf-8")) > 262_144
+                or not isinstance(json.loads(workflow.activation.content_json), dict)
+            ):
+                raise ValueError("workflow authority activation is invalid")
             for authority_record in (*workflow.selections, *workflow.migrations, *workflow.decisions):
                 if (
                     authority_record.revision < 1
@@ -754,17 +782,35 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     value=record.content_json,
                     occurred_at=event.occurred_at,
                 )
-                if workflow.selections:
-                    latest_selection = int(
-                        connection.execute(
-                            "SELECT COALESCE(MAX(revision), 0) FROM settings WHERE project_id=? AND setting_key=?",
-                            (self._project_id, _WORKFLOW_SELECTION_KEY),
-                        ).fetchone()[0]
+                activation = connection.execute(
+                    "SELECT text_value FROM settings WHERE project_id=? AND setting_key=? AND revision=0",
+                    (self._project_id, _INTENT_WORKFLOW_AUTHORITY_KEY),
+                ).fetchone()
+                latest_selection = int(
+                    connection.execute(
+                        "SELECT COALESCE(MAX(revision), 0) FROM settings WHERE project_id=? AND setting_key=?",
+                        (self._project_id, _WORKFLOW_SELECTION_KEY),
+                    ).fetchone()[0]
+                )
+                if workflow.activation is not None:
+                    if activation is not None or latest_selection != 0:
+                        raise RepositoryConflict("workflow authority activation changed")
+                    self._insert_text_setting(
+                        connection,
+                        key=_INTENT_WORKFLOW_AUTHORITY_KEY,
+                        revision=0,
+                        value=workflow.activation.content_json,
+                        occurred_at=event.occurred_at,
                     )
-                    if workflow.selections[0].revision != latest_selection + 1 or [
-                        item.revision for item in workflow.selections
-                    ] != list(range(latest_selection + 1, latest_selection + len(workflow.selections) + 1)):
-                        raise RepositoryConflict("workflow selection revision changed")
+                    activation = (workflow.activation.content_json,)
+                if workflow.selections and latest_selection == 0 and activation is None:
+                    raise RepositoryConflict("workflow authority activation is missing")
+                if workflow.selections and (
+                    workflow.selections[0].revision != latest_selection + 1
+                    or [item.revision for item in workflow.selections]
+                    != list(range(latest_selection + 1, latest_selection + len(workflow.selections) + 1))
+                ):
+                    raise RepositoryConflict("workflow selection revision changed")
                 for key, records in (
                     (_WORKFLOW_SELECTION_KEY, workflow.selections),
                     (_WORKFLOW_MIGRATION_KEY, workflow.migrations),

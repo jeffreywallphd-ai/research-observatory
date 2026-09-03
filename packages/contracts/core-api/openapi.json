@@ -3409,6 +3409,89 @@
       "WorkflowProfileProjection": {
         "additionalProperties": false,
         "properties": {
+          "defaultAutonomyLevel": {
+            "enum": [
+              "human-only",
+              "suggest",
+              "prepare-reversible",
+              "execute-reversible"
+            ],
+            "title": "Defaultautonomylevel",
+            "type": "string"
+          },
+          "defaultEvidenceTypes": {
+            "items": {
+              "enum": [
+                "empirical-study",
+                "systematic-review",
+                "theoretical-work",
+                "technical-evaluation",
+                "standard",
+                "dataset",
+                "interpretive-text",
+                "stakeholder-account",
+                "critical-analysis",
+                "private-report"
+              ],
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Defaultevidencetypes",
+            "type": "array"
+          },
+          "defaultNoveltyStandard": {
+            "enum": [
+              "bounded-comparative",
+              "incremental",
+              "theoretical",
+              "methodological",
+              "contextual",
+              "critical",
+              "interpretive",
+              "not-claimed"
+            ],
+            "title": "Defaultnoveltystandard",
+            "type": "string"
+          },
+          "defaultStoppingConditions": {
+            "items": {
+              "enum": [
+                "source-exhaustion",
+                "coverage-threshold",
+                "interpretive-saturation",
+                "benchmark-complete",
+                "nearest-prior-work-challenged",
+                "protocol-complete",
+                "resource-budget",
+                "researcher-decision"
+              ],
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Defaultstoppingconditions",
+            "type": "array"
+          },
+          "epistemicMode": {
+            "enum": [
+              "systematic",
+              "theory",
+              "technical",
+              "hermeneutic",
+              "critical",
+              "novelty",
+              "empirical"
+            ],
+            "title": "Epistemicmode",
+            "type": "string"
+          },
+          "example": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Example",
+            "type": "string"
+          },
           "expectedOutputs": {
             "items": {
               "type": "string"
@@ -3466,14 +3549,27 @@
             "minLength": 1,
             "title": "Title",
             "type": "string"
+          },
+          "warning": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Warning",
+            "type": "string"
           }
         },
         "required": [
           "profileId",
+          "epistemicMode",
           "title",
           "purpose",
+          "example",
           "expectedOutputs",
           "processForm",
+          "defaultEvidenceTypes",
+          "defaultNoveltyStandard",
+          "defaultAutonomyLevel",
+          "defaultStoppingConditions",
+          "warning",
           "stages"
         ],
         "title": "WorkflowProfileProjection",

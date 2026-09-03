@@ -19,44 +19,34 @@ import { packagedProjectTransport } from "./ProjectsWorkspace";
 type PrimaryUseCase = IntentDraftRequest["primaryUseCase"];
 type EvidenceType = IntentDraftRequest["evidenceTypes"][number];
 type NoveltyStandard = NonNullable<IntentDraftRequest["noveltyStandard"]>;
-type StoppingCondition = IntentDraftRequest["stoppingConditions"][number];
+type WorkflowProfile = WorkflowProfileCatalogProjection["profiles"][number];
 
 const EVIDENCE_TYPES: readonly EvidenceType[] = [
   "empirical-study", "systematic-review", "theoretical-work", "technical-evaluation", "standard",
   "dataset", "interpretive-text", "stakeholder-account", "critical-analysis", "private-report",
 ];
 
-export interface IntentModeGuidance {
-  readonly id: PrimaryUseCase;
-  readonly epistemicMode: IntentDraftProjection["epistemicMode"];
-  readonly example: string;
-  readonly defaultEvidenceTypes: readonly EvidenceType[];
-  readonly defaultNoveltyStandard: NoveltyStandard;
-  readonly defaultStoppingConditions: readonly StoppingCondition[];
-  readonly warning: string;
-}
-
-const INTENT_FORM_DEFAULTS: readonly IntentModeGuidance[] = Object.freeze([
-  { id: "rapid-orientation", epistemicMode: "systematic", example: "Map the main approaches and unresolved questions in a new field.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "not-claimed", defaultStoppingConditions: ["coverage-threshold"], warning: "Rapid orientation supports bounded understanding; it does not claim exhaustive coverage." },
-  { id: "systematic-review", epistemicMode: "systematic", example: "Estimate and explain an intervention effect from eligible studies.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["coverage-threshold"], warning: "Coverage claims remain bounded by the recorded protocol, sources, dates, and languages." },
-  { id: "living-review", epistemicMode: "systematic", example: "Maintain an evidence synthesis as qualifying studies appear.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "incremental", defaultStoppingConditions: ["coverage-threshold", "researcher-decision"], warning: "Every update preserves its search boundary and prior synthesis revision." },
-  { id: "theory-synthesis", epistemicMode: "theory", example: "Reconcile competing mechanisms into a bounded conceptual model.", defaultEvidenceTypes: ["theoretical-work", "empirical-study"], defaultNoveltyStandard: "theoretical", defaultStoppingConditions: ["interpretive-saturation"], warning: "Conceptual integration must preserve disagreements and evidentiary limits." },
-  { id: "hermeneutic-inquiry", epistemicMode: "hermeneutic", example: "Develop a situated interpretation across a bounded textual corpus.", defaultEvidenceTypes: ["interpretive-text"], defaultNoveltyStandard: "interpretive", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "Interpretations remain researcher-authored and tied to the recorded corpus and frame." },
-  { id: "critical-problematization", epistemicMode: "critical", example: "Surface exclusions and consequences within a dominant framing.", defaultEvidenceTypes: ["critical-analysis", "stakeholder-account"], defaultNoveltyStandard: "critical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The workflow must preserve standpoint, counter-evidence, and affected voices." },
-  { id: "technical-landscape", epistemicMode: "technical", example: "Compare architectures and evaluated capabilities for a technical domain.", defaultEvidenceTypes: ["technical-evaluation", "standard", "dataset"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["benchmark-complete"], warning: "Comparisons are limited to compatible evidence, versions, and benchmark conditions." },
-  { id: "novelty-audit", epistemicMode: "novelty", example: "Challenge a proposed contribution against the closest documented alternatives.", defaultEvidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"], defaultNoveltyStandard: "bounded-comparative", defaultStoppingConditions: ["nearest-prior-work-challenged"], warning: "A novelty claim is provisional until nearest prior work and plausible counterexamples are challenged." },
-  { id: "empirical-study-design", epistemicMode: "empirical", example: "Design a study without inventing participants, results, or feasibility evidence.", defaultEvidenceTypes: ["empirical-study", "systematic-review"], defaultNoveltyStandard: "methodological", defaultStoppingConditions: ["protocol-complete"], warning: "The researcher retains authority over ethics, recruitment, conduct, and interpretation." },
-  { id: "empirical-study-to-article", epistemicMode: "empirical", example: "Develop a manuscript from a documented study and analysis plan.", defaultEvidenceTypes: ["empirical-study", "dataset"], defaultNoveltyStandard: "contextual", defaultStoppingConditions: ["protocol-complete", "researcher-decision"], warning: "Unreported or missing results remain unreported or missing." },
-  { id: "empirical-results-to-article", epistemicMode: "empirical", example: "Develop an article from completed, traceable empirical results.", defaultEvidenceTypes: ["empirical-study", "dataset"], defaultNoveltyStandard: "incremental", defaultStoppingConditions: ["researcher-decision"], warning: "No result, statistic, or participant detail may be inferred when absent." },
-  { id: "theory-article-development", epistemicMode: "theory", example: "Develop a theory article from traceable concepts and propositions.", defaultEvidenceTypes: ["theoretical-work", "empirical-study"], defaultNoveltyStandard: "theoretical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The system can prepare arguments; the researcher owns interpretation and claims." },
-  { id: "critical-article-development", epistemicMode: "critical", example: "Develop a critical article with explicit standpoint and counter-evidence.", defaultEvidenceTypes: ["critical-analysis", "stakeholder-account", "interpretive-text"], defaultNoveltyStandard: "critical", defaultStoppingConditions: ["interpretive-saturation", "researcher-decision"], warning: "The article must not erase contested positions or affected perspectives." },
-  { id: "manuscript-review-revision", epistemicMode: "technical", example: "Address reviewer comments without silently broadening claims.", defaultEvidenceTypes: ["empirical-study", "theoretical-work", "technical-evaluation"], defaultNoveltyStandard: "not-claimed", defaultStoppingConditions: ["researcher-decision"], warning: "Reviewer responses and claim changes remain explicit, traceable researcher decisions." },
-]);
-
-export function selectedIntentGuidance(useCase: PrimaryUseCase): IntentModeGuidance {
-  const guidance = INTENT_FORM_DEFAULTS.find((candidate) => candidate.id === useCase);
+export function selectedIntentGuidance(
+  catalog: WorkflowProfileCatalogProjection,
+  useCase: PrimaryUseCase,
+): WorkflowProfile {
+  const guidance = catalog.profiles.find((candidate) => candidate.profileId === useCase);
   if (!guidance) throw new Error("RO-CORE-INTENT-MODE-INVALID");
   return guidance;
+}
+
+export function intentProfileSelectionDefaults(
+  catalog: WorkflowProfileCatalogProjection,
+  useCase: PrimaryUseCase,
+): Pick<IntentFormState, "primaryUseCase" | "evidenceTypes" | "noveltyStandard" | "autonomyLevel" | "stoppingConditions"> {
+  const profile = selectedIntentGuidance(catalog, useCase);
+  return {
+    primaryUseCase: profile.profileId,
+    evidenceTypes: profile.defaultEvidenceTypes,
+    noveltyStandard: profile.defaultNoveltyStandard,
+    autonomyLevel: profile.defaultAutonomyLevel,
+    stoppingConditions: profile.defaultStoppingConditions,
+  };
 }
 
 export function intentWorkspaceAvailability(project: ProjectProjection | null): {
@@ -219,25 +209,28 @@ export function intentFieldAffectsImpact(key: keyof IntentFormState): boolean {
   return IMPACT_FIELD_KEYS.has(key);
 }
 
-function initialForm(current: IntentDraftProjection | null): IntentFormState {
-  const guide = selectedIntentGuidance(current?.primaryUseCase ?? "theory-synthesis");
+function initialForm(
+  current: IntentDraftProjection | null,
+  catalog: WorkflowProfileCatalogProjection | null,
+): IntentFormState {
+  const guide = catalog ? selectedIntentGuidance(catalog, current?.primaryUseCase ?? "theory-synthesis") : null;
   return {
-    primaryUseCase: guide.id,
+    primaryUseCase: current?.primaryUseCase ?? guide?.profileId ?? "theory-synthesis",
     researchObjective: current?.researchObjective ?? "",
     contributionIntent: current?.contributionIntent ?? "",
     phenomenon: current?.phenomenon ?? "",
     unitOfAnalysis: current?.unitOfAnalysis ?? "",
     levelOfAnalysis: current?.levelOfAnalysis ?? "",
     sourceKinds: current?.sourceKinds ?? [],
-    evidenceTypes: current?.evidenceTypes ?? guide.defaultEvidenceTypes,
+    evidenceTypes: current?.evidenceTypes ?? guide?.defaultEvidenceTypes ?? [],
     languageCodes: current?.languageCodes.join(", ") ?? "",
     startYear: current?.startYear?.toString() ?? "",
     endYear: current?.endYear?.toString() ?? "",
     includePrivateReports: current?.includePrivateReports ?? false,
-    noveltyStandard: current?.noveltyStandard ?? null,
+    noveltyStandard: current ? current.noveltyStandard : guide?.defaultNoveltyStandard ?? null,
     noveltyRationale: current?.noveltyRationale ?? "",
-    autonomyLevel: current?.autonomyLevel ?? "suggest",
-    stoppingConditions: current?.stoppingConditions ?? guide.defaultStoppingConditions,
+    autonomyLevel: current?.autonomyLevel ?? guide?.defaultAutonomyLevel ?? "suggest",
+    stoppingConditions: current?.stoppingConditions ?? guide?.defaultStoppingConditions ?? [],
     revisionRationale: "",
   };
 }
@@ -259,7 +252,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   const availability = intentWorkspaceAvailability(project);
   const [workspace, setWorkspace] = useState<IntentWorkspaceProjection | null>(initialWorkspace ?? null);
   const [catalog, setCatalog] = useState<WorkflowProfileCatalogProjection | null>(initialCatalog ?? null);
-  const [form, setForm] = useState<IntentFormState>(() => initialForm(initialWorkspace?.current ?? null));
+  const [form, setForm] = useState<IntentFormState>(() => initialForm(initialWorkspace?.current ?? null, initialCatalog ?? null));
   const [impact, setImpact] = useState<IntentImpactPreview | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
   const [acceptanceConfirmed, setAcceptanceConfirmed] = useState(false);
@@ -285,6 +278,10 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   }, [client, initialCatalog]);
 
   useEffect(() => {
+    if (catalog && !workspace?.current && !formDirty) setForm(initialForm(null, catalog));
+  }, [catalog, formDirty, workspace?.current]);
+
+  useEffect(() => {
     setImpact(null);
     setAcknowledged(false);
     setAcceptanceConfirmed(false);
@@ -295,7 +292,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
     setFailure(null);
     if (initialWorkspace) {
       setWorkspace(initialWorkspace);
-      setForm(initialForm(initialWorkspace.current));
+      setForm(initialForm(initialWorkspace.current, initialCatalog ?? null));
       return;
     }
     setWorkspace(null);
@@ -305,7 +302,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
     void client.intent({ root: project.root }).then((next) => {
       if (!cancelled) {
         setWorkspace(next);
-        setForm(initialForm(next.current));
+        setForm(initialForm(next.current, null));
       }
     }).catch((error: unknown) => {
       if (!cancelled) setFailure(safeFailure(error));
@@ -315,8 +312,8 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
     return () => { cancelled = true; };
   }, [acceptanceCoordinator, availability.available, client, initialWorkspace, project]);
 
-  const guide = selectedIntentGuidance(form.primaryUseCase);
   const selectedProfile = catalog?.profiles.find((profile) => profile.profileId === form.primaryUseCase) ?? null;
+  const guide = selectedProfile;
   const clearImpact = (): void => { setImpact(null); setAcknowledged(false); };
   const update = <K extends keyof IntentFormState>(key: K, value: IntentFormState[K]): void => {
     if (acceptanceAttempt) return;
@@ -417,7 +414,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
     void acceptanceCoordinator.execute().then((result) => {
       if (result.status === "accepted") {
         setWorkspace((previous) => acceptedIntentWorkspace(previous, project?.projectId ?? "", result.accepted));
-        setForm(initialForm(result.accepted));
+        setForm(initialForm(result.accepted, catalog));
         setFormDirty(false);
         setAcceptanceConfirmed(false);
         setAcceptanceRationale("");
@@ -466,8 +463,9 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
             <label htmlFor="intent-use-case">Primary use case</label>
             <select id="intent-use-case" value={form.primaryUseCase} onChange={(event) => {
               if (acceptanceAttempt) return;
-              const next = selectedIntentGuidance(event.currentTarget.value as PrimaryUseCase);
-              setForm((current) => ({ ...current, primaryUseCase: next.id, evidenceTypes: next.defaultEvidenceTypes, noveltyStandard: next.defaultNoveltyStandard, stoppingConditions: next.defaultStoppingConditions }));
+              if (!catalog) return;
+              const defaults = intentProfileSelectionDefaults(catalog, event.currentTarget.value as PrimaryUseCase);
+              setForm((current) => ({ ...current, ...defaults }));
               setFormDirty(true);
               setAcceptanceConfirmed(false);
               clearImpact();
@@ -479,8 +477,8 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
               <p><strong>Expected output:</strong> {selectedProfile?.expectedOutputs.join(", ") ?? "Unavailable"}</p>
               <p><strong>Process form:</strong> {selectedProfile ? selectedProfile.processForm === "revisitable" ? "Revisitable process" : "Linear process" : "Unavailable"}</p>
               {selectedProfile ? <ol>{selectedProfile.stages.map((stage) => <li key={stage.stageKey}>{stage.label}{stage.optional ? " (optional)" : ""}</li>)}</ol> : null}
-              <p><strong>Example:</strong> {guide.example}</p>
-              <Notification tone="warning" title="Workflow change has downstream effects">{guide.warning}</Notification>
+              <p><strong>Example:</strong> {guide?.example ?? "Loading governed workflow guidance…"}</p>
+              <Notification tone="warning" title="Workflow change has downstream effects">{guide?.warning ?? "Governed workflow guidance is unavailable."}</Notification>
               <p className="field-note">All tools remain available. Evidence and provenance requirements do not change with the selected profile.</p>
             </div>
           </Panel>
@@ -489,7 +487,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
             <fieldset><legend>Source kinds</legend><label><input type="checkbox" checked={form.sourceKinds.includes("peer-reviewed-article")} onChange={(event) => update("sourceKinds", event.currentTarget.checked ? [...form.sourceKinds, "peer-reviewed-article"] : form.sourceKinds.filter((item) => item !== "peer-reviewed-article"))} /> Peer-reviewed articles</label><label><input type="checkbox" checked={form.sourceKinds.includes("technical-report")} onChange={(event) => update("sourceKinds", event.currentTarget.checked ? [...form.sourceKinds, "technical-report"] : form.sourceKinds.filter((item) => item !== "technical-report"))} /> Technical reports</label><label><input type="checkbox" checked={form.includePrivateReports} onChange={(event) => update("includePrivateReports", event.currentTarget.checked)} /> Include authorized private reports</label></fieldset>
             <div className="intent-three-column"><label>Languages (comma-separated)<input value={form.languageCodes} onChange={(event) => update("languageCodes", event.currentTarget.value)} /></label><label>Start year<input type="number" min="1000" max="9999" value={form.startYear} onChange={(event) => update("startYear", event.currentTarget.value)} /></label><label>End year<input type="number" min="1000" max="9999" value={form.endYear} onChange={(event) => update("endYear", event.currentTarget.value)} /></label></div>
             <fieldset><legend>Evidence types</legend>{EVIDENCE_TYPES.map((evidenceType) => <label key={evidenceType}><input type="checkbox" checked={form.evidenceTypes.includes(evidenceType)} onChange={(event) => update("evidenceTypes", event.currentTarget.checked ? [...form.evidenceTypes, evidenceType] : form.evidenceTypes.filter((item) => item !== evidenceType))} /> {evidenceType}</label>)}</fieldset>
-            <p className="field-note">Mode recommendation: {guide.defaultEvidenceTypes.join(", ")}. Corpus-scope changes require a fresh impact preview.</p>
+            <p className="field-note">Mode recommendation: {guide?.defaultEvidenceTypes.join(", ") ?? "Loading…"}. Corpus-scope changes require a fresh impact preview.</p>
           </Panel>
 
           <div className="intent-two-column">

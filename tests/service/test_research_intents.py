@@ -54,6 +54,8 @@ TRACE = "a" * 32
 ACTOR_ID = "018f0000-0000-7000-8000-000000000001"
 OTHER_ACTOR_ID = "018f0000-0000-7000-8000-000000000002"
 INTENT_REQUEST_FIXTURE = REPO / "tests" / "service" / "fixtures" / "valid-intent-draft-request.json"
+PRE_T02_INTENT_FIXTURE = REPO / "tests" / "service" / "fixtures" / "schema-v10-pre-t02-intent.json"
+PRE_T02_INTENT_FIXTURE_SHA256 = "93aa45458229a836adfd94cbeef4ca641b8b467bf0321e2fdd0e495c4adf3247"
 
 
 def draft_request(root: str, *, expected_revision: int = 0, **changes: object) -> IntentDraftRequest:
@@ -180,8 +182,14 @@ class ResearchIntentServiceTests(unittest.TestCase):
         self.assertIn("Theory Map", preview.affected_workflows)
         self.assertIn("research-intent-revision", preview.affected_schemas)
         self.assertTrue(preview.affected_checkpoints)
-        self.assertEqual(preview.autonomy_default_effects, ("researcher-selected-autonomy-remains",))
-        self.assertEqual(preview.stopping_logic_effects, ("researcher-selected-stopping-remains",))
+        self.assertEqual(preview.autonomy_default_effects, ("retained autonomy level: suggest",))
+        self.assertEqual(
+            preview.stopping_logic_effects,
+            (
+                "removed stopping condition: interpretive-saturation",
+                "added stopping condition: coverage-threshold",
+            ),
+        )
         self.assertEqual(preview.stale_artifact_ids, ())
         self.assertTrue(preview.all_tools_accessible)
         self.assertTrue(preview.evidence_requirements_unchanged)
@@ -243,6 +251,39 @@ class ResearchIntentServiceTests(unittest.TestCase):
         self.assertEqual(
             selections[1]["acceptedMigration"]["migrationContentHash"],
             migrations[0]["migrationContentHash"],
+        )
+
+    def test_profile_change_preview_reports_retained_removed_and_added_stopping_conditions(self) -> None:
+        first = self.service.save_draft(
+            draft_request(
+                self.root,
+                primaryUseCase="critical-problematization",
+                evidenceTypes=["critical-analysis", "stakeholder-account"],
+                noveltyStandard="critical",
+                stoppingConditions=["interpretive-saturation", "researcher-decision"],
+            ),
+            trace_id=TRACE,
+            idempotency_key="35" * 16,
+        )
+        changed = draft_request(
+            self.root,
+            expected_revision=first.revision,
+            primaryUseCase="technical-landscape",
+            evidenceTypes=["technical-evaluation", "standard", "dataset"],
+            noveltyStandard="bounded-comparative",
+            stoppingConditions=["benchmark-complete", "researcher-decision"],
+        )
+
+        preview = self.service.preview(changed.to_impact_request())
+
+        self.assertEqual(preview.autonomy_default_effects, ("retained autonomy level: suggest",))
+        self.assertEqual(
+            preview.stopping_logic_effects,
+            (
+                "retained stopping condition: researcher-decision",
+                "removed stopping condition: interpretive-saturation",
+                "added stopping condition: benchmark-complete",
+            ),
         )
 
     def test_impact_acknowledgement_binds_evidence_autonomy_and_stopping_fields(self) -> None:
@@ -562,25 +603,91 @@ class ResearchIntentServiceTests(unittest.TestCase):
             self.service.workspace(self.root)
         self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
 
-    def test_schema_v10_intent_without_selection_is_readable_and_establishes_authority(self) -> None:
-        first = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="33" * 16)
+    def test_restart_denies_complete_workflow_authority_deletion_after_activation(self) -> None:
+        self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="36" * 16)
         database = Path(self.root) / "state" / "project.sqlite3"
         connection = sqlite3.connect(database)
         try:
-            self.assertEqual(10, connection.execute("PRAGMA user_version").fetchone()[0])
-            intent_before = connection.execute(
-                "SELECT text_value FROM settings WHERE setting_key='research-intent.revision' AND revision=1"
+            trigger_sql = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='trigger' AND name='settings_no_delete'"
             ).fetchone()[0]
-            trigger_rows = connection.execute(
-                "SELECT name, sql FROM sqlite_master WHERE type='trigger' "
-                "AND name IN ('settings_no_update', 'settings_no_delete') ORDER BY name"
-            ).fetchall()
-            self.assertEqual(2, len(trigger_rows))
-            for name, _sql in trigger_rows:
-                connection.execute(f'DROP TRIGGER "{name}"')
+            connection.execute("DROP TRIGGER settings_no_delete")
             connection.execute("DELETE FROM settings WHERE setting_key LIKE 'workflow-profile.%'")
-            for _name, sql in trigger_rows:
-                connection.execute(sql)
+            connection.execute(trigger_sql)
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.assertRaises(IntentProblem) as denied:
+            self.service.workspace(self.root)
+        self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
+
+    def test_restart_denies_workflow_activation_deletion_while_selection_remains(self) -> None:
+        self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="37" * 16)
+        database = Path(self.root) / "state" / "project.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            trigger_sql = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='trigger' AND name='settings_no_delete'"
+            ).fetchone()[0]
+            connection.execute("DROP TRIGGER settings_no_delete")
+            connection.execute("DELETE FROM settings WHERE setting_key='research-intent.workflow-authority-binding'")
+            connection.execute(trigger_sql)
+            connection.commit()
+        finally:
+            connection.close()
+
+        with self.assertRaises(IntentProblem) as denied:
+            self.service.workspace(self.root)
+        self.assertEqual("RO-CORE-WORKFLOW-PROFILE-READ-FAILED", denied.exception.code)
+
+    def test_exact_schema_v10_pre_t02_intent_establishes_authority_without_rewriting_predecessor(self) -> None:
+        fixture_bytes = PRE_T02_INTENT_FIXTURE.read_bytes()
+        self.assertEqual(PRE_T02_INTENT_FIXTURE_SHA256, hashlib.sha256(fixture_bytes).hexdigest())
+        fixture = json.loads(fixture_bytes)
+        self.assertEqual("288cca7cc4cd380360f10879caea619007b71088", fixture["sourceCommit"])
+        intent_before = fixture["intentRevision"]
+        self.assertEqual(
+            fixture["intentRevisionSha256"],
+            hashlib.sha256(intent_before.encode("utf-8")).hexdigest(),
+        )
+        database = Path(self.root) / "state" / "project.sqlite3"
+        manifest_project_id = self.project.project_id
+        bridge = json.dumps(
+            {
+                "authority": "ADR-0013",
+                "domainProjectId": "018f0000-0000-7000-8000-000000000012",
+                "manifestProjectId": manifest_project_id,
+                "schemaVersion": "1.0",
+            },
+            ensure_ascii=True,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        connection = sqlite3.connect(database)
+        try:
+            self.assertEqual(
+                fixture["databaseSchemaVersion"],
+                connection.execute("PRAGMA user_version").fetchone()[0],
+            )
+            for setting_id, key, revision, value in (
+                ("018f0000-0000-7000-8000-000000000020", "research-intent.project-id-bridge", 0, bridge),
+                ("018f0000-0000-7000-8000-000000000021", "research-intent.revision", 1, intent_before),
+            ):
+                connection.execute(
+                    "INSERT INTO settings (setting_id, project_id, setting_key, revision, value_type, text_value, "
+                    "integer_value, real_value, boolean_value, created_at, modified_at) "
+                    "VALUES (?, ?, ?, ?, 'text', ?, NULL, NULL, NULL, ?, ?)",
+                    (
+                        setting_id,
+                        manifest_project_id,
+                        key,
+                        revision,
+                        value,
+                        "2026-08-01T12:00:00.000Z",
+                        "2026-08-01T12:00:00.000Z",
+                    ),
+                )
             connection.commit()
         finally:
             connection.close()
@@ -591,17 +698,26 @@ class ResearchIntentServiceTests(unittest.TestCase):
             stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=ACTOR_ID,
         )
-        self.assertEqual(first, restarted.workspace(self.root).current)
-        second = restarted.save_draft(
-            draft_request(
-                self.root,
-                expected_revision=first.revision,
-                researchObjective="Refine the bounded evidence question without changing workflow scope.",
-                revisionRationale="Record a compatible intent-only refinement.",
-            ),
-            trace_id=TRACE,
-            idempotency_key="34" * 16,
+        first = restarted.workspace(self.root).current
+        self.assertIsNotNone(first)
+        assert first is not None
+        second_command = draft_request(
+            self.root,
+            expected_revision=first.revision,
+            researchObjective="Refine the bounded evidence question without changing workflow scope.",
+            revisionRationale="Record a compatible intent-only refinement.",
         )
+        second = restarted.save_draft(
+            second_command,
+            trace_id=TRACE,
+            idempotency_key="38" * 16,
+        )
+        replayed = restarted.save_draft(
+            second_command,
+            trace_id=TRACE,
+            idempotency_key="38" * 16,
+        )
+        self.assertEqual(second, replayed)
         self.assertEqual(2, second.revision)
 
         connection = sqlite3.connect(database)
@@ -617,10 +733,17 @@ class ResearchIntentServiceTests(unittest.TestCase):
                     "SELECT text_value FROM settings WHERE setting_key='workflow-profile.selection' AND revision=1"
                 ).fetchone()[0]
             )
+            binding = json.loads(
+                connection.execute(
+                    "SELECT text_value FROM settings "
+                    "WHERE setting_key='research-intent.workflow-authority-binding' AND revision=0"
+                ).fetchone()[0]
+            )
         finally:
             connection.close()
         self.assertEqual(second.revision_id, selection["researchIntent"]["revisionId"])
         self.assertEqual(second.revision_content_hash, selection["researchIntent"]["revisionContentHash"])
+        self.assertEqual(selection["revisionContentHash"], binding["firstSelectionContentHash"])
 
     def test_api_requires_preview_acknowledgement_and_never_marks_draft_launch_ready(self) -> None:
         app = create_app(
@@ -683,6 +806,14 @@ class ResearchIntentServiceTests(unittest.TestCase):
         self.assertEqual(catalog.status_code, 200)
         self.assertEqual(14, len(catalog.json()["profiles"]))
         self.assertTrue(catalog.json()["allToolsAccessible"])
+        profiles = {profile["profileId"]: profile for profile in catalog.json()["profiles"]}
+        self.assertEqual(["coverage-threshold"], profiles["systematic-review"]["defaultStoppingConditions"])
+        self.assertEqual(
+            ["interpretive-saturation"],
+            profiles["theory-synthesis"]["defaultStoppingConditions"],
+        )
+        self.assertEqual("suggest", profiles["systematic-review"]["defaultAutonomyLevel"])
+        self.assertIn("nearest prior work", profiles["novelty-audit"]["warning"])
         self.assertEqual(initial.status_code, 200)
         self.assertIsNone(initial.json()["current"])
         self.assertEqual(missing_key.status_code, 422)

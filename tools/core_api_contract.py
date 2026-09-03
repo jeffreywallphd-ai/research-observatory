@@ -620,11 +620,19 @@ function decodeWorkflowProfileStageProjection(value: unknown): WorkflowProfileSt
 function decodeWorkflowProfileProjection(value: unknown): WorkflowProfileProjection | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
-    "profileId", "title", "purpose", "expectedOutputs", "processForm", "stages",
+    "profileId", "epistemicMode", "title", "purpose", "example", "expectedOutputs", "processForm",
+    "defaultEvidenceTypes", "defaultNoveltyStandard", "defaultAutonomyLevel", "defaultStoppingConditions",
+    "warning", "stages",
   ])) return null;
-  if (!member(candidate.profileId, INTENT_PRIMARY_USE_CASES) || !boundedText(candidate.title, 1, 200)
-    || !boundedText(candidate.purpose, 1, 4000) || !stringList(candidate.expectedOutputs, 32)
+  if (!member(candidate.profileId, INTENT_PRIMARY_USE_CASES) || !member(candidate.epistemicMode, INTENT_MODES)
+    || !boundedText(candidate.title, 1, 200) || !boundedText(candidate.purpose, 1, 4000)
+    || !boundedText(candidate.example, 1, 1000) || !stringList(candidate.expectedOutputs, 32)
     || candidate.expectedOutputs.length < 1 || !member(candidate.processForm, ["linear", "revisitable"] as const)
+    || !uniqueMembers(candidate.defaultEvidenceTypes, INTENT_EVIDENCE_TYPES, 32, 1)
+    || !member(candidate.defaultNoveltyStandard, INTENT_NOVELTY_STANDARDS)
+    || !member(candidate.defaultAutonomyLevel, INTENT_AUTONOMY_LEVELS)
+    || !uniqueMembers(candidate.defaultStoppingConditions, INTENT_STOPPING_CONDITIONS, 3, 1)
+    || !boundedText(candidate.warning, 1, 1000)
     || !Array.isArray(candidate.stages) || candidate.stages.length < 1 || candidate.stages.length > 256) return null;
   const stages = candidate.stages.map(decodeWorkflowProfileStageProjection);
   if (stages.some((stage) => stage === null)) return null;

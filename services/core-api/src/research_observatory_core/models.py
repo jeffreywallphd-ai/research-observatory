@@ -574,10 +574,17 @@ class WorkflowProfileStageProjection(ContractModel):
 
 class WorkflowProfileProjection(ContractModel):
     profile_id: WorkflowProfileId
+    epistemic_mode: IntentEpistemicMode
     title: str = Field(min_length=1, max_length=200)
     purpose: str = Field(min_length=1, max_length=4000)
+    example: str = Field(min_length=1, max_length=1000)
     expected_outputs: tuple[str, ...] = Field(min_length=1, max_length=32)
     process_form: Literal["linear", "revisitable"]
+    default_evidence_types: tuple[IntentEvidenceType, ...] = Field(min_length=1, max_length=32)
+    default_novelty_standard: IntentNoveltyStandard
+    default_autonomy_level: IntentAutonomyLevel
+    default_stopping_conditions: tuple[IntentStoppingCondition, ...] = Field(min_length=1, max_length=3)
+    warning: str = Field(min_length=1, max_length=1000)
     stages: tuple[WorkflowProfileStageProjection, ...] = Field(min_length=1, max_length=256)
 
 

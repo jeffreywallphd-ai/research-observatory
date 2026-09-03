@@ -905,6 +905,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationSettingsDraftReconciliation": False,
         "applicationSettingsConflictAnnouncement": False,
         "applicationSettingsPositionPreserved": False,
+        "intentStoppingEffects": False,
         "applicationSettingsFocusRestoration": False,
         "applicationHelloRecovery": False,
         "responsiveCases": 0,
@@ -1557,6 +1558,21 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     recoveryAction: 'none', revision: 0,
                     deleteConfirmation: 'delete:11111111-1111-4111-8111-111111111111'
                   };
+                  const currentIntent = {
+                    schemaVersion: '1.0', intentId: '019d5f72-5331-7000-8000-000000000001',
+                    revisionId: '019d5f72-5331-7000-8000-000000000002', revision: 1,
+                    revisionContentHash: `sha256:${'a'.repeat(64)}`, createdAt: '2026-09-03T12:00:00Z',
+                    status: 'draft', primaryUseCase: 'theory-synthesis', epistemicMode: 'theory',
+                    researchObjective: 'Preserve a bounded sensitive workflow.',
+                    contributionIntent: 'Retain exact researcher authority.', phenomenon: 'Research workflow',
+                    unitOfAnalysis: 'Project', levelOfAnalysis: 'System',
+                    sourceKinds: ['peer-reviewed-article'], evidenceTypes: ['theoretical-work'],
+                    languageCodes: ['en'], startYear: 2020, endYear: 2026, includePrivateReports: false,
+                    noveltyStandard: 'theoretical', noveltyRationale: 'Bound novelty against prior theory.',
+                    autonomyLevel: 'suggest', stoppingConditions: ['interpretive-saturation'],
+                    revisionRationale: 'Establish the bounded theory workflow.', unresolvedDecisions: [],
+                    decisionComplete: true, canRequestAcceptance: true, launchReady: false
+                  };
                   window.__LOCK_EMIT__ = (payload) => {
                     const callback = callbacks.get(lockListener);
                     if (callback) callback({event: 'application-lock-changed', id: lockListener, payload});
@@ -1643,7 +1659,33 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                         return {status: 200, contentType: 'application/json',
                           traceId: '0123456789abcdef0123456789abcdef', etag: null,
                           body: JSON.stringify({schemaVersion: '1.0',
-                            projectId: projection.projectId, current: null, history: []})};
+                            projectId: projection.projectId, current: currentIntent,
+                            history: [{revision: 1, revisionId: currentIntent.revisionId,
+                              revisionContentHash: currentIntent.revisionContentHash,
+                              createdAt: currentIntent.createdAt, status: 'draft',
+                              primaryUseCase: 'theory-synthesis', unresolvedDecisionCount: 0}]})};
+                      }
+                      if (command === 'core_api_request'
+                        && args?.request?.path === '/projects/intent/preview') {
+                        const body = JSON.parse(args.request.body);
+                        if (body.expectedRevision !== 1 || body.primaryUseCase !== 'systematic-review'
+                          || JSON.stringify(body.stoppingConditions) !== JSON.stringify(['coverage-threshold'])) {
+                          throw new Error('invalid governed stopping preview request');
+                        }
+                        return {status: 200, contentType: 'application/json',
+                          traceId: '0123456789abcdef0123456789abcdef', etag: null,
+                          body: JSON.stringify({schemaVersion: '1.0', expectedRevision: 1,
+                            changeCategories: ['primary-use-case'], affectedWorkflows: ['Research Intent'],
+                            affectedOutputs: ['Protocol, corpus, evidence table, cited synthesis, and audit bundle'],
+                            affectedSchemas: ['research-intent-revision', 'project-workflow-selection',
+                              'workflow-profile-migration'], affectedCheckpoints: ['Theory Map'],
+                            autonomyDefaultEffects: ['retained autonomy level: suggest'],
+                            stoppingLogicEffects: ['removed stopping condition: interpretive-saturation',
+                              'added stopping condition: coverage-threshold'], staleArtifactIds: [],
+                            allToolsAccessible: true, evidenceRequirementsUnchanged: true,
+                            provenanceRequirementsUnchanged: true,
+                            warnings: ['Ordered workflow, validation checkpoints, and expected outputs will change.'],
+                            acknowledgementRequired: true, acknowledgementToken: 'b'.repeat(64)})};
                       }
                       throw new Error(`unsupported lock reconciliation command: ${command}`);
                     }
@@ -1670,6 +1712,22 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 )
                 raise
             lock_reconciliation.locator("#intent-use-case").select_option("systematic-review")
+            systematic_default_applied = (
+                lock_reconciliation.get_by_role("checkbox", name="coverage-threshold", exact=True).is_checked()
+                and not lock_reconciliation.get_by_role(
+                    "checkbox", name="interpretive-saturation", exact=True
+                ).is_checked()
+            )
+            lock_reconciliation.get_by_role("button", name="Preview revision effects", exact=True).click()
+            lock_reconciliation.get_by_text(
+                "removed stopping condition: interpretive-saturation", exact=False
+            ).wait_for(timeout=5_000)
+            stopping_effects_rendered = (
+                "removed stopping condition: interpretive-saturation"
+                in lock_reconciliation.locator("[data-intent-workspace]").inner_text()
+                and "added stopping condition: coverage-threshold"
+                in lock_reconciliation.locator("[data-intent-workspace]").inner_text()
+            )
             lock_reconciliation.locator("#intent-objective").fill("Unsaved workflow position")
             topbar_settings = lock_reconciliation.get_by_role("button", name="Private profile", exact=True)
             topbar_settings.click()
@@ -1711,6 +1769,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 raise
             command_focus = command_settings.evaluate("element => document.activeElement === element")
             details["applicationSettingsPositionPreserved"] = workflow_round_trip
+            details["intentStoppingEffects"] = systematic_default_applied and stopping_effects_rendered
             details["applicationSettingsFocusRestoration"] = sidebar_focus and command_focus
             lock_reconciliation.locator("#shell-command").fill("private query")
             lock_reconciliation.get_by_role("button", name="Private profile", exact=True).click()
@@ -2111,6 +2170,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationSettingsDraftReconciliation",
         "applicationSettingsConflictAnnouncement",
         "applicationSettingsPositionPreserved",
+        "intentStoppingEffects",
         "applicationSettingsFocusRestoration",
         "applicationHelloRecovery",
     ):
