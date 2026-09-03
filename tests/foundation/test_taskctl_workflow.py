@@ -6274,6 +6274,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 return b"later bytes" if commit == "d" * 40 else b"first authority bytes"
 
             with (
+                patch("taskctl.git_commit_exists", return_value=True),
                 patch("taskctl.git_is_ancestor", return_value=True),
                 patch("taskctl.git_blob", side_effect=changed_after_first),
             ):
@@ -6295,6 +6296,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 return b"second authority bytes" if commit in {"d" * 40, "f" * 40} else b"first authority bytes"
 
             with (
+                patch("taskctl.git_commit_exists", return_value=True),
                 patch("taskctl.git_is_ancestor", return_value=True),
                 patch("taskctl.git_blob", side_effect=exactly_reauthorized),
             ):
@@ -6307,6 +6309,23 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 )
             self.assertEqual([], errors)
             self.assertIn(governed_path, patterns)
+
+            def legacy_ancestry(_repo: Path, ancestor: str, descendant: str = "HEAD") -> bool:
+                return ancestor != taskctl_module.BOOTSTRAP_ADDENDUM_BLOB_CONTROL_CUTOVER
+
+            with (
+                patch("taskctl.git_commit_exists", return_value=True),
+                patch("taskctl.git_is_ancestor", side_effect=legacy_ancestry),
+                patch("taskctl.git_blob", side_effect=changed_after_first),
+            ):
+                _patterns, errors = taskctl_module.bootstrap_candidate_authorization(
+                    repo,
+                    {"bootstrapUnit": {"authorizedPaths": []}},
+                    references[:1],
+                    "d" * 40,
+                    "W1.A02.B00",
+                )
+            self.assertEqual([], errors)
 
     def test_legacy_star_scope_is_bounded_to_the_declared_directory_tree(self) -> None:
         patterns = ["design/ui-reference/*"]

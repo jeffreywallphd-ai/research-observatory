@@ -107,6 +107,7 @@ HISTORICAL_W1_A04_WITNESS = {
 }
 BOOTSTRAP_SCOPE_ADDENDUM_SCHEMA_PATH = "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json"
 BOOTSTRAP_SCOPE_CONTROL_CUTOVER = "e886dd196e767b52ec253ce5286a0064d5a59c2f"
+BOOTSTRAP_ADDENDUM_BLOB_CONTROL_CUTOVER = "3e1119e1ef913432fa473e95e6d86283e4ed3658"
 TASK_RECOVERY_CONTRACT_FIELDS = (
     "id",
     "capability_id",
@@ -2246,6 +2247,12 @@ def bootstrap_candidate_authorization(
             latest_authority[str(authorized_path)] = introduction
 
     for authorized_path, introduction in latest_authority.items():
+        binding_required = git_commit_exists(repo, BOOTSTRAP_ADDENDUM_BLOB_CONTROL_CUTOVER) and (
+            introduction == BOOTSTRAP_ADDENDUM_BLOB_CONTROL_CUTOVER
+            or git_is_ancestor(repo, BOOTSTRAP_ADDENDUM_BLOB_CONTROL_CUTOVER, introduction)
+        )
+        if not binding_required:
+            continue
         if git_blob(repo, candidate, authorized_path) != git_blob(repo, introduction, authorized_path):
             errors.append(
                 f"{bootstrap_id}: addendum-authorized path changed after its latest authority boundary: "
