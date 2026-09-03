@@ -129,6 +129,22 @@ main { min-width: 0; width: min(100%, 80rem); padding: var(--space-7); }
 .lineage-governed-region > p, .lineage-governed-region > ul, .lineage-governed-region > ol { margin: 0; }
 .lineage-governed-region ul, .lineage-governed-region ol { display: grid; gap: var(--space-2); padding-inline-start: var(--space-5); }
 .lineage-governed-region code { overflow-wrap: anywhere; }
+.controlled-recalculation { display: grid; gap: var(--space-4); }
+.controlled-recalculation .lineage-notice > button { justify-self: start; }
+.controlled-recalculation select,
+.controlled-recalculation input { width: 100%; min-height: 2.75rem; padding: var(--space-2) var(--space-3); color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font: inherit; }
+.controlled-recalculation label { color: var(--text-strong); font-weight: 700; }
+.controlled-recalculation table { width: 100%; border-collapse: collapse; background: var(--surface-1); }
+.controlled-recalculation caption { padding: var(--space-3); color: var(--text-muted); text-align: start; }
+.controlled-recalculation th,
+.controlled-recalculation td { min-width: 12rem; padding: var(--space-3); border: 1px solid var(--border-subtle); text-align: start; vertical-align: top; }
+.controlled-recalculation th { color: var(--text-strong); background: var(--surface-2); }
+.controlled-recalculation td { font-size: var(--text-sm); }
+.controlled-recalculation td > span,
+.controlled-recalculation td > code { display: block; margin-block-start: var(--space-1); }
+.controlled-recalculation code { overflow-wrap: anywhere; font-size: var(--text-xs); }
+.lineage-action-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.recalculation-revision-fields { display: grid; grid-template-columns: minmax(12rem, .65fr) minmax(18rem, 2fr); align-items: center; gap: var(--space-2) var(--space-4); }
 .diagnostics-workspace { display: grid; gap: var(--space-5); }
 .diagnostics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--space-4); }
 .diagnostics-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }
@@ -186,6 +202,7 @@ kbd { padding: var(--space-1) var(--space-2); color: var(--text-strong); backgro
   .lineage-trace-form label:first-child, .lineage-trace-form input, .lineage-trace-form .field-note,
   .lineage-trace-form label[for="lineage-direction"], .lineage-trace-form select,
   .lineage-trace-form button { grid-column: 1; grid-row: auto; }
+  .recalculation-revision-fields { grid-template-columns: 1fr; }
   .task-center-layout { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: no-preference) {

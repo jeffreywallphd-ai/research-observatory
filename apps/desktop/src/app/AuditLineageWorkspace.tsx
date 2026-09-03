@@ -4,10 +4,18 @@ import {
   CoreApiClientError,
   createCoreApiClient,
   type CoreApiTransport,
+  type IntentDraftProjection,
+  type IntentWorkspaceProjection,
   type ProjectProjection,
   type ProvenanceLineageNode,
   type ProvenanceLineagePage,
   type ProvenanceLineageRequest,
+  type RecalculationCauseProjection,
+  type RecalculationComparisonProjection,
+  type RecalculationPreview,
+  type RecalculationRestoreReviewProjection,
+  type RecalculationRestoredRevision,
+  type RecalculationScheduleProjection,
 } from "@research-observatory/contracts/core-api";
 import { Button, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 
@@ -16,6 +24,161 @@ import { packagedProjectTransport } from "./ProjectsWorkspace";
 const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const PAGE_SIZE = 50;
 const MAX_DEPTH = 8;
+
+type CoreApiClient = ReturnType<typeof createCoreApiClient>;
+export type RecalculationImpactClass = "automatic" | "review-required" | "blocked";
+
+export function recalculationImpactClass(cause: RecalculationCauseProjection): RecalculationImpactClass {
+  if (cause.disposition === "unknown-impact") return "blocked";
+  return cause.reviewRequired ? "review-required" : "automatic";
+}
+
+export function acceptedRecalculationIntent(workspace: IntentWorkspaceProjection): IntentDraftProjection | null {
+  return workspace.current?.status === "accepted" ? workspace.current : null;
+}
+
+function commandId(): string {
+  if (!globalThis.crypto) throw new Error("RO-CORE-CRYPTO-UNAVAILABLE");
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("");
+}
+
+function assertInspectableProject(project: ProjectProjection, revisionId?: string): void {
+  if (!project.open || project.accessMode === "closed" || project.compatibilityState !== "compatible"
+    || (revisionId !== undefined && !UUID_V7.test(revisionId))) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+}
+
+function assertMutableProject(project: ProjectProjection): void {
+  assertInspectableProject(project);
+  if (project.accessMode !== "read-write") throw new Error("RO-CORE-MUTATION-UNAVAILABLE");
+}
+
+export class ControlledRecalculationCoordinator {
+  private readonly scheduleAttempts = new Map<string, { readonly idempotencyKey: string; readonly requestedAt: string }>();
+  private readonly restoreReviewAttempts = new Map<string, { readonly idempotencyKey: string; readonly requestedAt: string }>();
+  private readonly restoreAttempts = new Map<string, { readonly modifiedAt: string }>();
+
+  constructor(
+    private readonly client: CoreApiClient,
+    private readonly createCommandId: () => string = commandId,
+    private readonly now: () => string = () => new Date().toISOString(),
+  ) {}
+
+  async loadAcceptedIntent(project: ProjectProjection): Promise<IntentDraftProjection | null> {
+    assertInspectableProject(project);
+    return acceptedRecalculationIntent(await this.client.intent({ root: project.root }));
+  }
+
+  async preview(project: ProjectProjection, targetRevisionId: string): Promise<RecalculationPreview> {
+    assertInspectableProject(project, targetRevisionId);
+    const preview = await this.client.previewRecalculation({ root: project.root, targetRevisionId });
+    if (preview.projectId !== project.projectId) throw new Error("RO-CORE-RESPONSE-INVALID");
+    return preview;
+  }
+
+  async schedule(
+    project: ProjectProjection,
+    preview: RecalculationPreview,
+    intent: IntentDraftProjection,
+    changeId: string,
+  ): Promise<RecalculationScheduleProjection> {
+    assertMutableProject(project);
+    if (preview.projectId !== project.projectId || intent.status !== "accepted"
+      || !preview.changeIds.includes(changeId) || !UUID_V7.test(changeId)) {
+      throw new Error("RO-CORE-REQUEST-INVALID");
+    }
+    const authorityKey = [project.projectId, preview.targetRevisionId, preview.planSha256, changeId,
+      intent.intentId, intent.revisionId, intent.revisionContentHash].join(":");
+    let attempt = this.scheduleAttempts.get(authorityKey);
+    if (!attempt) {
+      attempt = { idempotencyKey: this.createCommandId(), requestedAt: this.now() };
+      this.scheduleAttempts.set(authorityKey, attempt);
+    }
+    return await this.client.scheduleRecalculation({
+      root: project.root,
+      targetRevisionId: preview.targetRevisionId,
+      changeId,
+      expectedPlanSha256: preview.planSha256,
+      intentId: intent.intentId,
+      intentRevisionId: intent.revisionId,
+      intentSha256: intent.revisionContentHash,
+      requestedAt: attempt.requestedAt,
+    }, attempt.idempotencyKey);
+  }
+
+  async compare(
+    project: ProjectProjection,
+    beforeRevisionId: string,
+    afterRevisionId: string,
+  ): Promise<RecalculationComparisonProjection> {
+    assertInspectableProject(project, beforeRevisionId);
+    if (!UUID_V7.test(afterRevisionId) || beforeRevisionId === afterRevisionId) {
+      throw new Error("RO-CORE-REQUEST-INVALID");
+    }
+    return await this.client.compareRecalculation({ root: project.root, beforeRevisionId, afterRevisionId });
+  }
+
+  async requestRestoreReview(
+    project: ProjectProjection,
+    intent: IntentDraftProjection,
+    beforeRevisionId: string,
+    afterRevisionId: string,
+  ): Promise<RecalculationRestoreReviewProjection> {
+    assertMutableProject(project);
+    if (intent.status !== "accepted" || !UUID_V7.test(beforeRevisionId) || !UUID_V7.test(afterRevisionId)
+      || beforeRevisionId === afterRevisionId) throw new Error("RO-CORE-REQUEST-INVALID");
+    const authorityKey = [project.projectId, beforeRevisionId, afterRevisionId,
+      intent.intentId, intent.revisionId, intent.revisionContentHash].join(":");
+    let attempt = this.restoreReviewAttempts.get(authorityKey);
+    if (!attempt) {
+      attempt = { idempotencyKey: this.createCommandId(), requestedAt: this.now() };
+      this.restoreReviewAttempts.set(authorityKey, attempt);
+    }
+    return await this.client.requestRecalculationRestoreReview({
+      root: project.root,
+      beforeRevisionId,
+      afterRevisionId,
+      intentId: intent.intentId,
+      intentRevisionId: intent.revisionId,
+      intentSha256: intent.revisionContentHash,
+      requestedAt: attempt.requestedAt,
+    }, attempt.idempotencyKey);
+  }
+
+  async restore(
+    project: ProjectProjection,
+    review: RecalculationRestoreReviewProjection,
+    priorAdjudicatedRevisionId: string,
+    expectedCurrentRevisionId: string,
+    decisionId: string,
+  ): Promise<RecalculationRestoredRevision> {
+    assertMutableProject(project);
+    if (!UUID_V7.test(review.workflowRunId) || !UUID_V7.test(review.humanTaskId)
+      || !UUID_V7.test(priorAdjudicatedRevisionId) || !UUID_V7.test(expectedCurrentRevisionId)
+      || !UUID_V7.test(decisionId) || priorAdjudicatedRevisionId === expectedCurrentRevisionId) {
+      throw new Error("RO-CORE-REQUEST-INVALID");
+    }
+    const authorityKey = [project.projectId, review.workflowRunId, review.humanTaskId, decisionId,
+      priorAdjudicatedRevisionId, expectedCurrentRevisionId].join(":");
+    let attempt = this.restoreAttempts.get(authorityKey);
+    if (!attempt) {
+      attempt = { modifiedAt: this.now() };
+      this.restoreAttempts.set(authorityKey, attempt);
+    }
+    return await this.client.restoreRecalculationRevision({
+      root: project.root,
+      workflowRunId: review.workflowRunId,
+      humanTaskId: review.humanTaskId,
+      decisionId,
+      priorAdjudicatedRevisionId,
+      expectedCurrentRevisionId,
+      modifiedAt: attempt.modifiedAt,
+    });
+  }
+}
 
 type LineageDirection = ProvenanceLineageRequest["direction"];
 type LineageNodeRole =
@@ -126,8 +289,8 @@ function safeFailure(error: unknown): { readonly title: string; readonly message
     };
   }
   return {
-    title: "RO-CORE-LINEAGE-TRACE-FAILED",
-    message: "The exact lineage trace could not be verified. Check local Core status and the revision ID, then retry.",
+    title: "RO-CORE-LOCAL-ACTION-FAILED",
+    message: "The local Core action could not be verified. Existing revisions and decisions remain authoritative; check Core status and retry.",
   };
 }
 
@@ -231,6 +394,363 @@ export function exportLineageManifest(
   }, null, 2);
 }
 
+type RecalculationAction = "preview" | "schedule" | "compare" | "request-restore-review" | "restore";
+
+interface ControlledRecalculationRegionProps {
+  readonly project: ProjectProjection | null;
+  readonly targetRevisionId: string;
+  readonly trace: ProvenanceLineagePage | null;
+  readonly coordinator: ControlledRecalculationCoordinator;
+  readonly announce: (message: string) => void;
+}
+
+function ControlledRecalculationRegion({
+  project,
+  targetRevisionId,
+  trace,
+  coordinator,
+  announce,
+}: ControlledRecalculationRegionProps): ReactNode {
+  const [preview, setPreview] = useState<RecalculationPreview | null>(null);
+  const [intent, setIntent] = useState<IntentDraftProjection | null>(null);
+  const [selectedChangeId, setSelectedChangeId] = useState("");
+  const [deferred, setDeferred] = useState(false);
+  const [schedule, setSchedule] = useState<RecalculationScheduleProjection | null>(null);
+  const [beforeRevisionId, setBeforeRevisionId] = useState("");
+  const [afterRevisionId, setAfterRevisionId] = useState("");
+  const [comparison, setComparison] = useState<RecalculationComparisonProjection | null>(null);
+  const [restoreReview, setRestoreReview] = useState<RecalculationRestoreReviewProjection | null>(null);
+  const [decisionId, setDecisionId] = useState("");
+  const [restored, setRestored] = useState<RecalculationRestoredRevision | null>(null);
+  const [busy, setBusy] = useState<RecalculationAction | null>(null);
+  const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
+
+  useEffect(() => {
+    setPreview(null);
+    setIntent(null);
+    setSelectedChangeId("");
+    setDeferred(false);
+    setSchedule(null);
+    setBeforeRevisionId("");
+    setAfterRevisionId("");
+    setComparison(null);
+    setRestoreReview(null);
+    setDecisionId("");
+    setRestored(null);
+    setFailure(null);
+  }, [project?.projectId, project?.root]);
+
+  const mutable = project?.open === true
+    && project.accessMode === "read-write"
+    && project.compatibilityState === "compatible";
+  const currentPreview = preview?.targetRevisionId === targetRevisionId;
+  const exactComparison = comparison?.beforeRevisionId === beforeRevisionId
+    && comparison.afterRevisionId === afterRevisionId;
+  const validComparisonInput = UUID_V7.test(beforeRevisionId)
+    && UUID_V7.test(afterRevisionId)
+    && beforeRevisionId !== afterRevisionId;
+  const selectedNode = trace?.items.find((node) => node.revisionId === targetRevisionId);
+
+  const fail = (error: unknown, action: string): void => {
+    const safe = safeFailure(error);
+    setFailure(safe);
+    announce(`${action} did not complete. ${safe.title}`);
+  };
+
+  const runPreview = async (): Promise<void> => {
+    if (!project) return;
+    setBusy("preview");
+    setFailure(null);
+    setIntent(null);
+    try {
+      const next = await coordinator.preview(project, targetRevisionId);
+      setPreview(next);
+      setSelectedChangeId(next.changeIds[0] ?? "");
+      setDeferred(false);
+      setSchedule(null);
+      setBeforeRevisionId(next.targetRevisionId);
+      setAfterRevisionId(next.replacementRevisionIds[0] ?? "");
+      setComparison(null);
+      setRestoreReview(null);
+      setDecisionId("");
+      setRestored(null);
+      const accepted = await coordinator.loadAcceptedIntent(project);
+      setIntent(accepted);
+      announce(accepted
+        ? "Controlled recalculation impact preview loaded and bound to the accepted research intent."
+        : "Impact preview loaded. Scheduling remains unavailable until the research intent is accepted.");
+    } catch (error) {
+      fail(error, "Recalculation preview");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const runSchedule = async (): Promise<void> => {
+    if (!project || !preview || !intent || !selectedChangeId || !currentPreview) return;
+    setBusy("schedule");
+    setFailure(null);
+    try {
+      const result = await coordinator.schedule(project, preview, intent, selectedChangeId);
+      setSchedule(result);
+      announce("Selected recalculation scheduled as a new immutable candidate; the stale revision remains visible.");
+    } catch (error) {
+      fail(error, "Recalculation schedule");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const runComparison = async (): Promise<void> => {
+    if (!project) return;
+    setBusy("compare");
+    setFailure(null);
+    try {
+      const result = await coordinator.compare(project, beforeRevisionId, afterRevisionId);
+      setComparison(result);
+      setRestoreReview(null);
+      setDecisionId("");
+      setRestored(null);
+      announce("Immutable before-and-after revision comparison loaded.");
+    } catch (error) {
+      fail(error, "Revision comparison");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const runRestoreReview = async (): Promise<void> => {
+    if (!project || !intent || !exactComparison) return;
+    setBusy("request-restore-review");
+    setFailure(null);
+    try {
+      const result = await coordinator.requestRestoreReview(
+        project,
+        intent,
+        beforeRevisionId,
+        afterRevisionId,
+      );
+      setRestoreReview(result);
+      setDecisionId("");
+      setRestored(null);
+      announce("Restore review requested. No revision was activated; an authorized human decision is required.");
+    } catch (error) {
+      fail(error, "Restore review request");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const runRestore = async (): Promise<void> => {
+    if (!project || !restoreReview || !exactComparison) return;
+    setBusy("restore");
+    setFailure(null);
+    try {
+      const result = await coordinator.restore(
+        project,
+        restoreReview,
+        beforeRevisionId,
+        afterRevisionId,
+        decisionId,
+      );
+      setRestored(result);
+      announce("The recorded human decision created a new restoration revision; prior revisions remain immutable.");
+    } catch (error) {
+      fail(error, "Revision restoration");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <section className="controlled-recalculation" aria-labelledby="controlled-recalculation-title">
+      <div className="lineage-results-heading">
+        <Typography id="controlled-recalculation-title" as="h2" variant="section-title">
+          Controlled recalculation
+        </Typography>
+        <span>Preview first; preserve every adjudicated revision.</span>
+      </div>
+
+      <section className="lineage-notice" data-recalculation-stale aria-labelledby="recalculation-stale-title">
+        <strong id="recalculation-stale-title">
+          {preview ? "Stale output remains visible" : "Check an output for dependency changes"}
+        </strong>
+        {preview ? (
+          <>
+            <span>{preview.causes[0]?.reason ?? "Core found a material dependency change for this revision."}</span>
+            <span>
+              Safest next action: inspect the bounded impact classes, then schedule only the selected change.
+              {deferred ? " Recalculation is deferred; staleness has not been cleared." : ""}
+            </span>
+          </>
+        ) : (
+          <span>Enter an exact revision ID and preview its current dependency impact. No work is scheduled by preview.</span>
+        )}
+        <Button
+          onClick={() => { void runPreview(); }}
+          tone="primary"
+          disabled={!project || busy !== null || !UUID_V7.test(targetRevisionId)}
+          data-preview-recalculation
+        >
+          {busy === "preview" ? "Previewing…" : "Preview impacts"}
+        </Button>
+      </section>
+
+      {failure ? (
+        <div className="lineage-notice lineage-notice--danger" role="alert">
+          <strong>{failure.title}</strong><span>{failure.message}</span>
+        </div>
+      ) : null}
+
+      <section className="lineage-governed-region" data-recalculation-preview aria-labelledby="recalculation-preview-title">
+        <div className="lineage-results-heading">
+          <Typography id="recalculation-preview-title" as="h3" variant="section-title">Impact preview</Typography>
+          <StatusBadge tone={preview ? "warning" : "neutral"}>
+            {preview ? `${preview.causes.length} affected` : "Not previewed"}
+          </StatusBadge>
+        </div>
+        {preview ? (
+          <>
+            {!currentPreview ? <p role="alert">The revision ID changed after this preview. Preview again before scheduling.</p> : null}
+            <div className="lineage-table-scroll">
+              <table>
+                <caption>Core-classified effects for the exact preview plan</caption>
+                <thead><tr><th scope="col">Class</th><th scope="col">Affected identity</th><th scope="col">Reason</th><th scope="col">Action</th></tr></thead>
+                <tbody>
+                  {preview.causes.map((cause) => {
+                    const impactClass = recalculationImpactClass(cause);
+                    return (
+                      <tr key={cause.causeId} data-impact-state={impactClass}>
+                        <td><StatusBadge tone={impactClass === "automatic" ? "success" : impactClass === "blocked" ? "danger" : "warning"}>{impactClass.replace("-", " ")}</StatusBadge></td>
+                        <td><code>{cause.causeId}</code><span>depth {cause.depth} · {cause.confidence}</span></td>
+                        <td>{cause.reason}</td>
+                        <td>{impactClass === "blocked" ? "Preserve stale revision" : impactClass === "review-required" ? "Create candidate for review" : "Eligible for selected recalculation"}</td>
+                      </tr>
+                    );
+                  })}
+                  {preview.reusableRevisionIds.map((revision) => (
+                    <tr key={`reuse:${revision}`} data-impact-state="informational-reuse">
+                      <td><StatusBadge tone="info">informational</StatusBadge></td>
+                      <td><code>{revision}</code></td>
+                      <td>Core proved this revision unchanged under the exact plan.</td>
+                      <td>Reuse without recomputation</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <label htmlFor="recalculation-change-id">Selected bounded change</label>
+            <select id="recalculation-change-id" value={selectedChangeId} onChange={(event) => setSelectedChangeId(event.currentTarget.value)}>
+              {preview.changeIds.map((changeId) => <option key={changeId} value={changeId}>{changeId}</option>)}
+            </select>
+            <div className="lineage-action-row">
+              <Button
+                onClick={() => {
+                  setDeferred(true);
+                  announce("Recalculation deferred; the stale state remains visible.");
+                }}
+                disabled={busy !== null || !preview.deferPreservesStaleVisibility}
+                data-defer-recalculation
+              >Defer and keep stale</Button>
+              <Button
+                onClick={() => { void runSchedule(); }}
+                tone="primary"
+                disabled={busy !== null || !mutable || !intent || !selectedChangeId || !currentPreview || schedule !== null}
+                data-schedule-recalculation
+              >{busy === "schedule" ? "Scheduling…" : "Schedule selected"}</Button>
+            </div>
+            {!intent ? <p role="status">An accepted research intent is required before scheduling or restore review.</p> : null}
+            {!mutable ? <p role="status">Read-only inspection is available, but recalculation and restoration require compatible read-write project access.</p> : null}
+            {schedule ? <p role="status">Candidate workflow <code>{schedule.workflowRunId}</code> is {schedule.state}; job <code>{schedule.jobId}</code>. The active revision was not overwritten.</p> : null}
+          </>
+        ) : (
+          <>
+            <p>Preview an exact revision to see automatic, review-required, blocked, and informational effects.</p>
+            <div className="lineage-action-row">
+              <Button disabled data-defer-recalculation>Defer and keep stale</Button>
+              <Button disabled data-schedule-recalculation>Schedule selected</Button>
+            </div>
+          </>
+        )}
+      </section>
+
+      <section className="lineage-governed-region" data-recalculation-policy aria-labelledby="recalculation-policy-title">
+        <Typography id="recalculation-policy-title" as="h3" variant="section-title">Current policy and rights authority</Typography>
+        <dl className="lineage-identity">
+          <div><dt>Preview policy</dt><dd>{preview ? <code>{preview.policySha256}</code> : "Not evaluated"}</dd></div>
+          <div><dt>Selected output rights</dt><dd>{selectedNode ? selectedNode.rightsStatus : "Load lineage for the exact rights result"}</dd></div>
+          <div><dt>Egress</dt><dd>No remote egress is authorized by these controls.</dd></div>
+        </dl>
+        <p>Core re-evaluates current policy when work is scheduled and when restore review is requested.</p>
+      </section>
+
+      <section className="lineage-governed-region" data-recalculation-comparison aria-labelledby="recalculation-comparison-title">
+        <Typography id="recalculation-comparison-title" as="h3" variant="section-title">Immutable revision comparison</Typography>
+        <p>Compare the current adjudicated revision with a generated candidate. Neither revision is modified.</p>
+        <div className="recalculation-revision-fields">
+          <label htmlFor="recalculation-before-id">Before revision ID</label>
+          <input id="recalculation-before-id" value={beforeRevisionId} onChange={(event) => {
+            setBeforeRevisionId(event.currentTarget.value.trim().toLowerCase());
+            setRestoreReview(null); setDecisionId(""); setRestored(null);
+          }} autoComplete="off" spellCheck={false} />
+          <label htmlFor="recalculation-after-id">Candidate/current revision ID</label>
+          <input id="recalculation-after-id" value={afterRevisionId} onChange={(event) => {
+            setAfterRevisionId(event.currentTarget.value.trim().toLowerCase());
+            setRestoreReview(null); setDecisionId(""); setRestored(null);
+          }} autoComplete="off" spellCheck={false} />
+        </div>
+        <Button onClick={() => { void runComparison(); }} disabled={!project || busy !== null || !validComparisonInput} data-compare-recalculation>
+          {busy === "compare" ? "Comparing…" : "Compare revisions"}
+        </Button>
+        {comparison ? (
+          <dl className="lineage-identity">
+            <div><dt>Aggregate</dt><dd><code>{comparison.aggregateId}</code></dd></div>
+            <div><dt>Before</dt><dd>revision {comparison.beforeRevision} · <code>{comparison.beforeRevisionId}</code></dd></div>
+            <div><dt>After</dt><dd>revision {comparison.afterRevision} · <code>{comparison.afterRevisionId}</code></dd></div>
+            <div><dt>Changed fields</dt><dd>{comparison.changedFields.length ? comparison.changedFields.join(", ") : "No field changes"}</dd></div>
+          </dl>
+        ) : null}
+      </section>
+
+      <section className="lineage-governed-region" data-recalculation-restoration aria-labelledby="recalculation-restoration-title">
+        <div className="lineage-results-heading">
+          <Typography id="recalculation-restoration-title" as="h3" variant="section-title">Human-gated restoration</Typography>
+          <StatusBadge tone={restoreReview ? "warning" : "neutral"}>{restoreReview ? "Decision required" : "Review not requested"}</StatusBadge>
+        </div>
+        <p>Requesting review does not activate a revision. Approval creates a new restoration revision and never rewrites history.</p>
+        <Button
+          onClick={() => { void runRestoreReview(); }}
+          disabled={busy !== null || !mutable || !intent || !exactComparison || restoreReview !== null}
+          data-request-restore-review
+        >{busy === "request-restore-review" ? "Requesting…" : "Request restore review"}</Button>
+        {restoreReview ? (
+          <>
+            <dl className="lineage-identity">
+              <div><dt>Workflow</dt><dd><code>{restoreReview.workflowRunId}</code></dd></div>
+              <div><dt>Human task</dt><dd><code>{restoreReview.humanTaskId}</code></dd></div>
+              <div><dt>Policy</dt><dd><code>{restoreReview.policySha256}</code></dd></div>
+            </dl>
+            <label htmlFor="recalculation-decision-id">Recorded approved decision ID from Task Center</label>
+            <input id="recalculation-decision-id" value={decisionId} onChange={(event) => setDecisionId(event.currentTarget.value.trim().toLowerCase())} autoComplete="off" spellCheck={false} />
+            <Button
+              onClick={() => { void runRestore(); }}
+              tone="primary"
+              disabled={busy !== null || !mutable || !exactComparison || !UUID_V7.test(decisionId) || restored !== null}
+              data-restore-revision
+            >{busy === "restore" ? "Restoring…" : "Create restoration revision"}</Button>
+          </>
+        ) : (
+          <>
+            <input aria-label="Recorded approved decision ID from Task Center" value="" disabled readOnly />
+            <Button disabled data-restore-revision>Create restoration revision</Button>
+          </>
+        )}
+        {restored ? <p role="status">Restoration revision <code>{restored.revisionId}</code> was created at revision {restored.revision}; rights {restored.rightsStatus}.</p> : null}
+      </section>
+    </section>
+  );
+}
+
 export function AuditLineageWorkspace({
   project,
   announce,
@@ -239,6 +759,7 @@ export function AuditLineageWorkspace({
   initialTrace = null,
 }: AuditLineageWorkspaceProps): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
+  const recalculationCoordinator = useMemo(() => new ControlledRecalculationCoordinator(client), [client]);
   const availability = lineageAvailability(project);
   const [revisionId, setRevisionId] = useState(initialRevisionId);
   const [direction, setDirection] = useState<LineageDirection>(initialTrace?.direction ?? "ancestors");
@@ -314,7 +835,7 @@ export function AuditLineageWorkspace({
       <div className="page-header">
         <Typography id="audit-lineage-title" as="h1" variant="page-title">Audit &amp; lineage</Typography>
         <Typography className="page-subtitle">
-          Trace an exact output revision through content-free source, transformation, configuration, actor, and audit identities.
+          Trace exact output lineage, inspect dependency impacts, and govern selective recalculation through immutable revisions and explicit human decisions.
         </Typography>
       </div>
 
@@ -361,6 +882,14 @@ export function AuditLineageWorkspace({
           <span>{failure.message}</span>
         </div>
       ) : null}
+
+      <ControlledRecalculationRegion
+        project={project}
+        targetRevisionId={revisionId}
+        trace={trace}
+        coordinator={recalculationCoordinator}
+        announce={announce}
+      />
 
       {trace ? (
         <>
