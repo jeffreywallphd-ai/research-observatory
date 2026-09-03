@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0015",
   "title": "Admit authenticated post-review bootstrap scope addenda",
-  "status": "pending-review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -77,18 +77,32 @@
       ],
       "path": "planning/governance-migrations/GOV-MAINT-0015.review-R01.json",
       "sha256": "845b6cb7fe0743f09238d0741865b7df203ac893a8782074c9d18e91c1282e79"
+    },
+    {
+      "reviewId": "GOV-MAINT-0015.R02",
+      "reviewedCommit": "5cf44d21fae8e3448f7980953b78f5bba9db5fcd",
+      "reviewer": "agent:ecr5-planning-authority-reviewer",
+      "reviewedAt": "2026-09-03T13:45:26.3587151-04:00",
+      "disposition": "APPROVED",
+      "findings": [],
+      "closures": [
+        "GOV-MAINT-0015-R01-F01"
+      ],
+      "path": "planning/governance-migrations/GOV-MAINT-0015.review-R02.json",
+      "sha256": "83c6d9c7293145dedb3878685e8a67fb410e6c442757540309794c854e8bf1e7"
     }
   ],
   "review": {
-    "reviewId": "GOV-MAINT-0015.R01",
-    "reviewedCommit": "e9762975408f341cbba04ca8fa0e5c08f8cb84f7",
+    "reviewId": "GOV-MAINT-0015.R02",
+    "reviewedCommit": "5cf44d21fae8e3448f7980953b78f5bba9db5fcd",
     "reviewer": "agent:ecr5-planning-authority-reviewer",
-    "reviewedAt": "2026-09-03T13:17:03.4270225-04:00",
-    "disposition": "CHANGES_REQUESTED",
-    "findings": [
+    "reviewedAt": "2026-09-03T13:45:26.3587151-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "closures": [
       "GOV-MAINT-0015-R01-F01"
     ],
-    "path": "planning/governance-migrations/GOV-MAINT-0015.review-R01.json",
-    "sha256": "845b6cb7fe0743f09238d0741865b7df203ac893a8782074c9d18e91c1282e79"
+    "path": "planning/governance-migrations/GOV-MAINT-0015.review-R02.json",
+    "sha256": "83c6d9c7293145dedb3878685e8a67fb410e6c442757540309794c854e8bf1e7"
   }
 }
