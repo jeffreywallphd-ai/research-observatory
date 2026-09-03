@@ -1480,14 +1480,15 @@ def wave_slice_authority_bound_approval_errors(
     projection_sequence = git(
         repo,
         "rev-list",
+        "--first-parent",
         "--reverse",
-        "--ancestry-path",
         f"{approved_wave_commit}..{proposal_commit}",
     ).splitlines()
     if not projection_sequence:
         return [*errors, f"{label}: approved Wave lacks an immutable approval projection before the proposal"]
     projection_commit = projection_sequence[0]
-    if git(repo, "rev-parse", f"{projection_commit}^") != approved_wave_commit:
+    projection_parents = git(repo, "rev-list", "--parents", "-n", "1", projection_commit).split()[1:]
+    if projection_parents != [approved_wave_commit]:
         errors.append(f"{label}: Wave approval projection is not the direct child of the packet commit")
 
     source_specs = {

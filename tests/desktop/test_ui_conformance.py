@@ -83,6 +83,7 @@ class UiConformanceTests(unittest.TestCase):
         temporary: str,
         *,
         extra_proposal_path: bool = False,
+        merge_projection: bool = False,
         substitute_slice: bool = False,
     ) -> tuple[Path, dict[str, Any], str, str]:
         root = Path(temporary) / "repo"
@@ -144,6 +145,8 @@ class UiConformanceTests(unittest.TestCase):
             "approved_commit": packet,
             "slice_ids": ["CAP-03.S05"],
         }
+        if merge_projection:
+            self.git(root, "checkout", "-b", "projection-injection")
         write_backlog(projected)
         write_slice(
             {
@@ -155,6 +158,16 @@ class UiConformanceTests(unittest.TestCase):
         )
         self.git(root, "add", "--all")
         self.git(root, "commit", "-m", "materialize Wave approval projection")
+        if merge_projection:
+            self.git(root, "checkout", "main")
+            self.git(
+                root,
+                "merge",
+                "--no-ff",
+                "projection-injection",
+                "-m",
+                "inject Wave approval projection through merge",
+            )
 
         if substitute_slice:
             substituted = yaml.safe_load(slice_path.read_text(encoding="utf-8").split("---", 2)[1])
@@ -637,6 +650,22 @@ class UiConformanceTests(unittest.TestCase):
             )
 
         self.assertTrue(any("proposal must change only" in error for error in errors), errors)
+
+    def test_wave_slice_bound_approval_rejects_multiparent_projection_injection(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval, _, approval_commit = self.wave_slice_authority_fixture(
+                temporary,
+                merge_projection=True,
+            )
+
+            errors = wave_slice_authority_bound_approval_errors(
+                root,
+                approval,
+                approval_commit,
+                "design/ui-reference/APPROVAL.yaml",
+            )
+
+        self.assertTrue(any("projection is not the direct child" in error for error in errors), errors)
 
     def test_wave_slice_bound_approval_rejects_slice_authority_substitution(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
