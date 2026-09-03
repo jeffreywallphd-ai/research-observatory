@@ -41,6 +41,7 @@ class DesktopAppCheckTests(unittest.TestCase):
                 "CAP-02.S04.T03",
                 "CAP-03.S02.T02",
                 "CAP-03.S03.T03",
+                "CAP-03.S05.T03",
             ],
             details["implementedCapabilities"],
         )

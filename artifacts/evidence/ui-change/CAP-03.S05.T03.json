@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-03.S05.T03",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-03.S05.T03.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+    "apps/desktop/src/app/audit-lineage.conformance.json"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "version": "1.5",
+    "packageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
+    "approvalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.4"
+  },
+  "focusedEvidence": [
+    {
+      "command": "apps/desktop/node_modules/.bin/tsc -p apps/desktop/tsconfig.json --noEmit --pretty false && npm run lint --prefix apps/desktop && npm test --prefix apps/desktop -- --run src/app/ApplicationRuntime.test.tsx src/app/AuditLineageWorkspace.test.tsx && npm run build --prefix apps/desktop",
+      "result": "passed",
+      "scope": "Strict desktop types and lint passed; 16 focused renderer and route tests passed; the production and reference bundles built with the exact approved v1.5 identity. The recalculation tests cover all five generated client operations, read-only mutation denial, accepted-intent and plan binding, impact classes, and byte-identical retry authority for scheduling, restore review, and restoration."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check && .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "result": "passed",
+      "scope": "All eight focused desktop-product checker tests passed. The assembled functional frame passed keyboard, focus, responsive, design-system, project, privacy, diagnostics, application-lock, and recovery checks while advertising CAP-03.S05.T03 as functional product work."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference && .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows && .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "result": "passed",
+      "scope": "The approved v1.5 reference is reproducible with zero errors; 139 workflow browser cases, 390 keyboard cases, and 66 responsive/accessibility visual cases passed against its exact package hash."
+    }
+  ],
+  "implementationScope": "Implement the approved Academic Minimal v1.5 controlled-recalculation experience in the production Audit & Lineage workspace. The renderer obtains a Core-authored stale/impact preview, shows automatic, review-required, blocked, and reusable effects, preserves visible staleness on deferral, displays exact current policy and lineage rights authority, schedules one selected change under an accepted research intent, compares immutable revisions, requests an exact human restore task, and creates a restoration revision only after Core validates the recorded decision. Existing and adjudicated revisions are never overwritten, no remote egress is authorized, and mutation controls fail closed for incompatible or read-only projects."
+}

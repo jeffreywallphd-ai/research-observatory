@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.4",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
   "referencePage": "audit-lineage.html",
   "routeId": "audit-lineage",
   "component": "apps/desktop/src/app/AuditLineageWorkspace.tsx",
@@ -10,12 +10,23 @@
     "rights-and-egress-decisions": "[data-rights-egress]",
     "human-decisions": "[data-human-decisions]",
     "audit-events": "[data-audit-events]",
-    "exportable-manifest": "[data-export-manifest]"
+    "exportable-manifest": "[data-export-manifest]",
+    "stale-status": "[data-recalculation-stale]",
+    "recalculation-impact-preview": "[data-recalculation-preview]",
+    "current-policy-status": "[data-recalculation-policy]",
+    "immutable-revision-comparison": "[data-recalculation-comparison]",
+    "human-gated-restoration": "[data-recalculation-restoration]"
   },
   "interactions": {
     "trace-exact-revision": "[data-trace-lineage]",
     "load-next-bounded-page": ".lineage-results button",
-    "export-content-minimized-manifest": "[data-export-manifest] button"
+    "export-content-minimized-manifest": "[data-export-manifest] button",
+    "preview-recalculation-impact": "[data-preview-recalculation]",
+    "defer-with-visible-staleness": "[data-defer-recalculation]",
+    "schedule-selected-recalculation": "[data-schedule-recalculation]",
+    "compare-immutable-revisions": "[data-compare-recalculation]",
+    "request-human-restore-review": "[data-request-restore-review]",
+    "restore-after-recorded-decision": "[data-restore-revision]"
   },
   "states": [
     "closed-project-denial",
@@ -25,7 +36,15 @@
     "missing-revision",
     "legacy-event",
     "stale-invalidation",
-    "rights-restricted-export-denial"
+    "rights-restricted-export-denial",
+    "stale-visible",
+    "recalculation-deferred",
+    "automatic-impact",
+    "review-required-impact",
+    "blocked-impact",
+    "informational-reuse",
+    "restore-review-required",
+    "restore-decision-ready"
   ],
   "tests": [
     "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",

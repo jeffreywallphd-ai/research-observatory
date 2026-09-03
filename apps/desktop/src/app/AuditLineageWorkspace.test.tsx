@@ -6,12 +6,16 @@ import { describe, expect, it } from "vitest";
 import {
   createCoreApiClient,
   type CoreApiRequest,
+  type IntentDraftProjection,
   type ProjectProjection,
   type ProvenanceLineagePage,
+  type RecalculationPreview,
 } from "@research-observatory/contracts/core-api";
 
 import {
   AuditLineageWorkspace,
+  ControlledRecalculationCoordinator,
+  acceptedRecalculationIntent,
   continuationLineageRequest,
   exportLineageManifest,
   lineageManifestReady,
@@ -20,6 +24,7 @@ import {
   loadLineagePage,
   mergeLineagePage,
   provenanceLineageRequest,
+  recalculationImpactClass,
 } from "./AuditLineageWorkspace";
 
 const project: ProjectProjection = {
@@ -151,7 +156,257 @@ const lineage: ProvenanceLineagePage = {
   exportDenialReason: "integrity-review",
 };
 
+const acceptedIntent: IntentDraftProjection = {
+  schemaVersion: "1.0",
+  intentId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a1",
+  revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a2",
+  revision: 3,
+  revisionContentHash: `sha256:${"a".repeat(64)}`,
+  createdAt: "2026-08-29T19:00:00.000Z",
+  status: "accepted",
+  primaryUseCase: "theory-synthesis",
+  epistemicMode: "theory",
+  researchObjective: "Explain the bounded mechanism.",
+  phenomenon: "observed mechanism",
+  unitOfAnalysis: "study",
+  levelOfAnalysis: "study",
+  contributionIntent: "bounded synthesis",
+  sourceKinds: ["peer-reviewed-article"],
+  evidenceTypes: ["empirical-study"],
+  languageCodes: ["en"],
+  startYear: 2000,
+  endYear: 2026,
+  includePrivateReports: false,
+  stoppingConditions: ["researcher-decision"],
+  autonomyLevel: "prepare-reversible",
+  noveltyStandard: "bounded-comparative",
+  noveltyRationale: "Compare only within the accepted corpus.",
+  revisionRationale: "Accepted scope.",
+  decisionComplete: true,
+  unresolvedDecisions: [],
+  canRequestAcceptance: false,
+  launchReady: true,
+};
+
+const recalculationPreview: RecalculationPreview = {
+  schemaVersion: "1.0",
+  projectId: project.projectId,
+  targetRevisionId: lineage.revisionId,
+  changeIds: ["01890f47-eae3-7cc0-98c4-dc0c0c0739a3"],
+  causes: [
+    {
+      causeId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a4",
+      changeId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a3",
+      confidence: "confirmed",
+      depth: 1,
+      disposition: "stale",
+      pathRevisionIds: [lineage.revisionId],
+      reason: "A verified evidence dependency changed.",
+      reviewRequired: false,
+    },
+    {
+      causeId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a5",
+      changeId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a3",
+      confidence: "conditional",
+      depth: 2,
+      disposition: "stale",
+      pathRevisionIds: [lineage.revisionId],
+      reason: "A researcher-adjudicated claim depends on the evidence.",
+      reviewRequired: true,
+    },
+    {
+      causeId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a6",
+      changeId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a3",
+      confidence: "unknown",
+      depth: 3,
+      disposition: "unknown-impact",
+      pathRevisionIds: [lineage.revisionId],
+      reason: "The downstream impact cannot be proven safely.",
+      reviewRequired: true,
+    },
+  ],
+  reusableRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c0739a7"],
+  replacementRevisionIds: ["01890f47-eae3-7cc0-98c4-dc0c0c0739a8"],
+  planSha256: `sha256:${"b".repeat(64)}`,
+  policySha256: `sha256:${"c".repeat(64)}`,
+  deferPreservesStaleVisibility: true,
+};
+
 describe("audit and lineage workspace", () => {
+  it("classifies controlled recalculation impacts without hiding uncertain or reusable work", () => {
+    expect(recalculationImpactClass(recalculationPreview.causes[0]!)).toBe("automatic");
+    expect(recalculationImpactClass(recalculationPreview.causes[1]!)).toBe("review-required");
+    expect(recalculationImpactClass(recalculationPreview.causes[2]!)).toBe("blocked");
+    expect(acceptedRecalculationIntent({
+      schemaVersion: "1.0",
+      projectId: project.projectId,
+      current: acceptedIntent,
+      history: [],
+    })).toBe(acceptedIntent);
+    expect(acceptedRecalculationIntent({
+      schemaVersion: "1.0",
+      projectId: project.projectId,
+      current: { ...acceptedIntent, status: "draft" },
+      history: [],
+    })).toBeNull();
+  });
+
+  it("drives the generated client through the complete bounded recalculation and restoration path", async () => {
+    const requests: CoreApiRequest[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      const body = request.body ? JSON.parse(request.body) as Record<string, unknown> : {};
+      const response = request.path === "/projects/intent"
+        ? {
+            schemaVersion: "1.0",
+            projectId: project.projectId,
+            current: acceptedIntent,
+            history: [{
+              revision: acceptedIntent.revision,
+              revisionId: acceptedIntent.revisionId,
+              revisionContentHash: acceptedIntent.revisionContentHash,
+              createdAt: acceptedIntent.createdAt,
+              status: acceptedIntent.status,
+              primaryUseCase: acceptedIntent.primaryUseCase,
+              unresolvedDecisionCount: 0,
+            }],
+          }
+        : request.path === "/projects/recalculation/preview"
+          ? recalculationPreview
+          : request.path === "/projects/recalculation/schedules"
+            ? {
+                schemaVersion: "1.0",
+                projectId: project.projectId,
+                targetRevisionId: body.targetRevisionId,
+                planSha256: body.expectedPlanSha256,
+                workflowRunId: "01890f47-eae3-7cc0-98c4-dc0c0c0739a9",
+                jobId: "01890f47-eae3-7cc0-98c4-dc0c0c0739aa",
+                state: "runnable",
+              }
+            : request.path === "/projects/recalculation/comparisons"
+              ? {
+                  schemaVersion: "1.0",
+                  aggregateId: "01890f47-eae3-7cc0-98c4-dc0c0c0739ab",
+                  beforeRevisionId: body.beforeRevisionId,
+                  beforeRevision: 4,
+                  afterRevisionId: body.afterRevisionId,
+                  afterRevision: 5,
+                  changedFields: ["knowledgeStatus", "summary"],
+                }
+              : request.path === "/projects/recalculation/restore-reviews"
+                ? {
+                    schemaVersion: "1.0",
+                    workflowRunId: "01890f47-eae3-7cc0-98c4-dc0c0c0739ac",
+                    humanTaskId: "01890f47-eae3-7cc0-98c4-dc0c0c0739ad",
+                    snapshotRevision: 1,
+                    historySequence: 2,
+                    policySha256: recalculationPreview.policySha256,
+                  }
+                : {
+                    schemaVersion: "1.0",
+                    projectId: project.projectId,
+                    aggregateId: "01890f47-eae3-7cc0-98c4-dc0c0c0739ab",
+                    revisionId: "01890f47-eae3-7cc0-98c4-dc0c0c0739ae",
+                    revision: 6,
+                    knowledgeStatus: "adjudicated",
+                    rightsStatus: "allowed",
+                  };
+      return {
+        status: 200,
+        contentType: "application/json",
+        traceId: "0123456789abcdef0123456789abcdef",
+        etag: null,
+        body: JSON.stringify(response),
+      };
+    });
+    let clockTick = 0;
+    const coordinator = new ControlledRecalculationCoordinator(
+      client,
+      () => "d".repeat(32),
+      () => `2026-09-03T11:00:0${clockTick++}.000Z`,
+    );
+    const intent = await coordinator.loadAcceptedIntent(project);
+    expect(intent).toEqual(acceptedIntent);
+    const preview = await coordinator.preview(project, lineage.revisionId);
+    const scheduled = await coordinator.schedule(project, preview, intent!, preview.changeIds[0]!);
+    const scheduledReplay = await coordinator.schedule(project, preview, intent!, preview.changeIds[0]!);
+    const comparison = await coordinator.compare(
+      project,
+      lineage.revisionId,
+      preview.replacementRevisionIds[0]!,
+    );
+    const review = await coordinator.requestRestoreReview(
+      project,
+      intent!,
+      comparison.beforeRevisionId,
+      comparison.afterRevisionId,
+    );
+    const reviewReplay = await coordinator.requestRestoreReview(
+      project,
+      intent!,
+      comparison.beforeRevisionId,
+      comparison.afterRevisionId,
+    );
+    const restored = await coordinator.restore(
+      project,
+      review,
+      comparison.beforeRevisionId,
+      comparison.afterRevisionId,
+      "01890f47-eae3-7cc0-98c4-dc0c0c0739af",
+    );
+    const restoredReplay = await coordinator.restore(
+      project,
+      review,
+      comparison.beforeRevisionId,
+      comparison.afterRevisionId,
+      "01890f47-eae3-7cc0-98c4-dc0c0c0739af",
+    );
+
+    expect(scheduled.planSha256).toBe(preview.planSha256);
+    expect(scheduledReplay).toEqual(scheduled);
+    expect(reviewReplay).toEqual(review);
+    expect(restoredReplay).toEqual(restored);
+    expect(restored.revisionId).not.toBe(comparison.beforeRevisionId);
+    expect(requests.map((request) => request.path)).toEqual([
+      "/projects/intent",
+      "/projects/recalculation/preview",
+      "/projects/recalculation/schedules",
+      "/projects/recalculation/schedules",
+      "/projects/recalculation/comparisons",
+      "/projects/recalculation/restore-reviews",
+      "/projects/recalculation/restore-reviews",
+      "/projects/recalculation/restorations",
+      "/projects/recalculation/restorations",
+    ]);
+    expect(requests[2]).toMatchObject({ idempotencyKey: "d".repeat(32) });
+    expect(requests[3]).toMatchObject({ idempotencyKey: "d".repeat(32) });
+    expect(requests[5]).toMatchObject({ idempotencyKey: "d".repeat(32) });
+    expect(requests[6]).toMatchObject({ idempotencyKey: "d".repeat(32) });
+    expect(requests[3]!.body).toBe(requests[2]!.body);
+    expect(requests[6]!.body).toBe(requests[5]!.body);
+    expect(requests[8]!.body).toBe(requests[7]!.body);
+    expect(JSON.parse(requests[2]!.body!)).toMatchObject({
+      root: project.root,
+      targetRevisionId: lineage.revisionId,
+      expectedPlanSha256: preview.planSha256,
+      intentId: acceptedIntent.intentId,
+      intentRevisionId: acceptedIntent.revisionId,
+      intentSha256: acceptedIntent.revisionContentHash,
+    });
+    expect(JSON.parse(requests[7]!.body!)).toMatchObject({
+      decisionId: "01890f47-eae3-7cc0-98c4-dc0c0c0739af",
+      priorAdjudicatedRevisionId: comparison.beforeRevisionId,
+      expectedCurrentRevisionId: comparison.afterRevisionId,
+      workflowRunId: review.workflowRunId,
+      humanTaskId: review.humanTaskId,
+    });
+    await expect(coordinator.schedule(
+      { ...project, accessMode: "read-only" },
+      preview,
+      intent!,
+      preview.changeIds[0]!,
+    )).rejects.toThrow("RO-CORE-MUTATION-UNAVAILABLE");
+  });
   it("keeps read-only inspection available while failing closed for unavailable projects", () => {
     expect(lineageAvailability(null)).toEqual({ available: false, reason: "Open a local project to trace lineage." });
     expect(lineageAvailability({ ...project, accessMode: "read-only" })).toEqual({ available: true, reason: null });
@@ -449,7 +704,7 @@ describe("audit and lineage workspace", () => {
       interactions: Record<string, string>;
       states: string[];
     };
-    expect(contract.referenceId).toBe("RO-UI-ACADEMIC-MINIMAL-1.4");
+    expect(contract.referenceId).toBe("RO-UI-ACADEMIC-MINIMAL-1.5");
     expect(Object.keys(contract.regions)).toEqual([
       "source-to-output-lineage",
       "model-schema-prompt-versions",
@@ -457,6 +712,11 @@ describe("audit and lineage workspace", () => {
       "human-decisions",
       "audit-events",
       "exportable-manifest",
+      "stale-status",
+      "recalculation-impact-preview",
+      "current-policy-status",
+      "immutable-revision-comparison",
+      "human-gated-restoration",
     ]);
     expect(contract.states).toContain("rights-restricted-export-denial");
     const html = renderToStaticMarkup(
