@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0013",
   "title": "Render truthful interleaved amendment and experience authority",
-  "status": "pending-review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -61,6 +61,26 @@
     ]
   },
   "rollback": "If independent maintenance review finds a blocker, preserve this candidate and ECR-0005 R01 history, keep W1 paused, and remediate only the reproduced generic projection defect. Do not approve or bootstrap ECR-0005 while either finding is open.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0013.R01",
+      "reviewedCommit": "66d16f625ac3189a91906f65825b32b86c2b00a0",
+      "reviewer": "agent:ecr5-planning-authority-reviewer",
+      "reviewedAt": "2026-09-03T11:06:58.9224009-04:00",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0013.review-R01.json",
+      "sha256": "3bc4ff58f1e3c4c64587ebbcb78b24628d16334922c7dac47f44a177039221bc"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0013.R01",
+    "reviewedCommit": "66d16f625ac3189a91906f65825b32b86c2b00a0",
+    "reviewer": "agent:ecr5-planning-authority-reviewer",
+    "reviewedAt": "2026-09-03T11:06:58.9224009-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0013.review-R01.json",
+    "sha256": "3bc4ff58f1e3c4c64587ebbcb78b24628d16334922c7dac47f44a177039221bc"
+  }
 }
