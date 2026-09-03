@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECR-0005 review — align CAP-03.S06 workflow authority</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; line-height: 1.55; }
+    body { max-width: 72rem; margin: 0 auto; padding: 2rem; }
+    header, section { border: 1px solid #7b8794; border-radius: .7rem; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    .pending { border-left: .45rem solid #b7791f; }
+    .selected { border-left: .45rem solid #2f855a; }
+    .conflict { border-left: .45rem solid #c53030; }
+    code { overflow-wrap: anywhere; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #7b8794; padding: .55rem; text-align: left; vertical-align: top; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <header class="pending">
+    <p><strong>Pending exact-commit approval · non-executable</strong></p>
+    <h1>ECR-0005 / W1.A06</h1>
+    <p>Align CAP-03.S06 workflow-profile authority before its first task is claimed.</p>
+  </header>
+
+  <section class="conflict">
+    <h2>Why W1 is paused</h2>
+    <table>
+      <thead><tr><th>Approved source</th><th>Current contract</th></tr></thead>
+      <tbody>
+        <tr><td>Slice scope and T01 objective</td><td>Represent the fourteen approved use cases.</td></tr>
+        <tr><td>T05 end-to-end contract</td><td>Verify all fourteen workflows.</td></tr>
+        <tr><td>Human-approved UI reference 1.5</td><td>Fourteen profiles are normative; the catalog has no built-in/extension split.</td></tr>
+        <tr><td>One T01 acceptance line</td><td>Exactly eight built-in profiles plus an undefined extension pack.</td></tr>
+      </tbody>
+    </table>
+    <p>Those requirements cannot all be true. No CAP-03.S06 task has been claimed, so the conflict can be corrected before implementation.</p>
+  </section>
+
+  <section class="selected">
+    <h2>Selected resolution</h2>
+    <blockquote>All fourteen workflow profiles in the approved workflow catalog are represented at its governed version; additions or changes require a versioned, reviewed workflow catalog and governed reference update.</blockquote>
+    <p>This preserves every other CAP-03.S06 criterion and removes only the unsupported eight-profile/extension-pack distinction. It changes no product code, runtime contract, schema, security behavior, or approved experience byte.</p>
+  </section>
+
+  <section>
+    <h2>Bounded work</h2>
+    <ul>
+      <li><code>W1.A06.B00</code> appends only the approved amendment record, preserves W1.A01–A05 and MI-0001, and remains independently reviewed.</li>
+      <li><code>W1.A06.S01 / W1.A06.T01</code> updates the criterion in the canonical backlog and slice plan, regenerates derived planning views, and changes no product path.</li>
+      <li>Refactor allocation: 0 of 194 approved-W1 estimate points.</li>
+      <li>W1 stays paused through amendment adoption; ordinary resume is separate.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Decision and alternatives</h2>
+    <p><strong>Recommended:</strong> approve after exact-commit independent packet review. This follows the already approved slice outcome and reference with the smallest possible authority correction.</p>
+    <p>Alternatives are to implement only eight, invent an extension tier, remove six approved workflows, or defer CAP-03.S06. Each either contradicts higher authority, expands scope, or leaves W1 incomplete.</p>
+  </section>
+
+  <section class="pending">
+    <h2>Approval effect</h2>
+    <p>Approval authorizes only the hash-bound B00, S01, and T01. It does not execute them, approve their reviews, adopt W1.A06, resume W1, qualify the Wave, approve G1, merge main, or push remotely.</p>
+    <p><a href="../review-site/waves/W1.html">W1 review page</a> · <a href="../review-site/CAP-03/index.html">CAP-03 review page</a> · <a href="../slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md">CAP-03.S06 plan</a></p>
+  </section>
+</body>
+</html>
