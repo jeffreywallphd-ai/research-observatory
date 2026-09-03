@@ -12881,7 +12881,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-03.S04.T03
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-03.S05.T01
       capability_id: CAP-03
@@ -14552,16 +14552,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:cap03-s05-integration-reviewer
       reviewed_at: '2026-09-03T13:23:46+00:00'
       evidence:
-      - artifacts/evidence/CAP-03.S05.integration-R02.json
-      notes: 'CHANGES_REQUESTED exact CAP-03.S05 R02 submission 096b38631a53311c660d68529c194de1e58d3010: authority, final
-        task ledgers, production API/client/UI, exact human/current-policy controls, SCC behavior, UI/reference, contract,
-        and security checks pass; all five R01 findings are closed. MEDIUM blocking CAP-03.S05-R02-F01: frozen evidence claims
-        87 changed paths for bc9441a..90bebf3 while Git and exact selector return 89. Preserve the disclosed 72-failure/17-error
-        foundation baseline and full W1 qualification for W1 exit.'
+      - artifacts/evidence/CAP-03.S05.integration-R03.json
+      notes: 'R03 is an evidence-only remediation of CAP-03.S05-R02-F01: the exact bc9441a-to-f05eeb state selection is bound
+        as 93 ordered paths, seven named unknown evidence paths, and safety-sensitive fallback; R02 product, authority, contract,
+        UI, and security results remain unchanged and independently authenticated.'
   - id: CAP-03.S06
     title: Use-case profiles and adaptive guided navigation
     outcome: A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench,
