@@ -1,0 +1,27 @@
+{
+  "$schema": "./bootstrap-scope-addendum.schema.json",
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-scope-addendum",
+  "amendmentId": "W1.A06",
+  "bootstrapUnit": "W1.A06.B00",
+  "status": "APPROVED",
+  "approvedBy": "authority-chain:W1.A06+GOV-MIG-0001+GOV-MAINT-0015",
+  "approvedAt": "2026-09-03T13:46:45.1386633-04:00",
+  "decision": "Bind the independently approved GOV-MAINT-0015 controller correction, its append-only review history, and its exact affected tests into the strict-descendant W1.A06.B00 R02 scope. Explicitly reauthorize the workflow-test path changed after addendum-01. This is bounded maintenance and bootstrap bookkeeping under the already approved W1.A06 packet and GOV-MIG-0001; it grants no new product, planning, control, release, or external authority.",
+  "baseApprovalCommit": "6e4581274972b7c324e5394fb317975ff063ecbe",
+  "candidateAtDecision": "5b964a6396c8adea369d7f521b08233cebe2d546",
+  "authorizedAdditionalPaths": [
+    "planning/governance-migrations/GOV-MAINT-0015.json",
+    "planning/governance-migrations/GOV-MAINT-0015.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0015.review-R02.json",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "constraints": [
+    "Authorization is limited to the exact adopted GOV-MAINT-0015 projection at 5b964a6396c8adea369d7f521b08233cebe2d546, the immutable R01 and R02 review ledgers introduced at 42c5e7d99c06a57f5faed1abb1ff988b3f05db82 and 2a65a028bcd08d35390f2493c7050c2435a0f9d4, and the exact controller and test blobs present when this addendum is introduced.",
+    "The workflow-test path is a deliberate ordered reauthorization after addendum-01; no future change to any authorized path is permitted without another later authenticated addendum whose introduction blob exactly matches the candidate.",
+    "The original W1.A06 bootstrap paths, addendum-01 authority, and automatic W1.A06.B00 evidence paths remain unchanged; no product/runtime path, canonical CAP-03.S06 plan, task inventory, experience reference, security authority, release gate, or external effect is added.",
+    "W1 must remain PAUSED and lease-free; W1.A06.B00 R01 remains adverse and append-only until an exact-candidate R02 independently replays and closes W1.A06.B00-R01-F01. No materialization, activation, W1.A06.T01 claim, amendment adoption, or ordinary W1 resume is authorized by this addendum."
+  ]
+}
