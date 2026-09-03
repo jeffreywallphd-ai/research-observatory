@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A06.B00",
+  "commit": "3fe834df6212516957048db3b76594bffe71eca5",
+  "baseCommit": "6e4581274972b7c324e5394fb317975ff063ecbe",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0005.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_append_records_reserved_history_and_bounded_maintenance tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_append_denies_an_active_recovery_hold tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment",
+      "exitCode": 0,
+      "result": "All three focused post-migration bootstrap transition tests passed in 4.834 seconds, covering the original bridge, active-hold denial, and the later W1.A06 successor over interleaved W1.A04/W1.A05 history with immutable MI-0001 preservation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_pending_v4_successor_orders_interleaved_authority_and_reuses_approved_experience tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_review_checker_validates_enabler_hashes_pages_and_links",
+      "exitCode": 0,
+      "result": "Both focused review-site tests passed in 17.243 seconds and the generated 489-page site validated, including the exact ordered authority chain and already-approved v1.5 reference binding."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0005 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0005/W1.A06 is approved and history-bound to packet candidate f48f11ed12c10d26acb1b80053e1a823c3ee5c16, approved R02 ledger introduction 6fe06c1c5e5f27882bf11263134e2f3214097ba4, and approval-record introduction 6e4581274972b7c324e5394fb317975ff063ecbe."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The canonical backlog validates with 20 capabilities, 117 slices, 363 tasks, and 12 release gates; all 489 planning-review pages pass; generated backlog views are unchanged."
+    },
+    {
+      "command": "git diff --check; git diff --name-only 6e4581274972b7c324e5394fb317975ff063ecbe 3fe834df6212516957048db3b76594bffe71eca5 --",
+      "exitCode": 0,
+      "result": "Patch hygiene passes and the exact approval-to-bootstrap candidate range contains only the three packet-authorized generated ECR-0005 projection paths."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "planctl authenticates the immutable W1 base; adopted W1.A01-W1.A03; terminal reserved W1.A04; adopted W1.A05; GOV-MIG-0001; revision-12 MI-0001; ECR-0005 packet; R02 independent review; and W1.A06 approval record.",
+        "The exact packet, proposal, static review, R02 ledger, approval, governed reference, migration, and predecessor hashes reproduce and remain ancestral."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused successor transition proves taskctl can append only W1.A06 in APPROVED state with W1.A06.B00 in REVIEW while preserving the interleaved W1.A04/W1.A05 authority and the existing MI-0001 record.",
+        "The bootstrap-submit command performs the canonical append atomically only after this exact manifest and candidate pass its scope, ancestry, quiescence, and evidence checks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "W1 is PAUSED at Wave scope with no lease, no active ordinary task, amendment campaign, or recovery hold; CAP-03.S06.T01 remains READY and unclaimed.",
+        "Candidate 3fe834df6212516957048db3b76594bffe71eca5 changes no product, canonical backlog, CAP-03.S06 plan, approved experience, security, runtime, schema, migration, task, or release-gate byte."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Only planning/review-site/enablers/ECR-0005.html, planning/review-site/enablers/index.html, and planning/review-site/manifest.json changed after the approval introduction.",
+        "The generated page truthfully shows APPROVED human authority, NOT_MATERIALIZED lifecycle, no amendment campaign, ordered predecessor authority, existing v1.5 binding, and an authorized but unmaterialized W1.A06.T01 inventory."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 affects only append-only amendment authority and generated approval projections. Selected checks therefore cover exact v4 approval history, later-successor append behavior, active-hold denial, interleaved predecessor and MI-0001 preservation, generated-page truth, canonical backlog/site/view integrity, and exact changed paths. No product or platform behavior changed.",
+    "deferred": "Canonical CAP-03.S06 planning reconciliation belongs to W1.A06.T01 after bootstrap materialization and activation. Product workflow profiles and all runtime, security, accessibility, packaging, performance, Windows-x64, and complete Wave qualification remain due in ordinary CAP-03.S06 work or W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-review",
+    "note": "Review exact candidate 3fe834df6212516957048db3b76594bffe71eca5, this evidence manifest, and the atomic bootstrap-submit projection. Confirm exact approval ancestry, authorized three-path candidate, W1.A06-only append, immutable predecessor/MI-0001 state, W1 pause and task quiescence, generated-view truth, and absence of product or canonical CAP-03.S06 changes before materialization."
+  }
+}

@@ -36061,3 +36061,48 @@ wave_amendments:
         findings: []
         closures: []
       current_submission: null
+- id: W1.A06
+  change_request_id: ECR-0005
+  target_wave: W1
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W1.A06.json
+    sha256: 244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67
+    introduction_commit: 6e4581274972b7c324e5394fb317975ff063ecbe
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: repository-owner
+      at: '2026-09-03T12:11:49.1702461-04:00'
+      rationale: The repository owner approved ECR-0005/W1.A06 in direct response to the exact-commit approval request for
+        f48f11ed12c10d26acb1b80053e1a823c3ee5c16. Authorize only bootstrap W1.A06.B00, contribution W1.A06.S01, and task W1.A06.T01
+        as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 fourteen-workflow catalog without
+        changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
+  bootstrap:
+    id: W1.A06.B00
+    status: REVIEW
+    implementer: codex
+    implementation_commit: 3fe834df6212516957048db3b76594bffe71eca5
+    submission_branch: codex/w1-windows-local-runtime
+    scope_addenda: []
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A06.B00.json
+      sha256: 16344e3a86e7221945ef910865a1d7fe773c5f293d2c7447853c63dccd582032
+      commit: 3fe834df6212516957048db3b76594bffe71eca5
+      recorded_at: '2026-09-03T16:19:23+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

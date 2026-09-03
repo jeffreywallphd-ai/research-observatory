@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 70f0b023e7f3783ae1f737443c6b650b86ad1c8b369016038ebdb7bd91332acb
+source_sha256: 355344465f24220f960ef62896c43632e9aeedceb3afb0fafaa876d2f4dd5edc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 7 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 5 |
+| Wave amendments | 6 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -45,6 +45,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
+| `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `APPROVED` |
 
 ## Waves
 
@@ -1470,6 +1471,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** Independent bounded R03 review found no remaining blocking or nonblocking acceptance-bound defect. Frozen submission 1841259fd2bc5cc91c6bc8d6629b2948d171c999, candidate d9923ff7e5f09fdb64faffd0d57af30f06e2a0b8, branch, ordered ancestry, all 18 declared paths, remediation evidence SHA-256 28e5f740c7bee8da3f0be29aebbdbbf649f9260820d0844696ae2e7c5edc7b1a, and R02 ledger SHA-256 20fd8cf835255fd091d5eaeb4d8daed19dc0f2b08d6bc14bc4f084753bc6e980 authenticate. The product remediation is frozen at 41d1feaff28eea1357e3e7e7c9db494e9ec6bb06. Later candidate history contains only independently approved GOV-MAINT-0009 and exact owner-bound lease/generated submission state; it changes no product, amendment scope, UI-reference, review, or release authority. W1.A05.T04-R02-F01 is fixed. After receipt replay and exact-target status reconciliation cannot confirm the request, bounded cleanup runs once. A complete source-policy comparison covers mode, normalized profile, timeout, configuration state, and revision. A truly unchanged source retains the bounded unchanged result; a different observed policy returns rejected with the authoritative snapshot and the exact message that native policy changed elsewhere, the request was not confirmed, and the current setting must be reviewed. Both same-mode wrong-profile and requested-60/observed-0 fixtures assert that result and exclude the former prior-policy-active message. The built product projects Other profile and timeout zero, renders the message as a danger alert, and emits the same text through the polite live region. It also independently replays and preserves the R02 closures: the open project and unsaved Research Intent position survive the settings detour; top-bar, sidebar, and command-result focus origins return exactly; locked recovery background stays inert and aria-hidden; all global shortcuts remain suppressed; modal focus is contained; and no deferred dialog appears after unlock. Independent checks passed 91 desktop tests, 15 focused settings/workspace cases, strict TypeScript, desktop lint, the real Rust-to-TypeScript witness and its three production tests, built-product browser checks, exact v1.4 UI gate, 139 browser and 390 keyboard workflow cases, 66 accessibility/responsive cases, Ruff, three focused amendment/task lease tests, canonical backlog validation, exact path inventory, and patch hygiene. R02's independently authenticated 66 visual captures remain reusable because R03 changes no approved reference, CSS, token, route, visual baseline, package, or layout primitive. Hardware-backed Hello success and the accumulated S02/amendment/W1 packaging, performance, security, accessibility, and cross-capability matrix remain truthfully assigned to later mandatory gates.
 
 **Currently open findings:** -
+
+## W1.A06 - ECR-0005
+
+**Target Wave / class:** `W1` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A06.json` (`244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-09-03T12:11:49.1702461-04:00` by repository-owner: The repository owner approved ECR-0005/W1.A06 in direct response to the exact-commit approval request for f48f11ed12c10d26acb1b80053e1a823c3ee5c16. Authorize only bootstrap W1.A06.B00, contribution W1.A06.S01, and task W1.A06.T01 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 fourteen-workflow catalog without changing its experience authority. Keep W1 paused until W1.A06 adoption and explicit ordinary resume.
+
+### Amendment-exit review and adoption — W1.A06
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 # Capability contributions, slices, and tasks
