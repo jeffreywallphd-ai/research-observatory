@@ -81,6 +81,7 @@
     "services/core-api/src/research_observatory_core/workflow_contracts.py",
     "services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
     "services/core-api/src/research_observatory_core/workflow_executor.py",
+    "services/core-api/src/research_observatory_core/workflow_progress.py",
     "services/core-api/src/research_observatory_core/migrations/__init__.py",
     "services/core-api/src/research_observatory_core/migrations/runner.py",
     "services/core-api/src/research_observatory_core/migrations/versions/__init__.py",
@@ -198,6 +199,7 @@
     "tests/service/test_recalculation_api.py",
     "tests/service/test_research_intents.py",
     "tests/service/test_task_center_api.py",
+    "tests/service/test_workflow_progress.py",
     "tests/workflows/__init__.py",
     "tests/workflows/test_local_workflow_executor.py",
     "tests/workflows/test_task_center.py"

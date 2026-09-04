@@ -1155,8 +1155,17 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
             state_id = value.get("stageStateId")
             if not isinstance(state_id, str):
                 raise ValueError("workflow stage-state aggregate identity is invalid")
+            revision = value.get("revision")
+            if not isinstance(revision, int) or isinstance(revision, bool):
+                raise ValueError("workflow stage-state revision is invalid")
             prior = heads.get(state_id)
-            if prior is None or int(value.get("revision", 0)) > int(prior.get("revision", 0)):
+            if prior is None:
+                heads[state_id] = value
+                continue
+            prior_revision = prior.get("revision")
+            if not isinstance(prior_revision, int) or isinstance(prior_revision, bool):
+                raise ValueError("persisted workflow stage-state revision is invalid")
+            if revision > prior_revision:
                 heads[state_id] = value
         current = [
             value
