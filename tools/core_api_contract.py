@@ -1656,18 +1656,14 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
         from research_observatory_core.research_intents import approved_workflow_catalog_projection
 
         openapi = canonical_openapi_bytes()
-        workflow_profile_projection = approved_workflow_catalog_projection().model_dump(
-            mode="json", by_alias=True
-        )
+        workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)
         workflow_profile_projection_bytes = json.dumps(
             workflow_profile_projection,
             ensure_ascii=True,
             separators=(",", ":"),
             sort_keys=True,
         ).encode("ascii")
-        workflow_profile_projection_sha256 = (
-            "sha256:" + hashlib.sha256(workflow_profile_projection_bytes).hexdigest()
-        )
+        workflow_profile_projection_sha256 = "sha256:" + hashlib.sha256(workflow_profile_projection_bytes).hexdigest()
     finally:
         sys.path.remove(str(source))
     return {
