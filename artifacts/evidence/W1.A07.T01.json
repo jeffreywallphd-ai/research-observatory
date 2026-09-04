@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A07.T01",
+  "commit": "7baa4346aa68e9a7357e00b872f4b2965b167d4b",
+  "baseCommit": "078dcfe197906359c11ae88a7903e69fbfa5d11d",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T05.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/enablers/ECR-0006.html",
+    "planning/review-site/manifest.json",
+    "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -c \"compare the exact parsed CAP-03.S06 backlog record and slice-plan bytes at 078dcfe197906359c11ae88a7903e69fbfa5d11d and 7baa4346aa68e9a7357e00b872f4b2965b167d4b, permitting only the approved T05 criterion replacement\"",
+      "exitCode": 0,
+      "result": "Exact structural comparison passed. CAP-03.S06 differs only at CAP-03.S06.T05 acceptance criterion 2, the slice plan contains exactly the same one-for-one replacement, and every other objective, criterion, task, dependency, estimate, status, boundary, and verification duty is unchanged."
+    },
+    {
+      "command": "Parse design/ui-reference/WORKFLOW_CATALOG.json and require the exact cyclical/non-cyclical identities; .venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .",
+      "exitCode": 0,
+      "result": "The catalog marks exactly living-review, hermeneutic-inquiry, and manuscript-review-revision cyclical; systematic-review, critical-problematization, and critical-article-development are non-cyclical. WORKFLOW_CATALOG.json SHA-256 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca matches REFERENCE_MANIFEST.yaml, APPROVAL.yaml is approved for RO-UI-ACADEMIC-MINIMAL-1.5, and the reference validator passes all 55 governed files with zero errors or warnings."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe -c \"require_runtime_amendment_integrity for W1.A07\"",
+      "exitCode": 0,
+      "result": "The canonical backlog validates with 20 capabilities, 117 slices, 365 tasks, and 12 release gates. All 490 planning-review pages pass, generated backlog views are current, and runtime amendment integrity authenticates the approved W1.A07 packet, bootstrap, immutable task inventory, and active lifecycle."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest seven active-campaign-safe PlanctlAmendmentTests plus tests.foundation.test_plan_review_amendments",
+      "exitCode": 0,
+      "result": "All 23 selected amendment authority and review-projection tests pass. A diagnostic run of the containing 26-test inventory also passed these 23 tests; its three synthetic successor-packet fixtures are lifecycle-inapplicable while a real amendment is ACTIVE because they intentionally require a paused Wave with no active campaign."
+    },
+    {
+      "command": "git diff --check 078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b; git diff --exit-code 078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b -- design/ui-reference modules apps verification-profiles.json",
+      "exitCode": 0,
+      "result": "Patch hygiene passes. No governed design-reference, product/runtime, application, module, or verification-profile path changed; the exact candidate range contains only the two authorized hand-authored planning locations, task claim state, and deterministic generated planning projections."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The canonical CAP-03.S06.T05 criterion and its slice-plan projection now both read exactly: Hermeneutic, manuscript-review/revision, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.",
+        "Exact parsed-record and byte comparisons against amendment activation base 078dcfe1 permit only that one approved semantic replacement in the two hand-authored locations."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "WORKFLOW_CATALOG.json has exactly three cyclical identities: living-review, hermeneutic-inquiry, and manuscript-review-revision.",
+        "Systematic-review, critical-problematization, and critical-article-development are explicitly non-cyclical. The catalog hash is exact in REFERENCE_MANIFEST.yaml, and APPROVAL.yaml binds approved RO-UI-ACADEMIC-MINIMAL-1.5."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "A deep structural comparison of the complete CAP-03.S06 backlog object shows no difference except T05 criterion 2; the slice plan equals its predecessor bytes after exactly one old-to-new sentence substitution.",
+        "All generated differences are deterministic projections of the task claim and approved criterion replacement; no other hand-authored CAP-03.S06 semantics changed."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Git proves no diff in design/ui-reference, modules, apps, or verification-profiles.json from activation base to candidate.",
+        "No runtime, schema, migration, security, governed experience, release-gate, predecessor authority, or unrelated planning file appears in the exact eight-path candidate inventory."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Deterministic backlog and planning-review generators produced the current implementation plan, status summary, CAP-03.S06 slice/task pages, ECR-0006 page, and manifest.",
+        "Backlog, all 490 review pages, generated views, runtime W1.A07 authority integrity, governed UI-reference integrity, selected amendment controls, and Git hygiene pass at the exact candidate; independent review is the pending controller transition."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:ui-reference"
+    ],
+    "riskAnalysis": "This is a planning-authority correction, not product implementation. The credible risks are changing more than the single authorized criterion, contradicting or rebinding the governed catalog, stale generated planning views, or losing the active amendment authority chain. Exact parsed/byte comparisons, the full governed-reference integrity check, canonical backlog/site/view validation, active runtime amendment-integrity validation, selected active-campaign-safe authority tests, and negative Git path checks cover those risks. The pre-activation planctl ECR readiness command and three synthetic successor-packet fixtures are intentionally lifecycle-inapplicable after activation because the real Wave is no longer paused without an active campaign.",
+    "deferred": [
+      "Service/data product behavior and Windows-x64 qualification are unchanged and remain assigned to resumed CAP-03.S06.T05, slice review, checkpoints, and W1 exit.",
+      "No full repository, product, packaging, performance, accessibility, or platform suite is warranted for a two-location planning-only correction."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-planning-control-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 7baa4346aa68e9a7357e00b872f4b2965b167d4b and this evidence. Confirm the exact two-location replacement, cycle policy and approved hash chain, preservation of every other CAP-03.S06 semantic field, deterministic projections, active W1.A07 authority, exact changed paths, and absence of product/design/security/release changes."
+  }
+}
