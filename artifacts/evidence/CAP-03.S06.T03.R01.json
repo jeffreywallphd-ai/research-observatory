@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T03",
+  "commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+  "baseCommit": "3c434794e144e186afc21e53933263653fb3fbe0",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "apps/desktop/src/app/workflowNavigation.test.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-03.S06.T03.task-start.md",
+    "artifacts/evidence/ui-change/CAP-03.S06.T03.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T03.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/core_api_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 109 active desktop tests passed with three declared platform-bound skips; desktop lint, strict TypeScript compilation, and the production/reference build passed on exact candidate 71c32375594de7fbd73a0f5a3a9a9507c3d31937."
+    },
+    {
+      "command": "apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 13 generated-client contract tests passed and the generated Core API projection reproduced exactly. The client authenticates the complete ordered workflow-profile projection rather than trusting an identifier-only substitute."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-built-frame.json",
+      "exitCode": 0,
+      "result": "All eight focused desktop product-check tests passed. The assembled frame proves adaptive ordered navigation, current workflow context, All tools disclosure, keyboard/focus/responsive contracts, both themes, privacy and recovery surfaces, no reference-only routes, and zero unexpected network requests."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "The exact task-range UI gate binds the five changed product UI files to Academic Minimal v1.5 and its approved package hash. All 139 browser workflow cases, 390 keyboard cases, 14 profile variants, and 66 responsive/accessibility cases passed."
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe format --check tests/desktop/test_desktop_app_check.py tools/core_api_contract.py tools/desktop_app_check.py services/core-api/src/research_observatory_core/research_intents.py; .venv/Scripts/ruff.exe check <same four files>; .venv/Scripts/mypy.exe --follow-imports=skip <same four files>",
+      "exitCode": 0,
+      "result": "Every changed Python source, tool, and test file passed Ruff formatting, Ruff lint, and focused mypy when the service source was included in the checked boundary: four files, zero issues."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --profile desktop --profile service --affected-base 3c434794e144e186afc21e53933263653fb3fbe0 --affected-head 71c32375594de7fbd73a0f5a3a9a9507c3d31937 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "Deterministic affected-path selection passed for the exact 24-path task range and recorded the relevant desktop, service-contract, UI, packaging, governance, and quality inventory. The selector assigns the performance command to W1 exit."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/planctl.py --repo . wave review W1 --check; git diff --check 3c434794e144e186afc21e53933263653fb3fbe0..71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+      "exitCode": 0,
+      "result": "The authoritative backlog, generated planning and review-site projections, W1 review packet, and exact candidate patch hygiene passed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The shell derives its numbered primary order from the exact persisted Research Intent workflow profile returned by Core; editing an unsaved profile form does not change navigation, while a successful persisted revision does.",
+        "The navigation model exposes explicit complete, current, upcoming, attention, optional, and cyclical presentations without treating a route visit as durable completion. Because T04 owns durable workflow-state mutation, T03 consumes only explicit authoritative state and otherwise renders the conservative current/upcoming projection.",
+        "Unimplemented future stages remain visible but disabled and have no invented reference routes; all profile-specific stage labels come from the authenticated Core catalog projection."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The secondary All tools surface identifies pages outside the ordered workflow as supporting tools and retains the complete implemented tool inventory independently of profile order.",
+        "Opening a supporting tool preserves an exact return witness containing project ID/root, Research Intent revision/hash, catalog version/hash, selected profile, primary stage, and primary page; one return action restores that exact primary context.",
+        "Changing any bound workflow or project identity invalidates the stale return witness rather than silently returning to a substituted context."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The navigation is operable with semantic buttons, current-step indication, labeled primary/supporting regions, visible focus, keyboard traversal, and a direct return action; focused renderer and browser checks cover these paths.",
+        "The adaptive rail becomes a horizontal workflow strip at the approved breakpoint while preserving order, context, controls, and reachability; built-frame checks cover desktop and narrow viewports in light and dark themes.",
+        "The task UI contract binds the changed shell, Intent integration, navigation component, and model to the approved Academic Minimal v1.5 reference and passes the repository UI gate plus workflow and accessibility conformance suites."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T03 changes a governed desktop navigation boundary fed by a public Core catalog projection and persisted Research Intent identity. Credible failures include trusting a partial or substituted catalog, deriving navigation from unsaved UI state, treating visits as completion, losing access to supporting tools, returning to a stale project/profile/revision, inventing routes for future stages, and breaking keyboard, responsive, theme, or approved-reference behavior. The selected checks therefore cover exact generated-client projection authentication, model and rendered-component state transitions, persisted-selection integration, production assembly, built-frame browser inspection, governed UI/reference/accessibility contracts, changed-file Python quality, exact affected-path selection, and repository governance. The full profile was also sampled and its only failures were proven in unchanged formatter/type-check paths, which remain explicit W1-exit debt.",
+    "selectedCommandIds": [
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "The affected selector assigns desktop performance to the complete W1-exit matrix; T03 changes no approved performance threshold.",
+      "A broad desktop-profile run reached the registered benchmark and UI gates successfully, then reported three repository-wide Ruff-format failures and ten mypy errors in five unchanged files: selective_recalculation.py, test_dependency_impacts.py, test_recalculation_api.py, tools/ui_conformance.py, tools/planctl.py, tests/desktop/test_ui_conformance.py, and tests/e2e/test_selective_recalculation.py. None is in T03's changed Python surface; all four changed Python files pass focused Ruff and mypy. The baseline debt remains mandatory for its owning remediation or W1 exit.",
+      "Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, coherent W1 integration checkpoints, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate 71c32375594de7fbd73a0f5a3a9a9507c3d31937 against base 3c434794e144e186afc21e53933263653fb3fbe0. Authenticate the full Core workflow projection, persisted-profile derivation, conservative state semantics, exact supporting-tool return witness and invalidation, disabled future stages, keyboard/screen-reader/responsive/theme behavior, approved Academic Minimal v1.5 lineage, and the disclosed broad-profile deferrals. Do not expand into T04-T05, slice integration, unrelated baseline debt, or the W1 exit matrix."
+  }
+}
