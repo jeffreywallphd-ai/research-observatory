@@ -38667,18 +38667,15 @@ wave_amendments:
       slice review, checkpoints, and W1 exit.
     - Obtain independent commit-bound planning/control review.
     packet_task_sha256: 6d3010292140d7e2d5a8f8ceffb9cf21d927b0ec1fea258bb7f36d5555258b81
-    status: REVIEW
+    status: DONE
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 078dcfe197906359c11ae88a7903e69fbfa5d11d
     worktree: C:/workspace/research-observatory
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-04T10:47:29+00:00'
-      expires_at: '2026-09-04T18:47:29+00:00'
+    lease: null
     started_at: '2026-09-04T10:47:29+00:00'
-    updated_at: '2026-09-04T10:56:14+00:00'
-    completed_at: null
+    updated_at: '2026-09-04T11:04:12+00:00'
+    completed_at: '2026-09-04T11:04:12+00:00'
     blocker: null
     implementation_notes: ''
     evidence:
@@ -38688,70 +38685,113 @@ wave_amendments:
       commit: 7baa4346aa68e9a7357e00b872f4b2965b167d4b
       recorded_at: '2026-09-04T10:56:14+00:00'
     verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+    review: &id121
+      reviewer: ecr6-planning-authority-reviewer
+      result: approved
+      reviewed_at: '2026-09-04T11:04:12+00:00'
+      notes: APPROVED at frozen submitted-state commit 65bc89aafc800810268695b26683dcdce81e4831 for candidate 7baa4346aa68e9a7357e00b872f4b2965b167d4b
+        against activation base 078dcfe197906359c11ae88a7903e69fbfa5d11d. Evidence SHA-256 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617,
+        R01 packet SHA-256 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386, and the exact eight-path inventory
+        authenticate. The canonical backlog and CAP-03.S06 slice plan contain exactly the ECR-0006-authorized one-for-one
+        cycle-criterion replacement; every other CAP-03.S06 semantic field is preserved. The approved RO-UI-ACADEMIC-MINIMAL-1.5
+        catalog contains 14 unique workflows, marks exactly living-review, hermeneutic-inquiry, and manuscript-review-revision
+        cyclical, marks the named critical and systematic profiles non-cyclical, and remains bound by catalog hash 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca.
+        Runtime W1.A07 authority, the controlled task submission, backlog, 490-page review site, generated views, governed
+        reference, and Git scope pass. The disclosed three lifecycle-inapplicable synthetic successor-ECR fixture failures
+        reproduce only because the real W1.A07 campaign is ACTIVE; the other 23 affected controller/projection tests pass,
+        so this diagnostic limitation is non-blocking. No product, runtime, schema, migration, security, governed-experience,
+        release, predecessor, or unrelated planning authority changed. Product and Windows qualification remain appropriately
+        deferred. This approves only W1.A07.T01; it does not approve amendment exit, adoption, ordinary W1 resume, CAP-03.S06.T05
+        recovery, W1 qualification, or release.
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex
-        submitted_at: '2026-09-04T10:56:14+00:00'
-        candidate_commit: 7baa4346aa68e9a7357e00b872f4b2965b167d4b
-        base_commit: 078dcfe197906359c11ae88a7903e69fbfa5d11d
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A07.T01.json
-          sha256: 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617
-          commit: 7baa4346aa68e9a7357e00b872f4b2965b167d4b
-          recorded_at: '2026-09-04T10:56:14+00:00'
-        acceptance_criteria_sha256: 67115b1a090b72a2ae1eb96cb86ea7cc50426df60b9141dbed2cd9b64e72ad65
-        changed_paths:
-        - docs/planning-implementation-plan.md
-        - planning/backlog.yaml
-        - planning/review-site/CAP-03/CAP-03.S06.T05.html
-        - planning/review-site/CAP-03/CAP-03.S06.html
-        - planning/review-site/enablers/ECR-0006.html
-        - planning/review-site/manifest.json
-        - planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md
-        - planning/status-summary.md
-        selected_checks:
-        - .venv\Scripts\python.exe -c "compare the exact parsed CAP-03.S06 backlog record and slice-plan bytes at 078dcfe197906359c11ae88a7903e69fbfa5d11d
-          and 7baa4346aa68e9a7357e00b872f4b2965b167d4b, permitting only the approved T05 criterion replacement"
-        - Parse design/ui-reference/WORKFLOW_CATALOG.json and require the exact cyclical/non-cyclical identities; .venv\Scripts\python.exe
-          tools/ui_reference_check.py --repo .
-        - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/plan_review_check.py
-          --repo .; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe -c "require_runtime_amendment_integrity
-          for W1.A07"
-        - .venv\Scripts\python.exe -m unittest seven active-campaign-safe PlanctlAmendmentTests plus tests.foundation.test_plan_review_amendments
-        - git diff --check 078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b; git diff --exit-code
-          078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b -- design/ui-reference modules
-          apps verification-profiles.json
-        deferred_checks:
-        - Service/data product behavior and Windows-x64 qualification are unchanged and remain assigned to resumed CAP-03.S06.T05,
-          slice review, checkpoints, and W1 exit.
-        - No full repository, product, packaging, performance, accessibility, or platform suite is warranted for a two-location
-          planning-only correction.
-        selection_rationale: This is a planning-authority correction, not product implementation. The credible risks are changing
-          more than the single authorized criterion, contradicting or rebinding the governed catalog, stale generated planning
-          views, or losing the active amendment authority chain. Exact parsed/byte comparisons, the full governed-reference
-          integrity check, canonical backlog/site/view validation, active runtime amendment-integrity validation, selected
-          active-campaign-safe authority tests, and negative Git path checks cover those risks. The pre-activation planctl
-          ECR readiness command and three synthetic successor-packet fixtures are intentionally lifecycle-inapplicable after
-          activation because the real Wave is no longer paused without an active campaign.
-        selection_sha256: dddb310e85cd3b1193e1ef9d4f54bbb79cefa2f387928620e29570f833115f19
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - foundation:backlog
-        - foundation:backlog-views
-        - foundation:ui-reference
-        packet_sha256: 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-04T10:56:14+00:00'
+          candidate_commit: 7baa4346aa68e9a7357e00b872f4b2965b167d4b
+          base_commit: 078dcfe197906359c11ae88a7903e69fbfa5d11d
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A07.T01.json
+            sha256: 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617
+            commit: 7baa4346aa68e9a7357e00b872f4b2965b167d4b
+            recorded_at: '2026-09-04T10:56:14+00:00'
+          acceptance_criteria_sha256: 67115b1a090b72a2ae1eb96cb86ea7cc50426df60b9141dbed2cd9b64e72ad65
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S06.T05.html
+          - planning/review-site/CAP-03/CAP-03.S06.html
+          - planning/review-site/enablers/ECR-0006.html
+          - planning/review-site/manifest.json
+          - planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md
+          - planning/status-summary.md
+          selected_checks:
+          - .venv\Scripts\python.exe -c "compare the exact parsed CAP-03.S06 backlog record and slice-plan bytes at 078dcfe197906359c11ae88a7903e69fbfa5d11d
+            and 7baa4346aa68e9a7357e00b872f4b2965b167d4b, permitting only the approved T05 criterion replacement"
+          - Parse design/ui-reference/WORKFLOW_CATALOG.json and require the exact cyclical/non-cyclical identities; .venv\Scripts\python.exe
+            tools/ui_reference_check.py --repo .
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/plan_review_check.py
+            --repo .; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe -c "require_runtime_amendment_integrity
+            for W1.A07"
+          - .venv\Scripts\python.exe -m unittest seven active-campaign-safe PlanctlAmendmentTests plus tests.foundation.test_plan_review_amendments
+          - git diff --check 078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b; git diff
+            --exit-code 078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b -- design/ui-reference
+            modules apps verification-profiles.json
+          deferred_checks:
+          - Service/data product behavior and Windows-x64 qualification are unchanged and remain assigned to resumed CAP-03.S06.T05,
+            slice review, checkpoints, and W1 exit.
+          - No full repository, product, packaging, performance, accessibility, or platform suite is warranted for a two-location
+            planning-only correction.
+          selection_rationale: This is a planning-authority correction, not product implementation. The credible risks are
+            changing more than the single authorized criterion, contradicting or rebinding the governed catalog, stale generated
+            planning views, or losing the active amendment authority chain. Exact parsed/byte comparisons, the full governed-reference
+            integrity check, canonical backlog/site/view validation, active runtime amendment-integrity validation, selected
+            active-campaign-safe authority tests, and negative Git path checks cover those risks. The pre-activation planctl
+            ECR readiness command and three synthetic successor-packet fixtures are intentionally lifecycle-inapplicable after
+            activation because the real Wave is no longer paused without an active campaign.
+          selection_sha256: dddb310e85cd3b1193e1ef9d4f54bbb79cefa2f387928620e29570f833115f19
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:backlog
+          - foundation:backlog-views
+          - foundation:ui-reference
+          packet_sha256: 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386
+        review: *id121
+        ledger:
+          path: artifacts/evidence/task-reviews/W1.A07.T01/R01.json
+          sha256: 3ac7f895180e4aff0dd177d6e525cc49aad8f63c80d16e85e0aade8da9d93ab7
+        findings: []
+        closures: []
+        telemetry:
+          task_id: W1.A07.T01
+          amendment_id: W1.A07
+          attempt_id: R01
+          submitted_at: '2026-09-04T10:56:14+00:00'
+          reviewed_at: '2026-09-04T11:04:12+00:00'
+          duration_seconds: 478
+          outcome: approved
+          finding_counts:
+            critical: 0
+            high: 0
+            medium: 0
+            low: 0
+            blocking: 0
+            total: 0
+          command_ids:
+          - foundation:backlog
+          - foundation:backlog-views
+          - foundation:ui-reference
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   completion:
     status: PENDING
     reviewer: null

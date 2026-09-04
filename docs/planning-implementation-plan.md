@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7e586ca4d94841dbba7176503392fcfa8386360df6f2c9b44ee4c9d922ff0268
+source_sha256: 42e1a419f6a7e0f8654cab2a0bde22d0b980cf6a8f914b1366cb10c77eac7f85
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1636,9 +1636,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W1.A07.T01 - Reconcile the CAP-03.S06 revisitable-cycle criterion
+### - [x] W1.A07.T01 - Reconcile the CAP-03.S06 revisitable-cycle criterion
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `DONE` / codex / ecr6-planning-authority-reviewer (`approved`)
 
 **Dependencies:** `W1.A07.B00`
 
@@ -1666,9 +1666,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A07.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386`
 
 - Candidate / base / branch: `7baa4346aa68e9a7357e00b872f4b2965b167d4b` / `078dcfe197906359c11ae88a7903e69fbfa5d11d` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-04T10:56:14+00:00`
@@ -1682,9 +1684,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / ecr6-planning-authority-reviewer / `2026-09-04T11:04:12+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/task-reviews/W1.A07.T01/R01.json` / `3ac7f895180e4aff0dd177d6e525cc49aad8f63c80d16e85e0aade8da9d93ab7`
+
+**Review notes:** APPROVED at frozen submitted-state commit 65bc89aafc800810268695b26683dcdce81e4831 for candidate 7baa4346aa68e9a7357e00b872f4b2965b167d4b against activation base 078dcfe197906359c11ae88a7903e69fbfa5d11d. Evidence SHA-256 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617, R01 packet SHA-256 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386, and the exact eight-path inventory authenticate. The canonical backlog and CAP-03.S06 slice plan contain exactly the ECR-0006-authorized one-for-one cycle-criterion replacement; every other CAP-03.S06 semantic field is preserved. The approved RO-UI-ACADEMIC-MINIMAL-1.5 catalog contains 14 unique workflows, marks exactly living-review, hermeneutic-inquiry, and manuscript-review-revision cyclical, marks the named critical and systematic profiles non-cyclical, and remains bound by catalog hash 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca. Runtime W1.A07 authority, the controlled task submission, backlog, 490-page review site, generated views, governed reference, and Git scope pass. The disclosed three lifecycle-inapplicable synthetic successor-ECR fixture failures reproduce only because the real W1.A07 campaign is ACTIVE; the other 23 affected controller/projection tests pass, so this diagnostic limitation is non-blocking. No product, runtime, schema, migration, security, governed-experience, release, predecessor, or unrelated planning authority changed. Product and Windows qualification remain appropriately deferred. This approves only W1.A07.T01; it does not approve amendment exit, adoption, ordinary W1 resume, CAP-03.S06.T05 recovery, W1 qualification, or release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by ecr6-planning-authority-reviewer at `2026-09-04T11:04:12+00:00`
+
+**Latest notes:** APPROVED at frozen submitted-state commit 65bc89aafc800810268695b26683dcdce81e4831 for candidate 7baa4346aa68e9a7357e00b872f4b2965b167d4b against activation base 078dcfe197906359c11ae88a7903e69fbfa5d11d. Evidence SHA-256 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617, R01 packet SHA-256 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386, and the exact eight-path inventory authenticate. The canonical backlog and CAP-03.S06 slice plan contain exactly the ECR-0006-authorized one-for-one cycle-criterion replacement; every other CAP-03.S06 semantic field is preserved. The approved RO-UI-ACADEMIC-MINIMAL-1.5 catalog contains 14 unique workflows, marks exactly living-review, hermeneutic-inquiry, and manuscript-review-revision cyclical, marks the named critical and systematic profiles non-cyclical, and remains bound by catalog hash 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca. Runtime W1.A07 authority, the controlled task submission, backlog, 490-page review site, generated views, governed reference, and Git scope pass. The disclosed three lifecycle-inapplicable synthetic successor-ECR fixture failures reproduce only because the real W1.A07 campaign is ACTIVE; the other 23 affected controller/projection tests pass, so this diagnostic limitation is non-blocking. No product, runtime, schema, migration, security, governed-experience, release, predecessor, or unrelated planning authority changed. Product and Windows qualification remain appropriately deferred. This approves only W1.A07.T01; it does not approve amendment exit, adoption, ordinary W1 resume, CAP-03.S06.T05 recovery, W1 qualification, or release.
 
 **Currently open findings:** -
 
