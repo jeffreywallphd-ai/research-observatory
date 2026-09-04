@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: bad3a9bac616d698cc399fa175ff25c611606a21bce01a1da81349befb2ea2c7
+source_sha256: df47eac9112208790a4f1ed2d61a211fd81eec317b6997df540e317536e6c8bf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,7 +69,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 1 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 9 |
 
 ## Wave authority and append-only amendments
@@ -618,3 +618,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A08.T01` Consolidate and align production styling | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
