@@ -68,11 +68,7 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertEqual(14, len(matrix["profiles"]))
         self.assertEqual(
             {"hermeneutic-inquiry", "living-review", "manuscript-review-revision"},
-            {
-                profile["profileId"]
-                for profile in matrix["profiles"]
-                if profile["processForm"] == "revisitable"
-            },
+            {profile["profileId"] for profile in matrix["profiles"] if profile["processForm"] == "revisitable"},
         )
         self.assertTrue(all(profile["valid"] for profile in matrix["profiles"]))
         self.assertTrue(details["intentMutationRaceGuarded"])
