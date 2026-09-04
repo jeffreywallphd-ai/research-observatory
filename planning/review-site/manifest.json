@@ -13992,7 +13992,7 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -14037,7 +14037,7 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "page": "CAP-07/CAP-07.S01.T02.html",
               "dependencies": [
                 "CAP-07.S01.T01"
