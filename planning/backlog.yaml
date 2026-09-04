@@ -16243,12 +16243,12 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-04T01:52:07+00:00'
-      updated_at: '2026-09-04T04:12:41+00:00'
-      completed_at: null
+      updated_at: '2026-09-04T04:21:04+00:00'
+      completed_at: '2026-09-04T04:21:04+00:00'
       blocker: null
       implementation_notes: ''
       evidence:
@@ -16268,24 +16268,19 @@ capabilities:
         commit: 4cc54d193d113384e483a9410ec726fe250654d2
         recorded_at: '2026-09-04T04:12:41+00:00'
       review: &id041
-        reviewer: agent:t04-r02-independent-reviewer
-        result: changes-requested
-        reviewed_at: '2026-09-04T03:54:08+00:00'
-        notes: 'The strict-descendant R02 candidate, direct-child submission, exact 23-path remediation inventory, two-path
-          submission projection, frozen evidence SHA-256/Git blob, linear ancestry, and patch hygiene authenticate. Focused
-          real-SQLite service/authority tests, renderer model and Project Home tests, generated-client parity, native request-shape
-          tests, and task governance validation pass. R01-F01 and R01-F03 through R01-F07 are fixed. The service portion of
-          R01-F02 is also corrected: revisitation now requires an exact terminal source, preserves a displaced active head,
-          and denies linear profiles. Approval remains unavailable because that earlier-stage transition is not reachable
-          through the shipped renderer: the only revisit action is shown after terminal workflow completion and the renderer
-          derives its source only from the server''s recommended stage key. Opening an earlier completed step from the workflow
-          rail is navigation-only and records no transition, so the criterion that cyclical workflows can revisit earlier
-          stages is not satisfied end to end.'
+        reviewer: agent:t04-r03-independent-reviewer
+        result: approved
+        reviewed_at: '2026-09-04T04:21:04+00:00'
+        notes: 'The strict-descendant R03 candidate, sole-parent submission, exact 12-path remediation inventory, two-path
+          submission projection, frozen evidence SHA-256/Git blob, append-only R01/R02 history, and patch hygiene authenticate.
+          Independent real-SQLite, renderer, built-product browser, static-quality, and governed workflow/accessibility checks
+          pass. The remaining parent R01-F02 and R02-F01 are fixed end to end: Project Home exposes an explicit eligible terminal
+          A source while later B is current; the renderer sends A''s exact revision/hash separately from B''s exact displaced-head
+          CAS; Core accepts A pass+1 while preserving B in-progress and A pass 1; ordinary rail navigation remains non-mutating;
+          linear, current, in-progress, attention, blocked, and superseded sources remain ineligible; and selected-source
+          requests cannot regain ownership after A-to-B-to-A context replacement. No blocking finding remains.'
       base_sha: e437cad11d0eb729790e575a7f45bf609d8b7ec4
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-09-04T03:54:08+00:00'
-        expires_at: '2026-09-04T11:54:08+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -16683,7 +16678,20 @@ capabilities:
             - service:unit
             - contracts:unit
             packet_sha256: aacc99374e20378acca76c0083510da695dc146523655442ea974aed4fc576a8
-          review: *id041
+          review:
+            reviewer: agent:t04-r02-independent-reviewer
+            result: changes-requested
+            reviewed_at: '2026-09-04T03:54:08+00:00'
+            notes: 'The strict-descendant R02 candidate, direct-child submission, exact 23-path remediation inventory, two-path
+              submission projection, frozen evidence SHA-256/Git blob, linear ancestry, and patch hygiene authenticate. Focused
+              real-SQLite service/authority tests, renderer model and Project Home tests, generated-client parity, native
+              request-shape tests, and task governance validation pass. R01-F01 and R01-F03 through R01-F07 are fixed. The
+              service portion of R01-F02 is also corrected: revisitation now requires an exact terminal source, preserves
+              a displaced active head, and denies linear profiles. Approval remains unavailable because that earlier-stage
+              transition is not reachable through the shipped renderer: the only revisit action is shown after terminal workflow
+              completion and the renderer derives its source only from the server''s recommended stage key. Opening an earlier
+              completed step from the workflow rail is navigation-only and records no transition, so the criterion that cyclical
+              workflows can revisit earlier stages is not satisfied end to end.'
           ledger:
             path: artifacts/evidence/CAP-03.S06.T04.review-R02.json
             sha256: c3c907bca0f8a555be78e0eb996a89036d311ebaf36a8e6c3dd64a50ba01e64b
@@ -16795,83 +16803,137 @@ capabilities:
               - CAP-03.S06.T04-R01-F05
               - CAP-03.S06.T04-R01-F06
               - CAP-03.S06.T04-R01-F07
-        current_submission:
-          id: R03
-          submitted_by: codex
-          submitted_at: '2026-09-04T04:12:41+00:00'
-          candidate_commit: 4cc54d193d113384e483a9410ec726fe250654d2
-          base_commit: a4f20c0b24351ce71e28b8b710d7e265f9908e4c
-          branch: codex/w1-windows-local-runtime
-          evidence_reference:
-            type: criterion-manifest
-            path: artifacts/evidence/CAP-03.S06.T04.R03.json
-            sha256: 54e9dab1c7f663964dae51c6df3c105347fef6ddf9f692219845f274ca8b028b
-            commit: 4cc54d193d113384e483a9410ec726fe250654d2
-            recorded_at: '2026-09-04T04:12:41+00:00'
-          acceptance_criteria_sha256: 1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa
-          changed_paths:
-          - apps/desktop/src/app.css
-          - apps/desktop/src/app/ApplicationRuntime.tsx
-          - apps/desktop/src/app/ProjectHomeWorkspace.test.tsx
-          - apps/desktop/src/app/ProjectHomeWorkspace.tsx
-          - apps/desktop/src/app/workflowNavigation.test.ts
-          - apps/desktop/src/app/workflowNavigationModel.ts
-          - artifacts/evidence/CAP-03.S06.T04.R02.json
-          - artifacts/evidence/CAP-03.S06.T04.review-R02.json
-          - docs/planning-implementation-plan.md
-          - planning/backlog.yaml
-          - planning/status-summary.md
-          - tools/desktop_app_check.py
-          selected_checks:
-          - npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json
-            --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop
-          - .venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv/Scripts/python.exe tools/desktop_app_check.py
-            --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R03-built-frame.json
-          - .venv/Scripts/python.exe -m ruff format --check tools/desktop_app_check.py; .venv/Scripts/python.exe -m ruff check
-            tools/desktop_app_check.py; .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/desktop_app_check.py
-          - .venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo
-            . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility
-          - .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file
-            planning/backlog.yaml validate
-          - .venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --affected-base a4f20c0b24351ce71e28b8b710d7e265f9908e4c
-            --affected-head 4cc54d193d113384e483a9410ec726fe250654d2 --deferred-gate W1-exit --selection-only; git diff --check
-            a4f20c0b24351ce71e28b8b710d7e265f9908e4c..4cc54d193d113384e483a9410ec726fe250654d2
-          deferred_checks:
-          - The unchanged repository-wide Ruff/MyPy baseline debt remains separately bounded and mandatory before W1 exit;
-            the only changed Python verifier passes focused quality.
-          - Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows
-            x64 qualification remains mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit.
-          selection_rationale: R03 is limited to CAP-03.S06.T04-R01-F02 and its refined continuation CAP-03.S06.T04-R02-F01,
-            the one remaining renderer reachability boundary. Credible failures are selecting a superseded or nonterminal
-            source, omitting the displaced active-head CAS, mutating on ordinary navigation, losing prior passes, accepting
-            a late selected-source response, breaking Project Home accessibility, or regressing the server-issued supporting
-            handoff fixture. The selected matrix therefore covers exact-source model tests, rendered Project Home states,
-            full desktop type/lint/unit/build, a real assembled ApplicationRuntime interaction, checker self-tests, approved
-            UI/accessibility conformance, changed-verifier quality, and append-only governance. Service persistence, generated
-            public contracts, and native routing did not change and were independently cleared in R02.
-          selection_sha256: 5de5c7b86c44aef2635f7fcd5affcdfc9fb3496cdec7f88bbeafa1e0ffaf98b5
-          prior_attempt_id: R02
-          open_finding_ids:
-          - CAP-03.S06.T04-R01-F02
-          - CAP-03.S06.T04-R02-F01
-          root_cause_analysis: 'R02 correctly separated terminal revisit-source authority from the displaced active-head CAS
-            in Core and the generated request, but the renderer retained T04''s original implicit no-argument revisit helper.
-            That helper chose only the server''s recommendedStageKey, and Project Home displayed it only after complete workflow
-            termination. The positive renderer test manually made the completed source the recommended key, so it did not
-            represent the reviewed A-terminal/B-current projection. R03 removes that implicit reachability assumption: it
-            derives current eligible terminal heads, requires an explicit source selection, authenticates the selected head
-            before request construction, and tests the real mixed-stage projection plus stale-response cancellation.'
-          selected_command_ids:
-          - foundation:backlog-views
-          - foundation:quality
-          - foundation:backlog
-          - desktop:application
-          - desktop:unit
-          - desktop:ui-reference-integrity
-          - desktop:ui-workflow
-          - desktop:ui-accessibility
-          - desktop:ui-visual-regression
-          packet_sha256: 38de62e327c57628dbb12f50135824a23790e1b98d171329e66a46bc0df245cb
+        - submission:
+            id: R03
+            submitted_by: codex
+            submitted_at: '2026-09-04T04:12:41+00:00'
+            candidate_commit: 4cc54d193d113384e483a9410ec726fe250654d2
+            base_commit: a4f20c0b24351ce71e28b8b710d7e265f9908e4c
+            branch: codex/w1-windows-local-runtime
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-03.S06.T04.R03.json
+              sha256: 54e9dab1c7f663964dae51c6df3c105347fef6ddf9f692219845f274ca8b028b
+              commit: 4cc54d193d113384e483a9410ec726fe250654d2
+              recorded_at: '2026-09-04T04:12:41+00:00'
+            acceptance_criteria_sha256: 1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa
+            changed_paths:
+            - apps/desktop/src/app.css
+            - apps/desktop/src/app/ApplicationRuntime.tsx
+            - apps/desktop/src/app/ProjectHomeWorkspace.test.tsx
+            - apps/desktop/src/app/ProjectHomeWorkspace.tsx
+            - apps/desktop/src/app/workflowNavigation.test.ts
+            - apps/desktop/src/app/workflowNavigationModel.ts
+            - artifacts/evidence/CAP-03.S06.T04.R02.json
+            - artifacts/evidence/CAP-03.S06.T04.review-R02.json
+            - docs/planning-implementation-plan.md
+            - planning/backlog.yaml
+            - planning/status-summary.md
+            - tools/desktop_app_check.py
+            selected_checks:
+            - npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json
+              --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop
+            - .venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv/Scripts/python.exe tools/desktop_app_check.py
+              --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R03-built-frame.json
+            - .venv/Scripts/python.exe -m ruff format --check tools/desktop_app_check.py; .venv/Scripts/python.exe -m ruff
+              check tools/desktop_app_check.py; .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/desktop_app_check.py
+            - .venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py
+              --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility
+            - .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py
+              --file planning/backlog.yaml validate
+            - .venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --affected-base a4f20c0b24351ce71e28b8b710d7e265f9908e4c
+              --affected-head 4cc54d193d113384e483a9410ec726fe250654d2 --deferred-gate W1-exit --selection-only; git diff
+              --check a4f20c0b24351ce71e28b8b710d7e265f9908e4c..4cc54d193d113384e483a9410ec726fe250654d2
+            deferred_checks:
+            - The unchanged repository-wide Ruff/MyPy baseline debt remains separately bounded and mandatory before W1 exit;
+              the only changed Python verifier passes focused quality.
+            - Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and
+              Windows x64 qualification remains mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and
+              W1 exit.
+            selection_rationale: R03 is limited to CAP-03.S06.T04-R01-F02 and its refined continuation CAP-03.S06.T04-R02-F01,
+              the one remaining renderer reachability boundary. Credible failures are selecting a superseded or nonterminal
+              source, omitting the displaced active-head CAS, mutating on ordinary navigation, losing prior passes, accepting
+              a late selected-source response, breaking Project Home accessibility, or regressing the server-issued supporting
+              handoff fixture. The selected matrix therefore covers exact-source model tests, rendered Project Home states,
+              full desktop type/lint/unit/build, a real assembled ApplicationRuntime interaction, checker self-tests, approved
+              UI/accessibility conformance, changed-verifier quality, and append-only governance. Service persistence, generated
+              public contracts, and native routing did not change and were independently cleared in R02.
+            selection_sha256: 5de5c7b86c44aef2635f7fcd5affcdfc9fb3496cdec7f88bbeafa1e0ffaf98b5
+            prior_attempt_id: R02
+            open_finding_ids:
+            - CAP-03.S06.T04-R01-F02
+            - CAP-03.S06.T04-R02-F01
+            root_cause_analysis: 'R02 correctly separated terminal revisit-source authority from the displaced active-head
+              CAS in Core and the generated request, but the renderer retained T04''s original implicit no-argument revisit
+              helper. That helper chose only the server''s recommendedStageKey, and Project Home displayed it only after complete
+              workflow termination. The positive renderer test manually made the completed source the recommended key, so
+              it did not represent the reviewed A-terminal/B-current projection. R03 removes that implicit reachability assumption:
+              it derives current eligible terminal heads, requires an explicit source selection, authenticates the selected
+              head before request construction, and tests the real mixed-stage projection plus stale-response cancellation.'
+            selected_command_ids:
+            - foundation:backlog-views
+            - foundation:quality
+            - foundation:backlog
+            - desktop:application
+            - desktop:unit
+            - desktop:ui-reference-integrity
+            - desktop:ui-workflow
+            - desktop:ui-accessibility
+            - desktop:ui-visual-regression
+            packet_sha256: 38de62e327c57628dbb12f50135824a23790e1b98d171329e66a46bc0df245cb
+          review: *id041
+          ledger:
+            path: artifacts/evidence/CAP-03.S06.T04.review-R03.json
+            sha256: edd01a85d622a9ff5b0717c89e1260258250a8aed40c27ccfd9715e461b330f3
+          findings: []
+          closures:
+          - finding_id: CAP-03.S06.T04-R01-F02
+            disposition: fixed
+            evidence: Core now permits revisit only from an exact latest terminal completed/skipped/stale source in a revisitable
+              profile, separately CAS-binds any current displaced head, appends pass+1 on the source aggregate, and preserves
+              both histories. The rebuilt ApplicationRuntime exposes and successfully performs that same explicit earlier-stage
+              transition while later B is current; linear and nonterminal/superseded sources remain denied.
+          - finding_id: CAP-03.S06.T04-R02-F01
+            disposition: fixed
+            evidence: Project Home derives eligible latest terminal primary heads and exposes an explicit action for completed
+              A while recommended/current B remains active. ApplicationRuntime passes that researcher-selected A to request
+              construction, which emits A's exact source witness and B's exact displaced-head CAS; the assembled browser accepts
+              A pass 2 and visibly preserves B in-progress and A pass 1. Ordinary rail navigation remains non-mutating, and
+              the selected-source guard rejects stale results after A-to-B-to-A invalidation.
+          telemetry:
+            task_id: CAP-03.S06.T04
+            amendment_id: null
+            attempt_id: R03
+            submitted_at: '2026-09-04T04:12:41+00:00'
+            reviewed_at: '2026-09-04T04:21:04+00:00'
+            duration_seconds: 503
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - foundation:backlog-views
+            - foundation:quality
+            - foundation:backlog
+            - desktop:application
+            - desktop:unit
+            - desktop:ui-reference-integrity
+            - desktop:ui-workflow
+            - desktop:ui-accessibility
+            - desktop:ui-visual-regression
+            remediation:
+              prior_attempt_id: R02
+              replayed_finding_ids:
+              - CAP-03.S06.T04-R01-F02
+              - CAP-03.S06.T04-R02-F01
+              closed_finding_ids:
+              - CAP-03.S06.T04-R01-F02
+              - CAP-03.S06.T04-R02-F01
+        current_submission: null
     - id: CAP-03.S06.T05
       capability_id: CAP-03
       slice_id: CAP-03.S06
@@ -16906,11 +16968,11 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-09-04T04:21:04+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
