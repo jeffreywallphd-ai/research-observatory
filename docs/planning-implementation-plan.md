@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: bad3a9bac616d698cc399fa175ff25c611606a21bce01a1da81349befb2ea2c7
+source_sha256: df47eac9112208790a4f1ed2d61a211fd81eec317b6997df540e317536e6c8bf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1772,7 +1772,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A08.T01 - Consolidate and align production styling
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A08.B00`, `CAP-01.S02.T03`
 
