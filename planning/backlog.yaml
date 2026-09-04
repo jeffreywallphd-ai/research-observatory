@@ -137,7 +137,7 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-04T18:30:59+00:00'
+    updated_at: '2026-09-04T18:57:56+00:00'
     pause_reason: null
     pause_category: null
     lease:
@@ -289,6 +289,17 @@ waves:
       commit: f13e078fcd303ae28bde8999ccc55671adcc20e7
     notes: Adopt the independently approved W1.A07 cycle-authority correction as a W1 security checkpoint; retain all ordinary
       CAP-03.S06.T05, slice-review, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
+  - id: W1.CP07
+    kind: risk-cluster
+    recorded_by: codex
+    recorded_at: '2026-09-04T18:57:56+00:00'
+    evidence:
+    - artifacts/evidence/CAP-03.S06.integration-R01.json
+    - artifacts/evidence/CAP-03.S06.integration.review-R01.json
+    notes: CAP-03.S06 closes the governed workflow-profile/Research-Intent/stage-progress/support-return/revisit cluster across
+      portable contracts, real Core/SQLite, native desktop transport and Academic Minimal 1.5. All five tasks and the slice
+      are independently approved with no open finding; full W1 clean-clone performance, packaging, cross-capability and Windows-x64
+      qualification remain due at exit.
   completion:
     status: IN_PROGRESS
     reviewer: null
