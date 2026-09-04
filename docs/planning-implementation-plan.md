@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: df47eac9112208790a4f1ed2d61a211fd81eec317b6997df540e317536e6c8bf
+source_sha256: 28f8f167706115f779b7440e2922057eef7c90dc5e1ffa1bd01d0dd54884c931
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1772,7 +1772,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A08.T01 - Consolidate and align production styling
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A08.B00`, `CAP-01.S02.T03`
 
@@ -1794,13 +1794,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Measure computed shell, page, section, panel/card, form/control, table, dialog, and action-row geometry at the controlled viewport matrix and inspect representative product/reference captures without requiring pixel identity.
 - Obtain independent commit-bound experience/accessibility/maintainability review and record broader cross-capability, packaging, performance, and Windows-x64 coverage deferred to T02, slice review, amendment exit, and W1 exit.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A08.T01.json` at `9b4e746928d1381c52a2a720ee6bb47eb433ca3f`
+
 #### Review history — W1.A08.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8f6a570c8d49459cd616fa3a067248d4edbf57340f9cb679d870c1aa93ddd2cd`
+
+- Candidate / base / branch: `9b4e746928d1381c52a2a720ee6bb47eb433ca3f` / `98d6612d0eb64482d92ea9f754ddcee22b8b79b9` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-04T21:15:41+00:00`
+- Evidence: `artifacts/evidence/W1.A08.T01.json` / `8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a` / `9b4e746928d1381c52a2a720ee6bb47eb433ca3f`
+- Acceptance-criteria SHA-256: `c5f799e0c25b1e7a19d20c9b80ba8641cba72cd475522d496c2139d1ca8245b1`
+- Verification-selection SHA-256: `71f0c3eeec4286c62ca21097b646a994388a92ac6402a8f7177ac5c55db33983`
+- Changed paths: `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/ApplicationSettingsWorkspace.tsx`, `apps/desktop/src/app/AuditLineageWorkspace.tsx`, `apps/desktop/src/app/DiagnosticsWorkspace.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `apps/desktop/src/app/ProjectHomeWorkspace.tsx`, `apps/desktop/src/app/ProjectSettingsWorkspace.tsx`, `apps/desktop/src/app/ProjectsWorkspace.tsx`, `apps/desktop/src/app/TaskCenterWorkspace.tsx`, `apps/desktop/src/app/WorkflowNavigation.tsx`, `docs/planning-implementation-plan.md`, `packages/ui-components/src/styles.css`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0007.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/desktop/test_desktop_app_check.py`, `tools/desktop_app_check.py`
+- Selected checks: `bundled Node 24.19.0: desktop lint and typecheck; ui-components typecheck and vitest; desktop vitest run`, `bundled Node 24.19.0: clean-dist, Vite product build, assemble-application, Vite runtime build, assemble-reference`, `.venv\Scripts\python.exe -m unittest tests.desktop.test_desktop_app_check`, `.venv\Scripts\python.exe tools/ui_reference_check.py --repo .`, `Generate and inspect full-page live-product captures at 1440x900 light, 1440x900 dark, and 720x450 dark; git diff --check`
+- Deferred checks: `W1.A08.T02 owns the reusable exhaustive fail-closed style-reuse analyzer, every-surface light/dark viewport-state matrix, stable semantic tolerances, and retained commit-bound representative captures.`, `W1.A08.S01 review and amendment exit own the cross-surface experience/accessibility/maintainability integration disposition.`, `Complete Windows-x64 packaging, performance, security, recovery, and cross-capability qualification remains due once at W1 exit.`
+- Selection rationale: T01 changes the shared desktop style boundary and every implemented W1 renderer surface without changing product authority. Credible failures are unresolved or duplicated style tokens, selector/inline escape hatches, changed interaction semantics, inaccessible scroll or focus presentation, dark-theme/reduced-motion regression, undersized controls, incoherent responsive geometry, overflow, stale production artifacts, or drift from the governed reference. The selected static contracts, complete affected TypeScript/component tests, production rebuild, live Playwright accessibility and geometry checks, two-theme visual inspection, UI-reference integrity, and exact Git hygiene cover those risks. Native service and persistence logic are unchanged, so native integration and full Windows packaging are not replayed at this ordinary styling task boundary.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W1.A08.T02 - Qualify live-product styling conformance
 
