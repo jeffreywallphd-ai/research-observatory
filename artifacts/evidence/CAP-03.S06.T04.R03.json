@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T04",
+  "commit": "4cc54d193d113384e483a9410ec726fe250654d2",
+  "baseCommit": "a4f20c0b24351ce71e28b8b710d7e265f9908e4c",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S06.T04.R02.json",
+    "sha256": "bd225420c084b010212399766c951e16a5cf651eaf1a8894b89bfa5d6c4652db",
+    "commit": "a4f20c0b24351ce71e28b8b710d7e265f9908e4c",
+    "reason": "Closes CAP-03.S06.T04-R02-F01 and its parent CAP-03.S06.T04-R01-F02 without expanding approved T04 authority."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ProjectHomeWorkspace.test.tsx",
+    "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+    "apps/desktop/src/app/workflowNavigation.test.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-03.S06.T04.R02.json",
+    "artifacts/evidence/CAP-03.S06.T04.review-R02.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 120 active desktop tests passed with three declared skips; strict TypeScript, lint, and production/reference builds passed. The focused model/component cases use completed stage A with later current B, select A explicitly, preserve B as the active CAS witness, deny implicit recommended-B revisitation, and cancel selected-source results after A-to-B-to-A context replacement."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R03-built-frame.json",
+      "exitCode": 0,
+      "result": "All eight desktop checker tests and the complete assembled product frame passed. A real ApplicationRuntime interaction renders the explicit Revisit intent-contract-1 action from an A-terminal/B-current projection, sends A's exact source revision/hash plus B's exact displaced-head CAS, accepts the response, and observes A pass 2 current, B in progress, and A pass 1 preserved in history. The existing server-issued supporting handoff path is also exercised with exact Core witness identity."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff format --check tools/desktop_app_check.py; .venv/Scripts/python.exe -m ruff check tools/desktop_app_check.py; .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/desktop_app_check.py",
+      "exitCode": 0,
+      "result": "The changed Python assembled-product verifier is formatted, lint-clean, and type-safe."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "The explicit revisit action restores the already approved revisitable-workflow contract without changing the governed reference. All 139 workflow browser cases, 390 keyboard cases, 14 profile variants, and 66 responsive/accessibility cases passed against Academic Minimal v1.5."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "Generated planning views and the authoritative 364-task backlog passed with R01/R02 attempts, findings, closures, and telemetry preserved append-only."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --affected-base a4f20c0b24351ce71e28b8b710d7e265f9908e4c --affected-head 4cc54d193d113384e483a9410ec726fe250654d2 --deferred-gate W1-exit --selection-only; git diff --check a4f20c0b24351ce71e28b8b710d7e265f9908e4c..4cc54d193d113384e483a9410ec726fe250654d2",
+      "exitCode": 0,
+      "result": "Exact desktop affected-path selection and remediation patch hygiene passed for the 12-path strict-descendant R03 range. The protected W1.A04.B00 witness remains untracked and untouched."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R03 does not change the R02-approved durable transition, idempotency, evidence-kind, canonical Intent authority, migration, recovery, or background-job boundaries. Their real-SQLite and native checks passed independent R02 review and are not duplicated for this renderer-only continuation.",
+        "The new action still executes only an explicit researcher command; ordinary workflow-rail navigation remains non-mutating and continues to announce that it recorded no completion or checkpoint."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Project Home now presents eligible current terminal heads under a dedicated Revisit completed steps panel, states that prior passes are preserved and the current step remains recorded in progress, and disables every action while another workflow command is busy.",
+        "Eligibility is derived from the newest primary revision per stage aggregate and permits only completed, skipped-with-rationale, or stale heads in a revisitable profile. Current, in-progress, attention, blocked, superseded, supporting, and every linear-profile source remain unavailable."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "CAP-03.S06.T04-R02-F01 and parent R01-F02 are closed end to end: ApplicationRuntime passes the researcher-selected terminal source to workflowCommandStageAuthority, which authenticates it against current projection heads and emits the exact source revision/hash separately from the displaced active-head revision/hash.",
+        "The assembled product starts with completed A and later current B, exposes the explicit A revisit, verifies the exact generated command, and renders the accepted result with A pass 2 current while B in-progress and A pass 1 remain in immutable history.",
+        "A focused request-guard regression binds the selected source and proves A-to-B-to-A invalidation rejects success, failure, cleanup, announcement, navigation, and return effects. The service's terminal-source, displaced-head preservation, pass+1, and linear-denial behavior remains unchanged from the independently cleared R02 boundary."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R03 is limited to CAP-03.S06.T04-R01-F02 and its refined continuation CAP-03.S06.T04-R02-F01, the one remaining renderer reachability boundary. Credible failures are selecting a superseded or nonterminal source, omitting the displaced active-head CAS, mutating on ordinary navigation, losing prior passes, accepting a late selected-source response, breaking Project Home accessibility, or regressing the server-issued supporting handoff fixture. The selected matrix therefore covers exact-source model tests, rendered Project Home states, full desktop type/lint/unit/build, a real assembled ApplicationRuntime interaction, checker self-tests, approved UI/accessibility conformance, changed-verifier quality, and append-only governance. Service persistence, generated public contracts, and native routing did not change and were independently cleared in R02.",
+    "selectedCommandIds": [
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression"
+    ],
+    "deferred": [
+      "The unchanged repository-wide Ruff/MyPy baseline debt remains separately bounded and mandatory before W1 exit; the only changed Python verifier passes focused quality.",
+      "Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [
+      "CAP-03.S06.T04-R01-F02",
+      "CAP-03.S06.T04-R02-F01"
+    ],
+    "rootCauseAnalysis": "R02 correctly separated terminal revisit-source authority from the displaced active-head CAS in Core and the generated request, but the renderer retained T04's original implicit no-argument revisit helper. That helper chose only the server's recommendedStageKey, and Project Home displayed it only after complete workflow termination. The positive renderer test manually made the completed source the recommended key, so it did not represent the reviewed A-terminal/B-current projection. R03 removes that implicit reachability assumption: it derives current eligible terminal heads, requires an explicit source selection, authenticates the selected head before request construction, and tests the real mixed-stage projection plus stale-response cancellation.",
+    "note": "Independently re-review strict-descendant candidate 4cc54d193d113384e483a9410ec726fe250654d2. Replay CAP-03.S06.T04-R02-F01 and parent R01-F02 through the A-terminal/B-current ApplicationRuntime interaction, confirm exact source and displaced-head witnesses, preservation of A pass 1 and B in-progress, non-mutating ordinary navigation, denial of linear/nonterminal/superseded sources, and A-to-B-to-A cancellation. Preserve all earlier findings and closures."
+  }
+}
