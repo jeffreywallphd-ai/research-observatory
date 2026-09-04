@@ -26491,9 +26491,9 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A08.json",
       "approval_sha256": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
       "approval_status": "APPROVED",
-      "lifecycle_status": "MATERIALIZED",
+      "lifecycle_status": "ACTIVE",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "NONE",
+      "campaign_status": "ACTIVE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -26848,7 +26848,7 @@
         {
           "task_id": "W1.A08.T01",
           "title": "Consolidate and align production styling",
-          "status": "NOT_STARTED",
+          "status": "READY",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,
