@@ -16,6 +16,7 @@ import {
   stageDisplayLabel,
   supportingReturnMatches,
   workflowCommandStageAuthority,
+  workflowRevisitSources,
   workspaceClassification,
   type WorkflowAuthoritySnapshot,
   type WorkflowStageAuthorityState,
@@ -339,6 +340,43 @@ describe("workflow navigation model", () => {
     expect(effects).toEqual([]);
   });
 
+  it("cancels a selected terminal-source revisit after A to B to A context replacement", async () => {
+    const projectA = workflowProject("a");
+    const base = activeWorkflowProgress(authority("manuscript-review-revision"), "task-center.html");
+    const active = {
+      ...base.current!,
+      stageKey: "manuscript-studio-1",
+      pageContractId: "manuscript-studio.html",
+    };
+    const source = {
+      ...base.current!,
+      stageStateId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d080",
+      stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d081",
+      revision: 2,
+      revisionContentHash: `sha256:${"7".repeat(64)}`,
+      status: "completed" as const,
+    };
+    const progress = {
+      ...base,
+      current: active,
+      recommendedStageKey: active.stageKey,
+      recommendedPageContractId: active.pageContractId,
+      history: [source],
+    };
+    const commandAuthority = workflowCommandStageAuthority("revisit", progress, source);
+    expect(commandAuthority?.sourceStage).toEqual(source);
+    const guard = new WorkflowRequestGuard();
+    const ticket = guard.begin("revisit", projectA, progress, commandAuthority!.sourceStage);
+    expect(ticket).not.toBeNull();
+    guard.invalidate();
+    guard.invalidate();
+    expect(guard.matchesSource(ticket!, projectA, progress)).toBe(false);
+    expect(guard.acceptsResult(ticket!, projectA, progress, {
+      ...progress,
+      current: { ...source, status: "current", passNumber: source.passNumber + 1 },
+    })).toBe(false);
+  });
+
   it("binds request ownership to exact root, Intent, selection, and active/source heads", () => {
     const guard = new WorkflowRequestGuard();
     const project = workflowProject("a");
@@ -363,20 +401,31 @@ describe("workflow navigation model", () => {
   });
 
   it("binds revisit source separately from the active displaced-head CAS", () => {
-    const progress = activeWorkflowProgress(authority(), "task-center.html");
+    const base = activeWorkflowProgress(authority("manuscript-review-revision"), "task-center.html");
+    const progress = {
+      ...base,
+      current: {
+        ...base.current!,
+        stageKey: "manuscript-studio-1",
+        pageContractId: "manuscript-studio.html",
+      },
+      recommendedStageKey: "manuscript-studio-1",
+      recommendedPageContractId: "manuscript-studio.html",
+    };
     const source = {
-      ...progress.current!,
-      completionEvidenceIds: [`sha256:${"6".repeat(64)}`],
+      ...base.current!,
+      completionEvidenceIds: ["018f47a2-4d6b-7f78-9f2e-7fb76c86d082"],
       revision: 2,
       revisionContentHash: `sha256:${"7".repeat(64)}`,
+      stageStateId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d080",
       stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d081",
       status: "completed" as const,
     };
-    const revisiting = workflowCommandStageAuthority("revisit", {
+    const earlierStageProjection = {
       ...progress,
-      recommendedStageKey: source.stageKey,
       history: [source],
-    });
+    };
+    const revisiting = workflowCommandStageAuthority("revisit", earlierStageProjection, source);
     expect(revisiting).toMatchObject({
       stageKey: source.stageKey,
       expectedStageStateRevisionId: progress.current!.stageStateRevisionId,
@@ -384,6 +433,8 @@ describe("workflow navigation model", () => {
       revisitSourceStageStateRevisionId: source.stageStateRevisionId,
       revisitSourceStageStateRevisionContentHash: source.revisionContentHash,
     });
+    expect(workflowRevisitSources(earlierStageProjection)).toEqual([source]);
+    expect(workflowCommandStageAuthority("revisit", earlierStageProjection)).toBeNull();
 
     expect(workflowCommandStageAuthority("revisit", {
       ...progress,
@@ -400,6 +451,14 @@ describe("workflow navigation model", () => {
     expect(workflowCommandStageAuthority("revisit", {
       ...progress,
       history: [{ ...source, status: "current" }],
+    })).toBeNull();
+    expect(workflowCommandStageAuthority("revisit", {
+      ...earlierStageProjection,
+      processForm: "linear",
+    }, source)).toBeNull();
+    expect(workflowCommandStageAuthority("revisit", earlierStageProjection, {
+      ...source,
+      stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d099",
     })).toBeNull();
     expect(workflowCommandStageAuthority("start", workflowProgress(progress.projectId))).toMatchObject({
       revisitSourceStageStateRevisionId: null,

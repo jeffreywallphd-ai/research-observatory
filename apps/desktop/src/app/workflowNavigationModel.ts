@@ -107,7 +107,7 @@ type WorkflowProgressIntentWitness = WorkflowProgressProjection & {
   readonly intentRevisionContentHash?: unknown;
 };
 
-type WorkflowProgressStage = NonNullable<WorkflowProgressProjection["current"]>;
+export type WorkflowProgressStage = NonNullable<WorkflowProgressProjection["current"]>;
 
 export type WorkflowRequestKind = "start" | "resume" | "revisit" | "open-supporting";
 
@@ -143,9 +143,27 @@ const REVISITABLE_SOURCE_STATES = new Set<WorkflowProgressStage["status"]>([
   "stale",
 ]);
 
+export function workflowRevisitSources(
+  progress: WorkflowProgressProjection,
+): readonly WorkflowProgressStage[] {
+  if (progress.processForm !== "revisitable") return [];
+  const seenAggregates = new Set<string>();
+  const sources: WorkflowProgressStage[] = [];
+  const candidates = progress.current === null
+    ? progress.history
+    : [progress.current, ...progress.history];
+  for (const stage of candidates) {
+    if (stage.navigationRole !== "primary" || seenAggregates.has(stage.stageStateId)) continue;
+    seenAggregates.add(stage.stageStateId);
+    if (REVISITABLE_SOURCE_STATES.has(stage.status)) sources.push(stage);
+  }
+  return Object.freeze(sources);
+}
+
 export function workflowCommandStageAuthority(
   action: "start" | "resume" | "revisit",
   progress: WorkflowProgressProjection,
+  selectedRevisitSource: WorkflowProgressStage | null = null,
 ): WorkflowCommandStageAuthority | null {
   const active = progress.current;
   if (action === "start") {
@@ -171,11 +189,15 @@ export function workflowCommandStageAuthority(
       sourceStage: null,
     });
   }
-  const source = progress.history.find((stage) => (
-    stage.navigationRole === "primary"
-    && stage.stageKey === progress.recommendedStageKey
-    && REVISITABLE_SOURCE_STATES.has(stage.status)
-  )) ?? null;
+  const sources = workflowRevisitSources(progress);
+  const source = selectedRevisitSource === null
+    ? sources.find((stage) => stage.stageKey === progress.recommendedStageKey) ?? null
+    : sources.find((stage) => (
+      stage.stageKey === selectedRevisitSource.stageKey
+      && stage.stageStateId === selectedRevisitSource.stageStateId
+      && stage.stageStateRevisionId === selectedRevisitSource.stageStateRevisionId
+      && stage.revisionContentHash === selectedRevisitSource.revisionContentHash
+    )) ?? null;
   if (!source) return null;
   return Object.freeze({
     stageKey: source.stageKey,

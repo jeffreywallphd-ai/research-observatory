@@ -66,6 +66,19 @@ const progress: WorkflowProgressProjection = {
   history: [],
 };
 
+const completedEarlierStage: NonNullable<WorkflowProgressProjection["current"]> = {
+  ...progress.current!,
+  stageStateId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d080",
+  stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d081",
+  revision: 2,
+  revisionContentHash: `sha256:${"e".repeat(64)}`,
+  stageKey: "intent-contract-1",
+  pageContractId: "intent-contract.html",
+  status: "completed",
+  completionEvidenceIds: ["018f47a2-4d6b-7f78-9f2e-7fb76c86d082"],
+  updatedAt: "2026-09-04T01:00:00.000Z",
+};
+
 describe("ProjectHomeWorkspace", () => {
   it("shows persisted position, unknown gate truth, stale impact, and one route back", () => {
     const html = renderToStaticMarkup(
@@ -125,6 +138,28 @@ describe("ProjectHomeWorkspace", () => {
       expect(html).not.toContain("Begin another pass");
     },
   );
+
+  it("offers an explicit exact-source revisit while a later stage remains current", () => {
+    const html = renderToStaticMarkup(
+      <ProjectHomeWorkspace
+        project={project}
+        progress={{ ...progress, history: [completedEarlierStage] }}
+        loadState="ready"
+        failure={null}
+        busy={false}
+        onStart={() => undefined}
+        onResume={() => undefined}
+        onOpenCurrent={() => undefined}
+        onRevisit={() => undefined}
+      />,
+    );
+
+    expect(html).toContain('data-workflow-revisit-options="true"');
+    expect(html).toContain("Revisit completed steps");
+    expect(html).toContain("Revisit intent-contract-1");
+    expect(html).toContain("another step is current, it remains recorded in progress");
+    expect(html).not.toContain("Begin another pass");
+  });
 
   it("keeps loading, error, and no-project states explicit", () => {
     const loading = renderToStaticMarkup(
