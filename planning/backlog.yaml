@@ -128,7 +128,7 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -137,13 +137,12 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-04T04:45:30+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-03T18:43:00+00:00'
-      expires_at: '2026-09-04T18:43:00+00:00'
+    updated_at: '2026-09-04T04:56:09+00:00'
+    pause_reason: T05 criterion 2 conflicts materially with accepted ADR-0026 and the exact approved Academic Minimal 1.5
+      cycle policy. Pause at the test-first quiescent boundary pending an append-only one-for-one planning-authority correction;
+      do not change catalog or product behavior.
+    pause_category: human-decision
+    lease: null
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -254,7 +253,7 @@ waves:
       and extra permissions remain denied; installed mode:none startup and fail-closed recovery matrix pass; no open findings.
       Complete packaging and Windows-x64 qualification remain due at W1 exit.'
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -16979,13 +16978,22 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-04T04:48:23+00:00'
-      updated_at: '2026-09-04T04:48:23+00:00'
+      updated_at: '2026-09-04T04:54:56+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: 'Material higher-authority conflict: immutable T05 criterion 2 names a critical cycle, while accepted ADR-0026
+          and the exact approved Academic Minimal 1.5 catalog classify both critical profiles as linear and manuscript-review-revision
+          as the third revisitable profile. No product or test implementation has begun.'
+        next_action: Prepare and independently review an append-only one-for-one W1 planning-authority amendment replacing
+          only critical with manuscript-review/revision in T05 criterion 2; obtain exact-commit repository-owner approval
+          if required by the amendment controller, adopt it without changing the governed catalog or product scope, explicitly
+          resume W1, recover T05, and execute the bound fourteen-profile matrix.
+        recorded_at: '2026-09-04T04:54:56+00:00'
+        owner: codex
       implementation_notes: ''
       evidence: []
       review:
@@ -16994,10 +17002,7 @@ capabilities:
         reviewed_at: null
         notes: null
       base_sha: b6c33dd67a4c219efbc7856b21653f2fdc2db3d4
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-09-04T04:48:23+00:00'
-        expires_at: '2026-09-04T12:48:23+00:00'
+      lease: null
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:

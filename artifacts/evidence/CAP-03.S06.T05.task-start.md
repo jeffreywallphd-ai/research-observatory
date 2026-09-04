@@ -57,4 +57,12 @@
 
 Adversarial preflight: the current implementation and prior T01-T04 findings were inspected directly. A separate preflight agent is not required because T05 adds verification first and changes no production authority unless a failing acceptance test exposes a bounded defect. Independent commit-bound task and slice review remain mandatory.
 
-Mandatory gate discovered: none. Academic Minimal 1.5 already governs the required fourteen-profile behavior. Any test result that requires a new workflow identity, route, output, interaction, or authority will stop at the existing design/amendment boundary rather than being silently encoded in T05.
+## Material authority mismatch discovered after the initial freeze
+
+- T05 criterion 2 in `planning/backlog.yaml` and the approved slice plan says that "Hermeneutic, critical, and living-review cycles" can revisit earlier steps.
+- The higher-authority accepted ADR-0026 requires an exact projection of the approved Academic Minimal 1.5 catalog. Those exact bytes classify `living-review`, `hermeneutic-inquiry`, and `manuscript-review-revision` as revisitable; `critical-problematization` and `critical-article-development` are linear.
+- The mismatch has existed since the repository bootstrap rather than being introduced by T01-T04. Implementing the literal T05 text would violate the accepted ADR and governed catalog; implementing only the catalog would leave the immutable Wave task criterion text false.
+- Safe interim state: T05 remains at its test-first boundary with no product or verification implementation change. Preserve all approved catalog bytes and current runtime behavior.
+- Recommended correction: an append-only, one-for-one Wave planning-authority amendment should replace only the word `critical` in T05 criterion 2 with `manuscript-review/revision`, leaving all other task, slice, product, experience, dependency, estimate, verification, and release authority unchanged. This aligns the lower-authority criterion to the already-approved ADR/catalog and does not authorize a new experience.
+
+Mandatory gate discovered: yes — higher-authority conflict material to criterion 2. Resume condition: the exact one-for-one planning correction is independently reviewed and approved through the repository's append-only Wave amendment path, adopted, and W1/T05 are explicitly resumed. A catalog or product change is not an authorized workaround.

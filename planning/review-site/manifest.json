@@ -157,7 +157,7 @@
       "exit_gate_id": "G1",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "IN_PROGRESS",
+      "completion_status": "PAUSED",
       "unlocks_waves": [
         "W2"
       ],
@@ -11649,7 +11649,7 @@
             {
               "task_id": "CAP-03.S06.T05",
               "title": "Verify all approved use-case workflows end to end",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -11747,7 +11747,7 @@
             {
               "task_id": "CAP-03.S06.T05",
               "title": "Verify all approved use-case workflows end to end",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "page": "CAP-03/CAP-03.S06.T05.html",
               "dependencies": [
                 "CAP-03.S06.T04"
@@ -11760,7 +11760,7 @@
               "plan_section_sha256": "80c11ac0f4b0b7db86c26231cfdfd752a1b7ec6c839d77e9273304e87ee2d6a0",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-03.S06.T05.task-start.md",
-                "sha256": "63d5311a755cd64755cedd817b1794e38108c87a8884e09ef0c3ebf936d62c8e"
+                "sha256": "88916c741f35af103da1ffdae2fbe1e267de57cbc3b65429514b47477f961709"
               }
             }
           ]
