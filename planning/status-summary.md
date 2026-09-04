@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 45b604256a4b22975c74d478fc9f0ccdd0434aa97b2da7a11d85cb0a7b7e401d
+source_sha256: 18de0bfd39542b5cfedae578568ce7c1024e64ef2d12e26f03bf7331eab87b10
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -83,7 +83,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` | `NONE` | `NONE` | 0 |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
-| `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `REVIEW` | `APPROVED` | `REVIEW` | 1 |
+| `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 1 |
 
 ## Amendment-exit review and adoption projections
 
@@ -413,9 +413,11 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W1.A07
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `af7f3453ccd595a36da67b7700b5905e10a40cbddb91a60d1ed50e3c0b1519d0`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `af7f3453ccd595a36da67b7700b5905e10a40cbddb91a60d1ed50e3c0b1519d0`
 
 - Candidate / declared candidate / branch: `fea1a49dd19ee41d08fdad5a2c1017f48dfac039` / `e3822bbc577e7edd0beb258552cabdc52530bbb5` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-04T11:08:33+00:00`
@@ -425,11 +427,29 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 - Selected checks: `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\ui_reference_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml amendment status W1.A07`, `git diff --check 078dcfe197906359c11ae88a7903e69fbfa5d11d..e3822bbc577e7edd0beb258552cabdc52530bbb5`, `git diff --exit-code 078dcfe197906359c11ae88a7903e69fbfa5d11d..e3822bbc577e7edd0beb258552cabdc52530bbb5 -- design/ui-reference modules apps verification-profiles.json`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / ecr6-planning-authority-reviewer / `2026-09-04T11:14:54+00:00`
+
+**Reviewed state commit:** `2758c24f6bf65ee1e8f8412a331b2f4b72bb8373`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W1.A07.exit-review-R01.json` / `40d989c95cf4902e46c287bf3fe8570223e60583aba25ee845b427cfeb6ef031`
+
+**Review notes:** APPROVED at exact frozen REVIEW-state commit 2758c24f6bf65ee1e8f8412a331b2f4b72bb8373 on codex/w1-windows-local-runtime with no blocking or nonblocking acceptance-bound finding. Exit evidence artifacts/evidence/W1.A07.exit.json is introduced and Git-bound at fea1a49dd19ee41d08fdad5a2c1017f48dfac039, reproduces SHA-256 a92b4bf8db9a20d181201ad7eafe9750bb4cc00c8d3ecebb24e308b88f7eddcd, and binds declared amendment candidate e3822bbc577e7edd0beb258552cabdc52530bbb5 as its strict parent; the frozen review state is the strict descendant. The exit submission recomputes packet SHA-256 af7f3453ccd595a36da67b7700b5905e10a40cbddb91a60d1ed50e3c0b1519d0 with no controller error. Human-approved ECR-0006 packet 43e317be1e644c77e653ff5f121425d6e2cde2ef reproduces SHA-256 6a4d123f4281f3783ec02eb8ac5d0d986b37e53e52b5f6cc6059b07447d5ab04, its independent R01 ledger precedes immutable approval planning/wave-amendment-approvals/W1.A07.json, and that approval reproduces SHA-256 c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6 at introduction commit 72052b7f7781dcfc83a1a2c8dae362b899b114d5. Approved B00 binds candidate 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b and evidence SHA-256 b1d1365ee9f3f7be499d79b461e982e05561bef3d7eaa948bee97ba5de2598bf. W1.A07.T01 is DONE and independently approved at candidate 7baa4346aa68e9a7357e00b872f4b2965b167d4b with evidence SHA-256 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617, R01 submission packet SHA-256 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386, and immutable review-ledger SHA-256 3ac7f895180e4aff0dd177d6e525cc49aad8f63c80d16e85e0aade8da9d93ab7, with no open finding. All eight ECR-0006 exit criteria pass: the complete predecessor, migration, maintenance, and paused-Wave authority validates; B00 remained the sole lawful first mutation; the amendment makes exactly the authorized one-for-one term replacement in the canonical backlog and CAP-03.S06 slice plan; accepted ADR-0026 and unchanged RO-UI-ACADEMIC-MINIMAL-1.5 bind the exact three cyclical profiles at WORKFLOW_CATALOG SHA-256 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca; all other CAP-03.S06, release-gate, predecessor, product, runtime, schema, migration, security, governed-experience, and Git-history authority is unchanged; refactor allocation remains zero of the immutable 194-point W1 baseline; bootstrap and task histories are append-only and independently approved; and no W1 qualification, G1 approval, local-main integration, remote action, external effect, destructive action, or spend is claimed. Independent replay passed runtime amendment/submission integrity, canonical backlog validation, the 490-page review site, generated backlog views, governed UI-reference validation, exact ancestry/blob hashes, semantic normalization, Git hygiene, and negative product/design/ADR/architecture path checks. Product and Windows qualification remain correctly deferred to resumed CAP-03.S06.T05, slice/checkpoint review, and W1 exit. W1 remains PAUSED at amendment-hold, CAP-03.S06.T05 remains BLOCKED and lease-free, and W1.A07 is REVIEW and lease-free. This disposition authorizes only recording the amendment-exit approval; adoption, explicit ordinary W1 resume, T05 recovery, remaining W1 qualification, G1 approval, local-main integration, and remote push remain separate transitions.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by ecr6-planning-authority-reviewer at `2026-09-04T11:14:54+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A07.exit.json`
 
-**Latest completion notes:** W1.A07.B00 and W1.A07.T01 are independently approved with no open findings; submit the bounded planning-only amendment for independent exit review while W1 remains paused and T05 remains blocked.
+**Latest completion notes:** APPROVED at exact frozen REVIEW-state commit 2758c24f6bf65ee1e8f8412a331b2f4b72bb8373 on codex/w1-windows-local-runtime with no blocking or nonblocking acceptance-bound finding. Exit evidence artifacts/evidence/W1.A07.exit.json is introduced and Git-bound at fea1a49dd19ee41d08fdad5a2c1017f48dfac039, reproduces SHA-256 a92b4bf8db9a20d181201ad7eafe9750bb4cc00c8d3ecebb24e308b88f7eddcd, and binds declared amendment candidate e3822bbc577e7edd0beb258552cabdc52530bbb5 as its strict parent; the frozen review state is the strict descendant. The exit submission recomputes packet SHA-256 af7f3453ccd595a36da67b7700b5905e10a40cbddb91a60d1ed50e3c0b1519d0 with no controller error. Human-approved ECR-0006 packet 43e317be1e644c77e653ff5f121425d6e2cde2ef reproduces SHA-256 6a4d123f4281f3783ec02eb8ac5d0d986b37e53e52b5f6cc6059b07447d5ab04, its independent R01 ledger precedes immutable approval planning/wave-amendment-approvals/W1.A07.json, and that approval reproduces SHA-256 c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6 at introduction commit 72052b7f7781dcfc83a1a2c8dae362b899b114d5. Approved B00 binds candidate 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b and evidence SHA-256 b1d1365ee9f3f7be499d79b461e982e05561bef3d7eaa948bee97ba5de2598bf. W1.A07.T01 is DONE and independently approved at candidate 7baa4346aa68e9a7357e00b872f4b2965b167d4b with evidence SHA-256 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617, R01 submission packet SHA-256 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386, and immutable review-ledger SHA-256 3ac7f895180e4aff0dd177d6e525cc49aad8f63c80d16e85e0aade8da9d93ab7, with no open finding. All eight ECR-0006 exit criteria pass: the complete predecessor, migration, maintenance, and paused-Wave authority validates; B00 remained the sole lawful first mutation; the amendment makes exactly the authorized one-for-one term replacement in the canonical backlog and CAP-03.S06 slice plan; accepted ADR-0026 and unchanged RO-UI-ACADEMIC-MINIMAL-1.5 bind the exact three cyclical profiles at WORKFLOW_CATALOG SHA-256 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca; all other CAP-03.S06, release-gate, predecessor, product, runtime, schema, migration, security, governed-experience, and Git-history authority is unchanged; refactor allocation remains zero of the immutable 194-point W1 baseline; bootstrap and task histories are append-only and independently approved; and no W1 qualification, G1 approval, local-main integration, remote action, external effect, destructive action, or spend is claimed. Independent replay passed runtime amendment/submission integrity, canonical backlog validation, the 490-page review site, generated backlog views, governed UI-reference validation, exact ancestry/blob hashes, semantic normalization, Git hygiene, and negative product/design/ADR/architecture path checks. Product and Windows qualification remain correctly deferred to resumed CAP-03.S06.T05, slice/checkpoint review, and W1 exit. W1 remains PAUSED at amendment-hold, CAP-03.S06.T05 remains BLOCKED and lease-free, and W1.A07 is REVIEW and lease-free. This disposition authorizes only recording the amendment-exit approval; adoption, explicit ordinary W1 resume, T05 recovery, remaining W1 qualification, G1 approval, local-main integration, and remote push remain separate transitions.
 
 **Bound amendment-adoption checkpoints:**
 
