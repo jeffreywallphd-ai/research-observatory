@@ -128,7 +128,7 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -137,13 +137,11 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-04T11:19:11+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-04T11:19:11+00:00'
-      expires_at: '2026-09-05T11:19:11+00:00'
+    updated_at: '2026-09-04T12:01:50+00:00'
+    pause_reason: User explicitly requested stopping within five minutes at the quiescent boundary after CAP-03.S06.T05 approval;
+      no new task claimed. Resume with CAP-03.S06 slice integration review.
+    pause_category: human-decision
+    lease: null
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -278,7 +276,7 @@ waves:
     notes: Adopt the independently approved W1.A07 cycle-authority correction as a W1 security checkpoint; retain all ordinary
       CAP-03.S06.T05, slice-review, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
