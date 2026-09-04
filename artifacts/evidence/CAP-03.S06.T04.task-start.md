@@ -64,6 +64,14 @@
 - Slice review owns the full CAP-03.S06 end-to-end matrix and adversarial cross-task integration.
 - W1 exit owns the complete affected/full repository, desktop/service/data, packaging, recovery, security, accessibility, performance, and Windows x64 release-authoritative matrix.
 
-Adversarial preflight: requested because T04 crosses public/generated API contracts, immutable SQLite authority, dependency staleness, human-gate security, and the multi-layer Project Home experience.
+Adversarial preflight: completed because T04 crosses public/generated API contracts, immutable SQLite authority, dependency staleness, human-gate security, and the multi-layer Project Home experience. It added these mandatory closure details before production code:
+
+- Profile-change stage impact/materialization must join the existing Intent/selection compare-and-swap transaction. T02's historical `priorStageStates: []` baseline is a compatibility input, not the target behavior once stage rows exist.
+- Add a normalized stage-state/head persistence boundary rather than silently mutating on GET. Fresh projects and exact pre-T04 v10 projects require explicit, idempotent bootstrap/migration semantics, corruption denials, and restart from a fresh Core composition.
+- Define current as the unique current *head* for the latest selection; immutable older revisions may truthfully retain historical `current` status. Multi-aggregate complete/skip/advance and replay must be atomic.
+- Persist exact project-scoped completion/output and stale-cause references, then derive the contract hashes. Reject arbitrary well-formed hashes and cross-project/substituted dependency identities. `unknown-impact` becomes explicit review/attention, while informational impact does not create stale authority.
+- Every governed stage currently has checkpoint state `unknown`; Project Home must say so. ADR-0025 analytical human tasks/checkpoints cannot be relabeled as scholarly quality-gate approval.
+- T04 owns a durable supporting-state handoff: restart returns only to the exact current-primary revision; a changed primary or selection invalidates the stale return without changing primary authority.
+- Project Home must be one coherent Core projection read from one SQLite snapshot, including exact command preconditions; delayed project-A results, read-only/lock, unimplemented routes, and substituted identity fields fail closed.
 
 Mandatory gate discovered: none at task start. Academic Minimal 1.5 already governs the required Project Home and stale-state experience; any newly required behavior outside it will stop for the existing design-first process.
