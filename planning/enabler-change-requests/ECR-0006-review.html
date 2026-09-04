@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECR-0006 review — align CAP-03.S06 cycle authority</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; line-height: 1.55; }
+    body { max-width: 72rem; margin: 0 auto; padding: 2rem; }
+    header, section { border: 1px solid #7b8794; border-radius: .7rem; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+    .pending { border-left: .45rem solid #b7791f; }
+    .selected { border-left: .45rem solid #2f855a; }
+    .conflict { border-left: .45rem solid #c53030; }
+    code { overflow-wrap: anywhere; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #7b8794; padding: .55rem; text-align: left; vertical-align: top; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <header class="pending">
+    <p><strong>Pending exact-commit approval · non-executable</strong></p>
+    <h1>ECR-0006 / W1.A07</h1>
+    <p>Align CAP-03.S06.T05 revisitable-cycle authority before end-to-end implementation.</p>
+  </header>
+
+  <section class="conflict">
+    <h2>Why W1 is paused</h2>
+    <table>
+      <thead><tr><th>Authority</th><th>Current contract</th></tr></thead>
+      <tbody>
+        <tr><td>T05 criterion</td><td>Hermeneutic, critical, and living-review cycles may revisit.</td></tr>
+        <tr><td>Accepted ADR-0026</td><td>The runtime projects the exact approved workflow catalog.</td></tr>
+        <tr><td>Approved UI reference 1.5</td><td>Living review, hermeneutic inquiry, and manuscript review/revision are revisitable; both critical profiles are linear.</td></tr>
+      </tbody>
+    </table>
+    <p>The lower-authority sentence cannot be implemented literally without violating accepted architecture and approved experience. T05 stopped before product or test implementation.</p>
+  </section>
+
+  <section class="selected">
+    <h2>Selected resolution</h2>
+    <blockquote>Hermeneutic, manuscript-review/revision, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.</blockquote>
+    <p>This replaces only <code>critical</code>, preserves every other task and Wave obligation, and changes no product, security, catalog, or governed-experience byte.</p>
+  </section>
+
+  <section>
+    <h2>Bounded work</h2>
+    <ul>
+      <li><code>W1.A07.B00</code> appends only the approved amendment record while W1 remains paused and T05 remains blocked.</li>
+      <li><code>W1.A07.S01 / W1.A07.T01</code> updates the sentence in the canonical backlog and slice plan and regenerates deterministic views.</li>
+      <li>Refactor allocation: 0 of 194 approved-W1 estimate points.</li>
+      <li>Independent packet, bootstrap, task, and exit reviews remain mandatory.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Decision and alternatives</h2>
+    <p><strong>Recommended:</strong> approve after exact-commit independent packet review. The selected correction follows the already accepted ADR and approved catalog with the smallest possible planning delta.</p>
+    <p>Alternatives would change governed workflow behavior or defer CAP-03.S06 and leave W1 incomplete.</p>
+  </section>
+
+  <section class="pending">
+    <h2>Approval effect</h2>
+    <p>Approval authorizes only the hash-bound B00, S01, and T01. It does not execute them, adopt W1.A07, resume W1, recover T05, qualify the Wave, approve G1, merge main, or push remotely.</p>
+    <p><a href="../review-site/waves/W1.html">W1 review page</a> · <a href="../review-site/CAP-03/index.html">CAP-03 review page</a> · <a href="../slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md">CAP-03.S06 plan</a> · <a href="../../docs/adr/ADR-0026-adopt-governed-workflow-profiles-and-history-preserving-navigation-state.md">ADR-0026</a></p>
+  </section>
+</body>
+</html>
