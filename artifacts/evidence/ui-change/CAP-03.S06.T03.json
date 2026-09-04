@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-03.S06.T03",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-03.S06.T03.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "apps/desktop/src/app/workflowNavigationModel.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "version": "1.5",
+    "packageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
+    "approvalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.4"
+  },
+  "focusedEvidence": [
+    {
+      "command": "npm test --prefix apps/desktop && npm run lint --prefix apps/desktop && npm run typecheck --prefix apps/desktop && npm run build --prefix apps/desktop",
+      "result": "passed",
+      "scope": "All 109 active desktop tests passed with three platform-bound cases skipped; desktop lint and strict TypeScript passed; the production and reference bundles built. Focused coverage proves profile-relative ordering, every governed display state, duplicate-page stage identities, no route-visit completion, loading and authority races, native disclosure semantics, context placement, exact supporting-return substitution denial, and truthful unavailable states."
+    },
+    {
+      "command": "apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts && .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check && .venv/Scripts/ruff.exe check tools/core_api_contract.py tools/desktop_app_check.py services/core-api/src/research_observatory_core/research_intents.py && .venv/Scripts/mypy.exe --follow-imports=skip tools/core_api_contract.py tools/desktop_app_check.py services/core-api/src/research_observatory_core/research_intents.py",
+      "result": "passed",
+      "scope": "Thirteen generated-client tests passed, including retained-advertised-hash substitutions of the tool inventory, profile order and metadata, expected outputs, process form, and every navigation-bearing stage field. Generator drift, Python lint, and isolated strict typing passed against the exact Core projection boundary."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "result": "passed",
+      "scope": "The assembled offline product passed keyboard, focus, responsive, light/dark, diagnostics, privacy, lock/recovery, and reference-containment checks. Its real generated-client/Tauri frame proved exact theory-profile ordering and context, retained the theory order for an unsaved systematic selection, changed to the exact systematic order only after a successful persisted Intent revision, and returned from Project Home to the exact current Research Intent step."
+    }
+  ],
+  "implementationScope": "Implement the already approved Academic Minimal v1.5 adaptive workflow-navigation region in the functional desktop. The shell authenticates the exact Core workflow projection, derives the numbered primary rail from the persisted current Research Intent profile, keeps all implemented tools in a native secondary disclosure, and shows the current stage rationale, previous/next actions, expected output, and exact checkpoint truth on every functional workspace. Supporting tools retain an in-memory return context bound to project root and ID, Intent revision and content hash, catalog version and hash, profile, and current stage. Route visits never assert scholarly completion or checkpoint approval; durable progress, recalculation, and restart authority remain assigned to T04, and reference-only pages remain unavailable rather than being fabricated as product routes."
+}
