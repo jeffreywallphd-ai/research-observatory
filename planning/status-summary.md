@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 202f11551d59f39aad484918cc24f0aaa13c697ab2ea15c9a48e0d670542c244
+source_sha256: d8b37017e1aff6262314becfd66d01ef19a4199eea63faeae609a15bf1b25396
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,8 +52,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 256 |
-| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 62 |
 | `DEFERRED` | 36 |
 
@@ -478,7 +478,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S05.T03` | `append-only v1` | 4 | `-` | approved / agent:cap03-s05-t03-r04-reviewer | - |
 | `CAP-03.S06.T01` | `append-only v1` | 2 | `-` | approved / agent:workflow-profile-contract-reviewer | - |
 | `CAP-03.S06.T02` | `append-only v1` | 4 | `-` | approved / agent:t02-independent-reviewer | - |
-| `CAP-03.S06.T03` | `append-only v1` | 1 | `-` | changes-requested / agent:t03-independent-reviewer | `CAP-03.S06.T03-R01-F01`, `CAP-03.S06.T03-R01-F02` |
+| `CAP-03.S06.T03` | `append-only v1` | 1 | `R02` | changes-requested / agent:t03-independent-reviewer | `CAP-03.S06.T03-R01-F01`, `CAP-03.S06.T03-R01-F02` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -551,5 +551,5 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S06.T03` Implement adaptive ordered navigation and workflow context | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S06.T03` Implement adaptive ordered navigation and workflow context | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 202f11551d59f39aad484918cc24f0aaa13c697ab2ea15c9a48e0d670542c244
+source_sha256: d8b37017e1aff6262314becfd66d01ef19a4199eea63faeae609a15bf1b25396
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6311,7 +6311,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6339,6 +6339,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S06.T03.R01.json` at `71c32375594de7fbd73a0f5a3a9a9507c3d31937`
+- `artifacts/evidence/CAP-03.S06.T03.R02.json` at `0dccfbd7896bd488b2d28674959f0df6d97e8328`
 
 ##### Review history — CAP-03.S06.T03
 
@@ -6375,7 +6376,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `39bd8860ae658181a5f88d9067664c233ff314f32228cbe1e8ddb8f7034b7021`
+
+- Candidate / base / branch: `0dccfbd7896bd488b2d28674959f0df6d97e8328` / `71c32375594de7fbd73a0f5a3a9a9507c3d31937` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-04T01:39:22+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T03.R02.json` / `fa8ab6bb610327d6e2bcc5a663ffee230cd02fdfe6bb6291e84981bbbbf55d8b` / `0dccfbd7896bd488b2d28674959f0df6d97e8328`
+- Acceptance-criteria SHA-256: `04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a`
+- Verification-selection SHA-256: `8e4108a71781570e83532c05305e3727accbe4e0194feaf74b0e1fd58eecdd1e`
+- Changed paths: `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/IntentWorkspace.test.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `apps/desktop/src/app/WorkflowNavigation.test.tsx`, `apps/desktop/src/app/workflowNavigation.test.ts`, `apps/desktop/src/app/workflowNavigationModel.ts`, `artifacts/evidence/CAP-03.S06.T03.R01.json`, `artifacts/evidence/CAP-03.S06.T03.review-R01.json`, `artifacts/evidence/CAP-03.S06.T03.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T03.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/desktop/test_desktop_app_check.py`, `tools/desktop_app_check.py`
+- Selected checks: `npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop`, `apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check`, `.venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-R02-final-built-frame.json`, `.venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility`, `.venv/Scripts/ruff.exe format --check tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv/Scripts/ruff.exe check tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; git diff --check 71c32375594de7fbd73a0f5a3a9a9507c3d31937..0dccfbd7896bd488b2d28674959f0df6d97e8328`
+- Deferred checks: `Desktop performance remains gate-bound to W1 exit; the remediation adds constant-size identity comparisons and no governed performance threshold changes.`, `The R01-disclosed repository-wide Ruff-format and mypy debt remains confined to unchanged files; both changed Python verification files pass focused quality checks.`, `Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, coherent W1 integration checkpoints, and W1 exit.`
+- Selection rationale: R02 addresses only the two high R01 findings. The credible failures are (1) a delayed project-A save/accept response mutating project B's live workflow shell and cancelling B's valid load, and (2) a supporting-return action surviving a governed-reference or guidance identity replacement. The selected checks lead with one-field substitution regressions, project/source/workspace identity denial, two delayed-response assembled-browser scenarios, the complete desktop suite/build, generated-client trust boundary, approved UI/reference/accessibility lineage, changed Python verification quality, and append-only governance. Service persistence, profile migration, analytical jobs, performance, packaging, and broader Wave qualification are unchanged and remain deferred to their owning boundaries.
+- Prior round / replayed open findings: `R01` / `CAP-03.S06.T03-R01-F01`, `CAP-03.S06.T03-R01-F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by agent:t03-independent-reviewer at `2026-09-04T01:21:08+00:00`
 

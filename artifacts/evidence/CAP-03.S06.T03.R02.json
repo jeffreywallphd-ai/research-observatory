@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T03",
+  "commit": "0dccfbd7896bd488b2d28674959f0df6d97e8328",
+  "baseCommit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S06.T03.R01.json",
+    "sha256": "e42a23927e9a779e2c42ed5755927758d1d18cbc9b2bf8df29c267f2c7b1aa21",
+    "commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+    "reason": "Mandatory R02 remediation for CAP-03.S06.T03-R01-F01 and CAP-03.S06.T03-R01-F02."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+    "apps/desktop/src/app/workflowNavigation.test.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-03.S06.T03.R01.json",
+    "artifacts/evidence/CAP-03.S06.T03.review-R01.json",
+    "artifacts/evidence/CAP-03.S06.T03.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T03.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 110 active desktop tests passed with three declared platform-bound skips; lint, strict TypeScript compilation, and production/reference builds passed on exact remediation candidate 0dccfbd7896bd488b2d28674959f0df6d97e8328."
+    },
+    {
+      "command": "apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 13 generated-client trust-boundary tests passed and the Core API client regenerated exactly; the complete authenticated workflow projection remains unchanged by the renderer remediation."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-R02-final-built-frame.json",
+      "exitCode": 0,
+      "result": "All eight desktop product-check tests and the assembled frame passed. The new real-browser scenario delays both a committed project-A draft response and acceptance response, switches to project B before releasing each, and proves B remains the sole workflow/project authority. Existing navigation, supporting return, focus, responsive/theme, lock, recovery, privacy, and zero-network-request cases remain green."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "The exact T03 UI range remains bound to approved Academic Minimal v1.5. All 139 workflow browser cases, 390 keyboard cases, 14 profile variants, and 66 responsive/accessibility cases passed."
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe format --check tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv/Scripts/ruff.exe check tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py",
+      "exitCode": 0,
+      "result": "Both changed Python verification files passed Ruff formatting and lint. The remediation changed no service/data Python source."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; git diff --check 71c32375594de7fbd73a0f5a3a9a9507c3d31937..0dccfbd7896bd488b2d28674959f0df6d97e8328",
+      "exitCode": 0,
+      "result": "The append-only R01 findings, active task projection, generated backlog views, and exact remediation patch hygiene passed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact persisted Research Intent remains the sole source of profile order; unsaved selection and route visits still create no durable completion or checkpoint authority.",
+        "CAP-03.S06.T03-R01-F01 is closed at two boundaries. IntentWorkspace drops preview/save/accept results after its project identity changes or it unmounts, and ApplicationRuntime independently rejects any persisted callback whose source project ID/root or returned workspace project ID differs from the live selected project.",
+        "The assembled product delays both project-A mutation response classes, installs project B while they are pending, releases A last, and proves B's project header and ordered workflow remain authoritative and recoverable."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "CAP-03.S06.T03-R01-F02 is closed: WorkflowAuthoritySnapshot and SupportingReturnContext now carry governed reference ID/version plus intent guidance version/hash in addition to project, Intent, portable catalog, profile, stage, and page identities.",
+        "Return validation compares every authority-bearing field. One-field substitutions of reference ID, reference version, guidance version, or guidance hash now expire the action exactly like existing project, Intent, catalog, profile, stage, and page substitutions.",
+        "Profile-relative primary/supporting classification and the one-action return remain green in focused model, rendered component, and assembled-browser checks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The remediation changes no governed layout or interaction. Semantic buttons, labelled regions, current-step indication, focus behavior, responsive rail, both themes, unknown quality-gate truth, and complete All tools disclosure remain green.",
+        "The task UI gate retains the same five approved-reference product files and exact Academic Minimal v1.5 package hash; workflow and accessibility conformance suites pass unchanged."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 addresses only the two high R01 findings. The credible failures are (1) a delayed project-A save/accept response mutating project B's live workflow shell and cancelling B's valid load, and (2) a supporting-return action surviving a governed-reference or guidance identity replacement. The selected checks lead with one-field substitution regressions, project/source/workspace identity denial, two delayed-response assembled-browser scenarios, the complete desktop suite/build, generated-client trust boundary, approved UI/reference/accessibility lineage, changed Python verification quality, and append-only governance. Service persistence, profile migration, analytical jobs, performance, packaging, and broader Wave qualification are unchanged and remain deferred to their owning boundaries.",
+    "selectedCommandIds": [
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "Desktop performance remains gate-bound to W1 exit; the remediation adds constant-size identity comparisons and no governed performance threshold changes.",
+      "The R01-disclosed repository-wide Ruff-format and mypy debt remains confined to unchanged files; both changed Python verification files pass focused quality checks.",
+      "Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, coherent W1 integration checkpoints, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [
+      "CAP-03.S06.T03-R01-F01",
+      "CAP-03.S06.T03-R01-F02"
+    ],
+    "note": "Independently authenticate exact R02 candidate 0dccfbd7896bd488b2d28674959f0df6d97e8328, replay both R01 findings and their two-layer closure, verify the delayed save and acceptance project-replacement browser cases plus every newly bound supporting-return identity substitution, preserve all R01 history, and limit review to the incremental remediation boundary plus prior-finding replay."
+  }
+}
