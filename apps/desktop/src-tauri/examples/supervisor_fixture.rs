@@ -93,7 +93,7 @@ mod windows_fixture {
             concat!(
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",",
                 "\"pid\":{},\"host\":\"127.0.0.1\",\"port\":{},",
-                "\"nonce\":\"{}\",\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\"],",
+                "\"nonce\":\"{}\",\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"intent.workflow-profiles\",\"intent.workflow-progress\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\",\"workflows.cancel\",\"workflows.human-decisions\",\"workflows.read\",\"workflows.retry\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}"
@@ -187,7 +187,7 @@ mod windows_fixture {
                     "{{\"schemaVersion\":\"1.0\",",
                     "\"service\":\"research-observatory-core\",",
                     "\"version\":\"{}\",\"state\":\"ready\",",
-                    "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\"],\"ready\":true}}"
+                    "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"intent.workflow-profiles\",\"intent.workflow-progress\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\",\"workflows.cancel\",\"workflows.human-decisions\",\"workflows.read\",\"workflows.retry\"],\"ready\":true}}"
                 ),
                 version,
             );

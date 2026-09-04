@@ -42,6 +42,7 @@ from .ports.repositories import (
     WorkflowAuthorityMutation,
     WorkflowAuthorityRecord,
     WorkflowAuthorityWitness,
+    WorkflowStageStateRecord,
 )
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .research_intent_contracts import (
@@ -54,6 +55,7 @@ from .workflow_profile_contracts import (
     approved_workflow_profile_catalog,
     decode_project_workflow_selection,
     decode_workflow_profile_migration,
+    decode_workflow_stage_state,
 )
 
 _RepositoryFactory = Callable[[Path, str], IntentRevisionRepository]
@@ -681,6 +683,77 @@ def _migration_stage_mappings(from_profile_id: str, to_profile_id: str) -> list[
     return mappings
 
 
+def _prior_stage_impacts(
+    parent: Mapping[str, object],
+    records: tuple[WorkflowStageStateRecord, ...],
+    mappings: Sequence[Mapping[str, object]],
+) -> list[dict[str, object]]:
+    """Bind the exact primary heads affected by a profile-selection migration."""
+
+    parent_revision_id = cast(str, parent["selectionRevisionId"])
+    mapping_by_stage = {cast(str, item["fromStageKey"]): item for item in mappings}
+    histories: dict[str, list[Mapping[str, object]]] = {}
+    for record in records:
+        try:
+            value = json.loads(record.content_json)
+        except json.JSONDecodeError, TypeError:
+            raise RepositoryProblem("workflow stage-state JSON is invalid") from None
+        if not isinstance(value, dict):
+            raise RepositoryProblem("workflow stage-state record is invalid")
+        selection = value.get("selection")
+        if not isinstance(selection, dict) or selection.get("selectionRevisionId") != parent_revision_id:
+            continue
+        if value.get("navigationRole") != "primary":
+            continue
+        if decode_workflow_stage_state(_WORKFLOW_CATALOG, parent, value) is None or value.get(
+            "revisionContentHash"
+        ) != _authority_content_hash(value, "revisionContentHash"):
+            raise RepositoryProblem("workflow stage-state authority is invalid")
+        histories.setdefault(cast(str, value["stageStateId"]), []).append(value)
+
+    heads: list[Mapping[str, object]] = []
+    for history in histories.values():
+        ordered = sorted(history, key=lambda item: cast(int, item["revision"]))
+        if [cast(int, item["revision"]) for item in ordered] != list(range(1, len(ordered) + 1)):
+            raise RepositoryProblem("workflow stage-state history is discontinuous")
+        for index, state in enumerate(ordered):
+            parent_state = state.get("parentState")
+            if index == 0:
+                if parent_state is not None:
+                    raise RepositoryProblem("workflow stage-state predecessor is invalid")
+            else:
+                prior = ordered[index - 1]
+                expected_parent = {
+                    "stageStateId": prior["stageStateId"],
+                    "stageStateRevisionId": prior["stageStateRevisionId"],
+                    "revision": prior["revision"],
+                    "revisionContentHash": prior["revisionContentHash"],
+                }
+                if _canonical_json(parent_state) != _canonical_json(expected_parent):
+                    raise RepositoryProblem("workflow stage-state predecessor differs")
+        heads.append(ordered[-1])
+
+    impacts: list[dict[str, object]] = []
+    for state in sorted(heads, key=lambda item: (cast(str, item["stageKey"]), cast(str, item["stageStateId"]))):
+        stage_key = cast(str, state["stageKey"])
+        mapping = mapping_by_stage.get(stage_key)
+        if mapping is None:
+            raise RepositoryProblem("workflow migration does not cover prior stage")
+        impacts.append(
+            {
+                "stageStateId": state["stageStateId"],
+                "stageStateRevisionId": state["stageStateRevisionId"],
+                "stageStateRevision": state["revision"],
+                "stageStateRevisionContentHash": state["revisionContentHash"],
+                "fromStageKey": stage_key,
+                "disposition": mapping["disposition"],
+                "targetStageKey": mapping["targetStageKey"],
+                "rationale": mapping["rationale"],
+            }
+        )
+    return impacts
+
+
 def _changed_workflow_authority(
     parent: Mapping[str, object],
     prior_intent_revision: Mapping[str, object],
@@ -688,6 +761,7 @@ def _changed_workflow_authority(
     *,
     actor_id: str,
     selected_at: str,
+    prior_stage_states: tuple[WorkflowStageStateRecord, ...],
 ) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
     parent_reference = _parent_selection(parent)
     prior_intent = _intent_reference(prior_intent_revision)
@@ -701,6 +775,7 @@ def _changed_workflow_authority(
         "decidedBy": {"actorType": "human", "actorId": actor_id},
     }
     decision["decisionContentHash"] = _authority_content_hash(decision, "decisionContentHash")
+    stage_mappings = _migration_stage_mappings(cast(str, from_profile["profileId"]), cast(str, to_profile["profileId"]))
     migration: dict[str, object] = {
         "schemaVersion": "1.0",
         "documentType": "research-observatory-workflow-profile-migration",
@@ -716,9 +791,7 @@ def _changed_workflow_authority(
         "historyPolicy": "preserve",
         "requiresHumanAcceptance": True,
         "acceptance": decision,
-        "stageMappings": _migration_stage_mappings(
-            cast(str, from_profile["profileId"]), cast(str, to_profile["profileId"])
-        ),
+        "stageMappings": stage_mappings,
     }
     migration["migrationContentHash"] = _authority_content_hash(migration, "migrationContentHash")
     accepted_migration = {
@@ -748,7 +821,7 @@ def _changed_workflow_authority(
             "priorSelection": parent_reference,
             "targetProfile": to_profile,
             "historyPolicy": "preserve",
-            "priorStageStates": [],
+            "priorStageStates": _prior_stage_impacts(parent, prior_stage_states, stage_mappings),
             "summary": (
                 "Preserve the prior workflow selection and stage history while applying the accepted profile change."
             ),
@@ -798,6 +871,7 @@ def _workflow_authority_mutation(
             target_intent,
             actor_id=actor_id,
             selected_at=selected_at,
+            prior_stage_states=existing.expected_stage_states or (),
         )
         revision = cast(int, changed["revision"])
         added_selections.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(changed)))
@@ -838,6 +912,7 @@ def _workflow_authority_mutation(
         selections=tuple(added_selections),
         migrations=tuple(added_migrations),
         decisions=tuple(added_decisions),
+        expected_stage_states=existing.expected_stage_states if profile_changed else None,
     )
 
 

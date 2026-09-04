@@ -60,6 +60,7 @@ def default_module_registry() -> ModuleRegistry:
                     "intent.policy-evaluation",
                     "intent.read",
                     "intent.workflow-profiles",
+                    "intent.workflow-progress",
                 ),
             ),
             ModuleDefinition(

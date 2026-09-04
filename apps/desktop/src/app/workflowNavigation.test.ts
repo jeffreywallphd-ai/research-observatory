@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import type { WorkflowProfileCatalogProjection } from "@research-observatory/contracts/core-api";
+import type {
+  WorkflowProfileCatalogProjection,
+  WorkflowProgressProjection,
+} from "@research-observatory/contracts/core-api";
 
 import {
   IMPLEMENTED_WORKSPACES,
@@ -210,6 +213,11 @@ describe("workflow navigation model", () => {
     const pending = new Map<string, (value: ReturnType<typeof authorityIntent>) => void>();
     const client = {
       workflowProfileCatalog: async () => catalog,
+      workflowProgress: async ({ root }: { readonly root: string }) => workflowProgress(
+        root === "C:/Research/project-b"
+          ? "22222222-2222-4222-8222-222222222222"
+          : "11111111-1111-4111-8111-111111111111",
+      ),
       intent: async ({ root }: { readonly root: string }) => await new Promise<ReturnType<typeof authorityIntent>>((resolve) => {
         pending.set(root, resolve);
       }),
@@ -262,5 +270,27 @@ function authorityIntent() {
       revisionContentHash: `sha256:${"c".repeat(64)}`,
       primaryUseCase: "systematic-review" as const,
     },
+  };
+}
+
+function workflowProgress(projectId: string): WorkflowProgressProjection {
+  return {
+    schemaVersion: "1.0",
+    projectId,
+    selectionRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d051",
+    selectionRevisionContentHash: `sha256:${"d".repeat(64)}`,
+    profileId: "systematic-review",
+    profileTitle: "Systematic review",
+    processForm: "linear",
+    bootstrapRequired: true,
+    current: null,
+    recommendedStageKey: "intent-contract-1",
+    recommendedPageContractId: "intent-contract.html",
+    recommendedAction: "Start the guided workflow.",
+    checkpointState: "unknown",
+    checkpointRationale,
+    supportingHandoff: null,
+    staleOutputs: [],
+    history: [],
   };
 }

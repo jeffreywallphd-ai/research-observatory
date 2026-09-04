@@ -219,6 +219,7 @@ def product_build_errors(repo: Path) -> list[str]:
             "CAP-03.S05.T03",
             "CAP-03.S06.T02",
             "CAP-03.S06.T03",
+            "CAP-03.S06.T04",
         ],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
@@ -1260,6 +1261,42 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     ]
                   };
                   const workflowCatalog = __WORKFLOW_CATALOG__;
+                  const currentIntent = {
+                    schemaVersion: '1.0', intentId: '019d5f72-5331-7000-8000-000000000001',
+                    revisionId: '019d5f72-5331-7000-8000-000000000002', revision: 1,
+                    revisionContentHash: `sha256:${'a'.repeat(64)}`,
+                    createdAt: '2026-09-03T12:00:00Z', status: 'draft',
+                    primaryUseCase: 'theory-synthesis', epistemicMode: 'theory',
+                    researchObjective: 'Explain a bounded evidence-first workflow.',
+                    contributionIntent: 'Retain exact researcher authority.', phenomenon: 'Research workflow',
+                    unitOfAnalysis: 'Project', levelOfAnalysis: 'System',
+                    sourceKinds: ['peer-reviewed-article'], evidenceTypes: ['theoretical-work'],
+                    languageCodes: ['en'], startYear: 2020, endYear: 2026,
+                    includePrivateReports: false, noveltyStandard: 'theoretical',
+                    noveltyRationale: 'Bound novelty against prior theory.', autonomyLevel: 'suggest',
+                    stoppingConditions: ['interpretive-saturation'],
+                    revisionRationale: 'Establish the bounded theory workflow.', unresolvedDecisions: [],
+                    decisionComplete: true, canRequestAcceptance: true, launchReady: false
+                  };
+                  let workflowStageState = null;
+                  let workflowSupportingHandoff = null;
+                  const workflowProgress = () => ({
+                    schemaVersion: '1.0', projectId,
+                    selectionRevisionId: '019d5f72-5331-7000-8000-000000000031',
+                    selectionRevisionContentHash: `sha256:${'7'.repeat(64)}`,
+                    profileId: 'theory-synthesis', profileTitle: 'Theory synthesis',
+                    processForm: 'linear', bootstrapRequired: workflowStageState === null,
+                    current: workflowStageState,
+                    recommendedStageKey: 'intent-contract-1',
+                    recommendedPageContractId: 'intent-contract.html',
+                    recommendedAction: workflowStageState === null
+                      ? 'Start the guided workflow at this researcher-controlled stage.'
+                      : 'Continue the current stage; completion requires explicit human evidence.',
+                    checkpointState: 'unknown',
+                    checkpointRationale:
+                      'No stage-specific checkpoint authority is declared by the approved reference.',
+                    supportingHandoff: workflowSupportingHandoff, staleOutputs: [], history: []
+                  });
                   const privacyPolicy = () => ({
                     schemaVersion: '1.0', projectId, revision: privacyRevision,
                     defaultsApplied: privacyRevision === 0, networkPolicy,
@@ -1310,12 +1347,78 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                         return {status: 200, contentType: 'application/json', traceId, etag: null,
                           body: JSON.stringify(workflowCatalog)};
                       }
-                      if (request?.method !== 'POST' || request?.ifMatch !== null || request?.idempotencyKey !== null) {
+                      const progressCommand = request?.path === '/projects/workflow-progress/commands';
+                      if (request?.method !== 'POST' || request?.ifMatch !== null
+                        || (progressCommand
+                          ? !/^[0-9a-f]{32}$/.test(request?.idempotencyKey)
+                          : request?.idempotencyKey !== null)) {
                         throw new Error('invalid project request envelope');
                       }
                       const body = JSON.parse(request.body);
                       let responseBody;
-                      if (request.path === '/projects/privacy') {
+                      if (request.path === '/projects/workflow-progress') {
+                        if (body.root !== 'C:/Research/study-one') throw new Error('invalid workflow progress root');
+                        responseBody = workflowProgress();
+                      } else if (request.path === '/projects/intent') {
+                        if (body.root !== 'C:/Research/study-one') throw new Error('invalid intent root');
+                        responseBody = {
+                          schemaVersion: '1.0', projectId, current: currentIntent,
+                          history: [{
+                            revision: currentIntent.revision,
+                            revisionId: currentIntent.revisionId,
+                            revisionContentHash: currentIntent.revisionContentHash,
+                            createdAt: currentIntent.createdAt,
+                            status: currentIntent.status,
+                            primaryUseCase: currentIntent.primaryUseCase,
+                            unresolvedDecisionCount: currentIntent.unresolvedDecisions.length
+                          }]
+                        };
+                      } else if (progressCommand) {
+                        if (body.root !== 'C:/Research/study-one'
+                          || body.stageKey !== 'intent-contract-1'
+                          || body.expectedSelectionRevisionId !== '019d5f72-5331-7000-8000-000000000031'
+                          || body.expectedSelectionRevisionContentHash !== `sha256:${'7'.repeat(64)}`
+                          || body.completionEvidenceRevisionIds.length !== 0
+                          || body.rationale !== null) {
+                          throw new Error('invalid workflow progress command');
+                        }
+                        if (body.action === 'start') {
+                          if (body.expectedStageStateRevisionId !== null
+                            || body.expectedStageStateRevisionContentHash !== null
+                            || body.supportingPageContractId !== null || workflowStageState !== null) {
+                            throw new Error('invalid workflow start command');
+                          }
+                          workflowStageState = {
+                            stageStateId: '019d5f72-5331-7000-8000-000000000041',
+                            stageStateRevisionId: '019d5f72-5331-7000-8000-000000000042',
+                            revision: 1, revisionContentHash: `sha256:${'9'.repeat(64)}`,
+                            parentStateRevisionId: null, stageKey: 'intent-contract-1',
+                            pageContractId: 'intent-contract.html', navigationRole: 'primary',
+                            passNumber: 1, status: 'current', completionEvidenceIds: [],
+                            attentionReason: null, staleCauseIds: [], skipRationale: null,
+                            updatedAt: '2026-09-04T02:00:00.000Z'
+                          };
+                        } else if (body.action === 'open-supporting') {
+                          if (workflowStageState === null
+                            || body.expectedStageStateRevisionId !== workflowStageState.stageStateRevisionId
+                            || body.expectedStageStateRevisionContentHash !== workflowStageState.revisionContentHash
+                            || !['index.html', 'project-settings.html', 'projects.html']
+                              .includes(body.supportingPageContractId)) {
+                            throw new Error('invalid supporting workflow command');
+                          }
+                          workflowSupportingHandoff = {
+                            stageStateId: workflowStageState.stageStateId,
+                            stageStateRevisionId: workflowStageState.stageStateRevisionId,
+                            revisionContentHash: workflowStageState.revisionContentHash,
+                            pageContractId: body.supportingPageContractId,
+                            navigationRole: 'supporting',
+                            returnStageStateRevisionId: workflowStageState.stageStateRevisionId
+                          };
+                        } else {
+                          throw new Error('unexpected workflow action');
+                        }
+                        responseBody = workflowProgress();
+                      } else if (request.path === '/projects/privacy') {
                         if (!open || accessMode !== 'read-write' || body.root !== 'C:/Research/study-one') {
                           throw new Error('privacy policy requested without writable project');
                         }
@@ -1408,6 +1511,25 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             current = projects.locator("[data-current-project]")
             current.get_by_role("button", name="Open project", exact=True).click()
             current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
+            open_desktop_tool(projects, "Project home")
+            projects.locator('[data-project-home-state="ready"]').wait_for(state="visible", timeout=5_000)
+            project_home_bootstrap_valid = (
+                "Theory synthesis · Linear workflow" in projects.locator("main").inner_text()
+                and "Not started" in projects.locator("main").inner_text()
+                and "Not yet governed" in projects.locator("main").inner_text()
+                and "No stale or unknown-impact outputs are recorded" in projects.locator("main").inner_text()
+            )
+            projects.get_by_role("button", name="Start guided workflow", exact=True).click()
+            projects.wait_for_function(
+                "window.__PROJECT_CALLS__.some((request) => request.path === '/projects/workflow-progress/commands')",
+                timeout=5_000,
+            )
+            open_desktop_tool(projects, "Project home")
+            projects.get_by_role("button", name="Open current step", exact=True).wait_for(timeout=5_000)
+            project_home_started_valid = (
+                "intent-contract-1" in projects.locator("main").inner_text()
+                and "Continue the current stage" in projects.locator("main").inner_text()
+            )
             open_desktop_tool(projects, "Project settings")
             projects.locator("#privacy-network-policy").wait_for(state="visible", timeout=5_000)
             privacy_defaults_valid = (
@@ -1483,7 +1605,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             project_sequence_valid = projects.evaluate(
                 """() => JSON.stringify(window.__PROJECT_CALLS__.map((request) => request.path))
                   === JSON.stringify(['/workflow-profiles/catalog','/projects','/projects/open',
-                    '/workflow-profiles/catalog','/projects/intent','/workflow-profiles/catalog',
+                    '/workflow-profiles/catalog','/projects/intent','/projects/workflow-progress',
+                    '/projects/workflow-progress/commands','/projects/workflow-progress/commands',
+                    '/projects/workflow-progress/commands','/projects/workflow-progress/commands',
+                    '/workflow-profiles/catalog',
                     '/projects/close','/projects/archive',
                     '/projects/restore','/projects/delete','/projects/open','/projects/close','/projects/open'])
                   && document.querySelector('[data-current-project]')?.textContent?.includes('Revision 3')
@@ -1497,6 +1622,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 "archivedIncompatible": archived_incompatible_valid,
                 "projectSequence": project_sequence_valid,
                 "workflowPreview": workflow_preview_valid,
+                "projectHomeBootstrap": project_home_bootstrap_valid,
+                "projectHomeStarted": project_home_started_valid,
                 "requestPaths": projects.evaluate("() => window.__PROJECT_CALLS__.map((request) => request.path)"),
             }
             details["projectsWorkflow"] = (
@@ -1504,6 +1631,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and archived_incompatible_valid
                 and project_sequence_valid
                 and workflow_preview_valid
+                and project_home_bootstrap_valid
+                and project_home_started_valid
                 and projects.evaluate("document.activeElement?.id === 'shell-command'")
             )
             if project_errors:
@@ -1613,6 +1742,26 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     revisionId: '019d5f72-5331-7000-8000-000000000022',
                     revisionContentHash: `sha256:${'2'.repeat(64)}`,
                     researchObjective: 'Keep project B authoritative during delayed project A responses.'
+                  };
+                  const workflowProgress = (selectedProjection, selectedIntent) => {
+                    const profile = workflowCatalog.profiles.find(
+                      (candidate) => candidate.profileId === selectedIntent.primaryUseCase);
+                    return {
+                      schemaVersion: '1.0', projectId: selectedProjection.projectId,
+                      selectionRevisionId: selectedProjection.projectId.startsWith('1111')
+                        ? '019d5f72-5331-7000-8000-000000000031'
+                        : '019d5f72-5331-7000-8000-000000000032',
+                      selectionRevisionContentHash: `sha256:${(
+                        selectedProjection.projectId.startsWith('1111') ? '7' : '8').repeat(64)}`,
+                      profileId: profile.profileId, profileTitle: profile.title,
+                      processForm: profile.processForm, bootstrapRequired: true, current: null,
+                      recommendedStageKey: profile.stages[0].stageKey,
+                      recommendedPageContractId: profile.stages[0].pageContractId,
+                      recommendedAction: 'Start the guided workflow at this researcher-controlled stage.',
+                      checkpointState: profile.stages[0].checkpointState,
+                      checkpointRationale: profile.stages[0].checkpointRationale,
+                      supportingHandoff: null, staleOutputs: [], history: []
+                    };
                   };
                   const coreResponse = (body) => ({status: 200, contentType: 'application/json',
                     traceId: '0123456789abcdef0123456789abcdef', etag: null,
@@ -1728,7 +1877,14 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                             revisionId: selectedIntent.revisionId,
                             revisionContentHash: selectedIntent.revisionContentHash,
                             createdAt: selectedIntent.createdAt, status: selectedIntent.status,
-                            primaryUseCase: selectedIntent.primaryUseCase, unresolvedDecisionCount: 0}]});
+                          primaryUseCase: selectedIntent.primaryUseCase, unresolvedDecisionCount: 0}]});
+                      }
+                      if (command === 'core_api_request'
+                        && args?.request?.path === '/projects/workflow-progress') {
+                        const body = JSON.parse(args.request.body);
+                        const selectedProjection = body.root === projectionB.root ? projectionB : projection;
+                        const selectedIntent = body.root === projectionB.root ? currentIntentB : currentIntent;
+                        return coreResponse(workflowProgress(selectedProjection, selectedIntent));
                       }
                       if (command === 'core_api_request'
                         && args?.request?.path === '/projects/intent/preview') {
@@ -1919,10 +2075,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and lock_reconciliation.locator("#intent-objective").input_value() == "Unsaved workflow position"
                 and "Sensitive Study" in lock_reconciliation.locator("[data-project-context]").inner_text()
             )
-            sidebar_settings = lock_reconciliation.locator("nav").get_by_role(
-                "button", name="Application settings", exact=True
-            )
-            sidebar_settings.click()
+            sidebar_settings = lock_reconciliation.locator('nav button[aria-label="Application settings"]')
+            sidebar_settings.click(timeout=5_000)
             lock_reconciliation.get_by_role("button", name="Return", exact=True).click()
             lock_reconciliation.wait_for_function(
                 "document.activeElement?.getAttribute('aria-label') === 'Application settings'", timeout=5_000

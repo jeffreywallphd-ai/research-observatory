@@ -65,6 +65,8 @@ from .models import (
     WorkflowCancelRequest,
     WorkflowHumanDecisionRequest,
     WorkflowProfileCatalogProjection,
+    WorkflowProgressCommand,
+    WorkflowProgressProjection,
     WorkflowRetryRequest,
     WorkflowTaskCenterPage,
     WorkflowTaskCenterRun,
@@ -83,6 +85,7 @@ from .research_intents import IntentProblem, ResearchIntentService
 from .selective_recalculation import RecalculationControlProblem, RecalculationControlService
 from .task_center import TaskCenterProblem, TaskCenterService
 from .transport import CoreProblem, TraceCorrelationMiddleware, problem_detail
+from .workflow_progress import WorkflowProgressProblem, WorkflowProgressService
 
 _ACTION_RESULT = TypeVar("_ACTION_RESULT")
 
@@ -95,6 +98,7 @@ class RuntimeContext:
     projects: ProjectLifecycleService
     privacy: ProjectPrivacyService
     intents: ResearchIntentService
+    workflow_progress: WorkflowProgressService
     provenance: ProvenanceService
     task_center: TaskCenterService
     recalculation: RecalculationControlService
@@ -109,6 +113,7 @@ def create_app(
     projects: ProjectLifecycleService | None = None,
     privacy: ProjectPrivacyService | None = None,
     intents: ResearchIntentService | None = None,
+    workflow_progress: WorkflowProgressService | None = None,
     provenance: ProvenanceService | None = None,
     task_center: TaskCenterService | None = None,
     recalculation: RecalculationControlService | None = None,
@@ -123,6 +128,11 @@ def create_app(
         resolved_projects = projects if projects is not None else ProjectLifecycleService()
         resolved_privacy = privacy if privacy is not None else ProjectPrivacyService.unavailable(resolved_projects)
         resolved_intents = intents if intents is not None else ResearchIntentService.unavailable(resolved_projects)
+        resolved_workflow_progress = (
+            workflow_progress
+            if workflow_progress is not None
+            else WorkflowProgressService.unavailable(resolved_projects)
+        )
         resolved_provenance = provenance if provenance is not None else ProvenanceService.unavailable(resolved_projects)
         resolved_task_center = (
             task_center if task_center is not None else TaskCenterService.unavailable(resolved_projects)
@@ -137,6 +147,7 @@ def create_app(
             projects=resolved_projects,
             privacy=resolved_privacy,
             intents=resolved_intents,
+            workflow_progress=resolved_workflow_progress,
             provenance=resolved_provenance,
             task_center=resolved_task_center,
             recalculation=resolved_recalculation,
@@ -314,6 +325,24 @@ def create_app(
             raise project_problem(request, error) from error
         except IntentProblem as error:
             raise intent_problem(request, error) from error
+
+    def run_workflow_progress_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+        except WorkflowProgressProblem as error:
+            raise CoreProblem(
+                problem_detail(
+                    status=error.status,
+                    code=error.code,
+                    title=error.title,
+                    detail=error.detail,
+                    trace_id=request.state.trace_id,
+                    retryable=error.retryable,
+                    remediation=error.remediation,
+                )
+            ) from error
 
     def run_provenance_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
         try:
@@ -708,6 +737,35 @@ def create_app(
         return run_intent_action(
             request,
             lambda: runtime(request).intents.evaluate_policy(command, trace_id=request.state.trace_id),
+        )
+
+    @app.post(
+        "/projects/workflow-progress",
+        response_model=WorkflowProgressProjection,
+        responses={409: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["intent"],
+    )
+    def project_workflow_progress(request: Request, command: ProjectRootRequest) -> WorkflowProgressProjection:
+        return run_workflow_progress_action(request, lambda: runtime(request).workflow_progress.workspace(command.root))
+
+    @app.post(
+        "/projects/workflow-progress/commands",
+        response_model=WorkflowProgressProjection,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["intent"],
+    )
+    def command_workflow_progress(
+        request: Request,
+        command: WorkflowProgressCommand,
+        idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
+    ) -> WorkflowProgressProjection:
+        return run_workflow_progress_action(
+            request,
+            lambda: runtime(request).workflow_progress.command(
+                command,
+                trace_id=request.state.trace_id,
+                idempotency_key=idempotency_key,
+            ),
         )
 
     @app.post(

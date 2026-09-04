@@ -381,6 +381,39 @@ class WorkflowAuthorityMutation:
     selections: tuple[WorkflowAuthorityRecord, ...] = ()
     migrations: tuple[WorkflowAuthorityRecord, ...] = ()
     decisions: tuple[WorkflowAuthorityRecord, ...] = ()
+    expected_stage_states: tuple[WorkflowStageStateRecord, ...] | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowStageStateRecord:
+    """One immutable governed navigation-stage state document."""
+
+    storage_revision: int
+    content_json: str
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowProgressCommandRecord:
+    """Idempotency and result binding for one stage-progress command."""
+
+    actor_id: str
+    idempotency_key: str
+    command_sha256: str
+    result_revision_ids: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowProgressAuditEvent:
+    """Content-free provenance and outbox binding for a progress transition."""
+
+    event_id: str
+    outbox_id: str
+    event_type: str
+    occurred_at: str
+    trace_id: str
+    actor_type: Literal["human", "system"]
+    actor_id: str
+    record_sha256: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -533,6 +566,33 @@ class IntentRevisionRepository(Protocol):
         *,
         record: IntentPolicyDecisionRecord,
         event: IntentPolicyAuditEvent,
+    ) -> None: ...
+
+
+@runtime_checkable
+class WorkflowProgressRepository(Protocol):
+    def read(self) -> tuple[WorkflowStageStateRecord, ...]: ...
+
+    def resolve_completion_evidence(self, revision_ids: tuple[str, ...]) -> tuple[str, ...]: ...
+
+    def replay(
+        self,
+        *,
+        actor_id: str,
+        idempotency_key: str,
+        command_sha256: str,
+    ) -> tuple[str, ...] | None: ...
+
+    def append(
+        self,
+        *,
+        expected_selection_revision_id: str,
+        expected_selection_revision_content_hash: str,
+        expected_current_revision_id: str | None,
+        expected_current_revision_content_hash: str | None,
+        records: tuple[WorkflowStageStateRecord, ...],
+        command: WorkflowProgressCommandRecord,
+        event: WorkflowProgressAuditEvent,
     ) -> None: ...
 
 

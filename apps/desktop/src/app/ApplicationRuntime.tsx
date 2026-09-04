@@ -4,11 +4,13 @@ import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 
 import { Button, Field, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 import {
+  CoreApiClientError,
   createCoreApiClient,
   type CoreApiTransport,
   type IntentWorkspaceProjection,
   type ProjectProjection,
   type WorkflowProfileCatalogProjection,
+  type WorkflowProgressProjection,
 } from "@research-observatory/contracts/core-api";
 
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
@@ -21,6 +23,7 @@ import {
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 import { AuditLineageWorkspace } from "./AuditLineageWorkspace";
 import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
+import { ProjectHomeWorkspace } from "./ProjectHomeWorkspace";
 import { packagedProjectTransport, ProjectsWorkspace } from "./ProjectsWorkspace";
 import {
   IntentWorkspace,
@@ -36,13 +39,14 @@ import {
 import {
   WorkflowContextLoader,
   createSupportingReturn,
-  createWorkflowAuthoritySnapshot,
+  implementedWorkspace,
   selectPrimaryStage,
   supportingReturnMatches,
   workspaceClassification,
   type ApplicationWorkspace,
   type SupportingReturnContext,
   type WorkflowAuthoritySnapshot,
+  type WorkflowStageAuthorityState,
 } from "./workflowNavigationModel";
 import {
   applicationUnlockFailureMessage,
@@ -281,6 +285,19 @@ interface ApplicationRuntimeProps {
   readonly workflowTransport?: CoreApiTransport;
 }
 
+function workflowCommandId(): string {
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function workflowCommandFailure(error: unknown): string {
+  if (error instanceof CoreApiClientError) {
+    return `${error.problem.title} (${error.problem.code}). ${error.problem.remediation}`;
+  }
+  return "The workflow action did not complete. Reload Project Home before retrying.";
+}
+
 export function ApplicationRuntime({ workflowTransport = packagedProjectTransport }: ApplicationRuntimeProps = {}): ReactNode {
   const [theme, setTheme] = useState<ApplicationTheme>(() => storedTheme(globalThis.window?.localStorage ?? null));
   const [query, setQuery] = useState("");
@@ -292,8 +309,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const [workflowCatalog, setWorkflowCatalog] = useState<WorkflowProfileCatalogProjection | null>(null);
   const [workflowIntent, setWorkflowIntent] = useState<IntentWorkspaceProjection | null>(null);
   const [workflowAuthority, setWorkflowAuthority] = useState<WorkflowAuthoritySnapshot | null>(null);
+  const [workflowProgress, setWorkflowProgress] = useState<WorkflowProgressProjection | null>(null);
+  const [workflowCommandBusy, setWorkflowCommandBusy] = useState(false);
   const currentProjectRef = useRef<ProjectProjection | null>(currentProject);
-  const workflowCatalogRef = useRef<WorkflowProfileCatalogProjection | null>(workflowCatalog);
   const workflowAuthorityRef = useRef<WorkflowAuthoritySnapshot | null>(workflowAuthority);
   const [workflowLoadState, setWorkflowLoadState] = useState<WorkflowNavigationLoadState>("unavailable");
   const [workflowFailure, setWorkflowFailure] = useState<string | null>(null);
@@ -325,7 +343,6 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const lockFailClosedRef = useRef(false);
   const lockedRecoveryControllerRef = useRef<ApplicationSettingsController | null>(null);
   currentProjectRef.current = currentProject;
-  workflowCatalogRef.current = workflowCatalog;
   workflowAuthorityRef.current = workflowAuthority;
   if (lockedRecoveryControllerRef.current === null) {
     lockedRecoveryControllerRef.current = new ApplicationSettingsController({
@@ -342,6 +359,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       setWorkflowCatalog(null);
       setWorkflowIntent(null);
       setWorkflowAuthority(null);
+      setWorkflowProgress(null);
       setWorkflowLoadState("unavailable");
       setWorkflowFailure(null);
       setSupportingReturn(null);
@@ -475,6 +493,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     setWorkflowCatalog(null);
     setWorkflowIntent(null);
     setWorkflowAuthority(null);
+    setWorkflowProgress(null);
     setSupportingReturn(null);
     setWorkflowFailure(null);
     if (!currentProject) {
@@ -506,6 +525,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       setWorkflowCatalog(result.catalog);
       setWorkflowIntent(result.intent);
       setWorkflowAuthority(result.authority);
+      setWorkflowProgress(result.progress);
       setWorkflowLoadState("ready");
       setWorkflowFailure(null);
       if (workspaceClassification(result.authority, workspaceRef.current).role === "supporting") {
@@ -520,22 +540,96 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     sourceProject: IntentProjectIdentity,
   ) => {
     const project = currentProjectRef.current;
-    const catalog = workflowCatalogRef.current;
-    const currentAuthority = workflowAuthorityRef.current;
-    if (!project || !catalog || !persistedIntentUpdateMatchesCurrentProject(project, sourceProject, next)) return;
+    if (!project || !persistedIntentUpdateMatchesCurrentProject(project, sourceProject, next)) return;
     workflowContextLoaderRef.current.invalidate();
-    const preserveStage = currentAuthority && next.current && currentAuthority.profileId === next.current.primaryUseCase
-      ? currentAuthority.currentStageKey
-      : null;
-    const nextAuthority = createWorkflowAuthoritySnapshot(project, catalog, next, preserveStage);
     setWorkflowIntent(next);
-    setWorkflowAuthority(nextAuthority);
-    setWorkflowLoadState(nextAuthority ? "ready" : "unavailable");
-    setWorkflowFailure(nextAuthority
-      ? null
-      : "The saved Research Intent did not resolve to an authenticated workflow profile. Guided navigation remains unavailable.");
+    setWorkflowProgress(null);
+    setWorkflowLoadState("loading");
+    setWorkflowFailure(null);
+    setSupportingReturn(null);
+    void workflowContextLoaderRef.current.load(project, workflowClient).then((result) => {
+      if (result.kind === "stale") return;
+      if (result.kind === "error") {
+        setWorkflowAuthority(null);
+        setWorkflowLoadState("error");
+        setWorkflowFailure(result.message);
+        return;
+      }
+      if (result.kind === "unavailable") {
+        setWorkflowAuthority(null);
+        setWorkflowLoadState("unavailable");
+        setWorkflowFailure("The saved Research Intent did not resolve to coherent workflow progress authority.");
+        return;
+      }
+      setWorkflowCatalog(result.catalog);
+      setWorkflowIntent(result.intent);
+      setWorkflowAuthority(result.authority);
+      setWorkflowProgress(result.progress);
+      setWorkflowLoadState("ready");
+    });
+  }, [workflowClient]);
+
+  const authoritativeWorkflowStates = useMemo(() => {
+    const states: Record<string, WorkflowStageAuthorityState> = {};
+    for (const item of [...(workflowProgress?.history ?? [])].reverse()) {
+      if (item.navigationRole === "primary") states[item.stageKey] = item.status;
+    }
+    if (workflowProgress?.current?.navigationRole === "primary") {
+      states[workflowProgress.current.stageKey] = workflowProgress.current.status;
+    }
+    return states;
+  }, [workflowProgress]);
+
+  const applyWorkflowProgress = useCallback((next: WorkflowProgressProjection) => {
+    setWorkflowProgress(next);
+    const authority = workflowAuthorityRef.current;
+    if (authority) {
+      const selected = selectPrimaryStage(
+        authority,
+        next.current?.stageKey ?? next.recommendedStageKey,
+      );
+      if (selected) {
+        workflowAuthorityRef.current = selected.authority;
+        setWorkflowAuthority(selected.authority);
+      }
+    }
     setSupportingReturn(null);
   }, []);
+
+  const commandWorkflowProgress = useCallback(async (action: "start" | "revisit") => {
+    const project = currentProjectRef.current;
+    const progress = workflowProgress;
+    if (!project || !progress || workflowCommandBusy) return null;
+    const stage = progress.current
+      ?? (action === "revisit"
+        ? progress.history.find((item) => item.stageKey === progress.recommendedStageKey) ?? null
+        : null);
+    setWorkflowCommandBusy(true);
+    try {
+      const next = await workflowClient.commandWorkflowProgress({
+        root: project.root,
+        action,
+        stageKey: progress.recommendedStageKey,
+        expectedSelectionRevisionId: progress.selectionRevisionId,
+        expectedSelectionRevisionContentHash: progress.selectionRevisionContentHash,
+        expectedStageStateRevisionId: stage?.stageStateRevisionId ?? null,
+        expectedStageStateRevisionContentHash: stage?.revisionContentHash ?? null,
+        completionEvidenceRevisionIds: [],
+        supportingPageContractId: null,
+        rationale: null,
+      }, workflowCommandId());
+      applyWorkflowProgress(next);
+      announce(action === "start" ? "Guided workflow started." : "A new workflow pass was recorded.");
+      return next;
+    } catch (error) {
+      const message = workflowCommandFailure(error);
+      setWorkflowFailure(message);
+      announce(message);
+      return null;
+    } finally {
+      setWorkflowCommandBusy(false);
+    }
+  }, [announce, applyWorkflowProgress, workflowClient, workflowCommandBusy, workflowProgress]);
 
   const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace) => {
     const authority = workflowAuthority;
@@ -547,16 +641,38 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     const classification = workspaceClassification(authority, nextWorkspace);
     if (classification.role === "supporting") {
       setSupportingReturn(createSupportingReturn(authority, nextWorkspace));
+      const progress = workflowProgress;
+      const project = currentProjectRef.current;
+      const pageContractId = implementedWorkspace(nextWorkspace).pageContractIds[0];
+      if (progress?.current && project && pageContractId) {
+        void workflowClient.commandWorkflowProgress({
+          root: project.root,
+          action: "open-supporting",
+          stageKey: progress.current.stageKey,
+          expectedSelectionRevisionId: progress.selectionRevisionId,
+          expectedSelectionRevisionContentHash: progress.selectionRevisionContentHash,
+          expectedStageStateRevisionId: progress.current.stageStateRevisionId,
+          expectedStageStateRevisionContentHash: progress.current.revisionContentHash,
+          completionEvidenceRevisionIds: [],
+          supportingPageContractId: pageContractId,
+          rationale: null,
+        }, workflowCommandId()).then((next) => {
+          applyWorkflowProgress(next);
+          if (workspaceRef.current === nextWorkspace && workflowAuthorityRef.current) {
+            setSupportingReturn(createSupportingReturn(workflowAuthorityRef.current, nextWorkspace));
+          }
+        }).catch((error: unknown) => {
+          setSupportingReturn(null);
+          const message = workflowCommandFailure(error);
+          setWorkflowFailure(message);
+          announce(message);
+        });
+      }
     } else {
-      const stageKey = classification.stageKeys.includes(authority.currentStageKey)
-        ? authority.currentStageKey
-        : classification.stageKeys[0];
-      const selected = stageKey ? selectPrimaryStage(authority, stageKey) : null;
-      if (selected) setWorkflowAuthority(selected.authority);
       setSupportingReturn(null);
     }
     setWorkspace(nextWorkspace);
-  }, [workflowAuthority]);
+  }, [announce, applyWorkflowProgress, workflowAuthority, workflowClient, workflowProgress]);
 
   const navigateToStage = useCallback((stageKey: string) => {
     if (!workflowAuthority) return;
@@ -565,7 +681,6 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       announce("That workflow step is not implemented in this version. The current primary step did not change.");
       return;
     }
-    setWorkflowAuthority(selected.authority);
     setSupportingReturn(null);
     setWorkspace(selected.workspace);
     announce(`${selected.authority.profile.stages.find((stage) => stage.stageKey === stageKey)?.label ?? "Workflow step"} opened. No completion or checkpoint was recorded.`);
@@ -899,8 +1014,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             currentWorkspace={workspace}
             loadState={workflowLoadState}
             failure={workflowFailure}
+            authoritativeStates={authoritativeWorkflowStates}
             supportingReturn={supportingReturn}
-            disabled={applicationSettingsBlocked}
+            disabled={applicationSettingsBlocked || workflowLoadState === "loading"}
             showContext={false}
             onSelectStage={navigateToStage}
             onSelectWorkspace={(nextWorkspace) => {
@@ -919,8 +1035,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
           <WorkflowContextBar
             authority={workflowAuthority}
             currentWorkspace={workspace}
+            authoritativeStates={authoritativeWorkflowStates}
             supportingReturn={supportingReturn}
-            disabled={applicationSettingsBlocked}
+            disabled={applicationSettingsBlocked || workflowLoadState === "loading"}
             onSelectStage={navigateToStage}
             onReturn={returnToCurrentWorkflowStage}
           />
@@ -948,12 +1065,27 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             <TaskCenterWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (
             <AuditLineageWorkspace project={currentProject} announce={announce} />
-          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "home" ? <><div className="page-header">
-            <Typography as="h1" variant="page-title">Desktop foundation</Typography>
-            <Typography className="page-subtitle">
-              A local, offline application shell. Research workspaces appear only when their capability is implemented.
-            </Typography>
-          </div>
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "home" ? <>
+          <ProjectHomeWorkspace
+            project={currentProject}
+            progress={workflowProgress}
+            loadState={workflowLoadState}
+            failure={workflowFailure}
+            busy={workflowCommandBusy}
+            onStart={() => {
+              void commandWorkflowProgress("start").then((next) => {
+                if (next) navigateToStage(next.current?.stageKey ?? next.recommendedStageKey);
+              });
+            }}
+            onOpenCurrent={() => {
+              if (workflowProgress) {
+                navigateToStage(workflowProgress.current?.stageKey ?? workflowProgress.recommendedStageKey);
+              }
+            }}
+            onRevisit={() => {
+              void commandWorkflowProgress("revisit");
+            }}
+          />
 
           <section className="command-area" aria-labelledby="command-title">
             <Typography id="command-title" as="h2" variant="section-title">Application commands</Typography>
