@@ -894,6 +894,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             "CAP-03.S05.T03",
             "CAP-03.S06.T02",
             "CAP-03.S06.T03",
+            "CAP-03.S06.T04",
         ],
         "referenceOnlyPages": 0,
         "commandFocus": False,
