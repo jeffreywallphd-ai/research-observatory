@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 93c74c9d3057dc937cd2ce444359ed89732037db064229355c02bd33043fca11
+source_sha256: e69db82db4e9bbbc35a2b5e50d75eb5eff0c71ffd358f02ea14b73938c9787d8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6311,7 +6311,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6336,13 +6336,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/taskctl.py validate
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S06.T03.R01.json` at `71c32375594de7fbd73a0f5a3a9a9507c3d31937`
+
 ##### Review history — CAP-03.S06.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0e99344f290690e3bc0eb054c68df19a3b363b107151c3b46adcec65d72dfd7d`
+
+- Candidate / base / branch: `71c32375594de7fbd73a0f5a3a9a9507c3d31937` / `3c434794e144e186afc21e53933263653fb3fbe0` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-04T01:10:59+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T03.R01.json` / `e42a23927e9a779e2c42ed5755927758d1d18cbc9b2bf8df29c267f2c7b1aa21` / `71c32375594de7fbd73a0f5a3a9a9507c3d31937`
+- Acceptance-criteria SHA-256: `04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a`
+- Verification-selection SHA-256: `e750f7d6b4fd388e2d667eadcab15d5c5189c385805be94232abb50b67a274ee`
+- Changed paths: `apps/desktop/scripts/assemble-application.mjs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.test.tsx`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/IntentWorkspace.tsx`, `apps/desktop/src/app/WorkflowNavigation.test.tsx`, `apps/desktop/src/app/WorkflowNavigation.tsx`, `apps/desktop/src/app/workflowNavigation.test.ts`, `apps/desktop/src/app/workflowNavigationModel.ts`, `artifacts/evidence/CAP-03.S06.T03.task-start.md`, `artifacts/evidence/ui-change/CAP-03.S06.T03.json`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T03.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/research_intents.py`, `tests/desktop/test_desktop_app_check.py`, `tools/core_api_contract.py`, `tools/desktop_app_check.py`
+- Selected checks: `npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop`, `apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check`, `.venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-built-frame.json`, `.venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility`, `.venv/Scripts/ruff.exe format --check tests/desktop/test_desktop_app_check.py tools/core_api_contract.py tools/desktop_app_check.py services/core-api/src/research_observatory_core/research_intents.py; .venv/Scripts/ruff.exe check <same four files>; .venv/Scripts/mypy.exe --follow-imports=skip <same four files>`, `.venv/Scripts/python.exe tools/verify.py --profile desktop --profile service --affected-base 3c434794e144e186afc21e53933263653fb3fbe0 --affected-head 71c32375594de7fbd73a0f5a3a9a9507c3d31937 --deferred-gate W1-exit --selection-only`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/planctl.py --repo . wave review W1 --check; git diff --check 3c434794e144e186afc21e53933263653fb3fbe0..71c32375594de7fbd73a0f5a3a9a9507c3d31937`
+- Deferred checks: `The affected selector assigns desktop performance to the complete W1-exit matrix; T03 changes no approved performance threshold.`, `A broad desktop-profile run reached the registered benchmark and UI gates successfully, then reported three repository-wide Ruff-format failures and ten mypy errors in five unchanged files: selective_recalculation.py, test_dependency_impacts.py, test_recalculation_api.py, tools/ui_conformance.py, tools/planctl.py, tests/desktop/test_ui_conformance.py, and tests/e2e/test_selective_recalculation.py. None is in T03's changed Python surface; all four changed Python files pass focused Ruff and mypy. The baseline debt remains mandatory for its owning remediation or W1 exit.`, `Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, coherent W1 integration checkpoints, and W1 exit.`
+- Selection rationale: T03 changes a governed desktop navigation boundary fed by a public Core catalog projection and persisted Research Intent identity. Credible failures include trusting a partial or substituted catalog, deriving navigation from unsaved UI state, treating visits as completion, losing access to supporting tools, returning to a stale project/profile/revision, inventing routes for future stages, and breaking keyboard, responsive, theme, or approved-reference behavior. The selected checks therefore cover exact generated-client projection authentication, model and rendered-component state transitions, persisted-selection integration, production assembly, built-frame browser inspection, governed UI/reference/accessibility contracts, changed-file Python quality, exact affected-path selection, and repository governance. The full profile was also sampled and its only failures were proven in unchanged formatter/type-check paths, which remain explicit W1-exit debt.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S06.T04 - Implement workflow progress, checkpoints, handoffs, and recalculation impact
 
