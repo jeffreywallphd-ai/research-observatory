@@ -137,7 +137,7 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-03T18:43:00+00:00'
+    updated_at: '2026-09-04T04:45:30+00:00'
     pause_reason: null
     pause_category: null
     lease:
@@ -242,6 +242,17 @@ waves:
       commit: ecd0fee90a58a3dffdc7cb955906856372968753
     notes: Adopt independently approved W1.A06 planning-authority alignment as a W1 security checkpoint; retain all ordinary
       CAP-03.S06 implementation, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
+  - id: W1.CP05
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-09-04T04:45:30+00:00'
+    evidence:
+    - artifacts/evidence/W1.application-lock-event-acl.R01.json
+    - artifacts/evidence/W1.application-lock-event-acl.review-R01.json
+    notes: 'W1.CP05 closes the receive-only Tauri application-lock event boundary after independent Tier-2 review: local main
+      listen/unlisten and retained devtools access pass; renderer emit/emit-to, non-main, remote, defaults, widened windows,
+      and extra permissions remain denied; installed mode:none startup and fail-closed recovery matrix pass; no open findings.
+      Complete packaging and Windows-x64 qualification remain due at W1 exit.'
   completion:
     status: IN_PROGRESS
     reviewer: null
