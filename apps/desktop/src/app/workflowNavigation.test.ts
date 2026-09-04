@@ -163,6 +163,12 @@ describe("workflow navigation model", () => {
   it("classifies workspaces relative to the selected profile and binds exact supporting return identity", () => {
     const systematic = authority("systematic-review");
     const theory = authority("theory-synthesis");
+    expect(theory).toMatchObject({
+      referenceId: catalog.referenceId,
+      referenceVersion: catalog.referenceVersion,
+      intentGuidanceVersion: catalog.intentGuidanceVersion,
+      intentGuidanceHash: catalog.intentGuidanceHash,
+    });
     expect(workspaceClassification(systematic, "tasks")).toMatchObject({ role: "primary", stageKeys: ["task-center-1"] });
     expect(workspaceClassification(theory, "tasks")).toMatchObject({ role: "supporting", stageKeys: [] });
 
@@ -175,6 +181,10 @@ describe("workflow navigation model", () => {
       { ...theory, intentRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d042" },
       { ...theory, intentRevisionContentHash: `sha256:${"d".repeat(64)}` },
       { ...theory, profileCatalogHash: `sha256:${"e".repeat(64)}` },
+      { ...theory, referenceId: "RO-UI-ACADEMIC-MINIMAL-1.6" },
+      { ...theory, referenceVersion: "1.6" },
+      { ...theory, intentGuidanceVersion: "1.1.0" },
+      { ...theory, intentGuidanceHash: `sha256:${"f".repeat(64)}` },
       { ...theory, profileId: "systematic-review" },
       { ...theory, currentStageKey: "audit-lineage-1" },
       { ...theory, currentPageContractId: "audit-lineage.html" },

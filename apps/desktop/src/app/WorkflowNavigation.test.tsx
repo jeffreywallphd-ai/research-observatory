@@ -16,6 +16,8 @@ const authority: WorkflowAuthoritySnapshot = {
   profileCatalogVersion: "1.0.0",
   referenceId: "RO-UI-ACADEMIC-MINIMAL-1.5",
   referenceVersion: "1.5",
+  intentGuidanceVersion: "1.0.0",
+  intentGuidanceHash: `sha256:${"c".repeat(64)}`,
   profileId: "manuscript-review-revision",
   currentStageKey: "intent-contract-1",
   currentPageContractId: "intent-contract.html",

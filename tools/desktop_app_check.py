@@ -915,6 +915,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsExactExport": False,
         "projectsWorkflow": False,
         "adaptiveWorkflowNavigation": False,
+        "intentMutationRaceGuarded": False,
         "privacySettingsWorkflow": False,
         "applicationLock": False,
         "applicationLockReconciliation": False,
@@ -1563,6 +1564,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   let failStatus = false;
                   let transitionConflict = false;
                   let transitionCommitAttempts = 0;
+                  let delayNextDraft = false;
+                  let delayNextAcceptance = false;
+                  let releaseDelayedDraft = null;
+                  let releaseDelayedAcceptance = null;
                   let snapshot = {
                     schemaVersion: '1.0', state: 'unlocked', signInMode: 'windows-password',
                     policyRevision: 1, profileName: 'Private profile', inactivityTimeoutMinutes: 15,
@@ -1596,7 +1601,35 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     revisionRationale: 'Establish the bounded theory workflow.', unresolvedDecisions: [],
                     decisionComplete: true, canRequestAcceptance: true, launchReady: false
                   };
+                  const projectionB = {
+                    ...projection,
+                    projectId: '22222222-2222-4222-8222-222222222222',
+                    displayName: 'Second Study', root: 'C:/Private/study-two',
+                    deleteConfirmation: 'delete:22222222-2222-4222-8222-222222222222'
+                  };
+                  let currentIntentB = {
+                    ...currentIntent,
+                    intentId: '019d5f72-5331-7000-8000-000000000021',
+                    revisionId: '019d5f72-5331-7000-8000-000000000022',
+                    revisionContentHash: `sha256:${'2'.repeat(64)}`,
+                    researchObjective: 'Keep project B authoritative during delayed project A responses.'
+                  };
+                  const coreResponse = (body) => ({status: 200, contentType: 'application/json',
+                    traceId: '0123456789abcdef0123456789abcdef', etag: null,
+                    body: JSON.stringify(body)});
                   window.__EXPECTED_CATALOG__ = workflowCatalog;
+                  window.__DELAY_NEXT_DRAFT__ = () => { delayNextDraft = true; };
+                  window.__DELAY_NEXT_ACCEPTANCE__ = () => { delayNextAcceptance = true; };
+                  window.__RELEASE_DELAYED_DRAFT__ = () => {
+                    const release = releaseDelayedDraft;
+                    releaseDelayedDraft = null;
+                    if (release) release();
+                  };
+                  window.__RELEASE_DELAYED_ACCEPTANCE__ = () => {
+                    const release = releaseDelayedAcceptance;
+                    releaseDelayedAcceptance = null;
+                    if (release) release();
+                  };
                   window.__LOCK_EMIT__ = (payload) => {
                     const callback = callbacks.get(lockListener);
                     if (callback) callback({event: 'application-lock-changed', id: lockListener, payload});
@@ -1679,15 +1712,23 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                           traceId: '0123456789abcdef0123456789abcdef', etag: null,
                           body: JSON.stringify(projection)};
                       }
+                      if (command === 'core_api_request' && args?.request?.path === '/projects/open') {
+                        const body = JSON.parse(args.request.body);
+                        if (body.root === projection.root) return coreResponse(projection);
+                        if (body.root === projectionB.root) return coreResponse(projectionB);
+                        throw new Error('unknown project root');
+                      }
                       if (command === 'core_api_request' && args?.request?.path === '/projects/intent') {
-                        return {status: 200, contentType: 'application/json',
-                          traceId: '0123456789abcdef0123456789abcdef', etag: null,
-                          body: JSON.stringify({schemaVersion: '1.0',
-                            projectId: projection.projectId, current: currentIntent,
-                            history: [{revision: 1, revisionId: currentIntent.revisionId,
-                              revisionContentHash: currentIntent.revisionContentHash,
-                              createdAt: currentIntent.createdAt, status: 'draft',
-                              primaryUseCase: 'theory-synthesis', unresolvedDecisionCount: 0}]})};
+                        const body = JSON.parse(args.request.body);
+                        const selectedProjection = body.root === projectionB.root ? projectionB : projection;
+                        const selectedIntent = body.root === projectionB.root ? currentIntentB : currentIntent;
+                        return coreResponse({schemaVersion: '1.0',
+                          projectId: selectedProjection.projectId, current: selectedIntent,
+                          history: [{revision: selectedIntent.revision,
+                            revisionId: selectedIntent.revisionId,
+                            revisionContentHash: selectedIntent.revisionContentHash,
+                            createdAt: selectedIntent.createdAt, status: selectedIntent.status,
+                            primaryUseCase: selectedIntent.primaryUseCase, unresolvedDecisionCount: 0}]});
                       }
                       if (command === 'core_api_request'
                         && args?.request?.path === '/projects/intent/preview') {
@@ -1714,15 +1755,21 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       if (command === 'core_api_request'
                         && args?.request?.path === '/projects/intent/drafts') {
                         const body = JSON.parse(args.request.body);
-                        if (body.expectedRevision !== 1 || body.primaryUseCase !== 'systematic-review'
-                          || body.impactAcknowledgement !== 'b'.repeat(64)
-                          || !args.request.idempotencyKey) {
+                        if (body.root !== projection.root || !args.request.idempotencyKey
+                          || body.expectedRevision !== currentIntent.revision
+                          || (body.expectedRevision === 1
+                            && (body.primaryUseCase !== 'systematic-review'
+                              || body.impactAcknowledgement !== 'b'.repeat(64)))) {
                           throw new Error('invalid governed intent save request');
                         }
+                        const nextRevision = body.expectedRevision + 1;
                         currentIntent = {
                           ...currentIntent,
-                          revisionId: '019d5f72-5331-7000-8000-000000000003', revision: 2,
-                          revisionContentHash: `sha256:${'c'.repeat(64)}`,
+                          revisionId: nextRevision === 2
+                            ? '019d5f72-5331-7000-8000-000000000003'
+                            : '019d5f72-5331-7000-8000-000000000005',
+                          revision: nextRevision,
+                          revisionContentHash: `sha256:${(nextRevision === 2 ? 'c' : 'e').repeat(64)}`,
                           createdAt: '2026-09-03T12:05:00Z',
                           status: 'draft', primaryUseCase: body.primaryUseCase,
                           epistemicMode: 'systematic', researchObjective: body.researchObjective,
@@ -1739,9 +1786,36 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                           unresolvedDecisions: [], decisionComplete: true,
                           canRequestAcceptance: true, launchReady: false
                         };
-                        return {status: 200, contentType: 'application/json',
-                          traceId: '0123456789abcdef0123456789abcdef', etag: null,
-                          body: JSON.stringify(currentIntent)};
+                        const result = coreResponse(currentIntent);
+                        if (delayNextDraft) {
+                          delayNextDraft = false;
+                          return new Promise((resolve) => { releaseDelayedDraft = () => resolve(result); });
+                        }
+                        return result;
+                      }
+                      if (command === 'core_api_request'
+                        && args?.request?.path === '/projects/intent/acceptances') {
+                        const body = JSON.parse(args.request.body);
+                        if (body.root !== projection.root || !args.request.idempotencyKey
+                          || body.expectedRevision !== currentIntent.revision
+                          || body.expectedRevisionContentHash !== currentIntent.revisionContentHash
+                          || body.confirmed !== true) {
+                          throw new Error('invalid governed intent acceptance request');
+                        }
+                        currentIntent = {
+                          ...currentIntent,
+                          revisionId: '019d5f72-5331-7000-8000-000000000006',
+                          revision: currentIntent.revision + 1,
+                          revisionContentHash: `sha256:${'f'.repeat(64)}`,
+                          createdAt: '2026-09-03T12:10:00Z', status: 'accepted',
+                          canRequestAcceptance: false, launchReady: true
+                        };
+                        const result = coreResponse(currentIntent);
+                        if (delayNextAcceptance) {
+                          delayNextAcceptance = false;
+                          return new Promise((resolve) => { releaseDelayedAcceptance = () => resolve(result); });
+                        }
+                        return result;
                       }
                       throw new Error(`unsupported lock reconciliation command: ${command}`);
                     }
@@ -1871,12 +1945,73 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   && document.querySelector('[data-workflow-nav] [data-stage-state=current]')
                     ?.getAttribute('data-workflow-stage-key') === 'intent-contract-1'"""
             )
+            lock_reconciliation.locator("#intent-objective").fill("Delayed project A draft response")
+            lock_reconciliation.locator("#intent-rationale").fill("Exercise the project-bound response guard.")
+            lock_reconciliation.evaluate("window.__DELAY_NEXT_DRAFT__()")
+            lock_reconciliation.get_by_role("button", name="Save draft revision", exact=True).click()
+            lock_reconciliation.get_by_role("button", name="Saving locally…", exact=True).wait_for(timeout=5_000)
+            open_desktop_tool(lock_reconciliation, "Local projects")
+            lock_reconciliation.locator("#project-root").fill("C:/Private/study-two")
+            lock_reconciliation.get_by_role("button", name="Open project", exact=True).click()
+            lock_reconciliation.locator('[data-current-project="22222222-2222-4222-8222-222222222222"]').wait_for(
+                timeout=5_000
+            )
+            lock_reconciliation.locator("[data-workflow-nav]").wait_for(timeout=5_000)
+            lock_reconciliation.evaluate("window.__RELEASE_DELAYED_DRAFT__()")
+            lock_reconciliation.wait_for_timeout(100)
+            delayed_draft_guarded = lock_reconciliation.evaluate(
+                """() => {
+                  const expected = window.__EXPECTED_CATALOG__.profiles.find(
+                    (candidate) => candidate.profileId === 'theory-synthesis').stages.map(
+                      (stage) => stage.stageKey);
+                  const actual = Array.from(document.querySelectorAll('[data-workflow-stage-key]'))
+                    .map((node) => node.getAttribute('data-workflow-stage-key'));
+                  return document.querySelector('[data-current-project]')
+                      ?.getAttribute('data-current-project') === '22222222-2222-4222-8222-222222222222'
+                    && JSON.stringify(actual) === JSON.stringify(expected)
+                    && (document.querySelector('[data-project-context]')?.textContent ?? '')
+                      .includes('Second Study');
+                }"""
+            )
+            lock_reconciliation.locator("#project-root").fill("C:/Private/sensitive-study")
+            lock_reconciliation.get_by_role("button", name="Open project", exact=True).click()
+            lock_reconciliation.locator('[data-current-project="11111111-1111-4111-8111-111111111111"]').wait_for(
+                timeout=5_000
+            )
+            open_desktop_tool(lock_reconciliation, "Research intent")
+            lock_reconciliation.locator("#intent-acceptance-rationale").wait_for(timeout=5_000)
+            lock_reconciliation.locator(".ro-status-badge").filter(has_text="Revision 3").wait_for(timeout=5_000)
+            lock_reconciliation.locator("#intent-acceptance-rationale").fill(
+                "Accept the exact persisted project A revision."
+            )
+            lock_reconciliation.locator(".intent-acceptance input[type=checkbox]").check()
+            lock_reconciliation.evaluate("window.__DELAY_NEXT_ACCEPTANCE__()")
+            lock_reconciliation.get_by_role("button", name="Accept intent revision", exact=True).click()
+            lock_reconciliation.get_by_text("Acceptance request in progress", exact=False).wait_for(timeout=5_000)
+            open_desktop_tool(lock_reconciliation, "Local projects")
+            lock_reconciliation.locator("#project-root").fill("C:/Private/study-two")
+            lock_reconciliation.get_by_role("button", name="Open project", exact=True).click()
+            lock_reconciliation.locator('[data-current-project="22222222-2222-4222-8222-222222222222"]').wait_for(
+                timeout=5_000
+            )
+            lock_reconciliation.locator("[data-workflow-nav]").wait_for(timeout=5_000)
+            lock_reconciliation.evaluate("window.__RELEASE_DELAYED_ACCEPTANCE__()")
+            lock_reconciliation.wait_for_timeout(100)
+            delayed_acceptance_guarded = lock_reconciliation.evaluate(
+                """() => document.querySelector('[data-current-project]')
+                    ?.getAttribute('data-current-project') === '22222222-2222-4222-8222-222222222222'
+                  && (document.querySelector('[data-project-context]')?.textContent ?? '')
+                    .includes('Second Study')
+                  && document.querySelector('[data-workflow-nav] [data-stage-state=current]')
+                    ?.getAttribute('data-workflow-stage-key') === 'intent-contract-1'"""
+            )
             details["adaptiveWorkflowNavigation"] = (
                 initial_adaptive_navigation
                 and unsaved_profile_retained
                 and persisted_profile_applied
                 and supporting_return_valid
             )
+            details["intentMutationRaceGuarded"] = delayed_draft_guarded and delayed_acceptance_guarded
             lock_reconciliation.keyboard.press("Control+K")
             lock_reconciliation.locator("#shell-command").fill("application settings")
             command_settings = lock_reconciliation.get_by_role("button", name="Open application settings", exact=True)
@@ -2291,6 +2426,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsExactExport",
         "projectsWorkflow",
         "adaptiveWorkflowNavigation",
+        "intentMutationRaceGuarded",
         "privacySettingsWorkflow",
         "applicationLock",
         "applicationLockReconciliation",

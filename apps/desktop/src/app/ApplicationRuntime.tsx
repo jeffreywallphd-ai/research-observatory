@@ -22,7 +22,11 @@ import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 import { AuditLineageWorkspace } from "./AuditLineageWorkspace";
 import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
 import { packagedProjectTransport, ProjectsWorkspace } from "./ProjectsWorkspace";
-import { IntentWorkspace } from "./IntentWorkspace";
+import {
+  IntentWorkspace,
+  persistedIntentUpdateMatchesCurrentProject,
+  type IntentProjectIdentity,
+} from "./IntentWorkspace";
 import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
 import {
   WorkflowContextBar,
@@ -288,6 +292,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const [workflowCatalog, setWorkflowCatalog] = useState<WorkflowProfileCatalogProjection | null>(null);
   const [workflowIntent, setWorkflowIntent] = useState<IntentWorkspaceProjection | null>(null);
   const [workflowAuthority, setWorkflowAuthority] = useState<WorkflowAuthoritySnapshot | null>(null);
+  const currentProjectRef = useRef<ProjectProjection | null>(currentProject);
+  const workflowCatalogRef = useRef<WorkflowProfileCatalogProjection | null>(workflowCatalog);
+  const workflowAuthorityRef = useRef<WorkflowAuthoritySnapshot | null>(workflowAuthority);
   const [workflowLoadState, setWorkflowLoadState] = useState<WorkflowNavigationLoadState>("unavailable");
   const [workflowFailure, setWorkflowFailure] = useState<string | null>(null);
   const [supportingReturn, setSupportingReturn] = useState<SupportingReturnContext | null>(null);
@@ -317,6 +324,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const nativeLockSnapshotRef = useRef<ApplicationLockSnapshot | null>(null);
   const lockFailClosedRef = useRef(false);
   const lockedRecoveryControllerRef = useRef<ApplicationSettingsController | null>(null);
+  currentProjectRef.current = currentProject;
+  workflowCatalogRef.current = workflowCatalog;
+  workflowAuthorityRef.current = workflowAuthority;
   if (lockedRecoveryControllerRef.current === null) {
     lockedRecoveryControllerRef.current = new ApplicationSettingsController({
       invoke: (command, arguments_) => invoke(command, arguments_),
@@ -505,11 +515,14 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     return () => workflowContextLoaderRef.current.invalidate();
   }, [currentProject, workflowClient]);
 
-  const applyPersistedIntentWorkspace = useCallback((next: IntentWorkspaceProjection) => {
-    const project = currentProject;
-    const catalog = workflowCatalog;
-    const currentAuthority = workflowAuthority;
-    if (!project || !catalog) return;
+  const applyPersistedIntentWorkspace = useCallback((
+    next: IntentWorkspaceProjection,
+    sourceProject: IntentProjectIdentity,
+  ) => {
+    const project = currentProjectRef.current;
+    const catalog = workflowCatalogRef.current;
+    const currentAuthority = workflowAuthorityRef.current;
+    if (!project || !catalog || !persistedIntentUpdateMatchesCurrentProject(project, sourceProject, next)) return;
     workflowContextLoaderRef.current.invalidate();
     const preserveStage = currentAuthority && next.current && currentAuthority.profileId === next.current.primaryUseCase
       ? currentAuthority.currentStageKey
@@ -522,7 +535,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       ? null
       : "The saved Research Intent did not resolve to an authenticated workflow profile. Guided navigation remains unavailable.");
     setSupportingReturn(null);
-  }, [currentProject, workflowAuthority, workflowCatalog]);
+  }, []);
 
   const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace) => {
     const authority = workflowAuthority;

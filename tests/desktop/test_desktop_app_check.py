@@ -49,6 +49,7 @@ class DesktopAppCheckTests(unittest.TestCase):
             details["implementedCapabilities"],
         )
         self.assertTrue(details["adaptiveWorkflowNavigation"])
+        self.assertTrue(details["intentMutationRaceGuarded"])
         self.assertEqual(0, details["referenceOnlyPages"])
         self.assertTrue(details["commandFocus"])
         self.assertTrue(details["skipLink"])
