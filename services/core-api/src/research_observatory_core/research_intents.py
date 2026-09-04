@@ -312,7 +312,9 @@ def _profile_reference(profile_id: str) -> dict[str, object]:
     }
 
 
-def _workflow_catalog_projection() -> WorkflowProfileCatalogProjection:
+def approved_workflow_catalog_projection() -> WorkflowProfileCatalogProjection:
+    """Return the exact approved catalog projection exposed by Core."""
+
     governed = cast(Mapping[str, object], _WORKFLOW_CATALOG["governedReference"])
     profiles: list[WorkflowProfileProjection] = []
     for profile in cast(Sequence[Mapping[str, object]], _WORKFLOW_CATALOG["profiles"]):
@@ -1499,7 +1501,7 @@ class ResearchIntentService:
         )
 
     def workflow_profile_catalog(self) -> WorkflowProfileCatalogProjection:
-        return _workflow_catalog_projection()
+        return approved_workflow_catalog_projection()
 
     def initialize_created_project(
         self,

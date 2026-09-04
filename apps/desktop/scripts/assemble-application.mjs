@@ -58,7 +58,7 @@ if (Object.keys(artifacts).sort().join("\n") !== [...expectedArtifacts].sort().j
 }
 
 const index = await readFile(path.join(productRoot, "index.html"), "utf8");
-for (const forbidden of ["prototype-index.html", "style-guide.html", "data-workflow-select", "data-all-tools"]) {
+for (const forbidden of ["prototype-index.html", "style-guide.html", "data-workflow-select"]) {
   if (index.includes(forbidden)) throw new Error(`reference-only marker entered the desktop product HTML: ${forbidden}`);
 }
 
@@ -81,7 +81,7 @@ const manifest = {
   schemaVersion: "1.0",
   documentType: "desktop-product-build-manifest",
   buildRole: "tauri-frontend",
-  implementedCapabilities: ["CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03", "CAP-03.S02.T02", "CAP-03.S03.T03", "CAP-03.S05.T03", "CAP-03.S06.T02"],
+  implementedCapabilities: ["CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03", "CAP-03.S02.T02", "CAP-03.S03.T03", "CAP-03.S05.T03", "CAP-03.S06.T02", "CAP-03.S06.T03"],
   routes: ["index.html"],
   referenceUse: "design-contract-only",
   referenceId: "RO-UI-ACADEMIC-MINIMAL-1.5",

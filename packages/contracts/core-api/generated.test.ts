@@ -823,6 +823,54 @@ describe("generated Core API client", () => {
         warning: "Reviewer responses and claim changes remain explicit, traceable researcher decisions.",
       },
     } as const;
+    const portableCatalogPath = fileURLToPath(new URL(
+      "../workflow-profile/fixtures/approved-workflow-profile-catalog.v1.json",
+      import.meta.url,
+    ));
+    const portableCatalog = JSON.parse(readFileSync(portableCatalogPath, "utf8")) as {
+      readonly registeredToolPageContractIds: readonly string[];
+      readonly profiles: ReadonlyArray<{
+        readonly profileId: keyof typeof guidanceByProfile;
+        readonly title: string;
+        readonly purpose: string;
+        readonly expectedOutputs: readonly string[];
+        readonly cyclePolicy: "linear" | "revisitable";
+        readonly stages: ReadonlyArray<{
+          readonly stageKey: string;
+          readonly order: number;
+          readonly pageContractId: string;
+          readonly optional: boolean;
+          readonly rationale: string;
+          readonly checkpoint: {
+            readonly state: "unknown" | "optional-human" | "required-human" | "not-applicable";
+            readonly rationale: string;
+          };
+        }>;
+      }>;
+    };
+    const epistemicModeByProfile = {
+      "rapid-orientation": "systematic",
+      "systematic-review": "systematic",
+      "living-review": "systematic",
+      "theory-synthesis": "theory",
+      "hermeneutic-inquiry": "hermeneutic",
+      "critical-problematization": "critical",
+      "technical-landscape": "technical",
+      "novelty-audit": "novelty",
+      "empirical-study-design": "empirical",
+      "empirical-study-to-article": "empirical",
+      "empirical-results-to-article": "empirical",
+      "theory-article-development": "theory",
+      "critical-article-development": "critical",
+      "manuscript-review-revision": "empirical",
+    } as const;
+    const stageLabel = (pageContractId: string): string => pageContractId === "intent-contract.html"
+      ? "Research Intent"
+      : pageContractId
+        .replace(/\.html$/, "")
+        .split("-")
+        .map((part) => part === "and" ? "&" : `${part.slice(0, 1).toUpperCase()}${part.slice(1)}`)
+        .join(" ");
     const catalog = {
       schemaVersion: "1.0",
       referenceId: "RO-UI-ACADEMIC-MINIMAL-1.5",
@@ -834,32 +882,33 @@ describe("generated Core API client", () => {
       allToolsAccessible: true,
       evidenceRequirementsUnchanged: true,
       provenanceRequirementsUnchanged: true,
-      registeredToolPageContractIds: ["intent-contract.html"],
-      profiles: profileIds.map((profileId) => {
+      registeredToolPageContractIds: portableCatalog.registeredToolPageContractIds,
+      profiles: portableCatalog.profiles.map((profile) => {
+        const profileId = profile.profileId;
         const guidance = guidanceByProfile[profileId];
         return {
           profileId,
-          epistemicMode: "theory" as const,
-          title: profileId,
-          purpose: `Purpose for ${profileId}`,
+          epistemicMode: epistemicModeByProfile[profileId],
+          title: profile.title,
+          purpose: profile.purpose,
           example: guidance.example,
-          expectedOutputs: ["Bounded output"],
-          processForm: "linear" as const,
+          expectedOutputs: profile.expectedOutputs,
+          processForm: profile.cyclePolicy,
           defaultEvidenceTypes: guidance.evidenceTypes,
           defaultNoveltyStandard: guidance.noveltyStandard,
           defaultAutonomyLevel: guidance.autonomyLevel,
           defaultStoppingConditions: guidance.stoppingConditions,
           warning: guidance.warning,
-          stages: [{
-            stageKey: "intent-contract-1",
-            order: 1,
-            pageContractId: "intent-contract.html",
-            label: "Research Intent",
-            optional: false,
-            rationale: "Establish authority.",
-            checkpointState: "unknown" as const,
-            checkpointRationale: "No checkpoint authority is declared.",
-          }],
+          stages: profile.stages.map((stage) => ({
+            stageKey: stage.stageKey,
+            order: stage.order,
+            pageContractId: stage.pageContractId,
+            label: stageLabel(stage.pageContractId),
+            optional: stage.optional,
+            rationale: stage.rationale,
+            checkpointState: stage.checkpoint.state,
+            checkpointRationale: stage.checkpoint.rationale,
+          })),
         };
       }),
     };
@@ -876,6 +925,42 @@ describe("generated Core API client", () => {
         ? { ...profile, defaultStoppingConditions: ["researcher-decision"] }
         : profile),
     })).toBeNull();
+    const mutateFirstProfile = (
+      mutation: (profile: (typeof catalog.profiles)[number]) => (typeof catalog.profiles)[number],
+    ) => ({ ...catalog, profiles: catalog.profiles.map((profile, index) => index === 0 ? mutation(profile) : profile) });
+    const mutateFirstStage = (
+      mutation: (stage: (typeof catalog.profiles)[number]["stages"][number]) => (typeof catalog.profiles)[number]["stages"][number],
+    ) => mutateFirstProfile((profile) => ({
+      ...profile,
+      stages: profile.stages.map((stage, index) => index === 0 ? mutation(stage) : stage),
+    }));
+    const retainedHashSubstitutions = [
+      { ...catalog, registeredToolPageContractIds: [...catalog.registeredToolPageContractIds].reverse() },
+      { ...catalog, profiles: [catalog.profiles[1], catalog.profiles[0], ...catalog.profiles.slice(2)] },
+      mutateFirstProfile((profile) => ({ ...profile, title: `${profile.title} substituted` })),
+      mutateFirstProfile((profile) => ({ ...profile, purpose: `${profile.purpose} substituted` })),
+      mutateFirstProfile((profile) => ({ ...profile, expectedOutputs: ["Substituted output"] })),
+      mutateFirstProfile((profile) => ({ ...profile, processForm: profile.processForm === "linear" ? "revisitable" : "linear" })),
+      mutateFirstStage((stage) => ({ ...stage, stageKey: `${stage.stageKey}-substituted` })),
+      mutateFirstProfile((profile) => ({
+        ...profile,
+        stages: profile.stages.length < 2 ? profile.stages : [
+          { ...profile.stages[1]!, order: 1 },
+          { ...profile.stages[0]!, order: 2 },
+          ...profile.stages.slice(2),
+        ],
+      })),
+      mutateFirstStage((stage) => ({ ...stage, pageContractId: "projects.html" })),
+      mutateFirstStage((stage) => ({ ...stage, label: `${stage.label} substituted` })),
+      mutateFirstStage((stage) => ({ ...stage, optional: !stage.optional })),
+      mutateFirstStage((stage) => ({ ...stage, rationale: `${stage.rationale} substituted` })),
+      mutateFirstStage((stage) => ({ ...stage, checkpointState: "required-human" })),
+      mutateFirstStage((stage) => ({ ...stage, checkpointRationale: `${stage.checkpointRationale} substituted` })),
+    ];
+    for (const substituted of retainedHashSubstitutions) {
+      expect(substituted.profileCatalogHash).toBe(catalog.profileCatalogHash);
+      expect(decodeWorkflowProfileCatalogProjection(substituted)).toBeNull();
+    }
     const requests: unknown[] = [];
     const client = createCoreApiClient(async (request) => {
       requests.push(request);

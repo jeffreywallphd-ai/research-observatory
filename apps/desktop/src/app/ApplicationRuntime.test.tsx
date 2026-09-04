@@ -32,6 +32,11 @@ describe("functional desktop application", () => {
     expect(html).not.toContain("does not yet package");
     expect(html).toContain("Copy diagnostic reference");
     expect(html).toContain("Only implemented capabilities appear here.");
+    expect(html).toContain('data-workflow-navigation="true"');
+    expect(html).toContain('data-all-tools="true"');
+    expect(html).toContain("Guided workflow unavailable");
+    expect(html).not.toContain('data-workflow-nav="true"');
+    expect(html).not.toContain('data-workflow-context="true"');
     expect(html).toContain("Local projects");
     expect(html).toContain("Project settings");
     expect(html).toContain("Application settings");
