@@ -64,6 +64,16 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(details["liveRegion"])
         self.assertTrue(details["boundaryState"])
         self.assertTrue(details["boundaryRecovery"])
+        self.assertTrue(details["applicationLockEventAclStartup"])
+        self.assertEqual(
+            {
+                "defaultNoLogin": True,
+                "deniedListener": True,
+                "timedOutListener": True,
+                "malformedEvent": True,
+            },
+            details["applicationLockEventAclStartupCases"],
+        )
         self.assertTrue(details["retainedInput"])
         self.assertTrue(details["diagnosticCopy"])
         self.assertEqual(2, details["responsiveCases"])
@@ -107,7 +117,58 @@ class DesktopAppCheckTests(unittest.TestCase):
 
         self.assertTrue(any("development URL" in error for error in errors))
         self.assertTrue(any("Tauri CSP" in error for error in errors))
-        self.assertTrue(any("only the narrow WebView inspector" in error for error in errors))
+        self.assertTrue(any("receive-only event permissions" in error for error in errors))
+
+    def test_event_capability_rejects_missing_widened_or_renderer_write_authority(self) -> None:
+        devtools = "core:webview:allow-internal-toggle-devtools"
+        listen = "core:event:allow-listen"
+        unlisten = "core:event:allow-unlisten"
+        expected = [devtools, listen, unlisten]
+        adversarial_capabilities = {
+            "missing-listen": {"permissions": [devtools, unlisten]},
+            "missing-unlisten": {"permissions": [devtools, listen]},
+            "added-emit": {"permissions": [*expected, "core:event:allow-emit"]},
+            "added-emit-to": {"permissions": [*expected, "core:event:allow-emit-to"]},
+            "added-event-default": {"permissions": [*expected, "core:event:default"]},
+            "added-core-default": {"permissions": [*expected, "core:default"]},
+            "added-arbitrary-permission": {"permissions": [*expected, "core:app:allow-version"]},
+            "widened-windows": {"permissions": expected, "windows": ["main", "*"]},
+            "remote-origin": {
+                "permissions": expected,
+                "remote": {"urls": ["https://example.invalid"]},
+            },
+        }
+
+        for case, mutation in adversarial_capabilities.items():
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary) / "repo"
+                source = REPO / "apps" / "desktop" / "src-tauri"
+                shutil.copytree(source, root / "apps" / "desktop" / "src-tauri")
+                capability_path = root / "apps" / "desktop" / "src-tauri" / "capabilities" / "main-window.json"
+                capability = json.loads(capability_path.read_text(encoding="utf-8"))
+                capability.update(mutation)
+                capability_path.write_text(json.dumps(capability), encoding="utf-8", newline="\n")
+
+                errors = security_errors(root)
+
+                self.assertTrue(
+                    any("receive-only event permissions" in error for error in errors),
+                    errors,
+                )
+
+    def test_generated_capability_projection_cannot_diverge(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            source = REPO / "apps" / "desktop" / "src-tauri"
+            shutil.copytree(source, root / "apps" / "desktop" / "src-tauri")
+            generated_path = root / "apps" / "desktop" / "src-tauri" / "gen" / "schemas" / "capabilities.json"
+            generated = json.loads(generated_path.read_text(encoding="utf-8"))
+            generated["main-window"]["permissions"].append("core:event:allow-emit")
+            generated_path.write_text(json.dumps(generated), encoding="utf-8", newline="\n")
+
+            errors = security_errors(root)
+
+        self.assertTrue(any("generated Tauri capability projection" in error for error in errors), errors)
 
     def test_product_bundle_rejects_reference_pages_and_tauri_fixture_redirect(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

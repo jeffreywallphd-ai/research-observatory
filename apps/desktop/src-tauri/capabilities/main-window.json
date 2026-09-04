@@ -3,5 +3,9 @@
   "identifier": "main-window",
   "description": "Offline desktop window using application-defined typed Core-supervision commands and the debug-build WebView inspector shortcut.",
   "windows": ["main"],
-  "permissions": ["core:webview:allow-internal-toggle-devtools"]
+  "permissions": [
+    "core:webview:allow-internal-toggle-devtools",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten"
+  ]
 }
