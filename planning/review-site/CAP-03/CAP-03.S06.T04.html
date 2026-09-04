@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-research-domain-workflows</a><span>/</span><a href="CAP-03.S06.html">SLICE-use-case-profiles-and-adaptive-guided-navigation</a><span>/</span><span aria-current="page">CAP-03.S06.T04</span></nav>
 
 <section class="hero compact" data-task-page="CAP-03.S06.T04">
-  <div class="hero-top"><div><span class="eyebrow">CAP-03.S06.T04 · task 4 of 5</span><h1>Implement workflow progress, checkpoints, handoffs, and recalculation impact</h1><p>Persist stage progress and human checkpoints separately from background jobs, recommend the next meaningful step, and mark affected workflow outputs when intent/evidence changes.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-03.S06.T04 · task 4 of 5</span><h1>Implement workflow progress, checkpoints, handoffs, and recalculation impact</h1><p>Persist stage progress and human checkpoints separately from background jobs, recommend the next meaningful step, and mark affected workflow outputs when intent/evidence changes.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W1</dd></div><div><dt>Slice</dt><dd><a href="CAP-03.S06.html">SLICE-use-case-profiles-and-adaptive-guided-navigation</a></dd></div><div><dt>Risk / review</dt><dd>high / human-and-agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li><li>python tools/taskctl.py validate</li></ul>
-  <p data-task-claim="CAP-03.S06.T04" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-03.S06.T04" data-task-owner="codex" data-task-branch="codex/w1-windows-local-runtime" data-task-base-sha="e437cad11d0eb729790e575a7f45bf609d8b7ec4"><strong>Claim projection:</strong> owner <code>codex</code> · branch <code>codex/w1-windows-local-runtime</code> · base <code>e437cad11d0eb729790e575a7f45bf609d8b7ec4</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-03.S06.T04" data-task-plan-sha256="525223d1dd60bbab7c9ffa2b6ae932e6f5bcee7272454330dbfecd75edf4d1c9"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.4 `CAP-03.S06.T04` - Implement workflow progress, checkpoints, handoffs, and recalculation impact
 **Objective:** Persist stage progress and human checkpoints separately from background jobs, recommend the next meaningful step, and mark affected workflow outputs when intent/evidence changes.
@@ -91,13 +91,86 @@ python tools/verify.py --profile data
 python tools/taskctl.py validate
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-03.S06.T04">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-03.S06.T04" data-worksheet-sha256="8c214ebcbc6474b8fe4e04e324f775d14461dce13a8aab647e847999ed42faa6">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-03.S06.T04.task-start.md</code> · <strong>SHA-256:</strong> <code>8c214ebcbc6474b8fe4e04e324f775d14461dce13a8aab647e847999ed42faa6</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-03.S06.T04 task-start acceptance closure
+
+## Frozen authority
+
+- Task: `CAP-03.S06.T04`
+- Claim base: `e437cad11d0eb729790e575a7f45bf609d8b7ec4`
+- Objective: persist researcher-controlled stage progress and human checkpoints independently of analytical jobs, recommend the next meaningful step, and expose intent/evidence-driven staleness without rewriting history.
+- Dependencies: independently approved `CAP-03.S06.T03`, `CAP-03.S04.T01`, and `CAP-03.S05.T01`.
+- Governing authority: approved W1 packet; CAP-03.S06 Section 9.4; ADR-0026; ADR-0025 for analytical execution separation; `docs/architecture/workflow-profile-contracts.md`; Systems Design Sections 6.5 and 13; Academic Minimal reference `RO-UI-ACADEMIC-MINIMAL-1.5`, especially Project Home, workflow context, research-quality gates, next actions, and durable stale-state disclosure.
+- Non-goals: no new workflow catalog/profile identity, no background-job-to-stage-completion inference, no rewrite of accepted Research Intent or selection history, no activation of unimplemented downstream research workspaces, no automatic execution of costly/consequential recalculation, and no governed experience change.
+
+## Implemented baseline and predecessor facts
+
+- T01 defines the strict portable `WorkflowStageState` contract. It binds exact project, immutable selection/profile references, aggregate and revision identities, primary/supporting route, pass number, status, completion evidence, attention, stale causes, skip rationale, support return, predecessor, timestamp, and actor. Completed, attention, stale, and skipped states are shape-constrained; only revisitable profiles may use pass numbers above one.
+- T02 atomically persists immutable Research Intent and workflow-selection/migration authority in the existing project settings transaction. Profile change currently has no durable stage-state rows to enumerate, so T04 must activate the already-approved history-preserving stage boundary rather than invent a second selection authority.
+- T03 authenticates the exact Core catalog/Intent projection and renders a selected workflow, but its stage changes are in-memory route context only and explicitly record no completion or checkpoint.
+- CAP-03.S04 owns analytical workflow runs, jobs, attempts, worker checkpoints, and human-task execution. Those identities and states are not navigation-stage authority and must never advance a scholarly stage by implication.
+- CAP-03.S05 owns dependency-impact and durable stale-state authority. T04 may project and bind those exact stale causes to affected stage/output guidance; it must not duplicate the dependency graph or clear stale state when a user merely navigates.
+- Project Home is currently a generic desktop-foundation screen. Restoring the approved Project Home regions is within Academic Minimal 1.5; any materially different interaction or authority would require a new governed reference.
+
+## Material acceptance rows
+
+| Dimension | Observable closure | Planned proof |
+|---|---|---|
+| Persistence/restart | Opening a selected project with no stage history creates or projects one exact current first-stage state; accepted commands append immutable revisions; closing/reopening the Core and desktop reconstructs the same current pass and history. | Service/repository tests against a real SQLite project, process-restart API test, generated-client test, and assembled desktop replay. |
+| Human authority | Only an explicit authorized human stage command may complete, skip, reopen, or start a new pass. A worker job success, analytical checkpoint, route visit, stale client precondition, system actor, or completion without evidence leaves stage authority unchanged. | Command/service denial matrix plus a cross-check that completed analytical job fixtures do not change `WorkflowStageState`. |
+| State/invariants | One selection has one current primary state at a time; stage revisions are immediate and content-hash bound; completed carries evidence, stale carries causes, attention/blocked carries a reason, skipped carries rationale; linear profiles reject pass &gt; 1; revisitable profiles append a new pass without deleting prior passes. | Transition-table unit tests, one-field substitutions, optimistic-precondition conflict tests, and complete-history assertions. |
+| Selection/migration | Every state binds the current immutable selection/profile. A profile migration preserves prior selection state history and materializes only the accepted retain/map/stale/review/drop dispositions; a stale or substituted migration is denied atomically. | Exact T02 selection/migration fixtures plus SQLite transaction/fault tests and prior-history reload. |
+| Recalculation/staleness | Exact CAP-03.S05 stale causes appear on affected workflow outputs/stages with reason and safest next action. Deferral preserves stale state; resolving navigation alone never clears dependency authority. | Real dependency repository integration with stale/unknown-impact/informational cases and deterministic Project Home projection assertions. |
+| Recommendation/checkpoints | Next action derives from durable stage state, catalog order/optionality, explicit checkpoint truth, and implementability. Governed `unknown` checkpoint authority remains unknown; the product never fabricates a passed research-quality gate. | Pure projection tests across current/completed/attention/blocked/stale/optional and unknown-checkpoint profiles, plus API/UI semantic assertions. |
+| Project Home | With a compatible project, Home shows exact use case, position, current/recommended action, checkpoint/gate truth, stale outputs, and a route to the current implemented stage. Loading, empty, incompatible, denied, error, and unimplemented-next states are explicit and recoverable. | ApplicationRuntime interaction tests, keyboard/focus/live-region assertions, both-theme responsive UI checks, and exact reference gate. |
+| Principal boundary | Packaged renderer uses strict generated Core API contracts over the local sidecar; commands bind project, selection/stage revision/hash, actor, and idempotency/precondition; real SQLite state survives a new service composition. | OpenAPI/client generation parity, built Core sidecar integration, assembled-browser stage-command/restart scenario, and no direct renderer database access. |
+| Evidence truth | Task evidence binds the exact candidate and maps each acceptance criterion to named checks. Exhaustive all-profile behavior remains T05; slice-wide/full profiles remain slice/W1-exit duties. | Commit-bound manifest, affected-path inventory, selected-check rationale, taskctl/backlog/site validation, and independent review. |
+
+## Authority-bearing fields and transition rules
+
+- Project/selection: project ID and canonical root; selection ID, revision ID, revision number/content hash; exact profile reference including governed reference, catalog/profile versions and hashes.
+- Stage aggregate: stage-state ID, revision ID, revision number/content hash, parent revision, stage key/page contract, navigation role, pass number, status, completion evidence, attention, stale causes, skip rationale, updated-at/by.
+- Command witness: exact current selection and stage revision/hash, human actor identity, idempotency key, requested transition, evidence/rationale/cause inputs, and project-scoped repository.
+- Dependency witness: impact/stale run identity, output revision identity, disposition/reason code, source endpoint revision, and immutable cause hash/reference.
+- A successful analytical job may create output and dependency facts; it cannot provide the human actor or stage-state precondition required for a consequential navigation transition.
+
+| From | Allowed explicit human action | Result |
+|---|---|---|
+| not-started/available | make current | append current revision; previous current becomes a truthful non-current state |
+| current/in-progress | complete with evidence | append completed revision and select the next meaningful available stage |
+| current/in-progress | mark attention or blocked | append reason-bound revision; retain truthful next-action guidance |
+| current/in-progress | skip optional with rationale | append skipped revision and recommend the next eligible stage |
+| completed/skipped/stale | revisit on a revisitable profile | preserve prior pass and append pass + 1; reject on a linear profile unless an approved correction transition applies |
+| any affected state | dependency/selection impact | append stale/review state with exact cause/migration disposition; never erase the predecessor |
+
+## First tests before product code
+
+1. Add service/model tests for initial projection, every material transition, exact optimistic authority, system/job denial, completion-evidence requirements, unknown checkpoint truth, and cyclic pass preservation.
+2. Add real SQLite tests proving atomic stage revision/provenance/outbox persistence, idempotent replay, stale precondition denial, crash/rollback cleanliness, restart reconstruction, and exact T02 selection/profile-migration history.
+3. Add dependency-integration tests proving stale and unknown-impact causes project into workflow guidance while informational changes and navigation do not fabricate/clear staleness.
+4. Add OpenAPI/generated-client tests for strict Project Home and stage-command projections, unknown fields, one-field identity substitution, project isolation, and current-revision preconditions.
+5. Add ApplicationRuntime tests for approved Project Home regions, actionable implemented route, unavailable-next recovery, keyboard/focus/live announcements, loading/empty/error/locked behavior, and no completion from navigation or job status.
+6. Extend the assembled product check to complete one human-authorized stage, restart the local service, recover the same stage position/history, and prove a completed background job alone cannot advance it.
+
+## Deferred broader coverage
+
+- T05 owns exhaustive fourteen-profile selection, exact sequences, cycle families, support-tool access, restart, accessibility, and expected-output handoffs.
+- Slice review owns the full CAP-03.S06 end-to-end matrix and adversarial cross-task integration.
+- W1 exit owns the complete affected/full repository, desktop/service/data, packaging, recovery, security, accessibility, performance, and Windows x64 release-authoritative matrix.
+
+Adversarial preflight: requested because T04 crosses public/generated API contracts, immutable SQLite authority, dependency staleness, human-gate security, and the multi-layer Project Home experience.
+
+Mandatory gate discovered: none at task start. Academic Minimal 1.5 already governs the required Project Home and stale-state experience; any newly required behavior outside it will stop for the existing design-first process.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-03.S06.T04" data-review-mode="latest-review-only">
   <h3>CAP-03.S06.T04 — Implement workflow progress, checkpoints, handoffs, and recalculation impact</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-03.S06.T04" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-03.S06.T04" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-03.S06.T03.html">Previous</a><a class="button button-primary" href="CAP-03.S06.T05.html">Next</a></nav>
