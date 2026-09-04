@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0016",
+  "title": "Stabilize historical ECR authority fixtures",
+  "status": "pending-review",
+  "riskTier": 1,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "bedd07c412f3cce8876cfc8f39520b6d919d3239",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": null
+  },
+  "trigger": {
+    "denial": "The focused planctl amendment module reported three failures after the structurally valid ECR-0006 proposal introduced the next repository-global ECR identity.",
+    "atomicity": "ECR-0006 is frozen as an inert, non-executable proposal at the predecessor commit. W1 remains paused and CAP-03.S06.T05 remains blocked and lease-free; no amendment campaign or recovery hold is active.",
+    "diagnosis": "Synthetic ECR-0004 and ECR-0005 unit fixtures call the live repository-global next-identity lookup, so a later legitimate ECR makes historical fixture equality assertions fail. Their intended pre-A05 fixture subtracts only amendments known when authored and now retains W1.A06; one historical-successor test similarly appends a duplicate W1.A06 to mutable live state instead of constructing its intended exact post-A06 boundary. The live ECR-0006 validator passes."
+  },
+  "authority": "This maintenance changes test fixtures only. It does not change planctl, taskctl, the backlog, any ECR packet, product code, planning authority, approval, experience, security, evidence semantics, lifecycle state, release state, or Git history. It grants no ECR-0006/W1.A07 approval, bootstrap, materialization, activation, adoption, T05 recovery, W1 resume, or external authority.",
+  "intendedDelta": {
+    "implementation": "Validate synthetic historical packet structure under the identity encoded by each fixture while leaving the dedicated repository-global identity-denial test on the real lookup. Define the intended pre-A05 backlog as exactly W1.A01 through W1.A03 and the historical post-successor backlog as exactly W1.A01 through W1.A06 rather than subtracting or appending relative to mutable live state.",
+    "failClosed": [
+      "Only equality checks for deliberately synthetic historical fixtures isolate live later-ECR identity drift; the production controller remains byte-identical.",
+      "The dedicated repository-global duplicate/invalid identity test continues to call the real controller path.",
+      "All authority-chain tamper, reservation, ancestry, budget, schema, review-ledger, approval, and no-save assertions remain present.",
+      "ECR-0006 remains non-executable and unavailable for human approval until exact-candidate independent packet review passes."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0016.json",
+      "tests/foundation/test_planctl_amendments.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The credible risk is masking the real repository-global identity invariant or weakening historical-chain checks. Run the three previously failing tests, the complete planctl amendment module, the adjacent review-site amendment module, live ECR-0006 validation, canonical backlog/site checks, Python quality with the repository runtime, maintenance JSON parsing, and Git diff hygiene. Product, runtime, packaging, and Windows suites are unrelated to this test-fixture-only correction.",
+    "results": [
+      {
+        "check": "focused red-to-green historical authority fixtures",
+        "result": "passed",
+        "detail": "The three previously failing tests pass in 165.397 seconds against real immutable Git authority: post-migration reserved authority and budget, interleaved adopted/reserved successors, and historical packet validity after W1.A06 materialization."
+      },
+      {
+        "check": "complete affected governance-test modules",
+        "result": "passed",
+        "detail": "All 10 planctl amendment tests pass in 180.993 seconds and all 16 amendment review-site tests pass in 19.157 seconds. The dedicated repository-global identity denial and all authority-chain, tamper, budget, approval, review-ledger, generated-site, and no-save assertions remain active."
+      },
+      {
+        "check": "live authority, quality, and scope integrity",
+        "result": "passed",
+        "detail": "The live ECR-0006 packet is structurally and historically valid; taskctl validates 20 capabilities, 117 slices, 364 tasks, and 12 gates; all 490 review-site pages pass; Ruff check and format verification pass for the changed Python test; GOV-MAINT-0016 parses as JSON and Git diff hygiene passes."
+      }
+    ]
+  },
+  "rollback": "If independent review finds a blocker, preserve this candidate and the inert ECR-0006 proposal, keep W1 paused and T05 blocked, and revise only the reproduced synthetic-fixture boundary.",
+  "reviewAttempts": [],
+  "review": null
+}
