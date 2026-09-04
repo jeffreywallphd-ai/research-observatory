@@ -29,6 +29,11 @@ from planctl import (  # noqa: E402
 
 
 class PlanctlAmendmentTests(unittest.TestCase):
+    def _fixture_authority_chain_v4_errors(self, packet: dict[str, Any]) -> list[str]:
+        """Validate a synthetic historical packet without live later-ECR identity drift."""
+        with patch("planctl._next_global_ecr_id", return_value=str(packet["changeRequestId"])):
+            return _authority_chain_v4_errors(REPO, packet)
+
     def _post_migration_v4_packet(self) -> dict[str, Any]:
         predecessor = json.loads(
             (REPO / "planning/enabler-change-requests/ECR-0003.packet.json").read_text(encoding="utf-8")
@@ -248,15 +253,15 @@ class PlanctlAmendmentTests(unittest.TestCase):
         packet = self._post_migration_v4_packet()
         schema = REPO / "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
         self.assertEqual([], _schema_errors(packet, schema, "ECR v4 fixture"))
-        self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+        self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
 
         backlog, _ = load_backlog(REPO)
         pre_bootstrap = copy.deepcopy(backlog)
         pre_bootstrap["wave_amendments"] = [
-            item for item in pre_bootstrap["wave_amendments"] if item["id"] not in {"W1.A04", "W1.A05"}
+            item for item in pre_bootstrap["wave_amendments"] if item["id"] in {"W1.A01", "W1.A02", "W1.A03"}
         ]
         with patch("planctl.load_backlog", return_value=(pre_bootstrap, REPO / "planning/backlog.yaml")):
-            self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+            self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
 
         altered_terminal = copy.deepcopy(backlog)
         reserved = next(item for item in altered_terminal["wave_amendments"] if item["id"] == "W1.A04")
@@ -338,7 +343,7 @@ class PlanctlAmendmentTests(unittest.TestCase):
             "scopeTaskIds": ["W1.A05.T01"],
             "rationale": "The provider boundary is necessary to deliver the requested login modes coherently.",
         }
-        self.assertEqual([], _authority_chain_v4_errors(REPO, directed_exception))
+        self.assertEqual([], self._fixture_authority_chain_v4_errors(directed_exception))
 
         overbroad_exception = copy.deepcopy(directed_exception)
         overbroad_exception["refactorBudget"]["limitPolicy"]["scopeTaskIds"] = ["W1.A05.T02"]
@@ -350,7 +355,7 @@ class PlanctlAmendmentTests(unittest.TestCase):
         packet = self._successor_post_migration_v4_packet()
         schema = REPO / "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
         self.assertEqual([], _schema_errors(packet, schema, "successor ECR v4 fixture"))
-        self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+        self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
 
         omitted_adopted = copy.deepcopy(packet)
         omitted_adopted["authorityChain"]["orderedAmendments"].pop()
@@ -387,11 +392,14 @@ class PlanctlAmendmentTests(unittest.TestCase):
         packet = self._post_migration_v4_packet()
         backlog, path = load_backlog(REPO)
         successor_backlog = copy.deepcopy(backlog)
-        successor = copy.deepcopy(next(item for item in successor_backlog["wave_amendments"] if item["id"] == "W1.A05"))
-        successor["id"] = "W1.A06"
-        successor_backlog["wave_amendments"].append(successor)
+        successor_backlog["wave_amendments"] = [
+            item
+            for item in successor_backlog["wave_amendments"]
+            if item["id"] in {"W1.A01", "W1.A02", "W1.A03", "W1.A04", "W1.A05", "W1.A06"}
+        ]
+        self.assertEqual("W1.A06", successor_backlog["wave_amendments"][-1]["id"])
         with patch("planctl.load_backlog", return_value=(successor_backlog, path)):
-            self.assertEqual([], _authority_chain_v4_errors(REPO, packet))
+            self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
 
     def test_v4_schema_allows_truthful_empty_predecessor_and_reservation_sets(self) -> None:
         packet = self._post_migration_v4_packet()
