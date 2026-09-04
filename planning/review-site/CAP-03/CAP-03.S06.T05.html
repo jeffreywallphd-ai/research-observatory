@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-research-domain-workflows</a><span>/</span><a href="CAP-03.S06.html">SLICE-use-case-profiles-and-adaptive-guided-navigation</a><span>/</span><span aria-current="page">CAP-03.S06.T05</span></nav>
 
 <section class="hero compact" data-task-page="CAP-03.S06.T05">
-  <div class="hero-top"><div><span class="eyebrow">CAP-03.S06.T05 · task 5 of 5</span><h1>Verify all approved use-case workflows end to end</h1><p>Test profile selection, navigation order, supporting-tool access, state persistence, profile revision, accessibility, and expected output handoffs across all fourteen use cases.</p></div><span class="status status-in-progress">In_Progress</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-03.S06.T05 · task 5 of 5</span><h1>Verify all approved use-case workflows end to end</h1><p>Test profile selection, navigation order, supporting-tool access, state persistence, profile revision, accessibility, and expected output handoffs across all fourteen use cases.</p></div><span class="status status-blocked">Blocked</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W1</dd></div><div><dt>Slice</dt><dd><a href="CAP-03.S06.html">SLICE-use-case-profiles-and-adaptive-guided-navigation</a></dd></div><div><dt>Risk / review</dt><dd>high / human-and-agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -231,9 +231,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-03.S06.T05" data-worksheet-sha256="63d5311a755cd64755cedd817b1794e38108c87a8884e09ef0c3ebf936d62c8e">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-03.S06.T05" data-worksheet-sha256="88916c741f35af103da1ffdae2fbe1e267de57cbc3b65429514b47477f961709">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-03.S06.T05.task-start.md</code> · <strong>SHA-256:</strong> <code>63d5311a755cd64755cedd817b1794e38108c87a8884e09ef0c3ebf936d62c8e</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-03.S06.T05.task-start.md</code> · <strong>SHA-256:</strong> <code>88916c741f35af103da1ffdae2fbe1e267de57cbc3b65429514b47477f961709</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-03.S06.T05 task-start acceptance closure
 
 ## Frozen authority
@@ -293,14 +293,22 @@ These sources constrain implementation choices but do not replace repository-spe
 
 Adversarial preflight: the current implementation and prior T01-T04 findings were inspected directly. A separate preflight agent is not required because T05 adds verification first and changes no production authority unless a failing acceptance test exposes a bounded defect. Independent commit-bound task and slice review remain mandatory.
 
-Mandatory gate discovered: none. Academic Minimal 1.5 already governs the required fourteen-profile behavior. Any test result that requires a new workflow identity, route, output, interaction, or authority will stop at the existing design/amendment boundary rather than being silently encoded in T05.</pre></article>
+## Material authority mismatch discovered after the initial freeze
+
+- T05 criterion 2 in `planning/backlog.yaml` and the approved slice plan says that &quot;Hermeneutic, critical, and living-review cycles&quot; can revisit earlier steps.
+- The higher-authority accepted ADR-0026 requires an exact projection of the approved Academic Minimal 1.5 catalog. Those exact bytes classify `living-review`, `hermeneutic-inquiry`, and `manuscript-review-revision` as revisitable; `critical-problematization` and `critical-article-development` are linear.
+- The mismatch has existed since the repository bootstrap rather than being introduced by T01-T04. Implementing the literal T05 text would violate the accepted ADR and governed catalog; implementing only the catalog would leave the immutable Wave task criterion text false.
+- Safe interim state: T05 remains at its test-first boundary with no product or verification implementation change. Preserve all approved catalog bytes and current runtime behavior.
+- Recommended correction: an append-only, one-for-one Wave planning-authority amendment should replace only the word `critical` in T05 criterion 2 with `manuscript-review/revision`, leaving all other task, slice, product, experience, dependency, estimate, verification, and release authority unchanged. This aligns the lower-authority criterion to the already-approved ADR/catalog and does not authorize a new experience.
+
+Mandatory gate discovered: yes — higher-authority conflict material to criterion 2. Resume condition: the exact one-for-one planning correction is independently reviewed and approved through the repository&#x27;s append-only Wave amendment path, adopted, and W1/T05 are explicitly resumed. A catalog or product change is not an authorized workaround.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-03.S06.T05" data-review-mode="latest-review-only">
   <h3>CAP-03.S06.T05 — Verify all approved use-case workflows end to end</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-03.S06.T05" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-03.S06.T05" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>BLOCKED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-03.S06.T04.html">Previous</a><a class="button button-primary" href="CAP-03.S06.html">Next</a></nav>
