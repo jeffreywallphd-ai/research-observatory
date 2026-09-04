@@ -173,12 +173,14 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key="2" * 32,
         )
+        assert started.current is not None
         self.assertEqual("current", started.current.status)
         started_revision = started.current.stage_state_revision_id
 
         # Creating an analytical/evidence output does not confer scholarly-stage authority.
         evidence = self._append_evidence()
         unchanged = self._service().workspace(self.root)
+        assert unchanged.current is not None
         self.assertEqual(started_revision, unchanged.current.stage_state_revision_id)
 
         completed = self.service.command(
@@ -191,6 +193,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key="3" * 32,
         )
+        assert completed.current is not None
         self.assertEqual("completed", completed.history[0].status)
         self.assertEqual(1, len(completed.history[0].completion_evidence_ids))
         self.assertNotEqual(started_revision, completed.current.stage_state_revision_id)
@@ -260,6 +263,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key="3" * 32,
         )
+        assert started.current is not None
         with self.assertRaisesRegex(
             WorkflowProgressProblem,
             "RO-CORE-WORKFLOW-PROGRESS-EVIDENCE-NOT-FOUND",
@@ -292,11 +296,13 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key="4" * 32,
         )
+        assert started.current is not None
         revisited = self.service.command(
             self._command(started, "revisit", stageKey=started.current.stage_key),
             trace_id=TRACE,
             idempotency_key="5" * 32,
         )
+        assert revisited.current is not None
 
         self.assertEqual(2, revisited.current.pass_number)
         self.assertEqual(started.current.stage_state_id, revisited.current.stage_state_id)
@@ -335,6 +341,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key=f"{sequence:032x}",
         )
+        assert revisited.current is not None
 
         self.assertEqual("current", revisited.current.status)
         self.assertEqual(2, revisited.current.pass_number)
@@ -342,6 +349,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
 
     def test_linear_profile_rejects_a_second_pass_without_mutation(self) -> None:
         current = self.intents.workspace(self.root).current
+        assert current is not None
         self._save_intent("systematic-review", expected_revision=current.revision, key="6" * 32)
         before = self._service().workspace(self.root)
         started = self.service.command(
@@ -349,6 +357,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key="7" * 32,
         )
+        assert started.current is not None
 
         with self.assertRaisesRegex(WorkflowProgressProblem, "RO-CORE-WORKFLOW-PROGRESS-CYCLE-DENIED"):
             self.service.command(
@@ -365,6 +374,8 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             idempotency_key="c" * 32,
         )
         current_intent = self.intents.workspace(self.root).current
+        assert started.current is not None
+        assert current_intent is not None
 
         self._save_intent("systematic-review", expected_revision=current_intent.revision, key="d" * 32)
 
@@ -390,6 +401,9 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             idempotency_key="6" * 32,
         )
         prior_intent = self.intents.workspace(self.root).current
+        assert started.current is not None
+        assert prior_intent is not None
+        started_stage = started.current
         raced = False
 
         class RacingRepository:
@@ -407,7 +421,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
                         self._command(
                             started,
                             "open-supporting",
-                            stageKey=started.current.stage_key,
+                            stageKey=started_stage.stage_key,
                             supportingPageContractId="project-settings.html",
                         ),
                         trace_id=TRACE,
@@ -442,7 +456,9 @@ class WorkflowProgressServiceTests(unittest.TestCase):
         with self.assertRaisesRegex(IntentProblem, "RO-CORE-INTENT-REVISION-CONFLICT"):
             racing_intents.save_draft(draft, trace_id=TRACE, idempotency_key="8" * 32)
 
-        self.assertEqual(prior_intent.revision, self.intents.workspace(self.root).current.revision)
+        persisted_intent = self.intents.workspace(self.root).current
+        assert persisted_intent is not None
+        self.assertEqual(prior_intent.revision, persisted_intent.revision)
         self.assertIsNotNone(self._service().workspace(self.root).supporting_handoff)
 
     def test_supporting_handoff_survives_restart_and_expires_when_primary_changes(self) -> None:
@@ -451,6 +467,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key="9" * 32,
         )
+        assert started.current is not None
         detached = self.service.command(
             self._command(
                 started,
@@ -461,6 +478,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             trace_id=TRACE,
             idempotency_key="a" * 32,
         )
+        assert detached.supporting_handoff is not None
         self.assertEqual(started.current, detached.current)
         self.assertEqual("supporting", detached.supporting_handoff.navigation_role)
         self.assertEqual(

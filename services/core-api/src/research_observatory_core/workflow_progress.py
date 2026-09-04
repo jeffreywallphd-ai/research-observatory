@@ -226,7 +226,7 @@ def _stage_projection(state: Mapping[str, object]) -> WorkflowStageStateProjecti
         completion_evidence_ids=tuple(cast(Sequence[str], state["completionEvidenceIds"])),
         attention_reason=cast(str, attention["rationale"]) if isinstance(attention, Mapping) else None,
         stale_cause_ids=tuple(cast(Sequence[str], state["staleCauses"])),
-        skip_rationale=cast(str, state["skipRationale"]) if isinstance(state["skipRationale"], str) else None,
+        skip_rationale=state["skipRationale"] if isinstance(state["skipRationale"], str) else None,
         updated_at=cast(str, state["updatedAt"]),
     )
 
@@ -598,7 +598,9 @@ class WorkflowProgressService:
             profile_id = cast(str, cast(Mapping[str, object], selection["profile"])["profileId"])
             profile = _PROFILES[profile_id]
             stages = cast(Sequence[Mapping[str, object]], profile["stages"])
-            selection_revision_id = cast(str, selection["selectionRevisionId"])
+            selection_revision_id = selection["selectionRevisionId"]
+            if not isinstance(selection_revision_id, str):
+                raise RepositoryProblem("workflow selection identity is invalid")
             heads = _heads(states, selection_revision_id)
             current = _current_primary(heads)
             revisit_head = next(
@@ -741,8 +743,8 @@ class WorkflowProgressService:
                 else "workflow.stage.progressed"
             )
             repository.append(
-                expected_selection_revision_id=cast(str, selection["selectionRevisionId"]),
-                expected_selection_revision_content_hash=cast(str, selection["revisionContentHash"]),
+                expected_selection_revision_id=selection["selectionRevisionId"],
+                expected_selection_revision_content_hash=selection["revisionContentHash"],
                 expected_current_revision_id=(
                     cast(str, current["stageStateRevisionId"]) if current is not None else None
                 ),
