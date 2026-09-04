@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -534,6 +537,70 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             proposal.write_text(proposal.read_text(encoding="utf-8") + "\nchanged\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "declared source hash mismatch"):
                 load_enabler_change_requests(root, {})
+
+    def test_ecr_loader_uses_git_normalized_governed_experience_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            packet_dir = root / "planning/enabler-change-requests"
+            packet_dir.mkdir(parents=True)
+            proposal = packet_dir / "ECR-9999.md"
+            review = packet_dir / "ECR-9999-review.html"
+            governed = root / "governed.css"
+            proposal.write_text("# Fixture proposal\n", encoding="utf-8")
+            review.write_text("<!doctype html><title>Fixture review</title>\n", encoding="utf-8")
+            (root / ".gitattributes").write_text("*.css text eol=crlf\n", encoding="utf-8")
+            governed.write_text(":root {\n  --space: 1rem;\n}\n", encoding="utf-8")
+            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Plan Review Test"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "review@example.invalid"], cwd=root, check=True)
+            subprocess.run(["git", "add", ".gitattributes", "governed.css"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=root, check=True)
+            governed.write_bytes(b":root {\r\n  --space: 1rem;\r\n}\r\n")
+            repository_payload = subprocess.check_output(["git", "show", "HEAD:governed.css"], cwd=root)
+            packet = {
+                "changeRequestId": "ECR-9999",
+                "proposedAmendmentId": "W1.A99",
+                "targetWave": "W1",
+                "status": "pending-approval",
+                "executionState": "non-executable",
+                "classification": "fixture",
+                "bootstrapUnit": {"id": "W1.A99.B00"},
+                "files": [
+                    {
+                        "path": "planning/enabler-change-requests/ECR-9999.md",
+                        "sha256": hashlib.sha256(proposal.read_bytes()).hexdigest(),
+                        "role": "canonical-proposal",
+                    },
+                    {
+                        "path": "planning/enabler-change-requests/ECR-9999-review.html",
+                        "sha256": hashlib.sha256(review.read_bytes()).hexdigest(),
+                        "role": "human-review",
+                    },
+                ],
+                "governedExperience": {
+                    "referenceId": "fixture",
+                    "files": [
+                        {
+                            "path": "governed.css",
+                            "sha256": hashlib.sha256(repository_payload).hexdigest(),
+                        }
+                    ],
+                },
+            }
+            (packet_dir / "ECR-9999.packet.json").write_text(
+                json.dumps(packet, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+            records = load_enabler_change_requests(root, {"waves": [], "wave_amendments": []})
+            self.assertEqual(
+                hashlib.sha256(repository_payload).hexdigest(),
+                records[0]["governed_experience"]["files"][0]["sha256"],
+            )
+
+            governed.write_bytes(b":root {\r\n  --space: 2rem;\r\n}\r\n")
+            with self.assertRaisesRegex(ValueError, "repository file hash mismatch"):
+                load_enabler_change_requests(root, {"waves": [], "wave_amendments": []})
 
     def test_controlled_review_history_renders_rounds_findings_closures_hashes_and_projection(self) -> None:
         task = controlled_review_task()

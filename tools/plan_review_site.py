@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from planctl import _bound_repository_file_errors
 
 try:
     import mistune  # type: ignore[import-not-found]
@@ -684,14 +685,19 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
         governed_experience = dict(packet.get("governedExperience") or {})
         governed_experience_files: list[dict[str, Any]] = []
         reference_approval_status = "not-bound"
-        for item in governed_experience.get("files") or []:
+        governed_file_inventory = governed_experience.get("files") or []
+        governed_file_errors = _bound_repository_file_errors(
+            repo,
+            governed_file_inventory,
+            label=f"{change_id} governed experience",
+        )
+        if governed_file_errors:
+            raise ValueError(governed_file_errors[0])
+        for item in governed_file_inventory:
             relative = str(item.get("path") or "")
             source = repository_file(repo, relative, label=f"{change_id} governed experience")
-            actual = sha256(source)
             expected = str(item.get("sha256") or "").lower()
-            if actual != expected:
-                raise ValueError(f"{change_id} governed experience hash mismatch: {relative}")
-            governed_experience_files.append({"path": relative, "sha256": actual})
+            governed_experience_files.append({"path": relative, "sha256": expected})
             if source.name == "APPROVAL.yaml":
                 approval_record = yaml.safe_load(source.read_text(encoding="utf-8"))
                 if isinstance(approval_record, dict) and approval_record.get("reference_id") == governed_experience.get(
