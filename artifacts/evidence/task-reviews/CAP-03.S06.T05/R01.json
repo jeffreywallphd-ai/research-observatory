@@ -1,0 +1,58 @@
+{
+  "task_id": "CAP-03.S06.T05",
+  "attempt_id": "R01",
+  "candidate_commit": "8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce",
+  "submission_record_commit": "d5635364c102a9cba7e0787f75192570b9bcdb98",
+  "reviewer": "agent:t05-r01-independent-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "The exact candidate, sole-parent submission, frozen evidence SHA-256/Git blob, 33-path historical claim range, five-path post-W1.A07 implementation boundary, controlled R01 packet, and patch hygiene authenticate. The claim history contains the independently reviewed, human-approved, completed, and adopted W1.A07 one-word cycle-authority correction followed by explicit W1 resume and T05 recovery; taskctl validates that append-only chain without reopening its authority. Independent real Core/API/SQLite replay proves all fourteen governed profiles create successfully, persist the exact hash-bound evidence/autonomy/stopping defaults while leaving novelty standard and rationale unresolved for the researcher, start at their exact first stage, open a server-issued supporting handoff without advancing the primary head, and reconstruct identical stage and handoff revisions through a fresh service composition. The cycle matrix accepts exactly living-review, hermeneutic-inquiry, and manuscript-review-revision as revisitable, appends pass 2 while preserving pass 1, denies the same transition without mutation for the remaining eleven linear profiles, and retains audit-lineage.html as systematic-review's ordered endpoint. Core independently exposes exact Academic Minimal 1.5 reference identity, workflow catalog version/hash, guidance version/hash, fourteen profile identities, thirty-three registered supporting page contracts, and the complete-workbench policy. The assembled production frame renders every profile's exact title, purpose, output, process form, ordered/optional stage labels, and enabled implemented-tool list with semantic list/button names, while the existing keyboard, focus, responsive, recovery, and adaptive-navigation assertions remain green. All 36 affected predecessor catalog, lifecycle, workflow-progress, migration, restart, supporting-expiry, evidence, CAS, idempotency, and authority-substitution tests pass. Focused Ruff, MyPy, governed-reference, backlog, W1.A07 runtime-integrity, exact-scope, ancestry, and Git checks pass. No acceptance-bound finding remains. Complete profile-union, packaging/install/upgrade, platform smoke, performance, cross-capability recovery/security, and full visual/accessibility qualification remain appropriately assigned to CAP-03.S06 slice review, any triggered checkpoint, and W1 exit; this task approval does not approve the slice, Wave, G1, local-main integration, or remote push.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T05.R01.json",
+      "sha256": "390614f401332c10f693c3a2bca985c68ed59d132b8bdb6ec4e0269eec8a7270",
+      "git_blob": "81a83285e357e34d5df9d8ac6c3a54461e7a999e",
+      "commit": "8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce",
+      "result": "PASS: the submission-introduced evidence bytes and Git blob bind the exact candidate, base, branch, changed paths, selected checks, criteria, and deferrals."
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base b6c33dd67a4c219efbc7856b21653f2fdc2db3d4, candidate 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce, and submission d5635364c102a9cba7e0787f75192570b9bcdb98; recompute task packet/evidence identities; compare base-to-candidate and post-recovery path inventories; inspect linear W1.A07 ancestry and git diff --check.",
+      "result": "PASS: submission is the candidate's sole child; evidence SHA-256 is 390614f401332c10f693c3a2bca985c68ed59d132b8bdb6ec4e0269eec8a7270 with blob 81a83285e357e34d5df9d8ac6c3a54461e7a999e; controlled packet SHA-256 is 5fd20ce080e7c79472789a2d74d2661f6aff25ee113255253ab1d9f283c4f33d with zero validation errors. All 33 frozen claim-range paths match Git exactly. After explicit W1.A07 adoption/resume/T05 recovery, the implementation delta is exactly the five declared T05 paths and has no whitespace error."
+    },
+    {
+      "type": "authority-chain-check",
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml amendment status W1.A07; authenticate approval, exit-review, adoption, resume, recovery, and candidate ancestry",
+      "result": "PASS: W1.A07 is ADOPTED with approved bootstrap/task/exit histories, no open finding or lease, exact exit-ledger SHA-256 40d989c95cf4902e46c287bf3fe8570223e60583aba25ee845b427cfeb6ef031, adoption-evidence SHA-256 9c8448704a9c9b63302795f532a2159ea0411778f4b30dcac9c980aa53932631, and candidate ancestry through adoption, explicit W1 resume, and T05 recovery."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.e2e.test_workflow_profile_matrix",
+      "result": "PASS: 2/2 real Core/API/SQLite tests passed. All fourteen profiles create, bind exact defaults, start, open supporting context without advancing, close, and resume exact stage/handoff identity after service reconstruction. Exactly three revisitable profiles append pass 2 with pass 1 retained; all eleven linear profiles deny without mutation; systematic-review ends at audit-lineage.html."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_workflow_profile_contracts tests.service.test_project_lifecycle tests.service.test_workflow_progress",
+      "result": "PASS: 36/36 affected predecessor tests passed, including exact catalog hashes, profile migration/history, atomic project publication, restart, supporting-handoff persistence/expiry, evidence-kind and selection substitution denial, canonical Intent authority, exact replay, linear/revisitable transitions, and CAS conflicts."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible",
+      "result": "PASS: the assembled candidate-bound production frame passed its fourteen-row workflow profile matrix and retained all existing keyboard, focus, responsive, boundary/recovery, lock, navigation, zero-network, and accessibility assertions. Every row has exact title, purpose, output, process form, ordered/optional stages, and eight enabled implemented tools under the accessible All implemented tools list."
+    },
+    {
+      "type": "independent-identity-check",
+      "command": "Project the live Core workflow catalog and assert exact UI/catalog/guidance version plus hash, fourteen profiles, thirty-three registered supporting page contracts, the 3/11 process partition, and systematic audit endpoint.",
+      "result": "PASS: Core reports RO-UI-ACADEMIC-MINIMAL-1.5 / 1.5, profile catalog 1.0.0 / sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49, guidance 1.0.0 / sha256:2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2, allToolsAccessible=true, fourteen profiles, thirty-three registered contracts, exactly three revisitable identities, and audit-lineage.html as the systematic endpoint."
+    },
+    {
+      "type": "independent-quality-and-governance-check",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check <four changed Python paths>; .venv\\Scripts\\python.exe -m ruff check <four changed Python paths>; .venv\\Scripts\\python.exe -m mypy --follow-imports=skip <three typed paths>; .venv\\Scripts\\python.exe tools\\ui_reference_check.py --repo .; .venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "result": "PASS: all changed Python is formatted and lint-clean, the changed service/e2e/verifier paths are type-clean, all 55 governed reference files validate with fourteen profiles and exact catalog hash, and the backlog validates with 20 capabilities, 117 slices, 365 tasks, and 12 release gates."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}
