@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -252,6 +252,18 @@ waves:
       listen/unlisten and retained devtools access pass; renderer emit/emit-to, non-main, remote, defaults, widened windows,
       and extra permissions remain denied; installed mode:none startup and fail-closed recovery matrix pass; no open findings.
       Complete packaging and Windows-x64 qualification remain due at W1 exit.'
+  - id: W1.CP06
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-09-04T11:17:05+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W1.A07
+      path: artifacts/evidence/W1.A07.adoption.json
+      sha256: 9c8448704a9c9b63302795f532a2159ea0411778f4b30dcac9c980aa53932631
+      commit: f13e078fcd303ae28bde8999ccc55671adcc20e7
+    notes: Adopt the independently approved W1.A07 cycle-authority correction as a W1 security checkpoint; retain all ordinary
+      CAP-03.S06.T05, slice-review, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
   completion:
     status: PAUSED
     reviewer: null
@@ -38575,7 +38587,7 @@ wave_amendments:
     sha256: c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6
     introduction_commit: 72052b7f7781dcfc83a1a2c8dae362b899b114d5
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -38602,6 +38614,13 @@ wave_amendments:
       at: '2026-09-04T11:08:33+00:00'
       rationale: W1.A07.B00 and W1.A07.T01 are independently approved with no open findings; submit the bounded planning-only
         amendment for independent exit review while W1 remains paused and T05 remains blocked.
+    - id: E05
+      status: ADOPTED
+      actor: codex
+      at: '2026-09-04T11:17:05+00:00'
+      rationale: Adopt the independently approved W1.A07 cycle-authority correction as a W1 security checkpoint; retain all
+        ordinary CAP-03.S06.T05, slice-review, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit
+        taskctl resume.
   bootstrap:
     id: W1.A07.B00
     status: APPROVED
