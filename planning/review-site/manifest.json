@@ -11649,13 +11649,13 @@
             {
               "task_id": "CAP-03.S06.T05",
               "title": "Verify all approved use-case workflows end to end",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": null
+                "notes": "Reopened: W1.A07 is adopted with independently approved exit; the exact T05 cycle criterion now aligns with accepted ADR-0026 and RO-UI-ACADEMIC-MINIMAL-1.5, so resume the previously test-first task without changing product or experience authority."
               },
               "review_control": null
             }
@@ -11747,7 +11747,7 @@
             {
               "task_id": "CAP-03.S06.T05",
               "title": "Verify all approved use-case workflows end to end",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S06.T05.html",
               "dependencies": [
                 "CAP-03.S06.T04"
