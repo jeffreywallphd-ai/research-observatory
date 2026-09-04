@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 442bfc1c669a168b6b6b0aae6d5af2cce0cfd80ae4be70af0e3e9ecb516d6c1b
+source_sha256: bf1c064d2a016d3cfeb19ccab211518e327432e0dc4ca1ba5df1a663b15f82ce
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 9 |
+| Enabler tasks | 11 |
 | Waves | 12 |
 | Wave approval bases | 1 |
 | Wave amendments | 8 |
@@ -47,7 +47,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
-| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `APPROVED` |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -1746,11 +1746,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A08.json` (`9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-04T16:33:03.7400050-04:00` by repository-owner: The repository owner approved ECR-0007/W1.A08 in direct response to the exact-commit approval request for 07b21b270dfb967ad3fd7e35217978c0860c8116. Authorize only bootstrap W1.A08.B00, contribution W1.A08.S01, and tasks W1.A08.T01 and W1.A08.T02 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 reference unchanged and authorize bounded production styling alignment plus live-product conformance. Keep W1 paused and CAP-07.S01.T02 blocked until W1.A08 adoption and explicit ordinary resume and task recovery.
+- `E02` `MATERIALIZED` at `2026-09-04T20:50:01+00:00` by codex: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W1.A08
 
@@ -1767,6 +1768,70 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W1.A08.T01 - Consolidate and align production styling
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A08.B00`, `CAP-01.S02.T03`
+
+**Objective:** Consolidate shared production styling primitives and align the application shell plus every currently implemented W1 desktop surface with the approved Academic Minimal 1.5 spacing, geometry, hierarchy, responsive, theme, focus, and reduced-motion character.
+
+**Acceptance criteria:**
+
+- The shared UI component/style boundary provides reusable semantic page-region, stack, cluster, grid, panel/card, form, notice, table, dialog, and action-row content-flow rules using the canonical token source, logical properties, controlled specificity, and no CSS-in-JS or inline-style escape hatch.
+- Materially repeated control, card, table, notice, and layout declarations in production are replaced by shared primitives or custom properties; any remaining repeated or raw geometry is composition-specific, documented, and covered by the style-reuse contract.
+- The application shell, lock/recovery and service states, Projects, Project Home, Project Settings, Application Settings, Research Intent, Audit & Lineage/controlled recalculation, Task Center, Diagnostics, dialogs, tables, forms, notices, and status/evidence panels follow the approved spacing, density, typography, radius, border, control, and content-hierarchy character.
+- At 1440x900, 1280x720, and 720x450 effective viewports the product preserves 28/20/16 px page-padding intent, coherent 16 px grid and 24-32 px section rhythm, usable 40/44 px controls, readable zoom/reflow, no accidental horizontal document overflow, and appropriate stacked or scrollable composition.
+- All existing routes, product semantics, local state transitions, data/service/security boundaries, accessible names, focus order, keyboard behavior, themes, reduced-motion behavior, and approved reference bytes are preserved; focused component and renderer tests and independent commit-bound review pass.
+
+**Verification:**
+
+- Run shared UI component tests and focused renderer characterization/interaction tests for every changed primitive and in-scope workspace, including default, dense, empty, error, warning, locked, dialog, table, and long-content states.
+- Run deterministic style-reuse analysis for inline declarations, canonical-token use, materially duplicated declaration groups, selector specificity, and documented composition exceptions.
+- Build the production frontend and run affected lint, typecheck, unit, application, UI-reference integrity, route/workflow, accessibility, and visual checks in both themes and reduced-motion mode.
+- Measure computed shell, page, section, panel/card, form/control, table, dialog, and action-row geometry at the controlled viewport matrix and inspect representative product/reference captures without requiring pixel identity.
+- Obtain independent commit-bound experience/accessibility/maintainability review and record broader cross-capability, packaging, performance, and Windows-x64 coverage deferred to T02, slice review, amendment exit, and W1 exit.
+
+#### Review history — W1.A08.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W1.A08.T02 - Qualify live-product styling conformance
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A08.B00`, `W1.A08.T01`
+
+**Objective:** Add a deterministic verification boundary over the actual functional React desktop product that prevents copied-reference success, style duplication, geometry drift, responsive regressions, and inaccessible visual states from satisfying W1 styling conformance.
+
+**Acceptance criteria:**
+
+- The conformance harness builds and exercises apps/desktop/product-dist with deterministic local adapters and representative states for every currently implemented W1 surface; it rejects a target that renders only copied design-reference HTML or lacks the functional product manifest.
+- A stable style-reuse check rejects inline styling, a second semantic-token source, unexplained raw spacing/control/card geometry, and materially repeated declaration groups while supporting a small reviewed allowlist for genuine page composition, visualization, and platform-specific needs.
+- Computed geometry checks cover application shell, page/section rhythm, panels/cards, forms/controls, tables, dialogs, notices, and action rows at 1440x900, 1280x720, and 720x450 effective viewports in light and dark themes with reduced motion, using documented semantic tolerances rather than screenshot hash equality.
+- Deterministic representative captures compare the live product's hierarchy, density, alignment, overflow, theme, focus, and state composition with the approved reference and receive independent visual disposition; accepted rendering variance is explicit and cannot waive accessibility or interaction contracts.
+- Affected shared-component, renderer, production-build, UI-reference, route/workflow, accessibility, visual, and performance checks pass; the independent task and W1.A08.S01 reviews close all blocking findings and retain full W1 qualification obligations.
+
+**Verification:**
+
+- Run negative harness tests proving copied-reference fixtures, stale or nonfunctional product manifests, inline styles, duplicated declarations, missing tokens, out-of-tolerance geometry, overflow, and inaccessible focus/state presentation fail closed.
+- Run the live-product viewport/theme/state matrix and retain privacy-safe computed measurements plus representative captures tied to the exact commit.
+- Run affected desktop lint, typecheck, unit, application/native integration where presentation state crosses that boundary, production build, UI reference, workflow, accessibility, visual, and performance checks.
+- Complete W1.A08.S01 accumulated interaction, accessibility, maintainability, responsive, visual, and adversarial review and the amendment-exit build/smoke/experience checkpoint.
+- Obtain independent commit-bound task, slice, and amendment-exit dispositions with all blocking findings closed; run the complete affected/full repository and Windows-x64 matrix at W1 exit.
+
+#### Review history — W1.A08.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 # Capability contributions, slices, and tasks

@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -39125,7 +39125,7 @@ wave_amendments:
     sha256: 9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960
     introduction_commit: 979486506a62b5dbf1b7a0af711079bdaa34cd44
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -39136,6 +39136,11 @@ wave_amendments:
         W1.A08.T01 and W1.A08.T02 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 reference
         unchanged and authorize bounded production styling alignment plus live-product conformance. Keep W1 paused and CAP-07.S01.T02
         blocked until W1.A08 adoption and explicit ordinary resume and task recovery.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex
+      at: '2026-09-04T20:50:01+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W1.A08.B00
     status: APPROVED
@@ -39161,7 +39166,119 @@ wave_amendments:
         is active. ECR authority, 491-page site, backlog views, UI reference, focused tests, hashes, ancestry, and diff hygiene
         pass; no product, reference, architecture, schema, or release change.
   campaign: null
-  tasks: []
+  tasks:
+  - id: W1.A08.T01
+    amendment_id: W1.A08
+    title: Consolidate and align production styling
+    objective: Consolidate shared production styling primitives and align the application shell plus every currently implemented
+      W1 desktop surface with the approved Academic Minimal 1.5 spacing, geometry, hierarchy, responsive, theme, focus, and
+      reduced-motion character.
+    dependencies:
+    - W1.A08.B00
+    - CAP-01.S02.T03
+    acceptance_criteria:
+    - The shared UI component/style boundary provides reusable semantic page-region, stack, cluster, grid, panel/card, form,
+      notice, table, dialog, and action-row content-flow rules using the canonical token source, logical properties, controlled
+      specificity, and no CSS-in-JS or inline-style escape hatch.
+    - Materially repeated control, card, table, notice, and layout declarations in production are replaced by shared primitives
+      or custom properties; any remaining repeated or raw geometry is composition-specific, documented, and covered by the
+      style-reuse contract.
+    - The application shell, lock/recovery and service states, Projects, Project Home, Project Settings, Application Settings,
+      Research Intent, Audit & Lineage/controlled recalculation, Task Center, Diagnostics, dialogs, tables, forms, notices,
+      and status/evidence panels follow the approved spacing, density, typography, radius, border, control, and content-hierarchy
+      character.
+    - At 1440x900, 1280x720, and 720x450 effective viewports the product preserves 28/20/16 px page-padding intent, coherent
+      16 px grid and 24-32 px section rhythm, usable 40/44 px controls, readable zoom/reflow, no accidental horizontal document
+      overflow, and appropriate stacked or scrollable composition.
+    - All existing routes, product semantics, local state transitions, data/service/security boundaries, accessible names,
+      focus order, keyboard behavior, themes, reduced-motion behavior, and approved reference bytes are preserved; focused
+      component and renderer tests and independent commit-bound review pass.
+    verification_commands:
+    - Run shared UI component tests and focused renderer characterization/interaction tests for every changed primitive and
+      in-scope workspace, including default, dense, empty, error, warning, locked, dialog, table, and long-content states.
+    - Run deterministic style-reuse analysis for inline declarations, canonical-token use, materially duplicated declaration
+      groups, selector specificity, and documented composition exceptions.
+    - Build the production frontend and run affected lint, typecheck, unit, application, UI-reference integrity, route/workflow,
+      accessibility, and visual checks in both themes and reduced-motion mode.
+    - Measure computed shell, page, section, panel/card, form/control, table, dialog, and action-row geometry at the controlled
+      viewport matrix and inspect representative product/reference captures without requiring pixel identity.
+    - Obtain independent commit-bound experience/accessibility/maintainability review and record broader cross-capability,
+      packaging, performance, and Windows-x64 coverage deferred to T02, slice review, amendment exit, and W1 exit.
+    packet_task_sha256: af5fcfca8f2c2302ede9ddbd334e7bb40af2fde351c4a640cddeb51e26825d7b
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A08.T02
+    amendment_id: W1.A08
+    title: Qualify live-product styling conformance
+    objective: Add a deterministic verification boundary over the actual functional React desktop product that prevents copied-reference
+      success, style duplication, geometry drift, responsive regressions, and inaccessible visual states from satisfying W1
+      styling conformance.
+    dependencies:
+    - W1.A08.B00
+    - W1.A08.T01
+    acceptance_criteria:
+    - The conformance harness builds and exercises apps/desktop/product-dist with deterministic local adapters and representative
+      states for every currently implemented W1 surface; it rejects a target that renders only copied design-reference HTML
+      or lacks the functional product manifest.
+    - A stable style-reuse check rejects inline styling, a second semantic-token source, unexplained raw spacing/control/card
+      geometry, and materially repeated declaration groups while supporting a small reviewed allowlist for genuine page composition,
+      visualization, and platform-specific needs.
+    - Computed geometry checks cover application shell, page/section rhythm, panels/cards, forms/controls, tables, dialogs,
+      notices, and action rows at 1440x900, 1280x720, and 720x450 effective viewports in light and dark themes with reduced
+      motion, using documented semantic tolerances rather than screenshot hash equality.
+    - Deterministic representative captures compare the live product's hierarchy, density, alignment, overflow, theme, focus,
+      and state composition with the approved reference and receive independent visual disposition; accepted rendering variance
+      is explicit and cannot waive accessibility or interaction contracts.
+    - Affected shared-component, renderer, production-build, UI-reference, route/workflow, accessibility, visual, and performance
+      checks pass; the independent task and W1.A08.S01 reviews close all blocking findings and retain full W1 qualification
+      obligations.
+    verification_commands:
+    - Run negative harness tests proving copied-reference fixtures, stale or nonfunctional product manifests, inline styles,
+      duplicated declarations, missing tokens, out-of-tolerance geometry, overflow, and inaccessible focus/state presentation
+      fail closed.
+    - Run the live-product viewport/theme/state matrix and retain privacy-safe computed measurements plus representative captures
+      tied to the exact commit.
+    - Run affected desktop lint, typecheck, unit, application/native integration where presentation state crosses that boundary,
+      production build, UI reference, workflow, accessibility, visual, and performance checks.
+    - Complete W1.A08.S01 accumulated interaction, accessibility, maintainability, responsive, visual, and adversarial review
+      and the amendment-exit build/smoke/experience checkpoint.
+    - Obtain independent commit-bound task, slice, and amendment-exit dispositions with all blocking findings closed; run
+      the complete affected/full repository and Windows-x64 matrix at W1 exit.
+    packet_task_sha256: 673da8285a6b4d1d5a05664fd6d70708c84e6622af0e34dee5e8c21b870a7031
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null
