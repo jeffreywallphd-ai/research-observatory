@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d8b37017e1aff6262314becfd66d01ef19a4199eea63faeae609a15bf1b25396
+source_sha256: aa7914374b3fabfbf77750883f6cd134b54727748281cb9ae462b9f23fe36fb6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6309,15 +6309,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
+#### - [x] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T02`, `CAP-01.S02.T01`, `CAP-01.S02.T02`
 
-**Owner / review:** codex / agent:t03-independent-reviewer (`changes-requested`)
+**Owner / review:** codex / agent:t03-independent-reviewer (`approved`)
 
 **Objective:** Render the selected workflow as numbered primary navigation, expose current/previous/next steps and rationale on each page, and retain a secondary complete tool inventory.
 
@@ -6343,7 +6343,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S06.T03
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -6376,7 +6376,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `39bd8860ae658181a5f88d9067664c233ff314f32228cbe1e8ddb8f7034b7021`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `39bd8860ae658181a5f88d9067664c233ff314f32228cbe1e8ddb8f7034b7021`
 
 - Candidate / base / branch: `0dccfbd7896bd488b2d28674959f0df6d97e8328` / `71c32375594de7fbd73a0f5a3a9a9507c3d31937` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-04T01:39:22+00:00`
@@ -6390,15 +6392,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-03.S06.T03-R01-F01`, `CAP-03.S06.T03-R01-F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:t03-independent-reviewer at `2026-09-04T01:21:08+00:00`
+**Disposition / reviewer / time:** `approved` / agent:t03-independent-reviewer / `2026-09-04T01:45:52+00:00`
 
-**Latest notes:** The frozen submission, criterion-evidence SHA-256/Git blob, exact 24-path candidate scope, eight-path submission projection, ancestry, approved Academic Minimal v1.5 lineage, and disclosed risk-based deferrals authenticate. Independent replay confirms exact generated-client authentication of the complete Core workflow projection and passes the focused navigation model, rendered component, desktop product, and assembled-browser checks. Approval remains unavailable because a delayed successful Intent mutation from a replaced project can reinstall the prior project's workflow authority and invalidate the current project's load, and because the supporting-return witness omits separately advertised governed-reference and guidance identities required by the task-start authority map.
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T03.review-R02.json` / `9f89fa05e91a5c5fdaaa470bc6e6730357b2bf5d24b210a93149cc7f1d013889`
 
-**Currently open findings:** `CAP-03.S06.T03-R01-F01`, `CAP-03.S06.T03-R01-F02`
+**Review notes:** The frozen R02 submission, evidence SHA-256/Git blob, exact seventeen-path prior-candidate scope, nine-path post-R01-review remediation delta, eight-path submission projection, linear ancestry, and immutable R01 evidence/review ledger authenticate. CAP-03.S06.T03-R01-F01 is fixed by project-bound child cancellation plus an independent live-project parent guard; exact assembled-browser replays delay both committed project-A draft and acceptance responses until project B is current and prove B remains authoritative. CAP-03.S06.T03-R01-F02 is fixed by carrying and comparing governed reference ID/version and intent guidance version/hash; all four one-field substitutions deny. The complete desktop suite/build, generated-client projection, approved UI lineage, and focused product checks remain green. No blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S06.T03-R01-F01` `fixed` — The persisted mutation callback now carries its initiating project ID/root. IntentWorkspace drops preview/save/accept results after project replacement or unmount, and ApplicationRuntime independently requires the source and returned workspace to match its live project before changing loader or workflow authority. Exact assembled-browser draft and acceptance races release project A last after B becomes current and retain B alone.
+- `CAP-03.S06.T03-R01-F02` `fixed` — Governed reference ID/version and intent guidance version/hash now flow from the authenticated catalog into the workflow authority and supporting-return witness and are compared on return. Focused one-field tests reject each substitution.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t03-independent-reviewer at `2026-09-04T01:45:52+00:00`
+
+**Latest notes:** The frozen R02 submission, evidence SHA-256/Git blob, exact seventeen-path prior-candidate scope, nine-path post-R01-review remediation delta, eight-path submission projection, linear ancestry, and immutable R01 evidence/review ledger authenticate. CAP-03.S06.T03-R01-F01 is fixed by project-bound child cancellation plus an independent live-project parent guard; exact assembled-browser replays delay both committed project-A draft and acceptance responses until project B is current and prove B remains authoritative. CAP-03.S06.T03-R01-F02 is fixed by carrying and comparing governed reference ID/version and intent guidance version/hash; all four one-field substitutions deny. The complete desktop suite/build, generated-client projection, approved UI lineage, and focused product checks remain green. No blocking finding remains.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S06.T04 - Implement workflow progress, checkpoints, handoffs, and recalculation impact
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
