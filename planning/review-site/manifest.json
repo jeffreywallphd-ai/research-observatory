@@ -162,8 +162,7 @@
         "W2"
       ],
       "interrupting_change_request_ids": [
-        "ECR-0003",
-        "ECR-0006"
+        "ECR-0003"
       ],
       "interrupting_recovery_request_ids": []
     },
@@ -25819,7 +25818,7 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A07.json",
       "approval_sha256": "c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "ADOPTED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
@@ -26323,7 +26322,24 @@
           "current_submission": null
         }
       },
-      "adoption_checkpoints": [],
+      "adoption_checkpoints": [
+        {
+          "id": "W1.CP06",
+          "kind": "security",
+          "recorded_by": "codex",
+          "recorded_at": "2026-09-04T11:17:05+00:00",
+          "notes": "Adopt the independently approved W1.A07 cycle-authority correction as a W1 security checkpoint; retain all ordinary CAP-03.S06.T05, slice-review, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.",
+          "evidence_references": [
+            {
+              "type": "amendment-adoption-evidence",
+              "amendment_id": "W1.A07",
+              "path": "artifacts/evidence/W1.A07.adoption.json",
+              "sha256": "9c8448704a9c9b63302795f532a2159ea0411778f4b30dcac9c980aa53932631",
+              "commit": "f13e078fcd303ae28bde8999ccc55671adcc20e7"
+            }
+          ]
+        }
+      ],
       "page": "enablers/ECR-0006.html"
     }
   ],
