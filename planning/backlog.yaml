@@ -15854,11 +15854,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/taskctl.py validate
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-09-03T23:54:16+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-09-03T23:57:30+00:00'
+      updated_at: '2026-09-03T23:57:30+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15868,10 +15868,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 3c434794e144e186afc21e53933263653fb3fbe0
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-03T23:57:30+00:00'
+        expires_at: '2026-09-04T07:57:30+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-03.S06.T04

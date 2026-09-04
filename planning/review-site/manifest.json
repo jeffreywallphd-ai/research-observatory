@@ -10798,7 +10798,7 @@
             {
               "task_id": "CAP-03.S06.T03",
               "title": "Implement adaptive ordered navigation and workflow context",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -10880,7 +10880,7 @@
             {
               "task_id": "CAP-03.S06.T03",
               "title": "Implement adaptive ordered navigation and workflow context",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S06.T03.html",
               "dependencies": [
                 "CAP-03.S06.T02",
@@ -10888,12 +10888,15 @@
                 "CAP-01.S02.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "3c434794e144e186afc21e53933263653fb3fbe0"
               },
               "plan_section_sha256": "4fb0b88cf0a8e63fb69362df84f1dd63793a91e22a24fb7c9c311f6b0f0422aa",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-03.S06.T03.task-start.md",
+                "sha256": "0d018daade1ca87a1e359d681ae40d4e80d1def76c5564c71d65a95cde4cb1e6"
+              }
             },
             {
               "task_id": "CAP-03.S06.T04",

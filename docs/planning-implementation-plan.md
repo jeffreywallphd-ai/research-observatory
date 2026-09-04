@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a58419d022a0bcc91ff6ec9b81130270db1349fd74efea45ef78b854bf1a6b65
+source_sha256: 6a3b3d22a215334caea3a83a835f94870d1f778b5bcf3c05c2cfdd9fedd2c146
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6311,13 +6311,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T02`, `CAP-01.S02.T01`, `CAP-01.S02.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Render the selected workflow as numbered primary navigation, expose current/previous/next steps and rationale on each page, and retain a secondary complete tool inventory.
 
