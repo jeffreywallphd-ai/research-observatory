@@ -1,0 +1,69 @@
+{
+  "task_id": "CAP-03.S06.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+  "submission_record_commit": "a7026f0c35226091d26cc503f4a43c931615a268",
+  "reviewer": "agent:t03-independent-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The frozen submission, criterion-evidence SHA-256/Git blob, exact 24-path candidate scope, eight-path submission projection, ancestry, approved Academic Minimal v1.5 lineage, and disclosed risk-based deferrals authenticate. Independent replay confirms exact generated-client authentication of the complete Core workflow projection and passes the focused navigation model, rendered component, desktop product, and assembled-browser checks. Approval remains unavailable because a delayed successful Intent mutation from a replaced project can reinstall the prior project's workflow authority and invalidate the current project's load, and because the supporting-return witness omits separately advertised governed-reference and guidance identities required by the task-start authority map.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T03.R01.json",
+      "sha256": "e42a23927e9a779e2c42ed5755927758d1d18cbc9b2bf8df29c267f2c7b1aa21",
+      "git_blob": "90d62680acd92d71da57cf5a074ed9c5b6dca384",
+      "commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+      "result": "PASS: the submission-introduced evidence bytes and Git blob match the immutable R01 packet and name the exact candidate."
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve the base, candidate, and submission commits; compare Git and submission path projections; authenticate the evidence digest/blob and governed UI lineage.",
+      "result": "PASS: base 3c434794e144e186afc21e53933263653fb3fbe0, candidate 71c32375594de7fbd73a0f5a3a9a9507c3d31937, and submission a7026f0c35226091d26cc503f4a43c931615a268 form the declared linear chain; the candidate has exactly 24 paths and the submission adds only the frozen evidence plus seven governance/generated projections."
+    },
+    {
+      "type": "independent-check",
+      "command": "apps/desktop/node_modules/.bin/vitest.cmd run apps/desktop/src/app/workflowNavigation.test.ts apps/desktop/src/app/WorkflowNavigation.test.tsx packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "result": "PASS: 23 focused model, rendered-component, and generated-client tests pass; the generated contract reproduces exactly, including retained-valid-hash substitutions across the registered tool inventory and every navigation-bearing profile/stage field."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-R01-review-built-frame.json",
+      "result": "PASS: all eight focused desktop product checks and the assembled-browser frame pass, including persisted-versus-unsaved profile behavior, ordered context, disabled reference-only routes, supporting return, keyboard/focus, responsive/theme, application-lock, and zero unexpected network requests."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T03-R01-F01",
+      "command": "Delay a successful project-A Intent save or acceptance response, navigate to Local projects, replace the current project with B and allow B's workflow load to start, then release A's response.",
+      "result": "FAIL: IntentWorkspace retains its project-A onWorkspaceChange callback after unmount; the late response invokes that stale closure, which invalidates B's loader and installs A's Intent/authority while the shell's current project is B."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T03-R01-F02",
+      "command": "Create a supporting return from one WorkflowAuthoritySnapshot, then substitute only referenceVersion (or the separately advertised guidance version/hash) in the current authority while retaining project, Intent, portable catalog version/hash, profile, and stage fields.",
+      "result": "FAIL: SupportingReturnContext carries neither reference ID/version nor guidance version/hash, and supportingReturnMatches therefore accepts a governed-reference substitution; guidance substitution cannot be represented or checked at all."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S06.T03-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "A delayed Intent mutation can reinstall workflow authority for a replaced project",
+      "reproduction": "At candidate 71c32375594de7fbd73a0f5a3a9a9507c3d31937, open project A in Research Intent and hold the response to a valid save or acceptance request after Core commits it. Use All tools to open Local projects, switch to compatible project B, and let B's catalog/Intent load begin. Release A's response. IntentWorkspace.tsx:403 or :434 invokes the callback ref retained by the unmounted project-A workspace. That callback is the project-A closure at ApplicationRuntime.tsx:508-523, so it invalidates the generation that is loading B and installs A's Intent and authority. The top-level currentProject remains B, leaving B's project header with A's ordered workflow and preventing the legitimate B response from repairing it because the loader was invalidated.",
+      "required_remediation": "Bind every persisted-Intent callback to the exact current project ID/root and a current request/component generation before it may invalidate or install workflow context. On project replacement or unmount, stale save/accept/load results must be ignored without cancelling the new project's load. Add an interactive delayed-response test for both save and acceptance that switches A to B, releases A last, and proves only B can become authoritative and remains recoverable."
+    },
+    {
+      "id": "CAP-03.S06.T03-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Supporting-return validation omits governed-reference and guidance identities",
+      "reproduction": "At workflowNavigationModel.ts:50-62 the current authority carries governed reference ID/version but not the separately advertised intentGuidanceVersion/intentGuidanceHash. SupportingReturnContext at :78-89 omits all four fields, createSupportingReturn at :255-271 cannot bind them, and supportingReturnMatches at :274-286 never compares them. Construct a valid support witness, then compare it with { ...authority, referenceVersion: '1.6' }; the function returns true. A guidance-only catalog replacement cannot even be represented in the authority/witness. This contradicts the task-start authority map at CAP-03.S06.T03.task-start.md:38-40, which makes those identities authority-bearing and requires any catalog replacement to stale the return.",
+      "required_remediation": "Carry the governed reference ID/version and intent guidance version/hash from the authenticated Core catalog into WorkflowAuthoritySnapshot and SupportingReturnContext, compare every field during return validation, and add one-field substitution tests for each. Preserve the exact portable catalog version/hash, project, Intent, profile, stage, and page checks already present."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}
