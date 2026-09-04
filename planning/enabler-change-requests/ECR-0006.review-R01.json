@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0006",
+  "proposedAmendmentId": "W1.A07",
+  "attemptId": "R01",
+  "candidateCommit": "43e317be1e644c77e653ff5f121425d6e2cde2ef",
+  "packetSha256": "6a4d123f4281f3783ec02eb8ac5d0d986b37e53e52b5f6cc6059b07447d5ab04",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr6-planning-authority-reviewer",
+  "reviewedAt": "2026-09-04T01:33:03.8865185-04:00",
+  "result": "approved",
+  "findings": [],
+  "closures": [],
+  "verified": [
+    "The exact candidate 43e317be1e644c77e653ff5f121425d6e2cde2ef strictly descends from ECR-0006 packet-introduction commit bedd07c412f3cce8876cfc8f39520b6d919d3239 through GOV-MAINT-0016 candidate e629e496bf7974c6a61ebb594ab4045c17d2779c, independent review-ledger introduction 1695ebad79688cc797631edec7cf2029b807bd02, and the candidate's adopted maintenance projection. The maintenance changed only synthetic historical ECR fixtures, remains independently approved, and grants no ECR-0006 authority.",
+    "ECR-0006 packet Git blob 357af59d99a35c1643ebcf9f5e872181b83ea246 reproduces SHA-256 6a4d123f4281f3783ec02eb8ac5d0d986b37e53e52b5f6cc6059b07447d5ab04. Its canonical proposal, v4 schema, and static human-review page reproduce their declared SHA-256 values; the generated ECR-0006 page carries the same packet/source hashes and pending non-executable state.",
+    "The exact W1 base and record, adopted W1.A01 through W1.A03, terminal reserved W1.A04 superseded by GOV-MIG-0001, adopted W1.A05 and W1.A06, W1.A06 effective-state commit 4dbc3f0cf4aa644c6becef670db196c514d3014c, GOV-MIG-0001, control revision 12, and MI-0001 are complete, ordered, hash-bound, ancestral, and accepted by the live v4 controller.",
+    "Accepted ADR-0026 and the approved RO-UI-ACADEMIC-MINIMAL-1.5 manifest, human approval, and workflow catalog remain byte-identical to the pre-proposal state. All 55 governed files validate. The catalog has fourteen unique workflows and marks exactly living-review, hermeneutic-inquiry, and manuscript-review-revision cyclical; critical-problematization, critical-article-development, and systematic-review remain linear.",
+    "The frozen backlog, approved CAP-03.S06 slice plan, and T05 task-start finding all expose the same isolated lower-authority word conflict. W1.A07 authorizes only replacing critical with manuscript-review/revision in T05 criterion 2 in the canonical backlog and slice plan, while preserving every other CAP-03.S06, product, architecture, experience, security, predecessor, verification, and release boundary.",
+    "The immutable W1 baseline contains 48 unique tasks totaling 194 points. W1.A07 has one S-sized product-planning correction, no refactor allocation or refactor task ID, and zero refactor points and share; it does not disguise technical-debt restructuring.",
+    "The bootstrap authorizes only planning/backlog.yaml, the bounded planning/review-site tree, docs/planning-implementation-plan.md, and planning/status-summary.md. Its required and prohibited outcomes restrict B00 to appending the exact approved W1.A07/bootstrap projection, preserve all predecessors and ordinary tasks, forbid the canonical criterion correction until T01, and require independent bootstrap review before materialization. T01, exit review, adoption, ordinary W1 resume, and T05 recovery remain separate controlled transitions.",
+    "All 10 planctl amendment tests pass in 180.138 seconds, including the dedicated live repository-global identity denial and tamper/authority/budget/approval assertions. All 16 amendment review-site tests pass in 19.381 seconds. Live ECR-0006 validation, canonical taskctl validation for 20 capabilities, 117 slices, 364 tasks, and 12 gates, the 490-page planning-review check, generated backlog views, governed-reference validation, Ruff format/lint, JSON/YAML parsing, ancestry, source/hash checks, and Git diff hygiene pass.",
+    "W1 remains PAUSED at Wave scope with no campaign lease, CAP-03.S06.T05 remains BLOCKED with no task lease or implementation evidence, and no active recovery hold or amendment campaign exists. The packet remains pending and non-executable with no W1.A07 approval or materialization record.",
+    "Human exact-commit approval is legally available after this independent no-finding ledger is introduced. It may authorize only ECR-0006/W1.A07 at candidate 43e317be1e644c77e653ff5f121425d6e2cde2ef and creation of the immutable W1.A07 approval record; it does not append or execute B00, materialize or activate the amendment, execute T01, adopt W1.A07, resume W1, recover T05, qualify W1, approve G1, integrate main, push remotely, or create any external effect.",
+    "The protected untracked artifacts/evidence/W1.A04.B00.json witness was not opened, read, hashed, staged, modified, or deleted during R01."
+  ],
+  "approvalAvailable": true
+}
