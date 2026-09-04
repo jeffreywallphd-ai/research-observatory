@@ -48,6 +48,7 @@ import {
   type ApplicationWorkspace,
   type SupportingReturnContext,
   type WorkflowAuthoritySnapshot,
+  type WorkflowProgressStage,
   type WorkflowStageAuthorityState,
 } from "./workflowNavigationModel";
 import {
@@ -627,11 +628,14 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     return nextAuthority;
   }, []);
 
-  const commandWorkflowProgress = useCallback(async (action: "start" | "resume" | "revisit") => {
+  const commandWorkflowProgress = useCallback(async (
+    action: "start" | "resume" | "revisit",
+    revisitSource: WorkflowProgressStage | null = null,
+  ) => {
     const project = currentProjectRef.current;
     const progress = workflowProgressRef.current;
     if (!project || !progress || workflowCommandBusyRef.current) return null;
-    const commandAuthority = workflowCommandStageAuthority(action, progress);
+    const commandAuthority = workflowCommandStageAuthority(action, progress, revisitSource);
     if (!commandAuthority) return null;
     const ticket = workflowRequestGuardRef.current.begin(
       action,
@@ -1176,8 +1180,10 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
                 navigateToStage(workflowProgress.current?.stageKey ?? workflowProgress.recommendedStageKey);
               }
             }}
-            onRevisit={() => {
-              void commandWorkflowProgress("revisit");
+            onRevisit={(source) => {
+              void commandWorkflowProgress("revisit", source).then((next) => {
+                if (next) navigateToStage(next.current?.stageKey ?? next.recommendedStageKey);
+              });
             }}
           />
 

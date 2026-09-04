@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5cb25d87afc8d543dd4ceccdb0a47cd7642cd2eef0244115f49f58d765296dda
+source_sha256: 331dd3bb40c83d3dfcd4cf5c5acc23410b75d6cc447461f3fb0feb8494a83b98
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6423,7 +6423,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-03.S06.T03`, `CAP-03.S04.T01`, `CAP-03.S05.T01`
 
-**Owner / review:** codex / agent:t04-independent-reviewer (`changes-requested`)
+**Owner / review:** codex / agent:t04-r02-independent-reviewer (`changes-requested`)
 
 **Objective:** Persist stage progress and human checkpoints separately from background jobs, recommend the next meaningful step, and mark affected workflow outputs when intent/evidence changes.
 
@@ -6447,10 +6447,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-03.S06.T04.R01.json` at `cd508bbf4c80ceedca13eb1e3364a1ba58480318`
+- `artifacts/evidence/CAP-03.S06.T04.R02.json` at `a4f20c0b24351ce71e28b8b710d7e265f9908e4c`
 
 ##### Review history — CAP-03.S06.T04
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -6488,13 +6489,48 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `aacc99374e20378acca76c0083510da695dc146523655442ea974aed4fc576a8`
+
+- Candidate / base / branch: `a4f20c0b24351ce71e28b8b710d7e265f9908e4c` / `cd508bbf4c80ceedca13eb1e3364a1ba58480318` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-04T03:43:13+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T04.R02.json` / `bd225420c084b010212399766c951e16a5cf651eaf1a8894b89bfa5d6c4652db` / `a4f20c0b24351ce71e28b8b710d7e265f9908e4c`
+- Acceptance-criteria SHA-256: `1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa`
+- Verification-selection SHA-256: `6bccdb32778d26362bd59fd7bb040b214e0f022c5f493415c6596a58e8bf2a5d`
+- Changed paths: `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/ProjectHomeWorkspace.test.tsx`, `apps/desktop/src/app/ProjectHomeWorkspace.tsx`, `apps/desktop/src/app/WorkflowNavigation.test.tsx`, `apps/desktop/src/app/workflowNavigation.test.ts`, `apps/desktop/src/app/workflowNavigationModel.ts`, `artifacts/evidence/CAP-03.S06.T04.R01.json`, `artifacts/evidence/CAP-03.S06.T04.review-R01.json`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `planning/backlog.yaml`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `services/core-api/src/research_observatory_core/workflow_progress.py`, `tests/service/test_workflow_progress.py`, `tools/core_api_contract.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py`, `npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop`, `npm test --prefix packages/contracts -- --run; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check`, `cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked --all-features supervisor::tests`, `.venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R02-built-frame.json`, `.venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility`, `.venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py`, `.venv/Scripts/python.exe -m ruff format --check <eight changed Python files>; .venv/Scripts/python.exe -m ruff check <same files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <same files>`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base e437cad11d0eb729790e575a7f45bf609d8b7ec4 --affected-head a4f20c0b24351ce71e28b8b710d7e265f9908e4c --deferred-gate W1-exit --selection-only; git diff --check e437cad11d0eb729790e575a7f45bf609d8b7ec4..a4f20c0b24351ce71e28b8b710d7e265f9908e4c`
+- Deferred checks: `The repository-wide quality wrapper remains red solely on the already disclosed unchanged baseline: Ruff-format differences in selective_recalculation.py, test_dependency_impacts.py, and test_recalculation_api.py plus ten MyPy errors in planctl.py, ui_conformance.py, selective_recalculation.py, test_ui_conformance.py, and test_selective_recalculation.py. All eight changed Python files pass focused Ruff and MyPy; baseline repair remains mandatory before W1 exit.`, `The complete foundation inventory is deferred because T04 does not change the verification runner or governance kernel. Exact backlog/view/architecture checks and affected selection cover the task boundary; full replay remains mandatory at W1 exit.`, `Complete cross-capability cancellation, migration, restart, recovery, security, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit.`
+- Selection rationale: R02 closes seven high R01 findings across durable workflow authority, profile migration, evidence authorization, idempotency, generated/native public contracts, and renderer concurrency. The selected matrix therefore replays every finding with real SQLite and browser/model regressions, the full service/desktop/contract suites, strict generated and native boundaries, a real packaged Windows sidecar, approved UI/accessibility conformance, changed-file static quality, and governance/affected-path integrity. It does not repeat the complete Wave matrix at this task boundary.
+- Prior round / replayed open findings: `R01` / `CAP-03.S06.T04-R01-F01`, `CAP-03.S06.T04-R01-F02`, `CAP-03.S06.T04-R01-F03`, `CAP-03.S06.T04-R01-F04`, `CAP-03.S06.T04-R01-F05`, `CAP-03.S06.T04-R01-F06`, `CAP-03.S06.T04-R01-F07`
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / agent:t04-r02-independent-reviewer / `2026-09-04T03:54:08+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T04.review-R02.json` / `c3c907bca0f8a555be78e0eb996a89036d311ebaf36a8e6c3dd64a50ba01e64b`
+
+**Review notes:** The strict-descendant R02 candidate, direct-child submission, exact 23-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, linear ancestry, and patch hygiene authenticate. Focused real-SQLite service/authority tests, renderer model and Project Home tests, generated-client parity, native request-shape tests, and task governance validation pass. R01-F01 and R01-F03 through R01-F07 are fixed. The service portion of R01-F02 is also corrected: revisitation now requires an exact terminal source, preserves a displaced active head, and denies linear profiles. Approval remains unavailable because that earlier-stage transition is not reachable through the shipped renderer: the only revisit action is shown after terminal workflow completion and the renderer derives its source only from the server's recommended stage key. Opening an earlier completed step from the workflow rail is navigation-only and records no transition, so the criterion that cyclical workflows can revisit earlier stages is not satisfied end to end.
+
+**Findings opened:**
+
+- `CAP-03.S06.T04-R02-F01` `high` blocking=`True` criterion=`3` — Earlier-stage revisitation is implemented in Core but unreachable from the shipped renderer; reproduce: At candidate a4f20c0b24351ce71e28b8b710d7e265f9908e4c, tests/service/test_workflow_progress.py:341-387 proves the service can revisit terminal stage A while later stage B is current and preserve B as in-progress. For that exact projection, workflow_progress.py:500-501 recommends B, while workflowNavigationModel.ts:174-179 selects a revisit source only when its stageKey equals progress.recommendedStageKey; it therefore cannot select A. ProjectHomeWorkspace.tsx:75-98 exposes onRevisit only when current is null, and WorkflowNavigation.tsx:128-140 routes an earlier-step click to ApplicationRuntime.tsx:764-775, which changes only the displayed workspace and explicitly announces that no completion or checkpoint was recorded. The positive renderer unit test at workflowNavigation.test.ts:365-399 makes A the recommended key by hand and does not represent the server state with B current. Consequently a researcher cannot perform the earlier-stage revisit required by the approved cyclical-workflow criterion, despite the repaired Core command.; remediate: Expose an explicit researcher-controlled revisit action for an eligible terminal earlier stage while another stage is current. Derive the source from the selected terminal stage rather than only recommendedStageKey, bind both the exact terminal source and displaced active-head CAS in the generated request, preserve ordinary rail navigation as non-mutating, and keep linear/current/in-progress/attention/blocked sources denied. Add an ApplicationRuntime interaction test using the real A-terminal/B-current projection that selects A, issues the exact revisit request, accepts the server result, and proves the displaced B state and prior A pass remain visible; also cover cancellation/stale-response denial for that selected-source path.
+
+**Prior finding closures:**
+
+- `CAP-03.S06.T04-R01-F01` `fixed` — Active-head resolution now includes attention-required and blocked, explicit resume is exact-head CAS-bound, Project Home renders both states without false completion, and skip atomically advances only when a governed stage is optional. The current approved catalog contains no optional stage, so every current skip remains denied rather than stranding a workflow.
+- `CAP-03.S06.T04-R01-F03` `fixed` — The SQLite command record now persists a canonical hashed resultProjection and replay authenticates and returns those immutable bytes before evaluating mutable current selection/stage authority. Real restart tests return exact equality after advancement and profile change while changed payload reuse conflicts.
+- `CAP-03.S06.T04-R01-F04` `fixed` — Profile changes bind the exact complete prior stage snapshot, materialize retained/mapped successors or an explicit attention-required review head under the new selection, and insert Intent, selection, migration, decision, successor state, provenance, and outbox inside one BEGIN IMMEDIATE transaction. The concurrent-head replay proves the complete mutation rolls back.
+- `CAP-03.S06.T04-R01-F05` `fixed` — Completion evidence resolution is project-scoped, UUID-exact, duplicate-denying, and now authorizes only aggregate_kind=evidence before hashing the immutable revision witness. The real-SQLite document-kind substitution and missing revision both fail without changing the current stage.
+- `CAP-03.S06.T04-R01-F06` `fixed` — Intent and progress now share validated_workflow_authority, which validates canonical Intent history, activation/witness, selection hash and parent chain, migration/decision lookup, actor/profile/project references, approved catalog/guidance hashes, and stage selection references. Retained-valid-hash authority substitution fails closed on the progress route.
+- `CAP-03.S06.T04-R01-F07` `fixed` — Each renderer request ticket binds a monotonically invalidated context generation plus per-kind request generation, project ID/root, Intent, selection/profile, active head, and optional revisit source. Runtime success, error, finally, announcement, selection, and return-context mutations consult that ticket. Progress binds the exact canonical Intent, and supporting return is created from and revalidated against the server-issued handoff that disappears when its primary-head witness changes.
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `changes-requested` by agent:t04-independent-reviewer at `2026-09-04T03:16:14+00:00`
+**Current latest-review projection:** `changes-requested` by agent:t04-r02-independent-reviewer at `2026-09-04T03:54:08+00:00`
 
-**Latest notes:** The frozen R01 submission, evidence SHA-256/Git blob, exact 38-path candidate scope, two-path submission projection, linear ancestry, generated Core contract, native supervisor allowlist, and disclosed pre-existing quality debt authenticate. Selected service, SQLite, generated-client, desktop, native, and governance checks pass. Approval remains unavailable because persisted attention/blocked/skipped heads are projected as an unrecoverable completed workflow; revisitation accepts a still-current pass and cannot select a completed earlier stage while another stage is current; idempotent replay returns mutable present state rather than the original command result; accepted profile migrations record impacts without materializing the accepted stage disposition under the new selection; completion accepts arbitrary same-project aggregate revisions as evidence; the progress service does not authenticate the full canonical Intent/activation/migration authority; and late renderer command/support responses can cross project/context boundaries.
+**Latest notes:** The strict-descendant R02 candidate, direct-child submission, exact 23-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, linear ancestry, and patch hygiene authenticate. Focused real-SQLite service/authority tests, renderer model and Project Home tests, generated-client parity, native request-shape tests, and task governance validation pass. R01-F01 and R01-F03 through R01-F07 are fixed. The service portion of R01-F02 is also corrected: revisitation now requires an exact terminal source, preserves a displaced active head, and denies linear profiles. Approval remains unavailable because that earlier-stage transition is not reachable through the shipped renderer: the only revisit action is shown after terminal workflow completion and the renderer derives its source only from the server's recommended stage key. Opening an earlier completed step from the workflow rail is navigation-only and records no transition, so the criterion that cyclical workflows can revisit earlier stages is not satisfied end to end.
 
-**Currently open findings:** `CAP-03.S06.T04-R01-F01`, `CAP-03.S06.T04-R01-F02`, `CAP-03.S06.T04-R01-F03`, `CAP-03.S06.T04-R01-F04`, `CAP-03.S06.T04-R01-F05`, `CAP-03.S06.T04-R01-F06`, `CAP-03.S06.T04-R01-F07`
+**Currently open findings:** `CAP-03.S06.T04-R01-F02`, `CAP-03.S06.T04-R02-F01`
 
 #### - [ ] CAP-03.S06.T05 - Verify all approved use-case workflows end to end
 

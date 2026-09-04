@@ -68,6 +68,8 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 .project-home-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }
 .project-home-stale-list { display: grid; gap: var(--space-3); margin: 0; padding-inline-start: var(--space-5); }
 .project-home-stale-list li { display: grid; gap: var(--space-1); }
+.project-home-revisit-list { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.project-home-revisit-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .projects-workspace { display: grid; gap: var(--space-5); }
 .project-workflow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr)); gap: var(--space-4); }
 .project-workflow-grid .ro-panel, .current-project { display: grid; align-content: start; gap: var(--space-4); }

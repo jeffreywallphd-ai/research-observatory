@@ -7,6 +7,10 @@ import type {
 } from "@research-observatory/contracts/core-api";
 
 import type { WorkflowNavigationLoadState } from "./WorkflowNavigation";
+import {
+  workflowRevisitSources,
+  type WorkflowProgressStage,
+} from "./workflowNavigationModel";
 
 interface ProjectHomeWorkspaceProps {
   readonly project: ProjectProjection | null;
@@ -17,7 +21,7 @@ interface ProjectHomeWorkspaceProps {
   readonly onStart: () => void;
   readonly onResume: () => void;
   readonly onOpenCurrent: () => void;
-  readonly onRevisit: () => void;
+  readonly onRevisit: (source: WorkflowProgressStage) => void;
 }
 
 function checkpointLabel(state: WorkflowProgressProjection["checkpointState"]): string {
@@ -74,6 +78,8 @@ export function ProjectHomeWorkspace({
   const currentLabel = progress.current?.stageKey ?? progress.recommendedStageKey;
   const complete = progress.current === null && !progress.bootstrapRequired;
   const resumable = progress.current?.status === "attention-required" || progress.current?.status === "blocked";
+  const revisitSources = workflowRevisitSources(progress);
+  const recommendedRevisit = revisitSources.find((source) => source.stageKey === progress.recommendedStageKey) ?? null;
   return (
     <section aria-labelledby="project-home-title" data-project-home-state="ready" data-workflow-profile={progress.profileId}>
       <div className="page-header">
@@ -95,7 +101,11 @@ export function ProjectHomeWorkspace({
           ) : resumable ? (
             <Button tone="primary" disabled={busy} onClick={onResume}>Resume current step</Button>
           ) : complete && progress.processForm === "revisitable" ? (
-            <Button tone="primary" disabled={busy} onClick={onRevisit}>Begin another pass</Button>
+            <Button
+              tone="primary"
+              disabled={busy || recommendedRevisit === null}
+              onClick={() => { if (recommendedRevisit) onRevisit(recommendedRevisit); }}
+            >Begin another pass</Button>
           ) : (
             <Button tone="primary" disabled={busy || progress.current === null} onClick={onOpenCurrent}>
               Open current step
@@ -111,6 +121,20 @@ export function ProjectHomeWorkspace({
           <p>Stage completion is recorded only by an explicit researcher action bound to exact project evidence.</p>
         </Panel>
       </div>
+
+      {revisitSources.length > 0 ? (
+        <Panel title="Revisit completed steps" tone="neutral">
+          <p>Starting a new pass preserves every prior pass. If another step is current, it remains recorded in progress.</p>
+          <ul className="project-home-revisit-list" data-workflow-revisit-options>
+            {revisitSources.map((source) => (
+              <li key={source.stageStateRevisionId}>
+                <span><strong>{source.stageKey}</strong> · Pass {source.passNumber} · {source.status}</span>
+                <Button disabled={busy} onClick={() => onRevisit(source)}>Revisit {source.stageKey}</Button>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      ) : null}
 
       <Panel title="Outputs needing review" tone={progress.staleOutputs.length > 0 ? "danger" : "success"}>
         {progress.staleOutputs.length === 0 ? (
