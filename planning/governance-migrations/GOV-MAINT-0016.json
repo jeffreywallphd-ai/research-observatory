@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0016",
   "title": "Stabilize historical ECR authority fixtures",
-  "status": "pending-review",
+  "status": "adopted",
   "riskTier": 1,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -53,6 +53,34 @@
     ]
   },
   "rollback": "If independent review finds a blocker, preserve this candidate and the inert ECR-0006 proposal, keep W1 paused and T05 blocked, and revise only the reproduced synthetic-fixture boundary.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0016.R01",
+      "reviewedCommit": "e629e496bf7974c6a61ebb594ab4045c17d2779c",
+      "reviewer": "agent:ecr6-planning-authority-reviewer",
+      "reviewedAt": "2026-09-04T01:24:53.3895144-04:00",
+      "disposition": "APPROVED",
+      "authorityPreserved": true,
+      "findings": [],
+      "ledger": {
+        "path": "planning/governance-migrations/GOV-MAINT-0016.review-R01.json",
+        "sha256": "db069bb6e1e2e7b6236b09c8989d8e588af979166ecdfa678c08ab0d1bb349f7",
+        "introductionCommit": "1695ebad79688cc797631edec7cf2029b807bd02"
+      }
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0016.R01",
+    "reviewedCommit": "e629e496bf7974c6a61ebb594ab4045c17d2779c",
+    "reviewer": "agent:ecr6-planning-authority-reviewer",
+    "reviewedAt": "2026-09-04T01:24:53.3895144-04:00",
+    "disposition": "APPROVED",
+    "authorityPreserved": true,
+    "findings": [],
+    "ledger": {
+      "path": "planning/governance-migrations/GOV-MAINT-0016.review-R01.json",
+      "sha256": "db069bb6e1e2e7b6236b09c8989d8e588af979166ecdfa678c08ab0d1bb349f7",
+      "introductionCommit": "1695ebad79688cc797631edec7cf2029b807bd02"
+    }
+  }
 }
