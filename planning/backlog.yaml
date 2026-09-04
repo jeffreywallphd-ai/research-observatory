@@ -16243,15 +16243,20 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-04T01:52:07+00:00'
-      updated_at: '2026-09-04T01:52:07+00:00'
+      updated_at: '2026-09-04T03:04:16+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S06.T04.R01.json
+        sha256: 3130321caa408ab12a62dac859fcabd1f05c45c620be898aa9000b03d9049212
+        commit: cd508bbf4c80ceedca13eb1e3364a1ba58480318
+        recorded_at: '2026-09-04T03:04:16+00:00'
       review:
         reviewer: null
         result: null
@@ -16262,10 +16267,126 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-04T01:52:07+00:00'
         expires_at: '2026-09-04T09:52:07+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-04T03:04:16+00:00'
+          candidate_commit: cd508bbf4c80ceedca13eb1e3364a1ba58480318
+          base_commit: e437cad11d0eb729790e575a7f45bf609d8b7ec4
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S06.T04.R01.json
+            sha256: 3130321caa408ab12a62dac859fcabd1f05c45c620be898aa9000b03d9049212
+            commit: cd508bbf4c80ceedca13eb1e3364a1ba58480318
+            recorded_at: '2026-09-04T03:04:16+00:00'
+          acceptance_criteria_sha256: 1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa
+          changed_paths:
+          - apps/desktop/scripts/assemble-application.mjs
+          - apps/desktop/src-tauri/examples/supervision_check.rs
+          - apps/desktop/src-tauri/examples/supervisor_fixture.rs
+          - apps/desktop/src-tauri/src/supervisor.rs
+          - apps/desktop/src/app.css
+          - apps/desktop/src/app/ApplicationRuntime.tsx
+          - apps/desktop/src/app/ProjectHomeWorkspace.test.tsx
+          - apps/desktop/src/app/ProjectHomeWorkspace.tsx
+          - apps/desktop/src/app/workflowNavigation.test.ts
+          - apps/desktop/src/app/workflowNavigationModel.ts
+          - artifacts/evidence/CAP-03.S06.T04.task-start.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/core-api/generated.test.ts
+          - packages/contracts/core-api/generated.ts
+          - packages/contracts/core-api/openapi.json
+          - packages/contracts/core-api/runtime-handshake.schema.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S06.T04.html
+          - planning/review-site/CAP-03/CAP-03.S06.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/src/research_observatory_core/app.py
+          - services/core-api/src/research_observatory_core/main.py
+          - services/core-api/src/research_observatory_core/models.py
+          - services/core-api/src/research_observatory_core/modules.py
+          - services/core-api/src/research_observatory_core/ports/repositories.py
+          - services/core-api/src/research_observatory_core/repositories.py
+          - services/core-api/src/research_observatory_core/research_intents.py
+          - services/core-api/src/research_observatory_core/workflow_progress.py
+          - tests/desktop/test_core_sidecar_performance_check.py
+          - tests/desktop/test_desktop_app_check.py
+          - tests/service/test_core_api.py
+          - tests/service/test_workflow_progress.py
+          - tools/core_api_contract.py
+          - tools/core_sidecar_performance_check.py
+          - tools/desktop_app_check.py
+          selected_checks:
+          - .venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py
+          - npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm
+            run build --prefix apps/desktop
+          - apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe
+            tools/core_api_contract.py --repo . --check
+          - cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml
+            supervisor::tests -- --nocapture
+          - .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-final-built-frame.json
+          - .venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo
+            . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility
+          - .venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv/Scripts/python.exe -m unittest
+            discover -s tests/packaging -p test_*.py
+          - .venv/Scripts/python.exe -m ruff format --check <T04 Python files>; .venv/Scripts/python.exe -m ruff check <T04
+            Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <T04 Python files>
+          - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/verify.py
+            --profile desktop --profile service --profile data --affected-base 340ad1c3cd399e4848c07ef608f0836c48dd05ff --affected-head
+            cd508bbf4c80ceedca13eb1e3364a1ba58480318 --deferred-gate W1-exit --selection-only; git diff --check e437cad11d0eb729790e575a7f45bf609d8b7ec4..cd508bbf4c80ceedca13eb1e3364a1ba58480318
+          deferred_checks:
+          - 'The repository-wide quality wrapper remains red solely on unchanged baseline debt: Ruff-format differences in
+            selective_recalculation.py, test_dependency_impacts.py, and test_recalculation_api.py, plus ten MyPy errors in
+            planctl.py, ui_conformance.py, selective_recalculation.py, test_ui_conformance.py, and test_selective_recalculation.py.
+            Every T04 path passes focused formatting, lint, and typing; baseline repair remains bounded separately and must
+            be closed before W1 exit.'
+          - The broad foundation unit inventory was not replayed for routine task state/view changes; taskctl validation,
+            generated backlog-view checks, exact affected selection, and the directly changed verifier/contract suites cover
+            the credible task boundary. It remains mandatory at W1 exit.
+          - Desktop, project-lifecycle, storage-maintenance, complete cancellation/migration/recovery/security, and full Windows
+            x64 performance qualification remain mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and
+            W1 exit.
+          selection_rationale: 'T04 is high risk because it adds durable scholarly-stage authority, evidence-bound completion,
+            atomic coupling to Research Intent/profile revisions, a public generated API, a native allowlist boundary, and
+            a multi-layer desktop experience. Verification therefore covers the full service suite, strict generated contract,
+            native supervisor, real Windows sidecar packaging, desktop component and assembled-browser behavior, approved
+            workflow/accessibility conformance, changed-file static quality, and governance identity. The repository-wide
+            quality command was also inspected: every T04 file is clean, while its overall exit remains nonzero only for ten
+            pre-existing issues in five unchanged files plus three unchanged formatting debts. Broad foundation replay and
+            governed performance remain owned by slice/W1 qualification.'
+          selection_sha256: ccfb68d186849935c338251b520d040d4f000c67be146ceb585645e25843612d
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:agent-protocol
+          - foundation:backlog-views
+          - foundation:quality
+          - foundation:unit
+          - desktop:application
+          - desktop:unit
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - desktop:ui-visual-regression
+          - packaging:unit
+          - service:unit
+          - contracts:unit
+          packet_sha256: ece1483379d4856dfb7b4b7caa4f577004d50489872b15a0d3c2597e679979b1
     - id: CAP-03.S06.T05
       capability_id: CAP-03
       slice_id: CAP-03.S06

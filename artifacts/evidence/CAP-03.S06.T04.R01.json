@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T04",
+  "commit": "cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+  "baseCommit": "e437cad11d0eb729790e575a7f45bf609d8b7ec4",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ProjectHomeWorkspace.test.tsx",
+    "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+    "apps/desktop/src/app/workflowNavigation.test.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-03.S06.T04.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/core-api/runtime-handshake.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-03/CAP-03.S06.T04.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "services/core-api/src/research_observatory_core/workflow_progress.py",
+    "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/service/test_core_api.py",
+    "tests/service/test_workflow_progress.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_performance_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 83 Core service tests passed at the exact candidate, including ten workflow-progress cases for restart durability, explicit human commands, evidence identity, idempotency, linear/revisitable behavior, atomic profile migration, concurrent-write denial, and supporting handoff expiry."
+    },
+    {
+      "command": "npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "exitCode": 0,
+      "result": "All 112 active desktop tests passed with three declared platform-bound skips; lint, strict TypeScript compilation, and the production/reference builds passed. The product manifest publishes CAP-03.S06.T04."
+    },
+    {
+      "command": "apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 14 generated-client trust-boundary tests passed and the OpenAPI/client/runtime-handshake artifacts regenerate exactly, including strict workflow-progress read and command shapes."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml supervisor::tests -- --nocapture",
+      "exitCode": 0,
+      "result": "Rust formatting and all 13 native supervisor contract tests passed. Native routing accepts only the generated workflow-progress request envelopes and keeps process/capability correlation exact."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-final-built-frame.json",
+      "exitCode": 0,
+      "result": "The assembled product frame passed with no unexpected requests. A real browser opens Project Home, observes persisted not-started and unknown-checkpoint truth, issues the explicit start command with exact selection preconditions, reloads the current stage, and records supporting-tool handoffs. Existing lock, recovery, focus, privacy, navigation, responsive, and diagnostics cases remain green."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "exitCode": 0,
+      "result": "The implementation restores the already approved Academic Minimal v1.5 Project Home contract without changing the governed reference. All 139 workflow browser cases, 390 keyboard cases, 14 profile variants, and 66 responsive/accessibility cases passed."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py",
+      "exitCode": 0,
+      "result": "All 77 portable-contract tests and all six packaging tests passed with one declared Windows-token symlink skip. A real PyInstaller Windows x64 sidecar build completed with the changed service modules packaged."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff format --check <T04 Python files>; .venv/Scripts/python.exe -m ruff check <T04 Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <T04 Python files>",
+      "exitCode": 0,
+      "result": "Every T04 Python source, test, contract generator, performance checker, and browser verifier is formatted, lint-clean, and type-safe. The new module and test are registered in the closed quality scope."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/verify.py --profile desktop --profile service --profile data --affected-base 340ad1c3cd399e4848c07ef608f0836c48dd05ff --affected-head cd508bbf4c80ceedca13eb1e3364a1ba58480318 --deferred-gate W1-exit --selection-only; git diff --check e437cad11d0eb729790e575a7f45bf609d8b7ec4..cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+      "exitCode": 0,
+      "result": "The 364-task backlog, affected-check selection, exact task range, and patch hygiene passed. The protected W1.A04.B00 witness remains untracked and untouched."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Workflow stage-state revisions are append-only SQLite records whose current head is selected transactionally under BEGIN IMMEDIATE and exact selection/current-state compare-and-swap preconditions.",
+        "Only authenticated explicit commands can start, complete, revisit, mark attention, block, skip, or open supporting work. Completion additionally requires exact canonical project evidence-revision identities; background evidence creation alone leaves the stage head unchanged.",
+        "Restart, exact replay, conflicting idempotency reuse, concurrent profile-selection migration, noncanonical evidence, selection substitution, and current-head substitution are exercised through real repository and API boundaries."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Project Home is driven by one coherent Core-owned catalog, Intent, selection, and workflow-progress load and renders current use case, process form, persisted position, recommended action, checkpoint truth, stale or unknown-impact outputs, and a single route back into the current step.",
+        "The built desktop scenario proves the bootstrap and post-start states through the strict generated client. Unknown checkpoint authority remains visibly unknown, and navigation visits do not manufacture completion or checkpoint state.",
+        "Supporting workspace opens are persisted as bounded handoffs tied to the exact current stage revision and expire when that primary authority changes."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Revisitable profiles append a new pass with a stable aggregate ID, a new revision ID, a parent revision link, and preserved prior history; a completed revisitable workflow can begin another explicit pass while a linear profile denies it without mutation.",
+        "Profile changes bind the exact prior stage-state heads inside the same transaction as the new selection/Intent revision. A concurrent supporting write makes that compare-and-swap fail rather than allowing split authority.",
+        "Intent/profile changes carry exact prior stage-state identity into impact metadata, and Project Home preserves stale versus unknown-impact dispositions with their cause hash and safest next action."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T04 is high risk because it adds durable scholarly-stage authority, evidence-bound completion, atomic coupling to Research Intent/profile revisions, a public generated API, a native allowlist boundary, and a multi-layer desktop experience. Verification therefore covers the full service suite, strict generated contract, native supervisor, real Windows sidecar packaging, desktop component and assembled-browser behavior, approved workflow/accessibility conformance, changed-file static quality, and governance identity. The repository-wide quality command was also inspected: every T04 file is clean, while its overall exit remains nonzero only for ten pre-existing issues in five unchanged files plus three unchanged formatting debts. Broad foundation replay and governed performance remain owned by slice/W1 qualification.",
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:agent-protocol",
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:unit",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit"
+    ],
+    "deferred": [
+      "The repository-wide quality wrapper remains red solely on unchanged baseline debt: Ruff-format differences in selective_recalculation.py, test_dependency_impacts.py, and test_recalculation_api.py, plus ten MyPy errors in planctl.py, ui_conformance.py, selective_recalculation.py, test_ui_conformance.py, and test_selective_recalculation.py. Every T04 path passes focused formatting, lint, and typing; baseline repair remains bounded separately and must be closed before W1 exit.",
+      "The broad foundation unit inventory was not replayed for routine task state/view changes; taskctl validation, generated backlog-view checks, exact affected selection, and the directly changed verifier/contract suites cover the credible task boundary. It remains mandatory at W1 exit.",
+      "Desktop, project-lifecycle, storage-maintenance, complete cancellation/migration/recovery/security, and full Windows x64 performance qualification remain mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [],
+    "note": "Authenticate exact candidate cd508bbf4c80ceedca13eb1e3364a1ba58480318 and this evidence, then review the transactional stage-head and Intent/profile migration invariants, evidence/project substitution denial, idempotency, linear versus revisitable history, generated/native contract strictness, coherent Project Home projection, supporting-handoff expiry, and truthful baseline-quality deferral."
+  }
+}
