@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1b76dc1c0de6735d0b02ee4e253601bc202d8fb292ff0a3791675a90578f7927
+source_sha256: fe1916f1296624be464005cbc1b3cb9af1fd4a27e54d5522fe3a4171ef3b5aad
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6700,7 +6700,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T05 - Verify all approved use-case workflows end to end
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -6733,7 +6733,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: W1.A07 is adopted with independently approved exit; the exact T05 cycle criterion now aligns with accepted ADR-0026 and RO-UI-ACADEMIC-MINIMAL-1.5, so resume the previously test-first task without changing product or experience authority.
 
 ## CAP-scholarly-ingestion (`CAP-04`) - Scholarly ingestion, connectors, canonicalization, and corpus governance
 
