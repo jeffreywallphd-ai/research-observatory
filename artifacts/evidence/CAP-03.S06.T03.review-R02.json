@@ -1,0 +1,73 @@
+{
+  "task_id": "CAP-03.S06.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "0dccfbd7896bd488b2d28674959f0df6d97e8328",
+  "submission_record_commit": "ef78ad8e75fef5ee7b1dfe40e5f18d76c91be228",
+  "reviewer": "agent:t03-independent-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "The frozen R02 submission, evidence SHA-256/Git blob, exact seventeen-path prior-candidate scope, nine-path post-R01-review remediation delta, eight-path submission projection, linear ancestry, and immutable R01 evidence/review ledger authenticate. CAP-03.S06.T03-R01-F01 is fixed by project-bound child cancellation plus an independent live-project parent guard; exact assembled-browser replays delay both committed project-A draft and acceptance responses until project B is current and prove B remains authoritative. CAP-03.S06.T03-R01-F02 is fixed by carrying and comparing governed reference ID/version and intent guidance version/hash; all four one-field substitutions deny. The complete desktop suite/build, generated-client projection, approved UI lineage, and focused product checks remain green. No blocking finding remains.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T03.R02.json",
+      "sha256": "fa8ab6bb610327d6e2bcc5a663ffee230cd02fdfe6bb6291e84981bbbbf55d8b",
+      "git_blob": "553986f08d67e1d65e67fb00012d88b0e93ebdb6",
+      "commit": "0dccfbd7896bd488b2d28674959f0df6d97e8328",
+      "result": "PASS: the submission-introduced evidence bytes and Git blob authenticate the exact frozen R02 candidate and prior R01 evidence."
+    },
+    {
+      "type": "identity-and-scope-check",
+      "result": "PASS: prior candidate 71c32375594de7fbd73a0f5a3a9a9507c3d31937, R01 review commit 1c8cd17f879a9fda4f9cb388537f52525c6f47cd, R02 candidate 0dccfbd7896bd488b2d28674959f0df6d97e8328, and submission ef78ad8e75fef5ee7b1dfe40e5f18d76c91be228 form the declared linear chain. The seventeen-path packet scope, nine-path remediation delta, and eight-path submission projection match Git exactly; the R01 evidence and review-ledger blobs remain unchanged."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T03-R01-F01",
+      "command": "Rebuild the product, delay committed project-A draft and acceptance responses independently, replace A with B and wait for B workflow authority, release A last, then inspect the assembled browser frame and the two-layer source guard.",
+      "result": "PASS: both late A responses are discarded after B becomes current. IntentWorkspace binds the initiating project ID/root and invalidates ownership on project change or unmount; ApplicationRuntime independently compares the callback source and returned workspace with its live project refs before it can invalidate the loader or install authority. The browser reports intentMutationRaceGuarded=true and retains B's project/workflow context."
+    },
+    {
+      "type": "prior-finding-replay",
+      "finding_id": "CAP-03.S06.T03-R01-F02",
+      "command": "Create an exact supporting return, then substitute governed reference ID, reference version, intent guidance version, and intent guidance hash one field at a time in the live authority.",
+      "result": "PASS: WorkflowAuthoritySnapshot and SupportingReturnContext now carry every field, createSupportingReturn copies each authenticated identity, and supportingReturnMatches rejects all four one-field substitutions while preserving the existing project, Intent, catalog, profile, stage, and page denials."
+    },
+    {
+      "type": "independent-check",
+      "command": "npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "result": "PASS: 110 active desktop tests pass with three declared platform-bound skips; desktop lint, strict TypeScript compilation, and production/reference builds pass on the frozen R02 submission."
+    },
+    {
+      "type": "independent-check",
+      "command": "apps/desktop/node_modules/.bin/vitest.cmd run apps/desktop/src/app/workflowNavigation.test.ts apps/desktop/src/app/WorkflowNavigation.test.tsx apps/desktop/src/app/IntentWorkspace.test.tsx packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "result": "PASS: 31 focused navigation, Intent, rendered-component, and generated-client tests pass, including the four new return substitutions; the complete Core API contract regenerates exactly."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-R02-review-built-frame.json",
+      "result": "PASS: all eight desktop product checks and the assembled product frame pass, including both delayed mutation races, adaptive navigation, supporting return, focus/responsive/theme, application lock and recovery, and zero unexpected network requests."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "result": "PASS: the approved Academic Minimal v1.5 lineage remains exact; 139 workflow browser cases, 390 keyboard cases, fourteen profiles, and 66 responsive/accessibility cases pass."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S06.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "The persisted mutation callback now carries its initiating project ID/root. IntentWorkspace drops preview/save/accept results after project replacement or unmount, and ApplicationRuntime independently requires the source and returned workspace to match its live project before changing loader or workflow authority. Exact assembled-browser draft and acceptance races release project A last after B becomes current and retain B alone."
+    },
+    {
+      "finding_id": "CAP-03.S06.T03-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Governed reference ID/version and intent guidance version/hash now flow from the authenticated catalog into the workflow authority and supporting-return witness and are compared on return. Focused one-field tests reject each substitution."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S06.T03-R01-F01",
+    "CAP-03.S06.T03-R01-F02"
+  ]
+}
