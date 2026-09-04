@@ -20,6 +20,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from planctl import (  # noqa: E402
     _approval_introduction_commit,
     _authority_chain_v4_errors,
+    _bound_repository_file_errors,
     _schema_errors,
     _v4_packet_review_errors,
     approve_ecr,
@@ -29,6 +30,72 @@ from planctl import (  # noqa: E402
 
 
 class PlanctlAmendmentTests(unittest.TestCase):
+    def test_bound_repository_files_use_git_normalized_bytes_for_clean_worktrees(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Planctl Test"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "planctl@example.invalid"], cwd=root, check=True)
+            (root / ".gitattributes").write_text("*.css text eol=crlf\n", encoding="utf-8")
+            governed = root / "governed.css"
+            governed.write_text(":root {\n  --space: 1rem;\n}\n", encoding="utf-8")
+            subprocess.run(["git", "add", ".gitattributes", "governed.css"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=root, check=True)
+            governed.write_bytes(b":root {\r\n  --space: 1rem;\r\n}\r\n")
+            commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+            repository_payload = subprocess.check_output(["git", "show", f"{commit}:governed.css"], cwd=root)
+            references = [{"path": "governed.css", "sha256": hashlib.sha256(repository_payload).hexdigest()}]
+
+            self.assertEqual(
+                [],
+                _bound_repository_file_errors(root, references, label="fixture"),
+            )
+            self.assertEqual(
+                [],
+                _bound_repository_file_errors(root, references, label="fixture", packet_commit=commit),
+            )
+
+            pending = root / "pending.css"
+            pending.write_bytes(b":root {\r\n  --pending: true;\r\n}\r\n")
+            self.assertEqual(
+                [],
+                _bound_repository_file_errors(
+                    root,
+                    [{"path": "pending.css", "sha256": hashlib.sha256(pending.read_bytes()).hexdigest()}],
+                    label="fixture",
+                ),
+            )
+
+            governed.write_bytes(b":root {\r\n  --space: 2rem;\r\n}\r\n")
+            self.assertTrue(
+                any(
+                    "hash mismatch" in error
+                    for error in _bound_repository_file_errors(root, references, label="fixture")
+                )
+            )
+            self.assertTrue(
+                any(
+                    "differs from" in error
+                    for error in _bound_repository_file_errors(
+                        root,
+                        references,
+                        label="fixture",
+                        packet_commit=commit,
+                    )
+                )
+            )
+            self.assertTrue(
+                any(
+                    "comparison failed" in error
+                    for error in _bound_repository_file_errors(
+                        root,
+                        references,
+                        label="fixture",
+                        packet_commit="f" * 40,
+                    )
+                )
+            )
+
     def _fixture_authority_chain_v4_errors(self, packet: dict[str, Any]) -> list[str]:
         """Validate a synthetic historical packet without live later-ECR identity drift."""
         with patch("planctl._next_global_ecr_id", return_value=str(packet["changeRequestId"])):

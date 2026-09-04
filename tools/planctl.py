@@ -731,13 +731,30 @@ def _bound_repository_file_errors(
             errors.append(f"{label}: unsafe repository path {relative!r}")
             continue
         try:
-            payload = path.read_bytes()
+            worktree_payload = path.read_bytes()
         except OSError as exc:
             errors.append(f"{label}: unreadable repository file {relative}: {exc}")
             continue
+        payload = worktree_payload
+        comparison_commit = packet_commit or "HEAD"
+        repository_payload = _git_blob(root, comparison_commit, relative)
+        comparison = subprocess.run(
+            ["git", "diff", "--quiet", "--no-ext-diff", comparison_commit, "--", relative],
+            cwd=root,
+            capture_output=True,
+            check=False,
+        )
+        if comparison.returncode > 1:
+            errors.append(f"{label}: repository comparison failed for {relative}")
+            continue
+        if packet_commit and repository_payload is None:
+            errors.append(f"{label}: repository file is unavailable from {packet_commit}: {relative}")
+            continue
+        if comparison.returncode == 0 and repository_payload is not None:
+            payload = repository_payload
         if hashlib.sha256(payload).hexdigest() != item.get("sha256"):
             errors.append(f"{label}: repository file hash mismatch: {relative}")
-        if packet_commit and _git_blob(root, packet_commit, relative) != payload:
+        if packet_commit and payload != repository_payload:
             errors.append(f"{label}: repository file differs from {packet_commit}: {relative}")
     return errors
 
