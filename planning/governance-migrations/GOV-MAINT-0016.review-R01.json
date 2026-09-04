@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0016",
+  "reviewId": "GOV-MAINT-0016.R01",
+  "reviewedCommit": "e629e496bf7974c6a61ebb594ab4045c17d2779c",
+  "reviewer": "agent:ecr6-planning-authority-reviewer",
+  "reviewedAt": "2026-09-04T01:24:53.3895144-04:00",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0016.json",
+    "tests/foundation/test_planctl_amendments.py"
+  ],
+  "findings": [],
+  "closures": [],
+  "verified": [
+    "The exact candidate e629e496bf7974c6a61ebb594ab4045c17d2779c has sole parent bedd07c412f3cce8876cfc8f39520b6d919d3239 and changes only the two declared maintenance-record and historical-fixture test paths. The maintenance record is Git blob 5552d8f55ab9b34d9c869e2044e61da6613d9981 with SHA-256 37f894392f5c490ed5cdbe3a38b4693b24f9aea13997c7dbff025775007f0794; the test is Git blob dc3334bce31f31f542ddf8d8081b057ca3a1c63d with SHA-256 630d74ab75303e00d1f85fc0366cb03dc5f887ef025a05f24b5efa104a63cc7d.",
+    "The synthetic historical helper patches only planctl._next_global_ecr_id to the identity encoded by the fixture and is used only for deliberately historical equality-success cases. The dedicated test_v4_change_request_identity_is_repository_global continues to call the real _authority_chain_v4_errors path and passes, so the live repository-global identity denial is not masked.",
+    "The pre-A05 fixture is projected from live state to exactly W1.A01, W1.A02, and W1.A03. The post-A06 historical fixture is projected to exactly W1.A01 through W1.A06 and asserts W1.A06 as its terminal entry. Controller validation still enforces completeness, order, predecessor identity, and authority equality, so filtering cannot turn a missing required amendment into success.",
+    "All pre-existing reserved-authority hash/introduction/migration/effective-state tamper checks, incomplete and reordered predecessor denials, duplicate reservation and skipped-identity denials, refactor budget/baseline/allocation/non-finite/exception assertions, immutable approval rewrite denial, invented review-ledger denial, exclusive-create duplicate approval denial, and missing append-only approval denial remain present and execute through the real controller checks.",
+    "The three previously failing historical fixture tests pass independently in 166.142 seconds. The complete affected tests.foundation.test_planctl_amendments module passes 10 of 10 in 179.502 seconds, including the dedicated live repository-global identity denial, and tests.foundation.test_plan_review_amendments passes 16 of 16 in 18.451 seconds.",
+    "The live ECR-0006 packet is structurally and historically valid without becoming approved or executable. Canonical taskctl validation passes for 20 capabilities, 117 slices, 364 tasks, and 12 release gates; all 490 planning-review pages pass; generated backlog views are current; Ruff format and lint pass for the changed Python test; GOV-MAINT-0016 parses as JSON; and exact candidate diff hygiene passes.",
+    "W1 remains PAUSED with no campaign lease, and CAP-03.S06.T05 remains BLOCKED with no task lease and no implementation evidence. This maintenance approves only synthetic historical test-fixture stabilization; it grants no ECR-0006 or W1.A07 approval, amendment materialization, T05 recovery, W1 resume, product mutation, release, integration, push, or external authority.",
+    "The protected untracked artifacts/evidence/W1.A04.B00.json witness was not opened, read, hashed, staged, modified, or deleted."
+  ]
+}
