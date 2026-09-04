@@ -1,0 +1,189 @@
+{
+  "documentType": "wave-amendment-exit-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A07",
+  "changeRequestId": "ECR-0006",
+  "targetWave": "W1",
+  "candidateCommit": "e3822bbc577e7edd0beb258552cabdc52530bbb5",
+  "branch": "codex/w1-windows-local-runtime",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "scope": {
+    "bootstrap": {
+      "id": "W1.A07.B00",
+      "status": "APPROVED",
+      "implementationCommit": "0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b",
+      "evidence": {
+        "path": "artifacts/evidence/W1.A07.B00.json",
+        "sha256": "b1d1365ee9f3f7be499d79b461e982e05561bef3d7eaa948bee97ba5de2598bf"
+      },
+      "reviewer": "ecr6-planning-authority-reviewer",
+      "reviewResult": "approved"
+    },
+    "authorizedContribution": {
+      "id": "W1.A07.S01",
+      "capabilityId": "CAP-03",
+      "title": "Workflow cycle-authority alignment",
+      "taskIds": [
+        "W1.A07.T01"
+      ]
+    },
+    "authorizedTasks": [
+      {
+        "taskId": "W1.A07.T01",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "7baa4346aa68e9a7357e00b872f4b2965b167d4b",
+        "finalEvidence": {
+          "path": "artifacts/evidence/W1.A07.T01.json",
+          "sha256": "89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617"
+        },
+        "reviewLedger": {
+          "path": "artifacts/evidence/task-reviews/W1.A07.T01/R01.json",
+          "sha256": "3ac7f895180e4aff0dd177d6e525cc49aad8f63c80d16e85e0aade8da9d93ab7"
+        },
+        "openFindings": []
+      }
+    ],
+    "authorizedPlanningDelta": {
+      "criterion": "Hermeneutic, manuscript-review/revision, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.",
+      "canonicalLocations": [
+        "planning/backlog.yaml",
+        "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md"
+      ],
+      "governedExperienceReference": "RO-UI-ACADEMIC-MINIMAL-1.5",
+      "cyclicalWorkflowIds": [
+        "living-review",
+        "hermeneutic-inquiry",
+        "manuscript-review-revision"
+      ],
+      "refactorAllocationPoints": 0,
+      "approvedW1BaselinePoints": 194
+    },
+    "retainedBoundary": {
+      "waveStatus": "PAUSED",
+      "waveScope": "amendment-hold",
+      "activeAmendment": "W1.A07",
+      "ordinaryWaveResumeAuthorized": false
+    },
+    "unauthorizedClaims": [
+      "ordinary W1 campaign resumption before amendment adoption and an explicit taskctl resume",
+      "CAP-03.S06.T05 recovery or implementation before adoption and ordinary resume",
+      "complete W1 product or deployment qualification",
+      "W1 completion or G1 approval",
+      "local-main integration or remote push"
+    ]
+  },
+  "authority": {
+    "approvalRecord": "planning/wave-amendment-approvals/W1.A07.json",
+    "approvalSha256": "c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6",
+    "approvalIntroductionCommit": "72052b7f7781dcfc83a1a2c8dae362b899b114d5",
+    "canonicalProposal": "planning/enabler-change-requests/ECR-0006.md",
+    "packet": "planning/enabler-change-requests/ECR-0006.packet.json",
+    "packetCommit": "43e317be1e644c77e653ff5f121425d6e2cde2ef",
+    "packetSha256": "6a4d123f4281f3783ec02eb8ac5d0d986b37e53e52b5f6cc6059b07447d5ab04",
+    "governedExperienceReference": "RO-UI-ACADEMIC-MINIMAL-1.5"
+  },
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "status": "passed",
+      "evidence": "Runtime amendment integrity validates the exact W1 base, ordered predecessor amendments including terminal W1.A04, GOV-MIG-0001, MI-0001 revision 12, and the paused quiescent Wave boundary."
+    },
+    {
+      "criterionIndex": 2,
+      "status": "passed",
+      "evidence": "Human approval is hash-bound at the recorded introduction commit; independently approved B00 was the first authorized mutation and W1 remained paused with T05 blocked."
+    },
+    {
+      "criterionIndex": 3,
+      "status": "passed",
+      "evidence": "The exact approved manuscript-review/revision term replaced critical in only the canonical CAP-03.S06.T05 criterion and its slice-plan projection; task R01 independently approved the delta."
+    },
+    {
+      "criterionIndex": 4,
+      "status": "passed",
+      "evidence": "Accepted ADR-0026 and the unchanged RO-UI-ACADEMIC-MINIMAL-1.5 manifest and approval bind exactly three revisitable workflows while systematic and both critical profiles remain linear."
+    },
+    {
+      "criterionIndex": 5,
+      "status": "passed",
+      "evidence": "Exact structural and Git negative-scope checks prove every other CAP-03.S06 field and all design-reference, product, runtime, schema, migration, security, release-profile, and unrelated implementation paths unchanged."
+    },
+    {
+      "criterionIndex": 6,
+      "status": "passed",
+      "evidence": "The packet and completed task classify the planning correction as zero refactor points against the immutable 194-point W1 baseline."
+    },
+    {
+      "criterionIndex": 7,
+      "status": "passed",
+      "evidence": "B00 and T01 have independent commit-bound approved dispositions with append-only history and no open findings; this packet requests the remaining independent amendment-exit disposition."
+    },
+    {
+      "criterionIndex": 8,
+      "status": "passed",
+      "evidence": "No W1 qualification, G1 approval, main integration, remote push, external effect, destructive action, or substantial spend occurred under W1.A07."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "result": "passed",
+      "summary": "The canonical backlog validates with 20 capabilities, 117 slices, 365 tasks, and 12 release gates; W1.A07.T01 is DONE and independently approved."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+      "result": "passed",
+      "summary": "All 490 generated planning-review pages and their authority links validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "result": "passed",
+      "summary": "Generated backlog views exactly match the canonical planning source."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_reference_check.py --repo .",
+      "result": "passed",
+      "summary": "The unchanged governed v1.5 reference validates across 55 files and fourteen workflow profiles with zero errors or warnings."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml amendment status W1.A07",
+      "result": "passed",
+      "summary": "Runtime authority and lifecycle integrity validate with approved B00, one DONE approved task, ACTIVE amendment campaign, and W1 PAUSED at amendment-hold."
+    },
+    {
+      "command": "git diff --check 078dcfe197906359c11ae88a7903e69fbfa5d11d..e3822bbc577e7edd0beb258552cabdc52530bbb5",
+      "result": "passed",
+      "summary": "The completed amendment range contains no whitespace errors."
+    },
+    {
+      "command": "git diff --exit-code 078dcfe197906359c11ae88a7903e69fbfa5d11d..e3822bbc577e7edd0beb258552cabdc52530bbb5 -- design/ui-reference modules apps verification-profiles.json",
+      "result": "passed",
+      "summary": "The amendment changed no governed design-reference, product/runtime module, application, or verification-profile path."
+    }
+  ],
+  "diagnosticContext": {
+    "selectedAffectedTests": "23 active-campaign-safe amendment authority and review-projection tests passed.",
+    "lifecycleInapplicableFixtures": "Three synthetic next-ECR fixtures intentionally require no active amendment and therefore fail only while the real W1.A07 campaign is ACTIVE; independent review reproduced and accepted this disclosed limitation as non-blocking."
+  },
+  "retainedDeferredWork": {
+    "owner": "ordinary-W1-campaign-and-W1-exit",
+    "items": [
+      "CAP-03.S06.T05 recovery and product verification proceed only after amendment adoption and explicit W1 resume.",
+      "CAP-03.S06 slice review and any triggered checkpoint remain due after T05.",
+      "The complete W1 Windows x64 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and cross-capability qualification matrix remains due once at W1 exit.",
+      "G1 remains a later human approval gate after complete W1 qualification."
+    ]
+  },
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "T05 criterion 2 conflicts materially with accepted ADR-0026 and the exact approved Academic Minimal 1.5 cycle policy. Pause at the test-first quiescent boundary pending an append-only one-for-one planning-authority correction; do not change catalog or product behavior."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review"
+}
