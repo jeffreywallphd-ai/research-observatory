@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 28f8f167706115f779b7440e2922057eef7c90dc5e1ffa1bd01d0dd54884c931
+source_sha256: 9b0b41a07e9d820f05b1935372d0349812b8556a81862d87ddf75c6818746398
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1772,7 +1772,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A08.T01 - Consolidate and align production styling
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / w1-a08-t01-independent-experience-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A08.B00`, `CAP-01.S02.T03`
 
@@ -1800,9 +1800,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A08.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8f6a570c8d49459cd616fa3a067248d4edbf57340f9cb679d870c1aa93ddd2cd`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `8f6a570c8d49459cd616fa3a067248d4edbf57340f9cb679d870c1aa93ddd2cd`
 
 - Candidate / base / branch: `9b4e746928d1381c52a2a720ee6bb47eb433ca3f` / `98d6612d0eb64482d92ea9f754ddcee22b8b79b9` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-04T21:15:41+00:00`
@@ -1816,11 +1818,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / w1-a08-t01-independent-experience-reviewer / `2026-09-04T21:26:47+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A08.T01.review-R01.json` / `d00a174be797cd47d8542534bbc4de0d8ba1d5d20ccbff7550592d5eb00e2976`
 
-**Currently open findings:** -
+**Review notes:** The frozen submission is the candidate's sole child, the exact 19-path base-to-candidate inventory and two-path submission projection authenticate, and the criterion evidence reproduces SHA-256 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a with Git blob ceca1048851c48fa85fe3ed8d905ad9e9667fbe9. Independent replay confirms the candidate removes the undefined style variables, uses the approved canonical token transport, preserves RO-UI-ACADEMIC-MINIMAL-1.5 bytes, passes the shared and desktop renderer suites, and gives the initial functional product exact 28/20/16 px page padding, 64 px topbar, 24 px section rhythm, 16 px grid, 40/44 px controls, reduced motion, focus/theme behavior, and no horizontal document overflow at the three controlled viewports. Approval remains unavailable because T01's required deterministic duplicate-declaration, selector-specificity, raw-geometry, and documented-composition-exception analysis is absent, and the live geometry check samples only the initial shell's first generic elements rather than the named panels/forms/tables/dialogs/notices/action rows and representative in-scope states. Those T01 checks cannot be wholly deferred to T02's later reusable exhaustive harness.
+
+**Findings opened:**
+
+- `W1.A08.T01-R01-F01` `medium` blocking=`True` criterion=`2` — The required deterministic residual-style and specificity contract is missing; reproduce: At candidate 9b4e746928d1381c52a2a720ee6bb47eb433ca3f, inspect tests/desktop/test_desktop_app_check.py:310-380. It asserts the ten primitive names occur somewhere, checks a few declaration substrings, resolves var() names, rejects only the literal 'min-height: 2.75rem', and searches TSX for style=. The only tools/desktop_app_check.py candidate change is the live shell geometry loop. No code computes normalized duplicate declaration groups, selector specificity, unexplained raw geometry, or a reviewed composition exception set, although the frozen T01 verification command requires all four. A normalized block scan still finds exact repeated groups such as .ro-table-pagination__actions versus .ro-boundary-state__actions and the duplicated tone rule; app.css also retains repeated label/focus/text groups. packages/ui-components/src/styles.css:65-66 and :74 retain physical text-align:left, border-top, and border-left-width in the shared table/notification boundary without a documented exception. Adding a token-valid duplicate group or raising a page selector's specificity does not make the new test fail.; remediate: At T01 scope, add and run a deterministic analysis over the shared and production CSS that inventories normalized material declaration groups, selector specificity, raw spacing/control/card geometry, undefined/duplicate semantic custom properties, inline/CSS-in-JS escapes, and physical directional properties. Consolidate material generic duplicates; express direction through logical properties; and bind any genuine composition-specific residual to a small reviewed documented exception record. Include focused negative fixtures showing an added duplicate, over-specific override, raw semantic geometry, undocumented exception, and physical-direction regression fail. T02 may generalize and exhaustively harden this analyzer, but it cannot supply T01's missing acceptance evidence retroactively.
+- `W1.A08.T01-R01-F02` `medium` blocking=`True` criterion=`4` — The live viewport check measures only the initial shell and leaves named styling boundaries unproved; reproduce: At tools/desktop_app_check.py:2976-3055, each 1440x900, 1280x720, and 720x450 case loads the same initial product state and measures only main, .topbar, .sidebar, the first .ro-page-region, first .ro-grid, first .ro-button, and first primary button. Consequently the passing geometry array contains no panel/card padding/radius, form/control layout, table row/contained-scroll behavior, dialog size/scroll/focus, notice hierarchy, action-row wrapping, or representative empty/error/warning/locked/dense/long-content measurement. The accessible table changes at AuditLineageWorkspace.tsx:615 and :942 and DiagnosticsWorkspace.tsx:359 have no direct test beyond source-string inclusion. ThemeToggle proves the root theme changes, while the geometry pages only prove reduced-motion duration and do not compute named surfaces in both themes. This is narrower than T01 criteria 3-5 and its explicit verification command; the evidence's temporary default-shell captures cannot close it.; remediate: Extend the focused T01 functional-product check to render representative in-scope states and directly assert computed panel/card, form/control, table, dialog, notice, and action-row contracts plus document-versus-contained overflow, focusability/name of each application table scroll region, dialog focus/scroll at 720x450, dark/light token application, and reduced-motion presentation at the three controlled viewports. This may be a bounded representative matrix rather than T02's exhaustive reusable all-surface harness, but every named T01 geometry category and the lock/recovery, error/warning, dialog/table, dense/long-content risks must have real renderer evidence.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by w1-a08-t01-independent-experience-reviewer at `2026-09-04T21:26:47+00:00`
+
+**Latest notes:** The frozen submission is the candidate's sole child, the exact 19-path base-to-candidate inventory and two-path submission projection authenticate, and the criterion evidence reproduces SHA-256 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a with Git blob ceca1048851c48fa85fe3ed8d905ad9e9667fbe9. Independent replay confirms the candidate removes the undefined style variables, uses the approved canonical token transport, preserves RO-UI-ACADEMIC-MINIMAL-1.5 bytes, passes the shared and desktop renderer suites, and gives the initial functional product exact 28/20/16 px page padding, 64 px topbar, 24 px section rhythm, 16 px grid, 40/44 px controls, reduced motion, focus/theme behavior, and no horizontal document overflow at the three controlled viewports. Approval remains unavailable because T01's required deterministic duplicate-declaration, selector-specificity, raw-geometry, and documented-composition-exception analysis is absent, and the live geometry check samples only the initial shell's first generic elements rather than the named panels/forms/tables/dialogs/notices/action rows and representative in-scope states. Those T01 checks cannot be wholly deferred to T02's later reusable exhaustive harness.
+
+**Currently open findings:** `W1.A08.T01-R01-F01`, `W1.A08.T01-R01-F02`
 
 ### - [ ] W1.A08.T02 - Qualify live-product styling conformance
 
