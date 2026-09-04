@@ -1,0 +1,102 @@
+{
+  "task_id": "CAP-03.S06.T04",
+  "attempt_id": "R02",
+  "candidate_commit": "a4f20c0b24351ce71e28b8b710d7e265f9908e4c",
+  "submission_record_commit": "053b2b18ea1f89700468a611609c0a0c7480869c",
+  "reviewer": "agent:t04-r02-independent-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The strict-descendant R02 candidate, direct-child submission, exact 23-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, linear ancestry, and patch hygiene authenticate. Focused real-SQLite service/authority tests, renderer model and Project Home tests, generated-client parity, native request-shape tests, and task governance validation pass. R01-F01 and R01-F03 through R01-F07 are fixed. The service portion of R01-F02 is also corrected: revisitation now requires an exact terminal source, preserves a displaced active head, and denies linear profiles. Approval remains unavailable because that earlier-stage transition is not reachable through the shipped renderer: the only revisit action is shown after terminal workflow completion and the renderer derives its source only from the server's recommended stage key. Opening an earlier completed step from the workflow rail is navigation-only and records no transition, so the criterion that cyclical workflows can revisit earlier stages is not satisfied end to end.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T04.R02.json",
+      "sha256": "bd225420c084b010212399766c951e16a5cf651eaf1a8894b89bfa5d6c4652db",
+      "git_blob": "a08c682aedcbdc9dbc09f641a4dad13b83e31d3a",
+      "commit": "a4f20c0b24351ce71e28b8b710d7e265f9908e4c"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Authenticate R01 candidate cd508bbf4c80ceedca13eb1e3364a1ba58480318, R02 candidate a4f20c0b24351ce71e28b8b710d7e265f9908e4c, direct-child submission 053b2b18ea1f89700468a611609c0a0c7480869c, declared changed paths, evidence digest/blob, and git diff --check.",
+      "result": "PASS: the R02 candidate is a strict descendant of the R01 candidate; the submission has the exact candidate as its sole parent; all 23 declared remediation paths match the Git delta; the submission adds only the R02 evidence packet and backlog projection; the patch has no whitespace errors."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.service.test_workflow_progress; .venv\\Scripts\\python.exe -m unittest -v tests.service.test_research_intents",
+      "result": "PASS: 36/36 focused real-SQLite workflow-progress and canonical Intent/selection/migration tests passed, including exact replay after advancement and profile change, evidence-kind denial, terminal-source revisitation with displaced-head preservation, linear denial, migration materialization/CAS rollback, attention/blocked restart recovery, server handoff expiry on primary-head replacement, and authority-tamper denial."
+    },
+    {
+      "type": "independent-check",
+      "command": "apps\\desktop\\node_modules\\.bin\\vitest.cmd run apps/desktop/src/app/ProjectHomeWorkspace.test.tsx apps/desktop/src/app/workflowNavigation.test.ts apps/desktop/src/app/WorkflowNavigation.test.tsx; npm test --prefix packages/contracts -- --run generated.test.ts; .venv\\Scripts\\python.exe tools\\core_api_contract.py --repo . --check",
+      "result": "PASS: all 18 focused renderer tests and all 14 generated Core-client tests passed; deterministic Core API generation is current. Request guards reject delayed A-to-B and A-to-B-to-A effects, server handoff identity is matched on return, and generated decoding/request construction is strict."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked --all-features supervisor::tests",
+      "result": "PASS: all 13 native supervisor tests passed, including the exact workflow start, resume, revisit, completion, and supporting request allowlist boundary."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate",
+      "result": "PASS: authoritative planning state validates with 20 capabilities, 117 slices, 364 tasks, and 12 release gates."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "finding_id": "CAP-03.S06.T04-R02-F01",
+      "command": "Construct the real server state exercised by test_revisitable_profile_appends_a_new_pass_without_erasing_prior_state: terminal stage A is in history while later stage B is current and recommended. Trace the same projection through workflowCommandStageAuthority, ProjectHomeWorkspace, WorkflowNavigation, and ApplicationRuntime.",
+      "result": "FAIL: the Core accepts an exact revisit of A and preserves B, but workflowCommandStageAuthority searches terminal history only for progress.recommendedStageKey (B), so it returns null for A. ProjectHomeWorkspace renders onRevisit only when current is null, and WorkflowNavigation's earlier-stage click calls navigateToStage, whose announcement explicitly says no completion or checkpoint was recorded. No renderer action can issue the authorized A revisit while B is current."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S06.T04-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Earlier-stage revisitation is implemented in Core but unreachable from the shipped renderer",
+      "reproduction": "At candidate a4f20c0b24351ce71e28b8b710d7e265f9908e4c, tests/service/test_workflow_progress.py:341-387 proves the service can revisit terminal stage A while later stage B is current and preserve B as in-progress. For that exact projection, workflow_progress.py:500-501 recommends B, while workflowNavigationModel.ts:174-179 selects a revisit source only when its stageKey equals progress.recommendedStageKey; it therefore cannot select A. ProjectHomeWorkspace.tsx:75-98 exposes onRevisit only when current is null, and WorkflowNavigation.tsx:128-140 routes an earlier-step click to ApplicationRuntime.tsx:764-775, which changes only the displayed workspace and explicitly announces that no completion or checkpoint was recorded. The positive renderer unit test at workflowNavigation.test.ts:365-399 makes A the recommended key by hand and does not represent the server state with B current. Consequently a researcher cannot perform the earlier-stage revisit required by the approved cyclical-workflow criterion, despite the repaired Core command.",
+      "required_remediation": "Expose an explicit researcher-controlled revisit action for an eligible terminal earlier stage while another stage is current. Derive the source from the selected terminal stage rather than only recommendedStageKey, bind both the exact terminal source and displaced active-head CAS in the generated request, preserve ordinary rail navigation as non-mutating, and keep linear/current/in-progress/attention/blocked sources denied. Add an ApplicationRuntime interaction test using the real A-terminal/B-current projection that selects A, issues the exact revisit request, accepts the server result, and proves the displaced B state and prior A pass remain visible; also cover cancellation/stale-response denial for that selected-source path."
+    }
+  ],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S06.T04-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Active-head resolution now includes attention-required and blocked, explicit resume is exact-head CAS-bound, Project Home renders both states without false completion, and skip atomically advances only when a governed stage is optional. The current approved catalog contains no optional stage, so every current skip remains denied rather than stranding a workflow."
+    },
+    {
+      "finding_id": "CAP-03.S06.T04-R01-F03",
+      "disposition": "fixed",
+      "evidence": "The SQLite command record now persists a canonical hashed resultProjection and replay authenticates and returns those immutable bytes before evaluating mutable current selection/stage authority. Real restart tests return exact equality after advancement and profile change while changed payload reuse conflicts."
+    },
+    {
+      "finding_id": "CAP-03.S06.T04-R01-F04",
+      "disposition": "fixed",
+      "evidence": "Profile changes bind the exact complete prior stage snapshot, materialize retained/mapped successors or an explicit attention-required review head under the new selection, and insert Intent, selection, migration, decision, successor state, provenance, and outbox inside one BEGIN IMMEDIATE transaction. The concurrent-head replay proves the complete mutation rolls back."
+    },
+    {
+      "finding_id": "CAP-03.S06.T04-R01-F05",
+      "disposition": "fixed",
+      "evidence": "Completion evidence resolution is project-scoped, UUID-exact, duplicate-denying, and now authorizes only aggregate_kind=evidence before hashing the immutable revision witness. The real-SQLite document-kind substitution and missing revision both fail without changing the current stage."
+    },
+    {
+      "finding_id": "CAP-03.S06.T04-R01-F06",
+      "disposition": "fixed",
+      "evidence": "Intent and progress now share validated_workflow_authority, which validates canonical Intent history, activation/witness, selection hash and parent chain, migration/decision lookup, actor/profile/project references, approved catalog/guidance hashes, and stage selection references. Retained-valid-hash authority substitution fails closed on the progress route."
+    },
+    {
+      "finding_id": "CAP-03.S06.T04-R01-F07",
+      "disposition": "fixed",
+      "evidence": "Each renderer request ticket binds a monotonically invalidated context generation plus per-kind request generation, project ID/root, Intent, selection/profile, active head, and optional revisit source. Runtime success, error, finally, announcement, selection, and return-context mutations consult that ticket. Progress binds the exact canonical Intent, and supporting return is created from and revalidated against the server-issued handoff that disappears when its primary-head witness changes."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S06.T04-R01-F01",
+    "CAP-03.S06.T04-R01-F02",
+    "CAP-03.S06.T04-R01-F03",
+    "CAP-03.S06.T04-R01-F04",
+    "CAP-03.S06.T04-R01-F05",
+    "CAP-03.S06.T04-R01-F06",
+    "CAP-03.S06.T04-R01-F07"
+  ]
+}
