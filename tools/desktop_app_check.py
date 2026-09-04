@@ -232,6 +232,7 @@ def product_build_errors(repo: Path) -> list[str]:
             "CAP-03.S06.T02",
             "CAP-03.S06.T03",
             "CAP-03.S06.T04",
+            "CAP-03.S06.T05",
         ],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
@@ -929,6 +930,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             "CAP-03.S06.T02",
             "CAP-03.S06.T03",
             "CAP-03.S06.T04",
+            "CAP-03.S06.T05",
         ],
         "referenceOnlyPages": 0,
         "commandFocus": False,
@@ -950,6 +952,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink": False,
         "diagnosticsExactExport": False,
         "projectsWorkflow": False,
+        "workflowProfileMatrixValid": False,
+        "workflowProfileMatrix": {},
         "workflowEarlierStageRevisit": False,
         "adaptiveWorkflowNavigation": False,
         "intentMutationRaceGuarded": False,
@@ -977,6 +981,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         workflow_catalog_json = core_workflow_catalog_json(repo)
     except ValueError as error:
         return [*errors, str(error)], details
+    workflow_catalog = json.loads(workflow_catalog_json)
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
         browser_context = browser.new_context()
@@ -1540,6 +1545,87 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             projects.locator("#project-directory-name").fill("study-one")
             projects.locator("#project-display-name").fill("Study One")
             projects.locator("#project-research-objective").fill("Explain a bounded evidence-first workflow.")
+            implemented_tool_labels = [
+                "Local projects",
+                "Project home",
+                "Research intent",
+                "Task Center",
+                "Audit & lineage",
+                "Project settings",
+                "Application settings",
+                "Diagnostics & support",
+            ]
+            workflow_profile_rows = []
+            for profile in workflow_catalog["profiles"]:
+                projects.locator("#project-primary-use-case").select_option(profile["profileId"])
+                preview = projects.locator(".workflow-profile-preview")
+                rendered = preview.evaluate(
+                    """element => ({
+                      title: element.querySelector('h3')?.textContent?.trim() ?? '',
+                      paragraphs: Array.from(element.querySelectorAll('p')).map(
+                        (item) => item.textContent?.trim() ?? ''),
+                      stages: Array.from(element.querySelectorAll('ol > li')).map(
+                        (item) => item.textContent?.trim() ?? '')
+                    })"""
+                )
+                all_tools = projects.locator("[data-all-tools]")
+                tool_buttons = all_tools.locator("button")
+                tool_labels = tool_buttons.evaluate_all(
+                    "elements => elements.map((element) => element.getAttribute('aria-label'))"
+                )
+                expected_stages = [
+                    f"{stage['label']}{' (optional)' if stage['optional'] else ''}"
+                    for stage in profile["stages"]
+                ]
+                expected_paragraphs = [
+                    profile["purpose"],
+                    f"Expected output: {', '.join(profile['expectedOutputs'])}",
+                    "Process form: "
+                    + ("Revisitable process" if profile["processForm"] == "revisitable" else "Linear process"),
+                    (
+                        "All tools remain available. The selected workflow does not weaken evidence or provenance "
+                        "requirements."
+                    ),
+                ]
+                row = {
+                    "profileId": profile["profileId"],
+                    "processForm": profile["processForm"],
+                    "title": rendered["title"] == profile["title"],
+                    "guidance": rendered["paragraphs"] == expected_paragraphs,
+                    "stageOrder": rendered["stages"] == expected_stages,
+                    "allTools": tool_labels == implemented_tool_labels
+                    and all(tool_buttons.nth(index).is_enabled() for index in range(len(implemented_tool_labels)))
+                    and all_tools.locator("ul").get_attribute("aria-label") == "All implemented tools",
+                }
+                row["valid"] = all(
+                    value is True for key, value in row.items() if key not in {"profileId", "processForm"}
+                )
+                workflow_profile_rows.append(row)
+            details["workflowProfileMatrix"] = {
+                "referenceId": workflow_catalog["referenceId"],
+                "referenceVersion": workflow_catalog["referenceVersion"],
+                "profileCatalogVersion": workflow_catalog["profileCatalogVersion"],
+                "profileCatalogHash": workflow_catalog["profileCatalogHash"],
+                "intentGuidanceHash": workflow_catalog["intentGuidanceHash"],
+                "allToolsAccessible": workflow_catalog["allToolsAccessible"],
+                "profiles": workflow_profile_rows,
+            }
+            details["workflowProfileMatrixValid"] = (
+                workflow_catalog["referenceId"] == "RO-UI-ACADEMIC-MINIMAL-1.5"
+                and workflow_catalog["referenceVersion"] == "1.5"
+                and workflow_catalog["profileCatalogVersion"] == "1.0.0"
+                and workflow_catalog["profileCatalogHash"]
+                == "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49"
+                and workflow_catalog["intentGuidanceHash"]
+                == "sha256:2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2"
+                and workflow_catalog["allToolsAccessible"] is True
+                and len(workflow_profile_rows) == 14
+                and all(row["valid"] for row in workflow_profile_rows)
+                and {
+                    row["profileId"] for row in workflow_profile_rows if row["processForm"] == "revisitable"
+                }
+                == {"hermeneutic-inquiry", "living-review", "manuscript-review-revision"}
+            )
             projects.locator("#project-primary-use-case").select_option("theory-synthesis")
             workflow_preview_valid = (
                 "Clarify and integrate constructs" in projects.locator("main").inner_text()
@@ -2947,6 +3033,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink",
         "diagnosticsExactExport",
         "projectsWorkflow",
+        "workflowProfileMatrixValid",
         "workflowEarlierStageRevisit",
         "adaptiveWorkflowNavigation",
         "intentMutationRaceGuarded",

@@ -84,6 +84,7 @@ const manifest = {
   implementedCapabilities: [
     "CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03", "CAP-03.S02.T02",
     "CAP-03.S03.T03", "CAP-03.S05.T03", "CAP-03.S06.T02", "CAP-03.S06.T03", "CAP-03.S06.T04",
+    "CAP-03.S06.T05",
   ],
   routes: ["index.html"],
   referenceUse: "design-contract-only",

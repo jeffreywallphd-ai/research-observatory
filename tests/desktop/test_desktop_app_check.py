@@ -46,10 +46,35 @@ class DesktopAppCheckTests(unittest.TestCase):
                 "CAP-03.S06.T02",
                 "CAP-03.S06.T03",
                 "CAP-03.S06.T04",
+                "CAP-03.S06.T05",
             ],
             details["implementedCapabilities"],
         )
         self.assertTrue(details["adaptiveWorkflowNavigation"])
+        self.assertTrue(details["workflowProfileMatrixValid"])
+        matrix = details["workflowProfileMatrix"]
+        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.5", matrix["referenceId"])
+        self.assertEqual("1.5", matrix["referenceVersion"])
+        self.assertEqual("1.0.0", matrix["profileCatalogVersion"])
+        self.assertEqual(
+            "sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49",
+            matrix["profileCatalogHash"],
+        )
+        self.assertEqual(
+            "sha256:2feffbaf216da3adb4d8fe0b3ca6e2579cdc2dcedc2d57341086a14def5fe0d2",
+            matrix["intentGuidanceHash"],
+        )
+        self.assertTrue(matrix["allToolsAccessible"])
+        self.assertEqual(14, len(matrix["profiles"]))
+        self.assertEqual(
+            {"hermeneutic-inquiry", "living-review", "manuscript-review-revision"},
+            {
+                profile["profileId"]
+                for profile in matrix["profiles"]
+                if profile["processForm"] == "revisitable"
+            },
+        )
+        self.assertTrue(all(profile["valid"] for profile in matrix["profiles"]))
         self.assertTrue(details["intentMutationRaceGuarded"])
         self.assertEqual(0, details["referenceOnlyPages"])
         self.assertTrue(details["commandFocus"])
