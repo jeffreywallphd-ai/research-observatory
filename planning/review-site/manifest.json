@@ -26492,7 +26492,7 @@
       "approval_sha256": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -26509,12 +26509,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "w1a08-bootstrap-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-09-04T20:47:49+00:00",
+            "notes": "APPROVED at final submitted-state commit 50620d5152da8d691a2e5d9e563f54aa35af3b18 for implementation candidate 32ab69cc8836fd9ec2dcdaf2a25c581a1b0ca71b and evidence SHA-256 4fd936dc0dbb8743e5a49e9734a42cfd88fb7f402b328a65f72f4f4e0a5990d1. Approval-to-candidate scope is exactly the three authorized generated paths; submitted state appends only W1.A08 with zero tasks/campaign then refreshes six deterministic derived views. All predecessor, migration, and MI authority is unchanged; W1 remains PAUSED and lease-free, CAP-07.S01.T02 remains BLOCKED and lease-free, and no amendment or recovery is active. ECR authority, 491-page site, backlog views, UI reference, focused tests, hashes, ancestry, and diff hygiene pass; no product, reference, architecture, schema, or release change."
           },
-          "current_status": "REVIEW"
+          "current_status": "APPROVED"
         }
       ],
       "slice_contributions": [
