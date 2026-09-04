@@ -25820,7 +25820,7 @@
       "approval_sha256": "c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -25837,12 +25837,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "ecr6-planning-authority-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-09-04T10:39:32+00:00",
+            "notes": "APPROVED at exact submitted-state commit eff5bb397d7cc6c6d77630e34ae3af89775162d6 for implementation candidate 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b and evidence SHA-256 b1d1365ee9f3f7be499d79b461e982e05561bef3d7eaa948bee97ba5de2598bf. The ECR-0006 R01 ledger and immutable W1.A07 approval authenticate; the candidate changes exactly the three authorized approval projections; submission appends only W1.A07 APPROVED with B00 REVIEW; all predecessor amendment, GOV-MIG-0001, MI-0001, Wave, task, and gate state remains exact. W1 stays PAUSED and CAP-03.S06.T05 stays BLOCKED and lease-free. Generated views and controller checks pass, with no product or canonical CAP-03.S06 criterion change and no open finding."
           },
-          "current_status": "REVIEW"
+          "current_status": "APPROVED"
         }
       ],
       "slice_contributions": [
