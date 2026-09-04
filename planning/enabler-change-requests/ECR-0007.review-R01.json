@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0007",
+  "proposedAmendmentId": "W1.A08",
+  "attemptId": "R01",
+  "candidateCommit": "3d868e579ba23a833f3a71650cd77f5f71c632b3",
+  "packetSha256": "a397f43c2eaaca765865b2fade8f1a57c0006f45da28e112b2bed3d6d9ab52cb",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr7-experience-architecture-reviewer",
+  "reviewedAt": "2026-09-04T19:27:45.5448000Z",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "ECR-0007-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 6,
+      "title": "The governed token hash binds checkout-specific CRLF bytes instead of the immutable candidate",
+      "reproduction": "At planning/enabler-change-requests/ECR-0007.packet.json:282, governedExperience binds design/ui-reference/assets/tokens.css to SHA-256 475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230, and planning/review-site/enablers/ECR-0007.html:86 repeats it. On this Windows checkout, Get-FileHash returns that value because the worktree file is 5,552 CRLF bytes. Hashing the immutable bytes from `git show 3d868e579ba23a833f3a71650cd77f5f71c632b3:design/ui-reference/assets/tokens.css` returns e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5 over 5,344 bytes; design/ui-reference/REFERENCE_MANIFEST.yaml:90 independently binds the same e6aa1ebf value. The pending ECR validator reads only checkout bytes, so it reports success, but the approved-history path supplies packet_commit and tools/planctl.py:740-741 then compares the candidate Git blob with the checkout payload. An approval created for this candidate would therefore fail its own immutable-packet validation, and the packet does not presently authenticate the exact approved token authority it claims to reaffirm unchanged.",
+      "requiredRemediation": "Create a strict-descendant R02 proposal candidate that binds assets/tokens.css to the repository-stable approved digest e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5 and regenerates the human-review page, generated ECR page, indexes, and manifest. Repair the generic v4 bound-file generation/validation path so pending and approved validation use one Git/canonical-byte semantic independent of checkout EOL conversion, with a focused Windows CRLF versus immutable-blob regression test; route that control correction through the bounded governance-maintenance workflow if required. Preserve this adverse R01 ledger append-only and obtain a new exact-commit independent review before requesting human approval."
+    }
+  ],
+  "closures": [],
+  "verified": [
+    "The exact candidate 3d868e579ba23a833f3a71650cd77f5f71c632b3 has sole parent 844e17bf7e4d2986dd7f37ee72efe25cbc4326ee. Its eight-path delta adds only the canonical ECR-0007 proposal, v4 packet, static review page, generated ECR page and four generated review-site indexes/manifests; it changes no backlog, Wave/task state, product, UI-reference, ADR, architecture, public contract, verification tool, approval, or predecessor-authority file. Git diff hygiene passes.",
+    "The packet itself has SHA-256 a397f43c2eaaca765865b2fade8f1a57c0006f45da28e112b2bed3d6d9ab52cb and Git blob a0bbc07aaa8fdca5f75210f818aa82ce68fd7d57. The proposal SHA-256 e4dbcbb204eacd9e807885ec1cf728bfeb05c8da1159d39958bfbd60341e06ee, v4 schema SHA-256 69b378e5958e460354ec523fe23bfcdae11b1e321388e41bd101ce1d9f20f347, and static review SHA-256 525826e787f1a6b7bc78a74eb8e57981a60c43d5a73620392890c3f44b801408 match their immutable candidate bytes. The generated site records the same packet/proposal/review identities and remains pending and non-executable.",
+    "The immutable W1 packet and approval, adopted W1.A01-W1.A03 and W1.A05-W1.A07, terminal reserved W1.A04, GOV-MIG-0001, revision-12 MI-0001, and all packet, approval-introduction, migration and effective-state commits are present, correctly ordered, and ancestral to the candidate. Sixteen of seventeen declared packet/authority/governed-reference hashes match the candidate Git bytes; ECR-0007-R01-F01 records the sole mismatch.",
+    "W1 remains PAUSED at Wave scope with no lease, active ordinary IN_PROGRESS/REVIEW task, active amendment campaign, or active recovery hold. CAP-07.S01.T02 is BLOCKED and lease-free before product work with an explicit W1.A08 boundary reason. CAP-01.S02.T03, the task-level styling predecessor, is DONE and independently approved.",
+    "The refactor baseline exactly reproduces the immutable W1 packet: 48 unique atomic tasks total 194 points under S=1, M=3, L=5. W1.A08.T01 is the sole L/5-point technical-debt allocation, and 5/194 rounds to 2.6%, below the 15% limit. W1.A08.T02 is separately scoped M-sized new live-product verification/product-quality work; no major refactor or accepted-architecture replacement is authorized.",
+    "The factual implementation baseline is supported by the repository: apps/desktop/src/main.tsx imports the canonical ui-token and shared-component styles before app.css; apps/desktop/src/app.css plus packages/ui-components/src/styles.css contain 317 CSS blocks; app.css declares an 18rem shell rail minimum around the approved 15rem token and a separate 80rem main width; the reference uses its centered page-content contract; and the current visual conformance target is apps/desktop/dist while the functional application is assembled separately under apps/desktop/product-dist.",
+    "The S01/T01/T02 inventory is decision-complete for the authorized correction. It enumerates all currently implemented W1 surfaces, one canonical token source, semantic reusable primitives, logical properties and bounded specificity, the exact desktop/compact/200%-effective viewport matrix, light/dark/reduced-motion/focus/keyboard/zoom/reflow obligations, semantic rather than pixel-identical tolerances, fail-closed live-product and style-reuse negatives, independent task/slice/exit reviews, and an experience/quality checkpoint. Rollback and non-goals prohibit reference-baseline rewrites, tolerance/allowlist escape, product-semantic or architecture expansion, later-Wave pages, major framework churn, release action, and hidden adverse-history deletion.",
+    "The approved RO-UI-ACADEMIC-MINIMAL-1.5 geometry and experience statements are factually grounded: the reference specifies the 4px scale, 64px top bar, 240/72px navigation, 28/20/16px responsive page padding, 16px grid, 24-32px section rhythm, 16/20px cards and 40/44px controls. Reference validation passes all 55 governed files and confirms the reference remains approved and otherwise unchanged.",
+    "Risk-selected checks pass: `planctl ecr review ECR-0007`, `planctl ecr validate ECR-0007`, canonical taskctl validation for 20 capabilities, 117 slices, 365 tasks and 12 gates, generated backlog views, the 491-page planning review site, all 16 amendment review-site tests, governed-reference validation, JSON parsing, exact base arithmetic, ancestry, negative product/reference/architecture scope, and Git whitespace hygiene. These checks do not supersede the independent immutable-Git-byte mismatch in ECR-0007-R01-F01.",
+    "Human exact-commit approval is not legally available for candidate 3d868e579ba23a833f3a71650cd77f5f71c632b3 while ECR-0007-R01-F01 remains open. No approval record, bootstrap, amendment append/materialization, product task, Wave resume, CAP-07.S01.T02 recovery, W1 qualification, G1 approval, local-main integration, remote action, external effect, destructive action, or spend is authorized by this ledger.",
+    "The protected pre-existing artifacts/evidence/W1.A04.B00.json witness was not opened, read, hashed, staged, modified, moved, or deleted during R01."
+  ],
+  "approvalAvailable": false
+}
