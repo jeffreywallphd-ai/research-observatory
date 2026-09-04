@@ -62,9 +62,18 @@ REFERENCE_ONLY_MARKERS = (
     "prototype-index.html",
     "style-guide.html",
     "data-workflow-select",
-    "data-workflow-nav",
-    "data-all-tools",
 )
+IMPLEMENTED_PRODUCT_PAGE_CONTRACTS = frozenset({
+    "application-settings.html",
+    "audit-lineage.html",
+    "help-onboarding.html",
+    "index.html",
+    "intent-contract.html",
+    "new-project.html",
+    "project-settings.html",
+    "projects.html",
+    "task-center.html",
+})
 EXPECTED_CSP = {
     "default-src": ("'self'",),
     "img-src": ("'self'", "data:"),
@@ -207,6 +216,7 @@ def product_build_errors(repo: Path) -> list[str]:
             "CAP-03.S03.T03",
             "CAP-03.S05.T03",
             "CAP-03.S06.T02",
+            "CAP-03.S06.T03",
         ],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
@@ -273,7 +283,9 @@ def product_build_errors(repo: Path) -> list[str]:
         for relative in sorted(EXPECTED_PRODUCT_ARTIFACTS)
     )
     leaked_route_names = sorted(
-        page for page in reference_pages - {"index.html"} if isinstance(page, str) and page in text_artifacts
+        page
+        for page in reference_pages - IMPLEMENTED_PRODUCT_PAGE_CONTRACTS
+        if isinstance(page, str) and page in text_artifacts
     )
     if leaked_route_names:
         errors.append(f"reference-only routes entered the desktop product runtime: {leaked_route_names}")
@@ -878,6 +890,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             "CAP-03.S03.T03",
             "CAP-03.S05.T03",
             "CAP-03.S06.T02",
+            "CAP-03.S06.T03",
         ],
         "referenceOnlyPages": 0,
         "commandFocus": False,
@@ -899,6 +912,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink": False,
         "diagnosticsExactExport": False,
         "projectsWorkflow": False,
+        "adaptiveWorkflowNavigation": False,
         "privacySettingsWorkflow": False,
         "applicationLock": False,
         "applicationLockReconciliation": False,
@@ -932,6 +946,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 details["requests"].append(route.request.url)
                 route.abort()
 
+        def open_desktop_tool(page: Any, name: str) -> None:
+            disclosure = page.locator("[data-all-tools]")
+            if disclosure.get_attribute("open") is None:
+                disclosure.locator("summary").click()
+            disclosure.get_by_role("button", name=name, exact=True).click()
+
         browser_context.route("**/*", serve_application)
         try:
             catalog_errors, catalog_details = component_catalog_browser_errors(repo, browser_context)
@@ -947,7 +967,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             details["pages"] = 1
             details["referenceOnlyPages"] = page.locator(
-                'a[href$=".html"], [data-workflow-select], [data-workflow-nav], [data-all-tools]'
+                'a[href$=".html"], [data-workflow-select]'
             ).count()
             violations = page.evaluate(
                 r"""() => {
@@ -1079,13 +1099,14 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             details["boundaryRecovery"] = boundary.locator("[data-retry-boundary]").is_enabled()
             details["retainedInput"] = command.input_value() == "Retained local draft"
-            page.get_by_role("button", name="Diagnostics & support", exact=True).click()
+            open_desktop_tool(page, "Diagnostics & support")
             page.get_by_role("heading", name="Diagnostics unavailable").wait_for(state="visible", timeout=5_000)
             details["diagnosticsUnavailable"] = (
                 page.locator("[data-diagnostics-workspace]").count() == 1
                 and page.locator("h1").inner_text().strip() == "Diagnostics & support"
                 and "No support data was exported" in page.locator("main").inner_text()
-                and page.locator("[data-workflow-select], [data-workflow-nav], [data-all-tools]").count() == 0
+                and page.locator("[data-workflow-nav]").count() == 0
+                and page.locator("[data-all-tools]").count() == 1
             )
             if page_errors:
                 errors.append(f"desktop product runtime error: {'; '.join(page_errors)}")
@@ -1171,7 +1192,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             diagnostics.goto("http://tauri.localhost/index.html", wait_until="load")
             diagnostics.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
-            diagnostics.get_by_role("button", name="Diagnostics & support", exact=True).click()
+            open_desktop_tool(diagnostics, "Diagnostics & support")
             diagnostics.wait_for_timeout(500)
             if diagnostics.get_by_role("heading", name="Exact support bundle preview").count() != 1:
                 raise ValueError(
@@ -1368,7 +1389,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             projects.goto("http://tauri.localhost/index.html", wait_until="load")
             projects.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
-            projects.get_by_role("button", name="Local projects", exact=True).click()
+            open_desktop_tool(projects, "Local projects")
             projects.locator("#project-parent-directory").fill("C:/Research")
             projects.locator("#project-directory-name").fill("study-one")
             projects.locator("#project-display-name").fill("Study One")
@@ -1386,7 +1407,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             current = projects.locator("[data-current-project]")
             current.get_by_role("button", name="Open project", exact=True).click()
             current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
-            projects.get_by_role("button", name="Project settings", exact=True).click()
+            open_desktop_tool(projects, "Project settings")
             projects.locator("#privacy-network-policy").wait_for(state="visible", timeout=5_000)
             privacy_defaults_valid = (
                 projects.locator("#privacy-network-policy").input_value() == "offline"
@@ -1423,7 +1444,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and privacy_defaults_valid
                 and consent_required
             )
-            projects.get_by_role("button", name="Local projects", exact=True).click()
+            open_desktop_tool(projects, "Local projects")
             current = projects.locator("[data-current-project]")
             current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
             current.get_by_role("button", name="Close project", exact=True).click()
@@ -1461,10 +1482,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             project_sequence_valid = projects.evaluate(
                 """() => JSON.stringify(window.__PROJECT_CALLS__.map((request) => request.path))
                   === JSON.stringify(['/workflow-profiles/catalog','/projects','/projects/open',
-                    '/workflow-profiles/catalog','/projects/close','/projects/archive',
+                    '/workflow-profiles/catalog','/projects/intent','/workflow-profiles/catalog',
+                    '/projects/close','/projects/archive',
                     '/projects/restore','/projects/delete','/projects/open','/projects/close','/projects/open'])
                   && document.querySelector('[data-current-project]')?.textContent?.includes('Revision 3')
-                  && !document.querySelector('[data-workflow-select], [data-workflow-nav], [data-all-tools]')"""
+                  && document.querySelectorAll('[data-all-tools]').length === 1
+                  && !document.querySelector('[data-workflow-select], [data-workflow-nav]')"""
             )
             projects.keyboard.press("Control+K")
             projects.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
@@ -1558,7 +1581,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     recoveryAction: 'none', revision: 0,
                     deleteConfirmation: 'delete:11111111-1111-4111-8111-111111111111'
                   };
-                  const currentIntent = {
+                  let currentIntent = {
                     schemaVersion: '1.0', intentId: '019d5f72-5331-7000-8000-000000000001',
                     revisionId: '019d5f72-5331-7000-8000-000000000002', revision: 1,
                     revisionContentHash: `sha256:${'a'.repeat(64)}`, createdAt: '2026-09-03T12:00:00Z',
@@ -1573,6 +1596,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     revisionRationale: 'Establish the bounded theory workflow.', unresolvedDecisions: [],
                     decisionComplete: true, canRequestAcceptance: true, launchReady: false
                   };
+                  window.__EXPECTED_CATALOG__ = workflowCatalog;
                   window.__LOCK_EMIT__ = (payload) => {
                     const callback = callbacks.get(lockListener);
                     if (callback) callback({event: 'application-lock-changed', id: lockListener, payload});
@@ -1687,6 +1711,38 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                             warnings: ['Ordered workflow, validation checkpoints, and expected outputs will change.'],
                             acknowledgementRequired: true, acknowledgementToken: 'b'.repeat(64)})};
                       }
+                      if (command === 'core_api_request'
+                        && args?.request?.path === '/projects/intent/drafts') {
+                        const body = JSON.parse(args.request.body);
+                        if (body.expectedRevision !== 1 || body.primaryUseCase !== 'systematic-review'
+                          || body.impactAcknowledgement !== 'b'.repeat(64)
+                          || !args.request.idempotencyKey) {
+                          throw new Error('invalid governed intent save request');
+                        }
+                        currentIntent = {
+                          ...currentIntent,
+                          revisionId: '019d5f72-5331-7000-8000-000000000003', revision: 2,
+                          revisionContentHash: `sha256:${'c'.repeat(64)}`,
+                          createdAt: '2026-09-03T12:05:00Z',
+                          status: 'draft', primaryUseCase: body.primaryUseCase,
+                          epistemicMode: 'systematic', researchObjective: body.researchObjective,
+                          contributionIntent: body.contributionIntent, phenomenon: body.phenomenon,
+                          unitOfAnalysis: body.unitOfAnalysis, levelOfAnalysis: body.levelOfAnalysis,
+                          sourceKinds: body.sourceKinds, evidenceTypes: body.evidenceTypes,
+                          languageCodes: body.languageCodes, startYear: body.startYear,
+                          endYear: body.endYear, includePrivateReports: body.includePrivateReports,
+                          noveltyStandard: body.noveltyStandard,
+                          noveltyRationale: body.noveltyRationale,
+                          autonomyLevel: body.autonomyLevel,
+                          stoppingConditions: body.stoppingConditions,
+                          revisionRationale: body.revisionRationale,
+                          unresolvedDecisions: [], decisionComplete: true,
+                          canRequestAcceptance: true, launchReady: false
+                        };
+                        return {status: 200, contentType: 'application/json',
+                          traceId: '0123456789abcdef0123456789abcdef', etag: null,
+                          body: JSON.stringify(currentIntent)};
+                      }
                       throw new Error(`unsupported lock reconciliation command: ${command}`);
                     }
                   };
@@ -1694,7 +1750,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             lock_reconciliation.goto("http://tauri.localhost/index.html", wait_until="load")
             lock_reconciliation.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
-            lock_reconciliation.get_by_role("button", name="Local projects", exact=True).click()
+            open_desktop_tool(lock_reconciliation, "Local projects")
             lock_reconciliation.locator("#project-parent-directory").fill("C:/Private")
             lock_reconciliation.locator("#project-directory-name").fill("sensitive-study")
             lock_reconciliation.locator("#project-display-name").fill("Sensitive Study")
@@ -1702,7 +1758,26 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             lock_reconciliation.locator("#project-primary-use-case").select_option("theory-synthesis")
             lock_reconciliation.get_by_role("button", name="Create project", exact=True).click()
             lock_reconciliation.locator("[data-current-project]").wait_for(timeout=5_000)
-            lock_reconciliation.get_by_role("button", name="Research intent", exact=True).click()
+            lock_reconciliation.locator("[data-workflow-nav]").wait_for(timeout=5_000)
+            initial_adaptive_navigation = lock_reconciliation.evaluate(
+                """() => {
+                  const profile = window.__EXPECTED_CATALOG__.profiles.find(
+                    (candidate) => candidate.profileId === 'theory-synthesis');
+                  const actual = Array.from(document.querySelectorAll('[data-workflow-stage-key]'))
+                    .map((node) => node.getAttribute('data-workflow-stage-key'));
+                  const context = document.querySelector('[data-workflow-context]')?.textContent ?? '';
+                  return JSON.stringify(actual) === JSON.stringify(profile.stages.map((stage) => stage.stageKey))
+                    && document.querySelectorAll('[data-workflow-nav] [aria-current=step]').length === 1
+                    && document.querySelector('[data-workflow-nav] [data-stage-state=current]')
+                      ?.getAttribute('data-workflow-stage-key') === profile.stages[0].stageKey
+                    && context.includes(profile.stages[0].rationale)
+                    && profile.expectedOutputs.every((output) => context.includes(output))
+                    && context.includes('Quality gate · Unknown')
+                    && document.querySelectorAll('[data-all-tools] li').length === 8
+                    && !document.querySelector('a[href$=".html"]');
+                }"""
+            )
+            open_desktop_tool(lock_reconciliation, "Research intent")
             try:
                 lock_reconciliation.locator("#intent-use-case").wait_for(timeout=5_000)
             except PlaywrightError:
@@ -1728,6 +1803,35 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and "added stopping condition: coverage-threshold"
                 in lock_reconciliation.locator("[data-intent-workspace]").inner_text()
             )
+            unsaved_profile_retained = lock_reconciliation.evaluate(
+                """() => {
+                  const expected = window.__EXPECTED_CATALOG__.profiles.find(
+                    (candidate) => candidate.profileId === 'theory-synthesis').stages.map(
+                      (stage) => stage.stageKey);
+                  const actual = Array.from(document.querySelectorAll('[data-workflow-stage-key]'))
+                    .map((node) => node.getAttribute('data-workflow-stage-key'));
+                  return JSON.stringify(actual) === JSON.stringify(expected);
+                }"""
+            )
+            lock_reconciliation.locator(".intent-impact input[type=checkbox]").check()
+            lock_reconciliation.locator("#intent-rationale").fill("Persist the reviewed systematic workflow.")
+            lock_reconciliation.get_by_role("button", name="Save draft revision", exact=True).click()
+            lock_reconciliation.wait_for_function(
+                """() => {
+                  const expected = window.__EXPECTED_CATALOG__.profiles.find(
+                    (candidate) => candidate.profileId === 'systematic-review').stages.map(
+                      (stage) => stage.stageKey);
+                  const actual = Array.from(document.querySelectorAll('[data-workflow-stage-key]'))
+                    .map((node) => node.getAttribute('data-workflow-stage-key'));
+                  return JSON.stringify(actual) === JSON.stringify(expected)
+                    && document.querySelector('[data-workflow-nav] [data-stage-state=current]')
+                      ?.getAttribute('data-workflow-stage-key') === expected[0];
+                }""",
+                timeout=5_000,
+            )
+            persisted_profile_applied = "Revision 2" in lock_reconciliation.locator(
+                "[data-intent-workspace]"
+            ).inner_text()
             lock_reconciliation.locator("#intent-objective").fill("Unsaved workflow position")
             topbar_settings = lock_reconciliation.get_by_role("button", name="Private profile", exact=True)
             topbar_settings.click()
@@ -1747,10 +1851,32 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             sidebar_settings.click()
             lock_reconciliation.get_by_role("button", name="Return", exact=True).click()
             lock_reconciliation.wait_for_function(
-                "document.activeElement?.textContent?.trim() === 'Application settings'", timeout=5_000
+                "document.activeElement?.getAttribute('aria-label') === 'Application settings'", timeout=5_000
             )
             sidebar_focus = sidebar_settings.evaluate("element => document.activeElement === element")
-            lock_reconciliation.get_by_role("button", name="Project home", exact=True).click()
+            open_desktop_tool(lock_reconciliation, "Project home")
+            lock_reconciliation.locator("[data-supporting-tool]").wait_for(timeout=5_000)
+            support_return = lock_reconciliation.get_by_role(
+                "button", name="Return to current step · Research Intent", exact=True
+            )
+            supporting_return_valid = (
+                support_return.count() == 1
+                and "Supporting tool · Project home"
+                in lock_reconciliation.locator("[data-supporting-tool]").inner_text()
+            )
+            support_return.click()
+            lock_reconciliation.locator("#intent-use-case").wait_for(timeout=5_000)
+            supporting_return_valid = supporting_return_valid and lock_reconciliation.evaluate(
+                """() => document.querySelector('[data-supporting-tool]') === null
+                  && document.querySelector('[data-workflow-nav] [data-stage-state=current]')
+                    ?.getAttribute('data-workflow-stage-key') === 'intent-contract-1'"""
+            )
+            details["adaptiveWorkflowNavigation"] = (
+                initial_adaptive_navigation
+                and unsaved_profile_retained
+                and persisted_profile_applied
+                and supporting_return_valid
+            )
             lock_reconciliation.keyboard.press("Control+K")
             lock_reconciliation.locator("#shell-command").fill("application settings")
             command_settings = lock_reconciliation.get_by_role("button", name="Open application settings", exact=True)
@@ -2164,6 +2290,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink",
         "diagnosticsExactExport",
         "projectsWorkflow",
+        "adaptiveWorkflowNavigation",
         "privacySettingsWorkflow",
         "applicationLock",
         "applicationLockReconciliation",

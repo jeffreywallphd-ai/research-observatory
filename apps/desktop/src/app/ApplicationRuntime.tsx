@@ -3,7 +3,13 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 
 import { Button, Field, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
-import type { ProjectProjection } from "@research-observatory/contracts/core-api";
+import {
+  createCoreApiClient,
+  type CoreApiTransport,
+  type IntentWorkspaceProjection,
+  type ProjectProjection,
+  type WorkflowProfileCatalogProjection,
+} from "@research-observatory/contracts/core-api";
 
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
 import { ApplicationSettingsWorkspace } from "./ApplicationSettingsWorkspace";
@@ -15,9 +21,25 @@ import {
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 import { AuditLineageWorkspace } from "./AuditLineageWorkspace";
 import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
-import { ProjectsWorkspace } from "./ProjectsWorkspace";
+import { packagedProjectTransport, ProjectsWorkspace } from "./ProjectsWorkspace";
 import { IntentWorkspace } from "./IntentWorkspace";
 import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
+import {
+  WorkflowContextBar,
+  WorkflowNavigation,
+  type WorkflowNavigationLoadState,
+} from "./WorkflowNavigation";
+import {
+  WorkflowContextLoader,
+  createSupportingReturn,
+  createWorkflowAuthoritySnapshot,
+  selectPrimaryStage,
+  supportingReturnMatches,
+  workspaceClassification,
+  type ApplicationWorkspace,
+  type SupportingReturnContext,
+  type WorkflowAuthoritySnapshot,
+} from "./workflowNavigationModel";
 import {
   applicationUnlockFailureMessage,
   decodeApplicationUnlockAttempt,
@@ -251,15 +273,24 @@ interface CommandDefinition {
   readonly run: () => void;
 }
 
-type ApplicationWorkspace = "projects" | "home" | "intent" | "tasks" | "audit" | "settings" | "application-settings" | "diagnostics";
+interface ApplicationRuntimeProps {
+  readonly workflowTransport?: CoreApiTransport;
+}
 
-export function ApplicationRuntime(): ReactNode {
+export function ApplicationRuntime({ workflowTransport = packagedProjectTransport }: ApplicationRuntimeProps = {}): ReactNode {
   const [theme, setTheme] = useState<ApplicationTheme>(() => storedTheme(globalThis.window?.localStorage ?? null));
   const [query, setQuery] = useState("");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
   const [workspace, setWorkspace] = useState<ApplicationWorkspace>("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
+  const workflowClient = useMemo(() => createCoreApiClient(workflowTransport), [workflowTransport]);
+  const [workflowCatalog, setWorkflowCatalog] = useState<WorkflowProfileCatalogProjection | null>(null);
+  const [workflowIntent, setWorkflowIntent] = useState<IntentWorkspaceProjection | null>(null);
+  const [workflowAuthority, setWorkflowAuthority] = useState<WorkflowAuthoritySnapshot | null>(null);
+  const [workflowLoadState, setWorkflowLoadState] = useState<WorkflowNavigationLoadState>("unavailable");
+  const [workflowFailure, setWorkflowFailure] = useState<string | null>(null);
+  const [supportingReturn, setSupportingReturn] = useState<SupportingReturnContext | null>(null);
   const [applicationLock, setApplicationLock] = useState<ApplicationLockSnapshot>(() => hasNativeRuntime()
     ? {
         ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
@@ -280,6 +311,8 @@ export function ApplicationRuntime(): ReactNode {
   const applicationSettingsTriggerRef = useRef<HTMLButtonElement>(null);
   const applicationSettingsRestoreFocusRef = useRef<HTMLElement | null>(null);
   const previousWorkspaceRef = useRef<ApplicationWorkspace>("home");
+  const workspaceRef = useRef<ApplicationWorkspace>("home");
+  const workflowContextLoaderRef = useRef(new WorkflowContextLoader());
   const applicationLockRef = useRef(applicationLock);
   const nativeLockSnapshotRef = useRef<ApplicationLockSnapshot | null>(null);
   const lockFailClosedRef = useRef(false);
@@ -294,7 +327,14 @@ export function ApplicationRuntime(): ReactNode {
     applicationLockRef.current = snapshot;
     setApplicationLock(snapshot);
     if (snapshot.state === "locked") {
+      workflowContextLoaderRef.current.invalidate();
       setCurrentProject(null);
+      setWorkflowCatalog(null);
+      setWorkflowIntent(null);
+      setWorkflowAuthority(null);
+      setWorkflowLoadState("unavailable");
+      setWorkflowFailure(null);
+      setSupportingReturn(null);
       setQuery("");
       setWorkspace("home");
       setShortcutsOpen(false);
@@ -416,6 +456,124 @@ export function ApplicationRuntime(): ReactNode {
     globalThis.window?.requestAnimationFrame(() => setAnnouncement(message));
   }, []);
 
+  useEffect(() => {
+    workspaceRef.current = workspace;
+  }, [workspace]);
+
+  useEffect(() => {
+    workflowContextLoaderRef.current.invalidate();
+    setWorkflowCatalog(null);
+    setWorkflowIntent(null);
+    setWorkflowAuthority(null);
+    setSupportingReturn(null);
+    setWorkflowFailure(null);
+    if (!currentProject) {
+      setWorkflowLoadState("unavailable");
+      return;
+    }
+    if (!currentProject.open || currentProject.compatibilityState !== "compatible") {
+      setWorkflowLoadState("unavailable");
+      setWorkflowFailure("Open a compatible local project before loading its guided workflow.");
+      return;
+    }
+    setWorkflowLoadState("loading");
+    void workflowContextLoaderRef.current.load(currentProject, workflowClient).then((result) => {
+      if (result.kind === "stale") return;
+      if (result.kind === "error") {
+        setWorkflowLoadState("error");
+        setWorkflowFailure(result.message);
+        return;
+      }
+      if (result.kind === "unavailable") {
+        setWorkflowLoadState("unavailable");
+        setWorkflowFailure(result.reason === "no-current-intent"
+          ? "This project has no current Research Intent. Define and save it before guided workflow navigation can begin."
+          : result.reason === "project-unavailable"
+            ? "Open a compatible local project before loading its guided workflow."
+            : "The local Core service returned workflow context for a different project or an unknown profile. Guided navigation remains unavailable.");
+        return;
+      }
+      setWorkflowCatalog(result.catalog);
+      setWorkflowIntent(result.intent);
+      setWorkflowAuthority(result.authority);
+      setWorkflowLoadState("ready");
+      setWorkflowFailure(null);
+      if (workspaceClassification(result.authority, workspaceRef.current).role === "supporting") {
+        setSupportingReturn(createSupportingReturn(result.authority, workspaceRef.current));
+      }
+    });
+    return () => workflowContextLoaderRef.current.invalidate();
+  }, [currentProject, workflowClient]);
+
+  const applyPersistedIntentWorkspace = useCallback((next: IntentWorkspaceProjection) => {
+    const project = currentProject;
+    const catalog = workflowCatalog;
+    const currentAuthority = workflowAuthority;
+    if (!project || !catalog) return;
+    workflowContextLoaderRef.current.invalidate();
+    const preserveStage = currentAuthority && next.current && currentAuthority.profileId === next.current.primaryUseCase
+      ? currentAuthority.currentStageKey
+      : null;
+    const nextAuthority = createWorkflowAuthoritySnapshot(project, catalog, next, preserveStage);
+    setWorkflowIntent(next);
+    setWorkflowAuthority(nextAuthority);
+    setWorkflowLoadState(nextAuthority ? "ready" : "unavailable");
+    setWorkflowFailure(nextAuthority
+      ? null
+      : "The saved Research Intent did not resolve to an authenticated workflow profile. Guided navigation remains unavailable.");
+    setSupportingReturn(null);
+  }, [currentProject, workflowAuthority, workflowCatalog]);
+
+  const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace) => {
+    const authority = workflowAuthority;
+    if (!authority) {
+      setSupportingReturn(null);
+      setWorkspace(nextWorkspace);
+      return;
+    }
+    const classification = workspaceClassification(authority, nextWorkspace);
+    if (classification.role === "supporting") {
+      setSupportingReturn(createSupportingReturn(authority, nextWorkspace));
+    } else {
+      const stageKey = classification.stageKeys.includes(authority.currentStageKey)
+        ? authority.currentStageKey
+        : classification.stageKeys[0];
+      const selected = stageKey ? selectPrimaryStage(authority, stageKey) : null;
+      if (selected) setWorkflowAuthority(selected.authority);
+      setSupportingReturn(null);
+    }
+    setWorkspace(nextWorkspace);
+  }, [workflowAuthority]);
+
+  const navigateToStage = useCallback((stageKey: string) => {
+    if (!workflowAuthority) return;
+    const selected = selectPrimaryStage(workflowAuthority, stageKey);
+    if (!selected?.workspace) {
+      announce("That workflow step is not implemented in this version. The current primary step did not change.");
+      return;
+    }
+    setWorkflowAuthority(selected.authority);
+    setSupportingReturn(null);
+    setWorkspace(selected.workspace);
+    announce(`${selected.authority.profile.stages.find((stage) => stage.stageKey === stageKey)?.label ?? "Workflow step"} opened. No completion or checkpoint was recorded.`);
+    globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
+  }, [announce, workflowAuthority]);
+
+  const returnToCurrentWorkflowStage = useCallback(() => {
+    if (!supportingReturn || !workflowAuthority) return;
+    const selected = supportingReturnMatches(supportingReturn, workflowAuthority)
+      ? selectPrimaryStage(workflowAuthority, workflowAuthority.currentStageKey)
+      : null;
+    if (!selected?.workspace) {
+      announce("The supporting context is stale. Reopen a primary workflow step before returning.");
+      return;
+    }
+    setSupportingReturn(null);
+    setWorkspace(selected.workspace);
+    announce(`Returned to current workflow step: ${selected.authority.profile.stages.find((stage) => stage.stageKey === selected.authority.currentStageKey)?.label ?? "current step"}.`);
+    globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
+  }, [announce, supportingReturn, workflowAuthority]);
+
   const applyTheme = useCallback((next: ApplicationTheme) => {
     setTheme(next);
     document.documentElement.dataset.theme = next;
@@ -483,20 +641,20 @@ export function ApplicationRuntime(): ReactNode {
       }
       if (commandShortcut) {
         event.preventDefault();
-        setWorkspace("home");
+        navigateWorkspaceState("home");
         globalThis.window?.requestAnimationFrame(() => commandRef.current?.focus());
       } else if (helpShortcut) {
         event.preventDefault();
         openShortcuts();
       } else if (homeShortcut) {
         event.preventDefault();
-        setWorkspace("home");
+        navigateWorkspaceState("home");
         globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
       }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [applicationSettingsBlocked, closeShortcuts, lockedRecoveryConfirmation, openShortcuts, shortcutsOpen]);
+  }, [applicationSettingsBlocked, closeShortcuts, lockedRecoveryConfirmation, navigateWorkspaceState, openShortcuts, shortcutsOpen]);
 
   const lockNow = useCallback(() => {
     const locked: ApplicationLockSnapshot = {
@@ -588,12 +746,12 @@ export function ApplicationRuntime(): ReactNode {
       applicationSettingsRestoreFocusRef.current = trigger
         ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
     }
-    setWorkspace("application-settings");
+    navigateWorkspaceState("application-settings");
     announce("Application Security and sign-in settings opened.");
-  }, [announce, workspace]);
+  }, [announce, navigateWorkspaceState, workspace]);
 
   const returnFromApplicationSettings = useCallback(() => {
-    setWorkspace(previousWorkspaceRef.current === "application-settings" ? "home" : previousWorkspaceRef.current);
+    navigateWorkspaceState(previousWorkspaceRef.current === "application-settings" ? "home" : previousWorkspaceRef.current);
     announce("Returned to the previous workspace.");
     const restore = applicationSettingsRestoreFocusRef.current;
     applicationSettingsRestoreFocusRef.current = null;
@@ -601,7 +759,7 @@ export function ApplicationRuntime(): ReactNode {
       if (restore?.isConnected) restore.focus();
       else applicationSettingsTriggerRef.current?.focus();
     });
-  }, [announce]);
+  }, [announce, navigateWorkspaceState]);
 
   const commands = useMemo<readonly CommandDefinition[]>(() => [
     {
@@ -609,7 +767,7 @@ export function ApplicationRuntime(): ReactNode {
       label: "Open local projects",
       description: "Create, open, archive, restore, or delete a governed local project package.",
       run: () => {
-        setWorkspace("projects");
+        navigateWorkspaceState("projects");
         announce("Local projects workspace opened.");
       },
     },
@@ -618,7 +776,7 @@ export function ApplicationRuntime(): ReactNode {
       label: "Open research intent",
       description: "Define the governed research objective, scope, evidence policy, novelty standard, and stopping logic.",
       run: () => {
-        setWorkspace("intent");
+        navigateWorkspaceState("intent");
         announce("Research Intent Contract workspace opened.");
       },
     },
@@ -627,7 +785,7 @@ export function ApplicationRuntime(): ReactNode {
       label: "Open project settings",
       description: "Review local privacy, egress, retention, and cache cleanup controls.",
       run: () => {
-        setWorkspace("settings");
+        navigateWorkspaceState("settings");
         announce("Project privacy and retention settings opened.");
       },
     },
@@ -636,7 +794,7 @@ export function ApplicationRuntime(): ReactNode {
       label: "Open Task Center",
       description: "Inspect durable local workflows, resource pools, progress, decisions, retry, cancellation, and logs.",
       run: () => {
-        setWorkspace("tasks");
+        navigateWorkspaceState("tasks");
         announce("Task Center opened.");
       },
     },
@@ -651,7 +809,7 @@ export function ApplicationRuntime(): ReactNode {
       label: "Open audit & lineage",
       description: "Trace exact output revisions through sources, transformations, configurations, actors, and audit events.",
       run: () => {
-        setWorkspace("audit");
+        navigateWorkspaceState("audit");
         announce("Audit and lineage workspace opened.");
       },
     },
@@ -660,7 +818,7 @@ export function ApplicationRuntime(): ReactNode {
       label: "Open diagnostics & support",
       description: "Review local health and a redacted support bundle before export.",
       run: () => {
-        setWorkspace("diagnostics");
+        navigateWorkspaceState("diagnostics");
         announce("Diagnostics and support workspace opened.");
       },
     },
@@ -676,7 +834,7 @@ export function ApplicationRuntime(): ReactNode {
       description: "Open the keyboard command reference.",
       run: () => openShortcuts(commandRef.current),
     },
-  ], [announce, applyTheme, openApplicationSettings, openShortcuts, theme]);
+  ], [announce, applyTheme, navigateWorkspaceState, openApplicationSettings, openShortcuts, theme]);
   const normalizedQuery = query.trim().toLowerCase();
   const visibleCommands = commands.filter(({ label, description }) =>
     !normalizedQuery || `${label} ${description}`.toLowerCase().includes(normalizedQuery));
@@ -723,20 +881,36 @@ export function ApplicationRuntime(): ReactNode {
 
       <div className="shell-body">
         <aside className="sidebar" aria-label="Available workspaces">
-          <nav>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "intent" ? "page" : undefined} onClick={() => setWorkspace("intent")}>Research intent</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "tasks" ? "page" : undefined} onClick={() => setWorkspace("tasks")}>Task Center</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "audit" ? "page" : undefined} onClick={() => setWorkspace("audit")}>Audit &amp; lineage</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "application-settings" ? "page" : undefined} onClick={(event) => openApplicationSettings(event.currentTarget)}>Application settings</button>
-            <button type="button" disabled={applicationSettingsBlocked} aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
-          </nav>
+          <WorkflowNavigation
+            authority={workflowAuthority}
+            currentWorkspace={workspace}
+            loadState={workflowLoadState}
+            failure={workflowFailure}
+            supportingReturn={supportingReturn}
+            disabled={applicationSettingsBlocked}
+            showContext={false}
+            onSelectStage={navigateToStage}
+            onSelectWorkspace={(nextWorkspace) => {
+              if (nextWorkspace === "application-settings") openApplicationSettings();
+              else {
+                navigateWorkspaceState(nextWorkspace);
+                announce(`${nextWorkspace === "home" ? "Project home" : nextWorkspace} opened.`);
+              }
+            }}
+            onReturn={returnToCurrentWorkflowStage}
+          />
           <p>Only implemented capabilities appear here.</p>
         </aside>
 
         <main id="main-content" ref={homeRef} tabIndex={-1}>
+          <WorkflowContextBar
+            authority={workflowAuthority}
+            currentWorkspace={workspace}
+            supportingReturn={supportingReturn}
+            disabled={applicationSettingsBlocked}
+            onSelectStage={navigateToStage}
+            onReturn={returnToCurrentWorkflowStage}
+          />
           <div
             className="workspace-layer"
             hidden={workspace === "application-settings"}
@@ -750,7 +924,13 @@ export function ApplicationRuntime(): ReactNode {
               onProjectChange={setCurrentProject}
             />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "intent" ? (
-            <IntentWorkspace project={currentProject} announce={announce} />
+            <IntentWorkspace
+              project={currentProject}
+              announce={announce}
+              initialCatalog={workflowCatalog ?? undefined}
+              initialWorkspace={workflowIntent ?? undefined}
+              onWorkspaceChange={applyPersistedIntentWorkspace}
+            />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "tasks" ? (
             <TaskCenterWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (

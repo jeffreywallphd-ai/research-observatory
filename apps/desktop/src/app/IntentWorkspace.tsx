@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 
 import {
   CoreApiClientError,
@@ -168,8 +168,9 @@ interface IntentWorkspaceProps {
   readonly project: ProjectProjection | null;
   readonly announce: (message: string) => void;
   readonly transport?: CoreApiTransport;
-  readonly initialWorkspace?: IntentWorkspaceProjection;
-  readonly initialCatalog?: WorkflowProfileCatalogProjection;
+  readonly initialWorkspace?: IntentWorkspaceProjection | undefined;
+  readonly initialCatalog?: WorkflowProfileCatalogProjection | undefined;
+  readonly onWorkspaceChange?: (workspace: IntentWorkspaceProjection) => void;
 }
 
 interface IntentFormState {
@@ -246,7 +247,14 @@ function idempotencyKey(): string {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export function IntentWorkspace({ project, announce, transport = packagedProjectTransport, initialWorkspace, initialCatalog }: IntentWorkspaceProps): ReactNode {
+export function IntentWorkspace({
+  project,
+  announce,
+  transport = packagedProjectTransport,
+  initialWorkspace,
+  initialCatalog,
+  onWorkspaceChange,
+}: IntentWorkspaceProps): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
   const acceptanceCoordinator = useMemo(() => new IntentAcceptanceCoordinator(client), [client]);
   const availability = intentWorkspaceAvailability(project);
@@ -262,6 +270,11 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
   const [showHistory, setShowHistory] = useState(false);
   const [busy, setBusy] = useState<"load" | "preview" | "save" | "accept" | null>(null);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
+  const onWorkspaceChangeRef = useRef(onWorkspaceChange);
+
+  useEffect(() => {
+    onWorkspaceChangeRef.current = onWorkspaceChange;
+  }, [onWorkspaceChange]);
 
   useEffect(() => {
     if (initialCatalog) {
@@ -303,6 +316,7 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
       if (!cancelled) {
         setWorkspace(next);
         setForm(initialForm(next.current, null));
+        onWorkspaceChangeRef.current?.(next);
       }
     }).catch((error: unknown) => {
       if (!cancelled) setFailure(safeFailure(error));
@@ -376,15 +390,17 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
       stoppingConditions: form.stoppingConditions,
       revisionRationale: form.revisionRationale,
     }, idempotencyKey()).then((current) => {
-      setWorkspace((previous) => ({
+      const nextWorkspace: IntentWorkspaceProjection = {
         schemaVersion: "1.0",
-        projectId: previous?.projectId ?? project.projectId,
+        projectId: workspace.projectId,
         current,
         history: [
           { revision: current.revision, revisionId: current.revisionId, revisionContentHash: current.revisionContentHash, createdAt: current.createdAt, primaryUseCase: current.primaryUseCase, status: current.status, unresolvedDecisionCount: current.unresolvedDecisions.length },
-          ...(previous?.history ?? []),
+          ...workspace.history,
         ],
-      }));
+      };
+      setWorkspace(nextWorkspace);
+      onWorkspaceChangeRef.current?.(nextWorkspace);
       setForm((currentForm) => ({ ...currentForm, revisionRationale: "" }));
       setFormDirty(false);
       setAcceptanceConfirmed(false);
@@ -413,7 +429,9 @@ export function IntentWorkspace({ project, announce, transport = packagedProject
     setFailure(null);
     void acceptanceCoordinator.execute().then((result) => {
       if (result.status === "accepted") {
-        setWorkspace((previous) => acceptedIntentWorkspace(previous, project?.projectId ?? "", result.accepted));
+        const nextWorkspace = acceptedIntentWorkspace(workspace, project?.projectId ?? "", result.accepted);
+        setWorkspace(nextWorkspace);
+        onWorkspaceChangeRef.current?.(nextWorkspace);
         setForm(initialForm(result.accepted, catalog));
         setFormDirty(false);
         setAcceptanceConfirmed(false);
