@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ECR-0007 Align production styling with Academic Minimal 1.5 - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="enabler-detail">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="waves">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities" hidden>
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves">
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item active" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+</aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">ECR-0007</span></nav>
+
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">W1.A08 · W1</span><h1>ECR-0007 — Align production styling with Academic Minimal 1.5</h1></div><span class="status status-pending">Pending</span></div>
+  <p>product-scope-security-experience. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>pending-approval / non-executable</dd></div><div><dt>Human approval</dt><dd>PENDING</dd></div><div><dt>Materialization lifecycle</dt><dd>NOT_MATERIALIZED</dd></div><div><dt>Amendment campaign</dt><dd>NONE</dd></div></dl>
+  <p>No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, amendment, Wave-resume, or release-gate authority.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0007.md</code></td><td><code>e4dbcbb204eacd9e807885ec1cf728bfeb05c8da1159d39958bfbd60341e06ee</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0007.packet.json</code></td><td><code>a397f43c2eaaca765865b2fade8f1a57c0006f45da28e112b2bed3d6d9ab52cb</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0007-review.html</code></td><td><code>525826e787f1a6b7bc78a74eb8e57981a60c43d5a73620392890c3f44b801408</code></td></tr>
+  <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
+
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria"><li>None</li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody><tr><td colspan="4">Not submitted</td></tr></tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W1 base approval</th><td><code>594e63be501711d67d17a4aef176bb9b6a8748be</code></td><td><code>901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701</code></td><td>Original complete Wave packet</td></tr><tr><th>W1.A01</th><td><code>c5bbd97c0cdc665eecb973f5862478ef7be97752</code></td><td><code>a20685b90532c60e0286e5e05f68b46c613e935d</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A02</th><td><code>57d73bcf314ea6aab38b8056ead118d6ef270921</code></td><td><code>6e9c440102a5c463bb35d81f4dbdc3453d9ce029</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A03</th><td><code>ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4</code></td><td><code>95c007b58619dfd82b5f443eea3d8e71e7efe082</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A04 · reserved</th><td><code>77896d26ddac0569e286fe8481c0676408c716b1</code></td><td><code>4f92ba991fd19a2c0ae413b34416a2901d7f84b9</code></td><td>Approved but unmaterialized; superseded by GOV-MIG-0001 and never executable here</td></tr><tr><th>W1.A05</th><td><code>25584d82ce5d6bd55e476cd746100eef0790a33d</code></td><td><code>1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A06</th><td><code>f48f11ed12c10d26acb1b80053e1a823c3ee5c16</code></td><td><code>6e4581274972b7c324e5394fb317975ff063ecbe</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A07</th><td><code>43e317be1e644c77e653ff5f121425d6e2cde2ef</code></td><td><code>72052b7f7781dcfc83a1a2c8dae362b899b114d5</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>GOV-MIG-0001</th><td><code>d8adf48e9c2e0319e4ece573a9381f6ec305310e</code></td><td><code>4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d</code></td><td>Post-migration governance authority; does not grant product execution</td></tr><tr><th>W1.A08</th><td><code>a397f43c2eaaca765865b2fade8f1a57c0006f45da28e112b2bed3d6d9ab52cb</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <p>Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. W1.A08 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W1.A08.B00</code> and the exact bounded task inventory below.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed slice contributions</h2>
+  <p>These slices are packet data, not hard-coded review-page inventory. They remain non-executable until exact approval and independently approved bootstrap materialization.</p>
+  <details class="plan-details"><summary>W1.A08.S01 — Production styling alignment and live-product conformance</summary><p>Bring all currently implemented W1 desktop surfaces into coherent Academic Minimal 1.5 visual and interaction alignment through reusable styling primitives and a deterministic conformance boundary over the real React product.</p><p><strong>Work type:</strong> mixed-refactor-and-new. <strong>Tasks:</strong> W1.A08.T01, W1.A08.T02. <strong>Refactor tasks:</strong> W1.A08.T01.</p><ul class="gate-criteria"><li>Every currently implemented W1 desktop surface uses the approved token scale and a coherent hierarchy for shell, page, section, panel, form, table, dialog, notice, and action spacing at desktop, compact-desktop, and 200%-effective viewports.</li><li>Shared semantic primitives own common geometry once wherever reuse is effective; page-specific selectors express only genuine composition differences, and production sources contain no inline styling or undocumented duplicate/raw-geometry exception.</li><li>The functional React/Tauri frontend is checked directly for computed geometry, responsive behavior, light/dark themes, reduced motion, accessibility, interaction preservation, and representative visual composition; rendering copied reference HTML alone cannot satisfy the gate.</li><li>RO-UI-ACADEMIC-MINIMAL-1.5 remains byte-identical and conformance is semantic/tolerance-based rather than a pixel-identical requirement for illustrative copy or composition.</li><li>Both tasks and the accumulated slice receive independent commit-bound review with all blocking findings closed before amendment exit and the W1 experience/quality checkpoint.</li></ul></details>
+</section>
+<section class="review-toolbar">
+  <h2>Refactor allocation and planning exception</h2>
+  <dl class="summary-grid"><div><dt>Approved-Wave baseline</dt><dd>194 points at <code>594e63be501711d67d17a4aef176bb9b6a8748be</code></dd></div><div><dt>Refactor allocation</dt><dd>5 points / 2.6%</dd></div><div><dt>Policy</dt><dd>standard-15-percent</dd></div><div><dt>Method</dt><dd>Reuse the immutable itemized 194-point approved-W1 baseline from packet commit 594e63be501711d67d17a4aef176bb9b6a8748be. Convert S=1, M=3, and L=5. W1.A08.T01 is the sole technical-debt refactor allocation at 5 points; W1.A08.T02 is new live-product verification and product-quality work.</dd></div></dl>
+  <table><thead><tr><th>Refactor task</th><th>Estimate</th><th>Points</th></tr></thead><tbody><tr><th><code>W1.A08.T01</code></th><td>L</td><td>5</td></tr></tbody></table>
+  <p>Standard refactor limit: 15%</p>
+</section>
+<section class="review-toolbar">
+  <h2>Governed experience proposal</h2>
+  <p>Reference <code>RO-UI-ACADEMIC-MINIMAL-1.5</code> is already human-approved. Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve a new reference or authorize bootstrap materialization of reference approval.</p>
+  <ul class="gate-criteria"><li><a href="file:///C:/workspace/research-observatory/design/ui-reference/REFERENCE_MANIFEST.yaml">design/ui-reference/REFERENCE_MANIFEST.yaml</a> — <code>893c3382ffaf1c031531e5b2bd05b79e2a4f9a8efaa20e5bedca57b3589642f1</code></li><li><a href="file:///C:/workspace/research-observatory/design/ui-reference/APPROVAL.yaml">design/ui-reference/APPROVAL.yaml</a> — <code>7f226d1f24080dee37717cd99e6f73549c8f3dda61e113d07d3a91731d9119bc</code></li><li><a href="file:///C:/workspace/research-observatory/design/ui-reference/STYLE_GUIDE.md">design/ui-reference/STYLE_GUIDE.md</a> — <code>6acc9f1be97ae2a1542c16fb30e7dd45aebb587cee6df425135e9f89a9a84565</code></li><li><a href="file:///C:/workspace/research-observatory/design/ui-reference/assets/tokens.css">design/ui-reference/assets/tokens.css</a> — <code>475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230</code></li><li><a href="file:///C:/workspace/research-observatory/design/ui-reference/assets/app.css">design/ui-reference/assets/app.css</a> — <code>15ae6ccdce2d0a147a220b1a723e1190b7c05123ddad8ba98c0fdb691a41d5ee</code></li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed bounded inventory</h2><ul class="wave-slice-list"><li><span><strong>W1.A08.T01 — Consolidate and align production styling</strong><small>Consolidate shared production styling primitives and align the application shell plus every currently implemented W1 desktop surface with the approved Academic Minimal 1.5 spacing, geometry, hierarchy, responsive, theme, focus, and reduced-motion character.</small><small>Estimate L · dependencies: W1.A08.B00, CAP-01.S02.T03</small></span><span class="status status-pending">Pending</span></li><li><span><strong>W1.A08.T02 — Qualify live-product styling conformance</strong><small>Add a deterministic verification boundary over the actual functional React desktop product that prevents copied-reference success, style duplication, geometry drift, responsive regressions, and inaccessible visual states from satisfying W1 styling conformance.</small><small>Estimate M · dependencies: W1.A08.B00, W1.A08.T01</small></span><span class="status status-pending">Pending</span></li></ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria"><li>The exact W1 base, adopted W1.A01-W1.A03 and W1.A05-W1.A07, terminal reserved W1.A04, GOV-MIG-0001, revision-12 MI-0001, and quiescent paused Wave boundary remain complete, ordered, hash-bound, ancestral, and unchanged.</li><li>W1.A08 remains non-executable before exact human approval; B00 is the sole lawful first mutation after approval and may append only the hash-bound S01/T01/T02 projection while W1 remains paused and CAP-07.S01.T02 remains blocked.</li><li>All currently implemented W1 desktop surfaces align generally with the approved Academic Minimal spacing, geometry, hierarchy, density, responsive, theme, focus, and reduced-motion contracts without imposing pixel identity on illustrative copy or composition.</li><li>Common production styling is consolidated into reusable token-driven semantic primitives wherever effective, with no inline styling, second token source, or unexplained materially duplicated declaration group.</li><li>The actual functional React product receives deterministic style-reuse, computed-geometry, responsive, accessibility, interaction, and representative visual checks; copied reference HTML alone cannot satisfy live-product conformance.</li><li>RO-UI-ACADEMIC-MINIMAL-1.5 and all accepted architecture, product semantics, security/privacy/data/service/model boundaries, later-Wave scope, and release criteria remain unchanged.</li><li>The sole refactor allocation is W1.A08.T01 at 5 of 194 approved-W1 points (2.6%), within the standard 15% cap; W1.A08.T02 is new verification/product-quality work and no major refactor enters by stealth.</li><li>Bootstrap, both tasks, the slice, and amendment exit receive independent commit-bound dispositions with append-only findings and closures; adoption records an experience/quality checkpoint and keeps W1 paused until explicit ordinary resume.</li><li>No W1 qualification, G1 approval, local-main integration, remote push, external effect, destructive action, or substantial spend occurs within packet approval.</li></ul>
+</section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The proposed packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<p>No amendment task has been materialized.</p>
+
+<section data-amendment-exit-id="W1.A08" data-exit-review-mode="latest-completion-only">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>
+  <section class="review-toolbar" data-latest-completion-projection="W1.A08" data-latest-completion-status="PENDING" data-latest-completion-reviewer="none" data-latest-completion-reviewed-at="none" data-latest-completion-notes="none"><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>PENDING</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div><div><dt>Evidence</dt><dd>None</dd></div></dl><p><strong>Latest notes:</strong> None</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+<p>No bound amendment-adoption checkpoint is recorded.</p>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>First obtain independent approval of this exact packet and explicit human approval. Only then may the amendment continue through independently approved bootstrap, materialization, completion and independent approval of all 2 tasks, amendment-exit control/security review, and the W1 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria"><li>Before approval, reject, defer, or withdraw the inert packet; W1 remains paused at its current recoverable boundary and no product or reference authority changes.</li><li>A failed B00 review preserves its immutable attempt and uses strict-descendant bootstrap resubmission; no task materializes.</li><li>A failed task, slice, or exit review preserves prior packets, findings, evidence, and closures and uses bounded remediation that replays the open styling, accessibility, maintainability, or conformance risk boundary.</li><li>Styling changes remain source-controlled and reversible; any failed build, interaction, accessibility, visual, responsive, or performance check prevents adoption without authorizing a reference-baseline rewrite, tolerance inflation, or weakened test.</li><li>If implementation requires a governed reference, architecture, product-semantic, security, or later-Wave scope change, keep W1 paused and prepare a separate explicit decision rather than expanding W1.A08.</li><li>Before adoption, withhold the checkpoint if authority, experience, accessibility, maintainability, evidence, or review validation fails; never rewrite predecessor Wave, amendment, approval, migration, finding, evidence, or Git history.</li></ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article"><pre class='markdown-fallback'>Status: pending independent packet review and explicit exact-commit human
+approval; non-executable.
+
+Proposed authority: `W1.A08`, ordered after adopted `W1.A01`–`W1.A03`, the
+terminal `W1.A04` reservation superseded by `GOV-MIG-0001`, and adopted
+`W1.A05`–`W1.A07`.
+
+Classification: the conservative v4
+`product-scope-security-experience` envelope. This packet authorizes a bounded
+production-styling correction and a live-product conformance boundary. It
+reaffirms the already approved `RO-UI-ACADEMIC-MINIMAL-1.5` reference unchanged
+and does not reserve or materialize a new reference.
+
+## 1. Decision requested
+
+Approve one append-only W1 amendment owned by `CAP-01`, with one mixed
+contribution and two ordered tasks:
+
+1. `W1.A08.T01` consolidates the shared production styling foundation and
+   brings every currently implemented W1 desktop surface into general visual
+   and interaction alignment with Academic Minimal 1.5.
+2. `W1.A08.T02` adds a deterministic live-product styling-conformance boundary
+   so the actual React/Tauri frontend—not a copied reference fixture—is checked
+   for reusable-style discipline, computed geometry, responsive behavior,
+   themes, accessibility, and representative visual composition.
+
+Conformance is deliberately not pixel-identical reproduction. Normative tokens,
+semantic states, control geometry, spacing rhythm, content hierarchy,
+responsive behavior, interaction states, and accessibility remain binding.
+Illustrative copy, data, and exact page composition remain non-normative, and
+small rendering differences that preserve those contracts are acceptable.
+
+The currently implemented surfaces in scope are the application shell;
+lock/recovery and service-boundary states; Projects; Project Home; Project
+Settings; Application Settings / Security &amp; sign-in; Research Intent; Audit &amp;
+Lineage including controlled recalculation; Task Center; Diagnostics; dialogs;
+tables; forms; notices; and shared status/evidence panels. Later-Wave pages are
+not pulled into W1.
+
+## 2. Initiation assessment
+
+### 2.1 Product and best-practice fit
+
+The Vision and approved reference call for a quiet academic workbench with
+consistent hierarchy, restrained density, predictable spacing, and reusable
+semantic components. A small token-driven layout vocabulary is the sustainable
+implementation fit: shared stack, cluster, grid, panel, form, notice, table,
+dialog, and page-region rules should own common geometry, while page selectors
+should express only genuine composition differences.
+
+The selected direction keeps CSS close to the component boundary, uses logical
+properties and semantic custom properties, favors low-specificity reusable
+classes, and tests the built product at observable layout and interaction
+boundaries. It does not introduce a CSS framework, CSS-in-JS runtime, or a
+second token source.
+
+### 2.2 Tested implementation baseline
+
+The production frontend already imports the canonical reference token file
+through `@research-observatory/ui-tokens` and has reusable typography, button,
+field, table, dialog, notification, badge, boundary-state, and panel components.
+Existing renderer tests cover substantial keyboard, focus, responsive,
+reduced-motion, theme, workflow, and application-state behavior. These are
+strong reusable boundaries.
+
+The visible implementation nevertheless has a second page-specific styling
+layer. `apps/desktop/src/app.css` and the component stylesheet contain roughly
+three hundred selector blocks, including repeated control, card, table, notice,
+and layout declarations. Several common containers rely on browser-default
+child margins instead of an explicit content-flow contract. Production shell
+geometry also diverges from the approved reference: for example, the sidebar
+declares an 18 rem minimum around a 15 rem token, while the main region uses a
+separate 80 rem width and lacks the reference page-content centering contract.
+Those differences explain the inconsistent padding, margins, alignment, and
+visual rhythm observed by the repository owner.
+
+The current UI conformance profile validates the generated
+`apps/desktop/dist` reference fixture. The real functional React product is
+built separately in `apps/desktop/product-dist`; it is source-hash-bound and
+covered by interaction tests, but it is not compared to the reference at the
+same computed-geometry or representative screenshot boundary. A copied
+reference page can therefore pass visual regression while the live product
+drifts.
+
+### 2.3 Refactor disposition
+
+`W1.A08.T01` is bounded technical-debt refactoring plus defect correction. It
+consolidates existing production styles and component composition without
+changing accepted architecture or restructuring completed capability outcomes.
+Its L estimate is 5 of the immutable 194-point approved-W1 baseline, or 2.6%,
+within the standard 15% limit. `W1.A08.T02` is new verification/product-quality
+work and is not counted as refactoring. No major refactor is authorized.
+
+## 3. Frozen authority and stopped boundary
+
+The immutable W1 base is packet commit
+`594e63be501711d67d17a4aef176bb9b6a8748be`, approved by record commit
+`901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701`. Adopted `W1.A01`–`W1.A03`
+and `W1.A05`–`W1.A07` remain unchanged. `W1.A04/ECR-0003` remains a
+terminal reservation superseded by `GOV-MIG-0001` and is not executable.
+
+At packet preparation W1 is `PAUSED` at Wave scope, with no active task in
+`IN_PROGRESS` or `REVIEW`, no active recovery hold, and no active amendment
+campaign. `CAP-07.S01.T02` is `BLOCKED` before product work, specifically to
+preserve this quiescent experience-change boundary. Ordinary W1 work remains
+held until W1.A08 is independently completed and adopted.
+
+## 4. Governed experience disposition
+
+`RO-UI-ACADEMIC-MINIMAL-1.5` remains the exact approved experience authority.
+This amendment restores and strengthens production conformance to that
+reference; it does not change the reference package, its approval, its page or
+workflow contracts, or its illustrative/non-normative boundary. The ECR binds
+the existing reference manifest, approval, style guide, semantic token file,
+and reference component/layout stylesheet by hash.
+
+The implementation must preserve the reference&#x27;s 4 px spacing scale, 64 px top
+bar, 240/72 px navigation widths, 28/20/16 px responsive page padding, 16 px
+standard grid gap, 24–32 px section rhythm, 16/20 px card padding, 40/44 px
+standard/primary controls, typography hierarchy, quiet border-led elevation,
+visible focus, non-color states, logical reading order, zoom/reflow, both
+themes, and reduced-motion behavior where those contracts apply. Page-specific
+composition may differ when the product&#x27;s real data and controls require it.
+
+## 5. Bounded execution plan
+
+### W1.A08.B00 — append-only bootstrap
+
+After exact human approval, the bootstrap may append only W1.A08 and submit
+its own evidence for independent review. It must:
+
+1. authenticate the exact W1 base, predecessor amendments, W1.A04 terminal
+   reservation, `GOV-MIG-0001`, immutable `MI-0001`, approved ECR-0007 packet,
+   and W1.A08 approval record;
+2. append W1.A08 in `APPROVED` state with only the hash-bound S01, T01, and T02
+   inventory;
+3. keep W1 paused, keep `CAP-07.S01.T02` blocked, and leave every ordinary task
+   otherwise unchanged;
+4. change no product, design-reference, architecture, schema, or release path;
+   and
+5. receive independent control/experience review before materialization.
+
+### W1.A08.T01 — consolidate and align production styling (L, refactor)
+
+- Establish reusable semantic layout and content-flow primitives in the shared
+  UI component/style boundary for page regions, stacks, clusters, grids,
+  panels/cards, forms, notices, tables, dialogs, and action rows.
+- Replace materially repeated production declarations with those primitives or
+  shared custom properties. Keep page-specific selectors only for real
+  composition needs; do not introduce inline styling or a second token source.
+- Align the application shell and all currently implemented W1 surfaces to the
+  approved spacing, density, typography, radii, border hierarchy, control
+  geometry, responsive layout, theme, focus, and reduced-motion character.
+- Preserve product semantics, state transitions, data boundaries, routes,
+  accessible names, focus order, keyboard behavior, and reference bytes.
+- Add focused component and renderer characterization/interaction tests before
+  or with production changes and obtain independent commit-bound review.
+
+### W1.A08.T02 — qualify live-product styling conformance (M, new work)
+
+- Build and exercise the real `apps/desktop/product-dist` React frontend with
+  deterministic local adapters and representative states for every currently
+  implemented W1 surface; a copied reference HTML fixture is not sufficient.
+- Add a stable style-reuse check that detects inline declarations, unexplained
+  raw geometry outside the approved token vocabulary, and materially repeated
+  declaration groups while allowing documented composition-specific rules.
+- Measure computed shell, page, section, panel, form, table, dialog, and action
+  geometry at the controlled desktop, compact-desktop, and 200%-effective
+  viewports in light and dark themes with reduced motion. Assert semantic
+  tolerances rather than pixel identity.
+- Capture deterministic representative product/reference views for independent
+  visual review, with accessibility and interaction assertions remaining the
+  deciding contracts. Record any accepted rendering variance explicitly.
+- Run the affected renderer, shared-component, build, UI-reference,
+  accessibility, visual, and performance checks; obtain independent task,
+  slice, and amendment-exit review.
+
+## 6. Dependencies and execution order
+
+Both tasks depend on independently approved `W1.A08.B00`. T01 additionally
+depends on completed `CAP-01.S02`, the existing desktop design-system and
+accessibility foundation. T02 depends on T01 so conformance is measured against
+the consolidated implementation rather than freezing known drift.
+
+S01 receives one independent experience/accessibility/maintainability review.
+Amendment exit records a W1 experience/quality integration checkpoint. Adoption
+leaves W1 paused; ordinary resume and `CAP-07.S01.T02` recovery are later
+explicit transitions.
+
+## 7. Verification and completion
+
+Risk-selected task checks cover shared CSS/component contracts, live renderer
+states, production build integrity, style reuse, computed geometry, responsive
+layout, light/dark themes, focus and keyboard behavior, zoom/reflow,
+reduced-motion, accessibility, and representative visual composition. Existing
+domain, persistence, service, security, and model-gateway suites are replayed
+only where changed-path impact makes failure credible. Full affected/repository,
+packaging, performance, and Windows-x64 qualification remains due at W1 exit.
+
+The amendment is complete only when all current W1 product surfaces exhibit a
+coherent Academic Minimal hierarchy and spacing rhythm; common geometry is
+owned once where reuse is effective; live-product conformance cannot pass by
+rendering copied reference HTML; no valid interaction/accessibility behavior
+regresses; T01, T02, S01, and amendment exit are independently approved with
+all blocking findings closed; and the experience/quality checkpoint is recorded
+while W1 remains paused.
+
+## 8. Rollback and recovery
+
+- Before approval, reject, defer, or withdraw this inert packet; W1 remains at
+  the current recoverable pause and no product or reference authority changes.
+- A failed B00 review preserves its immutable attempt and uses strict-descendant
+  bootstrap resubmission; no product task materializes.
+- A failed task, slice, or exit review preserves adverse history and uses
+  bounded remediation that replays the open styling, accessibility, or
+  maintainability risk boundary.
+- Styling changes remain source-controlled and reversible. Failed build,
+  interaction, accessibility, visual, responsive, or performance checks prevent
+  adoption; they do not authorize a reference-baseline rewrite or weakened
+  threshold.
+- If conformance requires changing the approved reference, accepted
+  architecture, or product semantics, stop and prepare a separate explicit
+  decision rather than expanding W1.A08.
+
+## 9. Alternatives
+
+1. **Consolidate shared styles and add live-product conformance — selected.**
+   This fixes the observed product quality and closes the verification gap that
+   allowed drift.
+2. **Patch spacing page by page.** Rejected because it would deepen duplicate
+   styling and make later surfaces less consistent.
+3. **Require exact pixel equality with reference mockups.** Rejected because
+   mock content and composition are illustrative; exact equality would be
+   brittle and would conflict with the requested general, not identical,
+   alignment.
+4. **Adopt a new styling framework.** Rejected as unnecessary foundational
+   churn for a token and component system that already has sound boundaries.
+5. **Defer to W6 or release qualification.** Available but not recommended;
+   W1 would establish weak styling patterns and a misleading visual gate for
+   every later desktop surface.
+
+## 10. Non-goals
+
+No governed-reference edit or new reference ID; no product workflow, domain,
+security, authentication, privacy, storage, service, model-provider, or release
+behavior change; no later-Wave page implementation; no CSS framework or
+CSS-in-JS runtime; no pixel-perfect requirement; no deletion or weakening of a
+valid test; no major refactor; no W1 qualification or G1 approval; no local-main
+integration before completed review; no remote push, external effect,
+destructive action, or substantial spend.
+
+## 11. Exact approval condition
+
+Human approval is legally available only after the proposal, packet, schema,
+and review page are committed at one immutable candidate; all v4 authority,
+planning, reference, and refactor-budget checks pass; and an independent
+experience/accessibility/architecture reviewer records `APPROVED` for that
+exact candidate with no open blocking finding.
+
+Required human statement:
+
+&gt; Approve ECR-0007 as W1.A08 at packet commit `&lt;40-character SHA&gt;`, authorizing
+&gt; only bootstrap W1.A08.B00, contribution W1.A08.S01, and tasks W1.A08.T01 and
+&gt; W1.A08.T02 as hash-bound in the packet. Reaffirm the already approved
+&gt; RO-UI-ACADEMIC-MINIMAL-1.5 reference unchanged and authorize bounded
+&gt; production styling alignment plus live-product conformance. Keep W1 paused
+&gt; and CAP-07.S01.T02 blocked until W1.A08 adoption and explicit ordinary resume
+&gt; and task recovery.
+
+That statement authorizes creation of a new immutable
+`planning/wave-amendment-approvals/W1.A08.json` record. It does not append the
+amendment, execute B00 or a product task, approve a task or slice, adopt W1.A08,
+resume W1, recover T02, qualify W1, approve G1, merge to main, or push remotely.</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>
