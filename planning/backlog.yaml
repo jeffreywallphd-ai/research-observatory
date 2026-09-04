@@ -38667,14 +38667,17 @@ wave_amendments:
       slice review, checkpoints, and W1 exit.
     - Obtain independent commit-bound planning/control review.
     packet_task_sha256: 6d3010292140d7e2d5a8f8ceffb9cf21d927b0ec1fea258bb7f36d5555258b81
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-09-04T10:44:21+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 078dcfe197906359c11ae88a7903e69fbfa5d11d
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-04T10:47:29+00:00'
+      expires_at: '2026-09-04T18:47:29+00:00'
+    started_at: '2026-09-04T10:47:29+00:00'
+    updated_at: '2026-09-04T10:47:29+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

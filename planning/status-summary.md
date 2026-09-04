@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: a42a6048a2703dfcf7cb7104d30079fb8199c5d4d27154e909857d1d39932558
+source_sha256: 6bfb81749723f0002fcf5fa0b49b70665a71b0f9f979c2bee800f05a30fb9908
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,7 +68,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 8 |
 
 ## Wave authority and append-only amendments
@@ -570,3 +570,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|
 | `CAP-03.S06.T05` Verify all approved use-case workflows end to end | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A07.T01` Reconcile the CAP-03.S06 revisitable-cycle criterion | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |

@@ -26155,7 +26155,7 @@
         {
           "task_id": "W1.A07.T01",
           "title": "Reconcile the CAP-03.S06 revisitable-cycle criterion",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,
