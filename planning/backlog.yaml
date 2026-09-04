@@ -128,20 +128,22 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
-    base_sha: 2993d585ffcc6160818b636ae22e5158812b8a12
+    base_sha: 3c29cc5f57f3b91af76b9053197e924241c1b3fc
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-04T12:01:50+00:00'
-    pause_reason: User explicitly requested stopping within five minutes at the quiescent boundary after CAP-03.S06.T05 approval;
-      no new task claimed. Resume with CAP-03.S06 slice integration review.
-    pause_category: human-decision
-    lease: null
+    updated_at: '2026-09-04T18:30:59+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-04T18:30:59+00:00'
+      expires_at: '2026-09-05T18:30:59+00:00'
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -203,6 +205,18 @@ waves:
       platform: windows-x64
       actor: codex
       resumed_at: '2026-09-04T11:19:11+00:00'
+    - id: W1.R06
+      wave_id: W1
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 3c29cc5f57f3b91af76b9053197e924241c1b3fc
+      prior_campaign_sha256: 3f461ac623250d4334621b82e58c06d6ddd7d69ae4f46414dab15f30b4076533
+      branch: codex/w1-windows-local-runtime
+      worktree: C:/workspace/research-observatory
+      profile: LOC
+      platform: windows-x64
+      actor: codex
+      resumed_at: '2026-09-04T18:30:59+00:00'
   checkpoints:
   - id: W1.CP01
     kind: security
@@ -276,7 +290,7 @@ waves:
     notes: Adopt the independently approved W1.A07 cycle-authority correction as a W1 security checkpoint; retain all ordinary
       CAP-03.S06.T05, slice-review, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []

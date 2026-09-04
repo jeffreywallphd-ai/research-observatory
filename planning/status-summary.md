@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: f45724affc9a1ef85ba0761fe98cf90f218ac9b6977e1c51fa29f264374c45b3
+source_sha256: c5c10cb00d814bfcc166bd43c65c8c4f6fa944f0dd5e0f32fbfb1935e193eefd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -37,8 +37,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
+| `ACTIVE` | 1 |
 | `NONE` | 11 |
-| `PAUSED` | 1 |
 
 ### Slice completion
 
@@ -541,7 +541,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 13/15 | 46/48 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 13/15 | 46/48 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
