@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -38575,7 +38575,7 @@ wave_amendments:
     sha256: c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6
     introduction_commit: 72052b7f7781dcfc83a1a2c8dae362b899b114d5
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -38586,6 +38586,11 @@ wave_amendments:
         as hash-bound in the packet. Reaffirm accepted ADR-0026 and the already approved RO-UI-ACADEMIC-MINIMAL-1.5 cycle
         policy without changing product or experience authority. Keep W1 paused and CAP-03.S06.T05 blocked until W1.A07 adoption
         and explicit ordinary resume and task recovery.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex
+      at: '2026-09-04T10:41:17+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W1.A07.B00
     status: APPROVED
@@ -38610,7 +38615,56 @@ wave_amendments:
         MI-0001, Wave, task, and gate state remains exact. W1 stays PAUSED and CAP-03.S06.T05 stays BLOCKED and lease-free.
         Generated views and controller checks pass, with no product or canonical CAP-03.S06 criterion change and no open finding.
   campaign: null
-  tasks: []
+  tasks:
+  - id: W1.A07.T01
+    amendment_id: W1.A07
+    title: Reconcile the CAP-03.S06 revisitable-cycle criterion
+    objective: Replace the isolated critical-cycle term with manuscript-review/revision in the canonical backlog and approved
+      slice plan, then regenerate derived planning views without changing product or governed-experience bytes.
+    dependencies:
+    - W1.A07.B00
+    acceptance_criteria:
+    - 'Replace exactly the CAP-03.S06.T05 cycle criterion in planning/backlog.yaml and its slice-plan projection with: Hermeneutic,
+      manuscript-review/revision, and living-review cycles can revisit earlier steps without rewriting history; systematic
+      review maintains its reproducible order and audit endpoint.'
+    - Prove design/ui-reference/WORKFLOW_CATALOG.json classifies exactly living-review, hermeneutic-inquiry, and manuscript-review-revision
+      as cyclical, classifies critical-problematization, critical-article-development, and systematic-review as non-cyclical,
+      and remains hash-bound by approved RO-UI-ACADEMIC-MINIMAL-1.5.
+    - Preserve every other CAP-03.S06 objective, criterion, task, dependency, estimate, status, architecture boundary, verification
+      duty, and W1 exit obligation byte-for-byte or through deterministic generated projection.
+    - Change no product, runtime, schema, migration, security, design-reference, release-gate, predecessor authority, or unrelated
+      planning path.
+    - Regenerate affected planning views, validate the canonical backlog and review site, and obtain independent commit-bound
+      review with no open blocking finding.
+    verification_commands:
+    - Compare the exact canonical backlog and CAP-03.S06 slice-plan criterion before and after the candidate; require the
+      declared sentence in both and deny any other hand-authored CAP-03.S06 semantic delta.
+    - Parse the approved workflow catalog, require the exact three cyclical identities and exact non-cyclical critical/systematic
+      identities, and verify the reference manifest plus human approval bind the current catalog hash and version.
+    - Run taskctl backlog validation, planning review-site validation, generated backlog-view validation, targeted ECR/amendment
+      authority checks, and Git formatting/diff hygiene.
+    - Record the risk-selected task evidence and defer product/runtime/Windows-x64 qualification to resumed T05, CAP-03.S06
+      slice review, checkpoints, and W1 exit.
+    - Obtain independent commit-bound planning/control review.
+    packet_task_sha256: 6d3010292140d7e2d5a8f8ceffb9cf21d927b0ec1fea258bb7f36d5555258b81
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null

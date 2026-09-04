@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 603cfb620cccd376392f3aaba73870cb5762edd6bd7cabb7ad2e88e0423693e8
+source_sha256: 8a04a3f78529afc4f3abe86106453ecfd252b269a37c2fdb859c597aaeab4af1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 8 |
+| Enabler tasks | 9 |
 | Waves | 12 |
 | Wave approval bases | 1 |
 | Wave amendments | 7 |
@@ -46,7 +46,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
-| `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `APPROVED` |
+| `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -1612,11 +1612,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A07.json` (`c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-04T06:27:45.2967207-04:00` by repository-owner: The repository owner approved ECR-0006/W1.A07 in direct response to the exact-commit approval request for 43e317be1e644c77e653ff5f121425d6e2cde2ef. Authorize only bootstrap W1.A07.B00, contribution W1.A07.S01, and task W1.A07.T01 as hash-bound in the packet. Reaffirm accepted ADR-0026 and the already approved RO-UI-ACADEMIC-MINIMAL-1.5 cycle policy without changing product or experience authority. Keep W1 paused and CAP-03.S06.T05 blocked until W1.A07 adoption and explicit ordinary resume and task recovery.
+- `E02` `MATERIALIZED` at `2026-09-04T10:41:17+00:00` by codex: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W1.A07
 
@@ -1633,6 +1634,38 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W1.A07.T01 - Reconcile the CAP-03.S06 revisitable-cycle criterion
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A07.B00`
+
+**Objective:** Replace the isolated critical-cycle term with manuscript-review/revision in the canonical backlog and approved slice plan, then regenerate derived planning views without changing product or governed-experience bytes.
+
+**Acceptance criteria:**
+
+- Replace exactly the CAP-03.S06.T05 cycle criterion in planning/backlog.yaml and its slice-plan projection with: Hermeneutic, manuscript-review/revision, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.
+- Prove design/ui-reference/WORKFLOW_CATALOG.json classifies exactly living-review, hermeneutic-inquiry, and manuscript-review-revision as cyclical, classifies critical-problematization, critical-article-development, and systematic-review as non-cyclical, and remains hash-bound by approved RO-UI-ACADEMIC-MINIMAL-1.5.
+- Preserve every other CAP-03.S06 objective, criterion, task, dependency, estimate, status, architecture boundary, verification duty, and W1 exit obligation byte-for-byte or through deterministic generated projection.
+- Change no product, runtime, schema, migration, security, design-reference, release-gate, predecessor authority, or unrelated planning path.
+- Regenerate affected planning views, validate the canonical backlog and review site, and obtain independent commit-bound review with no open blocking finding.
+
+**Verification:**
+
+- Compare the exact canonical backlog and CAP-03.S06 slice-plan criterion before and after the candidate; require the declared sentence in both and deny any other hand-authored CAP-03.S06 semantic delta.
+- Parse the approved workflow catalog, require the exact three cyclical identities and exact non-cyclical critical/systematic identities, and verify the reference manifest plus human approval bind the current catalog hash and version.
+- Run taskctl backlog validation, planning review-site validation, generated backlog-view validation, targeted ECR/amendment authority checks, and Git formatting/diff hygiene.
+- Record the risk-selected task evidence and defer product/runtime/Windows-x64 qualification to resumed T05, CAP-03.S06 slice review, checkpoints, and W1 exit.
+- Obtain independent commit-bound planning/control review.
+
+#### Review history — W1.A07.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 # Capability contributions, slices, and tasks
