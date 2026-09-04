@@ -669,6 +669,7 @@ WorkflowProgressAction = Literal[
     "mark-attention",
     "block",
     "skip",
+    "resume",
     "revisit",
     "open-supporting",
 ]
@@ -684,6 +685,11 @@ class WorkflowProgressCommand(ProjectRootRequest):
         default=None,
         pattern=r"^sha256:[0-9a-f]{64}$",
     )
+    revisit_source_stage_state_revision_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    revisit_source_stage_state_revision_content_hash: str | None = Field(
+        default=None,
+        pattern=r"^sha256:[0-9a-f]{64}$",
+    )
     completion_evidence_revision_ids: tuple[str, ...] = Field(default=(), max_length=256)
     supporting_page_contract_id: str | None = Field(
         default=None,
@@ -696,11 +702,24 @@ class WorkflowProgressCommand(ProjectRootRequest):
         has_precondition = self.expected_stage_state_revision_id is not None
         if has_precondition != (self.expected_stage_state_revision_content_hash is not None):
             raise ValueError("stage-state precondition is incomplete")
+        has_revisit_source = self.revisit_source_stage_state_revision_id is not None
+        if has_revisit_source != (self.revisit_source_stage_state_revision_content_hash is not None):
+            raise ValueError("revisit-source precondition is incomplete")
         if self.action == "start":
-            if has_precondition or self.completion_evidence_revision_ids or self.supporting_page_contract_id:
+            if (
+                has_precondition
+                or has_revisit_source
+                or self.completion_evidence_revision_ids
+                or self.supporting_page_contract_id
+            ):
                 raise ValueError("start command shape is invalid")
+        elif self.action == "revisit":
+            if not has_revisit_source:
+                raise ValueError("revisit-source precondition is required")
         elif not has_precondition:
             raise ValueError("stage-state precondition is required")
+        if self.action != "revisit" and has_revisit_source:
+            raise ValueError("revisit-source precondition is valid only for revisitation")
         if self.action == "complete" and not self.completion_evidence_revision_ids:
             raise ValueError("completion evidence is required")
         if self.action != "complete" and self.completion_evidence_revision_ids:
@@ -765,6 +784,8 @@ class WorkflowProgressProjection(ContractModel):
     project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
     selection_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
     selection_revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    intent_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    intent_revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
     profile_id: WorkflowProfileId
     profile_title: str = Field(min_length=1, max_length=200)
     process_form: Literal["linear", "revisitable"]

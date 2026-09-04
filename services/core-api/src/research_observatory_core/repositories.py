@@ -794,6 +794,14 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                         or not isinstance(json.loads(stage_record.content_json), dict)
                     ):
                         raise ValueError("workflow stage-state snapshot is invalid")
+            for stage_record in workflow.stage_states:
+                if (
+                    stage_record.storage_revision != 0
+                    or not stage_record.content_json
+                    or len(stage_record.content_json.encode("utf-8")) > 262_144
+                    or not isinstance(json.loads(stage_record.content_json), dict)
+                ):
+                    raise ValueError("workflow stage-state mutation is invalid")
             selection_revisions = [item.revision for item in workflow.selections]
             migration_revisions = [item.revision for item in workflow.migrations]
             decision_revisions = [item.revision for item in workflow.decisions]
@@ -934,6 +942,30 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                             key=key,
                             revision=authority_record.revision,
                             value=authority_record.content_json,
+                            occurred_at=event.occurred_at,
+                        )
+                if workflow.stage_states:
+                    if workflow.expected_stage_states is None or not workflow.selections:
+                        raise RepositoryConflict("workflow stage-state mutation lacks selection authority")
+                    latest_selection_value = json.loads(workflow.selections[-1].content_json)
+                    next_stage_revision = len(workflow.expected_stage_states) + 1
+                    for offset, stage_record in enumerate(workflow.stage_states):
+                        stage_value = json.loads(stage_record.content_json)
+                        if (
+                            not isinstance(stage_value, dict)
+                            or stage_value.get("projectId") != domain_project_id
+                            or not isinstance(stage_value.get("selection"), dict)
+                            or stage_value["selection"].get("selectionRevisionId")
+                            != latest_selection_value.get("selectionRevisionId")
+                            or stage_value["selection"].get("revisionContentHash")
+                            != latest_selection_value.get("revisionContentHash")
+                        ):
+                            raise RepositoryConflict("workflow stage-state mutation authority differs")
+                        self._insert_text_setting(
+                            connection,
+                            key=_WORKFLOW_STAGE_STATE_KEY,
+                            revision=next_stage_revision + offset,
+                            value=stage_record.content_json,
                             occurred_at=event.occurred_at,
                         )
                 idempotency_json = json.dumps(
@@ -1170,10 +1202,11 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
         current = [
             value
             for value in heads.values()
-            if value.get("navigationRole") == "primary" and value.get("status") == "current"
+            if value.get("navigationRole") == "primary"
+            and value.get("status") in {"current", "attention-required", "blocked"}
         ]
         if len(current) > 1:
-            raise ValueError("workflow progress has multiple current primary heads")
+            raise ValueError("workflow progress has multiple active primary heads")
         return current[0] if current else None
 
     def read(self) -> tuple[WorkflowStageStateRecord, ...]:
@@ -1211,6 +1244,8 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
                     ).fetchone()
                     if row is None:
                         raise RepositoryNotFound("workflow completion evidence was not found")
+                    if str(row[2]) != "evidence":
+                        raise RepositoryNotFound("workflow completion evidence kind is not authorized")
                     document = {
                         "aggregateId": str(row[1]),
                         "aggregateKind": str(row[2]),
@@ -1257,7 +1292,7 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
         actor_id: str,
         idempotency_key: str,
         command_sha256: str,
-    ) -> tuple[str, ...] | None:
+    ) -> WorkflowProgressCommandRecord | None:
         try:
             connection = self._open()
             try:
@@ -1281,9 +1316,26 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
             if value.get("actorId") != actor_id or value.get("commandSha256") != command_sha256:
                 raise RepositoryIdempotencyConflict("workflow progress idempotency key is already bound")
             result_ids = value.get("resultRevisionIds")
-            if not isinstance(result_ids, list) or not all(isinstance(item, str) for item in result_ids):
+            projection = value.get("resultProjection")
+            projection_hash = value.get("resultProjectionSha256")
+            if (
+                value.get("schemaVersion") != "1.1"
+                or not isinstance(result_ids, list)
+                or not all(isinstance(item, str) for item in result_ids)
+                or not isinstance(projection, dict)
+                or not isinstance(projection_hash, str)
+            ):
                 raise ValueError("workflow progress idempotency result is invalid")
-            return tuple(cast(list[str], result_ids))
+            projection_json = _workflow_json(projection)
+            if hashlib.sha256(projection_json.encode("utf-8")).hexdigest() != projection_hash:
+                raise ValueError("workflow progress idempotency projection differs")
+            return WorkflowProgressCommandRecord(
+                actor_id=actor_id,
+                idempotency_key=idempotency_key,
+                command_sha256=command_sha256,
+                result_revision_ids=tuple(cast(list[str], result_ids)),
+                result_projection_json=projection_json,
+            )
         except RepositoryIdempotencyConflict:
             raise
         except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
@@ -1300,6 +1352,25 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
         command: WorkflowProgressCommandRecord,
         event: WorkflowProgressAuditEvent,
     ) -> None:
+        try:
+            result_projection = json.loads(command.result_projection_json)
+        except json.JSONDecodeError, TypeError:
+            raise _transaction_failure("workflow progress result projection is invalid") from None
+        result_projection_revision_ids: set[str] = set()
+        if isinstance(result_projection, dict):
+            current_projection = result_projection.get("current")
+            if isinstance(current_projection, dict) and isinstance(current_projection.get("stageStateRevisionId"), str):
+                result_projection_revision_ids.add(current_projection["stageStateRevisionId"])
+            handoff_projection = result_projection.get("supportingHandoff")
+            if isinstance(handoff_projection, dict) and isinstance(handoff_projection.get("stageStateRevisionId"), str):
+                result_projection_revision_ids.add(handoff_projection["stageStateRevisionId"])
+            history_projection = result_projection.get("history")
+            if isinstance(history_projection, list):
+                result_projection_revision_ids.update(
+                    item["stageStateRevisionId"]
+                    for item in history_projection
+                    if isinstance(item, dict) and isinstance(item.get("stageStateRevisionId"), str)
+                )
         if (
             not records
             or not is_uuid_v7(expected_selection_revision_id)
@@ -1311,6 +1382,11 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
             or len(command.command_sha256) != 64
             or set(command.result_revision_ids)
             != {cast(str, json.loads(record.content_json).get("stageStateRevisionId")) for record in records}
+            or not isinstance(result_projection, dict)
+            or result_projection.get("projectId") != self._project_id
+            or result_projection.get("selectionRevisionId") != expected_selection_revision_id
+            or result_projection.get("selectionRevisionContentHash") != expected_selection_revision_content_hash
+            or not set(command.result_revision_ids).issubset(result_projection_revision_ids)
             or not is_uuid_v7(event.event_id)
             or not is_uuid_v7(event.outbox_id)
             or event.actor_id != command.actor_id
@@ -1337,6 +1413,7 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
                         or matching[0].get("actorId") != command.actor_id
                         or matching[0].get("commandSha256") != command.command_sha256
                         or matching[0].get("resultRevisionIds") != list(command.result_revision_ids)
+                        or matching[0].get("resultProjection") != result_projection
                     ):
                         raise RepositoryIdempotencyConflict("workflow progress idempotency key is already bound")
                     connection.execute("COMMIT")
@@ -1400,8 +1477,12 @@ class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
                         "actorId": command.actor_id,
                         "commandSha256": command.command_sha256,
                         "idempotencyKey": command.idempotency_key,
+                        "resultProjection": result_projection,
+                        "resultProjectionSha256": hashlib.sha256(
+                            _workflow_json(result_projection).encode("utf-8")
+                        ).hexdigest(),
                         "resultRevisionIds": list(command.result_revision_ids),
-                        "schemaVersion": "1.0",
+                        "schemaVersion": "1.1",
                     },
                     ensure_ascii=True,
                     sort_keys=True,

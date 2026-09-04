@@ -829,8 +829,8 @@ function decodeWorkflowStaleOutputProjection(value: unknown): WorkflowStaleOutpu
 export function decodeWorkflowProgressProjection(value: unknown): WorkflowProgressProjection | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
-    "schemaVersion", "projectId", "selectionRevisionId", "selectionRevisionContentHash", "profileId",
-    "profileTitle", "processForm", "bootstrapRequired", "current", "recommendedStageKey",
+    "schemaVersion", "projectId", "selectionRevisionId", "selectionRevisionContentHash", "intentRevisionId",
+    "intentRevisionContentHash", "profileId", "profileTitle", "processForm", "bootstrapRequired", "current", "recommendedStageKey",
     "recommendedPageContractId", "recommendedAction", "checkpointState", "checkpointRationale",
     "supportingHandoff", "staleOutputs", "history",
   ])) return null;
@@ -839,6 +839,7 @@ export function decodeWorkflowProgressProjection(value: unknown): WorkflowProgre
     ? null : decodeWorkflowSupportingHandoffProjection(candidate.supportingHandoff);
   if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
     || !canonicalUuid7(candidate.selectionRevisionId) || !contentHash(candidate.selectionRevisionContentHash)
+    || !canonicalUuid7(candidate.intentRevisionId) || !contentHash(candidate.intentRevisionContentHash)
     || !member(candidate.profileId, INTENT_PRIMARY_USE_CASES) || !boundedText(candidate.profileTitle, 1, 200)
     || !member(candidate.processForm, ["linear", "revisitable"] as const)
     || typeof candidate.bootstrapRequired !== "boolean" || (candidate.current !== null && current === null)
@@ -1350,8 +1351,10 @@ function intentPolicyBody(command: IntentPolicyRequest): string {
 function workflowProgressBody(command: WorkflowProgressCommand): string {
   const hasStagePrecondition = command.expectedStageStateRevisionId !== null
     && command.expectedStageStateRevisionContentHash !== null;
+  const hasRevisitSource = command.revisitSourceStageStateRevisionId !== null
+    && command.revisitSourceStageStateRevisionContentHash !== null;
   if (!projectRoot(command.root) || !member(command.action, [
-    "start", "complete", "mark-attention", "block", "skip", "revisit", "open-supporting",
+    "start", "complete", "mark-attention", "block", "skip", "resume", "revisit", "open-supporting",
   ] as const) || typeof command.stageKey !== "string"
     || !/^[a-z0-9][a-z0-9._-]{0,99}$/.test(command.stageKey)
     || !canonicalUuid7(command.expectedSelectionRevisionId)
@@ -1361,6 +1364,12 @@ function workflowProgressBody(command: WorkflowProgressCommand): string {
     || (command.expectedStageStateRevisionId !== null && !canonicalUuid7(command.expectedStageStateRevisionId))
     || (command.expectedStageStateRevisionContentHash !== null
       && !contentHash(command.expectedStageStateRevisionContentHash))
+    || ((command.revisitSourceStageStateRevisionId === null)
+      !== (command.revisitSourceStageStateRevisionContentHash === null))
+    || (command.revisitSourceStageStateRevisionId !== null
+      && !canonicalUuid7(command.revisitSourceStageStateRevisionId))
+    || (command.revisitSourceStageStateRevisionContentHash !== null
+      && !contentHash(command.revisitSourceStageStateRevisionContentHash))
     || !Array.isArray(command.completionEvidenceRevisionIds)
     || command.completionEvidenceRevisionIds.length > 256
     || !command.completionEvidenceRevisionIds.every(canonicalUuid7)
@@ -1371,7 +1380,10 @@ function workflowProgressBody(command: WorkflowProgressCommand): string {
     || (command.rationale !== null && !boundedText(command.rationale, 1, 4000))) {
     throw new Error("RO-CORE-REQUEST-INVALID");
   }
-  if ((command.action === "start") === hasStagePrecondition
+  if ((command.action === "start" && (hasStagePrecondition || hasRevisitSource))
+    || (command.action === "revisit" && !hasRevisitSource)
+    || (command.action !== "start" && command.action !== "revisit" && !hasStagePrecondition)
+    || (command.action !== "revisit" && hasRevisitSource)
     || (command.action === "complete") !== (command.completionEvidenceRevisionIds.length > 0)
     || (command.action === "open-supporting") !== (command.supportingPageContractId !== null)
     || member(command.action, ["mark-attention", "block", "skip"] as const) !== (command.rationale !== null)) {

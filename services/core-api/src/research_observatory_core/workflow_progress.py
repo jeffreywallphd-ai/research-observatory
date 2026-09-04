@@ -31,9 +31,9 @@ from .ports.repositories import (
     WorkflowStageStateRecord,
 )
 from .projects import ProjectLifecycleService
+from .research_intents import validated_workflow_authority
 from .workflow_profile_contracts import (
     approved_workflow_profile_catalog,
-    decode_project_workflow_selection,
     decode_workflow_stage_state,
 )
 
@@ -65,7 +65,13 @@ class _UnavailableProgressRepository:
         del revision_ids
         raise RepositoryProblem("workflow progress repository is unavailable")
 
-    def replay(self, *, actor_id: str, idempotency_key: str, command_sha256: str) -> tuple[str, ...] | None:
+    def replay(
+        self,
+        *,
+        actor_id: str,
+        idempotency_key: str,
+        command_sha256: str,
+    ) -> WorkflowProgressCommandRecord | None:
         del actor_id, idempotency_key, command_sha256
         raise RepositoryProblem("workflow progress repository is unavailable")
 
@@ -231,28 +237,17 @@ def _stage_projection(state: Mapping[str, object]) -> WorkflowStageStateProjecti
     )
 
 
-def _authority(
+def _project_authority(
     intent_repository: IntentRevisionRepository,
-) -> tuple[tuple[Mapping[str, object], ...], Mapping[str, object]]:
-    authority = intent_repository.read_workflow_authority()
-    selections: list[Mapping[str, object]] = []
-    for record in authority.selections:
-        try:
-            candidate = json.loads(record.content_json)
-        except json.JSONDecodeError, TypeError:
-            raise RepositoryProblem("workflow selection JSON is invalid") from None
-        decoded = decode_project_workflow_selection(_CATALOG, candidate)
-        if decoded is None or decoded["revision"] != record.revision:
-            raise RepositoryProblem("workflow selection authority is invalid")
-        selection = cast(Mapping[str, object], decoded)
-        if selection["revisionContentHash"] != _content_hash(selection):
-            raise RepositoryProblem("workflow selection content hash differs")
-        selections.append(selection)
-    if not selections:
+    project_id: str,
+) -> tuple[tuple[Mapping[str, object], ...], Mapping[str, object], Mapping[str, object]]:
+    _authority_record, revisions, selections, _migrations = validated_workflow_authority(
+        intent_repository,
+        expected_project_id=project_id,
+    )
+    if not selections or not revisions:
         raise RepositoryNotFound("workflow selection is unavailable")
-    if [cast(int, item["revision"]) for item in selections] != list(range(1, len(selections) + 1)):
-        raise RepositoryProblem("workflow selection history is discontinuous")
-    return tuple(selections), selections[-1]
+    return selections, selections[-1], revisions[0]
 
 
 def _decoded_states(
@@ -320,9 +315,13 @@ def _heads(states: Sequence[Mapping[str, object]], selection_revision_id: str) -
 
 
 def _current_primary(heads: Sequence[Mapping[str, object]]) -> Mapping[str, object] | None:
-    current = [state for state in heads if state["navigationRole"] == "primary" and state["status"] == "current"]
+    current = [
+        state
+        for state in heads
+        if state["navigationRole"] == "primary" and state["status"] in {"current", "attention-required", "blocked"}
+    ]
     if len(current) > 1:
-        raise RepositoryProblem("workflow progress has multiple current primary heads")
+        raise RepositoryProblem("workflow progress has multiple active primary heads")
     return current[0] if current else None
 
 
@@ -452,9 +451,9 @@ class WorkflowProgressService:
         project_id: str,
     ) -> WorkflowProgressProjection:
         try:
-            selections, selection = _authority(intent_repository)
+            selections, selection, intent = _project_authority(intent_repository, project_id)
             states = _decoded_states(repository.read(), selections)
-            return self._projection(selection, states, stale_repository, project_id)
+            return self._projection(selection, intent, states, stale_repository, project_id)
         except RepositoryNotFound as error:
             raise _problem(
                 status=409,
@@ -476,6 +475,7 @@ class WorkflowProgressService:
     def _projection(
         self,
         selection: Mapping[str, object],
+        intent: Mapping[str, object],
         states: tuple[Mapping[str, object], ...],
         stale_repository: DependencyImpactRepository,
         project_id: str,
@@ -505,7 +505,7 @@ class WorkflowProgressService:
             reverse=True,
         )
         valid_support: Mapping[str, object] | None = None
-        if current is not None:
+        if current is not None and current["status"] == "current":
             current_ref = _current_primary_reference(current)
             for state in supporting:
                 support = cast(Mapping[str, object], state["supportReturn"])
@@ -523,6 +523,8 @@ class WorkflowProgressService:
             project_id=project_id,
             selection_revision_id=selection_revision_id,
             selection_revision_content_hash=cast(str, selection["revisionContentHash"]),
+            intent_revision_id=cast(str, intent["revisionId"]),
+            intent_revision_content_hash=cast(str, intent["revisionContentHash"]),
             profile_id=cast(Any, profile_id),
             profile_title=cast(str, profile["title"]),
             process_form=cast(Any, profile["cyclePolicy"]),
@@ -533,6 +535,10 @@ class WorkflowProgressService:
             recommended_action=(
                 "Start the guided workflow at this researcher-controlled stage."
                 if not primary_heads
+                else "Resolve the recorded attention state, then explicitly resume this stage."
+                if current is not None and current["status"] == "attention-required"
+                else "Resolve the recorded blocker, then explicitly resume this stage."
+                if current is not None and current["status"] == "blocked"
                 else "Continue the current stage; completion requires explicit human evidence."
                 if current is not None
                 else "Review the completed workflow history and choose an explicit revisitation if needed."
@@ -583,18 +589,21 @@ class WorkflowProgressService:
                 idempotency_key=idempotency_key,
                 command_sha256=command_hash,
             )
-            selections, selection = _authority(intent_repository)
+            if replay is not None:
+                try:
+                    projection = WorkflowProgressProjection.model_validate_json(replay.result_projection_json)
+                except ValueError:
+                    raise RepositoryProblem("workflow progress replay result is invalid") from None
+                if projection.project_id != project_id:
+                    raise RepositoryProblem("workflow progress replay project authority differs")
+                return projection
+            selections, selection, intent = _project_authority(intent_repository, project_id)
             if (
                 command.expected_selection_revision_id != selection["selectionRevisionId"]
                 or command.expected_selection_revision_content_hash != selection["revisionContentHash"]
             ):
                 raise RepositoryConflict("workflow selection changed")
             states = _decoded_states(repository.read(), selections)
-            if replay is not None:
-                present = {cast(str, state["stageStateRevisionId"]) for state in states}
-                if any(item not in present for item in replay):
-                    raise RepositoryProblem("workflow progress replay result is unavailable")
-                return self._projection(selection, states, stale_repository, project_id)
             profile_id = cast(str, cast(Mapping[str, object], selection["profile"])["profileId"])
             profile = _PROFILES[profile_id]
             stages = cast(Sequence[Mapping[str, object]], profile["stages"])
@@ -611,19 +620,70 @@ class WorkflowProgressService:
                 ),
                 None,
             )
-            precondition_state = (
-                current if current is not None else revisit_head if command.action == "revisit" else None
-            )
-            if precondition_state is None:
+            if current is None:
                 if command.expected_stage_state_revision_id is not None:
                     raise RepositoryConflict("workflow current stage changed")
             elif (
-                command.expected_stage_state_revision_id != precondition_state["stageStateRevisionId"]
-                or command.expected_stage_state_revision_content_hash != precondition_state["revisionContentHash"]
+                command.expected_stage_state_revision_id != current["stageStateRevisionId"]
+                or command.expected_stage_state_revision_content_hash != current["revisionContentHash"]
             ):
                 raise RepositoryConflict("workflow current stage changed")
+            if command.action == "revisit" and (
+                revisit_head is None
+                or revisit_head["status"] not in {"completed", "skipped-with-rationale", "stale"}
+                or command.revisit_source_stage_state_revision_id != revisit_head["stageStateRevisionId"]
+                or command.revisit_source_stage_state_revision_content_hash != revisit_head["revisionContentHash"]
+            ):
+                raise RepositoryConflict("workflow revisit source changed")
             now = _timestamp()
             next_states: list[dict[str, object]] = []
+
+            def advance_after(stage: Mapping[str, object]) -> None:
+                index = list(stages).index(stage)
+                if index + 1 >= len(stages):
+                    return
+                next_stage = stages[index + 1]
+                prior_head = next(
+                    (
+                        head
+                        for head in heads
+                        if head["navigationRole"] == "primary" and head["stageKey"] == next_stage["stageKey"]
+                    ),
+                    None,
+                )
+                if prior_head is None:
+                    next_states.append(
+                        _stage_state(
+                            selection,
+                            actor_id=actor_id,
+                            actor_type="human",
+                            stage=next_stage,
+                            status="current",
+                            now=now,
+                        )
+                    )
+                    return
+                if prior_head["status"] == "in-progress":
+                    pass_number = cast(int, prior_head["passNumber"])
+                elif prior_head["status"] in {"completed", "skipped-with-rationale", "stale"}:
+                    if profile["cyclePolicy"] != "revisitable":
+                        raise RepositoryConflict("linear workflow stage cannot be reactivated")
+                    pass_number = cast(int, prior_head["passNumber"]) + 1
+                else:
+                    raise RepositoryConflict("workflow next-stage authority is already active")
+                next_states.append(
+                    _stage_state(
+                        selection,
+                        actor_id=actor_id,
+                        actor_type="human",
+                        stage=next_stage,
+                        status="current",
+                        pass_number=pass_number,
+                        parent=prior_head,
+                        now=now,
+                    )
+                )
+
             if command.action == "start":
                 if current is not None or heads or command.stage_key != stages[0]["stageKey"]:
                     raise RepositoryConflict("workflow start authority changed")
@@ -640,9 +700,11 @@ class WorkflowProgressService:
             else:
                 if command.action != "revisit" and (current is None or command.stage_key != current["stageKey"]):
                     raise RepositoryConflict("workflow current stage differs")
-                if command.action == "revisit" and current is not None and command.stage_key != current["stageKey"]:
-                    raise RepositoryConflict("complete the current stage before revisiting an earlier stage")
-                stage = next(item for item in stages if item["stageKey"] == command.stage_key)
+                if current is not None and current["status"] != "current" and command.action != "resume":
+                    raise RepositoryConflict("workflow attention state must be resumed explicitly")
+                stage = next((item for item in stages if item["stageKey"] == command.stage_key), None)
+                if stage is None:
+                    raise RepositoryConflict("workflow stage is not governed by the selected profile")
                 if command.action == "complete":
                     assert current is not None
                     evidence_ids = repository.resolve_completion_evidence(command.completion_evidence_revision_ids)
@@ -659,19 +721,7 @@ class WorkflowProgressService:
                             now=now,
                         )
                     )
-                    index = list(stages).index(stage)
-                    if index + 1 < len(stages):
-                        next_stage = stages[index + 1]
-                        next_states.append(
-                            _stage_state(
-                                selection,
-                                actor_id=actor_id,
-                                actor_type="human",
-                                stage=next_stage,
-                                status="current",
-                                now=now,
-                            )
-                        )
+                    advance_after(stage)
                 elif command.action == "revisit":
                     if profile["cyclePolicy"] != "revisitable":
                         raise _problem(
@@ -681,9 +731,20 @@ class WorkflowProgressService:
                             detail="The governed workflow profile does not authorize an additional pass.",
                             remediation="Continue the recorded linear sequence or revise the Research Intent profile.",
                         )
-                    prior_pass = current if current is not None else revisit_head
-                    if prior_pass is None:
-                        raise RepositoryConflict("workflow revisit target is unavailable")
+                    assert revisit_head is not None
+                    if current is not None:
+                        next_states.append(
+                            _stage_state(
+                                selection,
+                                actor_id=actor_id,
+                                actor_type="human",
+                                stage=next(item for item in stages if item["stageKey"] == current["stageKey"]),
+                                status="in-progress",
+                                pass_number=cast(int, current["passNumber"]),
+                                parent=current,
+                                now=now,
+                            )
+                        )
                     next_states.append(
                         _stage_state(
                             selection,
@@ -691,8 +752,8 @@ class WorkflowProgressService:
                             actor_type="human",
                             stage=stage,
                             status="current",
-                            pass_number=cast(int, prior_pass["passNumber"]) + 1,
-                            parent=prior_pass,
+                            pass_number=cast(int, revisit_head["passNumber"]) + 1,
+                            parent=revisit_head,
                             now=now,
                         )
                     )
@@ -708,6 +769,22 @@ class WorkflowProgressService:
                             pass_number=cast(int, current["passNumber"]),
                             supporting_page_contract_id=command.supporting_page_contract_id,
                             current_primary=current,
+                            now=now,
+                        )
+                    )
+                elif command.action == "resume":
+                    assert current is not None
+                    if current["status"] not in {"attention-required", "blocked"}:
+                        raise RepositoryConflict("workflow stage does not require resumption")
+                    next_states.append(
+                        _stage_state(
+                            selection,
+                            actor_id=actor_id,
+                            actor_type="human",
+                            stage=stage,
+                            status="current",
+                            pass_number=cast(int, current["passNumber"]),
+                            parent=current,
                             now=now,
                         )
                     )
@@ -733,10 +810,20 @@ class WorkflowProgressService:
                             now=now,
                         )
                     )
+                    if command.action == "skip":
+                        advance_after(stage)
                 else:
                     raise RepositoryProblem("workflow progress action is unsupported")
             record_json = tuple(_canonical_json(state) for state in next_states)
             result_ids = tuple(cast(str, state["stageStateRevisionId"]) for state in next_states)
+            result_projection = self._projection(
+                selection,
+                intent,
+                (*states, *next_states),
+                stale_repository,
+                project_id,
+            )
+            result_projection_json = _canonical_json(result_projection.model_dump(mode="json", by_alias=True))
             event_type = (
                 "workflow.stage.supporting-opened"
                 if command.action == "open-supporting"
@@ -759,6 +846,7 @@ class WorkflowProgressService:
                     idempotency_key=idempotency_key,
                     command_sha256=command_hash,
                     result_revision_ids=result_ids,
+                    result_projection_json=result_projection_json,
                 ),
                 event=WorkflowProgressAuditEvent(
                     event_id=new_uuid_v7(),
@@ -771,8 +859,7 @@ class WorkflowProgressService:
                     record_sha256=hashlib.sha256(_canonical_json(list(record_json)).encode("utf-8")).hexdigest(),
                 ),
             )
-            refreshed = _decoded_states(repository.read(), selections)
-            return self._projection(selection, refreshed, stale_repository, project_id)
+            return result_projection
         except WorkflowProgressProblem:
             raise
         except RepositoryIdempotencyConflict as error:

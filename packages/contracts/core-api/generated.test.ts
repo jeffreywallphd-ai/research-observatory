@@ -985,6 +985,8 @@ describe("generated Core API client", () => {
       projectId: "01890f47-eae3-4cc0-98c4-dc0c0c073981",
       selectionRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d072",
       selectionRevisionContentHash: `sha256:${"a".repeat(64)}`,
+      intentRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d070",
+      intentRevisionContentHash: `sha256:${"d".repeat(64)}`,
       profileId: "hermeneutic-inquiry",
       profileTitle: "Hermeneutic inquiry",
       processForm: "revisitable",
@@ -1051,6 +1053,8 @@ describe("generated Core API client", () => {
       expectedSelectionRevisionContentHash: projection.selectionRevisionContentHash,
       expectedStageStateRevisionId: stageRevisionId,
       expectedStageStateRevisionContentHash: projection.current!.revisionContentHash,
+      revisitSourceStageStateRevisionId: stageRevisionId,
+      revisitSourceStageStateRevisionContentHash: projection.current!.revisionContentHash,
       completionEvidenceRevisionIds: [],
       supportingPageContractId: null,
       rationale: null,
@@ -1068,10 +1072,26 @@ describe("generated Core API client", () => {
       expectedSelectionRevisionContentHash: projection.selectionRevisionContentHash,
       expectedStageStateRevisionId: stageRevisionId,
       expectedStageStateRevisionContentHash: projection.current!.revisionContentHash,
+      revisitSourceStageStateRevisionId: null,
+      revisitSourceStageStateRevisionContentHash: null,
       completionEvidenceRevisionIds: [],
       supportingPageContractId: null,
       rationale: null,
     }, "e".repeat(32))).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    await expect(client.commandWorkflowProgress({
+      root: "C:/Research/study-one",
+      action: "revisit",
+      stageKey: "intent-contract-1",
+      expectedSelectionRevisionId: projection.selectionRevisionId,
+      expectedSelectionRevisionContentHash: projection.selectionRevisionContentHash,
+      expectedStageStateRevisionId: stageRevisionId,
+      expectedStageStateRevisionContentHash: projection.current!.revisionContentHash,
+      revisitSourceStageStateRevisionId: stageRevisionId,
+      revisitSourceStageStateRevisionContentHash: null,
+      completionEvidenceRevisionIds: [],
+      supportingPageContractId: null,
+      rationale: null,
+    }, "f".repeat(32))).rejects.toThrow("RO-CORE-REQUEST-INVALID");
   });
 
   it("keeps privacy changes consent-bound and cache deletion disclosure exact", async () => {

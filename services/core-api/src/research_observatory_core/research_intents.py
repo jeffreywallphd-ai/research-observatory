@@ -836,6 +836,140 @@ def _changed_workflow_authority(
     return selection, migration, decision
 
 
+def _migrated_stage_states(
+    selection: Mapping[str, object],
+    migration: Mapping[str, object],
+    prior_stage_states: tuple[WorkflowStageStateRecord, ...],
+    *,
+    actor_id: str,
+    updated_at: str,
+) -> tuple[WorkflowStageStateRecord, ...]:
+    """Materialize accepted retain/map decisions under the new selection."""
+
+    impact_preview = cast(Mapping[str, object], selection["impactPreview"])
+    impacts = cast(Sequence[Mapping[str, object]], impact_preview["priorStageStates"])
+    mappings = {
+        cast(str, mapping["fromStageKey"]): mapping
+        for mapping in cast(Sequence[Mapping[str, object]], migration["stageMappings"])
+    }
+    prior_by_revision_id: dict[str, Mapping[str, object]] = {}
+    for record in prior_stage_states:
+        value = json.loads(record.content_json)
+        if not isinstance(value, dict):
+            raise RepositoryProblem("workflow stage-state migration source is invalid")
+        prior_by_revision_id[cast(str, value.get("stageStateRevisionId"))] = value
+    target_profile_id = cast(str, cast(Mapping[str, object], selection["profile"])["profileId"])
+    target_stages = {
+        cast(str, stage["stageKey"]): stage
+        for stage in cast(Sequence[Mapping[str, object]], _PROFILE_BY_ID[target_profile_id]["stages"])
+    }
+    selection_reference = {
+        "selectionId": selection["selectionId"],
+        "selectionRevisionId": selection["selectionRevisionId"],
+        "revision": selection["revision"],
+        "revisionContentHash": selection["revisionContentHash"],
+    }
+    successors: list[WorkflowStageStateRecord] = []
+    unmapped_active: list[tuple[Mapping[str, object], Mapping[str, object]]] = []
+    for impact in impacts:
+        mapping = mappings.get(cast(str, impact["fromStageKey"]))
+        source = prior_by_revision_id.get(cast(str, impact["stageStateRevisionId"]))
+        if mapping is None or source is None:
+            raise RepositoryProblem("workflow stage-state migration authority differs")
+        target_stage_key = mapping.get("targetStageKey")
+        if mapping.get("disposition") not in {"retain", "map"} or not isinstance(target_stage_key, str):
+            if source.get("status") in {"current", "attention-required", "blocked"}:
+                unmapped_active.append((source, mapping))
+            continue
+        target_stage = target_stages.get(target_stage_key)
+        if target_stage is None:
+            raise RepositoryProblem("workflow stage-state migration target is unavailable")
+        target_profile = _PROFILE_BY_ID[target_profile_id]
+        if target_profile["cyclePolicy"] == "linear" and cast(int, source["passNumber"]) > 1:
+            if source.get("status") in {"current", "attention-required", "blocked"}:
+                unmapped_active.append((source, mapping))
+            continue
+        successor = dict(source)
+        successor.update(
+            {
+                "stageStateRevisionId": new_uuid_v7(),
+                "revision": cast(int, source["revision"]) + 1,
+                "revisionContentHash": "sha256:" + "0" * 64,
+                "projectId": selection["projectId"],
+                "selection": selection_reference,
+                "profile": selection["profile"],
+                "stageKey": target_stage_key,
+                "pageContractId": target_stage["pageContractId"],
+                "parentState": {
+                    "stageStateId": source["stageStateId"],
+                    "stageStateRevisionId": source["stageStateRevisionId"],
+                    "revision": source["revision"],
+                    "revisionContentHash": source["revisionContentHash"],
+                },
+                "updatedAt": updated_at,
+                "updatedBy": {"actorType": "human", "actorId": actor_id},
+            }
+        )
+        successor["revisionContentHash"] = _authority_content_hash(successor, "revisionContentHash")
+        if decode_workflow_stage_state(_WORKFLOW_CATALOG, selection, successor) is None:
+            raise RepositoryProblem("workflow stage-state migration result is invalid")
+        successors.append(WorkflowStageStateRecord(storage_revision=0, content_json=_canonical_json(successor)))
+    successor_values = [cast(Mapping[str, object], json.loads(record.content_json)) for record in successors]
+    active_successors = [
+        value for value in successor_values if value.get("status") in {"current", "attention-required", "blocked"}
+    ]
+    if len(unmapped_active) + len(active_successors) > 1:
+        raise RepositoryProblem("workflow stage-state migration has multiple active review sources")
+    completed_targets = {
+        cast(str, value["stageKey"])
+        for value in successor_values
+        if value.get("status") in {"completed", "skipped-with-rationale"}
+    }
+    review_stage = next(
+        (stage for stage in target_stages.values() if stage["stageKey"] not in completed_targets),
+        None,
+    )
+    if not active_successors and impacts and review_stage is not None:
+        rationale = (
+            cast(str, unmapped_active[0][1]["rationale"])
+            if unmapped_active
+            else "Review the accepted workflow-profile migration before continuing with the target sequence."
+        )
+        review_state: dict[str, object] = {
+            "schemaVersion": "1.0",
+            "documentType": "research-observatory-workflow-stage-state",
+            "contractVersion": "1.0.0",
+            "stageStateId": new_uuid_v7(),
+            "stageStateRevisionId": new_uuid_v7(),
+            "revision": 1,
+            "revisionContentHash": "sha256:" + "0" * 64,
+            "projectId": selection["projectId"],
+            "selection": selection_reference,
+            "profile": selection["profile"],
+            "stageKey": review_stage["stageKey"],
+            "pageContractId": review_stage["pageContractId"],
+            "navigationRole": "primary",
+            "passNumber": 1,
+            "status": "attention-required",
+            "completionEvidenceIds": [],
+            "attention": {
+                "reasonCode": "profile-migration-review",
+                "rationale": rationale,
+            },
+            "staleCauses": [],
+            "skipRationale": None,
+            "supportReturn": None,
+            "parentState": None,
+            "updatedAt": updated_at,
+            "updatedBy": {"actorType": "human", "actorId": actor_id},
+        }
+        review_state["revisionContentHash"] = _authority_content_hash(review_state, "revisionContentHash")
+        if decode_workflow_stage_state(_WORKFLOW_CATALOG, selection, review_state) is None:
+            raise RepositoryProblem("workflow stage-state migration review result is invalid")
+        successors.append(WorkflowStageStateRecord(storage_revision=0, content_json=_canonical_json(review_state)))
+    return tuple(successors)
+
+
 def _workflow_authority_mutation(
     existing: WorkflowAuthorityMutation,
     *,
@@ -848,6 +982,7 @@ def _workflow_authority_mutation(
     added_selections: list[WorkflowAuthorityRecord] = []
     added_migrations: list[WorkflowAuthorityRecord] = []
     added_decisions: list[WorkflowAuthorityRecord] = []
+    added_stage_states: tuple[WorkflowStageStateRecord, ...] = ()
     activation: WorkflowAuthorityRecord | None = None
     activation_witness: WorkflowAuthorityWitness | None = None
     parent = selections[-1] if selections else None
@@ -877,6 +1012,13 @@ def _workflow_authority_mutation(
         added_selections.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(changed)))
         added_migrations.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(migration)))
         added_decisions.append(WorkflowAuthorityRecord(revision=revision, content_json=_canonical_json(decision)))
+        added_stage_states = _migrated_stage_states(
+            changed,
+            migration,
+            existing.expected_stage_states or (),
+            actor_id=actor_id,
+            updated_at=selected_at,
+        )
     if not added_selections and not added_migrations and not added_decisions:
         return None
     if existing.activation is None and added_selections:
@@ -913,6 +1055,7 @@ def _workflow_authority_mutation(
         migrations=tuple(added_migrations),
         decisions=tuple(added_decisions),
         expected_stage_states=existing.expected_stage_states if profile_changed else None,
+        stage_states=added_stage_states,
     )
 
 
@@ -1280,6 +1423,40 @@ def _validate_intent_authority_references(
             or acceptance.get("decidedBy") != target.get("createdBy")
         ):
             raise RepositoryProblem("workflow migration differs from canonical intent authority")
+
+
+def validated_workflow_authority(
+    repository: IntentRevisionRepository,
+    *,
+    expected_project_id: str | None,
+    revisions: tuple[Mapping[str, object], ...] | None = None,
+) -> tuple[
+    WorkflowAuthorityMutation,
+    tuple[Mapping[str, object], ...],
+    tuple[Mapping[str, object], ...],
+    tuple[Mapping[str, object], ...],
+]:
+    """Resolve one project's workflow authority through canonical Intent history."""
+
+    canonical_revisions = _decoded_records(repository.read()) if revisions is None else revisions
+    authority = repository.read_workflow_authority()
+    selections, migrations = _validated_workflow_authority(authority)
+    _validate_intent_authority_references(canonical_revisions, selections, migrations)
+    if expected_project_id is not None and not expected_project_id:
+        raise RepositoryProblem("routed project authority is unavailable")
+    canonical_project_ids = {revision.get("projectId") for revision in canonical_revisions}
+    if len(canonical_project_ids) > 1:
+        raise RepositoryProblem("research intent project authority differs")
+    if selections:
+        if not canonical_revisions:
+            raise RepositoryProblem("workflow selection has no canonical intent authority")
+        latest_selection = selections[-1]
+        latest_intent = canonical_revisions[0]
+        if latest_selection.get("projectId") != latest_intent.get("projectId") or cast(
+            Mapping[str, object], latest_selection["profile"]
+        ).get("profileId") != latest_intent.get("primaryUseCase"):
+            raise RepositoryProblem("latest workflow selection differs from current intent authority")
+    return authority, canonical_revisions, selections, migrations
 
 
 def _scope_from_projection(projection: IntentDraftProjection) -> dict[str, object]:
@@ -1765,9 +1942,12 @@ class ResearchIntentService:
         revisions: tuple[Mapping[str, object], ...],
     ) -> WorkflowAuthorityMutation:
         try:
-            authority = repository.read_workflow_authority()
-            selections, migrations = _validated_workflow_authority(authority)
-            _validate_intent_authority_references(revisions, selections, migrations)
+            expected_project_id = cast(str, revisions[0]["projectId"]) if revisions else None
+            authority, _revisions, selections, _migrations = validated_workflow_authority(
+                repository,
+                expected_project_id=expected_project_id,
+                revisions=revisions,
+            )
         except RepositoryProblem as error:
             raise _problem(
                 status=500,

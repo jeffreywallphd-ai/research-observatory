@@ -1285,6 +1285,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     schemaVersion: '1.0', projectId,
                     selectionRevisionId: '019d5f72-5331-7000-8000-000000000031',
                     selectionRevisionContentHash: `sha256:${'7'.repeat(64)}`,
+                    intentRevisionId: currentIntent.revisionId,
+                    intentRevisionContentHash: currentIntent.revisionContentHash,
                     profileId: 'theory-synthesis', profileTitle: 'Theory synthesis',
                     processForm: 'linear', bootstrapRequired: workflowStageState === null,
                     current: workflowStageState,
@@ -1379,6 +1381,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                           || body.stageKey !== 'intent-contract-1'
                           || body.expectedSelectionRevisionId !== '019d5f72-5331-7000-8000-000000000031'
                           || body.expectedSelectionRevisionContentHash !== `sha256:${'7'.repeat(64)}`
+                          || body.revisitSourceStageStateRevisionId !== null
+                          || body.revisitSourceStageStateRevisionContentHash !== null
                           || body.completionEvidenceRevisionIds.length !== 0
                           || body.rationale !== null) {
                           throw new Error('invalid workflow progress command');
@@ -1754,6 +1758,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                         : '019d5f72-5331-7000-8000-000000000032',
                       selectionRevisionContentHash: `sha256:${(
                         selectedProjection.projectId.startsWith('1111') ? '7' : '8').repeat(64)}`,
+                      intentRevisionId: selectedIntent.revisionId,
+                      intentRevisionContentHash: selectedIntent.revisionContentHash,
                       profileId: profile.profileId, profileTitle: profile.title,
                       processForm: profile.processForm, bootstrapRequired: true, current: null,
                       recommendedStageKey: profile.stages[0].stageKey,
