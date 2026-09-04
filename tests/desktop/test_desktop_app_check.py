@@ -44,9 +44,11 @@ class DesktopAppCheckTests(unittest.TestCase):
                 "CAP-03.S03.T03",
                 "CAP-03.S05.T03",
                 "CAP-03.S06.T02",
+                "CAP-03.S06.T03",
             ],
             details["implementedCapabilities"],
         )
+        self.assertTrue(details["adaptiveWorkflowNavigation"])
         self.assertEqual(0, details["referenceOnlyPages"])
         self.assertTrue(details["commandFocus"])
         self.assertTrue(details["skipLink"])
@@ -267,10 +269,17 @@ class TaskCenterInteractionTests(unittest.TestCase):
             page_errors: list[str] = []
             page.on("pageerror", page_error_collector(page_errors))
             page.add_init_script(fixture)
+
+            def open_desktop_tool(name: str) -> None:
+                disclosure = page.locator("[data-all-tools]")
+                if disclosure.get_attribute("open") is None:
+                    disclosure.locator("summary").click()
+                disclosure.get_by_role("button", name=name, exact=True).click()
+
             try:
                 page.goto("http://tauri.localhost/index.html", wait_until="load")
                 page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
-                page.get_by_role("button", name="Local projects", exact=True).click()
+                open_desktop_tool("Local projects")
                 page.locator("#project-parent-directory").fill("C:/Research")
                 page.locator("#project-directory-name").fill("study-one")
                 page.locator("#project-display-name").fill("Study One")
@@ -281,7 +290,7 @@ class TaskCenterInteractionTests(unittest.TestCase):
                     "button", name="Open project", exact=True
                 ).click()
                 page.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
-                page.get_by_role("button", name="Task Center", exact=True).click()
+                open_desktop_tool("Task Center")
                 page.get_by_role("heading", name="project-a-extract", exact=True).wait_for(timeout=5_000)
 
                 cancel = page.get_by_role("button", name="Cancel safely", exact=True)
@@ -320,13 +329,13 @@ class TaskCenterInteractionTests(unittest.TestCase):
 
                 page.evaluate("window.__DELAY_NEXT_A__()")
                 page.get_by_role("button", name="Refresh", exact=True).click()
-                page.get_by_role("button", name="Local projects", exact=True).click()
+                open_desktop_tool("Local projects")
                 page.locator("#project-root").fill("C:/Research/study-two")
                 page.locator("form").filter(has=page.locator("#project-root")).get_by_role(
                     "button", name="Open project", exact=True
                 ).click()
                 page.get_by_text("Study Two", exact=True).wait_for(timeout=5_000)
-                page.get_by_role("button", name="Task Center", exact=True).click()
+                open_desktop_tool("Task Center")
                 page.get_by_role("heading", name="project-b-review", exact=True).wait_for(timeout=5_000)
                 page.evaluate("window.__RESOLVE_A__()")
                 page.wait_for_timeout(100)

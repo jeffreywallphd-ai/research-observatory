@@ -63,17 +63,19 @@ REFERENCE_ONLY_MARKERS = (
     "style-guide.html",
     "data-workflow-select",
 )
-IMPLEMENTED_PRODUCT_PAGE_CONTRACTS = frozenset({
-    "application-settings.html",
-    "audit-lineage.html",
-    "help-onboarding.html",
-    "index.html",
-    "intent-contract.html",
-    "new-project.html",
-    "project-settings.html",
-    "projects.html",
-    "task-center.html",
-})
+IMPLEMENTED_PRODUCT_PAGE_CONTRACTS = frozenset(
+    {
+        "application-settings.html",
+        "audit-lineage.html",
+        "help-onboarding.html",
+        "index.html",
+        "intent-contract.html",
+        "new-project.html",
+        "project-settings.html",
+        "projects.html",
+        "task-center.html",
+    }
+)
 EXPECTED_CSP = {
     "default-src": ("'self'",),
     "img-src": ("'self'", "data:"),
@@ -966,9 +968,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             page.goto("http://tauri.localhost/index.html", wait_until="load")
             page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             details["pages"] = 1
-            details["referenceOnlyPages"] = page.locator(
-                'a[href$=".html"], [data-workflow-select]'
-            ).count()
+            details["referenceOnlyPages"] = page.locator('a[href$=".html"], [data-workflow-select]').count()
             violations = page.evaluate(
                 r"""() => {
                   const violations = [];
@@ -1829,9 +1829,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 }""",
                 timeout=5_000,
             )
-            persisted_profile_applied = "Revision 2" in lock_reconciliation.locator(
-                "[data-intent-workspace]"
-            ).inner_text()
+            persisted_profile_applied = (
+                "Revision 2" in lock_reconciliation.locator("[data-intent-workspace]").inner_text()
+            )
             lock_reconciliation.locator("#intent-objective").fill("Unsaved workflow position")
             topbar_settings = lock_reconciliation.get_by_role("button", name="Private profile", exact=True)
             topbar_settings.click()
