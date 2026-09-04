@@ -33830,7 +33830,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: W1.A07
+  active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -38575,7 +38575,7 @@ wave_amendments:
     sha256: c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6
     introduction_commit: 72052b7f7781dcfc83a1a2c8dae362b899b114d5
   lifecycle:
-    status: ACTIVE
+    status: REVIEW
     history:
     - id: E01
       status: APPROVED
@@ -38596,6 +38596,12 @@ wave_amendments:
       actor: codex
       at: '2026-09-04T10:44:21+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E04
+      status: REVIEW
+      actor: codex
+      at: '2026-09-04T11:08:33+00:00'
+      rationale: W1.A07.B00 and W1.A07.T01 are independently approved with no open findings; submit the bounded planning-only
+        amendment for independent exit review while W1 remains paused and T05 remains blocked.
   bootstrap:
     id: W1.A07.B00
     status: APPROVED
@@ -38620,7 +38626,7 @@ wave_amendments:
         MI-0001, Wave, task, and gate state remains exact. W1 stays PAUSED and CAP-03.S06.T05 stays BLOCKED and lease-free.
         Generated views and controller checks pass, with no product or canonical CAP-03.S06 criterion change and no open finding.
   campaign:
-    status: ACTIVE
+    status: REVIEW
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -38629,12 +38635,9 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-04T10:44:21+00:00'
-    updated_at: '2026-09-04T10:44:21+00:00'
+    updated_at: '2026-09-04T11:08:33+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-04T10:44:21+00:00'
-      expires_at: '2026-09-05T10:44:21+00:00'
+    lease: null
   tasks:
   - id: W1.A07.T01
     amendment_id: W1.A07
@@ -38793,8 +38796,40 @@ wave_amendments:
             closed_finding_ids: []
       current_submission: null
   completion:
-    status: PENDING
+    status: REVIEW
     reviewer: null
     reviewed_at: null
-    evidence: []
-    notes: null
+    evidence:
+    - artifacts/evidence/W1.A07.exit.json
+    notes: W1.A07.B00 and W1.A07.T01 are independently approved with no open findings; submit the bounded planning-only amendment
+      for independent exit review while W1 remains paused and T05 remains blocked.
+    exit_review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-09-04T11:08:33+00:00'
+        candidate_commit: fea1a49dd19ee41d08fdad5a2c1017f48dfac039
+        declared_candidate_commit: e3822bbc577e7edd0beb258552cabdc52530bbb5
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: amendment-exit-evidence
+          amendment_id: W1.A07
+          path: artifacts/evidence/W1.A07.exit.json
+          sha256: a92b4bf8db9a20d181201ad7eafe9750bb4cc00c8d3ecebb24e308b88f7eddcd
+          commit: fea1a49dd19ee41d08fdad5a2c1017f48dfac039
+        acceptance_criteria_sha256: 6d941185c23760c23179f113bea3b6cdbf7b03c0e1929657bf61e4c386a47888
+        selected_checks:
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .
+        - .venv\Scripts\python.exe tools\backlog_views.py --repo . --check
+        - .venv\Scripts\python.exe tools\ui_reference_check.py --repo .
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml amendment status W1.A07
+        - git diff --check 078dcfe197906359c11ae88a7903e69fbfa5d11d..e3822bbc577e7edd0beb258552cabdc52530bbb5
+        - git diff --exit-code 078dcfe197906359c11ae88a7903e69fbfa5d11d..e3822bbc577e7edd0beb258552cabdc52530bbb5 -- design/ui-reference
+          modules apps verification-profiles.json
+        selected_checks_sha256: 57a79b85b068cc997db54a0da32d5b0d58c89876cd1268313298f2f7d40357ae
+        prior_attempt_id: null
+        open_finding_ids: []
+        packet_sha256: af7f3453ccd595a36da67b7700b5905e10a40cbddb91a60d1ed50e3c0b1519d0
