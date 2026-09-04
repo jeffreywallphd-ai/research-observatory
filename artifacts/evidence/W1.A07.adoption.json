@@ -1,0 +1,44 @@
+{
+  "documentType": "wave-amendment-adoption-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A07",
+  "targetWave": "W1",
+  "candidateCommit": "24c690f0ca93bfb3f15a68667bf1a3e1d870eff6",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewedCompletionCommit": "24c690f0ca93bfb3f15a68667bf1a3e1d870eff6",
+  "approvedExitAttempt": "R01",
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W1.A07.exit-review-R01.json",
+    "sha256": "40d989c95cf4902e46c287bf3fe8570223e60583aba25ee845b427cfeb6ef031"
+  },
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W1.A07.exit.json",
+    "sha256": "a92b4bf8db9a20d181201ad7eafe9750bb4cc00c8d3ecebb24e308b88f7eddcd"
+  },
+  "waveDisposition": {
+    "status": "PAUSED",
+    "scopeAfterAdoption": "wave",
+    "ordinaryResumeAuthorized": false,
+    "gateApprovalAuthorized": false
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "adopts": [
+      "the exact manuscript-review/revision CAP-03.S06.T05 cycle criterion in the canonical backlog and approved slice plan",
+      "the unchanged accepted ADR-0026 and RO-UI-ACADEMIC-MINIMAL-1.5 governed cycle-policy authority",
+      "the zero-refactor planning correction against the immutable 194-point W1 baseline"
+    ],
+    "retains": [
+      "explicit ordinary W1 resume and CAP-03.S06.T05 recovery before product work",
+      "all ordinary CAP-03.S06.T05 implementation and task/slice review obligations",
+      "the complete W1 Windows x64 and cross-capability qualification matrix at W1 exit",
+      "G1 as a later human approval gate"
+    ]
+  },
+  "requiredNextTransitions": [
+    "explicitly resume W1 through taskctl",
+    "recover CAP-03.S06.T05 through taskctl against the adopted authority",
+    "execute T05 test-first and carry it through independent review",
+    "complete CAP-03.S06 slice review, triggered checkpoints, and W1 exit qualification"
+  ]
+}
