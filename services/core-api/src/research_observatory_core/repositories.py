@@ -75,6 +75,10 @@ from .ports.repositories import (
     WorkflowAuthorityMutation,
     WorkflowAuthorityRecord,
     WorkflowAuthorityWitness,
+    WorkflowProgressAuditEvent,
+    WorkflowProgressCommandRecord,
+    WorkflowProgressRepository,
+    WorkflowStageStateRecord,
 )
 from .ports.workflow_executor import (
     ConcurrencyClass,
@@ -387,6 +391,8 @@ _INTENT_WORKFLOW_AUTHORITY_KEY = "research-intent.workflow-authority-binding"
 _WORKFLOW_SELECTION_KEY = "workflow-profile.selection"
 _WORKFLOW_MIGRATION_KEY = "workflow-profile.migration"
 _WORKFLOW_ACCEPTANCE_KEY = "workflow-profile.acceptance"
+_WORKFLOW_STAGE_STATE_KEY = "workflow-profile.stage-state"
+_WORKFLOW_PROGRESS_COMMAND_KEY = "workflow-profile.stage-command"
 
 
 class _SqliteIntentRevisionRepository(IntentRevisionRepository):
@@ -523,6 +529,28 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                             raise ValueError("workflow authority record is invalid")
                         records.append(WorkflowAuthorityRecord(revision=revision, content_json=content_json))
                     values[key] = tuple(records)
+                stage_rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, _WORKFLOW_STAGE_STATE_KEY),
+                ).fetchall()
+                stage_states: list[WorkflowStageStateRecord] = []
+                for storage_revision, value_type, content_json in stage_rows:
+                    if (
+                        not isinstance(storage_revision, int)
+                        or storage_revision < 1
+                        or value_type != "text"
+                        or not isinstance(content_json, str)
+                        or len(content_json.encode("utf-8")) > 262_144
+                        or not isinstance(json.loads(content_json), dict)
+                    ):
+                        raise ValueError("workflow stage-state record is invalid")
+                    stage_states.append(
+                        WorkflowStageStateRecord(
+                            storage_revision=storage_revision,
+                            content_json=content_json,
+                        )
+                    )
             finally:
                 connection.close()
         except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
@@ -533,6 +561,7 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
             selections=values[_WORKFLOW_SELECTION_KEY],
             migrations=values[_WORKFLOW_MIGRATION_KEY],
             decisions=values[_WORKFLOW_ACCEPTANCE_KEY],
+            expected_stage_states=tuple(stage_states),
         )
 
     def replay(
@@ -756,6 +785,15 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                     or not isinstance(json.loads(authority_record.content_json), dict)
                 ):
                     raise ValueError("workflow authority mutation is invalid")
+            if workflow.expected_stage_states is not None:
+                for stage_record in workflow.expected_stage_states:
+                    if (
+                        stage_record.storage_revision < 1
+                        or not stage_record.content_json
+                        or len(stage_record.content_json.encode("utf-8")) > 262_144
+                        or not isinstance(json.loads(stage_record.content_json), dict)
+                    ):
+                        raise ValueError("workflow stage-state snapshot is invalid")
             selection_revisions = [item.revision for item in workflow.selections]
             migration_revisions = [item.revision for item in workflow.migrations]
             decision_revisions = [item.revision for item in workflow.decisions]
@@ -837,6 +875,17 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
                         (self._project_id, _WORKFLOW_SELECTION_KEY),
                     ).fetchone()[0]
                 )
+                if workflow.expected_stage_states is not None:
+                    current_stage_rows = connection.execute(
+                        "SELECT revision, value_type, text_value FROM settings "
+                        "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                        (self._project_id, _WORKFLOW_STAGE_STATE_KEY),
+                    ).fetchall()
+                    expected_stage_rows = [
+                        (item.storage_revision, "text", item.content_json) for item in workflow.expected_stage_states
+                    ]
+                    if [tuple(row) for row in current_stage_rows] != expected_stage_rows:
+                        raise RepositoryConflict("workflow stage-state authority changed")
                 if workflow.activation is not None:
                     if activation is not None or activation_witness is not None or latest_selection != 0:
                         raise RepositoryConflict("workflow authority activation changed")
@@ -1058,6 +1107,357 @@ def sqlite_intent_revision_repository(path: Path, project_id: str) -> IntentRevi
     """Compose intent persistence after lifecycle validation binds the project root."""
 
     return _SqliteIntentRevisionRepository(path / "state" / "project.sqlite3", project_id)
+
+
+class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
+    """Project-scoped immutable stage history with transactional head CAS."""
+
+    def __init__(self, database: Path, project_id: str) -> None:
+        if not database.is_absolute() or not project_id:
+            raise ValueError("workflow progress repository authority is invalid")
+        self._database = database
+        self._project_id = project_id
+
+    def _open(self) -> CanonicalConnection:
+        return open_canonical_database(self._database, expected_project_id=self._project_id)
+
+    @staticmethod
+    def _decoded_stage_rows(rows: list[tuple[object, object, object]]) -> tuple[WorkflowStageStateRecord, ...]:
+        records: list[WorkflowStageStateRecord] = []
+        for storage_revision, value_type, content_json in rows:
+            if (
+                not isinstance(storage_revision, int)
+                or storage_revision < 1
+                or value_type != "text"
+                or not isinstance(content_json, str)
+                or len(content_json.encode("utf-8")) > 65_536
+            ):
+                raise ValueError("workflow stage-state row is invalid")
+            value = json.loads(content_json)
+            if not isinstance(value, dict):
+                raise ValueError("workflow stage-state document is invalid")
+            records.append(WorkflowStageStateRecord(storage_revision=storage_revision, content_json=content_json))
+        if [record.storage_revision for record in records] != list(range(1, len(records) + 1)):
+            raise ValueError("workflow stage-state storage history is discontinuous")
+        return tuple(records)
+
+    @staticmethod
+    def _current_head(
+        records: tuple[WorkflowStageStateRecord, ...],
+        selection_revision_id: str,
+    ) -> Mapping[str, object] | None:
+        heads: dict[str, Mapping[str, object]] = {}
+        for record in records:
+            value = json.loads(record.content_json)
+            selection = value.get("selection")
+            if not isinstance(selection, dict) or selection.get("selectionRevisionId") != selection_revision_id:
+                continue
+            state_id = value.get("stageStateId")
+            if not isinstance(state_id, str):
+                raise ValueError("workflow stage-state aggregate identity is invalid")
+            prior = heads.get(state_id)
+            if prior is None or int(value.get("revision", 0)) > int(prior.get("revision", 0)):
+                heads[state_id] = value
+        current = [
+            value
+            for value in heads.values()
+            if value.get("navigationRole") == "primary" and value.get("status") == "current"
+        ]
+        if len(current) > 1:
+            raise ValueError("workflow progress has multiple current primary heads")
+        return current[0] if current else None
+
+    def read(self) -> tuple[WorkflowStageStateRecord, ...]:
+        try:
+            connection = self._open()
+            try:
+                rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, _WORKFLOW_STAGE_STATE_KEY),
+                ).fetchall()
+            finally:
+                connection.close()
+            return self._decoded_stage_rows(rows)
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
+            raise _transaction_failure("workflow progress read failed") from None
+
+    def resolve_completion_evidence(self, revision_ids: tuple[str, ...]) -> tuple[str, ...]:
+        if (
+            not revision_ids
+            or len(set(revision_ids)) != len(revision_ids)
+            or any(not is_uuid_v7(item) for item in revision_ids)
+        ):
+            raise RepositoryProblem("workflow completion evidence identity is invalid")
+        try:
+            connection = self._open()
+            try:
+                references: list[str] = []
+                for revision_id in revision_ids:
+                    row = connection.execute(
+                        "SELECT revision_id, aggregate_id, aggregate_kind, revision, contract_version, "
+                        "knowledge_status, rights_status FROM aggregate_revisions "
+                        "WHERE project_id=? AND revision_id=?",
+                        (self._project_id, revision_id),
+                    ).fetchone()
+                    if row is None:
+                        raise RepositoryNotFound("workflow completion evidence was not found")
+                    document = {
+                        "aggregateId": str(row[1]),
+                        "aggregateKind": str(row[2]),
+                        "contractVersion": str(row[4]),
+                        "knowledgeStatus": str(row[5]),
+                        "projectId": self._project_id,
+                        "revision": int(row[3]),
+                        "revisionId": str(row[0]),
+                        "rightsStatus": str(row[6]),
+                        "schemaVersion": "1.0",
+                    }
+                    references.append(
+                        "sha256:"
+                        + hashlib.sha256(
+                            json.dumps(
+                                document,
+                                ensure_ascii=True,
+                                sort_keys=True,
+                                separators=(",", ":"),
+                            ).encode("utf-8")
+                        ).hexdigest()
+                    )
+                return tuple(references)
+            finally:
+                connection.close()
+        except RepositoryNotFound:
+            raise
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError:
+            raise _transaction_failure("workflow completion evidence lookup failed") from None
+
+    @staticmethod
+    def _command_value(row: tuple[object, object, object]) -> Mapping[str, object]:
+        _revision, value_type, content_json = row
+        if value_type != "text" or not isinstance(content_json, str):
+            raise ValueError("workflow progress command row is invalid")
+        value = json.loads(content_json)
+        if not isinstance(value, dict):
+            raise ValueError("workflow progress command document is invalid")
+        return value
+
+    def replay(
+        self,
+        *,
+        actor_id: str,
+        idempotency_key: str,
+        command_sha256: str,
+    ) -> tuple[str, ...] | None:
+        try:
+            connection = self._open()
+            try:
+                rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, _WORKFLOW_PROGRESS_COMMAND_KEY),
+                ).fetchall()
+            finally:
+                connection.close()
+            matches = [
+                self._command_value(row)
+                for row in rows
+                if self._command_value(row).get("idempotencyKey") == idempotency_key
+            ]
+            if not matches:
+                return None
+            if len(matches) != 1:
+                raise RepositoryIdempotencyConflict("workflow progress idempotency authority is ambiguous")
+            value = matches[0]
+            if value.get("actorId") != actor_id or value.get("commandSha256") != command_sha256:
+                raise RepositoryIdempotencyConflict("workflow progress idempotency key is already bound")
+            result_ids = value.get("resultRevisionIds")
+            if not isinstance(result_ids, list) or not all(isinstance(item, str) for item in result_ids):
+                raise ValueError("workflow progress idempotency result is invalid")
+            return tuple(cast(list[str], result_ids))
+        except RepositoryIdempotencyConflict:
+            raise
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
+            raise _transaction_failure("workflow progress replay failed") from None
+
+    def append(
+        self,
+        *,
+        expected_selection_revision_id: str,
+        expected_selection_revision_content_hash: str,
+        expected_current_revision_id: str | None,
+        expected_current_revision_content_hash: str | None,
+        records: tuple[WorkflowStageStateRecord, ...],
+        command: WorkflowProgressCommandRecord,
+        event: WorkflowProgressAuditEvent,
+    ) -> None:
+        if (
+            not records
+            or not is_uuid_v7(expected_selection_revision_id)
+            or not expected_selection_revision_content_hash.startswith("sha256:")
+            or (expected_current_revision_id is None) != (expected_current_revision_content_hash is None)
+            or (expected_current_revision_id is not None and not is_uuid_v7(expected_current_revision_id))
+            or not is_uuid_v7(command.actor_id)
+            or not command.idempotency_key
+            or len(command.command_sha256) != 64
+            or set(command.result_revision_ids)
+            != {cast(str, json.loads(record.content_json).get("stageStateRevisionId")) for record in records}
+            or not is_uuid_v7(event.event_id)
+            or not is_uuid_v7(event.outbox_id)
+            or event.actor_id != command.actor_id
+            or event.actor_type not in {"human", "system"}
+        ):
+            raise _transaction_failure("workflow progress append is invalid")
+        try:
+            connection = self._open()
+            try:
+                connection.execute("BEGIN IMMEDIATE")
+                command_rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, _WORKFLOW_PROGRESS_COMMAND_KEY),
+                ).fetchall()
+                matching = [
+                    self._command_value(row)
+                    for row in command_rows
+                    if self._command_value(row).get("idempotencyKey") == command.idempotency_key
+                ]
+                if matching:
+                    if (
+                        len(matching) != 1
+                        or matching[0].get("actorId") != command.actor_id
+                        or matching[0].get("commandSha256") != command.command_sha256
+                        or matching[0].get("resultRevisionIds") != list(command.result_revision_ids)
+                    ):
+                        raise RepositoryIdempotencyConflict("workflow progress idempotency key is already bound")
+                    connection.execute("COMMIT")
+                    return
+                selection_row = connection.execute(
+                    "SELECT text_value FROM settings WHERE project_id=? AND setting_key=? "
+                    "ORDER BY revision DESC LIMIT 1",
+                    (self._project_id, _WORKFLOW_SELECTION_KEY),
+                ).fetchone()
+                if selection_row is None or not isinstance(selection_row[0], str):
+                    raise RepositoryConflict("workflow selection authority is unavailable")
+                selection = json.loads(selection_row[0])
+                if (
+                    not isinstance(selection, dict)
+                    or selection.get("selectionRevisionId") != expected_selection_revision_id
+                    or selection.get("revisionContentHash") != expected_selection_revision_content_hash
+                ):
+                    raise RepositoryConflict("workflow selection changed")
+                stage_rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, _WORKFLOW_STAGE_STATE_KEY),
+                ).fetchall()
+                existing = self._decoded_stage_rows(stage_rows)
+                current = self._current_head(existing, expected_selection_revision_id)
+                if current is None:
+                    if expected_current_revision_id is not None:
+                        raise RepositoryConflict("workflow current stage changed")
+                elif (
+                    current.get("stageStateRevisionId") != expected_current_revision_id
+                    or current.get("revisionContentHash") != expected_current_revision_content_hash
+                ):
+                    raise RepositoryConflict("workflow current stage changed")
+                next_state_storage_revision = len(existing) + 1
+                for offset, record in enumerate(records):
+                    value = json.loads(record.content_json)
+                    if (
+                        not isinstance(value, dict)
+                        or value.get("projectId") != selection.get("projectId")
+                        or not isinstance(value.get("selection"), dict)
+                        or value["selection"].get("selectionRevisionId") != expected_selection_revision_id
+                        or value["selection"].get("revisionContentHash") != expected_selection_revision_content_hash
+                    ):
+                        raise RepositoryConflict("workflow stage mutation authority differs")
+                    connection.execute(
+                        "INSERT INTO settings (setting_id, project_id, setting_key, revision, value_type, "
+                        "text_value, integer_value, real_value, boolean_value, created_at, modified_at) "
+                        "VALUES (?, ?, ?, ?, 'text', ?, NULL, NULL, NULL, ?, ?)",
+                        (
+                            new_uuid_v7(),
+                            self._project_id,
+                            _WORKFLOW_STAGE_STATE_KEY,
+                            next_state_storage_revision + offset,
+                            record.content_json,
+                            event.occurred_at,
+                            event.occurred_at,
+                        ),
+                    )
+                command_value = json.dumps(
+                    {
+                        "actorId": command.actor_id,
+                        "commandSha256": command.command_sha256,
+                        "idempotencyKey": command.idempotency_key,
+                        "resultRevisionIds": list(command.result_revision_ids),
+                        "schemaVersion": "1.0",
+                    },
+                    ensure_ascii=True,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+                connection.execute(
+                    "INSERT INTO settings (setting_id, project_id, setting_key, revision, value_type, "
+                    "text_value, integer_value, real_value, boolean_value, created_at, modified_at) "
+                    "VALUES (?, ?, ?, ?, 'text', ?, NULL, NULL, NULL, ?, ?)",
+                    (
+                        new_uuid_v7(),
+                        self._project_id,
+                        _WORKFLOW_PROGRESS_COMMAND_KEY,
+                        len(command_rows) + 1,
+                        command_value,
+                        event.occurred_at,
+                        event.occurred_at,
+                    ),
+                )
+                connection.execute(
+                    "INSERT INTO provenance_events (event_id, project_id, revision_id, event_type, "
+                    "occurred_at, trace_id, actor_type, actor_id, record_sha256) "
+                    "VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?)",
+                    (
+                        event.event_id,
+                        self._project_id,
+                        event.event_type,
+                        event.occurred_at,
+                        event.trace_id,
+                        event.actor_type,
+                        event.actor_id,
+                        event.record_sha256,
+                    ),
+                )
+                connection.execute(
+                    "INSERT INTO outbox_events (outbox_id, project_id, revision_id, event_type, occurred_at, "
+                    "available_at, state, attempt_count, published_at, idempotency_key, record_sha256) "
+                    "VALUES (?, ?, NULL, ?, ?, ?, 'pending', 0, NULL, ?, ?)",
+                    (
+                        event.outbox_id,
+                        self._project_id,
+                        event.event_type,
+                        event.occurred_at,
+                        event.occurred_at,
+                        command.idempotency_key,
+                        command.command_sha256,
+                    ),
+                )
+                connection.execute("COMMIT")
+            except BaseException:
+                if connection.in_transaction:
+                    connection.execute("ROLLBACK")
+                raise
+            finally:
+                connection.close()
+        except RepositoryIdempotencyConflict, RepositoryConflict:
+            raise
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
+            raise _transaction_failure("workflow progress append failed") from None
+
+
+def sqlite_workflow_progress_repository(path: Path, project_id: str) -> WorkflowProgressRepository:
+    """Compose stage-progress persistence after lifecycle validation binds the project root."""
+
+    return _SqliteWorkflowProgressRepository(path / "state" / "project.sqlite3", project_id)
 
 
 def _transaction_failure(message: str = "canonical repository transaction failed") -> RepositoryTransactionFailed:
@@ -7046,5 +7446,6 @@ __all__ = [
     "sqlite_privacy_policy_repository",
     "sqlite_provenance_ledger_repository",
     "sqlite_selective_recalculation_repository",
+    "sqlite_workflow_progress_repository",
     "sqlite_workflow_queue_repository",
 ]

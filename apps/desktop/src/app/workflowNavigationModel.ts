@@ -1,5 +1,6 @@
 import type {
   WorkflowProfileCatalogProjection,
+  WorkflowProgressProjection,
   WorkflowProfileProjection,
   WorkflowProfileStageProjection,
 } from "@research-observatory/contracts/core-api";
@@ -97,6 +98,7 @@ export interface SupportingReturnContext {
 export interface WorkflowContextClient<TIntent extends WorkflowIntentSelection = WorkflowIntentSelection> {
   workflowProfileCatalog(): Promise<WorkflowProfileCatalogProjection>;
   intent(command: { readonly root: string }): Promise<TIntent>;
+  workflowProgress(command: { readonly root: string }): Promise<WorkflowProgressProjection>;
 }
 
 export type WorkflowContextLoadResult<TIntent extends WorkflowIntentSelection = WorkflowIntentSelection> =
@@ -105,6 +107,7 @@ export type WorkflowContextLoadResult<TIntent extends WorkflowIntentSelection = 
       readonly authority: WorkflowAuthoritySnapshot;
       readonly catalog: WorkflowProfileCatalogProjection;
       readonly intent: TIntent;
+      readonly progress: WorkflowProgressProjection;
     }
   | { readonly kind: "unavailable"; readonly reason: "project-unavailable" | "no-current-intent" | "incoherent" }
   | { readonly kind: "error"; readonly message: string }
@@ -126,13 +129,24 @@ export class WorkflowContextLoader {
       return { kind: "unavailable", reason: "project-unavailable" };
     }
     try {
-      const [catalog, intent] = await Promise.all([
+      const [catalog, intent, progress] = await Promise.all([
         client.workflowProfileCatalog(),
         client.intent({ root: project.root }),
+        client.workflowProgress({ root: project.root }),
       ]);
       if (generation !== this.generation) return { kind: "stale" };
-      const authority = createWorkflowAuthoritySnapshot(project, catalog, intent);
-      if (authority) return { kind: "ready", authority, catalog, intent };
+      const progressCoherent = progress.projectId === project.projectId
+        && progress.profileId === intent.current?.primaryUseCase
+        && progress.processForm === catalog.profiles.find(({ profileId }) => profileId === progress.profileId)?.processForm;
+      const authority = progressCoherent
+        ? createWorkflowAuthoritySnapshot(
+            project,
+            catalog,
+            intent,
+            progress.current?.stageKey ?? progress.recommendedStageKey,
+          )
+        : null;
+      if (authority) return { kind: "ready", authority, catalog, intent, progress };
       return {
         kind: "unavailable",
         reason: intent.projectId === project.projectId && intent.current === null

@@ -27,6 +27,7 @@ import {
   decodeWorkflowTaskCenterPage,
   decodeWorkflowTaskCenterRun,
   decodeWorkflowProfileCatalogProjection,
+  decodeWorkflowProgressProjection,
   evaluateCoreApiCompatibility,
   parseOperationEventStream,
   type CoreApiResponse,
@@ -38,6 +39,7 @@ import {
   type RecalculationScheduleProjection,
   type VersionResponse,
   type WorkflowTaskCenterRun,
+  type WorkflowProgressProjection,
   workflowEtag,
 } from "./generated";
 
@@ -974,6 +976,102 @@ describe("generated Core API client", () => {
       ifMatch: null,
       idempotencyKey: null,
     }]);
+  });
+
+  it("binds workflow progress reads and explicit human commands to exact authority", async () => {
+    const stageRevisionId = "018f47a2-4d6b-7f78-9f2e-7fb76c86d071";
+    const projection: WorkflowProgressProjection = {
+      schemaVersion: "1.0",
+      projectId: "01890f47-eae3-4cc0-98c4-dc0c0c073981",
+      selectionRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d072",
+      selectionRevisionContentHash: `sha256:${"a".repeat(64)}`,
+      profileId: "hermeneutic-inquiry",
+      profileTitle: "Hermeneutic inquiry",
+      processForm: "revisitable",
+      bootstrapRequired: false,
+      current: {
+        stageStateId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d073",
+        stageStateRevisionId: stageRevisionId,
+        revision: 1,
+        revisionContentHash: `sha256:${"b".repeat(64)}`,
+        parentStateRevisionId: null,
+        stageKey: "intent-contract-1",
+        pageContractId: "intent-contract.html",
+        navigationRole: "primary",
+        passNumber: 1,
+        status: "current",
+        completionEvidenceIds: [],
+        attentionReason: null,
+        staleCauseIds: [],
+        skipRationale: null,
+        updatedAt: "2026-09-04T02:00:00.000Z",
+      },
+      recommendedStageKey: "intent-contract-1",
+      recommendedPageContractId: "intent-contract.html",
+      recommendedAction: "Continue the current stage; completion requires explicit human evidence.",
+      checkpointState: "unknown",
+      checkpointRationale: "Checkpoint authority remains unknown until a later governed decision.",
+      supportingHandoff: null,
+      staleOutputs: [],
+      history: [],
+    };
+    expect(decodeWorkflowProgressProjection(projection)).toEqual(projection);
+    const bootstrap = {
+      ...projection,
+      bootstrapRequired: true,
+      current: null,
+      recommendedAction: "Start the guided workflow at this researcher-controlled stage.",
+    };
+    expect(decodeWorkflowProgressProjection(bootstrap)).toEqual(bootstrap);
+    expect(decodeWorkflowProgressProjection({ ...projection, inventedAuthority: true })).toBeNull();
+    expect(decodeWorkflowProgressProjection({
+      ...projection,
+      current: { ...projection.current!, stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d099" },
+      supportingHandoff: {
+        stageStateId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d074",
+        stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d075",
+        revisionContentHash: `sha256:${"c".repeat(64)}`,
+        pageContractId: "project-settings.html",
+        navigationRole: "supporting",
+        returnStageStateRevisionId: stageRevisionId,
+      },
+    })).toBeNull();
+
+    const requests: unknown[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return response(200, projection);
+    });
+    await expect(client.workflowProgress({ root: "C:/Research/study-one" })).resolves.toEqual(projection);
+    await expect(client.commandWorkflowProgress({
+      root: "C:/Research/study-one",
+      action: "revisit",
+      stageKey: "intent-contract-1",
+      expectedSelectionRevisionId: projection.selectionRevisionId,
+      expectedSelectionRevisionContentHash: projection.selectionRevisionContentHash,
+      expectedStageStateRevisionId: stageRevisionId,
+      expectedStageStateRevisionContentHash: projection.current!.revisionContentHash,
+      completionEvidenceRevisionIds: [],
+      supportingPageContractId: null,
+      rationale: null,
+    }, "d".repeat(32))).resolves.toEqual(projection);
+    expect(requests).toHaveLength(2);
+    expect(requests[1]).toMatchObject({
+      path: "/projects/workflow-progress/commands",
+      idempotencyKey: "d".repeat(32),
+    });
+    await expect(client.commandWorkflowProgress({
+      root: "C:/Research/study-one",
+      action: "complete",
+      stageKey: "intent-contract-1",
+      expectedSelectionRevisionId: projection.selectionRevisionId,
+      expectedSelectionRevisionContentHash: projection.selectionRevisionContentHash,
+      expectedStageStateRevisionId: stageRevisionId,
+      expectedStageStateRevisionContentHash: projection.current!.revisionContentHash,
+      completionEvidenceRevisionIds: [],
+      supportingPageContractId: null,
+      rationale: null,
+    }, "e".repeat(32))).rejects.toThrow("RO-CORE-REQUEST-INVALID");
   });
 
   it("keeps privacy changes consent-bound and cache deletion disclosure exact", async () => {

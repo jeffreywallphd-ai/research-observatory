@@ -769,6 +769,96 @@ export function decodeWorkflowProfileCatalogProjection(value: unknown): Workflow
   return { ...candidate, profiles: decoded } as unknown as WorkflowProfileCatalogProjection;
 }
 
+function decodeWorkflowStageStateProjection(value: unknown): WorkflowStageStateProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "stageStateId", "stageStateRevisionId", "revision", "revisionContentHash", "parentStateRevisionId",
+    "stageKey", "pageContractId", "navigationRole", "passNumber", "status", "completionEvidenceIds",
+    "attentionReason", "staleCauseIds", "skipRationale", "updatedAt",
+  ])) return null;
+  if (!canonicalUuid7(candidate.stageStateId) || !canonicalUuid7(candidate.stageStateRevisionId)
+    || !integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER) || !contentHash(candidate.revisionContentHash)
+    || (candidate.parentStateRevisionId !== null && !canonicalUuid7(candidate.parentStateRevisionId))
+    || typeof candidate.stageKey !== "string" || !/^[a-z0-9][a-z0-9._-]{0,99}$/.test(candidate.stageKey)
+    || typeof candidate.pageContractId !== "string"
+    || !/^[a-z0-9][a-z0-9-]{0,99}\.html$/.test(candidate.pageContractId)
+    || !member(candidate.navigationRole, ["primary", "supporting"] as const)
+    || !integer(candidate.passNumber, 1, Number.MAX_SAFE_INTEGER)
+    || !member(candidate.status, [
+      "not-started", "available", "current", "in-progress", "attention-required", "blocked", "completed",
+      "stale", "skipped-with-rationale",
+    ] as const) || !Array.isArray(candidate.completionEvidenceIds)
+    || candidate.completionEvidenceIds.length > 256 || !candidate.completionEvidenceIds.every(canonicalUuid7)
+    || new Set(candidate.completionEvidenceIds).size !== candidate.completionEvidenceIds.length
+    || (candidate.attentionReason !== null && !boundedText(candidate.attentionReason, 1, 4000))
+    || !Array.isArray(candidate.staleCauseIds) || candidate.staleCauseIds.length > 256
+    || !candidate.staleCauseIds.every(canonicalUuid7)
+    || new Set(candidate.staleCauseIds).size !== candidate.staleCauseIds.length
+    || (candidate.skipRationale !== null && !boundedText(candidate.skipRationale, 1, 4000))
+    || !utcInstant(candidate.updatedAt)) return null;
+  if ((candidate.status === "completed") !== (candidate.completionEvidenceIds.length > 0)
+    || member(candidate.status, ["attention-required", "blocked"] as const) !== (candidate.attentionReason !== null)
+    || (candidate.status === "skipped-with-rationale") !== (candidate.skipRationale !== null)) return null;
+  return candidate as unknown as WorkflowStageStateProjection;
+}
+
+function decodeWorkflowSupportingHandoffProjection(value: unknown): WorkflowSupportingHandoffProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "stageStateId", "stageStateRevisionId", "revisionContentHash", "pageContractId", "navigationRole",
+    "returnStageStateRevisionId",
+  ])) return null;
+  if (!canonicalUuid7(candidate.stageStateId) || !canonicalUuid7(candidate.stageStateRevisionId)
+    || !contentHash(candidate.revisionContentHash) || typeof candidate.pageContractId !== "string"
+    || !/^[a-z0-9][a-z0-9-]{0,99}\.html$/.test(candidate.pageContractId)
+    || candidate.navigationRole !== "supporting" || !canonicalUuid7(candidate.returnStageStateRevisionId)) return null;
+  return candidate as unknown as WorkflowSupportingHandoffProjection;
+}
+
+function decodeWorkflowStaleOutputProjection(value: unknown): WorkflowStaleOutputProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "outputRevisionId", "disposition", "reason", "causeReferenceHash", "safestNextAction",
+  ])) return null;
+  if (!canonicalUuid7(candidate.outputRevisionId) || !member(candidate.disposition, ["stale", "unknown-impact"] as const)
+    || !boundedText(candidate.reason, 1, 100) || !contentHash(candidate.causeReferenceHash)
+    || !boundedText(candidate.safestNextAction, 1, 4000)) return null;
+  return candidate as unknown as WorkflowStaleOutputProjection;
+}
+
+export function decodeWorkflowProgressProjection(value: unknown): WorkflowProgressProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "selectionRevisionId", "selectionRevisionContentHash", "profileId",
+    "profileTitle", "processForm", "bootstrapRequired", "current", "recommendedStageKey",
+    "recommendedPageContractId", "recommendedAction", "checkpointState", "checkpointRationale",
+    "supportingHandoff", "staleOutputs", "history",
+  ])) return null;
+  const current = candidate.current === null ? null : decodeWorkflowStageStateProjection(candidate.current);
+  const supporting = candidate.supportingHandoff === null
+    ? null : decodeWorkflowSupportingHandoffProjection(candidate.supportingHandoff);
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
+    || !canonicalUuid7(candidate.selectionRevisionId) || !contentHash(candidate.selectionRevisionContentHash)
+    || !member(candidate.profileId, INTENT_PRIMARY_USE_CASES) || !boundedText(candidate.profileTitle, 1, 200)
+    || !member(candidate.processForm, ["linear", "revisitable"] as const)
+    || typeof candidate.bootstrapRequired !== "boolean" || (candidate.current !== null && current === null)
+    || typeof candidate.recommendedStageKey !== "string"
+    || !/^[a-z0-9][a-z0-9._-]{0,99}$/.test(candidate.recommendedStageKey)
+    || typeof candidate.recommendedPageContractId !== "string"
+    || !/^[a-z0-9][a-z0-9-]{0,99}\.html$/.test(candidate.recommendedPageContractId)
+    || !boundedText(candidate.recommendedAction, 1, 4000)
+    || !member(candidate.checkpointState, ["unknown", "optional-human", "required-human", "not-applicable"] as const)
+    || !boundedText(candidate.checkpointRationale, 1, 4000)
+    || (candidate.supportingHandoff !== null && supporting === null)
+    || !Array.isArray(candidate.staleOutputs) || candidate.staleOutputs.length > 256
+    || candidate.staleOutputs.some((item) => decodeWorkflowStaleOutputProjection(item) === null)
+    || !Array.isArray(candidate.history) || candidate.history.length > 512
+    || candidate.history.some((item) => decodeWorkflowStageStateProjection(item) === null)) return null;
+  if (candidate.bootstrapRequired !== (candidate.current === null && candidate.history.length === 0)
+    || (supporting !== null && current?.stageStateRevisionId !== supporting.returnStageStateRevisionId)) return null;
+  return { ...candidate, current, supportingHandoff: supporting } as unknown as WorkflowProgressProjection;
+}
+
 function decodeRecalculationCause(value: unknown): RecalculationCauseProjection | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
@@ -1257,6 +1347,39 @@ function intentPolicyBody(command: IntentPolicyRequest): string {
   return JSON.stringify(command);
 }
 
+function workflowProgressBody(command: WorkflowProgressCommand): string {
+  const hasStagePrecondition = command.expectedStageStateRevisionId !== null
+    && command.expectedStageStateRevisionContentHash !== null;
+  if (!projectRoot(command.root) || !member(command.action, [
+    "start", "complete", "mark-attention", "block", "skip", "revisit", "open-supporting",
+  ] as const) || typeof command.stageKey !== "string"
+    || !/^[a-z0-9][a-z0-9._-]{0,99}$/.test(command.stageKey)
+    || !canonicalUuid7(command.expectedSelectionRevisionId)
+    || !contentHash(command.expectedSelectionRevisionContentHash)
+    || ((command.expectedStageStateRevisionId === null)
+      !== (command.expectedStageStateRevisionContentHash === null))
+    || (command.expectedStageStateRevisionId !== null && !canonicalUuid7(command.expectedStageStateRevisionId))
+    || (command.expectedStageStateRevisionContentHash !== null
+      && !contentHash(command.expectedStageStateRevisionContentHash))
+    || !Array.isArray(command.completionEvidenceRevisionIds)
+    || command.completionEvidenceRevisionIds.length > 256
+    || !command.completionEvidenceRevisionIds.every(canonicalUuid7)
+    || new Set(command.completionEvidenceRevisionIds).size !== command.completionEvidenceRevisionIds.length
+    || (command.supportingPageContractId !== null
+      && (typeof command.supportingPageContractId !== "string"
+        || !/^[a-z0-9][a-z0-9-]{0,99}\.html$/.test(command.supportingPageContractId)))
+    || (command.rationale !== null && !boundedText(command.rationale, 1, 4000))) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  if ((command.action === "start") === hasStagePrecondition
+    || (command.action === "complete") !== (command.completionEvidenceRevisionIds.length > 0)
+    || (command.action === "open-supporting") !== (command.supportingPageContractId !== null)
+    || member(command.action, ["mark-attention", "block", "skip"] as const) !== (command.rationale !== null)) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify(command);
+}
+
 export function parseOperationEventStream(body: string): readonly OperationProgressEvent[] {
   if (body.length > 1_048_576) throw new Error("RO-CORE-RESPONSE-INVALID");
   if (!body) return [];
@@ -1368,6 +1491,21 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         method: "POST", path: "/projects/intent/policy/evaluations", body: intentPolicyBody(command),
         ifMatch: null, idempotencyKey: null,
       }, decodeIntentPolicyDecision);
+    },
+    async workflowProgress(command: ProjectRootRequest): Promise<WorkflowProgressProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/workflow-progress", body: projectBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeWorkflowProgressProjection);
+    },
+    async commandWorkflowProgress(
+      command: WorkflowProgressCommand, idempotencyKey: string,
+    ): Promise<WorkflowProgressProjection> {
+      if (!/^[0-9a-f]{32}$/.test(idempotencyKey)) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/workflow-progress/commands", body: workflowProgressBody(command),
+        ifMatch: null, idempotencyKey,
+      }, decodeWorkflowProgressProjection);
     },
     async privacy(command: ProjectPrivacyRequest): Promise<PrivacyPolicyProjection> {
       return await requestJson(transport, {

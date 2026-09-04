@@ -30,6 +30,7 @@ const EXPECTED_CORE_CAPABILITIES: &[&str] = &[
     "intent.policy-evaluation",
     "intent.read",
     "intent.workflow-profiles",
+    "intent.workflow-progress",
     "operations.cancel",
     "operations.events",
     "operations.read",
@@ -1241,6 +1242,129 @@ fn validate_intent_api_request(path: &str, body: &str) -> bool {
     false
 }
 
+fn workflow_content_hash(value: &serde_json::Value) -> bool {
+    value
+        .as_str()
+        .and_then(|candidate| candidate.strip_prefix("sha256:"))
+        .is_some_and(|hash| canonical_lower_hex(hash, 64))
+}
+
+fn workflow_stage_key(value: &serde_json::Value) -> bool {
+    value.as_str().is_some_and(|candidate| {
+        (1..=100).contains(&candidate.len())
+            && candidate.bytes().enumerate().all(|(index, byte)| {
+                byte.is_ascii_lowercase()
+                    || byte.is_ascii_digit()
+                    || (index > 0 && matches!(byte, b'.' | b'_' | b'-'))
+            })
+    })
+}
+
+fn workflow_page_contract(value: &serde_json::Value) -> bool {
+    value.as_str().is_some_and(|candidate| {
+        let Some(stem) = candidate.strip_suffix(".html") else {
+            return false;
+        };
+        (1..=100).contains(&stem.len())
+            && stem.bytes().enumerate().all(|(index, byte)| {
+                byte.is_ascii_lowercase() || byte.is_ascii_digit() || (index > 0 && byte == b'-')
+            })
+    })
+}
+
+fn validate_workflow_progress_api_request(path: &str, body: &str) -> bool {
+    const MAX_WORKFLOW_PROGRESS_BODY_BYTES: usize = 262_144;
+    if path == "/projects/workflow-progress" {
+        return exact_json_object(body, &["root"], MAX_WORKFLOW_PROGRESS_BODY_BYTES)
+            .and_then(|object| object["root"].as_str().map(canonical_project_root))
+            .unwrap_or(false);
+    }
+    if path != "/projects/workflow-progress/commands" {
+        return false;
+    }
+    let Some(object) = exact_json_object(
+        body,
+        &[
+            "root",
+            "action",
+            "stageKey",
+            "expectedSelectionRevisionId",
+            "expectedSelectionRevisionContentHash",
+            "expectedStageStateRevisionId",
+            "expectedStageStateRevisionContentHash",
+            "completionEvidenceRevisionIds",
+            "supportingPageContractId",
+            "rationale",
+        ],
+        MAX_WORKFLOW_PROGRESS_BODY_BYTES,
+    ) else {
+        return false;
+    };
+    let Some(action) = object.get("action").and_then(serde_json::Value::as_str) else {
+        return false;
+    };
+    if ![
+        "start",
+        "complete",
+        "mark-attention",
+        "block",
+        "skip",
+        "revisit",
+        "open-supporting",
+    ]
+    .contains(&action)
+    {
+        return false;
+    }
+    let stage_revision = object.get("expectedStageStateRevisionId");
+    let stage_hash = object.get("expectedStageStateRevisionContentHash");
+    let stage_precondition = match (stage_revision, stage_hash) {
+        (Some(revision), Some(hash)) if revision.is_null() && hash.is_null() => false,
+        (Some(revision), Some(hash)) => {
+            revision.as_str().is_some_and(canonical_uuid_v7) && workflow_content_hash(hash)
+        }
+        _ => return false,
+    };
+    let Some(evidence) = object
+        .get("completionEvidenceRevisionIds")
+        .and_then(serde_json::Value::as_array)
+    else {
+        return false;
+    };
+    let evidence_valid = evidence.len() <= 256
+        && evidence.iter().enumerate().all(|(index, value)| {
+            value.as_str().is_some_and(canonical_uuid_v7)
+                && evidence[..index].iter().all(|prior| prior != value)
+        });
+    let supporting_page = object.get("supportingPageContractId");
+    let supporting_present = supporting_page.is_some_and(|value| !value.is_null());
+    let supporting_valid =
+        supporting_page.is_some_and(|value| value.is_null() || workflow_page_contract(value));
+    let rationale = object.get("rationale");
+    let rationale_present = rationale.is_some_and(|value| !value.is_null());
+    let rationale_valid =
+        rationale.is_some_and(|value| value.is_null() || bounded_intent_narrative(value, 1));
+    object
+        .get("root")
+        .and_then(serde_json::Value::as_str)
+        .is_some_and(canonical_project_root)
+        && object.get("stageKey").is_some_and(workflow_stage_key)
+        && object
+            .get("expectedSelectionRevisionId")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(canonical_uuid_v7)
+        && object
+            .get("expectedSelectionRevisionContentHash")
+            .is_some_and(workflow_content_hash)
+        && (action == "start") != stage_precondition
+        && evidence_valid
+        && (action == "complete") == !evidence.is_empty()
+        && supporting_valid
+        && (action == "open-supporting") == supporting_present
+        && rationale_valid
+        && ["mark-attention", "block", "skip"].contains(&action) == rationale_present
+}
+
 fn validate_project_api_request(path: &str, body: &str) -> bool {
     if path == "/projects" {
         const PRIMARY_USE_CASES: &[&str] = &[
@@ -1632,6 +1756,22 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
             .is_some_and(|body| validate_intent_api_request(&request.path, body))
         && match request.path.as_str() {
             "/projects/intent/drafts" | "/projects/intent/acceptances" => request
+                .idempotency_key
+                .as_deref()
+                .is_some_and(|value| canonical_lower_hex(value, 32)),
+            _ => request.idempotency_key.is_none(),
+        }
+    {
+        return Ok(());
+    }
+    if request.method == "POST"
+        && request.if_match.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_workflow_progress_api_request(&request.path, body))
+        && match request.path.as_str() {
+            "/projects/workflow-progress/commands" => request
                 .idempotency_key
                 .as_deref()
                 .is_some_and(|value| canonical_lower_hex(value, 32)),
@@ -2420,7 +2560,7 @@ mod tests {
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",\"pid\":{},",
                 "\"host\":\"127.0.0.1\",\"port\":49152,",
                 "\"nonce\":\"0123456789abcdef0123456789abcdef\",",
-                "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"intent.workflow-profiles\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\",\"workflows.cancel\",\"workflows.human-decisions\",\"workflows.read\",\"workflows.retry\"],",
+                "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"intent.workflow-profiles\",\"intent.workflow-progress\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\",\"workflows.cancel\",\"workflows.human-decisions\",\"workflows.read\",\"workflows.retry\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}\n"
@@ -2918,6 +3058,60 @@ mod tests {
                 request.method,
                 request.path
             );
+        }
+    }
+
+    #[test]
+    fn native_api_transport_binds_workflow_progress_commands_to_exact_shapes() {
+        let selection_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d071";
+        let selection_hash = format!("sha256:{}", "a".repeat(64));
+        let read = intent_request(
+            "/projects/workflow-progress",
+            serde_json::json!({"root": "C:/Research/study-one"}),
+            None,
+        );
+        let start_body = serde_json::json!({
+            "root": "C:/Research/study-one",
+            "action": "start",
+            "stageKey": "intent-contract-1",
+            "expectedSelectionRevisionId": selection_id,
+            "expectedSelectionRevisionContentHash": selection_hash,
+            "expectedStageStateRevisionId": null,
+            "expectedStageStateRevisionContentHash": null,
+            "completionEvidenceRevisionIds": [],
+            "supportingPageContractId": null,
+            "rationale": null
+        });
+        let start = intent_request(
+            "/projects/workflow-progress/commands",
+            start_body.clone(),
+            Some("0123456789abcdef0123456789abcdef"),
+        );
+        assert!(validate_api_request(&read).is_ok());
+        assert!(validate_api_request(&start).is_ok());
+
+        let mut extra = start_body.clone();
+        extra["actorId"] = serde_json::json!("018f47a2-4d6b-7f78-9f2e-7fb76c86d099");
+        let mut incomplete = start_body;
+        incomplete["action"] = serde_json::json!("complete");
+        for denied in [
+            intent_request(
+                "/projects/workflow-progress/commands",
+                extra,
+                Some("0123456789abcdef0123456789abcdef"),
+            ),
+            intent_request(
+                "/projects/workflow-progress/commands",
+                incomplete,
+                Some("0123456789abcdef0123456789abcdef"),
+            ),
+            intent_request(
+                "/projects/workflow-progress/commands",
+                serde_json::json!({"root": "C:/Research/study-one"}),
+                Some("0123456789abcdef0123456789abcdef"),
+            ),
+        ] {
+            assert!(validate_api_request(&denied).is_err());
         }
     }
 

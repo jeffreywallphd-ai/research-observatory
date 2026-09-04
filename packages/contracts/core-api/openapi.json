@@ -3703,6 +3703,263 @@
         "title": "WorkflowProgress",
         "type": "object"
       },
+      "WorkflowProgressCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "start",
+              "complete",
+              "mark-attention",
+              "block",
+              "skip",
+              "revisit",
+              "open-supporting"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "completionEvidenceRevisionIds": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 256,
+            "title": "Completionevidencerevisionids",
+            "type": "array"
+          },
+          "expectedSelectionRevisionContentHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Expectedselectionrevisioncontenthash",
+            "type": "string"
+          },
+          "expectedSelectionRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Expectedselectionrevisionid",
+            "type": "string"
+          },
+          "expectedStageStateRevisionContentHash": {
+            "anyOf": [
+              {
+                "pattern": "^sha256:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectedstagestaterevisioncontenthash"
+          },
+          "expectedStageStateRevisionId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectedstagestaterevisionid"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rationale"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "stageKey": {
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,99}$",
+            "title": "Stagekey",
+            "type": "string"
+          },
+          "supportingPageContractId": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z0-9][a-z0-9-]{0,99}\\.html$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supportingpagecontractid"
+          }
+        },
+        "required": [
+          "root",
+          "action",
+          "stageKey",
+          "expectedSelectionRevisionId",
+          "expectedSelectionRevisionContentHash"
+        ],
+        "title": "WorkflowProgressCommand",
+        "type": "object"
+      },
+      "WorkflowProgressProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "bootstrapRequired": {
+            "title": "Bootstraprequired",
+            "type": "boolean"
+          },
+          "checkpointRationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Checkpointrationale",
+            "type": "string"
+          },
+          "checkpointState": {
+            "enum": [
+              "unknown",
+              "optional-human",
+              "required-human",
+              "not-applicable"
+            ],
+            "title": "Checkpointstate",
+            "type": "string"
+          },
+          "current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowStageStateProjection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStageStateProjection"
+            },
+            "maxItems": 512,
+            "title": "History",
+            "type": "array"
+          },
+          "processForm": {
+            "enum": [
+              "linear",
+              "revisitable"
+            ],
+            "title": "Processform",
+            "type": "string"
+          },
+          "profileId": {
+            "enum": [
+              "rapid-orientation",
+              "systematic-review",
+              "living-review",
+              "theory-synthesis",
+              "hermeneutic-inquiry",
+              "critical-problematization",
+              "technical-landscape",
+              "novelty-audit",
+              "empirical-study-design",
+              "empirical-study-to-article",
+              "empirical-results-to-article",
+              "theory-article-development",
+              "critical-article-development",
+              "manuscript-review-revision"
+            ],
+            "title": "Profileid",
+            "type": "string"
+          },
+          "profileTitle": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Profiletitle",
+            "type": "string"
+          },
+          "projectId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Projectid",
+            "type": "string"
+          },
+          "recommendedAction": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Recommendedaction",
+            "type": "string"
+          },
+          "recommendedPageContractId": {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,99}\\.html$",
+            "title": "Recommendedpagecontractid",
+            "type": "string"
+          },
+          "recommendedStageKey": {
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,99}$",
+            "title": "Recommendedstagekey",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "selectionRevisionContentHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Selectionrevisioncontenthash",
+            "type": "string"
+          },
+          "selectionRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Selectionrevisionid",
+            "type": "string"
+          },
+          "staleOutputs": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStaleOutputProjection"
+            },
+            "maxItems": 256,
+            "title": "Staleoutputs",
+            "type": "array"
+          },
+          "supportingHandoff": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowSupportingHandoffProjection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "projectId",
+          "selectionRevisionId",
+          "selectionRevisionContentHash",
+          "profileId",
+          "profileTitle",
+          "processForm",
+          "bootstrapRequired",
+          "current",
+          "recommendedStageKey",
+          "recommendedPageContractId",
+          "recommendedAction",
+          "checkpointState",
+          "checkpointRationale",
+          "supportingHandoff",
+          "staleOutputs",
+          "history"
+        ],
+        "title": "WorkflowProgressProjection",
+        "type": "object"
+      },
       "WorkflowRetryRequest": {
         "additionalProperties": false,
         "properties": {
@@ -3717,6 +3974,232 @@
           "root"
         ],
         "title": "WorkflowRetryRequest",
+        "type": "object"
+      },
+      "WorkflowStageStateProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "attentionReason": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attentionreason"
+          },
+          "completionEvidenceIds": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 256,
+            "title": "Completionevidenceids",
+            "type": "array"
+          },
+          "navigationRole": {
+            "enum": [
+              "primary",
+              "supporting"
+            ],
+            "title": "Navigationrole",
+            "type": "string"
+          },
+          "pageContractId": {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,99}\\.html$",
+            "title": "Pagecontractid",
+            "type": "string"
+          },
+          "parentStateRevisionId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parentstaterevisionid"
+          },
+          "passNumber": {
+            "maximum": 9007199254740991.0,
+            "minimum": 1.0,
+            "title": "Passnumber",
+            "type": "integer"
+          },
+          "revision": {
+            "maximum": 9007199254740991.0,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "revisionContentHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Revisioncontenthash",
+            "type": "string"
+          },
+          "skipRationale": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skiprationale"
+          },
+          "stageKey": {
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,99}$",
+            "title": "Stagekey",
+            "type": "string"
+          },
+          "stageStateId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Stagestateid",
+            "type": "string"
+          },
+          "stageStateRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Stagestaterevisionid",
+            "type": "string"
+          },
+          "staleCauseIds": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 256,
+            "title": "Stalecauseids",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "not-started",
+              "available",
+              "current",
+              "in-progress",
+              "attention-required",
+              "blocked",
+              "completed",
+              "stale",
+              "skipped-with-rationale"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "updatedAt": {
+            "title": "Updatedat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stageStateId",
+          "stageStateRevisionId",
+          "revision",
+          "revisionContentHash",
+          "stageKey",
+          "pageContractId",
+          "navigationRole",
+          "passNumber",
+          "status",
+          "completionEvidenceIds",
+          "staleCauseIds",
+          "updatedAt"
+        ],
+        "title": "WorkflowStageStateProjection",
+        "type": "object"
+      },
+      "WorkflowStaleOutputProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "causeReferenceHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Causereferencehash",
+            "type": "string"
+          },
+          "disposition": {
+            "enum": [
+              "stale",
+              "unknown-impact"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "outputRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Outputrevisionid",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "safestNextAction": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Safestnextaction",
+            "type": "string"
+          }
+        },
+        "required": [
+          "outputRevisionId",
+          "disposition",
+          "reason",
+          "causeReferenceHash",
+          "safestNextAction"
+        ],
+        "title": "WorkflowStaleOutputProjection",
+        "type": "object"
+      },
+      "WorkflowSupportingHandoffProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "navigationRole": {
+            "const": "supporting",
+            "default": "supporting",
+            "title": "Navigationrole",
+            "type": "string"
+          },
+          "pageContractId": {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,99}\\.html$",
+            "title": "Pagecontractid",
+            "type": "string"
+          },
+          "returnStageStateRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Returnstagestaterevisionid",
+            "type": "string"
+          },
+          "revisionContentHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Revisioncontenthash",
+            "type": "string"
+          },
+          "stageStateId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Stagestateid",
+            "type": "string"
+          },
+          "stageStateRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Stagestaterevisionid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stageStateId",
+          "stageStateRevisionId",
+          "revisionContentHash",
+          "pageContractId",
+          "returnStageStateRevisionId"
+        ],
+        "title": "WorkflowSupportingHandoffProjection",
         "type": "object"
       },
       "WorkflowTaskCenterEvent": {
@@ -5678,6 +6161,140 @@
         "summary": "Restore Project",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/projects/workflow-progress": {
+      "post": {
+        "operationId": "project_workflow_progress_projects_workflow_progress_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectRootRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowProgressProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Project Workflow Progress",
+        "tags": [
+          "intent"
+        ]
+      }
+    },
+    "/projects/workflow-progress/commands": {
+      "post": {
+        "operationId": "command_workflow_progress_projects_workflow_progress_commands_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowProgressCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowProgressProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Command Workflow Progress",
+        "tags": [
+          "intent"
         ]
       }
     },

@@ -389,6 +389,8 @@ fn main() {
                         "intent.impact-preview",
                         "intent.policy-evaluation",
                         "intent.read",
+                        "intent.workflow-profiles",
+                        "intent.workflow-progress",
                         "operations.cancel",
                         "operations.events",
                         "operations.read",
@@ -397,7 +399,11 @@ fn main() {
                         "projects.lifecycle",
                         "provenance.lineage.read",
                         "runtime.contract",
-                        "runtime.status"
+                        "runtime.status",
+                        "workflows.cancel",
+                        "workflows.human-decisions",
+                        "workflows.read",
+                        "workflows.retry"
                     ]),
             "measured health response violated the generated contract"
         );

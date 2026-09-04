@@ -663,6 +663,123 @@ class IntentWorkspaceProjection(ContractModel):
     history: tuple[IntentRevisionSummary, ...] = Field(max_length=100)
 
 
+WorkflowProgressAction = Literal[
+    "start",
+    "complete",
+    "mark-attention",
+    "block",
+    "skip",
+    "revisit",
+    "open-supporting",
+]
+
+
+class WorkflowProgressCommand(ProjectRootRequest):
+    action: WorkflowProgressAction
+    stage_key: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,99}$")
+    expected_selection_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    expected_selection_revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    expected_stage_state_revision_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    expected_stage_state_revision_content_hash: str | None = Field(
+        default=None,
+        pattern=r"^sha256:[0-9a-f]{64}$",
+    )
+    completion_evidence_revision_ids: tuple[str, ...] = Field(default=(), max_length=256)
+    supporting_page_contract_id: str | None = Field(
+        default=None,
+        pattern=r"^[a-z0-9][a-z0-9-]{0,99}\.html$",
+    )
+    rationale: str | None = Field(default=None, min_length=1, max_length=4000)
+
+    @model_validator(mode="after")
+    def validate_action_shape(self) -> WorkflowProgressCommand:
+        has_precondition = self.expected_stage_state_revision_id is not None
+        if has_precondition != (self.expected_stage_state_revision_content_hash is not None):
+            raise ValueError("stage-state precondition is incomplete")
+        if self.action == "start":
+            if has_precondition or self.completion_evidence_revision_ids or self.supporting_page_contract_id:
+                raise ValueError("start command shape is invalid")
+        elif not has_precondition:
+            raise ValueError("stage-state precondition is required")
+        if self.action == "complete" and not self.completion_evidence_revision_ids:
+            raise ValueError("completion evidence is required")
+        if self.action != "complete" and self.completion_evidence_revision_ids:
+            raise ValueError("completion evidence is valid only for completion")
+        if self.action == "open-supporting":
+            if self.supporting_page_contract_id is None:
+                raise ValueError("supporting page is required")
+        elif self.supporting_page_contract_id is not None:
+            raise ValueError("supporting page is valid only for a handoff")
+        if self.action in {"mark-attention", "block", "skip"} and self.rationale is None:
+            raise ValueError("this workflow transition requires a rationale")
+        return self
+
+
+class WorkflowStageStateProjection(ContractModel):
+    stage_state_id: str = Field(pattern=_UUID_V7_PATTERN)
+    stage_state_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    revision: int = Field(ge=1, le=9_007_199_254_740_991)
+    revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    parent_state_revision_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+    stage_key: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,99}$")
+    page_contract_id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]{0,99}\.html$")
+    navigation_role: Literal["primary", "supporting"]
+    pass_number: int = Field(ge=1, le=9_007_199_254_740_991)
+    status: Literal[
+        "not-started",
+        "available",
+        "current",
+        "in-progress",
+        "attention-required",
+        "blocked",
+        "completed",
+        "stale",
+        "skipped-with-rationale",
+    ]
+    completion_evidence_ids: tuple[str, ...] = Field(max_length=256)
+    attention_reason: str | None = Field(default=None, max_length=4000)
+    stale_cause_ids: tuple[str, ...] = Field(max_length=256)
+    skip_rationale: str | None = Field(default=None, max_length=4000)
+    updated_at: str
+
+
+class WorkflowSupportingHandoffProjection(ContractModel):
+    stage_state_id: str = Field(pattern=_UUID_V7_PATTERN)
+    stage_state_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    page_contract_id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]{0,99}\.html$")
+    navigation_role: Literal["supporting"] = "supporting"
+    return_stage_state_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+
+
+class WorkflowStaleOutputProjection(ContractModel):
+    output_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    disposition: Literal["stale", "unknown-impact"]
+    reason: str = Field(min_length=1, max_length=100)
+    cause_reference_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    safest_next_action: str = Field(min_length=1, max_length=4000)
+
+
+class WorkflowProgressProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    selection_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    selection_revision_content_hash: str = Field(pattern=r"^sha256:[0-9a-f]{64}$")
+    profile_id: WorkflowProfileId
+    profile_title: str = Field(min_length=1, max_length=200)
+    process_form: Literal["linear", "revisitable"]
+    bootstrap_required: bool
+    current: WorkflowStageStateProjection | None
+    recommended_stage_key: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,99}$")
+    recommended_page_contract_id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]{0,99}\.html$")
+    recommended_action: str = Field(min_length=1, max_length=4000)
+    checkpoint_state: Literal["unknown", "optional-human", "required-human", "not-applicable"]
+    checkpoint_rationale: str = Field(min_length=1, max_length=4000)
+    supporting_handoff: WorkflowSupportingHandoffProjection | None
+    stale_outputs: tuple[WorkflowStaleOutputProjection, ...] = Field(max_length=256)
+    history: tuple[WorkflowStageStateProjection, ...] = Field(max_length=512)
+
+
 class DeletionDisclosure(ContractModel):
     disclosure_version: Literal["secure-deletion-disclosure-v1"]
     scope: Literal["project-cache-only"]

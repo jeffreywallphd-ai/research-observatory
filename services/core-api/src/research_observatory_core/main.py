@@ -38,6 +38,7 @@ from .repositories import (
     sqlite_privacy_policy_repository,
     sqlite_provenance_ledger_repository,
     sqlite_selective_recalculation_repository,
+    sqlite_workflow_progress_repository,
     sqlite_workflow_queue_repository,
 )
 from .research_intents import ResearchIntentService
@@ -53,6 +54,7 @@ from .windows_credentials import (
     create_windows_local_actor_identity,
     create_windows_object_key_provider,
 )
+from .workflow_progress import WorkflowProgressService
 
 EXIT_CONFIGURATION_ERROR = 2
 SUPERVISION_PROTOCOL_VERSION = "1.0"
@@ -129,6 +131,13 @@ def create_runtime_app(
         intents=ResearchIntentService(
             projects,
             repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
+            local_actor_id=resolved_actor_id,
+        ),
+        workflow_progress=WorkflowProgressService(
+            projects,
+            repository_factory=sqlite_workflow_progress_repository,
+            intent_repository_factory=sqlite_intent_revision_repository,
             stale_state_repository_factory=sqlite_dependency_impact_repository,
             local_actor_id=resolved_actor_id,
         ),
