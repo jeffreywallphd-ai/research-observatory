@@ -8,12 +8,14 @@ import type {
 import {
   IMPLEMENTED_WORKSPACES,
   WorkflowContextLoader,
+  WorkflowRequestGuard,
   createSupportingReturn,
   createWorkflowAuthoritySnapshot,
   deriveWorkflowStages,
   selectPrimaryStage,
   stageDisplayLabel,
   supportingReturnMatches,
+  workflowCommandStageAuthority,
   workspaceClassification,
   type WorkflowAuthoritySnapshot,
   type WorkflowStageAuthorityState,
@@ -175,9 +177,10 @@ describe("workflow navigation model", () => {
     expect(workspaceClassification(systematic, "tasks")).toMatchObject({ role: "primary", stageKeys: ["task-center-1"] });
     expect(workspaceClassification(theory, "tasks")).toMatchObject({ role: "supporting", stageKeys: [] });
 
-    const support = createSupportingReturn(theory, "tasks");
+    const progress = activeWorkflowProgress(theory, "task-center.html");
+    const support = createSupportingReturn(theory, "tasks", progress);
     expect(support).not.toBeNull();
-    expect(supportingReturnMatches(support!, theory)).toBe(true);
+    expect(supportingReturnMatches(support!, theory, progress)).toBe(true);
 
     const substitutions: WorkflowAuthoritySnapshot[] = [
       { ...theory, projectId: "22222222-2222-4222-8222-222222222222" },
@@ -192,7 +195,16 @@ describe("workflow navigation model", () => {
       { ...theory, currentStageKey: "audit-lineage-1" },
       { ...theory, currentPageContractId: "audit-lineage.html" },
     ];
-    for (const substituted of substitutions) expect(supportingReturnMatches(support!, substituted)).toBe(false);
+    for (const substituted of substitutions) expect(supportingReturnMatches(support!, substituted, progress)).toBe(false);
+    expect(createSupportingReturn(theory, "tasks", { ...progress, supportingHandoff: null })).toBeNull();
+    expect(supportingReturnMatches(support!, theory, { ...progress, supportingHandoff: null })).toBe(false);
+    expect(supportingReturnMatches(support!, theory, {
+      ...progress,
+      supportingHandoff: {
+        ...progress.supportingHandoff!,
+        stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d099",
+      },
+    })).toBe(false);
   });
 
   it("refuses to fabricate a workflow for an absent, mismatched, closed, or incompatible Intent context", () => {
@@ -251,6 +263,16 @@ describe("workflow navigation model", () => {
       intent: async () => ({ ...authorityIntent(), projectId: projectB.projectId }),
     });
     await expect(mismatched).resolves.toMatchObject({ kind: "unavailable", reason: "incoherent" });
+    for (const substituted of [
+      { intentRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d099" },
+      { intentRevisionContentHash: `sha256:${"9".repeat(64)}` },
+    ]) {
+      await expect(loader.load(projectA, {
+        ...client,
+        intent: async () => authorityIntent(),
+        workflowProgress: async () => ({ ...workflowProgress(projectA.projectId), ...substituted }),
+      })).resolves.toMatchObject({ kind: "unavailable", reason: "incoherent" });
+    }
     loader.invalidate();
     await expect(loader.load(projectA, {
       ...client,
@@ -259,6 +281,147 @@ describe("workflow navigation model", () => {
       kind: "error",
       message: "Guided workflow could not be loaded from the local Core service. The previous workflow context was cleared.",
     });
+  });
+
+  it("discards delayed start, revisit, and supporting successes after project B becomes current", async () => {
+    const projectA = workflowProject("a");
+    const projectB = workflowProject("b");
+    const applied: string[] = [];
+    for (const kind of ["start", "resume", "revisit", "open-supporting"] as const) {
+      const guard = new WorkflowRequestGuard();
+      const progressA = kind === "start"
+        ? workflowProgress(projectA.projectId)
+        : activeWorkflowProgress(authority(), "task-center.html");
+      const ticket = guard.begin(kind, projectA, progressA, kind === "start" ? null : progressA.current);
+      expect(ticket).not.toBeNull();
+      let release!: (value: WorkflowProgressProjection) => void;
+      const delayed = new Promise<WorkflowProgressProjection>((resolve) => { release = resolve; });
+      const completion = delayed.then((result) => {
+        if (guard.acceptsResult(ticket!, projectB, workflowProgress(projectB.projectId), result)) {
+          applied.push(`${kind}:${result.projectId}`);
+        }
+      });
+
+      guard.invalidate();
+      release(progressA);
+      await completion;
+
+      expect(guard.owns(ticket!, projectB)).toBe(false);
+      expect(guard.matchesSource(ticket!, projectB, workflowProgress(projectB.projectId))).toBe(false);
+    }
+    expect(applied).toEqual([]);
+  });
+
+  it("discards delayed workflow errors, finally, announcements, and returns after A to B to A", async () => {
+    const projectA = workflowProject("a");
+    const effects: string[] = [];
+    for (const kind of ["start", "resume", "revisit", "open-supporting"] as const) {
+      const guard = new WorkflowRequestGuard();
+      const progressA = kind === "start"
+        ? workflowProgress(projectA.projectId)
+        : activeWorkflowProgress(authority(), "task-center.html");
+      const ticket = guard.begin(kind, projectA, progressA, kind === "start" ? null : progressA.current);
+      expect(ticket).not.toBeNull();
+      let release!: () => void;
+      const delayed = new Promise<void>((resolve) => { release = resolve; });
+      const completion = delayed.then(() => {
+        if (guard.matchesSource(ticket!, projectA, progressA)) effects.push(`${kind}:error`, `${kind}:announcement`);
+        if (guard.owns(ticket!, projectA)) effects.push(`${kind}:finally`, `${kind}:return-context`);
+      });
+
+      guard.invalidate(); // A -> B
+      guard.invalidate(); // B -> A with the same exact persisted authority
+      release();
+      await completion;
+
+      expect(guard.owns(ticket!, projectA)).toBe(false);
+    }
+    expect(effects).toEqual([]);
+  });
+
+  it("binds request ownership to exact root, Intent, selection, and active/source heads", () => {
+    const guard = new WorkflowRequestGuard();
+    const project = workflowProject("a");
+    const progress = activeWorkflowProgress(authority(), "task-center.html");
+    const ticket = guard.begin("revisit", project, progress, progress.current);
+    expect(ticket).not.toBeNull();
+    expect(guard.matchesSource(ticket!, project, progress)).toBe(true);
+    expect(guard.owns(ticket!, { ...project, root: "C:/Research/substituted" })).toBe(false);
+    expect(guard.matchesSource(ticket!, project, {
+      ...progress,
+      selectionRevisionContentHash: `sha256:${"8".repeat(64)}`,
+    })).toBe(false);
+    expect(guard.matchesSource(ticket!, project, {
+      ...progress,
+      current: { ...progress.current!, stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d099" },
+    })).toBe(false);
+    const substitutedIntent: IntentBoundProgress = {
+      ...progress,
+      intentRevisionContentHash: `sha256:${"7".repeat(64)}`,
+    };
+    expect(guard.acceptsResult(ticket!, project, progress, substitutedIntent)).toBe(false);
+  });
+
+  it("binds revisit source separately from the active displaced-head CAS", () => {
+    const progress = activeWorkflowProgress(authority(), "task-center.html");
+    const source = {
+      ...progress.current!,
+      completionEvidenceIds: [`sha256:${"6".repeat(64)}`],
+      revision: 2,
+      revisionContentHash: `sha256:${"7".repeat(64)}`,
+      stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d081",
+      status: "completed" as const,
+    };
+    const revisiting = workflowCommandStageAuthority("revisit", {
+      ...progress,
+      recommendedStageKey: source.stageKey,
+      history: [source],
+    });
+    expect(revisiting).toMatchObject({
+      stageKey: source.stageKey,
+      expectedStageStateRevisionId: progress.current!.stageStateRevisionId,
+      expectedStageStateRevisionContentHash: progress.current!.revisionContentHash,
+      revisitSourceStageStateRevisionId: source.stageStateRevisionId,
+      revisitSourceStageStateRevisionContentHash: source.revisionContentHash,
+    });
+
+    expect(workflowCommandStageAuthority("revisit", {
+      ...progress,
+      current: null,
+      supportingHandoff: null,
+      recommendedStageKey: source.stageKey,
+      history: [source],
+    })).toMatchObject({
+      expectedStageStateRevisionId: null,
+      expectedStageStateRevisionContentHash: null,
+      revisitSourceStageStateRevisionId: source.stageStateRevisionId,
+      revisitSourceStageStateRevisionContentHash: source.revisionContentHash,
+    });
+    expect(workflowCommandStageAuthority("revisit", {
+      ...progress,
+      history: [{ ...source, status: "current" }],
+    })).toBeNull();
+    expect(workflowCommandStageAuthority("start", workflowProgress(progress.projectId))).toMatchObject({
+      revisitSourceStageStateRevisionId: null,
+      revisitSourceStageStateRevisionContentHash: null,
+    });
+    const attention = {
+      ...progress,
+      current: {
+        ...progress.current!,
+        status: "attention-required" as const,
+        attentionReason: "Researcher review is required before continuing.",
+      },
+    };
+    expect(workflowCommandStageAuthority("resume", attention)).toMatchObject({
+      stageKey: attention.current.stageKey,
+      expectedStageStateRevisionId: attention.current.stageStateRevisionId,
+      expectedStageStateRevisionContentHash: attention.current.revisionContentHash,
+      revisitSourceStageStateRevisionId: null,
+      revisitSourceStageStateRevisionContentHash: null,
+      sourceStage: null,
+    });
+    expect(workflowCommandStageAuthority("resume", progress)).toBeNull();
   });
 });
 
@@ -273,10 +436,28 @@ function authorityIntent() {
   };
 }
 
-function workflowProgress(projectId: string): WorkflowProgressProjection {
+function workflowProject(suffix: "a" | "b") {
+  return {
+    projectId: suffix === "a"
+      ? "11111111-1111-4111-8111-111111111111"
+      : "22222222-2222-4222-8222-222222222222",
+    root: `C:/Research/project-${suffix}`,
+    open: true,
+    compatibilityState: "compatible" as const,
+  };
+}
+
+type IntentBoundProgress = WorkflowProgressProjection & {
+  readonly intentRevisionId: string;
+  readonly intentRevisionContentHash: string;
+};
+
+function workflowProgress(projectId: string): IntentBoundProgress {
   return {
     schemaVersion: "1.0",
     projectId,
+    intentRevisionId: authorityIntent().current.revisionId,
+    intentRevisionContentHash: authorityIntent().current.revisionContentHash,
     selectionRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d051",
     selectionRevisionContentHash: `sha256:${"d".repeat(64)}`,
     profileId: "systematic-review",
@@ -292,5 +473,48 @@ function workflowProgress(projectId: string): WorkflowProgressProjection {
     supportingHandoff: null,
     staleOutputs: [],
     history: [],
+  };
+}
+
+function activeWorkflowProgress(
+  selected: WorkflowAuthoritySnapshot,
+  supportingPageContractId: string,
+): IntentBoundProgress {
+  const primary = {
+    attentionReason: null,
+    completionEvidenceIds: [],
+    navigationRole: "primary" as const,
+    pageContractId: selected.currentPageContractId,
+    parentStateRevisionId: null,
+    passNumber: 1,
+    revision: 1,
+    revisionContentHash: `sha256:${"4".repeat(64)}`,
+    skipRationale: null,
+    stageKey: selected.currentStageKey,
+    stageStateId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d061",
+    stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d062",
+    staleCauseIds: [],
+    status: "current" as const,
+    updatedAt: "2026-09-03T12:00:00.000Z",
+  };
+  return {
+    ...workflowProgress(selected.projectId),
+    intentRevisionId: selected.intentRevisionId,
+    intentRevisionContentHash: selected.intentRevisionContentHash,
+    profileId: selected.profileId,
+    profileTitle: selected.profile.title,
+    processForm: selected.profile.processForm,
+    bootstrapRequired: false,
+    current: primary,
+    recommendedStageKey: selected.currentStageKey,
+    recommendedPageContractId: selected.currentPageContractId,
+    supportingHandoff: {
+      navigationRole: "supporting",
+      pageContractId: supportingPageContractId,
+      returnStageStateRevisionId: primary.stageStateRevisionId,
+      revisionContentHash: `sha256:${"5".repeat(64)}`,
+      stageStateId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d071",
+      stageStateRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d072",
+    },
   };
 }

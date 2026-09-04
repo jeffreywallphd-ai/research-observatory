@@ -15,6 +15,7 @@ interface ProjectHomeWorkspaceProps {
   readonly failure: string | null;
   readonly busy: boolean;
   readonly onStart: () => void;
+  readonly onResume: () => void;
   readonly onOpenCurrent: () => void;
   readonly onRevisit: () => void;
 }
@@ -35,6 +36,7 @@ export function ProjectHomeWorkspace({
   failure,
   busy,
   onStart,
+  onResume,
   onOpenCurrent,
   onRevisit,
 }: ProjectHomeWorkspaceProps): ReactNode {
@@ -71,6 +73,7 @@ export function ProjectHomeWorkspace({
 
   const currentLabel = progress.current?.stageKey ?? progress.recommendedStageKey;
   const complete = progress.current === null && !progress.bootstrapRequired;
+  const resumable = progress.current?.status === "attention-required" || progress.current?.status === "blocked";
   return (
     <section aria-labelledby="project-home-title" data-project-home-state="ready" data-workflow-profile={progress.profileId}>
       <div className="page-header">
@@ -81,14 +84,16 @@ export function ProjectHomeWorkspace({
       </div>
 
       <div className="project-home-grid">
-        <Panel title="Current position" tone={complete ? "success" : "neutral"}>
-          <StatusBadge tone={complete ? "success" : progress.current?.status === "blocked" ? "danger" : "neutral"}>
+        <Panel title="Current position" tone={complete ? "success" : resumable ? "danger" : "neutral"}>
+          <StatusBadge tone={complete ? "success" : resumable ? "danger" : "neutral"}>
             {complete ? "Workflow complete" : progress.bootstrapRequired ? "Not started" : progress.current?.status ?? "Review"}
           </StatusBadge>
           <p><strong>{currentLabel}</strong></p>
           <p>{progress.recommendedAction}</p>
           {progress.bootstrapRequired ? (
             <Button tone="primary" disabled={busy} onClick={onStart}>Start guided workflow</Button>
+          ) : resumable ? (
+            <Button tone="primary" disabled={busy} onClick={onResume}>Resume current step</Button>
           ) : complete && progress.processForm === "revisitable" ? (
             <Button tone="primary" disabled={busy} onClick={onRevisit}>Begin another pass</Button>
           ) : (

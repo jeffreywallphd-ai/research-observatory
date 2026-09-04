@@ -3713,6 +3713,7 @@
               "mark-attention",
               "block",
               "skip",
+              "resume",
               "revisit",
               "open-supporting"
             ],
@@ -3774,6 +3775,30 @@
               }
             ],
             "title": "Rationale"
+          },
+          "revisitSourceStageStateRevisionContentHash": {
+            "anyOf": [
+              {
+                "pattern": "^sha256:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revisitsourcestagestaterevisioncontenthash"
+          },
+          "revisitSourceStageStateRevisionId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revisitsourcestagestaterevisionid"
           },
           "root": {
             "maxLength": 4096,
@@ -3849,6 +3874,16 @@
             "maxItems": 512,
             "title": "History",
             "type": "array"
+          },
+          "intentRevisionContentHash": {
+            "pattern": "^sha256:[0-9a-f]{64}$",
+            "title": "Intentrevisioncontenthash",
+            "type": "string"
+          },
+          "intentRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Intentrevisionid",
+            "type": "string"
           },
           "processForm": {
             "enum": [
@@ -3943,6 +3978,8 @@
           "projectId",
           "selectionRevisionId",
           "selectionRevisionContentHash",
+          "intentRevisionId",
+          "intentRevisionContentHash",
           "profileId",
           "profileTitle",
           "processForm",

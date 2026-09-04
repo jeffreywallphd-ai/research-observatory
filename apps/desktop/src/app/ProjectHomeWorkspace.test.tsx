@@ -27,6 +27,8 @@ const progress: WorkflowProgressProjection = {
   projectId: project.projectId,
   selectionRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d071",
   selectionRevisionContentHash: `sha256:${"a".repeat(64)}`,
+  intentRevisionId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d070",
+  intentRevisionContentHash: `sha256:${"d".repeat(64)}`,
   profileId: "hermeneutic-inquiry",
   profileTitle: "Hermeneutic inquiry",
   processForm: "revisitable",
@@ -74,6 +76,7 @@ describe("ProjectHomeWorkspace", () => {
         failure={null}
         busy={false}
         onStart={() => undefined}
+        onResume={() => undefined}
         onOpenCurrent={() => undefined}
         onRevisit={() => undefined}
       />,
@@ -92,6 +95,37 @@ describe("ProjectHomeWorkspace", () => {
     expect(html).not.toContain("gate passed");
   });
 
+  it.each(["attention-required", "blocked"] as const)(
+    "offers an explicit researcher resume for a %s current head",
+    (status) => {
+      const html = renderToStaticMarkup(
+        <ProjectHomeWorkspace
+          project={project}
+          progress={{
+            ...progress,
+            current: {
+              ...progress.current!,
+              status,
+              attentionReason: `${status} requires an explicit researcher decision.`,
+            },
+          }}
+          loadState="ready"
+          failure={null}
+          busy={false}
+          onStart={() => undefined}
+          onResume={() => undefined}
+          onOpenCurrent={() => undefined}
+          onRevisit={() => undefined}
+        />,
+      );
+
+      expect(html).toContain(status);
+      expect(html).toContain("Resume current step");
+      expect(html).not.toContain("Workflow complete");
+      expect(html).not.toContain("Begin another pass");
+    },
+  );
+
   it("keeps loading, error, and no-project states explicit", () => {
     const loading = renderToStaticMarkup(
       <ProjectHomeWorkspace
@@ -101,6 +135,7 @@ describe("ProjectHomeWorkspace", () => {
         failure={null}
         busy={false}
         onStart={() => undefined}
+        onResume={() => undefined}
         onOpenCurrent={() => undefined}
         onRevisit={() => undefined}
       />,
@@ -116,6 +151,7 @@ describe("ProjectHomeWorkspace", () => {
         failure="Persisted workflow authority could not be validated."
         busy={false}
         onStart={() => undefined}
+        onResume={() => undefined}
         onOpenCurrent={() => undefined}
         onRevisit={() => undefined}
       />,
@@ -131,6 +167,7 @@ describe("ProjectHomeWorkspace", () => {
         failure={null}
         busy={false}
         onStart={() => undefined}
+        onResume={() => undefined}
         onOpenCurrent={() => undefined}
         onRevisit={() => undefined}
       />,

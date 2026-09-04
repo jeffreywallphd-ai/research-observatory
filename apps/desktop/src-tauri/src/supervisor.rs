@@ -1292,6 +1292,8 @@ fn validate_workflow_progress_api_request(path: &str, body: &str) -> bool {
             "expectedSelectionRevisionContentHash",
             "expectedStageStateRevisionId",
             "expectedStageStateRevisionContentHash",
+            "revisitSourceStageStateRevisionId",
+            "revisitSourceStageStateRevisionContentHash",
             "completionEvidenceRevisionIds",
             "supportingPageContractId",
             "rationale",
@@ -1309,6 +1311,7 @@ fn validate_workflow_progress_api_request(path: &str, body: &str) -> bool {
         "mark-attention",
         "block",
         "skip",
+        "resume",
         "revisit",
         "open-supporting",
     ]
@@ -1319,6 +1322,15 @@ fn validate_workflow_progress_api_request(path: &str, body: &str) -> bool {
     let stage_revision = object.get("expectedStageStateRevisionId");
     let stage_hash = object.get("expectedStageStateRevisionContentHash");
     let stage_precondition = match (stage_revision, stage_hash) {
+        (Some(revision), Some(hash)) if revision.is_null() && hash.is_null() => false,
+        (Some(revision), Some(hash)) => {
+            revision.as_str().is_some_and(canonical_uuid_v7) && workflow_content_hash(hash)
+        }
+        _ => return false,
+    };
+    let revisit_revision = object.get("revisitSourceStageStateRevisionId");
+    let revisit_hash = object.get("revisitSourceStageStateRevisionContentHash");
+    let revisit_precondition = match (revisit_revision, revisit_hash) {
         (Some(revision), Some(hash)) if revision.is_null() && hash.is_null() => false,
         (Some(revision), Some(hash)) => {
             revision.as_str().is_some_and(canonical_uuid_v7) && workflow_content_hash(hash)
@@ -1356,7 +1368,10 @@ fn validate_workflow_progress_api_request(path: &str, body: &str) -> bool {
         && object
             .get("expectedSelectionRevisionContentHash")
             .is_some_and(workflow_content_hash)
-        && (action == "start") != stage_precondition
+        && !(action == "start" && (stage_precondition || revisit_precondition))
+        && !(action == "revisit" && !revisit_precondition)
+        && !(!["start", "revisit"].contains(&action) && !stage_precondition)
+        && !(action != "revisit" && revisit_precondition)
         && evidence_valid
         && (action == "complete") == !evidence.is_empty()
         && supporting_valid
@@ -3078,6 +3093,8 @@ mod tests {
             "expectedSelectionRevisionContentHash": selection_hash,
             "expectedStageStateRevisionId": null,
             "expectedStageStateRevisionContentHash": null,
+            "revisitSourceStageStateRevisionId": null,
+            "revisitSourceStageStateRevisionContentHash": null,
             "completionEvidenceRevisionIds": [],
             "supportingPageContractId": null,
             "rationale": null
@@ -3090,10 +3107,30 @@ mod tests {
         assert!(validate_api_request(&read).is_ok());
         assert!(validate_api_request(&start).is_ok());
 
+        let stage_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d072";
+        let mut revisit_body = start_body.clone();
+        revisit_body["action"] = serde_json::json!("revisit");
+        revisit_body["expectedStageStateRevisionId"] = serde_json::json!(stage_id);
+        revisit_body["expectedStageStateRevisionContentHash"] =
+            serde_json::json!(format!("sha256:{}", "b".repeat(64)));
+        revisit_body["revisitSourceStageStateRevisionId"] = serde_json::json!(stage_id);
+        revisit_body["revisitSourceStageStateRevisionContentHash"] =
+            serde_json::json!(format!("sha256:{}", "c".repeat(64)));
+        assert!(
+            validate_api_request(&intent_request(
+                "/projects/workflow-progress/commands",
+                revisit_body.clone(),
+                Some("1123456789abcdef0123456789abcdef"),
+            ))
+            .is_ok()
+        );
+
         let mut extra = start_body.clone();
         extra["actorId"] = serde_json::json!("018f47a2-4d6b-7f78-9f2e-7fb76c86d099");
         let mut incomplete = start_body;
         incomplete["action"] = serde_json::json!("complete");
+        let mut incomplete_revisit = revisit_body;
+        incomplete_revisit["revisitSourceStageStateRevisionContentHash"] = serde_json::Value::Null;
         for denied in [
             intent_request(
                 "/projects/workflow-progress/commands",
@@ -3104,6 +3141,11 @@ mod tests {
                 "/projects/workflow-progress/commands",
                 incomplete,
                 Some("0123456789abcdef0123456789abcdef"),
+            ),
+            intent_request(
+                "/projects/workflow-progress/commands",
+                incomplete_revisit,
+                Some("2123456789abcdef0123456789abcdef"),
             ),
             intent_request(
                 "/projects/workflow-progress/commands",

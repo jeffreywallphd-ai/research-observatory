@@ -93,6 +93,245 @@ export interface SupportingReturnContext {
   readonly profileId: WorkflowProfileId;
   readonly currentStageKey: string;
   readonly currentPageContractId: string;
+  readonly selectionRevisionId: string;
+  readonly selectionRevisionContentHash: string;
+  readonly stageStateId: string;
+  readonly stageStateRevisionId: string;
+  readonly stageStateRevisionContentHash: string;
+  readonly returnStageStateRevisionId: string;
+  readonly supportingPageContractId: string;
+}
+
+type WorkflowProgressIntentWitness = WorkflowProgressProjection & {
+  readonly intentRevisionId?: unknown;
+  readonly intentRevisionContentHash?: unknown;
+};
+
+type WorkflowProgressStage = NonNullable<WorkflowProgressProjection["current"]>;
+
+export type WorkflowRequestKind = "start" | "resume" | "revisit" | "open-supporting";
+
+export interface WorkflowRequestTicket {
+  readonly kind: WorkflowRequestKind;
+  readonly contextGeneration: number;
+  readonly requestGeneration: number;
+  readonly projectId: string;
+  readonly projectRoot: string;
+  readonly intentRevisionId: string;
+  readonly intentRevisionContentHash: string;
+  readonly selectionRevisionId: string;
+  readonly selectionRevisionContentHash: string;
+  readonly profileId: WorkflowProfileId;
+  readonly activeStageStateRevisionId: string | null;
+  readonly activeStageStateRevisionContentHash: string | null;
+  readonly sourceStageStateRevisionId: string | null;
+  readonly sourceStageStateRevisionContentHash: string | null;
+}
+
+export interface WorkflowCommandStageAuthority {
+  readonly stageKey: string;
+  readonly expectedStageStateRevisionId: string | null;
+  readonly expectedStageStateRevisionContentHash: string | null;
+  readonly revisitSourceStageStateRevisionId: string | null;
+  readonly revisitSourceStageStateRevisionContentHash: string | null;
+  readonly sourceStage: WorkflowProgressStage | null;
+}
+
+const REVISITABLE_SOURCE_STATES = new Set<WorkflowProgressStage["status"]>([
+  "completed",
+  "skipped-with-rationale",
+  "stale",
+]);
+
+export function workflowCommandStageAuthority(
+  action: "start" | "resume" | "revisit",
+  progress: WorkflowProgressProjection,
+): WorkflowCommandStageAuthority | null {
+  const active = progress.current;
+  if (action === "start") {
+    return Object.freeze({
+      stageKey: progress.recommendedStageKey,
+      expectedStageStateRevisionId: active?.stageStateRevisionId ?? null,
+      expectedStageStateRevisionContentHash: active?.revisionContentHash ?? null,
+      revisitSourceStageStateRevisionId: null,
+      revisitSourceStageStateRevisionContentHash: null,
+      sourceStage: null,
+    });
+  }
+  if (action === "resume") {
+    if (!active || !new Set<WorkflowProgressStage["status"]>(["attention-required", "blocked"]).has(active.status)) {
+      return null;
+    }
+    return Object.freeze({
+      stageKey: active.stageKey,
+      expectedStageStateRevisionId: active.stageStateRevisionId,
+      expectedStageStateRevisionContentHash: active.revisionContentHash,
+      revisitSourceStageStateRevisionId: null,
+      revisitSourceStageStateRevisionContentHash: null,
+      sourceStage: null,
+    });
+  }
+  const source = progress.history.find((stage) => (
+    stage.navigationRole === "primary"
+    && stage.stageKey === progress.recommendedStageKey
+    && REVISITABLE_SOURCE_STATES.has(stage.status)
+  )) ?? null;
+  if (!source) return null;
+  return Object.freeze({
+    stageKey: source.stageKey,
+    expectedStageStateRevisionId: active?.stageStateRevisionId ?? null,
+    expectedStageStateRevisionContentHash: active?.revisionContentHash ?? null,
+    revisitSourceStageStateRevisionId: source.stageStateRevisionId,
+    revisitSourceStageStateRevisionContentHash: source.revisionContentHash,
+    sourceStage: source,
+  });
+}
+
+function progressIntentWitness(progress: WorkflowProgressProjection): {
+  readonly revisionId: string;
+  readonly revisionContentHash: string;
+} | null {
+  const witness = progress as WorkflowProgressIntentWitness;
+  return typeof witness.intentRevisionId === "string"
+    && typeof witness.intentRevisionContentHash === "string"
+    ? {
+        revisionId: witness.intentRevisionId,
+        revisionContentHash: witness.intentRevisionContentHash,
+      }
+    : null;
+}
+
+function sameStageRevision(
+  stage: WorkflowProgressStage | null,
+  revisionId: string | null,
+  revisionContentHash: string | null,
+): boolean {
+  return (stage?.stageStateRevisionId ?? null) === revisionId
+    && (stage?.revisionContentHash ?? null) === revisionContentHash;
+}
+
+function requestSource(
+  kind: WorkflowRequestKind,
+  contextGeneration: number,
+  requestGeneration: number,
+  project: WorkflowProjectIdentity,
+  progress: WorkflowProgressProjection,
+  sourceStage: WorkflowProgressStage | null,
+): WorkflowRequestTicket | null {
+  const intent = progressIntentWitness(progress);
+  if (
+    !intent
+    || !project.open
+    || project.compatibilityState !== "compatible"
+    || progress.projectId !== project.projectId
+  ) return null;
+  return Object.freeze({
+    kind,
+    contextGeneration,
+    requestGeneration,
+    projectId: project.projectId,
+    projectRoot: project.root,
+    intentRevisionId: intent.revisionId,
+    intentRevisionContentHash: intent.revisionContentHash,
+    selectionRevisionId: progress.selectionRevisionId,
+    selectionRevisionContentHash: progress.selectionRevisionContentHash,
+    profileId: progress.profileId,
+    activeStageStateRevisionId: progress.current?.stageStateRevisionId ?? null,
+    activeStageStateRevisionContentHash: progress.current?.revisionContentHash ?? null,
+    sourceStageStateRevisionId: sourceStage?.stageStateRevisionId ?? null,
+    sourceStageStateRevisionContentHash: sourceStage?.revisionContentHash ?? null,
+  });
+}
+
+/**
+ * Owns renderer-side workflow requests without treating project identity as a
+ * generation. Returning A -> B -> A therefore cannot revive an old A request.
+ */
+export class WorkflowRequestGuard {
+  private contextGeneration = 0;
+  private readonly requestGenerations: Record<WorkflowRequestKind, number> = {
+    start: 0,
+    resume: 0,
+    revisit: 0,
+    "open-supporting": 0,
+  };
+
+  invalidate(): void {
+    this.contextGeneration += 1;
+  }
+
+  begin(
+    kind: WorkflowRequestKind,
+    project: WorkflowProjectIdentity,
+    progress: WorkflowProgressProjection,
+    sourceStage: WorkflowProgressStage | null,
+  ): WorkflowRequestTicket | null {
+    const requestGeneration = this.requestGenerations[kind] + 1;
+    this.requestGenerations[kind] = requestGeneration;
+    return requestSource(
+      kind,
+      this.contextGeneration,
+      requestGeneration,
+      project,
+      progress,
+      sourceStage,
+    );
+  }
+
+  owns(ticket: WorkflowRequestTicket, project: WorkflowProjectIdentity | null): boolean {
+    return project !== null
+      && ticket.contextGeneration === this.contextGeneration
+      && ticket.requestGeneration === this.requestGenerations[ticket.kind]
+      && ticket.projectId === project.projectId
+      && ticket.projectRoot === project.root
+      && project.open
+      && project.compatibilityState === "compatible";
+  }
+
+  matchesSource(
+    ticket: WorkflowRequestTicket,
+    project: WorkflowProjectIdentity | null,
+    progress: WorkflowProgressProjection | null,
+  ): boolean {
+    if (!this.owns(ticket, project) || !progress) return false;
+    const intent = progressIntentWitness(progress);
+    const sourcePresent = ticket.sourceStageStateRevisionId === null
+      || [progress.current, ...progress.history].some((stage) => sameStageRevision(
+        stage,
+        ticket.sourceStageStateRevisionId,
+        ticket.sourceStageStateRevisionContentHash,
+      ));
+    return intent !== null
+      && progress.projectId === ticket.projectId
+      && intent.revisionId === ticket.intentRevisionId
+      && intent.revisionContentHash === ticket.intentRevisionContentHash
+      && progress.selectionRevisionId === ticket.selectionRevisionId
+      && progress.selectionRevisionContentHash === ticket.selectionRevisionContentHash
+      && progress.profileId === ticket.profileId
+      && sameStageRevision(
+        progress.current,
+        ticket.activeStageStateRevisionId,
+        ticket.activeStageStateRevisionContentHash,
+      )
+      && sourcePresent;
+  }
+
+  acceptsResult(
+    ticket: WorkflowRequestTicket,
+    project: WorkflowProjectIdentity | null,
+    sourceProgress: WorkflowProgressProjection | null,
+    result: WorkflowProgressProjection,
+  ): boolean {
+    if (!this.matchesSource(ticket, project, sourceProgress)) return false;
+    const intent = progressIntentWitness(result);
+    return intent !== null
+      && result.projectId === ticket.projectId
+      && intent.revisionId === ticket.intentRevisionId
+      && intent.revisionContentHash === ticket.intentRevisionContentHash
+      && result.selectionRevisionId === ticket.selectionRevisionId
+      && result.selectionRevisionContentHash === ticket.selectionRevisionContentHash
+      && result.profileId === ticket.profileId;
+  }
 }
 
 export interface WorkflowContextClient<TIntent extends WorkflowIntentSelection = WorkflowIntentSelection> {
@@ -135,7 +374,13 @@ export class WorkflowContextLoader {
         client.workflowProgress({ root: project.root }),
       ]);
       if (generation !== this.generation) return { kind: "stale" };
-      const progressCoherent = progress.projectId === project.projectId
+      const progressIntent = progressIntentWitness(progress);
+      const progressCoherent = intent.current !== null
+        && progressIntent !== null
+        && intent.projectId === project.projectId
+        && progress.projectId === project.projectId
+        && progressIntent.revisionId === intent.current.revisionId
+        && progressIntent.revisionContentHash === intent.current.revisionContentHash
         && progress.profileId === intent.current?.primaryUseCase
         && progress.processForm === catalog.profiles.find(({ profileId }) => profileId === progress.profileId)?.processForm;
       const authority = progressCoherent
@@ -277,8 +522,25 @@ export function selectPrimaryStage(
 export function createSupportingReturn(
   authority: WorkflowAuthoritySnapshot,
   supportingWorkspace: ApplicationWorkspace,
+  progress: WorkflowProgressProjection,
 ): SupportingReturnContext | null {
   if (workspaceClassification(authority, supportingWorkspace).role !== "supporting") return null;
+  const handoff = progress.supportingHandoff;
+  const intent = progressIntentWitness(progress);
+  const workspace = implementedWorkspace(supportingWorkspace);
+  if (
+    !handoff
+    || handoff.navigationRole !== "supporting"
+    || !(workspace.pageContractIds as readonly string[]).includes(handoff.pageContractId)
+    || !progress.current
+    || handoff.returnStageStateRevisionId !== progress.current.stageStateRevisionId
+    || progress.current.stageKey !== authority.currentStageKey
+    || progress.projectId !== authority.projectId
+    || progress.profileId !== authority.profileId
+    || !intent
+    || intent.revisionId !== authority.intentRevisionId
+    || intent.revisionContentHash !== authority.intentRevisionContentHash
+  ) return null;
   return Object.freeze({
     supportingWorkspace,
     projectId: authority.projectId,
@@ -294,13 +556,42 @@ export function createSupportingReturn(
     profileId: authority.profileId,
     currentStageKey: authority.currentStageKey,
     currentPageContractId: authority.currentPageContractId,
+    selectionRevisionId: progress.selectionRevisionId,
+    selectionRevisionContentHash: progress.selectionRevisionContentHash,
+    stageStateId: handoff.stageStateId,
+    stageStateRevisionId: handoff.stageStateRevisionId,
+    stageStateRevisionContentHash: handoff.revisionContentHash,
+    returnStageStateRevisionId: handoff.returnStageStateRevisionId,
+    supportingPageContractId: handoff.pageContractId,
   });
 }
 
 export function supportingReturnMatches(
   context: SupportingReturnContext,
   authority: WorkflowAuthoritySnapshot | null,
+  progress?: WorkflowProgressProjection | null,
 ): boolean {
+  const progressIntent = progress ? progressIntentWitness(progress) : null;
+  const handoff = progress?.supportingHandoff ?? null;
+  const serverWitnessMatches = progress === undefined || (
+    progress !== null
+    && progressIntent !== null
+    && progress.projectId === context.projectId
+    && progressIntent.revisionId === context.intentRevisionId
+    && progressIntent.revisionContentHash === context.intentRevisionContentHash
+    && progress.profileId === context.profileId
+    && progress.selectionRevisionId === context.selectionRevisionId
+    && progress.selectionRevisionContentHash === context.selectionRevisionContentHash
+    && progress.current?.stageKey === context.currentStageKey
+    && progress.current.stageStateRevisionId === context.returnStageStateRevisionId
+    && handoff !== null
+    && handoff.navigationRole === "supporting"
+    && handoff.stageStateId === context.stageStateId
+    && handoff.stageStateRevisionId === context.stageStateRevisionId
+    && handoff.revisionContentHash === context.stageStateRevisionContentHash
+    && handoff.returnStageStateRevisionId === context.returnStageStateRevisionId
+    && handoff.pageContractId === context.supportingPageContractId
+  );
   return authority !== null
     && context.projectId === authority.projectId
     && context.projectRoot === authority.projectRoot
@@ -314,5 +605,6 @@ export function supportingReturnMatches(
     && context.intentGuidanceHash === authority.intentGuidanceHash
     && context.profileId === authority.profileId
     && context.currentStageKey === authority.currentStageKey
-    && context.currentPageContractId === authority.currentPageContractId;
+    && context.currentPageContractId === authority.currentPageContractId
+    && serverWitnessMatches;
 }

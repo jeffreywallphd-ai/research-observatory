@@ -382,6 +382,7 @@ class WorkflowAuthorityMutation:
     migrations: tuple[WorkflowAuthorityRecord, ...] = ()
     decisions: tuple[WorkflowAuthorityRecord, ...] = ()
     expected_stage_states: tuple[WorkflowStageStateRecord, ...] | None = None
+    stage_states: tuple[WorkflowStageStateRecord, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -400,6 +401,7 @@ class WorkflowProgressCommandRecord:
     idempotency_key: str
     command_sha256: str
     result_revision_ids: tuple[str, ...]
+    result_projection_json: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -581,7 +583,7 @@ class WorkflowProgressRepository(Protocol):
         actor_id: str,
         idempotency_key: str,
         command_sha256: str,
-    ) -> tuple[str, ...] | None: ...
+    ) -> WorkflowProgressCommandRecord | None: ...
 
     def append(
         self,
