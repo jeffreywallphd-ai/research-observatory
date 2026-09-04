@@ -88,6 +88,18 @@ EXPECTED_CSP = {
     "frame-ancestors": ("'none'",),
     "form-action": ("'self'",),
 }
+EXPECTED_MAIN_WINDOW_PERMISSIONS = (
+    "core:webview:allow-internal-toggle-devtools",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+)
+EXPECTED_MAIN_WINDOW_CAPABILITY_FIELDS = {
+    "$schema",
+    "identifier",
+    "description",
+    "windows",
+    "permissions",
+}
 ROUTE_RECOVERY_CASES = (
     "%252e%252e/study-design.html",
     "%5c/study-design.html",
@@ -677,10 +689,32 @@ def security_errors(repo: Path) -> list[str]:
     if security.get("capabilities") != ["main-window"] or app.get("withGlobalTauri") is not False:
         errors.append("Tauri must expose only the named main-window capability without a global bridge")
     capability = json_object(repo / "apps" / "desktop" / "src-tauri" / "capabilities" / "main-window.json")
-    if capability.get("windows") != ["main"] or capability.get("permissions") != [
-        "core:webview:allow-internal-toggle-devtools"
-    ]:
-        errors.append("the desktop capability must grant only the narrow WebView inspector toggle command")
+    permissions = capability.get("permissions")
+    if (
+        set(capability) != EXPECTED_MAIN_WINDOW_CAPABILITY_FIELDS
+        or capability.get("identifier") != "main-window"
+        or capability.get("windows") != ["main"]
+        or not isinstance(permissions, list)
+        or tuple(permissions) != EXPECTED_MAIN_WINDOW_PERMISSIONS
+    ):
+        errors.append(
+            "the desktop capability must grant exactly the receive-only event permissions "
+            "and the narrow WebView inspector toggle command"
+        )
+    generated_capabilities = json_object(
+        repo / "apps" / "desktop" / "src-tauri" / "gen" / "schemas" / "capabilities.json"
+    )
+    expected_generated = {
+        "main-window": {
+            "identifier": capability.get("identifier"),
+            "description": capability.get("description"),
+            "local": True,
+            "windows": capability.get("windows"),
+            "permissions": capability.get("permissions"),
+        }
+    }
+    if generated_capabilities != expected_generated:
+        errors.append("the generated Tauri capability projection must exactly match the reviewed source capability")
     return errors
 
 
@@ -921,6 +955,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "intentMutationRaceGuarded": False,
         "privacySettingsWorkflow": False,
         "applicationLock": False,
+        "applicationLockEventAclStartup": False,
+        "applicationLockEventAclStartupCases": {},
         "applicationLockReconciliation": False,
         "applicationSettingsDraftReconciliation": False,
         "applicationSettingsConflictAnnouncement": False,
@@ -1840,6 +1876,83 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             revisit.evaluate("() => { localStorage.clear(); sessionStorage.clear(); }")
             revisit.close()
 
+            event_acl_startup_cases: dict[str, bool] = {}
+            for listener_mode in ("allowed", "denied", "timed-out"):
+                startup = browser_context.new_page()
+                startup_errors: list[str] = []
+                startup.on("pageerror", page_error_collector(startup_errors))
+                startup.add_init_script(
+                    r"""(() => {
+                      const listenerMode = '__LISTENER_MODE__';
+                      const calls = [];
+                      window.__LOCK_STARTUP_CALLS__ = calls;
+                      const unlocked = {
+                        schemaVersion: '1.0', state: 'unlocked', signInMode: 'none', policyRevision: 1,
+                        profileName: null, inactivityTimeoutMinutes: 0, configurationState: 'valid',
+                        reason: null, threatDisclosure: 'Application-session protection only; '
+                          + 'this is not Windows-account isolation.', retryAfterSeconds: 0, auditSequence: 0
+                      };
+                      window.__TAURI_INTERNALS__ = {
+                        transformCallback: () => 1,
+                        invoke: async (command) => {
+                          if (command === 'plugin:event|listen') {
+                            calls.push(command);
+                            if (listenerMode === 'denied') throw new Error('event listen denied');
+                            if (listenerMode === 'timed-out') return await new Promise(() => {});
+                            return 1;
+                          }
+                          if (command === 'application_lock_status') {
+                            calls.push(command);
+                            return {...unlocked};
+                          }
+                          if (command === 'application_lock_activity'
+                            || command === 'plugin:event|unlisten') return undefined;
+                          if (command === 'core_runtime_start' || command === 'core_runtime_status') {
+                            return {state: 'ready', attempt: 1, retryAvailable: false,
+                              diagnosticReference: null};
+                          }
+                          if (command === 'core_runtime_stop') return undefined;
+                          throw new Error(`unsupported event ACL startup command: ${command}`);
+                        }
+                      };
+                    })()""".replace("__LISTENER_MODE__", listener_mode)
+                )
+                startup.goto("http://tauri.localhost/index.html", wait_until="load")
+                startup.wait_for_function(
+                    "window.__LOCK_STARTUP_CALLS__.includes('application_lock_status')",
+                    timeout=5_000,
+                )
+                if listener_mode == "allowed":
+                    startup.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+                    observed_startup = startup.evaluate(
+                        """() => ({
+                          calls: window.__LOCK_STARTUP_CALLS__,
+                          locked: document.querySelector('[data-application-locked]') !== null,
+                          recovery: document.querySelector('[data-application-locked]')
+                            ?.textContent.includes('Recovery required') ?? false
+                        })"""
+                    )
+                    event_acl_startup_cases["defaultNoLogin"] = (
+                        observed_startup["calls"][:2] == ["plugin:event|listen", "application_lock_status"]
+                        and not observed_startup["locked"]
+                        and not observed_startup["recovery"]
+                    )
+                    if not event_acl_startup_cases["defaultNoLogin"]:
+                        details["applicationLockEventAclStartupDiagnostics"] = observed_startup
+                else:
+                    startup.locator("[data-application-locked]").wait_for(timeout=5_000)
+                    case_name = "deniedListener" if listener_mode == "denied" else "timedOutListener"
+                    event_acl_startup_cases[case_name] = startup.evaluate(
+                        """() => window.__LOCK_STARTUP_CALLS__[0] === 'plugin:event|listen'
+                          && window.__LOCK_STARTUP_CALLS__.includes('application_lock_status')
+                          && document.querySelector('[data-application-locked]')
+                            ?.textContent.includes('Recovery required')
+                          && document.querySelector('#shell-command, nav, footer') === null"""
+                    )
+                if startup_errors:
+                    errors.append(f"desktop {listener_mode} event-listener startup error: {'; '.join(startup_errors)}")
+                startup.close()
+
             locked = browser_context.new_page()
             locked_errors: list[str] = []
             locked.on("pageerror", page_error_collector(locked_errors))
@@ -2538,6 +2651,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             details["applicationLockReconciliation"] = (
                 malformed_locked and normal_unlock and missed_event_locked and monitor_failure_locked
             )
+            event_acl_startup_cases["malformedEvent"] = malformed_locked
+            details["applicationLockEventAclStartupCases"] = event_acl_startup_cases
+            details["applicationLockEventAclStartup"] = all(event_acl_startup_cases.values())
             if reconciliation_errors:
                 errors.append(f"desktop lock reconciliation runtime error: {'; '.join(reconciliation_errors)}")
             lock_reconciliation.close()
@@ -2836,6 +2952,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "intentMutationRaceGuarded",
         "privacySettingsWorkflow",
         "applicationLock",
+        "applicationLockEventAclStartup",
         "applicationLockReconciliation",
         "applicationSettingsDraftReconciliation",
         "applicationSettingsConflictAnnouncement",

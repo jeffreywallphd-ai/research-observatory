@@ -404,9 +404,53 @@ fn runtime_config<R: Runtime>(app: &App<R>) -> Result<SupervisorConfig, &'static
 #[cfg(test)]
 mod tests {
     use super::PRODUCT_NAME;
+    use tauri::ipc::Origin;
 
     #[test]
     fn product_identity_is_stable() {
         assert_eq!(PRODUCT_NAME, "Research Observatory");
+    }
+
+    #[test]
+    fn main_window_event_capability_is_receive_only() {
+        let mut context: tauri::Context<tauri::Wry> = tauri::generate_context!();
+        let authority = context.runtime_authority_mut();
+        let local = Origin::Local;
+        let remote = Origin::Remote {
+            url: "https://example.invalid".parse().expect("valid remote URL"),
+        };
+
+        for command in [
+            "plugin:webview|internal_toggle_devtools",
+            "plugin:event|listen",
+            "plugin:event|unlisten",
+        ] {
+            assert!(
+                authority
+                    .resolve_access(command, "main", "main", &local)
+                    .is_some(),
+                "{command} must be allowed for the local main window"
+            );
+            assert!(
+                authority
+                    .resolve_access(command, "secondary", "secondary", &local)
+                    .is_none(),
+                "{command} must be denied outside the main window"
+            );
+            assert!(
+                authority
+                    .resolve_access(command, "main", "main", &remote)
+                    .is_none(),
+                "{command} must be denied to remote origins"
+            );
+        }
+        for command in ["plugin:event|emit", "plugin:event|emit_to"] {
+            assert!(
+                authority
+                    .resolve_access(command, "main", "main", &local)
+                    .is_none(),
+                "{command} must remain denied for the local main window"
+            );
+        }
     }
 }
