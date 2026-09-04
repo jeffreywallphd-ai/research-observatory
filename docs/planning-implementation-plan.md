@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e69db82db4e9bbbc35a2b5e50d75eb5eff0c71ffd358f02ea14b73938c9787d8
+source_sha256: 202f11551d59f39aad484918cc24f0aaa13c697ab2ea15c9a48e0d670542c244
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6311,13 +6311,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T02`, `CAP-01.S02.T01`, `CAP-01.S02.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:t03-independent-reviewer (`changes-requested`)
 
 **Objective:** Render the selected workflow as numbered primary navigation, expose current/previous/next steps and rationale on each page, and retain a secondary complete tool inventory.
 
@@ -6342,9 +6342,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-03.S06.T03
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0e99344f290690e3bc0eb054c68df19a3b363b107151c3b46adcec65d72dfd7d`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `0e99344f290690e3bc0eb054c68df19a3b363b107151c3b46adcec65d72dfd7d`
 
 - Candidate / base / branch: `71c32375594de7fbd73a0f5a3a9a9507c3d31937` / `3c434794e144e186afc21e53933263653fb3fbe0` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-04T01:10:59+00:00`
@@ -6358,11 +6360,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / agent:t03-independent-reviewer / `2026-09-04T01:21:08+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T03.review-R01.json` / `8a4adda350c4ff804022081adfbf298da8db4573207eaabc29a705cbf56b5b16`
 
-**Currently open findings:** -
+**Review notes:** The frozen submission, criterion-evidence SHA-256/Git blob, exact 24-path candidate scope, eight-path submission projection, ancestry, approved Academic Minimal v1.5 lineage, and disclosed risk-based deferrals authenticate. Independent replay confirms exact generated-client authentication of the complete Core workflow projection and passes the focused navigation model, rendered component, desktop product, and assembled-browser checks. Approval remains unavailable because a delayed successful Intent mutation from a replaced project can reinstall the prior project's workflow authority and invalidate the current project's load, and because the supporting-return witness omits separately advertised governed-reference and guidance identities required by the task-start authority map.
+
+**Findings opened:**
+
+- `CAP-03.S06.T03-R01-F01` `high` blocking=`True` criterion=`1` — A delayed Intent mutation can reinstall workflow authority for a replaced project; reproduce: At candidate 71c32375594de7fbd73a0f5a3a9a9507c3d31937, open project A in Research Intent and hold the response to a valid save or acceptance request after Core commits it. Use All tools to open Local projects, switch to compatible project B, and let B's catalog/Intent load begin. Release A's response. IntentWorkspace.tsx:403 or :434 invokes the callback ref retained by the unmounted project-A workspace. That callback is the project-A closure at ApplicationRuntime.tsx:508-523, so it invalidates the generation that is loading B and installs A's Intent and authority. The top-level currentProject remains B, leaving B's project header with A's ordered workflow and preventing the legitimate B response from repairing it because the loader was invalidated.; remediate: Bind every persisted-Intent callback to the exact current project ID/root and a current request/component generation before it may invalidate or install workflow context. On project replacement or unmount, stale save/accept/load results must be ignored without cancelling the new project's load. Add an interactive delayed-response test for both save and acceptance that switches A to B, releases A last, and proves only B can become authoritative and remains recoverable.
+- `CAP-03.S06.T03-R01-F02` `high` blocking=`True` criterion=`2` — Supporting-return validation omits governed-reference and guidance identities; reproduce: At workflowNavigationModel.ts:50-62 the current authority carries governed reference ID/version but not the separately advertised intentGuidanceVersion/intentGuidanceHash. SupportingReturnContext at :78-89 omits all four fields, createSupportingReturn at :255-271 cannot bind them, and supportingReturnMatches at :274-286 never compares them. Construct a valid support witness, then compare it with { ...authority, referenceVersion: '1.6' }; the function returns true. A guidance-only catalog replacement cannot even be represented in the authority/witness. This contradicts the task-start authority map at CAP-03.S06.T03.task-start.md:38-40, which makes those identities authority-bearing and requires any catalog replacement to stale the return.; remediate: Carry the governed reference ID/version and intent guidance version/hash from the authenticated Core catalog into WorkflowAuthoritySnapshot and SupportingReturnContext, compare every field during return validation, and add one-field substitution tests for each. Preserve the exact portable catalog version/hash, project, Intent, profile, stage, and page checks already present.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:t03-independent-reviewer at `2026-09-04T01:21:08+00:00`
+
+**Latest notes:** The frozen submission, criterion-evidence SHA-256/Git blob, exact 24-path candidate scope, eight-path submission projection, ancestry, approved Academic Minimal v1.5 lineage, and disclosed risk-based deferrals authenticate. Independent replay confirms exact generated-client authentication of the complete Core workflow projection and passes the focused navigation model, rendered component, desktop product, and assembled-browser checks. Approval remains unavailable because a delayed successful Intent mutation from a replaced project can reinstall the prior project's workflow authority and invalidate the current project's load, and because the supporting-return witness omits separately advertised governed-reference and guidance identities required by the task-start authority map.
+
+**Currently open findings:** `CAP-03.S06.T03-R01-F01`, `CAP-03.S06.T03-R01-F02`
 
 #### - [ ] CAP-03.S06.T04 - Implement workflow progress, checkpoints, handoffs, and recalculation impact
 

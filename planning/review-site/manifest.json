@@ -10798,91 +10798,160 @@
             {
               "task_id": "CAP-03.S06.T03",
               "title": "Implement adaptive ordered navigation and workflow context",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:t03-independent-reviewer",
+                "result": "changes-requested",
+                "reviewed_at": "2026-09-04T01:21:08+00:00",
+                "notes": "The frozen submission, criterion-evidence SHA-256/Git blob, exact 24-path candidate scope, eight-path submission projection, ancestry, approved Academic Minimal v1.5 lineage, and disclosed risk-based deferrals authenticate. Independent replay confirms exact generated-client authentication of the complete Core workflow projection and passes the focused navigation model, rendered component, desktop product, and assembled-browser checks. Approval remains unavailable because a delayed successful Intent mutation from a replaced project can reinstall the prior project's workflow authority and invalidate the current project's load, and because the supporting-return witness omits separately advertised governed-reference and guidance identities required by the task-start authority map."
               },
               "review_control": {
                 "version": 1,
-                "attempts": [],
-                "current_submission": {
-                  "id": "R01",
-                  "submitted_by": "codex",
-                  "submitted_at": "2026-09-04T01:10:59+00:00",
-                  "candidate_commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
-                  "base_commit": "3c434794e144e186afc21e53933263653fb3fbe0",
-                  "branch": "codex/w1-windows-local-runtime",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-03.S06.T03.R01.json",
-                    "sha256": "e42a23927e9a779e2c42ed5755927758d1d18cbc9b2bf8df29c267f2c7b1aa21",
-                    "commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
-                    "recorded_at": "2026-09-04T01:10:59+00:00"
-                  },
-                  "acceptance_criteria_sha256": "04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a",
-                  "changed_paths": [
-                    "apps/desktop/scripts/assemble-application.mjs",
-                    "apps/desktop/src/app.css",
-                    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
-                    "apps/desktop/src/app/ApplicationRuntime.tsx",
-                    "apps/desktop/src/app/IntentWorkspace.tsx",
-                    "apps/desktop/src/app/WorkflowNavigation.test.tsx",
-                    "apps/desktop/src/app/WorkflowNavigation.tsx",
-                    "apps/desktop/src/app/workflowNavigation.test.ts",
-                    "apps/desktop/src/app/workflowNavigationModel.ts",
-                    "artifacts/evidence/CAP-03.S06.T03.task-start.md",
-                    "artifacts/evidence/ui-change/CAP-03.S06.T03.json",
-                    "docs/planning-implementation-plan.md",
-                    "packages/contracts/core-api/generated.test.ts",
-                    "packages/contracts/core-api/generated.ts",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-03/CAP-03.S06.T03.html",
-                    "planning/review-site/CAP-03/CAP-03.S06.html",
-                    "planning/review-site/manifest.json",
-                    "planning/review-site/waves/W1.html",
-                    "planning/status-summary.md",
-                    "services/core-api/src/research_observatory_core/research_intents.py",
-                    "tests/desktop/test_desktop_app_check.py",
-                    "tools/core_api_contract.py",
-                    "tools/desktop_app_check.py"
-                  ],
-                  "selected_checks": [
-                    "npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop",
-                    "apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
-                    ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-built-frame.json",
-                    ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
-                    ".venv/Scripts/ruff.exe format --check tests/desktop/test_desktop_app_check.py tools/core_api_contract.py tools/desktop_app_check.py services/core-api/src/research_observatory_core/research_intents.py; .venv/Scripts/ruff.exe check <same four files>; .venv/Scripts/mypy.exe --follow-imports=skip <same four files>",
-                    ".venv/Scripts/python.exe tools/verify.py --profile desktop --profile service --affected-base 3c434794e144e186afc21e53933263653fb3fbe0 --affected-head 71c32375594de7fbd73a0f5a3a9a9507c3d31937 --deferred-gate W1-exit --selection-only",
-                    ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/planctl.py --repo . wave review W1 --check; git diff --check 3c434794e144e186afc21e53933263653fb3fbe0..71c32375594de7fbd73a0f5a3a9a9507c3d31937"
-                  ],
-                  "deferred_checks": [
-                    "The affected selector assigns desktop performance to the complete W1-exit matrix; T03 changes no approved performance threshold.",
-                    "A broad desktop-profile run reached the registered benchmark and UI gates successfully, then reported three repository-wide Ruff-format failures and ten mypy errors in five unchanged files: selective_recalculation.py, test_dependency_impacts.py, test_recalculation_api.py, tools/ui_conformance.py, tools/planctl.py, tests/desktop/test_ui_conformance.py, and tests/e2e/test_selective_recalculation.py. None is in T03's changed Python surface; all four changed Python files pass focused Ruff and mypy. The baseline debt remains mandatory for its owning remediation or W1 exit.",
-                    "Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, coherent W1 integration checkpoints, and W1 exit."
-                  ],
-                  "selection_rationale": "T03 changes a governed desktop navigation boundary fed by a public Core catalog projection and persisted Research Intent identity. Credible failures include trusting a partial or substituted catalog, deriving navigation from unsaved UI state, treating visits as completion, losing access to supporting tools, returning to a stale project/profile/revision, inventing routes for future stages, and breaking keyboard, responsive, theme, or approved-reference behavior. The selected checks therefore cover exact generated-client projection authentication, model and rendered-component state transitions, persisted-selection integration, production assembly, built-frame browser inspection, governed UI/reference/accessibility contracts, changed-file Python quality, exact affected-path selection, and repository governance. The full profile was also sampled and its only failures were proven in unchanged formatter/type-check paths, which remain explicit W1-exit debt.",
-                  "selection_sha256": "e750f7d6b4fd388e2d667eadcab15d5c5189c385805be94232abb50b67a274ee",
-                  "prior_attempt_id": null,
-                  "open_finding_ids": [],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "foundation:backlog-views",
-                    "foundation:build-manifest",
-                    "foundation:ui-reference",
-                    "foundation:ui-change",
-                    "foundation:backlog",
-                    "desktop:application",
-                    "desktop:ui-reference-integrity",
-                    "desktop:ui-workflow",
-                    "desktop:ui-accessibility",
-                    "contracts:unit"
-                  ],
-                  "packet_sha256": "0e99344f290690e3bc0eb054c68df19a3b363b107151c3b46adcec65d72dfd7d"
-                }
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-04T01:10:59+00:00",
+                      "candidate_commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+                      "base_commit": "3c434794e144e186afc21e53933263653fb3fbe0",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S06.T03.R01.json",
+                        "sha256": "e42a23927e9a779e2c42ed5755927758d1d18cbc9b2bf8df29c267f2c7b1aa21",
+                        "commit": "71c32375594de7fbd73a0f5a3a9a9507c3d31937",
+                        "recorded_at": "2026-09-04T01:10:59+00:00"
+                      },
+                      "acceptance_criteria_sha256": "04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a",
+                      "changed_paths": [
+                        "apps/desktop/scripts/assemble-application.mjs",
+                        "apps/desktop/src/app.css",
+                        "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/IntentWorkspace.tsx",
+                        "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+                        "apps/desktop/src/app/WorkflowNavigation.tsx",
+                        "apps/desktop/src/app/workflowNavigation.test.ts",
+                        "apps/desktop/src/app/workflowNavigationModel.ts",
+                        "artifacts/evidence/CAP-03.S06.T03.task-start.md",
+                        "artifacts/evidence/ui-change/CAP-03.S06.T03.json",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-03/CAP-03.S06.T03.html",
+                        "planning/review-site/CAP-03/CAP-03.S06.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W1.html",
+                        "planning/status-summary.md",
+                        "services/core-api/src/research_observatory_core/research_intents.py",
+                        "tests/desktop/test_desktop_app_check.py",
+                        "tools/core_api_contract.py",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        "npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop",
+                        "apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+                        ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-built-frame.json",
+                        ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+                        ".venv/Scripts/ruff.exe format --check tests/desktop/test_desktop_app_check.py tools/core_api_contract.py tools/desktop_app_check.py services/core-api/src/research_observatory_core/research_intents.py; .venv/Scripts/ruff.exe check <same four files>; .venv/Scripts/mypy.exe --follow-imports=skip <same four files>",
+                        ".venv/Scripts/python.exe tools/verify.py --profile desktop --profile service --affected-base 3c434794e144e186afc21e53933263653fb3fbe0 --affected-head 71c32375594de7fbd73a0f5a3a9a9507c3d31937 --deferred-gate W1-exit --selection-only",
+                        ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/planctl.py --repo . wave review W1 --check; git diff --check 3c434794e144e186afc21e53933263653fb3fbe0..71c32375594de7fbd73a0f5a3a9a9507c3d31937"
+                      ],
+                      "deferred_checks": [
+                        "The affected selector assigns desktop performance to the complete W1-exit matrix; T03 changes no approved performance threshold.",
+                        "A broad desktop-profile run reached the registered benchmark and UI gates successfully, then reported three repository-wide Ruff-format failures and ten mypy errors in five unchanged files: selective_recalculation.py, test_dependency_impacts.py, test_recalculation_api.py, tools/ui_conformance.py, tools/planctl.py, tests/desktop/test_ui_conformance.py, and tests/e2e/test_selective_recalculation.py. None is in T03's changed Python surface; all four changed Python files pass focused Ruff and mypy. The baseline debt remains mandatory for its owning remediation or W1 exit.",
+                        "Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, coherent W1 integration checkpoints, and W1 exit."
+                      ],
+                      "selection_rationale": "T03 changes a governed desktop navigation boundary fed by a public Core catalog projection and persisted Research Intent identity. Credible failures include trusting a partial or substituted catalog, deriving navigation from unsaved UI state, treating visits as completion, losing access to supporting tools, returning to a stale project/profile/revision, inventing routes for future stages, and breaking keyboard, responsive, theme, or approved-reference behavior. The selected checks therefore cover exact generated-client projection authentication, model and rendered-component state transitions, persisted-selection integration, production assembly, built-frame browser inspection, governed UI/reference/accessibility contracts, changed-file Python quality, exact affected-path selection, and repository governance. The full profile was also sampled and its only failures were proven in unchanged formatter/type-check paths, which remain explicit W1-exit debt.",
+                      "selection_sha256": "e750f7d6b4fd388e2d667eadcab15d5c5189c385805be94232abb50b67a274ee",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "contracts:unit"
+                      ],
+                      "packet_sha256": "0e99344f290690e3bc0eb054c68df19a3b363b107151c3b46adcec65d72dfd7d"
+                    },
+                    "review": {
+                      "reviewer": "agent:t03-independent-reviewer",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-09-04T01:21:08+00:00",
+                      "notes": "The frozen submission, criterion-evidence SHA-256/Git blob, exact 24-path candidate scope, eight-path submission projection, ancestry, approved Academic Minimal v1.5 lineage, and disclosed risk-based deferrals authenticate. Independent replay confirms exact generated-client authentication of the complete Core workflow projection and passes the focused navigation model, rendered component, desktop product, and assembled-browser checks. Approval remains unavailable because a delayed successful Intent mutation from a replaced project can reinstall the prior project's workflow authority and invalidate the current project's load, and because the supporting-return witness omits separately advertised governed-reference and guidance identities required by the task-start authority map."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S06.T03.review-R01.json",
+                      "sha256": "8a4adda350c4ff804022081adfbf298da8db4573207eaabc29a705cbf56b5b16"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S06.T03-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "A delayed Intent mutation can reinstall workflow authority for a replaced project",
+                        "reproduction": "At candidate 71c32375594de7fbd73a0f5a3a9a9507c3d31937, open project A in Research Intent and hold the response to a valid save or acceptance request after Core commits it. Use All tools to open Local projects, switch to compatible project B, and let B's catalog/Intent load begin. Release A's response. IntentWorkspace.tsx:403 or :434 invokes the callback ref retained by the unmounted project-A workspace. That callback is the project-A closure at ApplicationRuntime.tsx:508-523, so it invalidates the generation that is loading B and installs A's Intent and authority. The top-level currentProject remains B, leaving B's project header with A's ordered workflow and preventing the legitimate B response from repairing it because the loader was invalidated.",
+                        "required_remediation": "Bind every persisted-Intent callback to the exact current project ID/root and a current request/component generation before it may invalidate or install workflow context. On project replacement or unmount, stale save/accept/load results must be ignored without cancelling the new project's load. Add an interactive delayed-response test for both save and acceptance that switches A to B, releases A last, and proves only B can become authoritative and remains recoverable."
+                      },
+                      {
+                        "id": "CAP-03.S06.T03-R01-F02",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Supporting-return validation omits governed-reference and guidance identities",
+                        "reproduction": "At workflowNavigationModel.ts:50-62 the current authority carries governed reference ID/version but not the separately advertised intentGuidanceVersion/intentGuidanceHash. SupportingReturnContext at :78-89 omits all four fields, createSupportingReturn at :255-271 cannot bind them, and supportingReturnMatches at :274-286 never compares them. Construct a valid support witness, then compare it with { ...authority, referenceVersion: '1.6' }; the function returns true. A guidance-only catalog replacement cannot even be represented in the authority/witness. This contradicts the task-start authority map at CAP-03.S06.T03.task-start.md:38-40, which makes those identities authority-bearing and requires any catalog replacement to stale the return.",
+                        "required_remediation": "Carry the governed reference ID/version and intent guidance version/hash from the authenticated Core catalog into WorkflowAuthoritySnapshot and SupportingReturnContext, compare every field during return validation, and add one-field substitution tests for each. Preserve the exact portable catalog version/hash, project, Intent, profile, stage, and page checks already present."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-03.S06.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-09-04T01:10:59+00:00",
+                      "reviewed_at": "2026-09-04T01:21:08+00:00",
+                      "duration_seconds": 609,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 2,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 2,
+                        "total": 2
+                      },
+                      "command_ids": [
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "contracts:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
               }
             },
             {
@@ -10957,7 +11026,7 @@
             {
               "task_id": "CAP-03.S06.T03",
               "title": "Implement adaptive ordered navigation and workflow context",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S06.T03.html",
               "dependencies": [
                 "CAP-03.S06.T02",
