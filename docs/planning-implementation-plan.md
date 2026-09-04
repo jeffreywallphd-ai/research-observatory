@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fe1916f1296624be464005cbc1b3cb9af1fd4a27e54d5522fe3a4171ef3b5aad
+source_sha256: f45724affc9a1ef85ba0761fe98cf90f218ac9b6977e1c51fa29f264374c45b3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -273,7 +273,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 
@@ -6698,15 +6698,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S06.T05 - Verify all approved use-case workflows end to end
+#### - [x] CAP-03.S06.T05 - Verify all approved use-case workflows end to end
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T04`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:t05-r01-independent-reviewer (`approved`)
 
 **Objective:** Test profile selection, navigation order, supporting-tool access, state persistence, profile revision, accessibility, and expected output handoffs across all fourteen use cases.
 
@@ -6727,13 +6727,51 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-03.S06.T05.R01.json` at `8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce`
+
 ##### Review history — CAP-03.S06.T05
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** Reopened: W1.A07 is adopted with independently approved exit; the exact T05 cycle criterion now aligns with accepted ADR-0026 and RO-UI-ACADEMIC-MINIMAL-1.5, so resume the previously test-first task without changing product or experience authority.
+**Immutable submission packet:** `R01` / packet SHA-256 `5fd20ce080e7c79472789a2d74d2661f6aff25ee113255253ab1d9f283c4f33d`
+
+- Candidate / base / branch: `8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce` / `b6c33dd67a4c219efbc7856b21653f2fdc2db3d4` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-04T11:40:42+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T05.R01.json` / `390614f401332c10f693c3a2bca985c68ed59d132b8bdb6ec4e0269eec8a7270` / `8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce`
+- Acceptance-criteria SHA-256: `42592d53c3b340683ca63c6cadee040fe2aa7973597e3541609ce69ef8d13434`
+- Verification-selection SHA-256: `b5211e103d219dd071374155e94a80972ee984c618c480d1da22b320c8f9c20a`
+- Changed paths: `apps/desktop/scripts/assemble-application.mjs`, `artifacts/evidence/CAP-03.S06.T05.task-start.md`, `artifacts/evidence/W1.A07.B00.json`, `artifacts/evidence/W1.A07.T01.json`, `artifacts/evidence/W1.A07.adoption.json`, `artifacts/evidence/W1.A07.exit-review-R01.json`, `artifacts/evidence/W1.A07.exit.json`, `artifacts/evidence/task-reviews/W1.A07.T01/R01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/enabler-change-requests/ECR-0006-review.html`, `planning/enabler-change-requests/ECR-0006.md`, `planning/enabler-change-requests/ECR-0006.packet.json`, `planning/enabler-change-requests/ECR-0006.review-R01.json`, `planning/governance-migrations/GOV-MAINT-0016.json`, `planning/governance-migrations/GOV-MAINT-0016.review-R01.json`, `planning/review-site/CAP-03/CAP-03.S06.T04.html`, `planning/review-site/CAP-03/CAP-03.S06.T05.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/README.md`, `planning/review-site/enablers/ECR-0006.html`, `planning/review-site/enablers/index.html`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md`, `planning/status-summary.md`, `planning/wave-amendment-approvals/W1.A07.json`, `services/core-api/src/research_observatory_core/research_intents.py`, `tests/desktop/test_desktop_app_check.py`, `tests/e2e/test_workflow_profile_matrix.py`, `tests/foundation/test_planctl_amendments.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.e2e.test_workflow_profile_matrix`, `.venv\Scripts\python.exe -m unittest -v tests.contracts.test_workflow_profile_contracts tests.service.test_project_lifecycle tests.service.test_workflow_progress`, `.venv\Scripts\python.exe -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible`, `.\.local\toolchains\node-v24.19.0-win-x64\pnpm.CMD --dir apps/desktop run build`, `.venv\Scripts\python.exe -m ruff format --check services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv\Scripts\python.exe -m ruff check services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv\Scripts\python.exe -m mypy --follow-imports=skip services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py tools/desktop_app_check.py`, `.venv\Scripts\python.exe tools/ui_reference_check.py --repo .; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe tools/verify.py --profile desktop --profile service --profile data --profile e2e-local --affected-base b6c33dd67a4c219efbc7856b21653f2fdc2db3d4 --affected-head 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce --deferred-gate W1-exit --selection-only; git diff --check b6c33dd67a4c219efbc7856b21653f2fdc2db3d4..8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce`
+- Deferred checks: `The complete desktop/service/data/e2e-local profile union selected by the historical claim range is deferred to CAP-03.S06 slice review and W1 exit; T05 ran the narrow deterministic commands that directly prove every criterion and changed boundary.`, `desktop:performance, data:project-lifecycle-performance, and data:storage-maintenance-performance are gate-bound to W1 exit by the affected selector.`, `Packaging/install/upgrade, full Windows-x64 smoke, cross-capability recovery/security, complete accessibility/visual, and repository-wide qualification remain mandatory at the integration checkpoint and W1 exit.`
+- Selection rationale: T05 is the exhaustive integration task for the approved workflow-profile slice. Its credible risks are catalog/reference substitution, inability to create one of the approved modes, generic defaults conflicting with mode contracts, wrong or collapsed stage order, hidden supporting tools, implicit stage advancement, lost restart identity, erased revisit history, linear-cycle bypass, wrong systematic endpoint, inaccessible output/tool semantics, and a verifier that tests source fixtures instead of the built product. The selected matrix therefore uses the exact Core projection across real project creation and SQLite restart for all fourteen profiles, positive and denial cycle commands for all fourteen, predecessor contract/service regressions, a rebuilt production frame with per-profile DOM/accessibility results, focused Python quality, reference integrity, backlog integrity, affected-path classification, and Git hygiene. The claim range also contains the independently approved and adopted W1.A07 authority repair that corrected criterion 2; those immutable planning/evidence paths explain the classifier's broad safety-sensitive inventory but do not expand this product candidate.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:t05-r01-independent-reviewer / `2026-09-04T11:50:59+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/task-reviews/CAP-03.S06.T05/R01.json` / `88a454e828375b5a836af754fc11fb818495d8423676572cbe3c30da787ec635`
+
+**Review notes:** The exact candidate, sole-parent submission, frozen evidence SHA-256/Git blob, 33-path historical claim range, five-path post-W1.A07 implementation boundary, controlled R01 packet, and patch hygiene authenticate. The claim history contains the independently reviewed, human-approved, completed, and adopted W1.A07 one-word cycle-authority correction followed by explicit W1 resume and T05 recovery; taskctl validates that append-only chain without reopening its authority. Independent real Core/API/SQLite replay proves all fourteen governed profiles create successfully, persist the exact hash-bound evidence/autonomy/stopping defaults while leaving novelty standard and rationale unresolved for the researcher, start at their exact first stage, open a server-issued supporting handoff without advancing the primary head, and reconstruct identical stage and handoff revisions through a fresh service composition. The cycle matrix accepts exactly living-review, hermeneutic-inquiry, and manuscript-review-revision as revisitable, appends pass 2 while preserving pass 1, denies the same transition without mutation for the remaining eleven linear profiles, and retains audit-lineage.html as systematic-review's ordered endpoint. Core independently exposes exact Academic Minimal 1.5 reference identity, workflow catalog version/hash, guidance version/hash, fourteen profile identities, thirty-three registered supporting page contracts, and the complete-workbench policy. The assembled production frame renders every profile's exact title, purpose, output, process form, ordered/optional stage labels, and enabled implemented-tool list with semantic list/button names, while the existing keyboard, focus, responsive, recovery, and adaptive-navigation assertions remain green. All 36 affected predecessor catalog, lifecycle, workflow-progress, migration, restart, supporting-expiry, evidence, CAS, idempotency, and authority-substitution tests pass. Focused Ruff, MyPy, governed-reference, backlog, W1.A07 runtime-integrity, exact-scope, ancestry, and Git checks pass. No acceptance-bound finding remains. Complete profile-union, packaging/install/upgrade, platform smoke, performance, cross-capability recovery/security, and full visual/accessibility qualification remain appropriately assigned to CAP-03.S06 slice review, any triggered checkpoint, and W1 exit; this task approval does not approve the slice, Wave, G1, local-main integration, or remote push.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t05-r01-independent-reviewer at `2026-09-04T11:50:59+00:00`
+
+**Latest notes:** The exact candidate, sole-parent submission, frozen evidence SHA-256/Git blob, 33-path historical claim range, five-path post-W1.A07 implementation boundary, controlled R01 packet, and patch hygiene authenticate. The claim history contains the independently reviewed, human-approved, completed, and adopted W1.A07 one-word cycle-authority correction followed by explicit W1 resume and T05 recovery; taskctl validates that append-only chain without reopening its authority. Independent real Core/API/SQLite replay proves all fourteen governed profiles create successfully, persist the exact hash-bound evidence/autonomy/stopping defaults while leaving novelty standard and rationale unresolved for the researcher, start at their exact first stage, open a server-issued supporting handoff without advancing the primary head, and reconstruct identical stage and handoff revisions through a fresh service composition. The cycle matrix accepts exactly living-review, hermeneutic-inquiry, and manuscript-review-revision as revisitable, appends pass 2 while preserving pass 1, denies the same transition without mutation for the remaining eleven linear profiles, and retains audit-lineage.html as systematic-review's ordered endpoint. Core independently exposes exact Academic Minimal 1.5 reference identity, workflow catalog version/hash, guidance version/hash, fourteen profile identities, thirty-three registered supporting page contracts, and the complete-workbench policy. The assembled production frame renders every profile's exact title, purpose, output, process form, ordered/optional stage labels, and enabled implemented-tool list with semantic list/button names, while the existing keyboard, focus, responsive, recovery, and adaptive-navigation assertions remain green. All 36 affected predecessor catalog, lifecycle, workflow-progress, migration, restart, supporting-expiry, evidence, CAS, idempotency, and authority-substitution tests pass. Focused Ruff, MyPy, governed-reference, backlog, W1.A07 runtime-integrity, exact-scope, ancestry, and Git checks pass. No acceptance-bound finding remains. Complete profile-union, packaging/install/upgrade, platform smoke, performance, cross-capability recovery/security, and full visual/accessibility qualification remain appropriately assigned to CAP-03.S06 slice review, any triggered checkpoint, and W1 exit; this task approval does not approve the slice, Wave, G1, local-main integration, or remote push.
+
+**Currently open findings:** -
 
 ## CAP-scholarly-ingestion (`CAP-04`) - Scholarly ingestion, connectors, canonicalization, and corpus governance
 
