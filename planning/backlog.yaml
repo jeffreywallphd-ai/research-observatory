@@ -38588,7 +38588,7 @@ wave_amendments:
         and explicit ordinary resume and task recovery.
   bootstrap:
     id: W1.A07.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex
     implementation_commit: 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b
     submission_branch: codex/w1-windows-local-runtime
@@ -38600,10 +38600,15 @@ wave_amendments:
       commit: 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b
       recorded_at: '2026-09-04T10:31:47+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: ecr6-planning-authority-reviewer
+      result: approved
+      reviewed_at: '2026-09-04T10:39:32+00:00'
+      notes: APPROVED at exact submitted-state commit eff5bb397d7cc6c6d77630e34ae3af89775162d6 for implementation candidate
+        0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b and evidence SHA-256 b1d1365ee9f3f7be499d79b461e982e05561bef3d7eaa948bee97ba5de2598bf.
+        The ECR-0006 R01 ledger and immutable W1.A07 approval authenticate; the candidate changes exactly the three authorized
+        approval projections; submission appends only W1.A07 APPROVED with B00 REVIEW; all predecessor amendment, GOV-MIG-0001,
+        MI-0001, Wave, task, and gate state remains exact. W1 stays PAUSED and CAP-03.S06.T05 stays BLOCKED and lease-free.
+        Generated views and controller checks pass, with no product or canonical CAP-03.S06 criterion change and no open finding.
   campaign: null
   tasks: []
   completion:
