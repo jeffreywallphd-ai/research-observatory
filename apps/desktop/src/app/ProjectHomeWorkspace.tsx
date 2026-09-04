@@ -46,7 +46,7 @@ export function ProjectHomeWorkspace({
 }: ProjectHomeWorkspaceProps): ReactNode {
   if (!project) {
     return (
-      <section aria-labelledby="project-home-title" data-project-home-state="empty">
+      <section className="project-home-workspace ro-page-region" aria-labelledby="project-home-title" data-project-home-state="empty">
         <div className="page-header">
           <Typography id="project-home-title" as="h1" variant="page-title">Project Home</Typography>
           <Typography className="page-subtitle">
@@ -59,7 +59,7 @@ export function ProjectHomeWorkspace({
 
   if (!progress) {
     return (
-      <section aria-labelledby="project-home-title" data-project-home-state={loadState}>
+      <section className="project-home-workspace ro-page-region" aria-labelledby="project-home-title" data-project-home-state={loadState}>
         <div className="page-header">
           <Typography id="project-home-title" as="h1" variant="page-title">{project.displayName}</Typography>
           <Typography className="page-subtitle">Project Home</Typography>
@@ -81,7 +81,7 @@ export function ProjectHomeWorkspace({
   const revisitSources = workflowRevisitSources(progress);
   const recommendedRevisit = revisitSources.find((source) => source.stageKey === progress.recommendedStageKey) ?? null;
   return (
-    <section aria-labelledby="project-home-title" data-project-home-state="ready" data-workflow-profile={progress.profileId}>
+    <section className="project-home-workspace ro-page-region" aria-labelledby="project-home-title" data-project-home-state="ready" data-workflow-profile={progress.profileId}>
       <div className="page-header">
         <Typography id="project-home-title" as="h1" variant="page-title">{project.displayName}</Typography>
         <Typography className="page-subtitle">
@@ -89,7 +89,7 @@ export function ProjectHomeWorkspace({
         </Typography>
       </div>
 
-      <div className="project-home-grid">
+      <div className="project-home-grid ro-grid">
         <Panel title="Current position" tone={complete ? "success" : resumable ? "danger" : "neutral"}>
           <StatusBadge tone={complete ? "success" : resumable ? "danger" : "neutral"}>
             {complete ? "Workflow complete" : progress.bootstrapRequired ? "Not started" : progress.current?.status ?? "Review"}
@@ -125,7 +125,7 @@ export function ProjectHomeWorkspace({
       {revisitSources.length > 0 ? (
         <Panel title="Revisit completed steps" tone="neutral">
           <p>Starting a new pass preserves every prior pass. If another step is current, it remains recorded in progress.</p>
-          <ul className="project-home-revisit-list" data-workflow-revisit-options>
+          <ul className="project-home-revisit-list ro-stack" data-workflow-revisit-options>
             {revisitSources.map((source) => (
               <li key={source.stageStateRevisionId}>
                 <span><strong>{source.stageKey}</strong> · Pass {source.passNumber} · {source.status}</span>
@@ -140,7 +140,7 @@ export function ProjectHomeWorkspace({
         {progress.staleOutputs.length === 0 ? (
           <p>No stale or unknown-impact outputs are recorded.</p>
         ) : (
-          <ul className="project-home-stale-list">
+          <ul className="project-home-stale-list ro-stack">
             {progress.staleOutputs.map((output) => (
               <li key={`${output.outputRevisionId}:${output.causeReferenceHash}`}>
                 <strong>{output.disposition === "unknown-impact" ? "Impact unknown" : "Stale output"}</strong>

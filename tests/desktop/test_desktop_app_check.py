@@ -97,7 +97,15 @@ class DesktopAppCheckTests(unittest.TestCase):
         )
         self.assertTrue(details["retainedInput"])
         self.assertTrue(details["diagnosticCopy"])
-        self.assertEqual(2, details["responsiveCases"])
+        self.assertEqual(3, details["responsiveCases"])
+        self.assertEqual([28, 20, 16], [case["mainPaddingInlineStart"] for case in details["styleGeometry"]])
+        self.assertTrue(all(case["topbarHeight"] == 64 for case in details["styleGeometry"]))
+        self.assertTrue(all(case["pageGap"] == 24 for case in details["styleGeometry"]))
+        self.assertTrue(all(case["gridGap"] == 16 for case in details["styleGeometry"]))
+        self.assertTrue(all(case["controlHeight"] >= 40 for case in details["styleGeometry"]))
+        self.assertTrue(all(case["primaryControlHeight"] >= 44 for case in details["styleGeometry"]))
+        self.assertTrue(all(not case["documentOverflow"] for case in details["styleGeometry"]))
+        self.assertEqual(240, details["styleGeometry"][0]["sidebarWidth"])
         self.assertEqual([], details["criticalViolations"])
         self.assertEqual([], details["requests"])
         self.assertEqual(6, details["designSystem"]["cases"])
@@ -298,6 +306,81 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(any("inline styles" in error for error in errors), errors)
         self.assertTrue(any("governed reference source" in error for error in errors), errors)
         self.assertTrue(any("every governed boundary state" in error for error in errors), errors)
+
+    def test_product_styling_uses_shared_semantic_flow_primitives_and_canonical_geometry(self) -> None:
+        token_styles = (REPO / "design" / "ui-reference" / "assets" / "tokens.css").read_text(
+            encoding="utf-8"
+        )
+        shared_styles = (REPO / "packages" / "ui-components" / "src" / "styles.css").read_text(
+            encoding="utf-8"
+        )
+        product_styles = (REPO / "apps" / "desktop" / "src" / "app.css").read_text(encoding="utf-8")
+        app_sources = {
+            path.name: path.read_text(encoding="utf-8")
+            for path in (REPO / "apps" / "desktop" / "src" / "app").glob("*.tsx")
+        }
+        combined_sources = "\n".join(app_sources.values())
+
+        semantic_primitives = {
+            "ro-page-region",
+            "ro-stack",
+            "ro-cluster",
+            "ro-grid",
+            "ro-card",
+            "ro-form",
+            "ro-notice",
+            "ro-table-region",
+            "ro-dialog-surface",
+            "ro-action-row",
+        }
+        for primitive in semantic_primitives:
+            with self.subTest(primitive=primitive):
+                self.assertRegex(shared_styles, rf"\.{re.escape(primitive)}(?![a-zA-Z0-9_-])")
+                self.assertIn(primitive, combined_sources)
+
+        for workspace in (
+            "ApplicationSettingsWorkspace.tsx",
+            "AuditLineageWorkspace.tsx",
+            "DiagnosticsWorkspace.tsx",
+            "IntentWorkspace.tsx",
+            "ProjectHomeWorkspace.tsx",
+            "ProjectSettingsWorkspace.tsx",
+            "ProjectsWorkspace.tsx",
+            "TaskCenterWorkspace.tsx",
+        ):
+            with self.subTest(workspace=workspace):
+                self.assertIn("ro-page-region", app_sources[workspace])
+
+        self.assertIn("padding: var(--content-padding)", product_styles)
+        combined_styles = "\n".join((token_styles, shared_styles, product_styles))
+        defined_properties = set(re.findall(r"(--[a-z0-9-]+)\s*:", combined_styles))
+        referenced_properties = set(re.findall(r"var\((--[a-z0-9-]+)", combined_styles))
+        self.assertEqual(set(), referenced_properties - defined_properties)
+        self.assertNotIn("min-height: 2.75rem", product_styles)
+        self.assertIsNone(re.search(r"\bstyle\s*=", combined_sources))
+
+        primitive_contracts = {
+            "ro-page-region": ("display: grid", "gap: var(--space-6)"),
+            "ro-grid": ("display: grid", "gap: var(--grid-gap)"),
+            "ro-card": ("padding: var(--card-padding)", "border-radius: var(--radius-md)"),
+            "ro-form": ("display: grid", "gap: var(--space-5)"),
+            "ro-table-region": ("max-width: 100%", "overflow: auto"),
+            "ro-dialog-surface": ("max-height: calc(100vh - var(--space-10))", "overflow: auto"),
+            "ro-action-row": ("display: flex", "flex-wrap: wrap"),
+        }
+        for primitive, declarations in primitive_contracts.items():
+            with self.subTest(primitive_contract=primitive):
+                declaration = re.search(
+                    rf"(?:^|\n)[^{{}}]*\.{re.escape(primitive)}(?:[^{{}}]*)\{{(?P<body>[^}}]+)\}}",
+                    shared_styles,
+                )
+                self.assertIsNotNone(declaration)
+                for expected in declarations:
+                    self.assertIn(expected, declaration.group("body") if declaration else "")
+        self.assertRegex(
+            shared_styles,
+            r"\.ro-form\s+:where\([^}]+\)\s*\{[^}]*min-height:\s*var\(--control-height-md\)",
+        )
 
     def test_catalog_structure_and_accessible_name_cannot_be_satisfied_by_comments(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

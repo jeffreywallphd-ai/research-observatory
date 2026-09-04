@@ -274,7 +274,7 @@ export function DiagnosticsWorkspace({
   }, [announce, exportProbe, preview]);
 
   return (
-    <section className="diagnostics-workspace" aria-labelledby="diagnostics-title" data-diagnostics-workspace>
+    <section className="diagnostics-workspace ro-page-region" aria-labelledby="diagnostics-title" data-diagnostics-workspace>
       <div className="page-header">
         <Typography id="diagnostics-title" as="h1" variant="page-title">Diagnostics &amp; support</Typography>
         <Typography className="page-subtitle">
@@ -292,7 +292,7 @@ export function DiagnosticsWorkspace({
 
       {preview ? (
         <>
-          <div className="diagnostics-grid">
+          <div className="diagnostics-grid ro-grid">
             <Panel title="Component versions" tone="neutral">
               <dl className="diagnostic-values">
                 {preview.bundle.components.map((component) => (
@@ -322,12 +322,12 @@ export function DiagnosticsWorkspace({
             </Panel>
           </div>
 
-          <section className="support-preview" aria-labelledby="support-preview-title">
+          <section className="support-preview ro-card ro-stack" aria-labelledby="support-preview-title">
             <div>
               <Typography id="support-preview-title" as="h2" variant="section-title">Exact support bundle preview</Typography>
               <p>{preview.byteLength.toLocaleString()} bytes · SHA-256 <code>{preview.sha256}</code></p>
             </div>
-            <div className="support-columns">
+            <div className="support-columns ro-grid">
               <div>
                 <Typography as="h3" variant="card-title">Included</Typography>
                 <ul>
@@ -353,10 +353,10 @@ export function DiagnosticsWorkspace({
             {exported ? <p role="status" className="diagnostic-path">Exported locally: {exported.path}</p> : null}
           </section>
 
-          <section className="recent-diagnostics" aria-labelledby="recent-diagnostics-title">
+          <section className="recent-diagnostics ro-card ro-stack" aria-labelledby="recent-diagnostics-title">
             <Typography id="recent-diagnostics-title" as="h2" variant="section-title">Recent failures and trace links</Typography>
             {preview.bundle.recentDiagnostics.length ? (
-              <div className="diagnostic-table-scroll"><table>
+              <div className="diagnostic-table-scroll ro-table-region" tabIndex={0} aria-label="Recent diagnostics table scroll region"><table>
                 <thead><tr><th scope="col">Sequence</th><th scope="col">Code</th><th scope="col">Source</th><th scope="col">Trace ID</th></tr></thead>
                 <tbody>{preview.bundle.recentDiagnostics.map((item) => (
                   <tr key={item.sequence}><td>{item.sequence}</td><td><code>{item.code}</code></td><td>{item.stream}</td><td><code>{item.traceId ?? "not applicable"}</code></td></tr>

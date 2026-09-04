@@ -206,7 +206,7 @@ export function ProjectSettingsWorkspace({
   };
 
   return (
-    <section className="project-settings-workspace" aria-labelledby="project-settings-title" data-project-settings-workspace>
+    <section className="project-settings-workspace ro-page-region" aria-labelledby="project-settings-title" data-project-settings-workspace>
       <div className="page-header">
         <Typography id="project-settings-title" as="h1" variant="page-title">Project settings</Typography>
         <Typography className="page-subtitle">
@@ -222,7 +222,7 @@ export function ProjectSettingsWorkspace({
 
       {availability.available && policy ? (
         <>
-          <form className="privacy-settings-form" onSubmit={save}>
+          <form className="privacy-settings-form ro-form" onSubmit={save}>
             <Panel title="Privacy, rights & egress">
               <div className="settings-field-grid">
                 <label htmlFor="privacy-network-policy">Network policy</label>
@@ -256,14 +256,14 @@ export function ProjectSettingsWorkspace({
                 </select>
               </div>
 
-              <div className="egress-preview" aria-live="polite" data-egress-preview={network}>
+              <div className="egress-preview ro-notice" aria-live="polite" data-egress-preview={network}>
                 <Typography as="h3" variant="section-title">What this setting does</Typography>
                 <p><strong>Will send:</strong> {boundary.sends}</p>
                 <p><strong>Will not send:</strong> {boundary.excludes}</p>
               </div>
 
               {needsConsent ? (
-                <label className="consent-boundary">
+                <label className="consent-boundary ro-notice">
                   <input
                     type="checkbox"
                     checked={consent}
@@ -304,7 +304,7 @@ export function ProjectSettingsWorkspace({
               <p className="field-note">Retention selections are local project policy. Review intervals never delete documents automatically.</p>
             </Panel>
 
-            <div className="settings-save-row">
+            <div className="settings-save-row ro-action-row">
               <span>Policy revision {policy.revision}</span>
               <Button tone="primary" type="submit" disabled={busy !== null || (needsConsent && !consent)}>
                 {busy === "save" ? "Saving…" : "Save project settings"}
@@ -320,7 +320,7 @@ export function ProjectSettingsWorkspace({
             {!cachePreview ? (
               <Button disabled={busy !== null} onClick={previewCache}>{busy === "preview" ? "Preparing preview…" : "Preview cache cleanup"}</Button>
             ) : (
-              <div className="cache-clear-confirmation" data-cache-clear-preview>
+              <div className="cache-clear-confirmation ro-notice" data-cache-clear-preview>
                 <p><strong>In scope:</strong> {cachePreview.itemCount} item(s), {cachePreview.byteCount} byte(s) of rebuildable cache.</p>
                 <p><strong>Guarantee:</strong> Logical removal only; physical media erasure is not guaranteed.</p>
                 <Button tone="primary" disabled={busy !== null} onClick={clearCache}>
