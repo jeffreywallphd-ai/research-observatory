@@ -1,0 +1,149 @@
+{
+  "task_id": "CAP-03.S06.T04",
+  "attempt_id": "R01",
+  "candidate_commit": "cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+  "submission_record_commit": "fd7cbd5022235ac5e9d59eee45e5f0f80a3b3311",
+  "reviewer": "agent:t04-independent-reviewer",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "The frozen R01 submission, evidence SHA-256/Git blob, exact 38-path candidate scope, two-path submission projection, linear ancestry, generated Core contract, native supervisor allowlist, and disclosed pre-existing quality debt authenticate. Selected service, SQLite, generated-client, desktop, native, and governance checks pass. Approval remains unavailable because persisted attention/blocked/skipped heads are projected as an unrecoverable completed workflow; revisitation accepts a still-current pass and cannot select a completed earlier stage while another stage is current; idempotent replay returns mutable present state rather than the original command result; accepted profile migrations record impacts without materializing the accepted stage disposition under the new selection; completion accepts arbitrary same-project aggregate revisions as evidence; the progress service does not authenticate the full canonical Intent/activation/migration authority; and late renderer command/support responses can cross project/context boundaries.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T04.R01.json",
+      "sha256": "3130321caa408ab12a62dac859fcabd1f05c45c620be898aa9000b03d9049212",
+      "git_blob": "64f7139167551cefaf09d6153aecc7260f241f95",
+      "commit": "cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+      "result": "PASS: the immutable R01 packet records the exact candidate, and its bytes and Git blob match both the frozen backlog submission and submission tree."
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Resolve base e437cad11d0eb729790e575a7f45bf609d8b7ec4, candidate, and submission; compare ancestry, exact candidate/submission path projections, frozen task packet, evidence digest/blob, criteria digest, and changed-path inventory.",
+      "result": "PASS: candidate cd508bbf4c80ceedca13eb1e3364a1ba58480318 and submission fd7cbd5022235ac5e9d59eee45e5f0f80a3b3311 form the declared linear chain. The candidate has exactly 38 frozen paths; the submission adds only the evidence JSON and backlog projection; packet SHA-256 ece1483379d4856dfb7b4b7caa4f577004d50489872b15a0d3c2597e679979b1 and criteria SHA-256 1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa authenticate."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.service.test_workflow_progress; apps/desktop/node_modules/.bin/vitest.cmd run apps/desktop/src/app/ProjectHomeWorkspace.test.tsx apps/desktop/src/app/workflowNavigation.test.ts packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "result": "PASS: all 10 workflow-progress service tests and 26 focused Project Home/navigation/generated-client tests pass; the Core API generated projection reproduces exactly. The passing service tests do not cover the adverse transition, replay, migration-materialization, or evidence-kind cases recorded below."
+    },
+    {
+      "type": "independent-check",
+      "command": "cargo test --manifest-path apps/desktop/native/Cargo.toml supervisor::tests; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; affected selection-only command validation; git diff --check e437cad11d0eb729790e575a7f45bf609d8b7ec4..cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+      "result": "PASS: 13 native-supervisor request/allowlist tests pass, the backlog and exact affected verification-command selection validate, all 16 selected command identities resolve, and the candidate diff has no whitespace errors."
+    },
+    {
+      "type": "independent-quality-deferral-check",
+      "command": "Replay the evidence-declared Python formatting and MyPy checks, then compare every reported path with base..candidate.",
+      "result": "PASS: the disclosed formatting debt and ten MyPy errors reproduce only in unchanged pre-existing paths; none is introduced by the 38-path candidate. Deferral to the governed full-quality owner is truthful and does not conceal a candidate regression."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T04-R01-F01",
+      "command": "Against a temporary real project SQLite database, start systematic-review.default, mark the current stage attention-required, restart/read the workflow projection, and evaluate the Project Home ready-state branch.",
+      "result": "FAIL: the durable head is attention-required but projection.current is null and bootstrapRequired is false. Project Home therefore renders 'Workflow complete', offers only the revisitable-profile new-pass path, and provides no resume/reopen action; blocked and skipped mid-sequence states have the same no-current behavior."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T04-R01-F02",
+      "command": "Start a revisitable profile and issue revisit against the current head before completion; separately complete an earlier stage so a later stage is current and request revisit of the completed earlier head.",
+      "result": "FAIL: the first request appends pass 2 directly from a current, unevidenced pass, while the second is rejected until the later current stage is completed. The service does not implement the authorized completed/skipped/stale-to-revisit transition table."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T04-R01-F03",
+      "command": "Against a temporary real project SQLite database, commit start with one idempotency key, advance the workflow with another command, then replay the byte-identical original start request and key.",
+      "result": "FAIL: the original response identifies intent-contract-1 and its first revision, but replay returns the later search-studio-1 current revision; exact response equality is false. A selection change can instead make the already-committed replay conflict because current selection preconditions are re-evaluated."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T04-R01-F04",
+      "command": "Persist stage progress, accept a profile migration whose exact priorStageStates disposition retains/maps the head, restart Core, and read progress under the new selection.",
+      "result": "FAIL: the Intent transaction atomically CAS-checks and records the old head in impactPreview, but appends no successor stage-state row for the new selection. The new selection reloads with bootstrapRequired=true/current=null even for an accepted retain disposition, so workflow position is not migrated."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T04-R01-F05",
+      "command": "Insert a legitimate same-project aggregate revision with aggregate_kind=document and use its revisionId as completionEvidenceRevisionIds for the current stage.",
+      "result": "FAIL: resolve_completion_evidence accepts the document revision and the command persists a completed stage with one completion hash. The resolver checks only project/revision identity and accepts record, document, workflow, ontology, or decision revisions without an evidence/output-kind contract."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T04-R01-F06",
+      "command": "Compare the workflow-progress authority loader with the canonical Research Intent authority validator, then apply one-field, retained-valid-hash substitutions to project/Intent selector/parent/accepted-migration/activation bindings in persisted settings.",
+      "result": "FAIL: workflow_progress._authority validates portable selection shape, self-hash, revision number, and contiguity only. Unlike the Intent path it does not require the activation witness, exact parent links, accepted migration/decision lookup, canonical stored Intent reference, selector identity, or selection project equality with the routed manifest project, so self-consistent substituted authority can reach progress projection/commands."
+    },
+    {
+      "type": "independent-adversarial-analysis",
+      "finding_id": "CAP-03.S06.T04-R01-F07",
+      "command": "Delay a project-A start/revisit or open-supporting response, replace the current project/context with B, let B load, then release A success or failure last; also compare the three parallel Project Home reads under a same-profile authority change.",
+      "result": "FAIL: ApplicationRuntime generation-guards context loads but applies command and supporting responses unconditionally. A late A result can install A progress/selected stage or clear B support/set B failure; parallel catalog/Intent/progress reads expose no exact Intent revision in the progress projection, so the loader cannot prove one SQLite authority snapshot. The browser also recreates return context locally instead of authenticating the server handoff revision/expiry."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-03.S06.T04-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Attention, blocked, and skipped heads become an unrecoverable false-completion Project Home state",
+      "reproduction": "At candidate cd508bbf4c80ceedca13eb1e3364a1ba58480318, start systematic-review.default and mark intent-contract-1 attention-required. After reload, workflow_progress.py:476-539 computes current=null, bootstrapRequired=false and a completed-history recommendation because _current_primary excludes the attention head. ProjectHomeWorkspace.tsx:73-100 defines that combination as complete, renders 'Workflow complete', and has no resume path; WorkflowProgressAction at models.py:666-674 exposes no resume/reopen/make-current action. The same defect follows block, and skip leaves a mid-sequence optional stage without making its successor current. Linear profiles are permanently stranded and the UI misstates governed status.",
+      "required_remediation": "Define and implement explicit researcher-controlled recovery/continuation semantics for every accepted non-current head: Project Home must project attention, blocked, and skipped truthfully, preserve rationale/history, and offer only authorized resume/reopen or successor transitions with exact selection/head CAS. A skip that authorizes sequence continuation must atomically make the next stage current. Add real-SQLite restart/replay tests and renderer/browser tests for attention, blocked, optional skip, final completion, both linear/revisitable profiles, and prove background jobs cannot cause any transition."
+    },
+    {
+      "id": "CAP-03.S06.T04-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Revisit accepts a current unevidenced pass and rejects an authorized completed earlier-stage revisit",
+      "reproduction": "workflow_progress.py:606-616 and :641-696 select the current head as a revisit source and only reject when a different stage is current. The existing test at tests/service/test_workflow_progress.py:293-310 therefore starts a profile and immediately revisits its still-current first stage, appending pass 2 without completion, skip, stale state, or evidence. Conversely, after completing stage 1, stage 2 becomes current and an explicit revisit of completed stage 1 is rejected at :643-644. This differs from the task transition authority at CAP-03.S06.T04.task-start.md:49 and does not provide useful cyclical earlier-stage navigation.",
+      "required_remediation": "Permit revisit only from an exact completed, skipped, or stale source head in a revisitable profile; deny current/in-progress/attention/blocked sources. Define and atomically preserve the displaced current-stage truth when revisiting an earlier completed stage, append pass+1 to the same stage aggregate without erasing either history, and retain linear denial. Add exact transition-matrix, current-earlier-stage, CAS-conflict, restart, and history tests; replace the current-source test with an explicit denial."
+    },
+    {
+      "id": "CAP-03.S06.T04-R01-F03",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Exact idempotent replay returns mutable present projection instead of the committed command result",
+      "reproduction": "workflow_progress.py:580-597 authenticates the idempotency record but then reads every current state and returns _projection(selection, states, ...). In a real SQLite replay, start initially returns intent-contract-1/revision A; after completing it, byte-identical replay of start with the same actor/key returns search-studio-1/revision B. If the workflow selection changed, :586-591 can reject the already committed command before replay. resultRevisionIds stored at repositories.py:1398-1423 are only checked for continued presence and are not used to reconstruct the original result.",
+      "required_remediation": "Make same actor/key/command replay return the exact immutable original response authority and projection independent of later stage, staleness, or selection changes, while a changed command still conflicts. Persist or deterministically reconstruct the command-bound response from its exact result revisions and selection/staleness witness, and evaluate an authenticated existing replay before mutable current-selection preconditions. Add post-advance, post-staleness, post-profile-change, restart, response-loss, and changed-payload tests."
+    },
+    {
+      "id": "CAP-03.S06.T04-R01-F04",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Accepted profile migration records prior impacts but does not materialize the accepted stage disposition",
+      "reproduction": "research_intents.py:686-754 binds exact prior primary heads and :806-831 writes their retain/map/stale/review/drop dispositions into the new selection. _workflow_authority_mutation at :839-916 passes old stage rows only as expected_stage_states for CAS; it appends no new-selection stage state. The real-path test at tests/service/test_workflow_progress.py:370-395 consequently expects the changed profile to reload with bootstrapRequired=true and current=null even though priorStageStates names the accepted retained/mapped head. The write is atomic, but the approved migration result is not materialized and workflow position is reset.",
+      "required_remediation": "Within the same Intent/selection transaction and exact old-stage CAS, append the new-selection stage successors required by every accepted disposition, with exact predecessor/cause/migration references and an unambiguous current/review projection; preserve all old history. Any invalid mapping, fault, or race must roll back Intent, selection, migration, decisions, stage successors, provenance, and outbox together. Add retain/map/stale/review/drop, legacy-no-state, restart, injected-fault, and concurrent-head-change tests."
+    },
+    {
+      "id": "CAP-03.S06.T04-R01-F05",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Stage completion accepts an arbitrary same-project aggregate revision as evidence",
+      "reproduction": "repositories.py:1194-1236 resolves a supplied UUID in aggregate_revisions by project and revision ID, hashes a summary containing aggregateKind, but never constrains that kind or validates a stage completion evidence contract. A legitimate aggregate_kind=document revision is accepted by workflow_progress.py:646-660 and produces a completed stage. Thus exact project ownership prevents cross-project substitution but not evidence-authority substitution within the project.",
+      "required_remediation": "Authorize explicit evidence/output aggregate kinds and any required knowledge/rights state for each completion contract before hashing the exact immutable revision; reject all other aggregate kinds even when UUID/project/hash are valid. Add per-kind substitution tests, cross-project denial, duplicate/missing/stale evidence cases, response-loss replay, and real SQLite restart proof."
+    },
+    {
+      "id": "CAP-03.S06.T04-R01-F06",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Workflow progress bypasses canonical Intent and migration authority validation",
+      "reproduction": "workflow_progress.py:234-255 decodes each selection, verifies its self-hash/revision, and checks contiguous numbers only. It does not apply research_intents.py:1130-1279, which authenticates the activation witness and approved catalog/guidance hashes, exact parentSelection chain, accepted migration and decision resolution, canonical stored Intent reference, selector/actor identity, and profile/project equality. Nor does the progress route compare selection.projectId with its routed manifest project. A retained-valid-hash one-field substitution can therefore remain a valid portable selection while changing the principal or provenance authority consumed by progress.",
+      "required_remediation": "Share one canonical workflow-authority validator between Intent and progress and bind it to the routed manifest project plus the exact stored Intent history. Progress reads and commands must fail closed for missing/substituted activation witness, project, selector, Intent reference, parent, migration, decision, catalog/guidance hash, or stage selection reference. Add retained-valid-hash one-field mutation tests and exact pre-T02 compatibility/corruption fixtures at the real SQLite and generated API boundaries."
+    },
+    {
+      "id": "CAP-03.S06.T04-R01-F07",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Late workflow commands and parallel reads can cross renderer project/authority boundaries",
+      "reproduction": "ApplicationRuntime.tsx:583-632 captures a project/progress for start/revisit but applies success, failure, announcement, and busy-state effects without checking the live project or request generation. The open-supporting path at :634-675 does the same. Switch from project A to B while an A command is delayed and release A last: applyWorkflowProgress can replace B progress/select B UI from A stage data, or an A error can clear/set B state. The loader generation-guards only its separate reads at :488-529; progress exposes selection but not its exact canonical Intent revision, so parallel catalog/Intent/progress reads cannot prove one coherent SQLite authority snapshot. The renderer also recreates supporting return locally after success instead of binding the server supportingHandoff revision/expiry.",
+      "required_remediation": "Bind every command/support request and every success, failure, finally, announcement, and return-context mutation to the initiating project ID/root, selection/head witness, and live request generation. Discard stale A results after A-to-B and A-to-B-to-A replacement. Return or read one coherent Core Project Home authority snapshot that binds exact Intent, selection, progress, stale-output, and supporting-handoff revision/expiry, and make the renderer honor that server witness. Add delayed start, revisit, and supporting success/error browser tests plus same-profile mid-read substitution and expired-handoff denial."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}
