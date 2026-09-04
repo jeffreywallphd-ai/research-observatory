@@ -1574,8 +1574,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     "elements => elements.map((element) => element.getAttribute('aria-label'))"
                 )
                 expected_stages = [
-                    f"{stage['label']}{' (optional)' if stage['optional'] else ''}"
-                    for stage in profile["stages"]
+                    f"{stage['label']}{' (optional)' if stage['optional'] else ''}" for stage in profile["stages"]
                 ]
                 expected_paragraphs = [
                     profile["purpose"],
@@ -1621,9 +1620,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and workflow_catalog["allToolsAccessible"] is True
                 and len(workflow_profile_rows) == 14
                 and all(row["valid"] for row in workflow_profile_rows)
-                and {
-                    row["profileId"] for row in workflow_profile_rows if row["processForm"] == "revisitable"
-                }
+                and {row["profileId"] for row in workflow_profile_rows if row["processForm"] == "revisitable"}
                 == {"hermeneutic-inquiry", "living-review", "manuscript-review-revision"}
             )
             projects.locator("#project-primary-use-case").select_option("theory-synthesis")
