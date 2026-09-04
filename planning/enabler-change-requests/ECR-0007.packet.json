@@ -279,7 +279,7 @@
       {"path": "design/ui-reference/REFERENCE_MANIFEST.yaml", "sha256": "893c3382ffaf1c031531e5b2bd05b79e2a4f9a8efaa20e5bedca57b3589642f1"},
       {"path": "design/ui-reference/APPROVAL.yaml", "sha256": "7f226d1f24080dee37717cd99e6f73549c8f3dda61e113d07d3a91731d9119bc"},
       {"path": "design/ui-reference/STYLE_GUIDE.md", "sha256": "6acc9f1be97ae2a1542c16fb30e7dd45aebb587cee6df425135e9f89a9a84565"},
-      {"path": "design/ui-reference/assets/tokens.css", "sha256": "475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230"},
+      {"path": "design/ui-reference/assets/tokens.css", "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"},
       {"path": "design/ui-reference/assets/app.css", "sha256": "15ae6ccdce2d0a147a220b1a723e1190b7c05123ddad8ba98c0fdb691a41d5ee"}
     ]
   },
@@ -320,8 +320,8 @@
     "No W1 repeat approval, Wave resume before adoption, CAP-07.S01.T02 recovery before explicit resume, W1 qualification, G1 approval, local-main integration before completion, remote push, external effect, destructive action, or substantial spend."
   ],
   "files": [
-    {"path": "planning/enabler-change-requests/ECR-0007.md", "sha256": "e4dbcbb204eacd9e807885ec1cf728bfeb05c8da1159d39958bfbd60341e06ee", "role": "canonical-proposal"},
+    {"path": "planning/enabler-change-requests/ECR-0007.md", "sha256": "1225fbf8a06f937cd5fe8cf2e7f88d13e42c13aff7ce78ac27c4615173a78f5e", "role": "canonical-proposal"},
     {"path": "planning/enabler-change-requests/enabler-change-request.v4.schema.json", "sha256": "69b378e5958e460354ec523fe23bfcdae11b1e321388e41bd101ce1d9f20f347", "role": "proposal-schema"},
-    {"path": "planning/enabler-change-requests/ECR-0007-review.html", "sha256": "525826e787f1a6b7bc78a74eb8e57981a60c43d5a73620392890c3f44b801408", "role": "human-review"}
+    {"path": "planning/enabler-change-requests/ECR-0007-review.html", "sha256": "a2183637a1538e2a681f366122fa3af3fbf9701fa74d2dbbd80ae5fcf63b7186", "role": "human-review"}
   ]
 }

@@ -24,7 +24,18 @@
 
   <section class="warning">
     <h2>Current gate</h2>
-    <p>W1 is paused and <code>CAP-07.S01.T02</code> is blocked without product changes. This packet is non-executable until independent exact-commit review and explicit human approval.</p>
+    <p>W1 is paused and <code>CAP-07.S01.T02</code> is blocked without product changes. R01 requested one governed-file hash correction. This strict-descendant R02 packet remains non-executable until independent exact-commit review closes that finding and explicit human approval follows.</p>
+  </section>
+
+  <section>
+    <h2>R01 remediation</h2>
+    <p><code>ECR-0007-R01-F01</code> found that <code>assets/tokens.css</code> was bound to checkout-specific CRLF bytes instead of its immutable approved Git blob. The adverse R01 ledger remains append-only.</p>
+    <ul>
+      <li>A separately reviewed Tier-2 maintenance increment corrected the generic validator to use Git-canonical bytes for clean tracked files while retaining local-byte validation for pending changes.</li>
+      <li>A strict-descendant supplement made the generated review-site projection reuse that validator; its evidence-classification R01 finding was closed by independent R02 review without changing ECR or product authority.</li>
+      <li>R02 binds the approved repository-stable token SHA-256 <code>e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5</code>.</li>
+      <li>The correction changes no UI-reference byte, product scope, task state, Wave state, or execution authority.</li>
+    </ul>
   </section>
 
   <section class="selected">
