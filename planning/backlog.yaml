@@ -33830,7 +33830,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: null
+  active_amendment: W1.A07
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -38575,7 +38575,7 @@ wave_amendments:
     sha256: c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6
     introduction_commit: 72052b7f7781dcfc83a1a2c8dae362b899b114d5
   lifecycle:
-    status: MATERIALIZED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -38591,6 +38591,11 @@ wave_amendments:
       actor: codex
       at: '2026-09-04T10:41:17+00:00'
       rationale: Materialized the exact human-approved task inventory.
+    - id: E03
+      status: ACTIVE
+      actor: codex
+      at: '2026-09-04T10:44:21+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W1.A07.B00
     status: APPROVED
@@ -38614,7 +38619,22 @@ wave_amendments:
         approval projections; submission appends only W1.A07 APPROVED with B00 REVIEW; all predecessor amendment, GOV-MIG-0001,
         MI-0001, Wave, task, and gate state remains exact. W1 stays PAUSED and CAP-03.S06.T05 stays BLOCKED and lease-free.
         Generated views and controller checks pass, with no product or canonical CAP-03.S06 criterion change and no open finding.
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave-amendment
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    worktree: C:/workspace/research-observatory
+    base_sha: d75206906329f2284f09ef7ce1d0e0f55e6af2dc
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-09-04T10:44:21+00:00'
+    updated_at: '2026-09-04T10:44:21+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-04T10:44:21+00:00'
+      expires_at: '2026-09-05T10:44:21+00:00'
   tasks:
   - id: W1.A07.T01
     amendment_id: W1.A07
@@ -38647,14 +38667,14 @@ wave_amendments:
       slice review, checkpoints, and W1 exit.
     - Obtain independent commit-bound planning/control review.
     packet_task_sha256: 6d3010292140d7e2d5a8f8ceffb9cf21d927b0ec1fea258bb7f36d5555258b81
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-09-04T10:44:21+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
