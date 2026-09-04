@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b65f83c11fde929afe05c0fc024e7f1f824128ee1aa4ccde9e97fbec35bd3488
+source_sha256: 7e586ca4d94841dbba7176503392fcfa8386360df6f2c9b44ee4c9d922ff0268
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1638,7 +1638,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A07.T01 - Reconcile the CAP-03.S06 revisitable-cycle criterion
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A07.B00`
 
@@ -1660,13 +1660,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Record the risk-selected task evidence and defer product/runtime/Windows-x64 qualification to resumed T05, CAP-03.S06 slice review, checkpoints, and W1 exit.
 - Obtain independent commit-bound planning/control review.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A07.T01.json` at `7baa4346aa68e9a7357e00b872f4b2965b167d4b`
+
 #### Review history — W1.A07.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386`
+
+- Candidate / base / branch: `7baa4346aa68e9a7357e00b872f4b2965b167d4b` / `078dcfe197906359c11ae88a7903e69fbfa5d11d` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-04T10:56:14+00:00`
+- Evidence: `artifacts/evidence/W1.A07.T01.json` / `89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617` / `7baa4346aa68e9a7357e00b872f4b2965b167d4b`
+- Acceptance-criteria SHA-256: `67115b1a090b72a2ae1eb96cb86ea7cc50426df60b9141dbed2cd9b64e72ad65`
+- Verification-selection SHA-256: `dddb310e85cd3b1193e1ef9d4f54bbb79cefa2f387928620e29570f833115f19`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-03/CAP-03.S06.T05.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/enablers/ECR-0006.html`, `planning/review-site/manifest.json`, `planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md`, `planning/status-summary.md`
+- Selected checks: `.venv\Scripts\python.exe -c "compare the exact parsed CAP-03.S06 backlog record and slice-plan bytes at 078dcfe197906359c11ae88a7903e69fbfa5d11d and 7baa4346aa68e9a7357e00b872f4b2965b167d4b, permitting only the approved T05 criterion replacement"`, `Parse design/ui-reference/WORKFLOW_CATALOG.json and require the exact cyclical/non-cyclical identities; .venv\Scripts\python.exe tools/ui_reference_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/plan_review_check.py --repo .; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe -c "require_runtime_amendment_integrity for W1.A07"`, `.venv\Scripts\python.exe -m unittest seven active-campaign-safe PlanctlAmendmentTests plus tests.foundation.test_plan_review_amendments`, `git diff --check 078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b; git diff --exit-code 078dcfe197906359c11ae88a7903e69fbfa5d11d..7baa4346aa68e9a7357e00b872f4b2965b167d4b -- design/ui-reference modules apps verification-profiles.json`
+- Deferred checks: `Service/data product behavior and Windows-x64 qualification are unchanged and remain assigned to resumed CAP-03.S06.T05, slice review, checkpoints, and W1 exit.`, `No full repository, product, packaging, performance, accessibility, or platform suite is warranted for a two-location planning-only correction.`
+- Selection rationale: This is a planning-authority correction, not product implementation. The credible risks are changing more than the single authorized criterion, contradicting or rebinding the governed catalog, stale generated planning views, or losing the active amendment authority chain. Exact parsed/byte comparisons, the full governed-reference integrity check, canonical backlog/site/view validation, active runtime amendment-integrity validation, selected active-campaign-safe authority tests, and negative Git path checks cover those risks. The pre-activation planctl ECR readiness command and three synthetic successor-packet fixtures are intentionally lifecycle-inapplicable after activation because the real Wave is no longer paused without an active campaign.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
