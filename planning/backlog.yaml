@@ -15854,11 +15854,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-03T23:57:30+00:00'
-      updated_at: '2026-09-04T01:21:08+00:00'
+      updated_at: '2026-09-04T01:39:22+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15868,6 +15868,11 @@ capabilities:
         sha256: e42a23927e9a779e2c42ed5755927758d1d18cbc9b2bf8df29c267f2c7b1aa21
         commit: 71c32375594de7fbd73a0f5a3a9a9507c3d31937
         recorded_at: '2026-09-04T01:10:59+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S06.T03.R02.json
+        sha256: fa8ab6bb610327d6e2bcc5a663ffee230cd02fdfe6bb6291e84981bbbbf55d8b
+        commit: 0dccfbd7896bd488b2d28674959f0df6d97e8328
+        recorded_at: '2026-09-04T01:39:22+00:00'
       review: &id040
         reviewer: agent:t03-independent-reviewer
         result: changes-requested
@@ -15884,7 +15889,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-04T01:21:08+00:00'
         expires_at: '2026-09-04T09:21:08+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -16061,7 +16066,84 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
-        current_submission: null
+        current_submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-09-04T01:39:22+00:00'
+          candidate_commit: 0dccfbd7896bd488b2d28674959f0df6d97e8328
+          base_commit: 71c32375594de7fbd73a0f5a3a9a9507c3d31937
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S06.T03.R02.json
+            sha256: fa8ab6bb610327d6e2bcc5a663ffee230cd02fdfe6bb6291e84981bbbbf55d8b
+            commit: 0dccfbd7896bd488b2d28674959f0df6d97e8328
+            recorded_at: '2026-09-04T01:39:22+00:00'
+          acceptance_criteria_sha256: 04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a
+          changed_paths:
+          - apps/desktop/src/app/ApplicationRuntime.tsx
+          - apps/desktop/src/app/IntentWorkspace.test.tsx
+          - apps/desktop/src/app/IntentWorkspace.tsx
+          - apps/desktop/src/app/WorkflowNavigation.test.tsx
+          - apps/desktop/src/app/workflowNavigation.test.ts
+          - apps/desktop/src/app/workflowNavigationModel.ts
+          - artifacts/evidence/CAP-03.S06.T03.R01.json
+          - artifacts/evidence/CAP-03.S06.T03.review-R01.json
+          - artifacts/evidence/CAP-03.S06.T03.task-start.md
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/CAP-03/CAP-03.S06.T03.html
+          - planning/review-site/CAP-03/CAP-03.S06.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/desktop/test_desktop_app_check.py
+          - tools/desktop_app_check.py
+          selected_checks:
+          - npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm
+            run build --prefix apps/desktop
+          - apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe
+            tools/core_api_contract.py --repo . --check
+          - .venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check; .venv/Scripts/python.exe tools/desktop_app_check.py
+            --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T03-R02-final-built-frame.json
+          - .venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo
+            . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility
+          - .venv/Scripts/ruff.exe format --check tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv/Scripts/ruff.exe
+            check tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py
+          - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/backlog_views.py
+            --repo . --check; git diff --check 71c32375594de7fbd73a0f5a3a9a9507c3d31937..0dccfbd7896bd488b2d28674959f0df6d97e8328
+          deferred_checks:
+          - Desktop performance remains gate-bound to W1 exit; the remediation adds constant-size identity comparisons and
+            no governed performance threshold changes.
+          - The R01-disclosed repository-wide Ruff-format and mypy debt remains confined to unchanged files; both changed
+            Python verification files pass focused quality checks.
+          - Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows
+            x64 qualification remains mandatory at CAP-03.S06 slice review, coherent W1 integration checkpoints, and W1 exit.
+          selection_rationale: R02 addresses only the two high R01 findings. The credible failures are (1) a delayed project-A
+            save/accept response mutating project B's live workflow shell and cancelling B's valid load, and (2) a supporting-return
+            action surviving a governed-reference or guidance identity replacement. The selected checks lead with one-field
+            substitution regressions, project/source/workspace identity denial, two delayed-response assembled-browser scenarios,
+            the complete desktop suite/build, generated-client trust boundary, approved UI/reference/accessibility lineage,
+            changed Python verification quality, and append-only governance. Service persistence, profile migration, analytical
+            jobs, performance, packaging, and broader Wave qualification are unchanged and remain deferred to their owning
+            boundaries.
+          selection_sha256: 8e4108a71781570e83532c05305e3727accbe4e0194feaf74b0e1fd58eecdd1e
+          prior_attempt_id: R01
+          open_finding_ids:
+          - CAP-03.S06.T03-R01-F01
+          - CAP-03.S06.T03-R01-F02
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:backlog-views
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:backlog
+          - desktop:application
+          - desktop:ui-reference-integrity
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - contracts:unit
+          packet_sha256: 39bd8860ae658181a5f88d9067664c233ff314f32228cbe1e8ddb8f7034b7021
     - id: CAP-03.S06.T04
       capability_id: CAP-03
       slice_id: CAP-03.S06
