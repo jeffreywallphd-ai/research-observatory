@@ -1775,6 +1775,7 @@ class ResearchIntentService:
                 retryable=True,
             )
         try:
+            guidance = _INTENT_GUIDANCE_BY_PROFILE[primary_use_case]
             command = IntentDraftRequest(
                 root=str(path),
                 expected_revision=0,
@@ -1789,11 +1790,11 @@ class ResearchIntentService:
                 start_year=None,
                 end_year=None,
                 include_private_reports=False,
-                evidence_types=(),
+                evidence_types=tuple(cast(Sequence[Any], guidance["evidenceTypes"])),
                 novelty_standard=None,
                 novelty_rationale="",
-                autonomy_level="human-only",
-                stopping_conditions=("researcher-decision",),
+                autonomy_level=cast(Any, guidance["autonomyLevel"]),
+                stopping_conditions=tuple(cast(Sequence[Any], guidance["stoppingConditions"])),
                 revision_rationale="Project creation selected the initial governed workflow profile.",
                 impact_acknowledgement=None,
             )
