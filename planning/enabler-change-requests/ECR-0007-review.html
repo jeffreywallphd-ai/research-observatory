@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECR-0007 review — align production styling</title>
+  <style>
+    :root { color-scheme: light dark; font-family: "Segoe UI", system-ui, sans-serif; line-height: 1.5; }
+    body { max-width: 72rem; margin: 0 auto; padding: 2rem; }
+    h1, h2 { font-family: Georgia, serif; }
+    section { margin-block: 1.5rem; padding: 1rem 1.25rem; border: 1px solid #8a9aad; border-radius: .625rem; }
+    code { overflow-wrap: anywhere; }
+    .selected { border-inline-start: .25rem solid #2563eb; }
+    .warning { border-inline-start: .25rem solid #b45309; }
+    li + li { margin-block-start: .5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <p>Inert append-only Wave amendment proposal</p>
+    <h1>ECR-0007 / W1.A08</h1>
+    <p><a href="ECR-0007.md">Open the complete canonical proposal</a> · <a href="ECR-0007.packet.json">Open the machine packet</a></p>
+  </header>
+
+  <section class="warning">
+    <h2>Current gate</h2>
+    <p>W1 is paused and <code>CAP-07.S01.T02</code> is blocked without product changes. This packet is non-executable until independent exact-commit review and explicit human approval.</p>
+  </section>
+
+  <section class="selected">
+    <h2>Selected decision</h2>
+    <p>Align the real W1 desktop product with the already approved <code>RO-UI-ACADEMIC-MINIMAL-1.5</code> styling and UX character, consolidate reusable styles, and add a live-product conformance gate. The reference itself remains unchanged.</p>
+    <ul>
+      <li><code>W1.A08.T01</code> consolidates shared layout/content-flow primitives and aligns every currently implemented W1 surface.</li>
+      <li><code>W1.A08.T02</code> checks the functional React product for style reuse, geometry, responsive behavior, themes, accessibility, and representative visual composition.</li>
+      <li>Conformance is semantic and tolerance-based, not pixel-identical reproduction of illustrative mock content.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Why an amendment is needed</h2>
+    <ul>
+      <li>The product imports the approved tokens and has a sound shared component package.</li>
+      <li>The desktop and component styles still repeat common control, card, table, notice, and layout declarations and leave some content rhythm to browser-default margins.</li>
+      <li>Several production shell dimensions diverge from the reference geometry.</li>
+      <li>The current visual-regression profile renders copied reference pages in <code>apps/desktop/dist</code>; the real product in <code>apps/desktop/product-dist</code> lacks an equivalent computed-geometry and representative-view gate.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Scope and budget</h2>
+    <p>One CAP-01 contribution, two tasks, all current W1 desktop surfaces. T01 is the only refactor allocation: 5 of the immutable 194 approved-W1 points (2.6%), inside the standard 15% limit. No major refactor, new framework, later-Wave UI, or governed-reference change is authorized.</p>
+  </section>
+
+  <section>
+    <h2>Completion evidence</h2>
+    <ul>
+      <li>Shared styling primitives own common geometry once; page rules remain only where composition genuinely differs.</li>
+      <li>The actual production bundle is exercised at desktop, compact-desktop, and 200%-effective viewports in light/dark and reduced-motion modes.</li>
+      <li>Computed geometry and accessibility contracts use meaningful tolerances; representative screenshots receive independent visual review.</li>
+      <li>Task, slice, and amendment-exit reviews close all blocking findings and record a W1 experience/quality checkpoint.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Alternatives</h2>
+    <ol>
+      <li><strong>Selected:</strong> consolidate styles and add live-product conformance.</li>
+      <li>Patch individual pages, increasing duplication.</li>
+      <li>Require brittle pixel identity with illustrative references.</li>
+      <li>Replace the existing design system with a new framework.</li>
+      <li>Defer the problem and carry the drift into later Waves.</li>
+    </ol>
+  </section>
+
+  <section class="warning">
+    <h2>Approval boundary</h2>
+    <p>Approval authorizes only the hash-bound B00, S01, T01, and T02. It does not execute them, approve their reviews, adopt W1.A08, resume W1, recover CAP-07.S01.T02, qualify W1, approve G1, merge main, or push remotely.</p>
+  </section>
+</body>
+</html>

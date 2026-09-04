@@ -26473,6 +26473,369 @@
         }
       ],
       "page": "enablers/ECR-0006.html"
+    },
+    {
+      "change_request_id": "ECR-0007",
+      "amendment_id": "W1.A08",
+      "target_wave": "W1",
+      "classification": "product-scope-security-experience",
+      "proposal_status": "pending-approval",
+      "proposal_execution_state": "non-executable",
+      "packet_path": "planning/enabler-change-requests/ECR-0007.packet.json",
+      "packet_sha256": "a397f43c2eaaca765865b2fade8f1a57c0006f45da28e112b2bed3d6d9ab52cb",
+      "proposal_path": "planning/enabler-change-requests/ECR-0007.md",
+      "proposal_sha256": "e4dbcbb204eacd9e807885ec1cf728bfeb05c8da1159d39958bfbd60341e06ee",
+      "review_path": "planning/enabler-change-requests/ECR-0007-review.html",
+      "review_sha256": "525826e787f1a6b7bc78a74eb8e57981a60c43d5a73620392890c3f44b801408",
+      "approval_path": null,
+      "approval_sha256": null,
+      "approval_status": "PENDING",
+      "lifecycle_status": "NOT_MATERIALIZED",
+      "bootstrap_status": "NOT_SUBMITTED",
+      "campaign_status": "NONE",
+      "bootstrap_attempts": [],
+      "slice_contributions": [
+        {
+          "id": "W1.A08.S01",
+          "capabilityId": "CAP-01",
+          "title": "Production styling alignment and live-product conformance",
+          "objective": "Bring all currently implemented W1 desktop surfaces into coherent Academic Minimal 1.5 visual and interaction alignment through reusable styling primitives and a deterministic conformance boundary over the real React product.",
+          "workType": "mixed-refactor-and-new",
+          "refactorTaskIds": [
+            "W1.A08.T01"
+          ],
+          "taskIds": [
+            "W1.A08.T01",
+            "W1.A08.T02"
+          ],
+          "acceptanceCriteria": [
+            "Every currently implemented W1 desktop surface uses the approved token scale and a coherent hierarchy for shell, page, section, panel, form, table, dialog, notice, and action spacing at desktop, compact-desktop, and 200%-effective viewports.",
+            "Shared semantic primitives own common geometry once wherever reuse is effective; page-specific selectors express only genuine composition differences, and production sources contain no inline styling or undocumented duplicate/raw-geometry exception.",
+            "The functional React/Tauri frontend is checked directly for computed geometry, responsive behavior, light/dark themes, reduced motion, accessibility, interaction preservation, and representative visual composition; rendering copied reference HTML alone cannot satisfy the gate.",
+            "RO-UI-ACADEMIC-MINIMAL-1.5 remains byte-identical and conformance is semantic/tolerance-based rather than a pixel-identical requirement for illustrative copy or composition.",
+            "Both tasks and the accumulated slice receive independent commit-bound review with all blocking findings closed before amendment exit and the W1 experience/quality checkpoint."
+          ]
+        }
+      ],
+      "authorized_task_ids": [
+        "W1.A08.T01",
+        "W1.A08.T02"
+      ],
+      "refactor_budget": {
+        "baseline": {
+          "waveId": "W1",
+          "sourceCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+          "sourcePath": "planning/backlog.yaml",
+          "estimateScale": {
+            "S": 1,
+            "M": 3,
+            "L": 5
+          },
+          "tasks": [
+            {
+              "id": "CAP-01.S01.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S03.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-01.S03.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-01.S04.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S04.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S02.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S02.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T04",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S04.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S04.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S04.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S06.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T04",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T05",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-07.S01.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-07.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-07.S01.T03",
+              "estimate": "L",
+              "points": 5
+            }
+          ],
+          "totalPoints": 194
+        },
+        "refactorAllocations": [
+          {
+            "taskId": "W1.A08.T01",
+            "estimate": "L",
+            "points": 5
+          }
+        ],
+        "refactorPoints": 5,
+        "refactorSharePercent": 2.6,
+        "limitPolicy": {
+          "mode": "standard-15-percent",
+          "limitPercent": 15
+        },
+        "refactorTaskIds": [
+          "W1.A08.T01"
+        ],
+        "method": "Reuse the immutable itemized 194-point approved-W1 baseline from packet commit 594e63be501711d67d17a4aef176bb9b6a8748be. Convert S=1, M=3, and L=5. W1.A08.T01 is the sole technical-debt refactor allocation at 5 points; W1.A08.T02 is new live-product verification and product-quality work."
+      },
+      "governed_experience": {
+        "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+        "approvalRequired": true,
+        "files": [
+          {
+            "path": "design/ui-reference/REFERENCE_MANIFEST.yaml",
+            "sha256": "893c3382ffaf1c031531e5b2bd05b79e2a4f9a8efaa20e5bedca57b3589642f1"
+          },
+          {
+            "path": "design/ui-reference/APPROVAL.yaml",
+            "sha256": "7f226d1f24080dee37717cd99e6f73549c8f3dda61e113d07d3a91731d9119bc"
+          },
+          {
+            "path": "design/ui-reference/STYLE_GUIDE.md",
+            "sha256": "6acc9f1be97ae2a1542c16fb30e7dd45aebb587cee6df425135e9f89a9a84565"
+          },
+          {
+            "path": "design/ui-reference/assets/tokens.css",
+            "sha256": "475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230"
+          },
+          {
+            "path": "design/ui-reference/assets/app.css",
+            "sha256": "15ae6ccdce2d0a147a220b1a723e1190b7c05123ddad8ba98c0fdb691a41d5ee"
+          }
+        ],
+        "referenceApprovalStatus": "approved"
+      },
+      "scope_addenda": [],
+      "task_reviews": [],
+      "exit_review": {
+        "amendment_id": "W1.A08",
+        "mode": "latest-completion-only",
+        "latest_completion": {
+          "status": null,
+          "reviewer": null,
+          "reviewed_at": null,
+          "evidence": null,
+          "notes": null
+        },
+        "exit_review_control": null
+      },
+      "adoption_checkpoints": [],
+      "page": "enablers/ECR-0007.html"
     }
   ],
   "governance_recoveries": [
