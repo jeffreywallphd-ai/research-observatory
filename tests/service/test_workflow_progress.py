@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 import tempfile
@@ -20,6 +21,7 @@ from research_observatory_core.models import WorkflowProgressCommand  # noqa: E4
 from research_observatory_core.ports.repositories import (  # noqa: E402
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
+    IntentRevisionRecord,
 )
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
 from research_observatory_core.repositories import (  # noqa: E402
@@ -122,6 +124,8 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             "expectedStageStateRevisionContentHash": (
                 workspace.current.revision_content_hash if workspace.current is not None else None
             ),
+            "revisitSourceStageStateRevisionId": None,
+            "revisitSourceStageStateRevisionContentHash": None,
             "completionEvidenceRevisionIds": [],
             "supportingPageContractId": None,
             "rationale": None,
@@ -129,7 +133,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
         payload.update(changes)
         return WorkflowProgressCommand.model_validate(payload)
 
-    def _append_evidence(self):
+    def _append_evidence(self, *, aggregate_kind: str = "evidence"):
         database = Path(self.root) / "state" / "project.sqlite3"
         factory = create_sqlite_unit_of_work_factory(database, self.project.project_id)
         revision_id = new_uuid_v7()
@@ -138,7 +142,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
                 AggregateRevisionDraft(
                     revision_id=revision_id,
                     aggregate_id=new_uuid_v7(),
-                    aggregate_kind="evidence",
+                    aggregate_kind=aggregate_kind,
                     created_at="2026-09-04T02:00:00.000Z",
                     modified_at="2026-09-04T02:00:00.000Z",
                     display_label_observed="Researcher-reviewed completion evidence",
@@ -167,6 +171,10 @@ class WorkflowProgressServiceTests(unittest.TestCase):
         unopened = self.service.workspace(self.root)
         self.assertTrue(unopened.bootstrap_required)
         self.assertIsNone(unopened.current)
+        current_intent = self.intents.workspace(self.root).current
+        assert current_intent is not None
+        self.assertEqual(current_intent.revision_id, unopened.intent_revision_id)
+        self.assertEqual(current_intent.revision_content_hash, unopened.intent_revision_content_hash)
 
         started = self.service.command(
             self._command(unopened, "start"),
@@ -246,8 +254,30 @@ class WorkflowProgressServiceTests(unittest.TestCase):
         workspace = self.service.workspace(self.root)
         command = self._command(workspace, "start")
         started = self.service.command(command, trace_id=TRACE, idempotency_key="2" * 32)
+        evidence = self._append_evidence()
+        assert started.current is not None
+        self.service.command(
+            self._command(
+                started,
+                "complete",
+                stageKey=started.current.stage_key,
+                completionEvidenceRevisionIds=[evidence.revision_id],
+            ),
+            trace_id=TRACE,
+            idempotency_key="3" * 32,
+        )
         replayed = self._service().command(command, trace_id=TRACE, idempotency_key="2" * 32)
         self.assertEqual(started, replayed)
+
+        current_intent = self.intents.workspace(self.root).current
+        assert current_intent is not None
+        self._save_intent("systematic-review", expected_revision=current_intent.revision, key="4" * 32)
+        replayed_after_profile_change = self._service().command(
+            command,
+            trace_id=TRACE,
+            idempotency_key="2" * 32,
+        )
+        self.assertEqual(started, replayed_after_profile_change)
 
         substituted = command.model_copy(update={"stage_key": "substituted-stage"})
         with self.assertRaisesRegex(
@@ -255,7 +285,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             "RO-CORE-WORKFLOW-PROGRESS-IDEMPOTENCY-CONFLICT",
         ):
             self.service.command(substituted, trace_id=TRACE, idempotency_key="2" * 32)
-        self.assertEqual(started, self._service().workspace(self.root))
+        self.assertEqual("systematic-review", self._service().workspace(self.root).profile_id)
 
     def test_completion_rejects_noncanonical_evidence_and_selection_substitution(self) -> None:
         started = self.service.command(
@@ -278,6 +308,21 @@ class WorkflowProgressServiceTests(unittest.TestCase):
                 trace_id=TRACE,
                 idempotency_key="4" * 32,
             )
+        document = self._append_evidence(aggregate_kind="document")
+        with self.assertRaisesRegex(
+            WorkflowProgressProblem,
+            "RO-CORE-WORKFLOW-PROGRESS-EVIDENCE-NOT-FOUND",
+        ):
+            self.service.command(
+                self._command(
+                    started,
+                    "complete",
+                    stageKey=started.current.stage_key,
+                    completionEvidenceRevisionIds=[document.revision_id],
+                ),
+                trace_id=TRACE,
+                idempotency_key="5" * 32,
+            )
         with self.assertRaisesRegex(WorkflowProgressProblem, "RO-CORE-WORKFLOW-PROGRESS-CONFLICT"):
             self.service.command(
                 self._command(
@@ -286,7 +331,7 @@ class WorkflowProgressServiceTests(unittest.TestCase):
                     expectedSelectionRevisionContentHash="sha256:" + "f" * 64,
                 ),
                 trace_id=TRACE,
-                idempotency_key="5" * 32,
+                idempotency_key="6" * 32,
             )
         self.assertEqual(started, self._service().workspace(self.root))
 
@@ -297,17 +342,49 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             idempotency_key="4" * 32,
         )
         assert started.current is not None
-        revisited = self.service.command(
-            self._command(started, "revisit", stageKey=started.current.stage_key),
+        evidence = self._append_evidence()
+        advanced = self.service.command(
+            self._command(
+                started,
+                "complete",
+                stageKey=started.current.stage_key,
+                completionEvidenceRevisionIds=[evidence.revision_id],
+            ),
             trace_id=TRACE,
             idempotency_key="5" * 32,
+        )
+        assert advanced.current is not None
+        completed_head = next(
+            item
+            for item in advanced.history
+            if item.stage_key == started.current.stage_key and item.status == "completed"
+        )
+
+        revisited = self.service.command(
+            self._command(
+                advanced,
+                "revisit",
+                stageKey=completed_head.stage_key,
+                revisitSourceStageStateRevisionId=completed_head.stage_state_revision_id,
+                revisitSourceStageStateRevisionContentHash=completed_head.revision_content_hash,
+            ),
+            trace_id=TRACE,
+            idempotency_key="6" * 32,
         )
         assert revisited.current is not None
 
         self.assertEqual(2, revisited.current.pass_number)
         self.assertEqual(started.current.stage_state_id, revisited.current.stage_state_id)
-        self.assertEqual(started.current.stage_state_revision_id, revisited.current.parent_state_revision_id)
-        self.assertIn(started.current, revisited.history)
+        self.assertEqual(completed_head.stage_state_revision_id, revisited.current.parent_state_revision_id)
+        displaced = next(
+            item
+            for item in revisited.history
+            if item.stage_state_id == advanced.current.stage_state_id and item.status == "in-progress"
+        )
+        self.assertEqual(advanced.current.stage_state_revision_id, displaced.parent_state_revision_id)
+
+        with self.assertRaises(ValueError):
+            self._command(revisited, "revisit", stageKey=revisited.current.stage_key)
 
     def test_completed_revisitable_workflow_can_begin_an_explicit_new_pass(self) -> None:
         progress = self.service.command(
@@ -335,8 +412,10 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             self._command(
                 progress,
                 "revisit",
-                expectedStageStateRevisionId=completed_head.stage_state_revision_id,
-                expectedStageStateRevisionContentHash=completed_head.revision_content_hash,
+                expectedStageStateRevisionId=None,
+                expectedStageStateRevisionContentHash=None,
+                revisitSourceStageStateRevisionId=completed_head.stage_state_revision_id,
+                revisitSourceStageStateRevisionContentHash=completed_head.revision_content_hash,
             ),
             trace_id=TRACE,
             idempotency_key=f"{sequence:032x}",
@@ -358,14 +437,36 @@ class WorkflowProgressServiceTests(unittest.TestCase):
             idempotency_key="7" * 32,
         )
         assert started.current is not None
+        evidence = self._append_evidence()
+        advanced = self.service.command(
+            self._command(
+                started,
+                "complete",
+                stageKey=started.current.stage_key,
+                completionEvidenceRevisionIds=[evidence.revision_id],
+            ),
+            trace_id=TRACE,
+            idempotency_key="8" * 32,
+        )
+        completed_head = next(
+            item
+            for item in advanced.history
+            if item.stage_key == started.current.stage_key and item.status == "completed"
+        )
 
         with self.assertRaisesRegex(WorkflowProgressProblem, "RO-CORE-WORKFLOW-PROGRESS-CYCLE-DENIED"):
             self.service.command(
-                self._command(started, "revisit", stageKey=started.current.stage_key),
+                self._command(
+                    advanced,
+                    "revisit",
+                    stageKey=completed_head.stage_key,
+                    revisitSourceStageStateRevisionId=completed_head.stage_state_revision_id,
+                    revisitSourceStageStateRevisionContentHash=completed_head.revision_content_hash,
+                ),
                 trace_id=TRACE,
-                idempotency_key="8" * 32,
+                idempotency_key="9" * 32,
             )
-        self.assertEqual(started, self._service().workspace(self.root))
+        self.assertEqual(advanced, self._service().workspace(self.root))
 
     def test_profile_change_atomically_binds_exact_prior_stage_head(self) -> None:
         started = self.service.command(
@@ -390,9 +491,15 @@ class WorkflowProgressServiceTests(unittest.TestCase):
         self.assertEqual(started.current.revision_content_hash, impacts[0]["stageStateRevisionContentHash"])
 
         restarted = self._service().workspace(self.root)
-        self.assertTrue(restarted.bootstrap_required)
-        self.assertIsNone(restarted.current)
+        self.assertFalse(restarted.bootstrap_required)
+        assert restarted.current is not None
         self.assertEqual("systematic-review", restarted.profile_id)
+        self.assertEqual(started.current.stage_state_id, restarted.current.stage_state_id)
+        self.assertEqual(started.current.revision + 1, restarted.current.revision)
+        self.assertEqual(started.current.stage_state_revision_id, restarted.current.parent_state_revision_id)
+        current_intent = self.intents.workspace(self.root).current
+        assert current_intent is not None
+        self.assertEqual(current_intent.revision_id, restarted.intent_revision_id)
 
     def test_profile_change_cas_rejects_a_concurrent_stage_write(self) -> None:
         started = self.service.command(
@@ -487,12 +594,61 @@ class WorkflowProgressServiceTests(unittest.TestCase):
         )
         self.assertEqual(detached.supporting_handoff, self._service().workspace(self.root).supporting_handoff)
 
-        revisited = self.service.command(
-            self._command(started, "revisit", stageKey=started.current.stage_key),
+        attention = self.service.command(
+            self._command(started, "mark-attention", rationale="Researcher review is needed."),
             trace_id=TRACE,
             idempotency_key="b" * 32,
         )
-        self.assertIsNone(revisited.supporting_handoff)
+        assert attention.current is not None
+        self.assertEqual("attention-required", attention.current.status)
+        self.assertFalse(attention.bootstrap_required)
+        self.assertNotIn("completed workflow", attention.recommended_action.lower())
+        self.assertIsNone(attention.supporting_handoff)
+
+        resumed = self.service.command(
+            self._command(attention, "resume", stageKey=attention.current.stage_key),
+            trace_id=TRACE,
+            idempotency_key="c" * 32,
+        )
+        assert resumed.current is not None
+        self.assertEqual("current", resumed.current.status)
+        self.assertEqual(attention.current.stage_state_revision_id, resumed.current.parent_state_revision_id)
+
+    def test_progress_rejects_noncanonical_intent_authority_for_the_routed_project(self) -> None:
+        delegate = sqlite_intent_revision_repository(Path(self.root), self.project.project_id)
+
+        class SubstitutedIntentRepository:
+            def read(inner_self):
+                records = delegate.read()
+                value = json.loads(records[0].content_json)
+                value["projectId"] = "018f0000-0000-7000-8000-000000000099"
+                value["revisionContentHash"] = "sha256:" + "0" * 64
+                without_hash = {key: item for key, item in value.items() if key != "revisionContentHash"}
+                value["revisionContentHash"] = "sha256:" + hashlib.sha256(
+                    json.dumps(
+                        without_hash,
+                        ensure_ascii=True,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                    ).encode("utf-8")
+                ).hexdigest()
+                return (IntentRevisionRecord(revision=records[0].revision, content_json=json.dumps(value)),)
+
+            def read_workflow_authority(inner_self):
+                return delegate.read_workflow_authority()
+
+        substituted = WorkflowProgressService(
+            self.projects,
+            repository_factory=sqlite_workflow_progress_repository,
+            intent_repository_factory=lambda _path, _project_id: SubstitutedIntentRepository(),
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
+            local_actor_id=ACTOR_ID,
+        )
+        with self.assertRaisesRegex(
+            WorkflowProgressProblem,
+            "RO-CORE-WORKFLOW-PROGRESS-READ-FAILED",
+        ):
+            substituted.workspace(self.root)
 
 
 if __name__ == "__main__":
