@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6bfb81749723f0002fcf5fa0b49b70665a71b0f9f979c2bee800f05a30fb9908
+source_sha256: b65f83c11fde929afe05c0fc024e7f1f824128ee1aa4ccde9e97fbec35bd3488
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6646,7 +6646,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Acceptance criteria:**
 
 - Each approved profile starts at project creation, renders the exact approved sequence, preserves access to all tools, and resumes correctly after restart.
-- Hermeneutic, critical, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.
+- Hermeneutic, manuscript-review/revision, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.
 - Automated evidence identifies the approved UI reference and workflow-catalog version used by every test.
 
 **Verification:**

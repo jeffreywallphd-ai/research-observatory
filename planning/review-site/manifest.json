@@ -9849,7 +9849,7 @@
           "wave": "W1",
           "title": "Use-case profiles and adaptive guided navigation",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
-          "plan_sha256": "5b72d6b86bbdff9a7f2e459bcd4ad6ebad9d61792c98542671605cba6d8f955f",
+          "plan_sha256": "a4862f47e69303a5d188fc4b05869ee5ff7005d68cec3e40e149eb7302b4c62e",
           "page": "CAP-03/CAP-03.S06.html",
           "task_count": 5,
           "task_reviews": [
@@ -11758,7 +11758,7 @@
                 "branch": "codex/w1-windows-local-runtime",
                 "base_sha": "b6c33dd67a4c219efbc7856b21653f2fdc2db3d4"
               },
-              "plan_section_sha256": "80c11ac0f4b0b7db86c26231cfdfd752a1b7ec6c839d77e9273304e87ee2d6a0",
+              "plan_section_sha256": "2d9746a9b739684de6edae76a8a0561a25b198df284a35ed4d9db391c9e0d032",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-03.S06.T05.task-start.md",
                 "sha256": "88916c741f35af103da1ffdae2fbe1e267de57cbc3b65429514b47477f961709"

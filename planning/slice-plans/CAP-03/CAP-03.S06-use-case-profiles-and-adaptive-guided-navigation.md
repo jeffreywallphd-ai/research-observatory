@@ -384,7 +384,7 @@ python tools/taskctl.py validate
 
 **Acceptance criteria from the authoritative backlog**
 - Each approved profile starts at project creation, renders the exact approved sequence, preserves access to all tools, and resumes correctly after restart.
-- Hermeneutic, critical, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.
+- Hermeneutic, manuscript-review/revision, and living-review cycles can revisit earlier steps without rewriting history; systematic review maintains its reproducible order and audit endpoint.
 - Automated evidence identifies the approved UI reference and workflow-catalog version used by every test.
 
 **Required criterion-linked evidence**
