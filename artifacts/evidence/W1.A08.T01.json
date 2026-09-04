@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A08.T01",
+  "commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
+  "baseCommit": "98d6612d0eb64482d92ea9f754ddcee22b8b79b9",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+    "apps/desktop/src/app/DiagnosticsWorkspace.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+    "apps/desktop/src/app/ProjectSettingsWorkspace.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/src/styles.css",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0007.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "bundled Node 24.19.0: desktop lint and typecheck; ui-components typecheck and vitest; desktop vitest run",
+      "exitCode": 0,
+      "result": "Desktop lint and strict TypeScript passed. The shared UI component package passed typecheck and all 4 tests. The complete desktop Vitest inventory passed 120 tests in 19 files, with 3 existing native-harness cases skipped in the ordinary run."
+    },
+    {
+      "command": "bundled Node 24.19.0: clean-dist, Vite product build, assemble-application, Vite runtime build, assemble-reference",
+      "exitCode": 0,
+      "result": "The functional product rebuilt successfully as the exact 4-artifact product bundle and the approved-reference fixture rebuilt as 42 artifacts. The resulting product manifest binds the current production source inputs and approved reference identity."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check",
+      "exitCode": 0,
+      "result": "All 11 desktop static, negative, product-build, browser, accessibility, workflow, and interaction checks passed. The live product measured 28/20/16 px page padding at 1440x900, 1280x720, and 720x450; 64 px topbar; 240 px wide navigation; 24 px page rhythm; 16 px grids; 40/44 px controls; suppressed motion; and no horizontal document overflow."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .",
+      "exitCode": 0,
+      "result": "The governed RO-UI-ACADEMIC-MINIMAL-1.5 package remains approved, generator-reproducible, and byte-valid across all 55 governed files with zero errors or warnings. No governed reference byte changed."
+    },
+    {
+      "command": "Generate and inspect full-page live-product captures at 1440x900 light, 1440x900 dark, and 720x450 dark; git diff --check",
+      "exitCode": 0,
+      "result": "Local visual disposition passed: the application shell, page hierarchy, command surface, navigation, success/warning panels, action rows, dark theme, and narrow stacked composition have coherent spacing, alignment, density, borders, radii, and readable reflow without clipping. Temporary captures were not promoted to durable evidence because T02 owns retained commit-bound representative captures. Git patch hygiene passed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The shared UI style boundary now defines reusable ro-page-region, ro-stack, ro-cluster, ro-grid, ro-card/ro-panel, ro-form, ro-notice, ro-table-region, ro-dialog-surface, and ro-action-row primitives using canonical custom properties and logical properties.",
+        "A focused static contract resolves every var() reference against the approved token and production style sources, rejects inline style attributes despite whitespace, and verifies each primitive's defining geometry."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The desktop application stylesheet removes repeated generic card, form, table, notice, dialog, action-row, and workspace-flow geometry; production TSX consumes the shared primitives and retains page CSS only for named composition-specific arrangements.",
+        "Undefined --space-7 and --brand references and the raw 2.75rem control height are eliminated. Shell spacing, focus offsets, card/control radii, and control state presentation now flow through the approved semantic tokens."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The shell, lock/recovery surface, service boundary, all eight implemented workspaces, workflow navigation/context, dialogs, tables, forms, notices, status/evidence panels, and controlled recalculation regions use the shared styling vocabulary.",
+        "All 120 desktop component/renderer tests, shared component checks, the built functional browser check, and representative light/dark visual inspection pass without changing product or service authority."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Computed live-product geometry is exact at the three controlled viewports: page padding 28/20/16 px, topbar 64 px, expanded sidebar 240 px, section rhythm 24 px, grid gaps 16 px, controls at least 40/44 px, and zero horizontal document overflow.",
+        "The 720x450 product stacks navigation and content, keeps action rows and long command descriptions readable, and confines wide tabular content to explicitly named focusable scroll regions."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Full desktop unit/interaction tests preserve routes, semantics, project and workflow transitions, accessible names, focus containment/restoration, keyboard commands, theme switching, lock/recovery, and service failure/recovery presentation.",
+        "Reduced-motion computed duration is at most 0.00001 seconds in every controlled viewport. The approved Academic Minimal 1.5 reference remains byte-identical and passes its complete 55-file integrity check."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T01 changes the shared desktop style boundary and every implemented W1 renderer surface without changing product authority. Credible failures are unresolved or duplicated style tokens, selector/inline escape hatches, changed interaction semantics, inaccessible scroll or focus presentation, dark-theme/reduced-motion regression, undersized controls, incoherent responsive geometry, overflow, stale production artifacts, or drift from the governed reference. The selected static contracts, complete affected TypeScript/component tests, production rebuild, live Playwright accessibility and geometry checks, two-theme visual inspection, UI-reference integrity, and exact Git hygiene cover those risks. Native service and persistence logic are unchanged, so native integration and full Windows packaging are not replayed at this ordinary styling task boundary.",
+    "selectedCommandIds": [
+      "foundation:ui-reference",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression"
+    ],
+    "deferred": [
+      "W1.A08.T02 owns the reusable exhaustive fail-closed style-reuse analyzer, every-surface light/dark viewport-state matrix, stable semantic tolerances, and retained commit-bound representative captures.",
+      "W1.A08.S01 review and amendment exit own the cross-surface experience/accessibility/maintainability integration disposition.",
+      "Complete Windows-x64 packaging, performance, security, recovery, and cross-capability qualification remains due once at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "independent-experience-accessibility-maintainability-task-review",
+    "openFindingIds": [],
+    "note": "Authenticate activation base 98d6612d0eb64482d92ea9f754ddcee22b8b79b9, candidate 9b4e746928d1381c52a2a720ee6bb47eb433ca3f, the exact changed-path inventory, and this evidence. Review semantic primitive reuse and specificity, composition-only residual CSS, all implemented surfaces, computed viewport geometry, dark/reduced-motion/focus behavior, accessible table scrolling, unchanged product/security authority and reference bytes, and the explicit T02/slice/W1-exit deferrals."
+  }
+}

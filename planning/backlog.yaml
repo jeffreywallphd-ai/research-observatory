@@ -39225,7 +39225,7 @@ wave_amendments:
     - Obtain independent commit-bound experience/accessibility/maintainability review and record broader cross-capability,
       packaging, performance, and Windows-x64 coverage deferred to T02, slice review, amendment exit, and W1 exit.
     packet_task_sha256: af5fcfca8f2c2302ede9ddbd334e7bb40af2fde351c4a640cddeb51e26825d7b
-    status: IN_PROGRESS
+    status: REVIEW
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 98d6612d0eb64482d92ea9f754ddcee22b8b79b9
@@ -39235,17 +39235,96 @@ wave_amendments:
       claimed_at: '2026-09-04T20:55:59+00:00'
       expires_at: '2026-09-05T04:55:59+00:00'
     started_at: '2026-09-04T20:55:59+00:00'
-    updated_at: '2026-09-04T20:55:59+00:00'
+    updated_at: '2026-09-04T21:15:41+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
-    evidence: []
-    verification_state: null
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A08.T01.json
+      sha256: 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a
+      commit: 9b4e746928d1381c52a2a720ee6bb47eb433ca3f
+      recorded_at: '2026-09-04T21:15:41+00:00'
+    verification_state: passed
     review:
       reviewer: null
       result: null
       reviewed_at: null
       notes: null
+    review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-09-04T21:15:41+00:00'
+        candidate_commit: 9b4e746928d1381c52a2a720ee6bb47eb433ca3f
+        base_commit: 98d6612d0eb64482d92ea9f754ddcee22b8b79b9
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: criterion-manifest
+          path: artifacts/evidence/W1.A08.T01.json
+          sha256: 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a
+          commit: 9b4e746928d1381c52a2a720ee6bb47eb433ca3f
+          recorded_at: '2026-09-04T21:15:41+00:00'
+        acceptance_criteria_sha256: c5f799e0c25b1e7a19d20c9b80ba8641cba72cd475522d496c2139d1ca8245b1
+        changed_paths:
+        - apps/desktop/src/app.css
+        - apps/desktop/src/app/ApplicationRuntime.tsx
+        - apps/desktop/src/app/ApplicationSettingsWorkspace.tsx
+        - apps/desktop/src/app/AuditLineageWorkspace.tsx
+        - apps/desktop/src/app/DiagnosticsWorkspace.tsx
+        - apps/desktop/src/app/IntentWorkspace.tsx
+        - apps/desktop/src/app/ProjectHomeWorkspace.tsx
+        - apps/desktop/src/app/ProjectSettingsWorkspace.tsx
+        - apps/desktop/src/app/ProjectsWorkspace.tsx
+        - apps/desktop/src/app/TaskCenterWorkspace.tsx
+        - apps/desktop/src/app/WorkflowNavigation.tsx
+        - docs/planning-implementation-plan.md
+        - packages/ui-components/src/styles.css
+        - planning/backlog.yaml
+        - planning/review-site/enablers/ECR-0007.html
+        - planning/review-site/manifest.json
+        - planning/status-summary.md
+        - tests/desktop/test_desktop_app_check.py
+        - tools/desktop_app_check.py
+        selected_checks:
+        - 'bundled Node 24.19.0: desktop lint and typecheck; ui-components typecheck and vitest; desktop vitest run'
+        - 'bundled Node 24.19.0: clean-dist, Vite product build, assemble-application, Vite runtime build, assemble-reference'
+        - .venv\Scripts\python.exe -m unittest tests.desktop.test_desktop_app_check
+        - .venv\Scripts\python.exe tools/ui_reference_check.py --repo .
+        - Generate and inspect full-page live-product captures at 1440x900 light, 1440x900 dark, and 720x450 dark; git diff
+          --check
+        deferred_checks:
+        - W1.A08.T02 owns the reusable exhaustive fail-closed style-reuse analyzer, every-surface light/dark viewport-state
+          matrix, stable semantic tolerances, and retained commit-bound representative captures.
+        - W1.A08.S01 review and amendment exit own the cross-surface experience/accessibility/maintainability integration
+          disposition.
+        - Complete Windows-x64 packaging, performance, security, recovery, and cross-capability qualification remains due
+          once at W1 exit.
+        selection_rationale: T01 changes the shared desktop style boundary and every implemented W1 renderer surface without
+          changing product authority. Credible failures are unresolved or duplicated style tokens, selector/inline escape
+          hatches, changed interaction semantics, inaccessible scroll or focus presentation, dark-theme/reduced-motion regression,
+          undersized controls, incoherent responsive geometry, overflow, stale production artifacts, or drift from the governed
+          reference. The selected static contracts, complete affected TypeScript/component tests, production rebuild, live
+          Playwright accessibility and geometry checks, two-theme visual inspection, UI-reference integrity, and exact Git
+          hygiene cover those risks. Native service and persistence logic are unchanged, so native integration and full Windows
+          packaging are not replayed at this ordinary styling task boundary.
+        selection_sha256: 71f0c3eeec4286c62ca21097b646a994388a92ac6402a8f7177ac5c55db33983
+        prior_attempt_id: null
+        open_finding_ids: []
+        root_cause_analysis: null
+        selected_command_ids:
+        - foundation:ui-reference
+        - desktop:application
+        - desktop:unit
+        - desktop:ui-reference-integrity
+        - desktop:ui-token
+        - desktop:ui-route-page
+        - desktop:ui-workflow
+        - desktop:ui-accessibility
+        - desktop:ui-visual-regression
+        packet_sha256: 8f6a570c8d49459cd616fa3a067248d4edbf57340f9cb679d870c1aa93ddd2cd
   - id: W1.A08.T02
     amendment_id: W1.A08
     title: Qualify live-product styling conformance
