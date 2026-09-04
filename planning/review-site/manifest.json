@@ -11091,20 +11091,565 @@
             {
               "task_id": "CAP-03.S06.T04",
               "title": "Implement workflow progress, checkpoints, handoffs, and recalculation impact",
-              "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "status": "DONE",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:t04-r03-independent-reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-09-04T04:21:04+00:00",
+                "notes": "The strict-descendant R03 candidate, sole-parent submission, exact 12-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, append-only R01/R02 history, and patch hygiene authenticate. Independent real-SQLite, renderer, built-product browser, static-quality, and governed workflow/accessibility checks pass. The remaining parent R01-F02 and R02-F01 are fixed end to end: Project Home exposes an explicit eligible terminal A source while later B is current; the renderer sends A's exact revision/hash separately from B's exact displaced-head CAS; Core accepts A pass+1 while preserving B in-progress and A pass 1; ordinary rail navigation remains non-mutating; linear, current, in-progress, attention, blocked, and superseded sources remain ineligible; and selected-source requests cannot regain ownership after A-to-B-to-A context replacement. No blocking finding remains."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-04T03:04:16+00:00",
+                      "candidate_commit": "cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+                      "base_commit": "e437cad11d0eb729790e575a7f45bf609d8b7ec4",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S06.T04.R01.json",
+                        "sha256": "3130321caa408ab12a62dac859fcabd1f05c45c620be898aa9000b03d9049212",
+                        "commit": "cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+                        "recorded_at": "2026-09-04T03:04:16+00:00"
+                      },
+                      "acceptance_criteria_sha256": "1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa",
+                      "changed_paths": [
+                        "apps/desktop/scripts/assemble-application.mjs",
+                        "apps/desktop/src-tauri/examples/supervision_check.rs",
+                        "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+                        "apps/desktop/src-tauri/src/supervisor.rs",
+                        "apps/desktop/src/app.css",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/ProjectHomeWorkspace.test.tsx",
+                        "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+                        "apps/desktop/src/app/workflowNavigation.test.ts",
+                        "apps/desktop/src/app/workflowNavigationModel.ts",
+                        "artifacts/evidence/CAP-03.S06.T04.task-start.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "packages/contracts/core-api/openapi.json",
+                        "packages/contracts/core-api/runtime-handshake.schema.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-03/CAP-03.S06.T04.html",
+                        "planning/review-site/CAP-03/CAP-03.S06.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W1.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/src/research_observatory_core/app.py",
+                        "services/core-api/src/research_observatory_core/main.py",
+                        "services/core-api/src/research_observatory_core/models.py",
+                        "services/core-api/src/research_observatory_core/modules.py",
+                        "services/core-api/src/research_observatory_core/ports/repositories.py",
+                        "services/core-api/src/research_observatory_core/repositories.py",
+                        "services/core-api/src/research_observatory_core/research_intents.py",
+                        "services/core-api/src/research_observatory_core/workflow_progress.py",
+                        "tests/desktop/test_core_sidecar_performance_check.py",
+                        "tests/desktop/test_desktop_app_check.py",
+                        "tests/service/test_core_api.py",
+                        "tests/service/test_workflow_progress.py",
+                        "tools/core_api_contract.py",
+                        "tools/core_sidecar_performance_check.py",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py",
+                        "npm test --prefix apps/desktop; npm run lint --prefix apps/desktop; npm run typecheck --prefix apps/desktop; npm run build --prefix apps/desktop",
+                        "apps/desktop/node_modules/.bin/vitest.cmd run packages/contracts/core-api/generated.test.ts; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+                        "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml supervisor::tests -- --nocapture",
+                        ".venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-final-built-frame.json",
+                        ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+                        ".venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py",
+                        ".venv/Scripts/python.exe -m ruff format --check <T04 Python files>; .venv/Scripts/python.exe -m ruff check <T04 Python files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <T04 Python files>",
+                        ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/verify.py --profile desktop --profile service --profile data --affected-base 340ad1c3cd399e4848c07ef608f0836c48dd05ff --affected-head cd508bbf4c80ceedca13eb1e3364a1ba58480318 --deferred-gate W1-exit --selection-only; git diff --check e437cad11d0eb729790e575a7f45bf609d8b7ec4..cd508bbf4c80ceedca13eb1e3364a1ba58480318"
+                      ],
+                      "deferred_checks": [
+                        "The repository-wide quality wrapper remains red solely on unchanged baseline debt: Ruff-format differences in selective_recalculation.py, test_dependency_impacts.py, and test_recalculation_api.py, plus ten MyPy errors in planctl.py, ui_conformance.py, selective_recalculation.py, test_ui_conformance.py, and test_selective_recalculation.py. Every T04 path passes focused formatting, lint, and typing; baseline repair remains bounded separately and must be closed before W1 exit.",
+                        "The broad foundation unit inventory was not replayed for routine task state/view changes; taskctl validation, generated backlog-view checks, exact affected selection, and the directly changed verifier/contract suites cover the credible task boundary. It remains mandatory at W1 exit.",
+                        "Desktop, project-lifecycle, storage-maintenance, complete cancellation/migration/recovery/security, and full Windows x64 performance qualification remain mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit."
+                      ],
+                      "selection_rationale": "T04 is high risk because it adds durable scholarly-stage authority, evidence-bound completion, atomic coupling to Research Intent/profile revisions, a public generated API, a native allowlist boundary, and a multi-layer desktop experience. Verification therefore covers the full service suite, strict generated contract, native supervisor, real Windows sidecar packaging, desktop component and assembled-browser behavior, approved workflow/accessibility conformance, changed-file static quality, and governance identity. The repository-wide quality command was also inspected: every T04 file is clean, while its overall exit remains nonzero only for ten pre-existing issues in five unchanged files plus three unchanged formatting debts. Broad foundation replay and governed performance remain owned by slice/W1 qualification.",
+                      "selection_sha256": "ccfb68d186849935c338251b520d040d4f000c67be146ceb585645e25843612d",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:agent-protocol",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:unit",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "packet_sha256": "ece1483379d4856dfb7b4b7caa4f577004d50489872b15a0d3c2597e679979b1"
+                    },
+                    "review": {
+                      "reviewer": "agent:t04-independent-reviewer",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-09-04T03:16:14+00:00",
+                      "notes": "The frozen R01 submission, evidence SHA-256/Git blob, exact 38-path candidate scope, two-path submission projection, linear ancestry, generated Core contract, native supervisor allowlist, and disclosed pre-existing quality debt authenticate. Selected service, SQLite, generated-client, desktop, native, and governance checks pass. Approval remains unavailable because persisted attention/blocked/skipped heads are projected as an unrecoverable completed workflow; revisitation accepts a still-current pass and cannot select a completed earlier stage while another stage is current; idempotent replay returns mutable present state rather than the original command result; accepted profile migrations record impacts without materializing the accepted stage disposition under the new selection; completion accepts arbitrary same-project aggregate revisions as evidence; the progress service does not authenticate the full canonical Intent/activation/migration authority; and late renderer command/support responses can cross project/context boundaries."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S06.T04.review-R01.json",
+                      "sha256": "800f681a8d17e3e8197b7ade22545ec5d53db0243e49a8f43492b3ca3de0d4e0"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S06.T04-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Attention, blocked, and skipped heads become an unrecoverable false-completion Project Home state",
+                        "reproduction": "At candidate cd508bbf4c80ceedca13eb1e3364a1ba58480318, start systematic-review.default and mark intent-contract-1 attention-required. After reload, workflow_progress.py:476-539 computes current=null, bootstrapRequired=false and a completed-history recommendation because _current_primary excludes the attention head. ProjectHomeWorkspace.tsx:73-100 defines that combination as complete, renders 'Workflow complete', and has no resume path; WorkflowProgressAction at models.py:666-674 exposes no resume/reopen/make-current action. The same defect follows block, and skip leaves a mid-sequence optional stage without making its successor current. Linear profiles are permanently stranded and the UI misstates governed status.",
+                        "required_remediation": "Define and implement explicit researcher-controlled recovery/continuation semantics for every accepted non-current head: Project Home must project attention, blocked, and skipped truthfully, preserve rationale/history, and offer only authorized resume/reopen or successor transitions with exact selection/head CAS. A skip that authorizes sequence continuation must atomically make the next stage current. Add real-SQLite restart/replay tests and renderer/browser tests for attention, blocked, optional skip, final completion, both linear/revisitable profiles, and prove background jobs cannot cause any transition."
+                      },
+                      {
+                        "id": "CAP-03.S06.T04-R01-F02",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 3,
+                        "title": "Revisit accepts a current unevidenced pass and rejects an authorized completed earlier-stage revisit",
+                        "reproduction": "workflow_progress.py:606-616 and :641-696 select the current head as a revisit source and only reject when a different stage is current. The existing test at tests/service/test_workflow_progress.py:293-310 therefore starts a profile and immediately revisits its still-current first stage, appending pass 2 without completion, skip, stale state, or evidence. Conversely, after completing stage 1, stage 2 becomes current and an explicit revisit of completed stage 1 is rejected at :643-644. This differs from the task transition authority at CAP-03.S06.T04.task-start.md:49 and does not provide useful cyclical earlier-stage navigation.",
+                        "required_remediation": "Permit revisit only from an exact completed, skipped, or stale source head in a revisitable profile; deny current/in-progress/attention/blocked sources. Define and atomically preserve the displaced current-stage truth when revisiting an earlier completed stage, append pass+1 to the same stage aggregate without erasing either history, and retain linear denial. Add exact transition-matrix, current-earlier-stage, CAS-conflict, restart, and history tests; replace the current-source test with an explicit denial."
+                      },
+                      {
+                        "id": "CAP-03.S06.T04-R01-F03",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Exact idempotent replay returns mutable present projection instead of the committed command result",
+                        "reproduction": "workflow_progress.py:580-597 authenticates the idempotency record but then reads every current state and returns _projection(selection, states, ...). In a real SQLite replay, start initially returns intent-contract-1/revision A; after completing it, byte-identical replay of start with the same actor/key returns search-studio-1/revision B. If the workflow selection changed, :586-591 can reject the already committed command before replay. resultRevisionIds stored at repositories.py:1398-1423 are only checked for continued presence and are not used to reconstruct the original result.",
+                        "required_remediation": "Make same actor/key/command replay return the exact immutable original response authority and projection independent of later stage, staleness, or selection changes, while a changed command still conflicts. Persist or deterministically reconstruct the command-bound response from its exact result revisions and selection/staleness witness, and evaluate an authenticated existing replay before mutable current-selection preconditions. Add post-advance, post-staleness, post-profile-change, restart, response-loss, and changed-payload tests."
+                      },
+                      {
+                        "id": "CAP-03.S06.T04-R01-F04",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 3,
+                        "title": "Accepted profile migration records prior impacts but does not materialize the accepted stage disposition",
+                        "reproduction": "research_intents.py:686-754 binds exact prior primary heads and :806-831 writes their retain/map/stale/review/drop dispositions into the new selection. _workflow_authority_mutation at :839-916 passes old stage rows only as expected_stage_states for CAS; it appends no new-selection stage state. The real-path test at tests/service/test_workflow_progress.py:370-395 consequently expects the changed profile to reload with bootstrapRequired=true and current=null even though priorStageStates names the accepted retained/mapped head. The write is atomic, but the approved migration result is not materialized and workflow position is reset.",
+                        "required_remediation": "Within the same Intent/selection transaction and exact old-stage CAS, append the new-selection stage successors required by every accepted disposition, with exact predecessor/cause/migration references and an unambiguous current/review projection; preserve all old history. Any invalid mapping, fault, or race must roll back Intent, selection, migration, decisions, stage successors, provenance, and outbox together. Add retain/map/stale/review/drop, legacy-no-state, restart, injected-fault, and concurrent-head-change tests."
+                      },
+                      {
+                        "id": "CAP-03.S06.T04-R01-F05",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Stage completion accepts an arbitrary same-project aggregate revision as evidence",
+                        "reproduction": "repositories.py:1194-1236 resolves a supplied UUID in aggregate_revisions by project and revision ID, hashes a summary containing aggregateKind, but never constrains that kind or validates a stage completion evidence contract. A legitimate aggregate_kind=document revision is accepted by workflow_progress.py:646-660 and produces a completed stage. Thus exact project ownership prevents cross-project substitution but not evidence-authority substitution within the project.",
+                        "required_remediation": "Authorize explicit evidence/output aggregate kinds and any required knowledge/rights state for each completion contract before hashing the exact immutable revision; reject all other aggregate kinds even when UUID/project/hash are valid. Add per-kind substitution tests, cross-project denial, duplicate/missing/stale evidence cases, response-loss replay, and real SQLite restart proof."
+                      },
+                      {
+                        "id": "CAP-03.S06.T04-R01-F06",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Workflow progress bypasses canonical Intent and migration authority validation",
+                        "reproduction": "workflow_progress.py:234-255 decodes each selection, verifies its self-hash/revision, and checks contiguous numbers only. It does not apply research_intents.py:1130-1279, which authenticates the activation witness and approved catalog/guidance hashes, exact parentSelection chain, accepted migration and decision resolution, canonical stored Intent reference, selector/actor identity, and profile/project equality. Nor does the progress route compare selection.projectId with its routed manifest project. A retained-valid-hash one-field substitution can therefore remain a valid portable selection while changing the principal or provenance authority consumed by progress.",
+                        "required_remediation": "Share one canonical workflow-authority validator between Intent and progress and bind it to the routed manifest project plus the exact stored Intent history. Progress reads and commands must fail closed for missing/substituted activation witness, project, selector, Intent reference, parent, migration, decision, catalog/guidance hash, or stage selection reference. Add retained-valid-hash one-field mutation tests and exact pre-T02 compatibility/corruption fixtures at the real SQLite and generated API boundaries."
+                      },
+                      {
+                        "id": "CAP-03.S06.T04-R01-F07",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Late workflow commands and parallel reads can cross renderer project/authority boundaries",
+                        "reproduction": "ApplicationRuntime.tsx:583-632 captures a project/progress for start/revisit but applies success, failure, announcement, and busy-state effects without checking the live project or request generation. The open-supporting path at :634-675 does the same. Switch from project A to B while an A command is delayed and release A last: applyWorkflowProgress can replace B progress/select B UI from A stage data, or an A error can clear/set B state. The loader generation-guards only its separate reads at :488-529; progress exposes selection but not its exact canonical Intent revision, so parallel catalog/Intent/progress reads cannot prove one coherent SQLite authority snapshot. The renderer also recreates supporting return locally after success instead of binding the server supportingHandoff revision/expiry.",
+                        "required_remediation": "Bind every command/support request and every success, failure, finally, announcement, and return-context mutation to the initiating project ID/root, selection/head witness, and live request generation. Discard stale A results after A-to-B and A-to-B-to-A replacement. Return or read one coherent Core Project Home authority snapshot that binds exact Intent, selection, progress, stale-output, and supporting-handoff revision/expiry, and make the renderer honor that server witness. Add delayed start, revisit, and supporting success/error browser tests plus same-profile mid-read substitution and expired-handoff denial."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-03.S06.T04",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-09-04T03:04:16+00:00",
+                      "reviewed_at": "2026-09-04T03:16:14+00:00",
+                      "duration_seconds": 718,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 7,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 7,
+                        "total": 7
+                      },
+                      "command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:agent-protocol",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:unit",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  },
+                  {
+                    "submission": {
+                      "id": "R02",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-04T03:43:13+00:00",
+                      "candidate_commit": "a4f20c0b24351ce71e28b8b710d7e265f9908e4c",
+                      "base_commit": "cd508bbf4c80ceedca13eb1e3364a1ba58480318",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S06.T04.R02.json",
+                        "sha256": "bd225420c084b010212399766c951e16a5cf651eaf1a8894b89bfa5d6c4652db",
+                        "commit": "a4f20c0b24351ce71e28b8b710d7e265f9908e4c",
+                        "recorded_at": "2026-09-04T03:43:13+00:00"
+                      },
+                      "acceptance_criteria_sha256": "1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa",
+                      "changed_paths": [
+                        "apps/desktop/src-tauri/src/supervisor.rs",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/ProjectHomeWorkspace.test.tsx",
+                        "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+                        "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+                        "apps/desktop/src/app/workflowNavigation.test.ts",
+                        "apps/desktop/src/app/workflowNavigationModel.ts",
+                        "artifacts/evidence/CAP-03.S06.T04.R01.json",
+                        "artifacts/evidence/CAP-03.S06.T04.review-R01.json",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "packages/contracts/core-api/openapi.json",
+                        "planning/backlog.yaml",
+                        "planning/status-summary.md",
+                        "services/core-api/src/research_observatory_core/models.py",
+                        "services/core-api/src/research_observatory_core/ports/repositories.py",
+                        "services/core-api/src/research_observatory_core/repositories.py",
+                        "services/core-api/src/research_observatory_core/research_intents.py",
+                        "services/core-api/src/research_observatory_core/workflow_progress.py",
+                        "tests/service/test_workflow_progress.py",
+                        "tools/core_api_contract.py",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_*.py",
+                        "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+                        "npm test --prefix packages/contracts -- --run; packages/contracts/node_modules/.bin/tsc.cmd -p packages/contracts/tsconfig.json --noEmit --pretty false; .venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+                        "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked --all-features supervisor::tests",
+                        ".venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R02-built-frame.json",
+                        ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+                        ".venv/Scripts/python.exe -m unittest discover -s tests/contracts -p test_*.py; .venv/Scripts/python.exe -m unittest discover -s tests/packaging -p test_*.py",
+                        ".venv/Scripts/python.exe -m ruff format --check <eight changed Python files>; .venv/Scripts/python.exe -m ruff check <same files>; .venv/Scripts/python.exe -m mypy --follow-imports=skip <same files>",
+                        ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv/Scripts/python.exe tools/repository_structure_check.py --repo .; .venv/Scripts/python.exe tools/architecture_check.py --repo .",
+                        ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --affected-base e437cad11d0eb729790e575a7f45bf609d8b7ec4 --affected-head a4f20c0b24351ce71e28b8b710d7e265f9908e4c --deferred-gate W1-exit --selection-only; git diff --check e437cad11d0eb729790e575a7f45bf609d8b7ec4..a4f20c0b24351ce71e28b8b710d7e265f9908e4c"
+                      ],
+                      "deferred_checks": [
+                        "The repository-wide quality wrapper remains red solely on the already disclosed unchanged baseline: Ruff-format differences in selective_recalculation.py, test_dependency_impacts.py, and test_recalculation_api.py plus ten MyPy errors in planctl.py, ui_conformance.py, selective_recalculation.py, test_ui_conformance.py, and test_selective_recalculation.py. All eight changed Python files pass focused Ruff and MyPy; baseline repair remains mandatory before W1 exit.",
+                        "The complete foundation inventory is deferred because T04 does not change the verification runner or governance kernel. Exact backlog/view/architecture checks and affected selection cover the task boundary; full replay remains mandatory at W1 exit.",
+                        "Complete cross-capability cancellation, migration, restart, recovery, security, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit."
+                      ],
+                      "selection_rationale": "R02 closes seven high R01 findings across durable workflow authority, profile migration, evidence authorization, idempotency, generated/native public contracts, and renderer concurrency. The selected matrix therefore replays every finding with real SQLite and browser/model regressions, the full service/desktop/contract suites, strict generated and native boundaries, a real packaged Windows sidecar, approved UI/accessibility conformance, changed-file static quality, and governance/affected-path integrity. It does not repeat the complete Wave matrix at this task boundary.",
+                      "selection_sha256": "6bccdb32778d26362bd59fd7bb040b214e0f022c5f493415c6596a58e8bf2a5d",
+                      "prior_attempt_id": "R01",
+                      "open_finding_ids": [
+                        "CAP-03.S06.T04-R01-F01",
+                        "CAP-03.S06.T04-R01-F02",
+                        "CAP-03.S06.T04-R01-F03",
+                        "CAP-03.S06.T04-R01-F04",
+                        "CAP-03.S06.T04-R01-F05",
+                        "CAP-03.S06.T04-R01-F06",
+                        "CAP-03.S06.T04-R01-F07"
+                      ],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:agent-protocol",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:unit",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "packet_sha256": "aacc99374e20378acca76c0083510da695dc146523655442ea974aed4fc576a8"
+                    },
+                    "review": {
+                      "reviewer": "agent:t04-r02-independent-reviewer",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-09-04T03:54:08+00:00",
+                      "notes": "The strict-descendant R02 candidate, direct-child submission, exact 23-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, linear ancestry, and patch hygiene authenticate. Focused real-SQLite service/authority tests, renderer model and Project Home tests, generated-client parity, native request-shape tests, and task governance validation pass. R01-F01 and R01-F03 through R01-F07 are fixed. The service portion of R01-F02 is also corrected: revisitation now requires an exact terminal source, preserves a displaced active head, and denies linear profiles. Approval remains unavailable because that earlier-stage transition is not reachable through the shipped renderer: the only revisit action is shown after terminal workflow completion and the renderer derives its source only from the server's recommended stage key. Opening an earlier completed step from the workflow rail is navigation-only and records no transition, so the criterion that cyclical workflows can revisit earlier stages is not satisfied end to end."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S06.T04.review-R02.json",
+                      "sha256": "c3c907bca0f8a555be78e0eb996a89036d311ebaf36a8e6c3dd64a50ba01e64b"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-03.S06.T04-R02-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 3,
+                        "title": "Earlier-stage revisitation is implemented in Core but unreachable from the shipped renderer",
+                        "reproduction": "At candidate a4f20c0b24351ce71e28b8b710d7e265f9908e4c, tests/service/test_workflow_progress.py:341-387 proves the service can revisit terminal stage A while later stage B is current and preserve B as in-progress. For that exact projection, workflow_progress.py:500-501 recommends B, while workflowNavigationModel.ts:174-179 selects a revisit source only when its stageKey equals progress.recommendedStageKey; it therefore cannot select A. ProjectHomeWorkspace.tsx:75-98 exposes onRevisit only when current is null, and WorkflowNavigation.tsx:128-140 routes an earlier-step click to ApplicationRuntime.tsx:764-775, which changes only the displayed workspace and explicitly announces that no completion or checkpoint was recorded. The positive renderer unit test at workflowNavigation.test.ts:365-399 makes A the recommended key by hand and does not represent the server state with B current. Consequently a researcher cannot perform the earlier-stage revisit required by the approved cyclical-workflow criterion, despite the repaired Core command.",
+                        "required_remediation": "Expose an explicit researcher-controlled revisit action for an eligible terminal earlier stage while another stage is current. Derive the source from the selected terminal stage rather than only recommendedStageKey, bind both the exact terminal source and displaced active-head CAS in the generated request, preserve ordinary rail navigation as non-mutating, and keep linear/current/in-progress/attention/blocked sources denied. Add an ApplicationRuntime interaction test using the real A-terminal/B-current projection that selects A, issues the exact revisit request, accepts the server result, and proves the displaced B state and prior A pass remain visible; also cover cancellation/stale-response denial for that selected-source path."
+                      }
+                    ],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-03.S06.T04-R01-F01",
+                        "disposition": "fixed",
+                        "evidence": "Active-head resolution now includes attention-required and blocked, explicit resume is exact-head CAS-bound, Project Home renders both states without false completion, and skip atomically advances only when a governed stage is optional. The current approved catalog contains no optional stage, so every current skip remains denied rather than stranding a workflow."
+                      },
+                      {
+                        "finding_id": "CAP-03.S06.T04-R01-F03",
+                        "disposition": "fixed",
+                        "evidence": "The SQLite command record now persists a canonical hashed resultProjection and replay authenticates and returns those immutable bytes before evaluating mutable current selection/stage authority. Real restart tests return exact equality after advancement and profile change while changed payload reuse conflicts."
+                      },
+                      {
+                        "finding_id": "CAP-03.S06.T04-R01-F04",
+                        "disposition": "fixed",
+                        "evidence": "Profile changes bind the exact complete prior stage snapshot, materialize retained/mapped successors or an explicit attention-required review head under the new selection, and insert Intent, selection, migration, decision, successor state, provenance, and outbox inside one BEGIN IMMEDIATE transaction. The concurrent-head replay proves the complete mutation rolls back."
+                      },
+                      {
+                        "finding_id": "CAP-03.S06.T04-R01-F05",
+                        "disposition": "fixed",
+                        "evidence": "Completion evidence resolution is project-scoped, UUID-exact, duplicate-denying, and now authorizes only aggregate_kind=evidence before hashing the immutable revision witness. The real-SQLite document-kind substitution and missing revision both fail without changing the current stage."
+                      },
+                      {
+                        "finding_id": "CAP-03.S06.T04-R01-F06",
+                        "disposition": "fixed",
+                        "evidence": "Intent and progress now share validated_workflow_authority, which validates canonical Intent history, activation/witness, selection hash and parent chain, migration/decision lookup, actor/profile/project references, approved catalog/guidance hashes, and stage selection references. Retained-valid-hash authority substitution fails closed on the progress route."
+                      },
+                      {
+                        "finding_id": "CAP-03.S06.T04-R01-F07",
+                        "disposition": "fixed",
+                        "evidence": "Each renderer request ticket binds a monotonically invalidated context generation plus per-kind request generation, project ID/root, Intent, selection/profile, active head, and optional revisit source. Runtime success, error, finally, announcement, selection, and return-context mutations consult that ticket. Progress binds the exact canonical Intent, and supporting return is created from and revalidated against the server-issued handoff that disappears when its primary-head witness changes."
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-03.S06.T04",
+                      "amendment_id": null,
+                      "attempt_id": "R02",
+                      "submitted_at": "2026-09-04T03:43:13+00:00",
+                      "reviewed_at": "2026-09-04T03:54:08+00:00",
+                      "duration_seconds": 655,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 1,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:agent-protocol",
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:unit",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R01",
+                        "replayed_finding_ids": [
+                          "CAP-03.S06.T04-R01-F01",
+                          "CAP-03.S06.T04-R01-F02",
+                          "CAP-03.S06.T04-R01-F03",
+                          "CAP-03.S06.T04-R01-F04",
+                          "CAP-03.S06.T04-R01-F05",
+                          "CAP-03.S06.T04-R01-F06",
+                          "CAP-03.S06.T04-R01-F07"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-03.S06.T04-R01-F01",
+                          "CAP-03.S06.T04-R01-F03",
+                          "CAP-03.S06.T04-R01-F04",
+                          "CAP-03.S06.T04-R01-F05",
+                          "CAP-03.S06.T04-R01-F06",
+                          "CAP-03.S06.T04-R01-F07"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "submission": {
+                      "id": "R03",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-09-04T04:12:41+00:00",
+                      "candidate_commit": "4cc54d193d113384e483a9410ec726fe250654d2",
+                      "base_commit": "a4f20c0b24351ce71e28b8b710d7e265f9908e4c",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-03.S06.T04.R03.json",
+                        "sha256": "54e9dab1c7f663964dae51c6df3c105347fef6ddf9f692219845f274ca8b028b",
+                        "commit": "4cc54d193d113384e483a9410ec726fe250654d2",
+                        "recorded_at": "2026-09-04T04:12:41+00:00"
+                      },
+                      "acceptance_criteria_sha256": "1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa",
+                      "changed_paths": [
+                        "apps/desktop/src/app.css",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/ProjectHomeWorkspace.test.tsx",
+                        "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+                        "apps/desktop/src/app/workflowNavigation.test.ts",
+                        "apps/desktop/src/app/workflowNavigationModel.ts",
+                        "artifacts/evidence/CAP-03.S06.T04.R02.json",
+                        "artifacts/evidence/CAP-03.S06.T04.review-R02.json",
+                        "docs/planning-implementation-plan.md",
+                        "planning/backlog.yaml",
+                        "planning/status-summary.md",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        "npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+                        ".venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R03-built-frame.json",
+                        ".venv/Scripts/python.exe -m ruff format --check tools/desktop_app_check.py; .venv/Scripts/python.exe -m ruff check tools/desktop_app_check.py; .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/desktop_app_check.py",
+                        ".venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility",
+                        ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+                        ".venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --affected-base a4f20c0b24351ce71e28b8b710d7e265f9908e4c --affected-head 4cc54d193d113384e483a9410ec726fe250654d2 --deferred-gate W1-exit --selection-only; git diff --check a4f20c0b24351ce71e28b8b710d7e265f9908e4c..4cc54d193d113384e483a9410ec726fe250654d2"
+                      ],
+                      "deferred_checks": [
+                        "The unchanged repository-wide Ruff/MyPy baseline debt remains separately bounded and mandatory before W1 exit; the only changed Python verifier passes focused quality.",
+                        "Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit."
+                      ],
+                      "selection_rationale": "R03 is limited to CAP-03.S06.T04-R01-F02 and its refined continuation CAP-03.S06.T04-R02-F01, the one remaining renderer reachability boundary. Credible failures are selecting a superseded or nonterminal source, omitting the displaced active-head CAS, mutating on ordinary navigation, losing prior passes, accepting a late selected-source response, breaking Project Home accessibility, or regressing the server-issued supporting handoff fixture. The selected matrix therefore covers exact-source model tests, rendered Project Home states, full desktop type/lint/unit/build, a real assembled ApplicationRuntime interaction, checker self-tests, approved UI/accessibility conformance, changed-verifier quality, and append-only governance. Service persistence, generated public contracts, and native routing did not change and were independently cleared in R02.",
+                      "selection_sha256": "5de5c7b86c44aef2635f7fcd5affcdfc9fb3496cdec7f88bbeafa1e0ffaf98b5",
+                      "prior_attempt_id": "R02",
+                      "open_finding_ids": [
+                        "CAP-03.S06.T04-R01-F02",
+                        "CAP-03.S06.T04-R02-F01"
+                      ],
+                      "root_cause_analysis": "R02 correctly separated terminal revisit-source authority from the displaced active-head CAS in Core and the generated request, but the renderer retained T04's original implicit no-argument revisit helper. That helper chose only the server's recommendedStageKey, and Project Home displayed it only after complete workflow termination. The positive renderer test manually made the completed source the recommended key, so it did not represent the reviewed A-terminal/B-current projection. R03 removes that implicit reachability assumption: it derives current eligible terminal heads, requires an explicit source selection, authenticates the selected head before request construction, and tests the real mixed-stage projection plus stale-response cancellation.",
+                      "selected_command_ids": [
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression"
+                      ],
+                      "packet_sha256": "38de62e327c57628dbb12f50135824a23790e1b98d171329e66a46bc0df245cb"
+                    },
+                    "review": {
+                      "reviewer": "agent:t04-r03-independent-reviewer",
+                      "result": "approved",
+                      "reviewed_at": "2026-09-04T04:21:04+00:00",
+                      "notes": "The strict-descendant R03 candidate, sole-parent submission, exact 12-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, append-only R01/R02 history, and patch hygiene authenticate. Independent real-SQLite, renderer, built-product browser, static-quality, and governed workflow/accessibility checks pass. The remaining parent R01-F02 and R02-F01 are fixed end to end: Project Home exposes an explicit eligible terminal A source while later B is current; the renderer sends A's exact revision/hash separately from B's exact displaced-head CAS; Core accepts A pass+1 while preserving B in-progress and A pass 1; ordinary rail navigation remains non-mutating; linear, current, in-progress, attention, blocked, and superseded sources remain ineligible; and selected-source requests cannot regain ownership after A-to-B-to-A context replacement. No blocking finding remains."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-03.S06.T04.review-R03.json",
+                      "sha256": "edd01a85d622a9ff5b0717c89e1260258250a8aed40c27ccfd9715e461b330f3"
+                    },
+                    "findings": [],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-03.S06.T04-R01-F02",
+                        "disposition": "fixed",
+                        "evidence": "Core now permits revisit only from an exact latest terminal completed/skipped/stale source in a revisitable profile, separately CAS-binds any current displaced head, appends pass+1 on the source aggregate, and preserves both histories. The rebuilt ApplicationRuntime exposes and successfully performs that same explicit earlier-stage transition while later B is current; linear and nonterminal/superseded sources remain denied."
+                      },
+                      {
+                        "finding_id": "CAP-03.S06.T04-R02-F01",
+                        "disposition": "fixed",
+                        "evidence": "Project Home derives eligible latest terminal primary heads and exposes an explicit action for completed A while recommended/current B remains active. ApplicationRuntime passes that researcher-selected A to request construction, which emits A's exact source witness and B's exact displaced-head CAS; the assembled browser accepts A pass 2 and visibly preserves B in-progress and A pass 1. Ordinary rail navigation remains non-mutating, and the selected-source guard rejects stale results after A-to-B-to-A invalidation."
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-03.S06.T04",
+                      "amendment_id": null,
+                      "attempt_id": "R03",
+                      "submitted_at": "2026-09-04T04:12:41+00:00",
+                      "reviewed_at": "2026-09-04T04:21:04+00:00",
+                      "duration_seconds": 503,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "foundation:backlog-views",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R02",
+                        "replayed_finding_ids": [
+                          "CAP-03.S06.T04-R01-F02",
+                          "CAP-03.S06.T04-R02-F01"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-03.S06.T04-R01-F02",
+                          "CAP-03.S06.T04-R02-F01"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             },
             {
               "task_id": "CAP-03.S06.T05",
               "title": "Verify all approved use-case workflows end to end",
-              "status": "NOT_STARTED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -11181,7 +11726,7 @@
             {
               "task_id": "CAP-03.S06.T04",
               "title": "Implement workflow progress, checkpoints, handoffs, and recalculation impact",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "page": "CAP-03/CAP-03.S06.T04.html",
               "dependencies": [
                 "CAP-03.S06.T03",
@@ -11196,24 +11741,27 @@
               "plan_section_sha256": "525223d1dd60bbab7c9ffa2b6ae932e6f5bcee7272454330dbfecd75edf4d1c9",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-03.S06.T04.task-start.md",
-                "sha256": "8c214ebcbc6474b8fe4e04e324f775d14461dce13a8aab647e847999ed42faa6"
+                "sha256": "61c792455b5a9eeb619a01641ae4f7453077541c47c71792f10bc5f9ca785324"
               }
             },
             {
               "task_id": "CAP-03.S06.T05",
               "title": "Verify all approved use-case workflows end to end",
-              "status": "NOT_STARTED",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S06.T05.html",
               "dependencies": [
                 "CAP-03.S06.T04"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "b6c33dd67a4c219efbc7856b21653f2fdc2db3d4"
               },
               "plan_section_sha256": "80c11ac0f4b0b7db86c26231cfdfd752a1b7ec6c839d77e9273304e87ee2d6a0",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-03.S06.T05.task-start.md",
+                "sha256": "63d5311a755cd64755cedd817b1794e38108c87a8884e09ef0c3ebf936d62c8e"
+              }
             }
           ]
         }
