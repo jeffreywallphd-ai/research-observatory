@@ -11091,7 +11091,7 @@
             {
               "task_id": "CAP-03.S06.T04",
               "title": "Implement workflow progress, checkpoints, handoffs, and recalculation impact",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -11181,7 +11181,7 @@
             {
               "task_id": "CAP-03.S06.T04",
               "title": "Implement workflow progress, checkpoints, handoffs, and recalculation impact",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-03/CAP-03.S06.T04.html",
               "dependencies": [
                 "CAP-03.S06.T03",
@@ -11189,12 +11189,15 @@
                 "CAP-03.S05.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex",
+                "branch": "codex/w1-windows-local-runtime",
+                "base_sha": "e437cad11d0eb729790e575a7f45bf609d8b7ec4"
               },
               "plan_section_sha256": "525223d1dd60bbab7c9ffa2b6ae932e6f5bcee7272454330dbfecd75edf4d1c9",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-03.S06.T04.task-start.md",
+                "sha256": "8c214ebcbc6474b8fe4e04e324f775d14461dce13a8aab647e847999ed42faa6"
+              }
             },
             {
               "task_id": "CAP-03.S06.T05",

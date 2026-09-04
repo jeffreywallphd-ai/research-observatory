@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aa7914374b3fabfbf77750883f6cd134b54727748281cb9ae462b9f23fe36fb6
+source_sha256: f84a7b520e21c913a3c33e0eb62b03e2e88bdc488051c1d75101e150bbf47ef9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6417,13 +6417,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S06.T04 - Implement workflow progress, checkpoints, handoffs, and recalculation impact
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T03`, `CAP-03.S04.T01`, `CAP-03.S05.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Persist stage progress and human checkpoints separately from background jobs, recommend the next meaningful step, and mark affected workflow outputs when intent/evidence changes.
 
