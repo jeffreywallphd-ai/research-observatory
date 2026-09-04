@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7bd45860239325cd015b5fe2c42721beac8907b244ba192a8efc5d124d22bab6
+source_sha256: 47b4ae19a724225e467639066c46b2c3fd8e887e334203605b9b747850db4468
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6158,7 +6158,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench, with visible progress and access to supporting tools.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

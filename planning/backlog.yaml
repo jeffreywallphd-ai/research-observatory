@@ -14646,7 +14646,7 @@ capabilities:
     depends_on:
     - CAP-03.S02.T01
     - CAP-00.S06.T04
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-03.S06.T01
       capability_id: CAP-03
@@ -17202,13 +17202,18 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: APPROVED
+      reviewer: agent:cap03-s06-integration-reviewer
+      reviewed_at: '2026-09-04T18:54:40+00:00'
       evidence:
       - artifacts/evidence/CAP-03.S06.integration-R01.json
-      notes: R01 integrates all five independently approved tasks at product candidate 8c6ec2e. The affected contract/Core/SQLite/native/desktop/E2E/UI/accessibility/architecture/performance
-        union passes; exact W1-exit deferrals remain explicit; no open task finding.
+      notes: 'APPROVED exact CAP-03.S06 R01 submission 3e44d9d258419fbb8332426ee299a29ce8046b0e: direct state/evidence/submission
+        lineage and evidence SHA/blob authenticate; all five tasks are DONE and independently approved with all ten final
+        hashes exact and all sixteen prior findings closed. Fresh selector reproduces 126 paths, 38 unknown paths, safety-sensitive
+        fallback and the exact three W1-exit deferrals. Fresh Core/SQLite/contracts/native/renderer/production-frame/UI/accessibility/API/architecture
+        replays pass the fourteen-profile and exact cycle, restart, migration, support-return, stale-response and revisit-authority
+        boundaries. No finding remains. Preserve clean-clone performance plus full Windows/package/cross-capability qualification
+        for W1 exit.'
   execution_mode: wave_contribution
   campaign: null
   completion:
