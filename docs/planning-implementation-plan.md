@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 331dd3bb40c83d3dfcd4cf5c5acc23410b75d6cc447461f3fb0feb8494a83b98
+source_sha256: 7d32b9e02bee2828583e6ececd1a6115225f55559bc790bf20433ca4741a1ada
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -6415,15 +6415,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-03.S06.T04 - Implement workflow progress, checkpoints, handoffs, and recalculation impact
+#### - [x] CAP-03.S06.T04 - Implement workflow progress, checkpoints, handoffs, and recalculation impact
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S06.T03`, `CAP-03.S04.T01`, `CAP-03.S05.T01`
 
-**Owner / review:** codex / agent:t04-r02-independent-reviewer (`changes-requested`)
+**Owner / review:** codex / agent:t04-r03-independent-reviewer (`approved`)
 
 **Objective:** Persist stage progress and human checkpoints separately from background jobs, recommend the next meaningful step, and mark affected workflow outputs when intent/evidence changes.
 
@@ -6448,10 +6448,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S06.T04.R01.json` at `cd508bbf4c80ceedca13eb1e3364a1ba58480318`
 - `artifacts/evidence/CAP-03.S06.T04.R02.json` at `a4f20c0b24351ce71e28b8b710d7e265f9908e4c`
+- `artifacts/evidence/CAP-03.S06.T04.R03.json` at `4cc54d193d113384e483a9410ec726fe250654d2`
 
 ##### Review history — CAP-03.S06.T04
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -6524,17 +6525,48 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `CAP-03.S06.T04-R01-F06` `fixed` — Intent and progress now share validated_workflow_authority, which validates canonical Intent history, activation/witness, selection hash and parent chain, migration/decision lookup, actor/profile/project references, approved catalog/guidance hashes, and stage selection references. Retained-valid-hash authority substitution fails closed on the progress route.
 - `CAP-03.S06.T04-R01-F07` `fixed` — Each renderer request ticket binds a monotonically invalidated context generation plus per-kind request generation, project ID/root, Intent, selection/profile, active head, and optional revisit source. Runtime success, error, finally, announcement, selection, and return-context mutations consult that ticket. Progress binds the exact canonical Intent, and supporting return is created from and revalidated against the server-issued handoff that disappears when its primary-head witness changes.
 
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `38de62e327c57628dbb12f50135824a23790e1b98d171329e66a46bc0df245cb`
+
+- Candidate / base / branch: `4cc54d193d113384e483a9410ec726fe250654d2` / `a4f20c0b24351ce71e28b8b710d7e265f9908e4c` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-04T04:12:41+00:00`
+- Evidence: `artifacts/evidence/CAP-03.S06.T04.R03.json` / `54e9dab1c7f663964dae51c6df3c105347fef6ddf9f692219845f274ca8b028b` / `4cc54d193d113384e483a9410ec726fe250654d2`
+- Acceptance-criteria SHA-256: `1defcd920a129d753b6df5e6a496fda7c1dfacf8c4d71899514baeceb25f26aa`
+- Verification-selection SHA-256: `5de5c7b86c44aef2635f7fcd5affcdfc9fb3496cdec7f88bbeafa1e0ffaf98b5`
+- Changed paths: `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/ProjectHomeWorkspace.test.tsx`, `apps/desktop/src/app/ProjectHomeWorkspace.tsx`, `apps/desktop/src/app/workflowNavigation.test.ts`, `apps/desktop/src/app/workflowNavigationModel.ts`, `artifacts/evidence/CAP-03.S06.T04.R02.json`, `artifacts/evidence/CAP-03.S06.T04.review-R02.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/status-summary.md`, `tools/desktop_app_check.py`
+- Selected checks: `npm test --prefix apps/desktop -- --run; apps/desktop/node_modules/.bin/tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop`, `.venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R03-built-frame.json`, `.venv/Scripts/python.exe -m ruff format --check tools/desktop_app_check.py; .venv/Scripts/python.exe -m ruff check tools/desktop_app_check.py; .venv/Scripts/python.exe -m mypy --follow-imports=skip tools/desktop_app_check.py`, `.venv/Scripts/python.exe tools/ui_change_gate.py --repo .; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check workflows; .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check accessibility`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv/Scripts/python.exe tools/verify.py --repo . --profile desktop --affected-base a4f20c0b24351ce71e28b8b710d7e265f9908e4c --affected-head 4cc54d193d113384e483a9410ec726fe250654d2 --deferred-gate W1-exit --selection-only; git diff --check a4f20c0b24351ce71e28b8b710d7e265f9908e4c..4cc54d193d113384e483a9410ec726fe250654d2`
+- Deferred checks: `The unchanged repository-wide Ruff/MyPy baseline debt remains separately bounded and mandatory before W1 exit; the only changed Python verifier passes focused quality.`, `Complete cross-capability cancellation, migration, restart, recovery, security, packaging, performance, and Windows x64 qualification remains mandatory at CAP-03.S06 slice review, the next coherent W1 checkpoint, and W1 exit.`
+- Selection rationale: R03 is limited to CAP-03.S06.T04-R01-F02 and its refined continuation CAP-03.S06.T04-R02-F01, the one remaining renderer reachability boundary. Credible failures are selecting a superseded or nonterminal source, omitting the displaced active-head CAS, mutating on ordinary navigation, losing prior passes, accepting a late selected-source response, breaking Project Home accessibility, or regressing the server-issued supporting handoff fixture. The selected matrix therefore covers exact-source model tests, rendered Project Home states, full desktop type/lint/unit/build, a real assembled ApplicationRuntime interaction, checker self-tests, approved UI/accessibility conformance, changed-verifier quality, and append-only governance. Service persistence, generated public contracts, and native routing did not change and were independently cleared in R02.
+- Prior round / replayed open findings: `R02` / `CAP-03.S06.T04-R01-F02`, `CAP-03.S06.T04-R02-F01`
+- Root-cause escalation: R02 correctly separated terminal revisit-source authority from the displaced active-head CAS in Core and the generated request, but the renderer retained T04's original implicit no-argument revisit helper. That helper chose only the server's recommendedStageKey, and Project Home displayed it only after complete workflow termination. The positive renderer test manually made the completed source the recommended key, so it did not represent the reviewed A-terminal/B-current projection. R03 removes that implicit reachability assumption: it derives current eligible terminal heads, requires an explicit source selection, authenticates the selected head before request construction, and tests the real mixed-stage projection plus stale-response cancellation.
+
+**Disposition / reviewer / time:** `approved` / agent:t04-r03-independent-reviewer / `2026-09-04T04:21:04+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-03.S06.T04.review-R03.json` / `edd01a85d622a9ff5b0717c89e1260258250a8aed40c27ccfd9715e461b330f3`
+
+**Review notes:** The strict-descendant R03 candidate, sole-parent submission, exact 12-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, append-only R01/R02 history, and patch hygiene authenticate. Independent real-SQLite, renderer, built-product browser, static-quality, and governed workflow/accessibility checks pass. The remaining parent R01-F02 and R02-F01 are fixed end to end: Project Home exposes an explicit eligible terminal A source while later B is current; the renderer sends A's exact revision/hash separately from B's exact displaced-head CAS; Core accepts A pass+1 while preserving B in-progress and A pass 1; ordinary rail navigation remains non-mutating; linear, current, in-progress, attention, blocked, and superseded sources remain ineligible; and selected-source requests cannot regain ownership after A-to-B-to-A context replacement. No blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-03.S06.T04-R01-F02` `fixed` — Core now permits revisit only from an exact latest terminal completed/skipped/stale source in a revisitable profile, separately CAS-binds any current displaced head, appends pass+1 on the source aggregate, and preserves both histories. The rebuilt ApplicationRuntime exposes and successfully performs that same explicit earlier-stage transition while later B is current; linear and nonterminal/superseded sources remain denied.
+- `CAP-03.S06.T04-R02-F01` `fixed` — Project Home derives eligible latest terminal primary heads and exposes an explicit action for completed A while recommended/current B remains active. ApplicationRuntime passes that researcher-selected A to request construction, which emits A's exact source witness and B's exact displaced-head CAS; the assembled browser accepts A pass 2 and visibly preserves B in-progress and A pass 1. Ordinary rail navigation remains non-mutating, and the selected-source guard rejects stale results after A-to-B-to-A invalidation.
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `changes-requested` by agent:t04-r02-independent-reviewer at `2026-09-04T03:54:08+00:00`
+**Current latest-review projection:** `approved` by agent:t04-r03-independent-reviewer at `2026-09-04T04:21:04+00:00`
 
-**Latest notes:** The strict-descendant R02 candidate, direct-child submission, exact 23-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, linear ancestry, and patch hygiene authenticate. Focused real-SQLite service/authority tests, renderer model and Project Home tests, generated-client parity, native request-shape tests, and task governance validation pass. R01-F01 and R01-F03 through R01-F07 are fixed. The service portion of R01-F02 is also corrected: revisitation now requires an exact terminal source, preserves a displaced active head, and denies linear profiles. Approval remains unavailable because that earlier-stage transition is not reachable through the shipped renderer: the only revisit action is shown after terminal workflow completion and the renderer derives its source only from the server's recommended stage key. Opening an earlier completed step from the workflow rail is navigation-only and records no transition, so the criterion that cyclical workflows can revisit earlier stages is not satisfied end to end.
+**Latest notes:** The strict-descendant R03 candidate, sole-parent submission, exact 12-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, append-only R01/R02 history, and patch hygiene authenticate. Independent real-SQLite, renderer, built-product browser, static-quality, and governed workflow/accessibility checks pass. The remaining parent R01-F02 and R02-F01 are fixed end to end: Project Home exposes an explicit eligible terminal A source while later B is current; the renderer sends A's exact revision/hash separately from B's exact displaced-head CAS; Core accepts A pass+1 while preserving B in-progress and A pass 1; ordinary rail navigation remains non-mutating; linear, current, in-progress, attention, blocked, and superseded sources remain ineligible; and selected-source requests cannot regain ownership after A-to-B-to-A context replacement. No blocking finding remains.
 
-**Currently open findings:** `CAP-03.S06.T04-R01-F02`, `CAP-03.S06.T04-R02-F01`
+**Currently open findings:** -
 
 #### - [ ] CAP-03.S06.T05 - Verify all approved use-case workflows end to end
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
