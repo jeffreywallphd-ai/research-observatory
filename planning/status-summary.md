@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: f99a979c79ce3c6eeeadcecf3e4a61e5e410658158a9dad630109d9d89a88e62
+source_sha256: 46897838f4f60fc9d66b9b56e8b14b7eb7b9d4cb47bfd8cbc1b78758c4fdb54b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 254 |
-| `BLOCKED` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 65 |
 | `DEFERRED` | 36 |
 
@@ -599,4 +599,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-07.S01.T02` Implement model registry and capability discovery | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |

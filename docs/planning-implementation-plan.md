@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f99a979c79ce3c6eeeadcecf3e4a61e5e410658158a9dad630109d9d89a88e62
+source_sha256: 46897838f4f60fc9d66b9b56e8b14b7eb7b9d4cb47bfd8cbc1b78758c4fdb54b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8901,7 +8901,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -8932,7 +8932,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: The stale ordering blocker is resolved: CAP-03.S04 through CAP-03.S06 and their dependency-ordered predecessors are DONE and independently approved, W1.CP07 records the closed workflow-profile risk cluster, and CAP-07.S01 is now the current W1 slice. No prior T02 product work existed.
 
 #### - [ ] CAP-07.S01.T03 - Implement routing, fallback, timeout, and circuit-breaker policy
 

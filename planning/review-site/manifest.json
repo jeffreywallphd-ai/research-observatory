@@ -13992,13 +13992,13 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": null
+                "notes": "Reopened: The stale ordering blocker is resolved: CAP-03.S04 through CAP-03.S06 and their dependency-ordered predecessors are DONE and independently approved, W1.CP07 records the closed workflow-profile risk cluster, and CAP-07.S01 is now the current W1 slice. No prior T02 product work existed."
               },
               "review_control": null
             },
@@ -14037,7 +14037,7 @@
             {
               "task_id": "CAP-07.S01.T02",
               "title": "Implement model registry and capability discovery",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-07/CAP-07.S01.T02.html",
               "dependencies": [
                 "CAP-07.S01.T01"

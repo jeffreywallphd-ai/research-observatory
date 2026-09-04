@@ -20581,32 +20581,32 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile ai
       - python tools/verify.py --profile service
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-01T13:30:14+00:00'
-      updated_at: '2026-09-01T13:47:34+00:00'
+      updated_at: '2026-09-04T19:00:05+00:00'
       completed_at: null
-      blocker:
-        reason: 'Correct stale workflow ordering: CAP-03.S04.T01 remained blocked after W1.A05 adoption and should have been
-          reopened before task selection; no CAP-07.S01.T02 product implementation began.'
-        next_action: After CAP-03.S04.T01 and its dependency-ordered predecessors complete, reopen CAP-07.S01.T02 through
-          taskctl when it is again the selected READY work.
-        recorded_at: '2026-09-01T13:47:34+00:00'
-        owner: codex
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: null
+        notes: 'Reopened: The stale ordering blocker is resolved: CAP-03.S04 through CAP-03.S06 and their dependency-ordered
+          predecessors are DONE and independently approved, W1.CP07 records the closed workflow-profile risk cluster, and
+          CAP-07.S01 is now the current W1 slice. No prior T02 product work existed.'
       base_sha: 949f8a37ec9a5cb48b9f0e4ea9c2cc1a30e4e4a5
-      lease: null
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-04T19:00:05+00:00'
+        expires_at: '2026-09-05T03:00:05+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      cancellation: null
     - id: CAP-07.S01.T03
       capability_id: CAP-07
       slice_id: CAP-07.S01
