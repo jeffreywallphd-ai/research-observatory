@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 934c6c6fe982c6be900344e514cdb9cb045a2835cb143b9d1ddd851167646124
+source_sha256: d3b01045584970a4fa7ee51c58a8483bb8d830fe3a55ee84bba841082a9eae65
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 8 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 6 |
+| Wave amendments | 7 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -46,6 +46,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A04` | `ECR-0003` | `planning/wave-amendment-approvals/W1.A04.json` | `SUPERSEDED` |
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
+| `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `APPROVED` |
 
 ## Waves
 
@@ -1604,6 +1605,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** APPROVED at frozen R01 state 966598fc9a6e50b19914bc0911918425bd0fc8fd for candidate 8cfefe0249581bbf26f2bc4c97aeab0289007657. Evidence SHA-256 491b2ddda142f060a5285b534a1b4173f859c2873cd8e4af4957ea71129ae049 and the exact eight-path inventory authenticate. The backlog and CAP-03.S06 slice plan contain exactly the packet-authorized one-for-one criterion replacement; every other CAP-03.S06 semantic field is preserved. The approved RO-UI-ACADEMIC-MINIMAL-1.5 catalog contains 14 unique hash-bound workflows. Runtime W1.A06 authority, backlog, 489-page review site, generated views, UI reference, and Git scope all pass. No product, security, experience, release, predecessor, or unrelated planning authority changed. Product/full suites remain appropriately deferred. This approves only W1.A06.T01; it does not approve amendment exit, adoption, ordinary W1 resume, W1 qualification, or release.
 
 **Currently open findings:** -
+
+## W1.A07 - ECR-0006
+
+**Target Wave / class:** `W1` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A07.json` (`c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-09-04T06:27:45.2967207-04:00` by repository-owner: The repository owner approved ECR-0006/W1.A07 in direct response to the exact-commit approval request for 43e317be1e644c77e653ff5f121425d6e2cde2ef. Authorize only bootstrap W1.A07.B00, contribution W1.A07.S01, and task W1.A07.T01 as hash-bound in the packet. Reaffirm accepted ADR-0026 and the already approved RO-UI-ACADEMIC-MINIMAL-1.5 cycle policy without changing product or experience authority. Keep W1 paused and CAP-03.S06.T05 blocked until W1.A07 adoption and explicit ordinary resume and task recovery.
+
+### Amendment-exit review and adoption — W1.A07
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 # Capability contributions, slices, and tasks

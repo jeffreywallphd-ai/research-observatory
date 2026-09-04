@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A07.B00",
+  "commit": "0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b",
+  "baseCommit": "72052b7f7781dcfc83a1a2c8dae362b899b114d5",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0006.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0006 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0006/W1.A07 is approved and history-bound to exact packet candidate 43e317be1e644c77e653ff5f121425d6e2cde2ef, independent R01 ledger introduction 8b6e63613247597d7eb378c5e87113f914fe6f18, and approval-record introduction 72052b7f7781dcfc83a1a2c8dae362b899b114d5."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_pending_v4_successor_orders_interleaved_authority_and_reuses_approved_experience tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_review_checker_validates_enabler_hashes_pages_and_links",
+      "exitCode": 0,
+      "result": "Both focused approval-projection tests passed in 15.810 seconds, including the complete 490-page generated-site integrity check."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 490 planning review pages pass after the deterministic ECR-0006 approval projection."
+    },
+    {
+      "command": "git diff --check; git diff --name-only 72052b7f7781dcfc83a1a2c8dae362b899b114d5 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b --",
+      "exitCode": 0,
+      "result": "Patch hygiene passes and the exact approval-to-bootstrap candidate range contains only the three packet-authorized generated ECR-0006 projection paths."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "planctl authenticates the immutable W1 base; adopted W1.A01-W1.A03; terminal reserved W1.A04; adopted W1.A05-W1.A06; GOV-MIG-0001; revision-12 MI-0001; ECR-0006 packet; R01 independent review; and W1.A07 approval record.",
+        "The packet, proposal, static review, R01 ledger, approval, governed reference, migration, and predecessor hashes reproduce and remain ancestral."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The generic bootstrap controller may append only W1.A07 in APPROVED state with W1.A07.B00 in REVIEW and exact packet task inventory while preserving all interleaved predecessor authority and MI-0001.",
+        "Bootstrap submission performs the append atomically only after this exact manifest and candidate pass scope, ancestry, quiescence, and evidence checks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "W1 is PAUSED at Wave scope with no lease, no active amendment campaign or recovery hold; CAP-03.S06.T05 remains BLOCKED and lease-free with no implementation evidence.",
+        "Candidate 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b changes no product, canonical backlog, CAP-03.S06 plan, approved experience, security, runtime, schema, migration, task, or release-gate byte."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Only planning/review-site/enablers/ECR-0006.html, planning/review-site/enablers/index.html, and planning/review-site/manifest.json changed after approval introduction.",
+        "The generated page truthfully shows APPROVED human authority, NOT_MATERIALIZED lifecycle, no amendment campaign, ordered predecessor authority, unchanged v1.5 binding, and an authorized but unmaterialized W1.A07.T01 inventory."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 affects only append-only amendment authority and deterministic approval projections. Selected checks cover exact v4 approval history, interleaved predecessor and MI-0001 preservation through the already independently reviewed generic controller, generated-page truth, canonical site integrity, and exact changed paths. No product or platform behavior changed.",
+    "deferred": [
+      "The canonical CAP-03.S06 criterion reconciliation belongs to W1.A07.T01 after bootstrap approval, materialization, and activation.",
+      "T05 product workflow verification plus security, accessibility, packaging, performance, Windows-x64, recovery, and complete Wave qualification remain due after ordinary recovery or at W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-review",
+    "note": "Review exact candidate 0d5fd02450b0e23b75d7b980ce1f51f754f4aa5b, this evidence manifest, and the atomic bootstrap-submit projection. Confirm exact approval ancestry, authorized three-path candidate, W1.A07-only append, immutable predecessor and MI-0001 state, W1 pause and T05 block, generated-view truth, and absence of product or canonical CAP-03.S06 changes before materialization."
+  }
+}
