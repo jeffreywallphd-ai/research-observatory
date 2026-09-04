@@ -15877,6 +15877,15 @@ capabilities:
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      experience_change:
+        kind: approved-reference-implementation
+        contract_path: artifacts/evidence/ui-change/CAP-03.S06.T03.json
+        reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
+        reference_version: '1.5'
+        reference_package_sha256: 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae
+        reference_approval_commit: 7ec1b27d72c189216d7a203586b7339202733531
+        previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.4
+        implementation_agent: agent:codex
     - id: CAP-03.S06.T04
       capability_id: CAP-03
       slice_id: CAP-03.S06
