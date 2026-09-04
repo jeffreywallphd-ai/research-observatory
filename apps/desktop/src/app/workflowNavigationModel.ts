@@ -56,6 +56,8 @@ export interface WorkflowAuthoritySnapshot {
   readonly profileCatalogVersion: string;
   readonly referenceId: string;
   readonly referenceVersion: string;
+  readonly intentGuidanceVersion: string;
+  readonly intentGuidanceHash: string;
   readonly profileId: WorkflowProfileId;
   readonly profile: WorkflowProfileProjection;
   readonly currentStageKey: string;
@@ -83,6 +85,10 @@ export interface SupportingReturnContext {
   readonly intentRevisionContentHash: string;
   readonly profileCatalogHash: string;
   readonly profileCatalogVersion: string;
+  readonly referenceId: string;
+  readonly referenceVersion: string;
+  readonly intentGuidanceVersion: string;
+  readonly intentGuidanceHash: string;
   readonly profileId: WorkflowProfileId;
   readonly currentStageKey: string;
   readonly currentPageContractId: string;
@@ -179,6 +185,8 @@ export function createWorkflowAuthoritySnapshot(
     profileCatalogVersion: catalog.profileCatalogVersion,
     referenceId: catalog.referenceId,
     referenceVersion: catalog.referenceVersion,
+    intentGuidanceVersion: catalog.intentGuidanceVersion,
+    intentGuidanceHash: catalog.intentGuidanceHash,
     profileId: profile.profileId,
     profile,
     currentStageKey: current.stageKey,
@@ -265,6 +273,10 @@ export function createSupportingReturn(
     intentRevisionContentHash: authority.intentRevisionContentHash,
     profileCatalogHash: authority.profileCatalogHash,
     profileCatalogVersion: authority.profileCatalogVersion,
+    referenceId: authority.referenceId,
+    referenceVersion: authority.referenceVersion,
+    intentGuidanceVersion: authority.intentGuidanceVersion,
+    intentGuidanceHash: authority.intentGuidanceHash,
     profileId: authority.profileId,
     currentStageKey: authority.currentStageKey,
     currentPageContractId: authority.currentPageContractId,
@@ -282,6 +294,10 @@ export function supportingReturnMatches(
     && context.intentRevisionContentHash === authority.intentRevisionContentHash
     && context.profileCatalogHash === authority.profileCatalogHash
     && context.profileCatalogVersion === authority.profileCatalogVersion
+    && context.referenceId === authority.referenceId
+    && context.referenceVersion === authority.referenceVersion
+    && context.intentGuidanceVersion === authority.intentGuidanceVersion
+    && context.intentGuidanceHash === authority.intentGuidanceHash
     && context.profileId === authority.profileId
     && context.currentStageKey === authority.currentStageKey
     && context.currentPageContractId === authority.currentPageContractId;

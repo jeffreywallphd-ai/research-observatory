@@ -20,6 +20,7 @@ import {
   intentAcceptanceAvailability,
   intentAcceptanceRequest,
   intentWorkspaceAvailability,
+  persistedIntentUpdateMatchesCurrentProject,
   selectedIntentGuidance,
 } from "./IntentWorkspace";
 
@@ -160,6 +161,23 @@ function response(status: number, body: unknown, contentType = "application/json
 }
 
 describe("guided research intent workspace", () => {
+  it("rejects delayed persisted updates after the selected project changes", () => {
+    const projectA = project;
+    const projectB = {
+      ...project,
+      projectId: "22222222-2222-4222-8222-222222222222",
+      root: "C:/Research/study-two",
+    };
+    const source = { projectId: projectA.projectId, root: projectA.root };
+
+    expect(persistedIntentUpdateMatchesCurrentProject(projectA, source, decisionCompleteWorkspace)).toBe(true);
+    expect(persistedIntentUpdateMatchesCurrentProject(projectB, source, decisionCompleteWorkspace)).toBe(false);
+    expect(persistedIntentUpdateMatchesCurrentProject(projectA, source, {
+      ...decisionCompleteWorkspace,
+      projectId: projectB.projectId,
+    })).toBe(false);
+  });
+
   it("invalidates impact acknowledgement for every preview-bound field", () => {
     for (const field of [
       "primaryUseCase",

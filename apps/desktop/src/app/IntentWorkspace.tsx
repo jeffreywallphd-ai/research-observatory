@@ -20,6 +20,7 @@ type PrimaryUseCase = IntentDraftRequest["primaryUseCase"];
 type EvidenceType = IntentDraftRequest["evidenceTypes"][number];
 type NoveltyStandard = NonNullable<IntentDraftRequest["noveltyStandard"]>;
 type WorkflowProfile = WorkflowProfileCatalogProjection["profiles"][number];
+export type IntentProjectIdentity = Pick<ProjectProjection, "projectId" | "root">;
 
 const EVIDENCE_TYPES: readonly EvidenceType[] = [
   "empirical-study", "systematic-review", "theoretical-work", "technical-evaluation", "standard",
@@ -164,13 +165,34 @@ export function acceptedIntentWorkspace(
   };
 }
 
+export function persistedIntentUpdateMatchesCurrentProject(
+  currentProject: IntentProjectIdentity | null,
+  sourceProject: IntentProjectIdentity,
+  workspace: Pick<IntentWorkspaceProjection, "projectId">,
+): boolean {
+  return intentProjectIdentityMatches(currentProject, sourceProject)
+    && workspace.projectId === sourceProject.projectId;
+}
+
+export function intentProjectIdentityMatches(
+  currentProject: IntentProjectIdentity | null,
+  sourceProject: IntentProjectIdentity,
+): boolean {
+  return currentProject !== null
+    && currentProject.projectId === sourceProject.projectId
+    && currentProject.root === sourceProject.root;
+}
+
 interface IntentWorkspaceProps {
   readonly project: ProjectProjection | null;
   readonly announce: (message: string) => void;
   readonly transport?: CoreApiTransport;
   readonly initialWorkspace?: IntentWorkspaceProjection | undefined;
   readonly initialCatalog?: WorkflowProfileCatalogProjection | undefined;
-  readonly onWorkspaceChange?: (workspace: IntentWorkspaceProjection) => void;
+  readonly onWorkspaceChange?: (
+    workspace: IntentWorkspaceProjection,
+    sourceProject: IntentProjectIdentity,
+  ) => void;
 }
 
 interface IntentFormState {
@@ -271,10 +293,16 @@ export function IntentWorkspace({
   const [busy, setBusy] = useState<"load" | "preview" | "save" | "accept" | null>(null);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
   const onWorkspaceChangeRef = useRef(onWorkspaceChange);
+  const activeProjectRef = useRef<IntentProjectIdentity | null>(null);
+  activeProjectRef.current = project ? { projectId: project.projectId, root: project.root } : null;
 
   useEffect(() => {
     onWorkspaceChangeRef.current = onWorkspaceChange;
   }, [onWorkspaceChange]);
+
+  useEffect(() => () => {
+    activeProjectRef.current = null;
+  }, []);
 
   useEffect(() => {
     if (initialCatalog) {
@@ -302,6 +330,7 @@ export function IntentWorkspace({
     acceptanceCoordinator.reset();
     setAcceptanceAttempt(null);
     setFormDirty(false);
+    setBusy(null);
     setFailure(null);
     if (initialWorkspace) {
       setWorkspace(initialWorkspace);
@@ -316,7 +345,7 @@ export function IntentWorkspace({
       if (!cancelled) {
         setWorkspace(next);
         setForm(initialForm(next.current, null));
-        onWorkspaceChangeRef.current?.(next);
+        onWorkspaceChangeRef.current?.(next, { projectId: project.projectId, root: project.root });
       }
     }).catch((error: unknown) => {
       if (!cancelled) setFailure(safeFailure(error));
@@ -341,6 +370,7 @@ export function IntentWorkspace({
 
   const preview = (): void => {
     if (!project || !workspace) return;
+    const sourceProject = { projectId: project.projectId, root: project.root };
     setBusy("preview");
     setFailure(null);
     void client.previewIntent({
@@ -357,15 +387,21 @@ export function IntentWorkspace({
       autonomyLevel: form.autonomyLevel,
       stoppingConditions: form.stoppingConditions,
     }).then((next) => {
+      if (!intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) return;
       setImpact(next);
       setAcknowledged(!next.acknowledgementRequired);
       announce(next.acknowledgementRequired ? "Revision impact preview ready. Review and acknowledge the affected workflow authority." : "Revision preview found no governed downstream scope change.");
-    }).catch((error: unknown) => setFailure(safeFailure(error))).finally(() => setBusy(null));
+    }).catch((error: unknown) => {
+      if (intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) setFailure(safeFailure(error));
+    }).finally(() => {
+      if (intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) setBusy(null);
+    });
   };
 
   const save = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!project || !workspace || (impact?.acknowledgementRequired && !acknowledged)) return;
+    const sourceProject = { projectId: project.projectId, root: project.root };
     setBusy("save");
     setFailure(null);
     void client.saveIntentDraft({
@@ -399,8 +435,9 @@ export function IntentWorkspace({
           ...workspace.history,
         ],
       };
+      if (!persistedIntentUpdateMatchesCurrentProject(activeProjectRef.current, sourceProject, nextWorkspace)) return;
       setWorkspace(nextWorkspace);
-      onWorkspaceChangeRef.current?.(nextWorkspace);
+      onWorkspaceChangeRef.current?.(nextWorkspace, sourceProject);
       setForm((currentForm) => ({ ...currentForm, revisionRationale: "" }));
       setFormDirty(false);
       setAcceptanceConfirmed(false);
@@ -410,10 +447,13 @@ export function IntentWorkspace({
       clearImpact();
       announce(`Research intent draft revision ${current.revision} saved locally. It remains unable to launch analysis.`);
     }).catch((error: unknown) => {
+      if (!intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) return;
       const safe = safeFailure(error);
       setFailure(safe);
       announce(`Research intent draft was not saved. ${safe.title}`);
-    }).finally(() => setBusy(null));
+    }).finally(() => {
+      if (intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) setBusy(null);
+    });
   };
 
   const accept = (): void => {
@@ -424,14 +464,17 @@ export function IntentWorkspace({
       if (!project || !current || !acceptance.available || formDirty || !acceptanceConfirmed || !acceptanceRationale.trim()) return;
       attempt = acceptanceCoordinator.prepare(project.root, current, acceptanceRationale);
     }
+    if (!project) return;
+    const sourceProject = { projectId: project.projectId, root: project.root };
     setAcceptanceAttempt(attempt);
     setBusy("accept");
     setFailure(null);
     void acceptanceCoordinator.execute().then((result) => {
       if (result.status === "accepted") {
-        const nextWorkspace = acceptedIntentWorkspace(workspace, project?.projectId ?? "", result.accepted);
+        const nextWorkspace = acceptedIntentWorkspace(workspace, sourceProject.projectId, result.accepted);
+        if (!persistedIntentUpdateMatchesCurrentProject(activeProjectRef.current, sourceProject, nextWorkspace)) return;
         setWorkspace(nextWorkspace);
-        onWorkspaceChangeRef.current?.(nextWorkspace);
+        onWorkspaceChangeRef.current?.(nextWorkspace, sourceProject);
         setForm(initialForm(result.accepted, catalog));
         setFormDirty(false);
         setAcceptanceConfirmed(false);
@@ -441,15 +484,19 @@ export function IntentWorkspace({
         return;
       }
       if (result.status === "rejected") {
+        if (!intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) return;
         const safe = safeFailure(result.error);
         setAcceptanceAttempt(null);
         setFailure(safe);
         announce(`Research intent was not accepted. ${safe.title}`);
         return;
       }
+      if (!intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) return;
       setAcceptanceAttempt(result.attempt);
       announce("Research intent acceptance outcome is unresolved. Retry the exact acceptance request to reconcile with Core before changing the draft.");
-    }).finally(() => setBusy(null));
+    }).finally(() => {
+      if (intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) setBusy(null);
+    });
   };
 
   if (!availability.available) {
