@@ -1,0 +1,72 @@
+{
+  "task_id": "CAP-03.S06.T04",
+  "attempt_id": "R03",
+  "candidate_commit": "4cc54d193d113384e483a9410ec726fe250654d2",
+  "submission_record_commit": "564a8683bd0616453a4ebb7487782cb80c41a3d5",
+  "reviewer": "agent:t04-r03-independent-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "The strict-descendant R03 candidate, sole-parent submission, exact 12-path remediation inventory, two-path submission projection, frozen evidence SHA-256/Git blob, append-only R01/R02 history, and patch hygiene authenticate. Independent real-SQLite, renderer, built-product browser, static-quality, and governed workflow/accessibility checks pass. The remaining parent R01-F02 and R02-F01 are fixed end to end: Project Home exposes an explicit eligible terminal A source while later B is current; the renderer sends A's exact revision/hash separately from B's exact displaced-head CAS; Core accepts A pass+1 while preserving B in-progress and A pass 1; ordinary rail navigation remains non-mutating; linear, current, in-progress, attention, blocked, and superseded sources remain ineligible; and selected-source requests cannot regain ownership after A-to-B-to-A context replacement. No blocking finding remains.",
+  "evidence": [
+    {
+      "type": "frozen-task-evidence",
+      "path": "artifacts/evidence/CAP-03.S06.T04.R03.json",
+      "sha256": "54e9dab1c7f663964dae51c6df3c105347fef6ddf9f692219845f274ca8b028b",
+      "git_blob": "398ed387c32e9f9161490f3d5228833940a149ad",
+      "commit": "4cc54d193d113384e483a9410ec726fe250654d2"
+    },
+    {
+      "type": "identity-and-scope-check",
+      "command": "Authenticate R02 candidate a4f20c0b24351ce71e28b8b710d7e265f9908e4c, R02 review d6c8878ac8351d2049ceec54184c042a9c9180fe, R03 candidate 4cc54d193d113384e483a9410ec726fe250654d2, sole-parent submission 564a8683bd0616453a4ebb7487782cb80c41a3d5, declared changed paths, evidence digest/blob, and git diff --check.",
+      "result": "PASS: ancestry is linear; the R03 candidate descends from the R02 candidate through its immutable review; the submission has the exact candidate as its sole parent; all 12 declared R03 paths match the Git delta; the submission adds only the R03 evidence packet and backlog projection; tracked state was clean and the remediation patch has no whitespace errors."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.service.test_workflow_progress",
+      "result": "PASS: 12/12 focused real-SQLite workflow tests passed. The A-terminal/B-current revisit uses the exact terminal A witness and exact B head CAS, appends A pass 2, preserves completed A pass 1, displaces B to in-progress without erasure, survives persisted projection reads, and denies a linear second pass without mutation."
+    },
+    {
+      "type": "independent-check",
+      "command": "npm test --prefix apps/desktop -- --run; apps\\desktop\\node_modules\\.bin\\tsc.cmd -p apps/desktop/tsconfig.json --noEmit --pretty false; npm run lint --prefix apps/desktop; npm run build --prefix apps/desktop",
+      "result": "PASS: all 120 active desktop tests passed with three declared skips; strict TypeScript, lint, and the production/reference build passed. Focused tests bind the selected terminal source independently from the active displaced head and reject an implicit recommended-B request, exact-source substitution, linear profiles, nonterminal current sources, and A-to-B-to-A selected-source results."
+    },
+    {
+      "type": "independent-adversarial-replay",
+      "finding_id": "CAP-03.S06.T04-R02-F01",
+      "command": "Inspect workflowRevisitSources, workflowCommandStageAuthority, WorkflowNavigation, and ApplicationRuntime against newest-first Core history using terminal and nonterminal latest heads, an older superseded terminal revision of the same stage aggregate, and ordinary rail selection.",
+      "result": "PASS: eligible sources are derived only for revisitable profiles, latest-head-first aggregate deduplication prevents an older terminal revision from becoming selectable after a newer current/in-progress/attention/blocked head, and the terminal allowlist is exactly completed/skipped-with-rationale/stale. Selected revision/hash must match the canonical eligible head. WorkflowNavigation calls only navigateToStage; that path changes the workspace and announces that no completion or checkpoint was recorded, while the explicit Project Home action alone invokes revisit."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check -q; .venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06.T04-R03-independent-review-built-frame.json",
+      "result": "PASS: all eight verifier self-tests and the rebuilt assembled ApplicationRuntime frame passed with no errors. The real interaction rendered the explicit Revisit intent-contract-1 action from A-terminal/B-current state, emitted A's exact source revision/hash and B's exact active-head revision/hash, accepted A pass 2, and retained B in-progress plus A pass 1 in rendered history; workflowEarlierStageRevisit was true."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check tools/desktop_app_check.py; .venv\\Scripts\\python.exe -m ruff check tools/desktop_app_check.py; .venv\\Scripts\\python.exe -m mypy --follow-imports=skip tools/desktop_app_check.py; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check workflows; .venv\\Scripts\\python.exe tools/ui_conformance.py --repo . --check accessibility",
+      "result": "PASS: the changed assembled-product verifier is formatted, lint-clean, and type-safe; all 139 approved workflow browser cases, 390 keyboard cases, 14 profiles, and 66 responsive/accessibility cases passed against RO-UI-ACADEMIC-MINIMAL-1.5."
+    },
+    {
+      "type": "independent-check",
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate",
+      "result": "PASS: the pre-review authoritative state validates with 20 capabilities, 117 slices, 364 tasks, and 12 release gates, preserving all R01/R02 submissions, findings, closures, ledgers, and telemetry append-only."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-03.S06.T04-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Core now permits revisit only from an exact latest terminal completed/skipped/stale source in a revisitable profile, separately CAS-binds any current displaced head, appends pass+1 on the source aggregate, and preserves both histories. The rebuilt ApplicationRuntime exposes and successfully performs that same explicit earlier-stage transition while later B is current; linear and nonterminal/superseded sources remain denied."
+    },
+    {
+      "finding_id": "CAP-03.S06.T04-R02-F01",
+      "disposition": "fixed",
+      "evidence": "Project Home derives eligible latest terminal primary heads and exposes an explicit action for completed A while recommended/current B remains active. ApplicationRuntime passes that researcher-selected A to request construction, which emits A's exact source witness and B's exact displaced-head CAS; the assembled browser accepts A pass 2 and visibly preserves B in-progress and A pass 1. Ordinary rail navigation remains non-mutating, and the selected-source guard rejects stale results after A-to-B-to-A invalidation."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-03.S06.T04-R01-F02",
+    "CAP-03.S06.T04-R02-F01"
+  ]
+}
