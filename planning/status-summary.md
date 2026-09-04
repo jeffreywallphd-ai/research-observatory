@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 45c7b25fe826e81025315302772f427f34633e1d5e44d461348aeb65f7cf3cb9
+source_sha256: b7179c67efdfd548a4eca72ce2375b71c341d6eae7bd283c102cb1fcbe0408a9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -20,7 +20,7 @@ manual_edit: prohibited
 | Enabler tasks | 9 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 7 |
+| Wave amendments | 8 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -61,6 +61,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `ADOPTED` | 6 |
+| `APPROVED` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -83,6 +84,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
 
 ## Amendment-exit review and adoption projections
 
@@ -454,6 +456,20 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 - `W1.CP06` `security` by codex at `2026-09-04T11:17:05+00:00` — Adopt the independently approved W1.A07 cycle-authority correction as a W1 security checkpoint; retain all ordinary CAP-03.S06.T05, slice-review, W1-exit qualification, and G1 obligations; keep W1 paused pending explicit taskctl resume.
   - amendment `W1.A07` / `artifacts/evidence/W1.A07.adoption.json` / `9c8448704a9c9b63302795f532a2159ea0411778f4b30dcac9c980aa53932631` / `f13e078fcd303ae28bde8999ccc55671adcc20e7`
+
+### Amendment-exit review and adoption — W1.A08
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
 
 
 ## Task review history projections

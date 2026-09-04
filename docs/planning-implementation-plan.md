@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 45c7b25fe826e81025315302772f427f34633e1d5e44d461348aeb65f7cf3cb9
+source_sha256: b7179c67efdfd548a4eca72ce2375b71c341d6eae7bd283c102cb1fcbe0408a9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 9 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 7 |
+| Wave amendments | 8 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -47,6 +47,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `APPROVED` |
 
 ## Waves
 
@@ -1738,6 +1739,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** APPROVED at frozen submitted-state commit 65bc89aafc800810268695b26683dcdce81e4831 for candidate 7baa4346aa68e9a7357e00b872f4b2965b167d4b against activation base 078dcfe197906359c11ae88a7903e69fbfa5d11d. Evidence SHA-256 89b8f9c1035c29a0f3e2a02c3921972b23235e6925e03fa1e5543f6e8caea617, R01 packet SHA-256 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386, and the exact eight-path inventory authenticate. The canonical backlog and CAP-03.S06 slice plan contain exactly the ECR-0006-authorized one-for-one cycle-criterion replacement; every other CAP-03.S06 semantic field is preserved. The approved RO-UI-ACADEMIC-MINIMAL-1.5 catalog contains 14 unique workflows, marks exactly living-review, hermeneutic-inquiry, and manuscript-review-revision cyclical, marks the named critical and systematic profiles non-cyclical, and remains bound by catalog hash 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca. Runtime W1.A07 authority, the controlled task submission, backlog, 490-page review site, generated views, governed reference, and Git scope pass. The disclosed three lifecycle-inapplicable synthetic successor-ECR fixture failures reproduce only because the real W1.A07 campaign is ACTIVE; the other 23 affected controller/projection tests pass, so this diagnostic limitation is non-blocking. No product, runtime, schema, migration, security, governed-experience, release, predecessor, or unrelated planning authority changed. Product and Windows qualification remain appropriately deferred. This approves only W1.A07.T01; it does not approve amendment exit, adoption, ordinary W1 resume, CAP-03.S06.T05 recovery, W1 qualification, or release.
 
 **Currently open findings:** -
+
+## W1.A08 - ECR-0007
+
+**Target Wave / class:** `W1` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A08.json` (`9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-09-04T16:33:03.7400050-04:00` by repository-owner: The repository owner approved ECR-0007/W1.A08 in direct response to the exact-commit approval request for 07b21b270dfb967ad3fd7e35217978c0860c8116. Authorize only bootstrap W1.A08.B00, contribution W1.A08.S01, and tasks W1.A08.T01 and W1.A08.T02 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 reference unchanged and authorize bounded production styling alignment plus live-product conformance. Keep W1 paused and CAP-07.S01.T02 blocked until W1.A08 adoption and explicit ordinary resume and task recovery.
+
+### Amendment-exit review and adoption — W1.A08
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 # Capability contributions, slices, and tasks
