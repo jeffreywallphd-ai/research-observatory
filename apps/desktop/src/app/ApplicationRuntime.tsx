@@ -200,9 +200,9 @@ export function ApplicationLockedView({
   }, [busy, recoveryConfirmation]);
   return (
     <div className="locked-application" data-application-locked="true">
-      <main className="locked-card" aria-labelledby="locked-title">
+      <main className="locked-card ro-card ro-stack" aria-labelledby="locked-title">
         <div
-          className="locked-surface-content"
+          className="locked-surface-content ro-stack"
           aria-hidden={recoveryConfirmation || undefined}
           inert={recoveryConfirmation || undefined}
         >
@@ -242,7 +242,7 @@ export function ApplicationLockedView({
         </div>
         {recoveryConfirmation ? (
           <div
-            className="locked-recovery-confirmation"
+            className="locked-recovery-confirmation ro-notice"
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="locked-recovery-title"
@@ -266,7 +266,7 @@ export function ApplicationLockedView({
           >
             <Typography id="locked-recovery-title" as="h2" variant="section-title">Confirm recovery to No login</Typography>
             <p>Windows verified the same user. This changes Research Observatory sign-in to No login{recoveryRequired ? " and replaces the invalid app policy" : " after the unavailable Hello provider"}; project protections remain unchanged.</p>
-            <div className="dialog-actions">
+            <div className="dialog-actions ro-action-row">
               <Button ref={recoveryCancelRef} autoFocus disabled={busy} onClick={() => onRecoveryDecision?.(false)}>Keep application locked</Button>
               <Button ref={recoveryConfirmRef} tone="danger" disabled={busy} onClick={() => onRecoveryDecision?.(true)}>Confirm recovery</Button>
             </div>
@@ -1083,7 +1083,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
           <span className="brand-mark" aria-hidden="true">RO</span>
           <span>Research Observatory</span>
         </a>
-        <div className="topbar-actions">
+        <div className="topbar-actions ro-cluster">
           <span className="project-context" data-project-context>
             {currentProject ? `${currentProject.displayName} · ${currentProject.accessMode === "read-only" ? "Read-only" : currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
           </span>
@@ -1187,7 +1187,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             }}
           />
 
-          <section className="command-area" aria-labelledby="command-title">
+          <section className="command-area ro-card ro-stack" aria-labelledby="command-title">
             <Typography id="command-title" as="h2" variant="section-title">Application commands</Typography>
             <Field
               id="shell-command"
@@ -1212,7 +1212,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             {visibleCommands.length === 0 ? <p role="status">No application commands match.</p> : null}
           </section>
 
-          <div className="status-grid">
+          <div className="status-grid ro-grid">
             <Panel title="Desktop shell" tone="success">
               <StatusBadge tone="success">Ready</StatusBadge>
               <p>The signed-development Tauri window and React renderer are running locally.</p>
@@ -1249,7 +1249,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       {shortcutsOpen ? (
         <div className="dialog-backdrop" role="presentation">
           <section
-            className="shortcut-dialog"
+            className="shortcut-dialog ro-dialog-surface"
             role="dialog"
             aria-modal="true"
             aria-labelledby="shortcut-title"

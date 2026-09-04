@@ -84,8 +84,8 @@ export function WorkflowNavigation({
 }: WorkflowNavigationProps): ReactNode {
   if (!authority) {
     return (
-      <nav className="workflow-navigation" aria-label="Research workflow and tools" data-workflow-navigation>
-        <div className="workflow-navigation-heading">
+      <nav className="workflow-navigation ro-stack" aria-label="Research workflow and tools" data-workflow-navigation>
+        <div className="workflow-navigation-heading ro-stack">
           <strong>Guided workflow unavailable</strong>
           <span role={loadState === "error" ? "alert" : "status"}>
             {loadState === "loading"
@@ -107,12 +107,12 @@ export function WorkflowNavigation({
 
   return (
     <nav
-      className="workflow-navigation"
+      className="workflow-navigation ro-stack"
       aria-label="Research workflow and tools"
       data-workflow-navigation
       data-workflow-nav
     >
-      <div className="workflow-navigation-heading">
+      <div className="workflow-navigation-heading ro-stack">
         <strong>{authority.profile.title}</strong>
         <span>{authority.profile.processForm === "revisitable" ? "Revisitable workflow" : "Linear workflow"}</span>
       </div>
@@ -187,8 +187,8 @@ export function WorkflowContextBar({
   const showingSupportingTool = workspaceClassification(authority, currentWorkspace).role === "supporting";
   const returnIsCurrent = supportingReturn !== null && supportingReturnMatches(supportingReturn, authority);
   return (
-    <section className="workflow-context" aria-label="Current guided workflow position" data-workflow-context>
-      <div className="workflow-context-heading">
+    <section className="workflow-context ro-card" aria-label="Current guided workflow position" data-workflow-context>
+      <div className="workflow-context-heading ro-stack">
         <strong>Step {current.order} of {stages.length} · {current.label}</strong>
         <span>{authority.referenceId} · {authority.referenceVersion}</span>
       </div>
@@ -197,7 +197,7 @@ export function WorkflowContextBar({
         <div><dt>Expected output</dt><dd>{authority.profile.expectedOutputs.join("; ")}</dd></div>
         <div><dt>Quality gate · {checkpointLabel(current.checkpointState)}</dt><dd>{current.checkpointRationale}</dd></div>
       </dl>
-      <div className="workflow-context-actions">
+      <div className="workflow-context-actions ro-stack">
         {previous ? (
           <button
             type="button"
@@ -221,7 +221,7 @@ export function WorkflowContextBar({
         ) : <span>Next step · None</span>}
       </div>
       {showingSupportingTool ? (
-        <div className="supporting-tool-context" data-supporting-tool>
+        <div className="supporting-tool-context ro-stack" data-supporting-tool>
           <strong>Supporting tool · {workspace.label}</strong>
           {returnIsCurrent ? (
             <button type="button" disabled={disabled} onClick={onReturn}>

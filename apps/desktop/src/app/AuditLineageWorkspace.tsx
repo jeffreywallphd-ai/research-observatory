@@ -563,15 +563,15 @@ function ControlledRecalculationRegion({
   };
 
   return (
-    <section className="controlled-recalculation" aria-labelledby="controlled-recalculation-title">
-      <div className="lineage-results-heading">
+    <section className="controlled-recalculation ro-stack" aria-labelledby="controlled-recalculation-title">
+      <div className="lineage-results-heading ro-cluster">
         <Typography id="controlled-recalculation-title" as="h2" variant="section-title">
           Controlled recalculation
         </Typography>
         <span>Preview first; preserve every adjudicated revision.</span>
       </div>
 
-      <section className="lineage-notice" data-recalculation-stale aria-labelledby="recalculation-stale-title">
+      <section className="lineage-notice ro-notice" data-recalculation-stale aria-labelledby="recalculation-stale-title">
         <strong id="recalculation-stale-title">
           {preview ? "Stale output remains visible" : "Check an output for dependency changes"}
         </strong>
@@ -597,13 +597,13 @@ function ControlledRecalculationRegion({
       </section>
 
       {failure ? (
-        <div className="lineage-notice lineage-notice--danger" role="alert">
+        <div className="lineage-notice ro-notice lineage-notice--danger" role="alert">
           <strong>{failure.title}</strong><span>{failure.message}</span>
         </div>
       ) : null}
 
-      <section className="lineage-governed-region" data-recalculation-preview aria-labelledby="recalculation-preview-title">
-        <div className="lineage-results-heading">
+      <section className="lineage-governed-region ro-card ro-stack" data-recalculation-preview aria-labelledby="recalculation-preview-title">
+        <div className="lineage-results-heading ro-cluster">
           <Typography id="recalculation-preview-title" as="h3" variant="section-title">Impact preview</Typography>
           <StatusBadge tone={preview ? "warning" : "neutral"}>
             {preview ? `${preview.causes.length} affected` : "Not previewed"}
@@ -612,7 +612,7 @@ function ControlledRecalculationRegion({
         {preview ? (
           <>
             {!currentPreview ? <p role="alert">The revision ID changed after this preview. Preview again before scheduling.</p> : null}
-            <div className="lineage-table-scroll">
+            <div className="lineage-table-scroll ro-table-region" tabIndex={0} aria-label="Recalculation impact table scroll region">
               <table>
                 <caption>Core-classified effects for the exact preview plan</caption>
                 <thead><tr><th scope="col">Class</th><th scope="col">Affected identity</th><th scope="col">Reason</th><th scope="col">Action</th></tr></thead>
@@ -643,7 +643,7 @@ function ControlledRecalculationRegion({
             <select id="recalculation-change-id" value={selectedChangeId} onChange={(event) => setSelectedChangeId(event.currentTarget.value)}>
               {preview.changeIds.map((changeId) => <option key={changeId} value={changeId}>{changeId}</option>)}
             </select>
-            <div className="lineage-action-row">
+            <div className="lineage-action-row ro-action-row">
               <Button
                 onClick={() => {
                   setDeferred(true);
@@ -666,7 +666,7 @@ function ControlledRecalculationRegion({
         ) : (
           <>
             <p>Preview an exact revision to see automatic, review-required, blocked, and informational effects.</p>
-            <div className="lineage-action-row">
+            <div className="lineage-action-row ro-action-row">
               <Button disabled data-defer-recalculation>Defer and keep stale</Button>
               <Button disabled data-schedule-recalculation>Schedule selected</Button>
             </div>
@@ -674,7 +674,7 @@ function ControlledRecalculationRegion({
         )}
       </section>
 
-      <section className="lineage-governed-region" data-recalculation-policy aria-labelledby="recalculation-policy-title">
+      <section className="lineage-governed-region ro-card ro-stack" data-recalculation-policy aria-labelledby="recalculation-policy-title">
         <Typography id="recalculation-policy-title" as="h3" variant="section-title">Current policy and rights authority</Typography>
         <dl className="lineage-identity">
           <div><dt>Preview policy</dt><dd>{preview ? <code>{preview.policySha256}</code> : "Not evaluated"}</dd></div>
@@ -684,10 +684,10 @@ function ControlledRecalculationRegion({
         <p>Core re-evaluates current policy when work is scheduled and when restore review is requested.</p>
       </section>
 
-      <section className="lineage-governed-region" data-recalculation-comparison aria-labelledby="recalculation-comparison-title">
+      <section className="lineage-governed-region ro-card ro-stack" data-recalculation-comparison aria-labelledby="recalculation-comparison-title">
         <Typography id="recalculation-comparison-title" as="h3" variant="section-title">Immutable revision comparison</Typography>
         <p>Compare the current adjudicated revision with a generated candidate. Neither revision is modified.</p>
-        <div className="recalculation-revision-fields">
+        <div className="recalculation-revision-fields ro-grid ro-form">
           <label htmlFor="recalculation-before-id">Before revision ID</label>
           <input id="recalculation-before-id" value={beforeRevisionId} onChange={(event) => {
             setBeforeRevisionId(event.currentTarget.value.trim().toLowerCase());
@@ -712,8 +712,8 @@ function ControlledRecalculationRegion({
         ) : null}
       </section>
 
-      <section className="lineage-governed-region" data-recalculation-restoration aria-labelledby="recalculation-restoration-title">
-        <div className="lineage-results-heading">
+      <section className="lineage-governed-region ro-card ro-stack" data-recalculation-restoration aria-labelledby="recalculation-restoration-title">
+        <div className="lineage-results-heading ro-cluster">
           <Typography id="recalculation-restoration-title" as="h3" variant="section-title">Human-gated restoration</Typography>
           <StatusBadge tone={restoreReview ? "warning" : "neutral"}>{restoreReview ? "Decision required" : "Review not requested"}</StatusBadge>
         </div>
@@ -831,7 +831,7 @@ export function AuditLineageWorkspace({
   };
 
   return (
-    <section className="audit-lineage-workspace" aria-labelledby="audit-lineage-title" data-audit-lineage-workspace>
+    <section className="audit-lineage-workspace ro-page-region" aria-labelledby="audit-lineage-title" data-audit-lineage-workspace>
       <div className="page-header">
         <Typography id="audit-lineage-title" as="h1" variant="page-title">Audit &amp; lineage</Typography>
         <Typography className="page-subtitle">
@@ -845,7 +845,7 @@ export function AuditLineageWorkspace({
           <p>No project content or identifiers are requested while this boundary is unavailable.</p>
         </Panel>
       ) : (
-        <form className="lineage-trace-form" onSubmit={submit}>
+        <form className="lineage-trace-form ro-card ro-form" onSubmit={submit}>
           <label htmlFor="lineage-revision-id">Exact output revision ID</label>
           <input
             id="lineage-revision-id"
@@ -877,7 +877,7 @@ export function AuditLineageWorkspace({
       )}
 
       {failure ? (
-        <div className="lineage-notice lineage-notice--danger" role="alert">
+        <div className="lineage-notice ro-notice lineage-notice--danger" role="alert">
           <strong>{failure.title}</strong>
           <span>{failure.message}</span>
         </div>
@@ -893,7 +893,7 @@ export function AuditLineageWorkspace({
 
       {trace ? (
         <>
-          <div className="lineage-summary-grid">
+          <div className="lineage-summary-grid ro-grid">
             <Panel title="Output identity">
               <dl className="lineage-identity">
                 <div><dt>Revision</dt><dd><code>{trace.revisionId}</code></dd></div>
@@ -910,14 +910,14 @@ export function AuditLineageWorkspace({
           </div>
 
           {trace.integrityState === "integrity-review" ? (
-            <div className="lineage-notice" role="alert">
+            <div className="lineage-notice ro-notice" role="alert">
               <strong>Integrity review required</strong>
               <span>Keep this trace available for inspection, but do not rely on it for export or claim use until repaired.</span>
             </div>
           ) : null}
 
           {trace.truncated ? (
-            <div className="lineage-notice" role="alert" data-lineage-truncated>
+            <div className="lineage-notice ro-notice" role="alert" data-lineage-truncated>
               <strong>Lineage trace is incomplete</strong>
               <span>
                 The bounded local query reached its {trace.truncationReason === "scan-limit" ? "scan" : "continuation"} limit.
@@ -927,19 +927,19 @@ export function AuditLineageWorkspace({
           ) : null}
 
           {trace.missingRevisionIds.length ? (
-            <div className="lineage-notice" role="alert">
+            <div className="lineage-notice ro-notice" role="alert">
               <strong>Referenced revisions are missing</strong>
               <ul>{trace.missingRevisionIds.map((item) => <li key={item}><code>{item}</code></li>)}</ul>
             </div>
           ) : null}
 
-          <section className="lineage-results" aria-labelledby="lineage-results-title">
-            <div className="lineage-results-heading">
+          <section className="lineage-results ro-stack" aria-labelledby="lineage-results-title">
+            <div className="lineage-results-heading ro-cluster">
               <Typography id="lineage-results-title" as="h2" variant="section-title">Lineage trace</Typography>
               <span>{trace.items.length === 0 ? "No canonical lineage record found." : "All returned branches remain visible."}</span>
             </div>
             {trace.items.length ? (
-              <div className="lineage-table-scroll">
+              <div className="lineage-table-scroll ro-table-region" tabIndex={0} aria-label="Audit lineage table scroll region">
                 <table>
                   <caption>Exact, content-free provenance facts discovered by the wasDerivedFrom {trace.direction} traversal for the selected output revision</caption>
                   <thead><tr><th scope="col">Relation and state</th><th scope="col">Entity revision</th><th scope="col">Transformation and configuration</th><th scope="col">Responsible actor</th><th scope="col">Audit event</th></tr></thead>
@@ -964,24 +964,24 @@ export function AuditLineageWorkspace({
             ) : null}
           </section>
 
-          <section className="lineage-governed-region" aria-labelledby="lineage-audit-events-title" data-audit-events>
+          <section className="lineage-governed-region ro-card ro-stack" aria-labelledby="lineage-audit-events-title" data-audit-events>
             <Typography id="lineage-audit-events-title" as="h2" variant="section-title">Audit events</Typography>
             <p>Content-minimized security, model, scholarly, rights, and invalidation facts returned by Core.</p>
             <ol>{trace.items.map((node) => <li key={`audit:${node.factId}`}><code>{node.eventId}</code> {node.eventType} · {node.activityStatus} · <time dateTime={node.occurredAt}>{node.occurredAt}</time></li>)}</ol>
           </section>
 
-          <section className="lineage-governed-region" aria-labelledby="lineage-rights-title" data-rights-egress>
+          <section className="lineage-governed-region ro-card ro-stack" aria-labelledby="lineage-rights-title" data-rights-egress>
             <Typography id="lineage-rights-title" as="h2" variant="section-title">Rights &amp; egress decisions</Typography>
             <ul>{trace.items.map((node) => <li key={`rights:${node.factId}`}><code>{node.revisionId}</code> · rights {node.rightsStatus}</li>)}</ul>
             <p>Local manifest export: {manifestReady ? "allowed" : trace.exportAllowed && trace.nextCursor !== null ? "pending (load every lineage page)" : `denied (${trace.exportDenialReason})`}. This trace does not authorize remote egress.</p>
           </section>
 
-          <section className="lineage-governed-region" aria-labelledby="lineage-decisions-title" data-human-decisions>
+          <section className="lineage-governed-region ro-card ro-stack" aria-labelledby="lineage-decisions-title" data-human-decisions>
             <Typography id="lineage-decisions-title" as="h2" variant="section-title">Human decisions</Typography>
             {humanDecisions.length ? <ul>{humanDecisions.map((node) => <li key={`decision:${node.factId}`}>{node.agentRole} · <code>{node.agentId}</code> · {node.eventType}</li>)}</ul> : <p>No human decision is recorded in this trace.</p>}
           </section>
 
-          <section className="lineage-governed-region" aria-labelledby="lineage-export-title" data-export-manifest>
+          <section className="lineage-governed-region ro-card ro-stack" aria-labelledby="lineage-export-title" data-export-manifest>
             <Typography id="lineage-export-title" as="h2" variant="section-title">Exportable manifest</Typography>
             <p>Local JSON omits research content, raw prompts, secrets, and hidden rationale. Exact identities and policy states remain.</p>
             <Button onClick={downloadManifest} disabled={!manifestReady}>Export content-minimized manifest</Button>
@@ -992,7 +992,7 @@ export function AuditLineageWorkspace({
                 : null}
           </section>
 
-          <div className="lineage-transparency-note">
+          <div className="lineage-transparency-note ro-notice">
             <strong>Useful transparency</strong>
             <p>
               This view exposes exact sources, transformations, configuration or prompt-version identities, model or human roles,

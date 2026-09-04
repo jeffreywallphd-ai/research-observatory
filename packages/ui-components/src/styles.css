@@ -7,13 +7,56 @@
 .ro-typography--compact { font: 500 var(--text-xs) / var(--leading-normal) var(--font-sans); }
 .ro-typography--label { font: 650 var(--text-2xs) / var(--leading-normal) var(--font-sans); letter-spacing: 0.04em; }
 .ro-icon { width: 1.25rem; height: 1.25rem; fill: currentColor; flex: none; }
-.ro-button { min-height: var(--control-height-md); padding: 0 var(--space-4); border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-strong); background: var(--surface-1); font: 650 var(--text-md) / var(--leading-normal) var(--font-sans); }
-.ro-button--primary { color: var(--text-inverse); background: var(--brand-600); border-color: var(--brand-600); }
+
+/* Shared content-flow primitives. Page styles select composition; these own common geometry. */
+.ro-page-region { min-width: 0; display: grid; align-content: start; gap: var(--space-6); }
+.ro-stack { min-width: 0; display: grid; align-content: start; gap: var(--ro-stack-gap, var(--space-4)); }
+.ro-cluster, .ro-action-row { min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ro-cluster-gap, var(--space-2)); }
+.ro-grid { min-width: 0; display: grid; gap: var(--grid-gap); }
+.ro-card, .ro-panel, .ro-notification, .ro-boundary-state {
+  min-width: 0;
+  padding: var(--card-padding);
+  color: var(--text-default);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+}
+.ro-card { display: grid; align-content: start; gap: var(--ro-card-gap, var(--space-3)); }
+.ro-panel { display: grid; align-content: start; gap: var(--space-3); }
+.ro-panel > div { min-width: 0; display: grid; gap: var(--space-3); }
+.ro-form { min-width: 0; display: grid; gap: var(--space-5); }
+.ro-form :where(label, legend) { color: var(--text-strong); font-weight: 700; }
+.ro-form :where(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+  width: 100%;
+  min-height: var(--control-height-md);
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-default);
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+.ro-form textarea { resize: vertical; }
+.ro-notice { min-width: 0; display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+.ro-table-region { max-width: 100%; overflow: auto; background: var(--surface-1); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+.ro-table-region table { width: 100%; border-collapse: collapse; }
+.ro-table-region caption { padding: var(--space-3); color: var(--text-muted); text-align: start; }
+.ro-table-region th, .ro-table-region td { min-width: 12rem; padding: var(--space-3); border-block-end: 1px solid var(--border-subtle); text-align: start; vertical-align: top; }
+.ro-table-region th { color: var(--text-strong); background: var(--surface-2); }
+.ro-table-region td { font-size: var(--text-sm); }
+.ro-dialog-surface { width: min(var(--drawer-width), 100%); max-height: calc(100vh - var(--space-10)); overflow: auto; display: grid; gap: var(--space-4); padding: var(--card-padding-lg); color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); }
+.ro-action-row { justify-content: flex-start; }
+
+.ro-button { min-height: var(--control-height-md); padding: 0 var(--space-4); border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-strong); background: var(--surface-1); font: 650 var(--text-md) / var(--leading-normal) var(--font-sans); cursor: pointer; }
+.ro-button--primary { min-height: var(--control-height-lg); color: var(--text-inverse); background: var(--brand-600); border-color: var(--brand-600); }
 .ro-button--danger { color: var(--danger); background: var(--danger-soft); border-color: var(--danger-border); }
-.ro-button:focus-visible, .ro-field input:focus-visible, .ro-table-scroll:focus-visible { outline: 2px solid var(--brand-600); outline-offset: 2px; box-shadow: var(--focus-ring); }
+.ro-button:hover:not(:disabled) { border-color: var(--brand-400); }
+.ro-button:disabled { cursor: not-allowed; opacity: .68; }
+.ro-button:focus-visible, .ro-field input:focus-visible, .ro-form :where(input, select, textarea):focus-visible, .ro-table-scroll:focus-visible, .ro-table-region:focus-visible { outline: 2px solid var(--brand-600); outline-offset: 2px; box-shadow: var(--focus-ring); }
 .ro-field { display: grid; gap: var(--space-1); color: var(--text-default); font: 400 var(--text-md) / var(--leading-normal) var(--font-sans); }
 .ro-field label { color: var(--text-strong); font-weight: 650; }
-.ro-field input { min-height: var(--control-height-md); padding: 0 var(--space-3); color: var(--text-strong); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-sm); }
+.ro-field input { min-height: var(--control-height-md); padding: 0 var(--space-3); color: var(--text-strong); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-md); }
 .ro-field__description { color: var(--text-muted); }
 .ro-field__error, .ro-field[data-invalid="true"] label { color: var(--danger); }
 .ro-table-scroll { max-width: 100%; overflow: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
@@ -28,7 +71,6 @@
 .ro-dialog::backdrop { background: var(--overlay); }
 .ro-dialog__body { margin-top: var(--space-3); }
 .ro-dialog__actions { display: flex; flex-wrap: wrap; justify-content: end; gap: var(--space-2); margin-top: var(--space-5); }
-.ro-notification, .ro-panel, .ro-boundary-state { padding: var(--space-4); color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-md); }
 .ro-notification { display: grid; gap: var(--space-2); border-left-width: var(--space-1); }
 .ro-status-badge { display: inline-flex; align-items: center; min-height: var(--space-6); padding: 0 var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-pill); color: var(--text-default); background: var(--neutral-soft); font: 650 var(--text-xs) / var(--leading-normal) var(--font-sans); }
 .ro-evidence-state, .ro-uncertainty-state { display: inline-flex; align-items: center; min-height: var(--space-6); padding: 0 var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-default); background: var(--neutral-soft); font: 650 var(--text-xs) / var(--leading-normal) var(--font-sans); }

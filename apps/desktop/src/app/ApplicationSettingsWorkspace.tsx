@@ -190,7 +190,7 @@ export function ApplicationSettingsWorkspace({
   }
 
   return (
-    <section className="application-settings-workspace" aria-labelledby="application-settings-title" data-application-settings>
+    <section className="application-settings-workspace ro-page-region" aria-labelledby="application-settings-title" data-application-settings>
       <header className="page-header">
         <div>
           <p className="eyebrow">Application Settings</p>
@@ -199,7 +199,7 @@ export function ApplicationSettingsWorkspace({
             Choose whether Research Observatory adds an application-level prompt after Windows sign-in.
           </Typography>
         </div>
-        <div className="page-actions">
+        <div className="page-actions ro-action-row">
           <Button ref={returnRef} disabled={busy || controller.busy} onClick={() => void returnToPreviousWorkspace()}>Return</Button>
           <Button ref={saveRef} tone="primary" disabled={busy || !changed || (draft.mode === "windows-hello" && !helloSelectable)} onClick={() => void save()}>
             {busy ? "Working…" : "Save change"}
@@ -211,7 +211,7 @@ export function ApplicationSettingsWorkspace({
         <p>This controls only the extra Research Observatory prompt. Windows account isolation, filesystem permissions, project privacy, and Core process protection remain unchanged.</p>
       </Panel>
 
-      <section className="settings-card" aria-labelledby="sign-in-mode-title">
+      <section className="settings-card ro-card ro-form" aria-labelledby="sign-in-mode-title">
         <div className="settings-card-header">
           <div>
             <Typography id="sign-in-mode-title" as="h2" variant="section-title">App sign-in mode</Typography>
@@ -221,32 +221,32 @@ export function ApplicationSettingsWorkspace({
         </div>
         <fieldset className="choice-fieldset" disabled={busy}>
           <legend className="visually-hidden">Choose app sign-in mode</legend>
-          <div className="mode-grid">
-            <label className="mode-card">
+          <div className="mode-grid ro-grid">
+            <label className="mode-card ro-card">
               <span><input type="radio" name="sign-in-mode" checked={draft.mode === "none"} onChange={() => selectMode("none")} /> <strong>No login</strong> <StatusBadge tone="success">Default</StatusBadge></span>
               <span>Open directly after Windows sign-in. No app startup, manual, or inactivity reauthentication.</span>
               <small>Best for a typical single-user PC protected by Windows.</small>
             </label>
-            <label className="mode-card">
+            <label className="mode-card ro-card">
               <span><input type="radio" name="sign-in-mode" checked={draft.mode === "windows-password"} onChange={() => selectMode("windows-password")} /> <strong>Windows password</strong></span>
               <span>Use the native Windows credential prompt for the same Windows account.</span>
               <small>Research Observatory never receives or stores the password.</small>
             </label>
-            <label className={`mode-card${helloSelectable ? "" : " mode-card-disabled"}`}>
+            <label className={`mode-card ro-card${helloSelectable ? "" : " mode-card-disabled"}`}>
               <span><input type="radio" name="sign-in-mode" checked={draft.mode === "windows-hello"} disabled={!helloSelectable} onChange={() => selectMode("windows-hello")} /> <strong>Windows Hello</strong> <StatusBadge tone={hello.tone}>{hello.label}</StatusBadge></span>
               <span>Ask Windows Hello for current-user presence using a PIN, face, or fingerprint configured by Windows.</span>
               <small>The app never receives or stores a PIN or biometric.</small>
             </label>
           </div>
         </fieldset>
-        <div className="settings-warning" role="note">
+        <div className="settings-warning ro-notice" role="note">
           <strong>Reducing protection requires proof first.</strong>
           <span> Switching a protected mode to No login verifies the current provider or an explicitly selected same-user Windows password recovery prompt before confirmation.</span>
         </div>
       </section>
 
-      <div className="settings-grid">
-        <section className="settings-card" aria-labelledby="behavior-preview-title">
+      <div className="settings-grid ro-grid">
+        <section className="settings-card ro-card ro-form" aria-labelledby="behavior-preview-title">
           <div className="settings-card-header">
             <Typography id="behavior-preview-title" as="h2" variant="section-title">Lock behavior preview</Typography>
             <StatusBadge tone={draft.mode === "none" ? "info" : "success"}>{draft.mode === "none" ? "Disabled in No login" : "Preview"}</StatusBadge>
@@ -284,7 +284,7 @@ export function ApplicationSettingsWorkspace({
           </dl>
         </section>
 
-        <section className="settings-card" aria-labelledby="provider-status-title">
+        <section className="settings-card ro-card ro-form" aria-labelledby="provider-status-title">
           <div className="settings-card-header">
             <Typography id="provider-status-title" as="h2" variant="section-title">Provider status &amp; recovery</Typography>
             <StatusBadge tone={hello.tone}>{hello.label}</StatusBadge>
@@ -307,12 +307,12 @@ export function ApplicationSettingsWorkspace({
         </ol>
       </Panel>
 
-      {feedback ? <p className={`settings-feedback settings-feedback-${feedback.tone}`} role={feedback.tone === "danger" ? "alert" : "status"}>{feedback.message}</p> : null}
+      {feedback ? <p className={`settings-feedback ro-notice settings-feedback-${feedback.tone}`} role={feedback.tone === "danger" ? "alert" : "status"}>{feedback.message}</p> : null}
 
       {confirmation ? (
         <div className="dialog-backdrop" role="presentation">
           <section
-            className="protection-warning-dialog"
+            className="protection-warning-dialog ro-dialog-surface"
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="protection-warning-title"
@@ -337,7 +337,7 @@ export function ApplicationSettingsWorkspace({
           >
             <Typography id="protection-warning-title" as="h2" variant="section-title">Confirm reduced application protection</Typography>
             <p id="protection-warning-description">Windows verified the same user. No login removes Research Observatory startup, manual, and inactivity reauthentication; Windows and project protections remain unchanged.</p>
-            <div className="dialog-actions">
+            <div className="dialog-actions ro-action-row">
               <Button ref={warningCancelRef} autoFocus disabled={busy} onClick={() => void decide(false)}>Keep current protection</Button>
               <Button ref={warningConfirmRef} tone="danger" disabled={busy} onClick={() => void decide(true)}>Confirm No login</Button>
             </div>

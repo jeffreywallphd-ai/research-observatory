@@ -969,6 +969,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationSettingsFocusRestoration": False,
         "applicationHelloRecovery": False,
         "responsiveCases": 0,
+        "styleGeometry": [],
         "criticalViolations": [],
         "requests": [],
         "designSystem": {},
@@ -2989,16 +2990,72 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"desktop Hello recovery runtime error: {'; '.join(hello_recovery_errors)}")
             hello_recovery.close()
 
-            for width, height in ((1280, 720), (720, 450)):
+            for width, height in ((1440, 900), (1280, 720), (720, 450)):
                 responsive = browser_context.new_page()
                 responsive.set_viewport_size({"width": width, "height": height})
+                responsive.emulate_media(reduced_motion="reduce")
                 responsive.goto("http://tauri.localhost/index.html", wait_until="load")
                 responsive.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
-                overflow = responsive.evaluate(
-                    "document.documentElement.scrollWidth > document.documentElement.clientWidth"
+                geometry = responsive.evaluate(
+                    """() => {
+                      const px = (node, property) => node
+                        ? Number.parseFloat(getComputedStyle(node)[property])
+                        : null;
+                      const main = document.querySelector('main');
+                      const topbar = document.querySelector('.topbar');
+                      const sidebar = document.querySelector('.sidebar');
+                      const page = document.querySelector('.ro-page-region');
+                      const grid = document.querySelector('.ro-grid');
+                      const control = document.querySelector('.ro-button');
+                      const primary = document.querySelector('.ro-button--primary');
+                      return {
+                        viewport: [window.innerWidth, window.innerHeight],
+                        documentOverflow: document.documentElement.scrollWidth
+                          > document.documentElement.clientWidth,
+                        mainPaddingInlineStart: px(main, 'paddingInlineStart'),
+                        topbarHeight: topbar?.getBoundingClientRect().height ?? null,
+                        sidebarWidth: sidebar?.getBoundingClientRect().width ?? null,
+                        pageGap: px(page, 'rowGap'),
+                        gridGap: px(grid, 'columnGap'),
+                        controlHeight: control?.getBoundingClientRect().height ?? null,
+                        primaryControlHeight: primary?.getBoundingClientRect().height ?? null,
+                        reducedMotionDuration: control
+                          ? getComputedStyle(control).transitionDuration
+                          : null,
+                      };
+                    }"""
                 )
-                if overflow:
+                details["styleGeometry"].append(geometry)
+                if geometry["documentOverflow"]:
                     errors.append(f"desktop product overflows horizontally at {width}x{height}")
+                expected_padding = 28 if width == 1440 else 20 if width == 1280 else 16
+                if geometry["mainPaddingInlineStart"] != expected_padding:
+                    errors.append(
+                        f"desktop product page padding is {geometry['mainPaddingInlineStart']}px, "
+                        f"expected {expected_padding}px at {width}x{height}"
+                    )
+                if geometry["topbarHeight"] != 64:
+                    errors.append(f"desktop product topbar is not 64px at {width}x{height}")
+                if geometry["pageGap"] != 24:
+                    errors.append(f"desktop product section rhythm is not 24px at {width}x{height}")
+                if geometry["gridGap"] != 16:
+                    errors.append(f"desktop product grid gap is not 16px at {width}x{height}")
+                if (geometry["controlHeight"] or 0) < 40 or (geometry["primaryControlHeight"] or 0) < 44:
+                    errors.append(f"desktop product controls are undersized at {width}x{height}")
+                reduced_motion_durations = [
+                    duration.strip() for duration in str(geometry["reducedMotionDuration"] or "").split(",")
+                ]
+                try:
+                    motion_is_suppressed = bool(reduced_motion_durations) and all(
+                        duration.endswith("s") and float(duration[:-1]) <= 0.00001
+                        for duration in reduced_motion_durations
+                    )
+                except ValueError:
+                    motion_is_suppressed = False
+                if not motion_is_suppressed:
+                    errors.append(f"desktop product does not suppress motion at {width}x{height}")
+                if width == 1440 and geometry["sidebarWidth"] != 240:
+                    errors.append("desktop product expanded navigation is not 240px at 1440x900")
                 details["responsiveCases"] += 1
                 responsive.close()
         except (OSError, PlaywrightError, ValueError) as exc:

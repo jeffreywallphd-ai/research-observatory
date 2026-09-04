@@ -217,7 +217,7 @@ export function TaskCenterWorkspace({
     }
   };
 
-  return <div className="task-center-workspace" data-task-center-workspace>
+  return <div className="task-center-workspace ro-page-region" data-task-center-workspace>
     <div className="page-header">
       <div>
         <Typography as="h1" variant="page-title">Task Center</Typography>
@@ -229,11 +229,11 @@ export function TaskCenterWorkspace({
     {failure ? <Notification tone="danger" title="Task Center unavailable">{failure}</Notification> : null}
     {loading ? <p role="status">Loading durable workflows…</p> : null}
     {!loading && runs.length === 0 ? <Panel title="No durable work"><p>Queued, running, waiting and failed workflows will appear here.</p></Panel> : null}
-    {runs.length > 0 ? <div className="task-center-layout">
+    {runs.length > 0 ? <div className="task-center-layout ro-grid">
       <section aria-labelledby="workflow-list-title">
         <Typography id="workflow-list-title" as="h2" variant="section-title">Workflows</Typography>
         <Field id="task-center-filter" label="Filter workflows" input={{ type: "search", value: filter, onChange: (event) => setFilter(event.currentTarget.value) }} />
-        <ul className="task-center-list" aria-label="Durable workflows">
+        <ul className="task-center-list ro-stack" aria-label="Durable workflows">
           {visible.map((run) => <li key={run.workflowRunId}><button
             ref={run.workflowRunId === selected?.workflowRunId ? selectedWorkflowRef : undefined}
             type="button"
@@ -248,7 +248,7 @@ export function TaskCenterWorkspace({
         </ul>
         {visible.length === 0 ? <p role="status">No workflows match this filter.</p> : null}
       </section>
-      {selected ? <section aria-labelledby="workflow-detail-title" className="task-center-detail">
+      {selected ? <section aria-labelledby="workflow-detail-title" className="task-center-detail ro-stack">
         <Typography id="workflow-detail-title" as="h2" variant="section-title">{selected.workflowKey}</Typography>
         <p>Definition {selected.definitionVersion} · snapshot {selected.snapshotRevision} · history {selected.revision}</p>
         {selected.continuationFromWorkflowRunId && selected.continuationFromJobId ? <p data-workflow-continuation>
@@ -265,7 +265,7 @@ export function TaskCenterWorkspace({
           <p><strong>Progress:</strong> {job.progress.kind === "quantified" ? `${job.progress.completedUnits} of ${job.progress.totalUnits} ${job.progress.unit}` : `${job.progress.kind} ${job.progress.unit}`}</p>
           {job.latestCheckpointId ? <p>Safe checkpoint recorded at {job.latestCheckpointAt ?? "an unknown time"}.</p> : <p>No checkpoint reported.</p>}
           {job.diagnosticCode ? <p role="status">Diagnostic: {job.diagnosticCode}</p> : null}
-          <div className="task-center-actions">
+          <div className="task-center-actions ro-action-row">
             <Button disabled={!writable || busy || !["claimed", "running", "runnable", "retry-scheduled"].includes(job.state)} onClick={(event) => { restoreFocusRef.current = event.currentTarget; setConfirmation({ kind: "cancel", workflow: selected, jobId: job.jobId }); }}>Cancel safely</Button>
             <Button disabled={!writable || busy || !["failed", "cancelled"].includes(job.state)} onClick={(event) => { restoreFocusRef.current = event.currentTarget; setConfirmation({ kind: "retry", workflow: selected, jobId: job.jobId }); }}>Retry as continuation</Button>
           </div>
@@ -273,25 +273,25 @@ export function TaskCenterWorkspace({
         {selected.humanTasks.filter((task) => task.state === "requested" || task.state === "claimed").map((task) => <Panel key={task.humanTaskId} title="Decision required" tone="warning">
           <p>This exact workflow is waiting for a {task.requiredRole} decision. Compute is not active.</p>
           <p>Review {task.evidenceArtifactIds.length} bound evidence artifact(s). The definition—not this screen—controls each consequence.</p>
-          <div className="task-center-actions">
+          <div className="task-center-actions ro-action-row">
             {task.allowedDispositions.map((disposition) => <Button key={disposition} disabled={!writable || busy} tone={disposition === "approved" ? "primary" : "secondary"} onClick={() => void decide(task.humanTaskId, disposition)}>{disposition.replace("-", " ")} — {task.consequencesByDisposition[disposition]?.replaceAll("-", " ")}</Button>)}
           </div>
         </Panel>)}
         <Panel title="Retained outputs and logs">
           <p>{selected.retainedArtifacts.length ? `Partial artifacts: ${selected.retainedArtifacts.join(", ")}.` : "No retained incomplete or quarantined artifacts."}</p>
-          <ol className="task-center-events">
+          <ol className="task-center-events ro-stack">
             {selected.events.map((event) => <li key={`${event.sequence}-${event.entityId}`}><strong>{event.sequence}</strong> {event.entityType} → {event.toState} · {event.reasonCode}</li>)}
           </ol>
         </Panel>
       </section> : null}
     </div> : null}
     {confirmation ? <div className="dialog-backdrop" role="presentation">
-      <section className="task-center-confirmation" role="alertdialog" aria-modal="true" aria-labelledby="task-center-confirmation-title" onKeyDown={containConfirmationFocus}>
+      <section className="task-center-confirmation ro-dialog-surface" role="alertdialog" aria-modal="true" aria-labelledby="task-center-confirmation-title" onKeyDown={containConfirmationFocus}>
         <Typography id="task-center-confirmation-title" as="h2" variant="section-title">{confirmation.kind === "cancel" ? "Request safe cancellation?" : "Create a retry continuation?"}</Typography>
         <p>{confirmation.kind === "cancel"
           ? "Active work will stop at its next cooperative safe point. Any partial artifacts retain their recorded disposition."
           : "The failed or cancelled run remains immutable. Retry creates a new run bound to the exact same workflow definition."}</p>
-        <div className="dialog-actions">
+        <div className="dialog-actions ro-action-row">
           <Button ref={cancelRef} disabled={busy} onClick={closeConfirmation}>Keep current state</Button>
           <Button tone={confirmation.kind === "cancel" ? "danger" : "primary"} disabled={busy} onClick={() => void confirmCommand()}>{busy ? "Working…" : "Confirm"}</Button>
         </div>

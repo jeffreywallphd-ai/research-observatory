@@ -154,7 +154,7 @@ export function ProjectsWorkspace({
   };
 
   return (
-    <section className="projects-workspace" aria-labelledby="projects-title" data-projects-workspace>
+    <section className="projects-workspace ro-page-region" aria-labelledby="projects-title" data-projects-workspace>
       <div className="page-header">
         <Typography id="projects-title" as="h1" variant="page-title">Local projects</Typography>
         <Typography className="page-subtitle">
@@ -164,9 +164,9 @@ export function ProjectsWorkspace({
 
       {failure ? <Notification tone="danger" title={failure.title}>{failure.message}</Notification> : null}
 
-      <div className="project-workflow-grid">
+      <div className="project-workflow-grid ro-grid">
         <Panel title="Create a local project">
-          <form className="project-form" onSubmit={createProject}>
+          <form className="project-form ro-form" onSubmit={createProject}>
             <Field
               id="project-parent-directory"
               label="Parent directory"
@@ -207,7 +207,7 @@ export function ProjectsWorkspace({
               ))}
             </select>
             {selectedProfile ? (
-              <div className="workflow-profile-preview" aria-live="polite">
+              <div className="workflow-profile-preview ro-notice" aria-live="polite">
                 <Typography as="h3" variant="section-title">{selectedProfile.title}</Typography>
                 <p>{selectedProfile.purpose}</p>
                 <p><strong>Expected output:</strong> {selectedProfile.expectedOutputs.join(", ")}</p>
@@ -221,7 +221,7 @@ export function ProjectsWorkspace({
         </Panel>
 
         <Panel title="Open an existing project">
-          <form className="project-form" onSubmit={openProject}>
+          <form className="project-form ro-form" onSubmit={openProject}>
             <Field
               id="project-root"
               label="Project directory"
@@ -235,7 +235,7 @@ export function ProjectsWorkspace({
 
       <Panel title="Current project" tone={project ? "success" : "neutral"}>
         {!project ? <p>No project is selected. Create one or open an existing local project.</p> : (
-          <div className="current-project" data-current-project={project.projectId}>
+          <div className="current-project ro-card ro-stack" data-current-project={project.projectId}>
             {projectCompatibilityGuidance(project) ? (
               <Notification tone="warning" title={projectCompatibilityGuidance(project)?.title ?? "Read-only project"}>
                 {projectCompatibilityGuidance(project)?.message}
@@ -244,7 +244,7 @@ export function ProjectsWorkspace({
             <div>
               <Typography as="h2" variant="section-title">{project.displayName}</Typography>
               <p><code>{project.root}</code></p>
-              <div className="project-status-row">
+              <div className="project-status-row ro-cluster">
                 <StatusBadge tone={project.lifecycleState === "active" ? "success" : "warning"}>
                   {project.lifecycleState}
                 </StatusBadge>
@@ -253,7 +253,7 @@ export function ProjectsWorkspace({
                 <span>Revision {project.revision}</span>
               </div>
             </div>
-            <div className="project-actions" aria-label="Current project actions">
+            <div className="project-actions ro-action-row" aria-label="Current project actions">
               {project.lifecycleState === "active" ? (
                 <Button disabled={busy !== null} onClick={() => void run(
                   project.open ? "Close project" : "Open project",
@@ -272,7 +272,7 @@ export function ProjectsWorkspace({
               ) : null}
             </div>
             {!project.open && project.lifecycleState !== "trash" && project.compatibilityState === "compatible" ? (
-              <div className="project-delete-boundary">
+              <div className="project-delete-boundary ro-notice">
                 <Typography as="h3" variant="section-title">Move to recoverable trash</Typography>
                 <p>This moves only this project package. The shared model cache is not deleted.</p>
                 <Field
