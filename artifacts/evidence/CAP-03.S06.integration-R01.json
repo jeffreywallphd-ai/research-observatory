@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-03.S06",
+  "attemptId": "R01",
+  "stateCommit": "b84adf7e8da92acb7db0f854828f8c1840589af4",
+  "productCandidateCommit": "8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce",
+  "branch": "codex/w1-windows-local-runtime",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner",
+    "authorityNote": "Accepted ADR-0026 and adopted W1.A06/W1.A07 bind the current RO-UI-ACADEMIC-MINIMAL-1.5 reference and the exact living-review, hermeneutic-inquiry, and manuscript-review-revision cycle authority; they supersede the slice plan's historical 1.3 reference text without changing the approved slice outcome."
+  },
+  "outcome": "CAP-03.S06 now provides one versioned fourteen-profile workflow catalog; profile-specific Research Intent defaults and explicit researcher acceptance; history-preserving profile revision and migration; durable primary-stage, supporting-handoff, checkpoint, completion, revisit, stale-impact, restart and compare-and-swap authority; and an accessible adaptive desktop path whose production frame preserves all implemented tools while guiding the selected scholarly workflow.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-03.S06.T01",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "7d03065c43391f98e8648c076042e50d76e242da",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T01.R02.json",
+          "sha256": "8f81a7a3e4d74d9862efe0f5c4ac450ec17ca597538fe3b6bdb05df96262e871"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T01.review-R02.json",
+          "sha256": "c3c5517e8aa53ee5e7284757bddf87d18334efd5bea84fa4e8b53e6531cff930"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S06.T02",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "e38117d044b22138ee79a5d9d836ce963d5adce7",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T02.remediation-03.json",
+          "sha256": "b21c290db8df295e33f866938ca5d7048e0c1476b5b033494a43d1336a6992c0"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T02.review-R04.json",
+          "sha256": "96f8792e43ecbff7d7300092e669d32cd7852c7056a52fa7e9330ef925708d26"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S06.T03",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "0dccfbd7896bd488b2d28674959f0df6d97e8328",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T03.R02.json",
+          "sha256": "fa8ab6bb610327d6e2bcc5a663ffee230cd02fdfe6bb6291e84981bbbbf55d8b"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T03.review-R02.json",
+          "sha256": "9f89fa05e91a5c5fdaaa470bc6e6730357b2bf5d24b210a93149cc7f1d013889"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S06.T04",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "4cc54d193d113384e483a9410ec726fe250654d2",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T04.R03.json",
+          "sha256": "54e9dab1c7f663964dae51c6df3c105347fef6ddf9f692219845f274ca8b028b"
+        },
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T04.review-R03.json",
+          "sha256": "edd01a85d622a9ff5b0717c89e1260258250a8aed40c27ccfd9715e461b330f3"
+        }
+      ]
+    },
+    {
+      "taskId": "CAP-03.S06.T05",
+      "status": "DONE",
+      "review": "approved",
+      "candidateCommit": "8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-03.S06.T05.R01.json",
+          "sha256": "390614f401332c10f693c3a2bca985c68ed59d132b8bdb6ec4e0269eec8a7270"
+        },
+        {
+          "path": "artifacts/evidence/task-reviews/CAP-03.S06.T05/R01.json",
+          "sha256": "88a454e828375b5a836af754fc11fb818495d8423676572cbe3c30da787ec635"
+        }
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_research_intent_contracts tests.contracts.test_workflow_profile_contracts tests.service.test_project_lifecycle tests.service.test_research_intents tests.service.test_workflow_progress tests.e2e.test_workflow_profile_matrix",
+      "exitCode": 0,
+      "result": "All 74 selected portable-contract, Core/API, real SQLite lifecycle/intent/progress, restart, migration, failure/denial, supporting-handoff and fourteen-profile end-to-end tests passed in 39.961 seconds. Every profile creates, starts at the exact first stage, opens a supporting tool without advancing primary authority, restarts with identical revisions, and enforces its exact linear or revisitable cycle policy."
+    },
+    {
+      "command": "Repository-pinned Node 24.19.0 and pnpm 11.20.0: pnpm --dir packages/contracts run verify",
+      "exitCode": 0,
+      "result": "All domain, intent, model-gateway, provenance, workflow and workflow-profile generators passed drift checks; strict contract typecheck passed; 10 Vitest files and all 92 tests passed."
+    },
+    {
+      "command": "Repository-pinned Node 24.19.0 and pnpm 11.20.0: pnpm --dir apps/desktop run verify",
+      "exitCode": 0,
+      "result": "Desktop lint and strict typecheck passed; 19 Vitest files and 120 tests passed with only three deliberately skipped tests; the functional production frame and reference-conformance fixture rebuilt successfully."
+    },
+    {
+      "command": "Repository-pinned Node 24.19.0: pnpm --dir apps/desktop run test:intent-native",
+      "exitCode": 0,
+      "result": "The native renderer-to-local-Core intent path passed through a real sidecar. It proved generated-route allowlisting, canonical idempotency, response-loss reconciliation, durable three-revision state, actor-bound provenance for draft/acceptance/policy/profile activation, explicit denial, close/delete cleanup and no actor injection."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-03.S06-slice-built-frame.json",
+      "exitCode": 0,
+      "result": "The assembled production frame passed with no critical violation. It authenticated Academic Minimal 1.5, all fourteen exact profile rows, exact stage order/optional labels/process form/output/guidance identity, all eight enabled implemented tools, accessible tool-list semantics, adaptive navigation, history-preserving revisit, supporting return, keyboard/focus/recovery behavior and the default-no-login startup contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/desktop -p test_*.py; isolated temporary-clone replay of UiConformanceTests.test_adopted_maintenance_makes_exact_rejected_candidate_history_non_authoritative",
+      "exitCode": 0,
+      "result": "The broad 72-test desktop governance/checker suite produced no product failure: 71 tests passed, and the only initial error was the sandbox denying a temporary shared Git clone before its assertions. The isolated test then passed in 97.525 seconds with its intended temporary-clone permission."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo .; tools/ui_conformance.py --check workflows; tools/ui_conformance.py --check accessibility; tools/ui_reference_check.py --repo .",
+      "exitCode": 0,
+      "result": "The existing approved-reference restoration required no new experience change. All 139 workflow browser cases, 390 keyboard cases, fourteen profiles, 33 pages and 66 responsive/accessibility cases passed; all 55 governed reference files reproduce Academic Minimal 1.5 and workflow-catalog SHA-256 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check; tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "Portable OpenAPI/generated-client parity passed. Architecture passed 13 areas, 12 modules, five stable interfaces and three deployment profiles; no renderer database/filesystem authority or hosted-infrastructure dependency was introduced."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_performance_check.py --repo . --report artifacts/tmp/CAP-03.S06-desktop-performance-repeat.json --allow-dirty",
+      "exitCode": 0,
+      "result": "On Windows 11 AMD64 with 20 logical CPUs and 16,984,227,840 bytes of memory, 12 Chromium repetitions measured cold-shell FCP p95 72.0 ms, warm-route usable p95 35.891 ms and visible-skeleton p95 33.475 ms. Twenty 1,000-render batches measured the 10,000-row accessible table p95 43.198 ms. Every absolute and committed 20-percent regression threshold passed, with no unexpected request."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile service --profile data --profile e2e-local --affected-base 012693e22441100f5fe778dd4d29f7667752a488 --affected-head b84adf7e8da92acb7db0f854828f8c1840589af4 --deferred-gate W1-exit --selection-only",
+      "exitCode": 0,
+      "result": "The exact slice-start-to-state selector passed over 126 paths. Its 38 evidence/control paths trigger the truthful safety-sensitive fallback. The selected inventory covers foundation, contract, data, service, desktop, packaging and local E2E ownership; only desktop performance, project-lifecycle performance and storage-maintenance performance remain gate-bound to W1 exit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; tools/backlog_views.py --repo . --check; tools/plan_review_check.py --repo .; git diff --check 012693e22441100f5fe778dd4d29f7667752a488..b84adf7e8da92acb7db0f854828f8c1840589af4",
+      "exitCode": 0,
+      "result": "The authoritative backlog validates with 20 capabilities, 117 slices, 365 tasks and 12 release gates; generated planning views and the 490-page review site are current; the complete slice state range has no patch error."
+    }
+  ],
+  "environmentNotes": [
+    "Two initial pnpm launches resolved host Node 20 instead of the repository toolchain; one contract run nevertheless passed and the desktop run stopped before discovery on its declared engine requirement. The authoritative desktop and contract replays put the repository-pinned Node 24.19.0 runtime first on PATH and passed completely.",
+    "The first desktop performance run passed all workflow-facing metrics but one unrelated accessible-table p95 sample exceeded its committed regression threshold by 1.796 ms. The complete unchanged replay passed every metric, including that table at 43.198 ms versus the 46.916 ms threshold; the first sample is retained as transient measurement variance, not hidden or used as passing evidence.",
+    "The project-lifecycle performance tool refuses any tracked or untracked file even with --measure-only. The only worktree dirt is the protected pre-existing W1.A04.B00 witness, which this campaign must not read, hash, stage, delete or move. That cross-capability benchmark and storage-maintenance performance remain explicitly gate-bound to clean-clone W1-exit qualification; navigation/render performance is directly qualified here.",
+    "The protected pre-existing untracked W1.A04.B00 witness remained untouched and unstaged throughout slice verification."
+  ],
+  "findingReplay": {
+    "closedFindingIds": [
+      "CAP-03.S06.T01-R01-F01",
+      "CAP-03.S06.T01-R01-F02",
+      "CAP-03.S06.T01-R01-F03",
+      "CAP-03.S06.T02-R01-F01",
+      "CAP-03.S06.T02-R01-F02",
+      "CAP-03.S06.T02-R01-F03",
+      "CAP-03.S06.T03-R01-F01",
+      "CAP-03.S06.T03-R01-F02",
+      "CAP-03.S06.T04-R01-F01",
+      "CAP-03.S06.T04-R01-F02",
+      "CAP-03.S06.T04-R01-F03",
+      "CAP-03.S06.T04-R01-F04",
+      "CAP-03.S06.T04-R01-F05",
+      "CAP-03.S06.T04-R01-F06",
+      "CAP-03.S06.T04-R01-F07",
+      "CAP-03.S06.T04-R02-F01"
+    ],
+    "openFindingIds": [],
+    "result": "Every formal task finding is closed by its immutable approved review. The accumulated slice union replays the formerly affected support-return, migration, intent-lineage, guidance-hash, stale-response, exact revisit-source/displaced-head and history-preservation boundaries. T05 had no finding."
+  },
+  "profileSelection": {
+    "selected": "CAP-03.S06 crosses portable versioned contracts, a public Core API/generated client, real SQLite intent/workflow authority and restart behavior, native desktop transport, the governed production frame, all-profile workflow behavior, accessibility and reference integrity. The slice therefore ran the accumulated affected contract/data/service/desktop/native/E2E union, production build/browser smoke, architecture/API drift, focused governance and the applicable navigation/render performance qualification.",
+    "deferredToWaveExit": "The complete repository/deployment-profile matrix, Windows x64 installed-package smoke, cross-capability security/recovery and the gate-bound project-lifecycle/storage-maintenance performance benchmarks remain mandatory once after CAP-07.S01 closes. The affected selector records those exact deferrals; no full profile is represented as executed here."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskReviewsApproved": true,
+    "affectedSliceUnionPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The complete W1 repository, deployment, packaging, security, migration, recovery, accessibility, performance and release-authoritative Windows x64 qualification matrix remains due at W1 exit.",
+      "Project-lifecycle and storage-maintenance performance are W1-exit checks and must run from a clean clone/worktree because the active campaign worktree contains the protected pre-existing untracked witness.",
+      "The protected pre-existing W1.A04.B00 witness remains untouched and unstaged."
+    ]
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-07.S01",
+      "contract": "The desktop may consume authenticated Core workflow-profile, intent, stage-progress, checkpoint and supporting-return projections without reconstructing authority in the renderer; default startup remains mode:none with no credential prompt.",
+      "readyPendingSliceApproval": true
+    },
+    {
+      "consumer": "later scholarly workflow capabilities",
+      "contract": "Stable profile/stage/page/output identities, version/hash binding, history-preserving revision and revisit, explicit human acceptance, stale-impact semantics and complete supporting-tool access remain portable across later local and hosted adapters.",
+      "readyPendingSliceApproval": true
+    }
+  ]
+}
