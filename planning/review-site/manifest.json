@@ -26848,83 +26848,151 @@
         {
           "task_id": "W1.A08.T01",
           "title": "Consolidate and align production styling",
-          "status": "REVIEW",
+          "status": "IN_PROGRESS",
           "mode": "append-only",
           "latest_review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "w1-a08-t01-independent-experience-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-09-04T21:26:47+00:00",
+            "notes": "The frozen submission is the candidate's sole child, the exact 19-path base-to-candidate inventory and two-path submission projection authenticate, and the criterion evidence reproduces SHA-256 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a with Git blob ceca1048851c48fa85fe3ed8d905ad9e9667fbe9. Independent replay confirms the candidate removes the undefined style variables, uses the approved canonical token transport, preserves RO-UI-ACADEMIC-MINIMAL-1.5 bytes, passes the shared and desktop renderer suites, and gives the initial functional product exact 28/20/16 px page padding, 64 px topbar, 24 px section rhythm, 16 px grid, 40/44 px controls, reduced motion, focus/theme behavior, and no horizontal document overflow at the three controlled viewports. Approval remains unavailable because T01's required deterministic duplicate-declaration, selector-specificity, raw-geometry, and documented-composition-exception analysis is absent, and the live geometry check samples only the initial shell's first generic elements rather than the named panels/forms/tables/dialogs/notices/action rows and representative in-scope states. Those T01 checks cannot be wholly deferred to T02's later reusable exhaustive harness."
           },
           "review_control": {
             "version": 1,
-            "attempts": [],
-            "current_submission": {
-              "id": "R01",
-              "submitted_by": "codex",
-              "submitted_at": "2026-09-04T21:15:41+00:00",
-              "candidate_commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
-              "base_commit": "98d6612d0eb64482d92ea9f754ddcee22b8b79b9",
-              "branch": "codex/w1-windows-local-runtime",
-              "evidence_reference": {
-                "type": "criterion-manifest",
-                "path": "artifacts/evidence/W1.A08.T01.json",
-                "sha256": "8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a",
-                "commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
-                "recorded_at": "2026-09-04T21:15:41+00:00"
-              },
-              "acceptance_criteria_sha256": "c5f799e0c25b1e7a19d20c9b80ba8641cba72cd475522d496c2139d1ca8245b1",
-              "changed_paths": [
-                "apps/desktop/src/app.css",
-                "apps/desktop/src/app/ApplicationRuntime.tsx",
-                "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
-                "apps/desktop/src/app/AuditLineageWorkspace.tsx",
-                "apps/desktop/src/app/DiagnosticsWorkspace.tsx",
-                "apps/desktop/src/app/IntentWorkspace.tsx",
-                "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
-                "apps/desktop/src/app/ProjectSettingsWorkspace.tsx",
-                "apps/desktop/src/app/ProjectsWorkspace.tsx",
-                "apps/desktop/src/app/TaskCenterWorkspace.tsx",
-                "apps/desktop/src/app/WorkflowNavigation.tsx",
-                "docs/planning-implementation-plan.md",
-                "packages/ui-components/src/styles.css",
-                "planning/backlog.yaml",
-                "planning/review-site/enablers/ECR-0007.html",
-                "planning/review-site/manifest.json",
-                "planning/status-summary.md",
-                "tests/desktop/test_desktop_app_check.py",
-                "tools/desktop_app_check.py"
-              ],
-              "selected_checks": [
-                "bundled Node 24.19.0: desktop lint and typecheck; ui-components typecheck and vitest; desktop vitest run",
-                "bundled Node 24.19.0: clean-dist, Vite product build, assemble-application, Vite runtime build, assemble-reference",
-                ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check",
-                ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .",
-                "Generate and inspect full-page live-product captures at 1440x900 light, 1440x900 dark, and 720x450 dark; git diff --check"
-              ],
-              "deferred_checks": [
-                "W1.A08.T02 owns the reusable exhaustive fail-closed style-reuse analyzer, every-surface light/dark viewport-state matrix, stable semantic tolerances, and retained commit-bound representative captures.",
-                "W1.A08.S01 review and amendment exit own the cross-surface experience/accessibility/maintainability integration disposition.",
-                "Complete Windows-x64 packaging, performance, security, recovery, and cross-capability qualification remains due once at W1 exit."
-              ],
-              "selection_rationale": "T01 changes the shared desktop style boundary and every implemented W1 renderer surface without changing product authority. Credible failures are unresolved or duplicated style tokens, selector/inline escape hatches, changed interaction semantics, inaccessible scroll or focus presentation, dark-theme/reduced-motion regression, undersized controls, incoherent responsive geometry, overflow, stale production artifacts, or drift from the governed reference. The selected static contracts, complete affected TypeScript/component tests, production rebuild, live Playwright accessibility and geometry checks, two-theme visual inspection, UI-reference integrity, and exact Git hygiene cover those risks. Native service and persistence logic are unchanged, so native integration and full Windows packaging are not replayed at this ordinary styling task boundary.",
-              "selection_sha256": "71f0c3eeec4286c62ca21097b646a994388a92ac6402a8f7177ac5c55db33983",
-              "prior_attempt_id": null,
-              "open_finding_ids": [],
-              "root_cause_analysis": null,
-              "selected_command_ids": [
-                "foundation:ui-reference",
-                "desktop:application",
-                "desktop:unit",
-                "desktop:ui-reference-integrity",
-                "desktop:ui-token",
-                "desktop:ui-route-page",
-                "desktop:ui-workflow",
-                "desktop:ui-accessibility",
-                "desktop:ui-visual-regression"
-              ],
-              "packet_sha256": "8f6a570c8d49459cd616fa3a067248d4edbf57340f9cb679d870c1aa93ddd2cd"
-            }
+            "attempts": [
+              {
+                "submission": {
+                  "id": "R01",
+                  "submitted_by": "codex",
+                  "submitted_at": "2026-09-04T21:15:41+00:00",
+                  "candidate_commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
+                  "base_commit": "98d6612d0eb64482d92ea9f754ddcee22b8b79b9",
+                  "branch": "codex/w1-windows-local-runtime",
+                  "evidence_reference": {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/W1.A08.T01.json",
+                    "sha256": "8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a",
+                    "commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
+                    "recorded_at": "2026-09-04T21:15:41+00:00"
+                  },
+                  "acceptance_criteria_sha256": "c5f799e0c25b1e7a19d20c9b80ba8641cba72cd475522d496c2139d1ca8245b1",
+                  "changed_paths": [
+                    "apps/desktop/src/app.css",
+                    "apps/desktop/src/app/ApplicationRuntime.tsx",
+                    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+                    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+                    "apps/desktop/src/app/DiagnosticsWorkspace.tsx",
+                    "apps/desktop/src/app/IntentWorkspace.tsx",
+                    "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+                    "apps/desktop/src/app/ProjectSettingsWorkspace.tsx",
+                    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+                    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+                    "apps/desktop/src/app/WorkflowNavigation.tsx",
+                    "docs/planning-implementation-plan.md",
+                    "packages/ui-components/src/styles.css",
+                    "planning/backlog.yaml",
+                    "planning/review-site/enablers/ECR-0007.html",
+                    "planning/review-site/manifest.json",
+                    "planning/status-summary.md",
+                    "tests/desktop/test_desktop_app_check.py",
+                    "tools/desktop_app_check.py"
+                  ],
+                  "selected_checks": [
+                    "bundled Node 24.19.0: desktop lint and typecheck; ui-components typecheck and vitest; desktop vitest run",
+                    "bundled Node 24.19.0: clean-dist, Vite product build, assemble-application, Vite runtime build, assemble-reference",
+                    ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check",
+                    ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .",
+                    "Generate and inspect full-page live-product captures at 1440x900 light, 1440x900 dark, and 720x450 dark; git diff --check"
+                  ],
+                  "deferred_checks": [
+                    "W1.A08.T02 owns the reusable exhaustive fail-closed style-reuse analyzer, every-surface light/dark viewport-state matrix, stable semantic tolerances, and retained commit-bound representative captures.",
+                    "W1.A08.S01 review and amendment exit own the cross-surface experience/accessibility/maintainability integration disposition.",
+                    "Complete Windows-x64 packaging, performance, security, recovery, and cross-capability qualification remains due once at W1 exit."
+                  ],
+                  "selection_rationale": "T01 changes the shared desktop style boundary and every implemented W1 renderer surface without changing product authority. Credible failures are unresolved or duplicated style tokens, selector/inline escape hatches, changed interaction semantics, inaccessible scroll or focus presentation, dark-theme/reduced-motion regression, undersized controls, incoherent responsive geometry, overflow, stale production artifacts, or drift from the governed reference. The selected static contracts, complete affected TypeScript/component tests, production rebuild, live Playwright accessibility and geometry checks, two-theme visual inspection, UI-reference integrity, and exact Git hygiene cover those risks. Native service and persistence logic are unchanged, so native integration and full Windows packaging are not replayed at this ordinary styling task boundary.",
+                  "selection_sha256": "71f0c3eeec4286c62ca21097b646a994388a92ac6402a8f7177ac5c55db33983",
+                  "prior_attempt_id": null,
+                  "open_finding_ids": [],
+                  "root_cause_analysis": null,
+                  "selected_command_ids": [
+                    "foundation:ui-reference",
+                    "desktop:application",
+                    "desktop:unit",
+                    "desktop:ui-reference-integrity",
+                    "desktop:ui-token",
+                    "desktop:ui-route-page",
+                    "desktop:ui-workflow",
+                    "desktop:ui-accessibility",
+                    "desktop:ui-visual-regression"
+                  ],
+                  "packet_sha256": "8f6a570c8d49459cd616fa3a067248d4edbf57340f9cb679d870c1aa93ddd2cd"
+                },
+                "review": {
+                  "reviewer": "w1-a08-t01-independent-experience-reviewer",
+                  "result": "changes-requested",
+                  "reviewed_at": "2026-09-04T21:26:47+00:00",
+                  "notes": "The frozen submission is the candidate's sole child, the exact 19-path base-to-candidate inventory and two-path submission projection authenticate, and the criterion evidence reproduces SHA-256 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a with Git blob ceca1048851c48fa85fe3ed8d905ad9e9667fbe9. Independent replay confirms the candidate removes the undefined style variables, uses the approved canonical token transport, preserves RO-UI-ACADEMIC-MINIMAL-1.5 bytes, passes the shared and desktop renderer suites, and gives the initial functional product exact 28/20/16 px page padding, 64 px topbar, 24 px section rhythm, 16 px grid, 40/44 px controls, reduced motion, focus/theme behavior, and no horizontal document overflow at the three controlled viewports. Approval remains unavailable because T01's required deterministic duplicate-declaration, selector-specificity, raw-geometry, and documented-composition-exception analysis is absent, and the live geometry check samples only the initial shell's first generic elements rather than the named panels/forms/tables/dialogs/notices/action rows and representative in-scope states. Those T01 checks cannot be wholly deferred to T02's later reusable exhaustive harness."
+                },
+                "ledger": {
+                  "path": "artifacts/evidence/W1.A08.T01.review-R01.json",
+                  "sha256": "d00a174be797cd47d8542534bbc4de0d8ba1d5d20ccbff7550592d5eb00e2976"
+                },
+                "findings": [
+                  {
+                    "id": "W1.A08.T01-R01-F01",
+                    "severity": "medium",
+                    "blocking": true,
+                    "criterion_index": 2,
+                    "title": "The required deterministic residual-style and specificity contract is missing",
+                    "reproduction": "At candidate 9b4e746928d1381c52a2a720ee6bb47eb433ca3f, inspect tests/desktop/test_desktop_app_check.py:310-380. It asserts the ten primitive names occur somewhere, checks a few declaration substrings, resolves var() names, rejects only the literal 'min-height: 2.75rem', and searches TSX for style=. The only tools/desktop_app_check.py candidate change is the live shell geometry loop. No code computes normalized duplicate declaration groups, selector specificity, unexplained raw geometry, or a reviewed composition exception set, although the frozen T01 verification command requires all four. A normalized block scan still finds exact repeated groups such as .ro-table-pagination__actions versus .ro-boundary-state__actions and the duplicated tone rule; app.css also retains repeated label/focus/text groups. packages/ui-components/src/styles.css:65-66 and :74 retain physical text-align:left, border-top, and border-left-width in the shared table/notification boundary without a documented exception. Adding a token-valid duplicate group or raising a page selector's specificity does not make the new test fail.",
+                    "required_remediation": "At T01 scope, add and run a deterministic analysis over the shared and production CSS that inventories normalized material declaration groups, selector specificity, raw spacing/control/card geometry, undefined/duplicate semantic custom properties, inline/CSS-in-JS escapes, and physical directional properties. Consolidate material generic duplicates; express direction through logical properties; and bind any genuine composition-specific residual to a small reviewed documented exception record. Include focused negative fixtures showing an added duplicate, over-specific override, raw semantic geometry, undocumented exception, and physical-direction regression fail. T02 may generalize and exhaustively harden this analyzer, but it cannot supply T01's missing acceptance evidence retroactively."
+                  },
+                  {
+                    "id": "W1.A08.T01-R01-F02",
+                    "severity": "medium",
+                    "blocking": true,
+                    "criterion_index": 4,
+                    "title": "The live viewport check measures only the initial shell and leaves named styling boundaries unproved",
+                    "reproduction": "At tools/desktop_app_check.py:2976-3055, each 1440x900, 1280x720, and 720x450 case loads the same initial product state and measures only main, .topbar, .sidebar, the first .ro-page-region, first .ro-grid, first .ro-button, and first primary button. Consequently the passing geometry array contains no panel/card padding/radius, form/control layout, table row/contained-scroll behavior, dialog size/scroll/focus, notice hierarchy, action-row wrapping, or representative empty/error/warning/locked/dense/long-content measurement. The accessible table changes at AuditLineageWorkspace.tsx:615 and :942 and DiagnosticsWorkspace.tsx:359 have no direct test beyond source-string inclusion. ThemeToggle proves the root theme changes, while the geometry pages only prove reduced-motion duration and do not compute named surfaces in both themes. This is narrower than T01 criteria 3-5 and its explicit verification command; the evidence's temporary default-shell captures cannot close it.",
+                    "required_remediation": "Extend the focused T01 functional-product check to render representative in-scope states and directly assert computed panel/card, form/control, table, dialog, notice, and action-row contracts plus document-versus-contained overflow, focusability/name of each application table scroll region, dialog focus/scroll at 720x450, dark/light token application, and reduced-motion presentation at the three controlled viewports. This may be a bounded representative matrix rather than T02's exhaustive reusable all-surface harness, but every named T01 geometry category and the lock/recovery, error/warning, dialog/table, dense/long-content risks must have real renderer evidence."
+                  }
+                ],
+                "closures": [],
+                "telemetry": {
+                  "task_id": "W1.A08.T01",
+                  "amendment_id": "W1.A08",
+                  "attempt_id": "R01",
+                  "submitted_at": "2026-09-04T21:15:41+00:00",
+                  "reviewed_at": "2026-09-04T21:26:47+00:00",
+                  "duration_seconds": 666,
+                  "outcome": "changes-requested",
+                  "finding_counts": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 2,
+                    "low": 0,
+                    "blocking": 2,
+                    "total": 2
+                  },
+                  "command_ids": [
+                    "foundation:ui-reference",
+                    "desktop:application",
+                    "desktop:unit",
+                    "desktop:ui-reference-integrity",
+                    "desktop:ui-token",
+                    "desktop:ui-route-page",
+                    "desktop:ui-workflow",
+                    "desktop:ui-accessibility",
+                    "desktop:ui-visual-regression"
+                  ],
+                  "remediation": {
+                    "prior_attempt_id": null,
+                    "replayed_finding_ids": [],
+                    "closed_finding_ids": []
+                  }
+                }
+              }
+            ],
+            "current_submission": null
           }
         },
         {
