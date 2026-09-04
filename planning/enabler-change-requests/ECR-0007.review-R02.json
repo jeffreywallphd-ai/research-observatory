@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0007",
+  "proposedAmendmentId": "W1.A08",
+  "attemptId": "R02",
+  "candidateCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
+  "packetSha256": "f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr7-experience-architecture-reviewer",
+  "reviewedAt": "2026-09-04T20:16:59.5878877Z",
+  "result": "approved",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "ECR-0007-R01-F01",
+      "disposition": "closed",
+      "notes": "The strict-descendant R02 packet binds design/ui-reference/assets/tokens.css to SHA-256 e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5, which independently matches the immutable candidate Git blob and the approved RO-UI-ACADEMIC-MINIMAL-1.5 reference manifest. The generated ECR page and manifest project the same digest. Independently reviewed Tier-2 maintenance makes both planctl and the review-site loader use one fail-closed Git-canonical clean-file boundary while retaining pending-local and exact-commit denials. Exact-candidate ECR validation, site validation, and the 28-test amendment suite pass. The adverse R01 ledger remains append-only."
+    }
+  ],
+  "verified": [
+    "The exact candidate 07b21b270dfb967ad3fd7e35217978c0860c8116 has sole parent f5e55a84e5f0ced0bb175c35e4dafcbdcf9c7ad9 and strictly descends from rejected R01 candidate 3d868e579ba23a833f3a71650cd77f5f71c632b3 and adverse-ledger commit 5423e4c918ad6aa71653e04a36545674e78c7423. The immutable R01 ledger remains present at SHA-256 bb500ffc2fe59fc8a1603d21fd81ce669e89087147fde0b0acc4a9fa032baad1.",
+    "The separately reviewed governance-maintenance chain is exact and ancestral: 1.0 candidate 7ac7f5d999da871716b30640ec1c8f2115398c6c and approval commit 4eaa413b23d72c52d2229574d9fbb76ef6ea7338; 1.1 candidate fe9e5345595e12fe63887b343034bcec5796ab80, adverse review commit 1942ab0ca231aaafd2c47aef92d11a1314b72af9, evidence correction e8c27fcf12a8fdc2889c3385922a7f974e658333, and approving R02 commit f5e55a84e5f0ced0bb175c35e4dafcbdcf9c7ad9. The approved maintenance ledger hashes are 68afcaab1bab656f680cdde536c99f53d53149e5246870913fa2ee4561e1d701 and ba152b70811e38bf0a23280b8f9acc77b41a02580cc17cb72e6472c116aa49c1; the maintenance grants no ECR execution or product authority.",
+    "The post-maintenance candidate delta is exactly five paths: ECR-0007.md, ECR-0007.packet.json, ECR-0007-review.html, the generated ECR-0007 page, and the generated review-site manifest. It changes no backlog, product, reference, ADR, architecture, schema, controller, approval, Wave/task state, or predecessor authority file. Git diff hygiene passes for this five-path delta.",
+    "The packet has exact SHA-256 f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15 and Git blob 4199b7bebc3c30691506354574718ca499fc3381. Its proposal SHA-256 1225fbf8a06f937cd5fe8cf2e7f88d13e42c13aff7ce78ac27c4615173a78f5e, v4 schema SHA-256 69b378e5958e460354ec523fe23bfcdae11b1e321388e41bd101ce1d9f20f347, and static-review SHA-256 a2183637a1538e2a681f366122fa3af3fbf9701fa74d2dbbd80ae5fcf63b7186 match immutable candidate bytes. All five governed-reference hashes match their Git blobs.",
+    "ECR-0007-R01-F01 is resolved at the exact identity boundary. The packet, approved reference integrity output, and generated ECR projection all bind tokens.css to repository-stable SHA-256 e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5 rather than the rejected checkout-specific digest. Clean-filter, dirty semantic, pending-untracked, exact-commit divergence, missing/unsafe path, and Git-error fail-closed behavior remain covered by the independently reviewed shared helper and focused regressions.",
+    "The v4 authority remains complete and ordered: immutable W1 base; adopted W1.A01-W1.A03 and W1.A05-W1.A07; terminal reserved W1.A04 under GOV-MIG-0001; and unchanged revision-12/MI-0001 history. W1 is PAUSED at Wave scope and lease-free, CAP-07.S01.T02 is BLOCKED and lease-free, and there is no ordinary IN_PROGRESS/REVIEW task, active recovery hold, or active amendment campaign.",
+    "The decision boundary remains the R01-reviewed bounded product-scope/experience amendment: only W1.A08.S01 with W1.A08.T01 and W1.A08.T02 is authorized, B00 remains the sole lawful first post-approval mutation, the approved RO-UI-ACADEMIC-MINIMAL-1.5 bytes remain unchanged, and product, security, architecture, later-Wave, release, external, destructive, and substantial-spend expansion remains prohibited.",
+    "The refactor inventory remains exact: 48 unique approved-W1 atomic tasks total 194 points under S=1, M=3, L=5; W1.A08.T01 is the sole L/5-point refactor allocation; 5/194 rounds to 2.6%, below the standard 15% limit; and W1.A08.T02 remains separately classified as M-sized new live-product verification/product-quality work.",
+    "The committed generated manifest records packet SHA-256 f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15, proposal SHA-256 1225fbf8a06f937cd5fe8cf2e7f88d13e42c13aff7ce78ac27c4615173a78f5e, static-review SHA-256 a2183637a1538e2a681f366122fa3af3fbf9701fa74d2dbbd80ae5fcf63b7186, pending/non-executable status, approved existing reference status, and the canonical token digest. The generated ECR page renders the R01 finding, maintenance chain, corrected digest, scope, budget, and approval boundary. Fresh generation and the 491-page review-site checker pass; fresh output differs from committed bytes only in designed workspace-local file URIs and the preserved-versus-new generation timestamp.",
+    "Risk-selected exact-candidate checks pass: planctl ECR review and validation, generated backlog-view freshness, approved UI-reference integrity for all 55 governed files, full planning-site generation/check for 491 pages, all 28 amendment-control and amendment-review tests in 214.393 seconds, packet/declared/governed hash verification, authority/quiescence/budget assertions, and the five-path Git diff check.",
+    "Canonical taskctl validation in the isolated exact-history clone reports only GRR-0002.S01/S02 target-bootstrap evidence errors because the required protected untracked W1.A04.B00 witness is deliberately absent from Git and was not supplied to the clone. The candidate changes neither backlog nor taskctl, and the ECR-specific authority validators pass; this inherited external-witness limitation is not attributed to the five-path R02 delta or represented as a passing independent replay.",
+    "Human exact-commit approval is legally available after this independent ledger is recorded with no open finding. Such approval may authorize only the hash-bound ECR-0007/W1.A08 decision and creation of its approval record; bootstrap, amendment materialization or execution, product-task work, Wave resume, CAP-07.S01.T02 recovery, W1 qualification, G1 approval, local-main integration, remote action, external effect, destructive action, and spend remain separately gated.",
+    "The protected pre-existing artifacts/evidence/W1.A04.B00.json witness was not opened, read, hashed, copied, staged, modified, moved, or deleted during R02."
+  ],
+  "approvalAvailable": true
+}
