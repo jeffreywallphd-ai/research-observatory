@@ -26482,11 +26482,11 @@
       "proposal_status": "pending-approval",
       "proposal_execution_state": "non-executable",
       "packet_path": "planning/enabler-change-requests/ECR-0007.packet.json",
-      "packet_sha256": "a397f43c2eaaca765865b2fade8f1a57c0006f45da28e112b2bed3d6d9ab52cb",
+      "packet_sha256": "f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15",
       "proposal_path": "planning/enabler-change-requests/ECR-0007.md",
-      "proposal_sha256": "e4dbcbb204eacd9e807885ec1cf728bfeb05c8da1159d39958bfbd60341e06ee",
+      "proposal_sha256": "1225fbf8a06f937cd5fe8cf2e7f88d13e42c13aff7ce78ac27c4615173a78f5e",
       "review_path": "planning/enabler-change-requests/ECR-0007-review.html",
-      "review_sha256": "525826e787f1a6b7bc78a74eb8e57981a60c43d5a73620392890c3f44b801408",
+      "review_sha256": "a2183637a1538e2a681f366122fa3af3fbf9701fa74d2dbbd80ae5fcf63b7186",
       "approval_path": null,
       "approval_sha256": null,
       "approval_status": "PENDING",
@@ -26811,7 +26811,7 @@
           },
           {
             "path": "design/ui-reference/assets/tokens.css",
-            "sha256": "475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230"
+            "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"
           },
           {
             "path": "design/ui-reference/assets/app.css",
