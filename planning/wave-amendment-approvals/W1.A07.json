@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W1.A07",
+  "changeRequestId": "ECR-0006",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-09-04T06:27:45.2967207-04:00",
+  "decision": "The repository owner approved ECR-0006/W1.A07 in direct response to the exact-commit approval request for 43e317be1e644c77e653ff5f121425d6e2cde2ef. Authorize only bootstrap W1.A07.B00, contribution W1.A07.S01, and task W1.A07.T01 as hash-bound in the packet. Reaffirm accepted ADR-0026 and the already approved RO-UI-ACADEMIC-MINIMAL-1.5 cycle policy without changing product or experience authority. Keep W1 paused and CAP-03.S06.T05 blocked until W1.A07 adoption and explicit ordinary resume and task recovery.",
+  "packet": {
+    "commit": "43e317be1e644c77e653ff5f121425d6e2cde2ef",
+    "path": "planning/enabler-change-requests/ECR-0006.packet.json",
+    "sha256": "6a4d123f4281f3783ec02eb8ac5d0d986b37e53e52b5f6cc6059b07447d5ab04",
+    "proposalPath": "planning/enabler-change-requests/ECR-0006.md",
+    "proposalSha256": "78f657d71d97c1024d7a5d526a99a9885e6690256b1048a2f28765517d04b027"
+  },
+  "effectiveBase": {
+    "waveBase": {
+      "waveId": "W1",
+      "packetCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+      "approvalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W1.A01",
+        "changeRequestId": null,
+        "status": "ADOPTED",
+        "packetCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A01.json",
+          "sha256": "2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde",
+          "introductionCommit": "a20685b90532c60e0286e5e05f68b46c613e935d"
+        },
+        "effectiveStateCommit": "305e7444d632800c16cd9e0a7c41ae7b5f8abf93"
+      },
+      {
+        "id": "W1.A02",
+        "changeRequestId": "ECR-0001",
+        "status": "ADOPTED",
+        "packetCommit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A02.json",
+          "sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
+          "introductionCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"
+        },
+        "effectiveStateCommit": "24277ae5552930de558290f7c51255a73119ee1a"
+      },
+      {
+        "id": "W1.A03",
+        "changeRequestId": "ECR-0002",
+        "status": "ADOPTED",
+        "packetCommit": "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A03.json",
+          "sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd",
+          "introductionCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082"
+        },
+        "effectiveStateCommit": "673c6d30e83a77b922c40fc00f6aec13bedb26a9"
+      },
+      {
+        "id": "W1.A05",
+        "changeRequestId": "ECR-0004",
+        "status": "ADOPTED",
+        "packetCommit": "25584d82ce5d6bd55e476cd746100eef0790a33d",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A05.json",
+          "sha256": "a0e1ddc522a145267b75488d88c206d6003bae1213bd5ff8457e1c424eca5267",
+          "introductionCommit": "1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b"
+        },
+        "effectiveStateCommit": "9a56ed8d25d4747d0ad6741255ea5c7514e08fc7"
+      },
+      {
+        "id": "W1.A06",
+        "changeRequestId": "ECR-0005",
+        "status": "ADOPTED",
+        "packetCommit": "f48f11ed12c10d26acb1b80053e1a823c3ee5c16",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A06.json",
+          "sha256": "244abca46cad110b3eab200bc1bbc2d8c8220edf62993ac040c1aac5df67cd67",
+          "introductionCommit": "6e4581274972b7c324e5394fb317975ff063ecbe"
+        },
+        "effectiveStateCommit": "4dbc3f0cf4aa644c6becef670db196c514d3014c"
+      }
+    ],
+    "reservedAmendments": [
+      {
+        "id": "W1.A04",
+        "changeRequestId": "ECR-0003",
+        "status": "APPROVED_UNMATERIALIZED_SUPERSEDED",
+        "packetCommit": "77896d26ddac0569e286fe8481c0676408c716b1",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A04.json",
+          "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+          "introductionCommit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+        },
+        "supersededByMigration": {
+          "id": "GOV-MIG-0001",
+          "path": "planning/governance-migrations/GOV-MIG-0001.json",
+          "sha256": "4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d",
+          "commit": "d8adf48e9c2e0319e4ece573a9381f6ec305310e"
+        }
+      }
+    ]
+  },
+  "bootstrapUnit": "W1.A07.B00",
+  "authorizedTaskIds": [
+    "W1.A07.T01"
+  ],
+  "independentPacketReview": {
+    "reviewer": "ecr6-planning-authority-reviewer",
+    "candidateCommit": "43e317be1e644c77e653ff5f121425d6e2cde2ef",
+    "reviewedStateCommit": "8b6e63613247597d7eb378c5e87113f914fe6f18",
+    "result": "APPROVED",
+    "attemptId": "R01",
+    "findingIdsClosed": [],
+    "ledger": {
+      "path": "planning/enabler-change-requests/ECR-0006.review-R01.json",
+      "sha256": "176cbc857de1cf092bc5ad3a07877a10c82325e3b19c86d183c6eb57571c0da2",
+      "introductionCommit": "8b6e63613247597d7eb378c5e87113f914fe6f18"
+    }
+  }
+}
