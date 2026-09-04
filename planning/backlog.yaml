@@ -17003,15 +17003,21 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-09-04T04:48:23+00:00'
-      updated_at: '2026-09-04T11:21:25+00:00'
+      updated_at: '2026-09-04T11:40:42+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: R01 freezes the complete fourteen-profile Core/SQLite and assembled-product matrix, including
+        the bounded governed-default creation fix and exact W1.A07 cycle authority.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S06.T05.R01.json
+        sha256: 390614f401332c10f693c3a2bca985c68ed59d132b8bdb6ec4e0269eec8a7270
+        commit: 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce
+        recorded_at: '2026-09-04T11:40:42+00:00'
       review:
         reviewer: null
         result: null
@@ -17024,11 +17030,112 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-09-04T11:21:25+00:00'
         expires_at: '2026-09-04T19:21:25+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
       cancellation: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-04T11:40:42+00:00'
+          candidate_commit: 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce
+          base_commit: b6c33dd67a4c219efbc7856b21653f2fdc2db3d4
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-03.S06.T05.R01.json
+            sha256: 390614f401332c10f693c3a2bca985c68ed59d132b8bdb6ec4e0269eec8a7270
+            commit: 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce
+            recorded_at: '2026-09-04T11:40:42+00:00'
+          acceptance_criteria_sha256: 42592d53c3b340683ca63c6cadee040fe2aa7973597e3541609ce69ef8d13434
+          changed_paths:
+          - apps/desktop/scripts/assemble-application.mjs
+          - artifacts/evidence/CAP-03.S06.T05.task-start.md
+          - artifacts/evidence/W1.A07.B00.json
+          - artifacts/evidence/W1.A07.T01.json
+          - artifacts/evidence/W1.A07.adoption.json
+          - artifacts/evidence/W1.A07.exit-review-R01.json
+          - artifacts/evidence/W1.A07.exit.json
+          - artifacts/evidence/task-reviews/W1.A07.T01/R01.json
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/enabler-change-requests/ECR-0006-review.html
+          - planning/enabler-change-requests/ECR-0006.md
+          - planning/enabler-change-requests/ECR-0006.packet.json
+          - planning/enabler-change-requests/ECR-0006.review-R01.json
+          - planning/governance-migrations/GOV-MAINT-0016.json
+          - planning/governance-migrations/GOV-MAINT-0016.review-R01.json
+          - planning/review-site/CAP-03/CAP-03.S06.T04.html
+          - planning/review-site/CAP-03/CAP-03.S06.T05.html
+          - planning/review-site/CAP-03/CAP-03.S06.html
+          - planning/review-site/README.md
+          - planning/review-site/enablers/ECR-0006.html
+          - planning/review-site/enablers/index.html
+          - planning/review-site/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W1.html
+          - planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md
+          - planning/status-summary.md
+          - planning/wave-amendment-approvals/W1.A07.json
+          - services/core-api/src/research_observatory_core/research_intents.py
+          - tests/desktop/test_desktop_app_check.py
+          - tests/e2e/test_workflow_profile_matrix.py
+          - tests/foundation/test_planctl_amendments.py
+          - tools/desktop_app_check.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest -v tests.e2e.test_workflow_profile_matrix
+          - .venv\Scripts\python.exe -m unittest -v tests.contracts.test_workflow_profile_contracts tests.service.test_project_lifecycle
+            tests.service.test_workflow_progress
+          - .venv\Scripts\python.exe -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible
+          - .\.local\toolchains\node-v24.19.0-win-x64\pnpm.CMD --dir apps/desktop run build
+          - .venv\Scripts\python.exe -m ruff format --check services/core-api/src/research_observatory_core/research_intents.py
+            tests/e2e/test_workflow_profile_matrix.py tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py;
+            .venv\Scripts\python.exe -m ruff check services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py
+            tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv\Scripts\python.exe -m mypy --follow-imports=skip
+            services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py
+            tools/desktop_app_check.py
+          - .venv\Scripts\python.exe tools/ui_reference_check.py --repo .; .venv\Scripts\python.exe tools/taskctl.py --file
+            planning/backlog.yaml validate
+          - .venv\Scripts\python.exe tools/verify.py --profile desktop --profile service --profile data --profile e2e-local
+            --affected-base b6c33dd67a4c219efbc7856b21653f2fdc2db3d4 --affected-head 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce
+            --deferred-gate W1-exit --selection-only; git diff --check b6c33dd67a4c219efbc7856b21653f2fdc2db3d4..8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce
+          deferred_checks:
+          - The complete desktop/service/data/e2e-local profile union selected by the historical claim range is deferred to
+            CAP-03.S06 slice review and W1 exit; T05 ran the narrow deterministic commands that directly prove every criterion
+            and changed boundary.
+          - desktop:performance, data:project-lifecycle-performance, and data:storage-maintenance-performance are gate-bound
+            to W1 exit by the affected selector.
+          - Packaging/install/upgrade, full Windows-x64 smoke, cross-capability recovery/security, complete accessibility/visual,
+            and repository-wide qualification remain mandatory at the integration checkpoint and W1 exit.
+          selection_rationale: T05 is the exhaustive integration task for the approved workflow-profile slice. Its credible
+            risks are catalog/reference substitution, inability to create one of the approved modes, generic defaults conflicting
+            with mode contracts, wrong or collapsed stage order, hidden supporting tools, implicit stage advancement, lost
+            restart identity, erased revisit history, linear-cycle bypass, wrong systematic endpoint, inaccessible output/tool
+            semantics, and a verifier that tests source fixtures instead of the built product. The selected matrix therefore
+            uses the exact Core projection across real project creation and SQLite restart for all fourteen profiles, positive
+            and denial cycle commands for all fourteen, predecessor contract/service regressions, a rebuilt production frame
+            with per-profile DOM/accessibility results, focused Python quality, reference integrity, backlog integrity, affected-path
+            classification, and Git hygiene. The claim range also contains the independently approved and adopted W1.A07 authority
+            repair that corrected criterion 2; those immutable planning/evidence paths explain the classifier's broad safety-sensitive
+            inventory but do not expand this product candidate.
+          selection_sha256: b5211e103d219dd071374155e94a80972ee984c618c480d1da22b320c8f9c20a
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:quality
+          - foundation:ui-reference
+          - foundation:backlog
+          - desktop:application
+          - service:unit
+          - contracts:unit
+          - data:unit
+          - e2e-local:system
+          packet_sha256: 5fd20ce080e7c79472789a2d74d2661f6aff25ee113255253ab1d9f283c4f33d
     platform_targets:
     - windows-x64
     completion:

@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S06.T05",
+  "commit": "8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce",
+  "baseCommit": "b6c33dd67a4c219efbc7856b21653f2fdc2db3d4",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "artifacts/evidence/CAP-03.S06.T05.task-start.md",
+    "artifacts/evidence/W1.A07.B00.json",
+    "artifacts/evidence/W1.A07.T01.json",
+    "artifacts/evidence/W1.A07.adoption.json",
+    "artifacts/evidence/W1.A07.exit-review-R01.json",
+    "artifacts/evidence/W1.A07.exit.json",
+    "artifacts/evidence/task-reviews/W1.A07.T01/R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/enabler-change-requests/ECR-0006-review.html",
+    "planning/enabler-change-requests/ECR-0006.md",
+    "planning/enabler-change-requests/ECR-0006.packet.json",
+    "planning/enabler-change-requests/ECR-0006.review-R01.json",
+    "planning/governance-migrations/GOV-MAINT-0016.json",
+    "planning/governance-migrations/GOV-MAINT-0016.review-R01.json",
+    "planning/review-site/CAP-03/CAP-03.S06.T04.html",
+    "planning/review-site/CAP-03/CAP-03.S06.T05.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/README.md",
+    "planning/review-site/enablers/ECR-0006.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
+    "planning/status-summary.md",
+    "planning/wave-amendment-approvals/W1.A07.json",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/e2e/test_workflow_profile_matrix.py",
+    "tests/foundation/test_planctl_amendments.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.e2e.test_workflow_profile_matrix",
+      "exitCode": 0,
+      "result": "Both real Core/API/SQLite end-to-end cases passed. All fourteen profiles were created from the governed selection, started at their exact first stage, opened a supporting tool without advancing authority, closed, and resumed through a new service composition with identical stage and handoff revisions. Exact governed defaults were persisted without inventing a novelty rationale. All three revisitable profiles appended pass 2 while preserving pass 1; all eleven linear profiles denied revisit without mutation, and systematic-review retained audit-lineage.html as its endpoint."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_workflow_profile_contracts tests.service.test_project_lifecycle tests.service.test_workflow_progress",
+      "exitCode": 0,
+      "result": "All 36 predecessor contract, project-lifecycle, and workflow-progress tests passed, including exact catalog hashing, selection/migration history, restart, supporting-return expiry, completion evidence, linear denial, revisitable history, compare-and-swap, and damaged/newer project recovery boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible",
+      "exitCode": 0,
+      "result": "The assembled production frame passed. Its machine-readable matrix contains exactly fourteen valid rows and verifies each profile's exact title, purpose, expected output, ordered/optional stage labels, process form, eight enabled implemented tools, accessible tool-list name, and exact Academic Minimal 1.5 catalog/guidance identity. Existing keyboard, focus, responsive, lock, recovery, and adaptive-navigation assertions also passed."
+    },
+    {
+      "command": ".\\.local\\toolchains\\node-v24.19.0-win-x64\\pnpm.CMD --dir apps/desktop run build",
+      "exitCode": 0,
+      "result": "The functional desktop product and reference-conformance fixture rebuilt successfully. The generated application manifest binds CAP-03.S06.T05 and the exact current desktop source inventory; Vite produced only the expected local product artifacts."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py tools/desktop_app_check.py tests/desktop/test_desktop_app_check.py; .venv\\Scripts\\python.exe -m mypy --follow-imports=skip services/core-api/src/research_observatory_core/research_intents.py tests/e2e/test_workflow_profile_matrix.py tools/desktop_app_check.py",
+      "exitCode": 0,
+      "result": "All four changed Python files are format- and lint-clean; the changed service, end-to-end test, and desktop verifier are type-safe under the repository's focused MyPy mode."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The approved RO-UI-ACADEMIC-MINIMAL-1.5 reference passes all 55 governed files with exactly fourteen profiles and workflow-catalog SHA-256 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca. The authoritative backlog validates with 20 capabilities, 117 slices, 365 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile desktop --profile service --profile data --profile e2e-local --affected-base b6c33dd67a4c219efbc7856b21653f2fdc2db3d4 --affected-head 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce --deferred-gate W1-exit --selection-only; git diff --check b6c33dd67a4c219efbc7856b21653f2fdc2db3d4..8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce",
+      "exitCode": 0,
+      "result": "Affected selection passed for the exact claim-base-to-candidate range with desktop, service, data, and e2e-local ownership included; only the three gate-bound performance commands are deferred to W1 exit. Patch hygiene passed. The broad selection is caused by the append-only W1.A07 authority repair retained inside the original T05 claim range, not by unreviewed product scope."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The real Core/API/SQLite matrix creates, opens, starts, opens a supporting tool, closes, and reconstructs every one of the fourteen approved profiles through a fresh service composition, asserting exact first-stage and immutable stage/handoff revision identity after restart.",
+        "The production-frame Playwright matrix renders every profile's exact ordered and optional stages and expected outputs from the Core projection, while the All Tools disclosure retains exactly eight enabled implemented workspaces with the accessible name All implemented tools.",
+        "The matrix exposed and closes a real creation defect: ResearchIntentService now seeds each selected profile's governed evidence, autonomy, and stopping defaults rather than a generic combination that made four approved profiles impossible to create. Novelty remains unresolved because its rationale is researcher-authored."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact catalog classification is asserted as living-review, hermeneutic-inquiry, and manuscript-review-revision revisitable, with every other profile linear.",
+        "Real persisted commands append pass 2 for each of the three revisitable profiles while preserving the completed pass-1 revision and evidence. The same command is denied for all eleven linear profiles and leaves their exact projection unchanged.",
+        "Systematic-review's final governed page contract is asserted as audit-lineage.html, preserving its reproducible order and audit endpoint."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Both end-to-end tests require reference ID RO-UI-ACADEMIC-MINIMAL-1.5, reference version 1.5, profile-catalog version 1.0.0, profile-catalog hash sha256:0a3887774b30bb2d2d7fced5c9e43452e7e34993407a6122155b740814350e49, and the exact intent-guidance hash.",
+        "The compiled-frame report carries the same reference ID/version, catalog version/hash, guidance hash, all-tools policy, and one result row for each governed profile. The independent UI-reference validator authenticates the source workflow catalog at SHA-256 2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T05 is the exhaustive integration task for the approved workflow-profile slice. Its credible risks are catalog/reference substitution, inability to create one of the approved modes, generic defaults conflicting with mode contracts, wrong or collapsed stage order, hidden supporting tools, implicit stage advancement, lost restart identity, erased revisit history, linear-cycle bypass, wrong systematic endpoint, inaccessible output/tool semantics, and a verifier that tests source fixtures instead of the built product. The selected matrix therefore uses the exact Core projection across real project creation and SQLite restart for all fourteen profiles, positive and denial cycle commands for all fourteen, predecessor contract/service regressions, a rebuilt production frame with per-profile DOM/accessibility results, focused Python quality, reference integrity, backlog integrity, affected-path classification, and Git hygiene. The claim range also contains the independently approved and adopted W1.A07 authority repair that corrected criterion 2; those immutable planning/evidence paths explain the classifier's broad safety-sensitive inventory but do not expand this product candidate.",
+    "selectedCommandIds": [
+      "foundation:quality",
+      "foundation:ui-reference",
+      "foundation:backlog",
+      "desktop:application",
+      "service:unit",
+      "contracts:unit",
+      "data:unit",
+      "e2e-local:system"
+    ],
+    "deferred": [
+      "The complete desktop/service/data/e2e-local profile union selected by the historical claim range is deferred to CAP-03.S06 slice review and W1 exit; T05 ran the narrow deterministic commands that directly prove every criterion and changed boundary.",
+      "desktop:performance, data:project-lifecycle-performance, and data:storage-maintenance-performance are gate-bound to W1 exit by the affected selector.",
+      "Packaging/install/upgrade, full Windows-x64 smoke, cross-capability recovery/security, complete accessibility/visual, and repository-wide qualification remain mandatory at the integration checkpoint and W1 exit."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "human-and-agent-review",
+    "openFindingIds": [],
+    "note": "Independently review candidate 8c6ec2e510109c00a5f8d7663cf49aa59d3b45ce. Authenticate the original claim-base range and adopted W1.A07 correction, then focus on the five T05 implementation paths. Replay all fourteen creation/restart and cycle cases, the production-frame profile/accessibility matrix, the governed identity hashes, the bounded creation-default correction, and the unchanged researcher authority over novelty rationale."
+  }
+}
