@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-maintenance-review",
+  "reviewId": "W1.application-lock-event-acl.review-R01",
+  "reviewer": "agent:application-lock-event-acl-independent-reviewer",
+  "riskTier": 2,
+  "result": "approved",
+  "approvalAvailable": true,
+  "parentCommit": "c6ca6d7096b5db60c5ea655d80ecb86fa1abdfe6",
+  "candidateCommit": "cb3cd6267607f5e0306f5b64c25fea0607db3189",
+  "evidence": {
+    "path": "artifacts/evidence/W1.application-lock-event-acl.R01.json",
+    "commit": "cb3cd6267607f5e0306f5b64c25fea0607db3189",
+    "gitBlob": "a5d5d5fb509cde2fef8c4a0620a45bc75b3ec489",
+    "sha256": "7d0244b60bd389c272ae5c8b0b7e394aca2e4bd48fd4cad1a7455d80d195cab8"
+  },
+  "scope": {
+    "result": "PASS",
+    "changedPaths": [
+      "apps/desktop/src-tauri/capabilities/main-window.json",
+      "apps/desktop/src-tauri/gen/schemas/capabilities.json",
+      "apps/desktop/src-tauri/src/lib.rs",
+      "artifacts/evidence/W1.application-lock-event-acl.R01.json",
+      "tests/desktop/test_desktop_app_check.py",
+      "tools/desktop_app_check.py"
+    ],
+    "notes": "The candidate has the declared parent as its sole parent, introduces exactly the six declared paths, reproduces every recorded predecessor and candidate Git blob, byte count, and canonical SHA-256, and passes exact-range whitespace validation. No application-lock policy, renderer implementation, persistence, migration, project, workflow, release, or planning path changed."
+  },
+  "criteria": [
+    {
+      "criterion": "Capability identity and authority are exact and local-main receive-only.",
+      "result": "PASS",
+      "evidence": "The source capability retains identifier main-window and its exact existing description, has windows exactly [main], contains no remote field, and grants exactly core:webview:allow-internal-toggle-devtools, core:event:allow-listen, and core:event:allow-unlisten. It grants neither defaults nor renderer event-write authority."
+    },
+    {
+      "criterion": "The generated capability projection is coherent with the source capability.",
+      "result": "PASS",
+      "evidence": "The tracked generated projection contains one local main-window capability with the same identifier, description, main window scope, and exact three permissions. The checker reconstructs and compares the complete expected projection, and its divergence mutation is rejected."
+    },
+    {
+      "criterion": "The installed Tauri runtime authority resolves the exact allow and denial matrix.",
+      "result": "PASS",
+      "evidence": "Cargo.lock binds tauri 2.11.5. The real generate_context! RuntimeAuthority test allows plugin:webview|internal_toggle_devtools, plugin:event|listen, and plugin:event|unlisten only for local main/main; denies those commands for secondary/secondary and a remote Origin; and denies plugin:event|emit and plugin:event|emit_to for local main/main."
+    },
+    {
+      "criterion": "Static checks reject privilege omission, substitution, and expansion.",
+      "result": "PASS",
+      "evidence": "Independent checker tests reject missing listen, missing unlisten, added emit, added emit-to, core:event:default, core:default, arbitrary extra permission, widened windows, remote origins, and generated source/projection divergence."
+    },
+    {
+      "criterion": "Installed mode none starts ready only after successful listener registration while monitor failures remain fail-closed.",
+      "result": "PASS",
+      "evidence": "The assembled built frame proves plugin:event|listen precedes application_lock_status; a successful listener plus valid unlocked mode-none status reaches applicationReady without recovery; denied and timed-out listeners plus malformed lock events render Recovery required and suppress protected application chrome. The renderer files are unchanged from the parent, preserving listener-before-status sequencing and fail-closed reconciliation."
+    }
+  ],
+  "checks": [
+    {
+      "command": "git identity, ancestry, exact six-path diff, per-file blob/byte/SHA-256 authentication, and git diff --check against c6ca6d7096b5db60c5ea655d80ecb86fa1abdfe6..cb3cd6267607f5e0306f5b64c25fea0607db3189",
+      "result": "PASS"
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked tests::main_window_event_capability_is_receive_only -- --exact --nocapture",
+      "result": "PASS: 1 exact real Tauri runtime-authority test."
+    },
+    {
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "result": "PASS: 60 passed and one declared renderer-harness test ignored."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check -q",
+      "result": "PASS: all 10 checker tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "result": "PASS: zero errors; applicationLockEventAclStartup and defaultNoLogin, deniedListener, timedOutListener, and malformedEvent are all true."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check; ruff format/check and mypy for tools/desktop_app_check.py and tests/desktop/test_desktop_app_check.py",
+      "result": "PASS."
+    },
+    {
+      "command": "cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked -- -D warnings; cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked -- -D warnings -A clippy::nonminimal_bool",
+      "result": "QUALIFIED PASS: strict lib lint reproduces only the two disclosed unchanged supervisor.rs nonminimal_bool findings; the bounded changed-path command with that named allowance passes."
+    }
+  ],
+  "nonBlockingObservations": [
+    {
+      "observation": "The broader cargo clippy --workspace --all-targets --locked -- -D warnings replay additionally reports two needless_borrow findings in unchanged application_lock.rs test helpers at lines 1336 and 1346.",
+      "disposition": "Pre-existing test-target lint debt outside the candidate delta. It does not contradict the recorded bounded --lib pass or affect this remedy, and remains part of the evidence-declared broader Wave-exit coverage."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "checkpoint": {
+    "triggered": true,
+    "recommendation": "After this independent approval, bind the candidate, implementation evidence, and this review ledger into the next coherent W1 security/platform integration checkpoint. The change crosses the Tauri renderer principal boundary and application-lock startup path; it does not itself authorize release, W1 exit, a new product capability, or remote integration."
+  },
+  "notes": "APPROVED for the exact frozen candidate. The correction restores the already-approved default no-login startup behavior by adding only the two receive-side listener lifecycle permissions required by the unchanged renderer. Real Tauri authority, static mutation, generated-projection, and assembled startup/failure checks pass with no blocking or nonblocking acceptance-bound finding."
+}
