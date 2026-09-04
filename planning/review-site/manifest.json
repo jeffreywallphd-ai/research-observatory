@@ -25819,9 +25819,9 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A07.json",
       "approval_sha256": "c6d1369d96b49315213a8bc7d38037556532bef1d01f48c43424abb55d17cdd6",
       "approval_status": "APPROVED",
-      "lifecycle_status": "MATERIALIZED",
+      "lifecycle_status": "ACTIVE",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "NONE",
+      "campaign_status": "ACTIVE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -26155,7 +26155,7 @@
         {
           "task_id": "W1.A07.T01",
           "title": "Reconcile the CAP-03.S06 revisitable-cycle criterion",
-          "status": "NOT_STARTED",
+          "status": "READY",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,
