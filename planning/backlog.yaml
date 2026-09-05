@@ -39687,3 +39687,67 @@ wave_amendments:
     reviewed_at: null
     evidence: []
     notes: null
+- id: W1.A09
+  change_request_id: ECR-0008
+  target_wave: W1
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W1.A09.json
+    sha256: 08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c
+    introduction_commit: fcf627b4c83af81d0c3472526477bc7aa68d819c
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: repository-owner
+      at: '2026-09-05T03:15:45Z'
+      rationale: 'Record and bind the repository owner''s existing explicit preapproval: ''You have preapproval for the project-UX/reference
+        correct gate. Continue past that. Only seek approval for W1 passing.'' The owner authorized continuation for the disclosed
+        combined project-UX/reference correction before this exact binding; this record does not claim that the owner personally
+        reviewed the later commit. Independent R02 accepted the matching bounded descendant, closing both R01 findings. Authorize
+        only ECR-0008 at 2160cc9917282d80848189dc9669fe3827979246, its exact proposed Academic Minimal 1.6 package and enumerated
+        activation metadata mapping, bootstrap W1.A09.B00, contribution W1.A09.S01 and tasks W1.A09.T01-T04. Native project
+        contract/readiness repair, shared protected native folder selection, truthful fresh baseline and semantic1.5 preservation
+        must satisfy their exact criteria. Preserve paused A08 and return to it only through independently reviewed correctionReturn;
+        ordinary W1 resume remains after A08 adoption. This approval is not implementation completion, independent task/slice/exit
+        review, G1/W1 passing, W2 authorization, remote/destructive action, spend or broader security authority. The timestamp
+        records this exact binding of the standing owner authorization.'
+  bootstrap:
+    id: W1.A09.B00
+    status: REVIEW
+    implementer: codex
+    implementation_commit: d849d6699cbc0295e3b94f5efda9e338822d7c9e
+    submission_branch: codex/w1-windows-local-runtime
+    scope_addenda: []
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A09.B00.json
+      sha256: 75222f0993c050df6a6579052f263c5e30b5fc175ea55b80f1bd32d5febdd6f4
+      commit: d849d6699cbc0295e3b94f5efda9e338822d7c9e
+      recorded_at: '2026-09-05T03:21:27+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
+  correction:
+    id: W1.A08
+    changeRequestId: ECR-0007
+    status: PAUSED
+    packetCommit: 07b21b270dfb967ad3fd7e35217978c0860c8116
+    approvalReference:
+      path: planning/wave-amendment-approvals/W1.A08.json
+      sha256: 9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960
+      introductionCommit: 979486506a62b5dbf1b7a0af711079bdaa34cd44
+    effectiveStateCommit: 5329e538d853a36b46d123b9fc97caabb7d4735a
+    recordSha256: 3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506
+    returnPolicy: paused-predecessor

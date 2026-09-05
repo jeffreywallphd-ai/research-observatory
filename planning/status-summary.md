@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 1064069098cb73ddc62a42d45b09ffb70b8191f5181dbd8b9ad8932347e5c2c9
+source_sha256: ae7e48e23c25c852fadb58ab8bf3c3eee3b3fdcd0d92cf79fa8b6e4893d3ae94
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -20,7 +20,7 @@ manual_edit: prohibited
 | Enabler tasks | 11 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 8 |
+| Wave amendments | 9 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -61,6 +61,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `ADOPTED` | 6 |
+| `APPROVED` | 1 |
 | `PAUSED` | 1 |
 | `SUPERSEDED` | 1 |
 
@@ -86,6 +87,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
 
 ## Amendment-exit review and adoption projections
 
@@ -459,6 +461,20 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
   - amendment `W1.A07` / `artifacts/evidence/W1.A07.adoption.json` / `9c8448704a9c9b63302795f532a2159ea0411778f4b30dcac9c980aa53932631` / `f13e078fcd303ae28bde8999ccc55671adcc20e7`
 
 ### Amendment-exit review and adoption — W1.A08
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+### Amendment-exit review and adoption — W1.A09
 
 **Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
 

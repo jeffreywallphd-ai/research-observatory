@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1064069098cb73ddc62a42d45b09ffb70b8191f5181dbd8b9ad8932347e5c2c9
+source_sha256: ae7e48e23c25c852fadb58ab8bf3c3eee3b3fdcd0d92cf79fa8b6e4893d3ae94
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 11 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 8 |
+| Wave amendments | 9 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -48,6 +48,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `APPROVED` |
 
 ## Waves
 
@@ -1905,6 +1906,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+## W1.A09 - ECR-0008
+
+**Target Wave / class:** `W1` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A09.json` (`08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-09-05T03:15:45Z` by repository-owner: Record and bind the repository owner's existing explicit preapproval: 'You have preapproval for the project-UX/reference correct gate. Continue past that. Only seek approval for W1 passing.' The owner authorized continuation for the disclosed combined project-UX/reference correction before this exact binding; this record does not claim that the owner personally reviewed the later commit. Independent R02 accepted the matching bounded descendant, closing both R01 findings. Authorize only ECR-0008 at 2160cc9917282d80848189dc9669fe3827979246, its exact proposed Academic Minimal 1.6 package and enumerated activation metadata mapping, bootstrap W1.A09.B00, contribution W1.A09.S01 and tasks W1.A09.T01-T04. Native project contract/readiness repair, shared protected native folder selection, truthful fresh baseline and semantic1.5 preservation must satisfy their exact criteria. Preserve paused A08 and return to it only through independently reviewed correctionReturn; ordinary W1 resume remains after A08 adoption. This approval is not implementation completion, independent task/slice/exit review, G1/W1 passing, W2 authorization, remote/destructive action, spend or broader security authority. The timestamp records this exact binding of the standing owner authorization.
+
+### Amendment-exit review and adoption — W1.A09
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 # Capability contributions, slices, and tasks

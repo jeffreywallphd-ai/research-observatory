@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A09.B00",
+  "commit": "d849d6699cbc0295e3b94f5efda9e338822d7c9e",
+  "baseCommit": "fcf627b4c83af81d0c3472526477bc7aa68d819c",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0008.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0008 --require-approved",
+      "exitCode": 0,
+      "result": "Post-candidate replay passes: exact immutable owner-preapproval record fcf627b4, packet2160cc99, independent R02 ledger56656807, full predecessor/migration authority and paused A08 snapshot are authenticated. No new human approval was inferred or requested."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_pending_v4_successor_orders_interleaved_authority_and_reuses_approved_experience tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_review_checker_validates_enabler_hashes_pages_and_links",
+      "exitCode": 0,
+      "result": "Post-candidate replay:2 tests passed in27.226 seconds, including492-page site integrity. Existing reviewed generic correction/CAS regressions remain bound in paused-amendment-correction.evidence-01.json and independent review; not represented as freshly rerun here."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "Post-candidate replay passes492 planning pages; the exact approved/unmaterialized ECR projection and links agree."
+    },
+    {
+      "command": "git diff --check fcf627b4c83af81d0c3472526477bc7aa68d819c d849d6699cbc0295e3b94f5efda9e338822d7c9e; git diff --name-only fcf627b4c83af81d0c3472526477bc7aa68d819c d849d6699cbc0295e3b94f5efda9e338822d7c9e",
+      "exitCode": 0,
+      "result": "Exactly the three authorized generated review projection paths changed; clean patch hygiene. No product, active reference, baseline, semantic payload, backlog, controller, predecessor or gate change in the candidate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "planctl authenticates the immutable preapproved ECR-0008 packet, actual independent R02 acceptance/closures, A09 approval introduction, W1 base/adopted/reserved/migration chain and exact quiescent A08 approval/snapshot/full-record hash.",
+        "The generic correction entry/return implementation and independent maintenance disposition remain immutable ancestral evidence; product/reference authority comes only from the newly recorded owner preapproval."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The approved bootstrap-submit/CAS implementation admits only W1.A09 APPROVED with B00 REVIEW and packet-bound S01/T01-T04 definitions; materialization is still denied pending independent B00 review.",
+        "This candidate/evidence is submitted through that supported command. The resulting append is verified in the independent bootstrap review; this pre-submission manifest does not claim the live append has already occurred."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Before submission W1 and A08 remain PAUSED, lease-free, no active task/campaign; A08.T02 and CAP-07.S01.T02 remain BLOCKED. The exact paused parent record stays unchanged.",
+        "Bootstrap submission freezes that parent while retaining one pending-child relation; no new execution lease, ordinary Wave resume, parent recovery or premature adoption is authorized. Post-submission independent review must compare the actual immutable predecessor projection."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The exact candidate changes only ECR-0008.html, enablers/index.html and review-site/manifest.json under planning/review-site.",
+        "These projections show APPROVED owner authority and unmaterialized correction scope. The proposed reference remains inert; active reference1.5, baseline and product are untouched."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 is a three-file generated authority projection over an already independently accepted generic append-only correction controller. Selected exact-approval/history, generated-site integrity, source-scope and two focused projection regressions cover the credible delta. Independent review must check the actual bootstrap CAS append and frozen parent before materialization. No runtime, platform adapter or product change warrants a full profile at B00.",
+    "deferred": [
+      "T01 active reference/semantic bridge/fresh baseline and control checkpoint.",
+      "T02 exact compiled native/Core project contracts/readiness;T03 real Windows folder dialog and protected lifetime;T04 integrated qualification.",
+      "Returned A08 styling qualification, remaining CAP-07 tasks, full W1 Windows/security/recovery/performance/packaging matrix and separate human G1 approval."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-bootstrap-control-review",
+    "note": "Review exact d849d669 candidate and atomic bootstrap-submit state. Compare entire A08/predecessor authority and ordinary task/gate state, verify A09-only append and no materialization/lease/product/reference activation before approving B00."
+  }
+}
