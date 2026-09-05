@@ -40118,14 +40118,17 @@ wave_amendments:
     - Real Windows/native/disposable Core integration and lock/restart replay
     - Affected Rust/TS/Python type/lint/build and independent contract/security review
     packet_task_sha256: a1596d263e86b30101e25c81876693113073724d6e3df086bda319cf0c95debc
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-09-05T13:31:01+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: cc1d0407e6882b724e628caa136dfe4b9569410c
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-05T13:33:11+00:00'
+      expires_at: '2026-09-05T21:33:11+00:00'
+    started_at: '2026-09-05T13:33:11+00:00'
+    updated_at: '2026-09-05T13:33:11+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

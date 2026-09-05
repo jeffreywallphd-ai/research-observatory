@@ -19,7 +19,7 @@ const RUNTIME_STATES = [
   "recovery-required",
 ] as const;
 
-type RuntimeState = (typeof RUNTIME_STATES)[number];
+export type RuntimeState = (typeof RUNTIME_STATES)[number];
 
 const SNAPSHOT_DIAGNOSTICS = new Set<string>([
   "RO-CORE-STARTING",
@@ -57,6 +57,8 @@ export interface LocalServiceBoundaryProps {
   readonly probe?: LocalServiceProbe;
   readonly statusProbe?: LocalServiceProbe;
   readonly stopProbe?: () => Promise<unknown>;
+  readonly observeOnly?: boolean;
+  readonly onStateChange?: (state: RuntimeState) => void;
 }
 
 interface LocalServiceView {
@@ -230,10 +232,14 @@ export function LocalServiceBoundary({
   probe = packagedLocalServiceProbe,
   statusProbe = packagedLocalServiceStatusProbe,
   stopProbe = stopPackagedLocalService,
+  observeOnly = false,
+  onStateChange,
 }: LocalServiceBoundaryProps): ReactNode {
   const [view, setView] = useState<LocalServiceView>(() => hasTauriRuntime() ? LOADING_VIEW : UNAVAILABLE_VIEW);
   const activeProbe = useRef<AbortController | null>(null);
   const lastAnnouncedState = useRef<RuntimeState>(view.runtimeState);
+
+  useEffect(() => onStateChange?.(view.runtimeState), [onStateChange, view.runtimeState]);
 
   const applyResult = useCallback((result: unknown, announceUnchanged = false): void => {
     const nextView = localServiceViewFromProbeResult(result);
@@ -266,9 +272,16 @@ export function LocalServiceBoundary({
   }, [announce, applyResult, probe]);
 
   useEffect(() => {
-    if (probe === packagedLocalServiceProbe && hasTauriRuntime()) void retry();
+    if (observeOnly) {
+      const controller = new AbortController();
+      activeProbe.current = controller;
+      void statusProbe(controller.signal)
+        .then((result) => { if (!controller.signal.aborted) applyResult(result); })
+        .catch((error) => { if (!controller.signal.aborted) setView(secretSafeServiceFailure(error)); })
+        .finally(() => { if (activeProbe.current === controller) activeProbe.current = null; });
+    } else if (probe === packagedLocalServiceProbe && hasTauriRuntime()) void retry();
     return () => activeProbe.current?.abort();
-  }, [probe, retry]);
+  }, [applyResult, observeOnly, probe, retry, statusProbe]);
 
   useEffect(() => {
     if (!hasTauriRuntime() || (view.runtimeState !== "starting" && view.runtimeState !== "ready")) return undefined;

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dc72a6f2017972fe3aa8b60943b98660101a1476dbc2886b968aa174d83b8fa9
+source_sha256: f7b9d0110e52bd2a507265031ddddc55a03cdf6d8906f1a1204b5a47526521d2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2008,7 +2008,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T02 - Restore exact project contracts and explicit recovery
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T01`
 

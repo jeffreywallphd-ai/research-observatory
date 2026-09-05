@@ -704,6 +704,31 @@ describe("generated Core API client", () => {
     );
   });
 
+  it("allows bounded multiline creation objectives without relaxing control or nonblank checks", async () => {
+    const observed: string[] = [];
+    const client = createCoreApiClient(async (request) => {
+      observed.push(request.body ?? "");
+      throw new Error("fixture-transport-reached");
+    });
+    const command = {
+      parentDirectory: "C:/Research",
+      directoryName: "multiline-study",
+      displayName: "Multiline study",
+      primaryUseCase: "theory-synthesis" as const,
+    };
+    for (const researchObjective of ["A\nB", "A\rB", "A\tB", "A\r\nB\tC", "x".repeat(4000)]) {
+      const previous = observed.length;
+      await expect(client.createProject({ ...command, researchObjective })).rejects.toThrow("fixture-transport-reached");
+      expect(observed).toHaveLength(previous + 1);
+      expect(JSON.parse(observed.at(-1) ?? "{}").researchObjective).toBe(researchObjective);
+    }
+    for (const researchObjective of ["", " \r\n\t ", "x".repeat(4001), "A\u0000B", "A\u0001B", "A\u000bB", "A\u000cB", "A\u001fB", "A\u007fB"]) {
+      const previous = observed.length;
+      await expect(client.createProject({ ...command, researchObjective })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+      expect(observed).toHaveLength(previous);
+    }
+  });
+
   it("strictly decodes and requests the governed workflow profile catalog", async () => {
     const profileIds = [
       "rapid-orientation", "systematic-review", "living-review", "theory-synthesis",
