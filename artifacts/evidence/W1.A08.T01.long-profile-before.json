@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "desktop-long-profile-characterization",
+  "taskId": "W1.A08.T01",
+  "sourceCommit": "1a10a197678967d70e6bd607d932dd3e1bf54ff6",
+  "buildManifestPath": "apps/desktop/product-dist/application-manifest.json",
+  "buildManifestSha256": "770d3aeb55ae450216855aa7f4216af378619c74fc5bf1394cd750b30d0f7ae0",
+  "command": ".venv/Scripts/python.exe artifacts/tmp/w1-a08-long-profile-characterization.py",
+  "input": {
+    "profileName": "W repeated exactly 80 times",
+    "adapter": "Existing native invoke shape with an unlocked, valid Windows-password application-lock snapshot; no project open.",
+    "viewport": [720, 450]
+  },
+  "passed": false,
+  "scope": "Actual built product renderer, unmodified product CSS. Records horizontal document overflow and action geometry. The helper scrolls the document to the origin before measurement. Hit ownership is measured at each action center; no click was attempted in this pre-fix characterization.",
+  "measurements": [
+    {
+      "viewport": [720, 450],
+      "rootFontSize": "16px",
+      "documentClientWidth": 720,
+      "documentScrollWidth": 1337,
+      "documentOverflow": true,
+      "header": {"left": 0, "top": 0, "right": 1337.15625, "bottom": 64, "width": 1337.15625, "height": 64},
+      "sidebar": {"left": 0, "top": 64, "right": 1337.15625, "bottom": 264, "width": 1337.15625, "height": 200},
+      "actions": [
+        {"name": "profile80", "left": 157.6875, "top": 0, "right": 1317.15625, "bottom": 40, "width": 1159.46875, "height": 40, "fontSize": "14px", "hitTarget": null, "hitOwned": false},
+        {"name": "Lock", "left": 1028.921875, "top": 48, "right": 1093.1875, "bottom": 88, "width": 64.265625, "height": 40, "fontSize": "14px", "hitTarget": null, "hitOwned": false},
+        {"name": "Shortcuts", "left": 1101.1875, "top": 48, "right": 1198.1875, "bottom": 88, "width": 97, "height": 40, "fontSize": "14px", "hitTarget": null, "hitOwned": false},
+        {"name": "Dark theme", "left": 1206.1875, "top": 48, "right": 1317.15625, "bottom": 88, "width": 110.96875, "height": 40, "fontSize": "14px", "hitTarget": null, "hitOwned": false}
+      ],
+      "errors": []
+    },
+    {
+      "viewport": [720, 450],
+      "rootFontSize": "32px",
+      "documentClientWidth": 720,
+      "documentScrollWidth": 2672,
+      "documentOverflow": true,
+      "header": {"left": 0, "top": 0, "right": 2672.3125, "bottom": 128, "width": 2672.3125, "height": 128},
+      "sidebar": {"left": 0, "top": 128, "right": 2672.3125, "bottom": 526, "width": 2672.3125, "height": 398},
+      "actions": [
+        {"name": "profile80", "left": 315.375, "top": 0, "right": 2632.3125, "bottom": 80, "width": 2316.9375, "height": 80, "fontSize": "28px", "hitTarget": null, "hitOwned": false},
+        {"name": "Lock", "left": 2061.84375, "top": 96, "right": 2188.375, "bottom": 176, "width": 126.53125, "height": 80, "fontSize": "28px", "hitTarget": null, "hitOwned": false},
+        {"name": "Shortcuts", "left": 2204.375, "top": 96, "right": 2396.375, "bottom": 176, "width": 192, "height": 80, "fontSize": "28px", "hitTarget": null, "hitOwned": false},
+        {"name": "Dark theme", "left": 2412.375, "top": 96, "right": 2632.3125, "bottom": 176, "width": 219.9375, "height": 80, "fontSize": "28px", "hitTarget": null, "hitOwned": false}
+      ],
+      "errors": []
+    }
+  ]
+}

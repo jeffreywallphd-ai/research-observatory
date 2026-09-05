@@ -1,0 +1,8 @@
+{
+  "commands": [],
+  "errors": [
+    "invalid desktop application build: desktop application manifest does not bind the exact current build-input inventory"
+  ],
+  "frame": {},
+  "ok": false
+}

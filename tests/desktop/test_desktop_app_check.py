@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import re
 import shutil
@@ -24,8 +25,179 @@ from desktop_app_check import (  # noqa: E402
     product_build_errors,
     runtime_frame_errors,
     security_errors,
+    style_surface_matrix_errors,
     tool_environment,
 )
+
+
+def valid_style_surface_matrix() -> dict[str, Any]:
+    responsive = []
+    for width, height, padding in ((1440, 900, 28), (1280, 720, 20), (720, 450, 16)):
+        light_surface = "rgb(255, 255, 255)"
+        dark_surface = "rgb(11, 31, 55)"
+        text_scale = 2 if width == 720 else 1
+        responsive.append(
+            {
+                "viewport": [width, height],
+                "documentOverflow": False,
+                "contentDocumentOverflow": False,
+                "mainPaddingInlineStart": padding,
+                "topbarHeight": 64,
+                "sidebarWidth": 240 if width == 1440 else width,
+                "pageGap": 24,
+                "gridGap": 16,
+                "controlHeight": 40,
+                "primaryControlHeight": 44,
+                "states": {"empty": True, "recovery": True, "warning": True},
+                "surfaces": {
+                    "card": {"paddingInlineStart": 16, "borderRadius": 10},
+                    "panel": {"paddingInlineStart": 16, "borderRadius": 10},
+                    "form": {"display": "grid", "rowGap": 20},
+                    "control": {"height": 40, "borderRadius": 10},
+                    "notice": {"display": "grid", "paddingInlineStart": 16, "borderRadius": 10},
+                    "actionRow": {"display": "flex", "flexWrap": "wrap"},
+                    "dialog": {
+                        "display": "grid",
+                        "overflowY": "auto",
+                        "width": 640 if width == 720 else 400,
+                        "height": 370 if width == 720 else 275,
+                        "paddingInlineStart": 20 * text_scale,
+                        "borderRadius": 10 * text_scale,
+                        "focusContained": True,
+                        "containedVerticalOverflow": width == 720,
+                        "scrolledWithinSurface": True,
+                        "scaledClientHeight": 368 if width == 720 else 273,
+                        "scaledScrollHeight": 624 if width == 720 else 273,
+                    },
+                },
+                "themes": {
+                    "light": {
+                        "theme": "light",
+                        "surface1": light_surface,
+                        "surface2": "rgb(248, 250, 253)",
+                        "textDefault": "rgb(36, 59, 85)",
+                        "cardBackground": light_surface,
+                        "panelBackground": light_surface,
+                        "noticeBackground": "rgb(248, 250, 253)",
+                        "cardColor": "rgb(36, 59, 85)",
+                    },
+                    "dark": {
+                        "theme": "dark",
+                        "surface1": dark_surface,
+                        "surface2": "rgb(16, 39, 64)",
+                        "textDefault": "rgb(215, 226, 239)",
+                        "cardBackground": dark_surface,
+                        "panelBackground": dark_surface,
+                        "noticeBackground": "rgb(16, 39, 64)",
+                        "cardColor": "rgb(215, 226, 239)",
+                    },
+                },
+                "reducedMotion": [{"transitionDuration": "0.00001s", "animationDuration": "0.01ms"}],
+                "textScalePercent": 200 if width == 720 else 100,
+                "textScale": {
+                    "initialRootFontSize": 16,
+                    "rootFontSize": 16 * text_scale,
+                    "bodyFontSize": 14 * text_scale,
+                    "dialogFontSize": 14 * text_scale,
+                    "headingFontSize": 18 * text_scale,
+                    "available": True,
+                    "profileNameLength": len("Local profile"),
+                    "scaledDocumentOverflow": False,
+                    "documentClientWidth": width,
+                    "documentScrollWidth": width,
+                    "triggerHitTarget": True,
+                    "allActionsWithinTopbar": True,
+                    "sidebarAfterTopbar": True,
+                    "topbarBottom": 128 if width == 720 else 64,
+                    "triggerBottom": 112 if width == 720 else 52,
+                    "maxActionBottom": 112 if width == 720 else 52,
+                    "sidebarTop": 128 if width == 720 else 64,
+                },
+            }
+        )
+    tables = {
+        name: {
+            "accessibleName": name,
+            "tabIndex": 0,
+            "focused": True,
+            "focusOutlineWidth": 2,
+            "overflowX": "auto",
+            "documentOverflow": False,
+            "containedHorizontalOverflow": name != "Recent diagnostics table scroll region",
+            "rowCount": 10 if name == "Audit lineage table scroll region" else 4,
+            **{
+                field: 8 if name == "Recent diagnostics table scroll region" else 12
+                for field in (
+                    "headerPaddingInlineStart",
+                    "headerPaddingInlineEnd",
+                    "headerPaddingBlockStart",
+                    "headerPaddingBlockEnd",
+                    "dataPaddingInlineStart",
+                    "dataPaddingInlineEnd",
+                    "dataPaddingBlockStart",
+                    "dataPaddingBlockEnd",
+                )
+            },
+            "headerRowHeight": 38 if name == "Recent diagnostics table scroll region" else 44,
+            "dataRowHeight": 38 if name == "Recent diagnostics table scroll region" else 44,
+        }
+        for name in (
+            "Recent diagnostics table scroll region",
+            "Recalculation impact table scroll region",
+            "Audit lineage table scroll region",
+        )
+    }
+    return {
+        "responsive": responsive,
+        "longProfile": {
+            "baseline": {
+                "available": True,
+                "rootFontSize": 16,
+                "bodyFontSize": 14,
+                "profileNameLength": 80,
+                "scaledDocumentOverflow": False,
+                "documentClientWidth": 720,
+                "documentScrollWidth": 720,
+                "normalClick": True,
+                "triggerHitTarget": True,
+                "allActionsWithinTopbar": True,
+                "sidebarAfterTopbar": True,
+                "topbarBottom": 114,
+                "maxActionBottom": 100,
+                "sidebarTop": 114,
+            },
+            "scaled": {
+                "available": True,
+                "rootFontSize": 32,
+                "bodyFontSize": 28,
+                "profileNameLength": 80,
+                "scaledDocumentOverflow": False,
+                "documentClientWidth": 720,
+                "documentScrollWidth": 720,
+                "normalClick": True,
+                "triggerHitTarget": True,
+                "allActionsWithinTopbar": True,
+                "sidebarAfterTopbar": True,
+                "topbarBottom": 531,
+                "maxActionBottom": 500,
+                "sidebarTop": 531,
+            },
+        },
+        "tableRegions": tables,
+        "longContent": {
+            "containedVerticalOverflow": True,
+            "scrolledWithinSurface": True,
+            "documentOverflow": False,
+        },
+        "lockRecovery": {
+            "locked": True,
+            "recoveryRequired": True,
+            "noticeVisible": True,
+            "focusContained": True,
+            "documentOverflow": False,
+        },
+        "errorState": {"visible": True, "color": "rgb(198, 40, 40)", "dangerToken": "rgb(198, 40, 40)"},
+    }
 
 
 class DesktopAppCheckTests(unittest.TestCase):
@@ -106,6 +278,44 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(all(case["primaryControlHeight"] >= 44 for case in details["styleGeometry"]))
         self.assertTrue(all(not case["documentOverflow"] for case in details["styleGeometry"]))
         self.assertEqual(240, details["styleGeometry"][0]["sidebarWidth"])
+        style_matrix = details["styleSurfaceMatrix"]
+        self.assertEqual([], style_surface_matrix_errors(style_matrix))
+        self.assertEqual(
+            {
+                "Recent diagnostics table scroll region",
+                "Recalculation impact table scroll region",
+                "Audit lineage table scroll region",
+            },
+            set(style_matrix["tableRegions"]),
+        )
+        self.assertEqual(
+            8,
+            style_matrix["tableRegions"]["Recent diagnostics table scroll region"]["dataPaddingInlineStart"],
+        )
+        self.assertEqual(
+            12,
+            style_matrix["tableRegions"]["Audit lineage table scroll region"]["headerPaddingBlockStart"],
+        )
+        self.assertGreaterEqual(style_matrix["tableRegions"]["Audit lineage table scroll region"]["dataRowHeight"], 44)
+        self.assertTrue(all(case["states"]["empty"] for case in style_matrix["responsive"]))
+        self.assertTrue(all(case["states"]["recovery"] for case in style_matrix["responsive"]))
+        self.assertTrue(all(case["states"]["warning"] for case in style_matrix["responsive"]))
+        self.assertTrue(style_matrix["longContent"]["containedVerticalOverflow"])
+        self.assertTrue(style_matrix["lockRecovery"]["focusContained"])
+        self.assertTrue(style_matrix["errorState"]["visible"])
+        self.assertEqual(32, style_matrix["responsive"][2]["textScale"]["rootFontSize"])
+        self.assertEqual(28, style_matrix["responsive"][2]["textScale"]["bodyFontSize"])
+        self.assertEqual(36, style_matrix["responsive"][2]["textScale"]["headingFontSize"])
+
+        escaped_dialog = copy.deepcopy(style_matrix)
+        escaped_dialog["responsive"][2]["surfaces"]["dialog"]["containedVerticalOverflow"] = False
+        self.assertTrue(any("dialog" in error for error in style_surface_matrix_errors(escaped_dialog)))
+        unnamed_table = copy.deepcopy(style_matrix)
+        unnamed_table["tableRegions"]["Audit lineage table scroll region"]["accessibleName"] = None
+        self.assertTrue(any("named and tabbable" in error for error in style_surface_matrix_errors(unnamed_table)))
+        theme_drift = copy.deepcopy(style_matrix)
+        theme_drift["responsive"][0]["themes"]["dark"]["cardBackground"] = "rgb(255, 0, 0)"
+        self.assertTrue(any("--surface-1" in error for error in style_surface_matrix_errors(theme_drift)))
         self.assertEqual([], details["criticalViolations"])
         self.assertEqual([], details["requests"])
         self.assertEqual(6, details["designSystem"]["cases"])
@@ -115,6 +325,100 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(details["largeTable"]["focusPreserved"])
         self.assertTrue(details["largeTable"]["disabledBoundaries"])
         self.assertTrue(details["largeTable"]["compact"])
+
+    def test_style_surface_matrix_rejects_each_named_regression(self) -> None:
+        baseline = valid_style_surface_matrix()
+        self.assertEqual([], style_surface_matrix_errors(baseline))
+
+        mutations = {
+            "missing geometry": (
+                lambda matrix: matrix["responsive"][0].pop("topbarHeight"),
+                "shell rhythm",
+            ),
+            "nonfinite geometry": (
+                lambda matrix: matrix["responsive"][0].__setitem__("controlHeight", float("nan")),
+                "undersized",
+            ),
+            "invalid geometry": (
+                lambda matrix: matrix["responsive"][1]["surfaces"]["dialog"].__setitem__("width", "wide"),
+                "escapes the viewport",
+            ),
+            "document overflow": (
+                lambda matrix: matrix["responsive"][1].__setitem__("contentDocumentOverflow", True),
+                "escapes the document",
+            ),
+            "table inventory": (
+                lambda matrix: matrix["tableRegions"].pop("Recent diagnostics table scroll region"),
+                "all three",
+            ),
+            "table focus": (
+                lambda matrix: matrix["tableRegions"]["Audit lineage table scroll region"].__setitem__(
+                    "focused", False
+                ),
+                "visible keyboard focus",
+            ),
+            "table cell padding": (
+                lambda matrix: matrix["tableRegions"]["Recent diagnostics table scroll region"].__setitem__(
+                    "dataPaddingInlineStart", 0
+                ),
+                "canonical padding",
+            ),
+            "table row height": (
+                lambda matrix: matrix["tableRegions"]["Audit lineage table scroll region"].__setitem__(
+                    "dataRowHeight", 12
+                ),
+                "representative minimum",
+            ),
+            "dialog containment": (
+                lambda matrix: matrix["responsive"][2]["surfaces"]["dialog"].__setitem__(
+                    "containedVerticalOverflow", False
+                ),
+                "dialog",
+            ),
+            "declared text scale without computed scale": (
+                lambda matrix: matrix["responsive"][2]["textScale"].__setitem__("rootFontSize", 16),
+                "computed 200% text scale",
+            ),
+            "scaled shortcut trigger overlap": (
+                lambda matrix: matrix["responsive"][2]["textScale"].__setitem__("triggerHitTarget", False),
+                "200% text Shortcuts trigger",
+            ),
+            "scaled long-profile document overflow": (
+                lambda matrix: matrix["longProfile"]["scaled"].__setitem__("scaledDocumentOverflow", True),
+                "long-profile shell escapes",
+            ),
+            "theme token": (
+                lambda matrix: matrix["responsive"][0]["themes"]["dark"].__setitem__(
+                    "cardBackground", "rgb(255, 0, 0)"
+                ),
+                "--surface-1",
+            ),
+            "reduced motion": (
+                lambda matrix: matrix["responsive"][0]["reducedMotion"][0].__setitem__("transitionDuration", "0.12s"),
+                "suppress motion",
+            ),
+            "required state": (
+                lambda matrix: matrix["responsive"][0]["states"].__setitem__("empty", False),
+                "empty, recovery, or warning",
+            ),
+            "long content": (
+                lambda matrix: matrix["longContent"].__setitem__("containedVerticalOverflow", False),
+                "long-content",
+            ),
+            "lock recovery": (
+                lambda matrix: matrix["lockRecovery"].__setitem__("recoveryRequired", False),
+                "locked recovery",
+            ),
+            "error state": (
+                lambda matrix: matrix["errorState"].__setitem__("visible", False),
+                "error notice",
+            ),
+        }
+        for name, (mutate, expected) in mutations.items():
+            with self.subTest(name=name):
+                changed = copy.deepcopy(baseline)
+                mutate(changed)
+                self.assertTrue(any(expected in error for error in style_surface_matrix_errors(changed)))
 
     def test_security_boundary_and_complete_command_plan(self) -> None:
         self.assertEqual([], security_errors(REPO))
@@ -308,12 +612,8 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(any("every governed boundary state" in error for error in errors), errors)
 
     def test_product_styling_uses_shared_semantic_flow_primitives_and_canonical_geometry(self) -> None:
-        token_styles = (REPO / "design" / "ui-reference" / "assets" / "tokens.css").read_text(
-            encoding="utf-8"
-        )
-        shared_styles = (REPO / "packages" / "ui-components" / "src" / "styles.css").read_text(
-            encoding="utf-8"
-        )
+        token_styles = (REPO / "design" / "ui-reference" / "assets" / "tokens.css").read_text(encoding="utf-8")
+        shared_styles = (REPO / "packages" / "ui-components" / "src" / "styles.css").read_text(encoding="utf-8")
         product_styles = (REPO / "apps" / "desktop" / "src" / "app.css").read_text(encoding="utf-8")
         app_sources = {
             path.name: path.read_text(encoding="utf-8")
@@ -359,10 +659,20 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertNotIn("min-height: 2.75rem", product_styles)
         self.assertIsNone(re.search(r"\bstyle\s*=", combined_sources))
 
+        shared_rules = tuple(
+            (match.group("selectors"), match.group("body"))
+            for match in re.finditer(
+                r"(?P<selectors>[^{}]+)\{(?P<body>[^{}]*)\}",
+                re.sub(r"/\*.*?\*/", "", shared_styles, flags=re.DOTALL),
+            )
+        )
         primitive_contracts = {
             "ro-page-region": ("display: grid", "gap: var(--space-6)"),
             "ro-grid": ("display: grid", "gap: var(--grid-gap)"),
-            "ro-card": ("padding: var(--card-padding)", "border-radius: var(--radius-md)"),
+            "ro-card": (
+                "padding: var(--ro-card-padding, var(--card-padding))",
+                "border-radius: var(--radius-md)",
+            ),
             "ro-form": ("display: grid", "gap: var(--space-5)"),
             "ro-table-region": ("max-width: 100%", "overflow: auto"),
             "ro-dialog-surface": ("max-height: calc(100vh - var(--space-10))", "overflow: auto"),
@@ -370,17 +680,16 @@ class DesktopAppCheckTests(unittest.TestCase):
         }
         for primitive, declarations in primitive_contracts.items():
             with self.subTest(primitive_contract=primitive):
-                declaration = re.search(
-                    rf"(?:^|\n)[^{{}}]*\.{re.escape(primitive)}(?:[^{{}}]*)\{{(?P<body>[^}}]+)\}}",
-                    shared_styles,
+                applicable_bodies = "\n".join(
+                    body
+                    for selectors, body in shared_rules
+                    if re.search(rf"\.{re.escape(primitive)}(?![a-zA-Z0-9_-])", selectors)
                 )
-                self.assertIsNotNone(declaration)
+                self.assertTrue(applicable_bodies)
                 for expected in declarations:
-                    self.assertIn(expected, declaration.group("body") if declaration else "")
-        self.assertRegex(
-            shared_styles,
-            r"\.ro-form\s+:where\([^}]+\)\s*\{[^}]*min-height:\s*var\(--control-height-md\)",
-        )
+                    self.assertIn(expected, applicable_bodies)
+        form_control_bodies = "\n".join(body for selectors, body in shared_rules if ".ro-form :where(" in selectors)
+        self.assertIn("min-height: var(--control-height-md)", form_control_bodies)
 
     def test_catalog_structure_and_accessible_name_cannot_be_satisfied_by_comments(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -911,6 +912,447 @@ def core_workflow_catalog_json(repo: Path) -> str:
     return workflow_catalog_json
 
 
+STYLE_TABLE_REGION_NAMES = frozenset(
+    {
+        "Recent diagnostics table scroll region",
+        "Recalculation impact table scroll region",
+        "Audit lineage table scroll region",
+    }
+)
+
+
+def _motion_duration_is_suppressed(value: object) -> bool:
+    durations = [item.strip() for item in str(value or "").split(",") if item.strip()]
+    if not durations:
+        return False
+    try:
+        seconds = [
+            float(item[:-2]) / 1_000 if item.endswith("ms") else float(item[:-1])
+            for item in durations
+            if item.endswith(("ms", "s"))
+        ]
+    except ValueError:
+        return False
+    return len(seconds) == len(durations) and all(duration <= 0.00001 for duration in seconds)
+
+
+def _finite_style_number(value: object) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    number = float(value)
+    return number if math.isfinite(number) else None
+
+
+def _style_number_below(value: object, minimum: float) -> bool:
+    number = _finite_style_number(value)
+    return number is None or number < minimum
+
+
+def _style_number_matches(value: object, expected: float, *, tolerance: float = 0.05) -> bool:
+    number = _finite_style_number(value)
+    return number is not None and abs(number - expected) <= tolerance
+
+
+def style_surface_matrix_errors(matrix: dict[str, Any]) -> list[str]:
+    """Validate representative product styling from real computed renderer state."""
+    errors: list[str] = []
+    responsive = matrix.get("responsive")
+    expected_viewports = ((1440, 900, 28), (1280, 720, 20), (720, 450, 16))
+    if not isinstance(responsive, list) or len(responsive) != len(expected_viewports):
+        return ["desktop style matrix must contain the three governed responsive viewports"]
+
+    for case, (width, height, expected_padding) in zip(responsive, expected_viewports, strict=True):
+        label = f"{width}x{height}"
+        expected_text_scale = 2 if width == 720 else 1
+        text_scale = case.get("textScale")
+        expected_text_sizes = {
+            "initialRootFontSize": 16,
+            "rootFontSize": 16 * expected_text_scale,
+            "bodyFontSize": 14 * expected_text_scale,
+            "dialogFontSize": 14 * expected_text_scale,
+            "headingFontSize": 18 * expected_text_scale,
+        }
+        if (
+            case.get("textScalePercent") != expected_text_scale * 100
+            or not isinstance(text_scale, dict)
+            or any(
+                not _style_number_matches(text_scale.get(name), expected)
+                for name, expected in expected_text_sizes.items()
+            )
+        ):
+            errors.append(f"desktop product does not prove computed {expected_text_scale * 100}% text scale at {label}")
+        if width == 720 and isinstance(text_scale, dict):
+            topbar_bottom = _finite_style_number(text_scale.get("topbarBottom"))
+            trigger_bottom = _finite_style_number(text_scale.get("triggerBottom"))
+            max_action_bottom = _finite_style_number(text_scale.get("maxActionBottom"))
+            sidebar_top = _finite_style_number(text_scale.get("sidebarTop"))
+            document_client_width = _finite_style_number(text_scale.get("documentClientWidth"))
+            document_scroll_width = _finite_style_number(text_scale.get("documentScrollWidth"))
+            if (
+                not text_scale.get("triggerHitTarget")
+                or not text_scale.get("allActionsWithinTopbar")
+                or not text_scale.get("sidebarAfterTopbar")
+                or topbar_bottom is None
+                or trigger_bottom is None
+                or max_action_bottom is None
+                or sidebar_top is None
+                or trigger_bottom > topbar_bottom + 0.05
+                or max_action_bottom > topbar_bottom + 0.05
+                or sidebar_top < topbar_bottom - 0.05
+            ):
+                errors.append("desktop 200% text Shortcuts trigger is obscured by shell content at 720x450")
+            if (
+                not text_scale.get("available")
+                or text_scale.get("scaledDocumentOverflow")
+                or document_client_width is None
+                or document_scroll_width is None
+                or document_scroll_width > document_client_width + 0.05
+            ):
+                errors.append("desktop 200% text shell escapes the document at 720x450")
+        if case.get("viewport") != [width, height]:
+            errors.append(f"desktop style matrix viewport order is invalid at {label}")
+        if case.get("documentOverflow") or case.get("contentDocumentOverflow"):
+            errors.append(f"desktop product content escapes the document horizontally at {label}")
+        if case.get("mainPaddingInlineStart") != expected_padding:
+            errors.append(f"desktop product page padding is not {expected_padding}px at {label}")
+        if case.get("topbarHeight") != 64 or case.get("pageGap") != 24 or case.get("gridGap") != 16:
+            errors.append(f"desktop product shell rhythm is not canonical at {label}")
+        if _style_number_below(case.get("controlHeight"), 40) or _style_number_below(
+            case.get("primaryControlHeight"), 44
+        ):
+            errors.append(f"desktop product shell controls are undersized at {label}")
+        if width == 1440 and case.get("sidebarWidth") != 240:
+            errors.append("desktop product expanded navigation is not 240px at 1440x900")
+
+        surfaces = case.get("surfaces")
+        if not isinstance(surfaces, dict):
+            errors.append(f"desktop style matrix has no named surface projection at {label}")
+            continue
+        required_surfaces = {"card", "panel", "form", "control", "notice", "actionRow", "dialog"}
+        missing_surfaces = required_surfaces - set(surfaces)
+        if missing_surfaces:
+            errors.append(f"desktop style matrix is missing {sorted(missing_surfaces)} at {label}")
+            continue
+        card = surfaces["card"]
+        panel = surfaces["panel"]
+        form = surfaces["form"]
+        control = surfaces["control"]
+        notice = surfaces["notice"]
+        action_row = surfaces["actionRow"]
+        dialog = surfaces["dialog"]
+        if _style_number_below(card.get("paddingInlineStart"), 16) or card.get("borderRadius") != 10:
+            errors.append(f"desktop product card geometry is not canonical at {label}")
+        if panel.get("paddingInlineStart") != 16 or panel.get("borderRadius") != 10:
+            errors.append(f"desktop product panel geometry is not canonical at {label}")
+        if form.get("display") != "grid" or _style_number_below(form.get("rowGap"), 16):
+            errors.append(f"desktop product form rhythm is not canonical at {label}")
+        if _style_number_below(control.get("height"), 40) or control.get("borderRadius") != 10:
+            errors.append(f"desktop product form control is undersized or misaligned at {label}")
+        if notice.get("display") != "grid" or notice.get("paddingInlineStart") != 16:
+            errors.append(f"desktop product notice hierarchy is not canonical at {label}")
+        if notice.get("borderRadius") != 10:
+            errors.append(f"desktop product notice radius is not canonical at {label}")
+        if action_row.get("display") != "flex" or action_row.get("flexWrap") != "wrap":
+            errors.append(f"desktop product action row cannot wrap at {label}")
+        if dialog.get("display") != "grid" or dialog.get("overflowY") not in {"auto", "scroll"}:
+            errors.append(f"desktop product dialog is not a contained scroll surface at {label}")
+        dialog_width = _finite_style_number(dialog.get("width"))
+        dialog_height = _finite_style_number(dialog.get("height"))
+        if dialog_width is None or dialog_height is None or dialog_width > width or dialog_height > height:
+            errors.append(f"desktop product dialog escapes the viewport at {label}")
+        if not _style_number_matches(
+            dialog.get("paddingInlineStart"), 20 * expected_text_scale
+        ) or not _style_number_matches(dialog.get("borderRadius"), 10 * expected_text_scale):
+            errors.append(f"desktop product dialog geometry is not canonical at {label}")
+        if not dialog.get("focusContained"):
+            errors.append(f"desktop product dialog does not contain keyboard focus at {label}")
+        if width == 720:
+            scaled_client_height = _finite_style_number(dialog.get("scaledClientHeight"))
+            scaled_scroll_height = _finite_style_number(dialog.get("scaledScrollHeight"))
+            if (
+                not dialog.get("containedVerticalOverflow")
+                or not dialog.get("scrolledWithinSurface")
+                or scaled_client_height is None
+                or scaled_scroll_height is None
+                or scaled_scroll_height <= scaled_client_height
+            ):
+                errors.append("desktop product dialog does not retain focus and scrolling at 720x450 with 200% text")
+
+        motions = case.get("reducedMotion")
+        if not isinstance(motions, list) or not motions:
+            errors.append(f"desktop style matrix has no reduced-motion samples at {label}")
+        elif any(
+            not _motion_duration_is_suppressed(sample.get("transitionDuration"))
+            or not _motion_duration_is_suppressed(sample.get("animationDuration"))
+            for sample in motions
+        ):
+            errors.append(f"desktop product does not suppress motion across named surfaces at {label}")
+
+        themes = case.get("themes")
+        if not isinstance(themes, dict) or set(themes) != {"light", "dark"}:
+            errors.append(f"desktop style matrix does not cover light and dark tokens at {label}")
+        else:
+            for theme_name in ("light", "dark"):
+                theme = themes[theme_name]
+                if theme.get("theme") != theme_name:
+                    errors.append(f"desktop product reports the wrong {theme_name} theme at {label}")
+                if theme.get("cardBackground") != theme.get("surface1"):
+                    errors.append(f"desktop product card does not apply --surface-1 in {theme_name} at {label}")
+                if theme.get("panelBackground") != theme.get("surface1"):
+                    errors.append(f"desktop product panel does not apply --surface-1 in {theme_name} at {label}")
+                if theme.get("noticeBackground") != theme.get("surface2"):
+                    errors.append(f"desktop product notice does not apply --surface-2 in {theme_name} at {label}")
+                if theme.get("cardColor") != theme.get("textDefault"):
+                    errors.append(f"desktop product card does not apply --text-default in {theme_name} at {label}")
+            if themes["light"].get("surface1") == themes["dark"].get("surface1"):
+                errors.append(f"desktop product named surfaces do not change theme tokens at {label}")
+
+        states = case.get("states")
+        if not isinstance(states, dict) or not all(states.get(name) for name in ("empty", "recovery", "warning")):
+            errors.append(f"desktop style matrix omits empty, recovery, or warning state at {label}")
+
+    long_profile = matrix.get("longProfile")
+    if not isinstance(long_profile, dict) or set(long_profile) != {"baseline", "scaled"}:
+        errors.append("desktop style matrix must exercise the 80-character profile at 100% and 200% text")
+    else:
+        for scale_name, expected_root, expected_body in (("baseline", 16, 14), ("scaled", 32, 28)):
+            profile_case = long_profile[scale_name]
+            document_client_width = _finite_style_number(profile_case.get("documentClientWidth"))
+            document_scroll_width = _finite_style_number(profile_case.get("documentScrollWidth"))
+            topbar_bottom = _finite_style_number(profile_case.get("topbarBottom"))
+            max_action_bottom = _finite_style_number(profile_case.get("maxActionBottom"))
+            sidebar_top = _finite_style_number(profile_case.get("sidebarTop"))
+            if (
+                not profile_case.get("available")
+                or _style_number_below(profile_case.get("profileNameLength"), 80)
+                or not _style_number_matches(profile_case.get("rootFontSize"), expected_root)
+                or not _style_number_matches(profile_case.get("bodyFontSize"), expected_body)
+                or profile_case.get("scaledDocumentOverflow")
+                or document_client_width is None
+                or document_scroll_width is None
+                or document_scroll_width > document_client_width + 0.05
+            ):
+                errors.append(f"desktop long-profile shell escapes at {scale_name} text scale")
+            if (
+                not profile_case.get("normalClick")
+                or not profile_case.get("triggerHitTarget")
+                or not profile_case.get("allActionsWithinTopbar")
+                or not profile_case.get("sidebarAfterTopbar")
+                or topbar_bottom is None
+                or max_action_bottom is None
+                or sidebar_top is None
+                or max_action_bottom > topbar_bottom + 0.05
+                or sidebar_top < topbar_bottom - 0.05
+            ):
+                errors.append(f"desktop long-profile actions are not operable at {scale_name} text scale")
+
+    table_regions = matrix.get("tableRegions")
+    if not isinstance(table_regions, dict) or set(table_regions) != STYLE_TABLE_REGION_NAMES:
+        errors.append("desktop style matrix must exercise all three application table scroll regions")
+    else:
+        for accessible_name, table in table_regions.items():
+            if table.get("accessibleName") != accessible_name or table.get("tabIndex") != 0:
+                errors.append(f"desktop table region is not named and tabbable: {accessible_name}")
+            if not table.get("focused") or _style_number_below(table.get("focusOutlineWidth"), 2):
+                errors.append(f"desktop table region does not expose visible keyboard focus: {accessible_name}")
+            if table.get("overflowX") not in {"auto", "scroll"} or table.get("documentOverflow"):
+                errors.append(f"desktop table region does not contain overflow: {accessible_name}")
+            expected_cell_padding = 8 if accessible_name == "Recent diagnostics table scroll region" else 12
+            padding_fields = (
+                "headerPaddingInlineStart",
+                "headerPaddingInlineEnd",
+                "headerPaddingBlockStart",
+                "headerPaddingBlockEnd",
+                "dataPaddingInlineStart",
+                "dataPaddingInlineEnd",
+                "dataPaddingBlockStart",
+                "dataPaddingBlockEnd",
+            )
+            if any(not _style_number_matches(table.get(field), expected_cell_padding) for field in padding_fields):
+                errors.append(f"desktop table cells do not apply canonical padding: {accessible_name}")
+            minimum_row_height = 38 if accessible_name == "Recent diagnostics table scroll region" else 44
+            if _style_number_below(table.get("headerRowHeight"), minimum_row_height) or _style_number_below(
+                table.get("dataRowHeight"), minimum_row_height
+            ):
+                errors.append(f"desktop table rows are below the representative minimum: {accessible_name}")
+        for accessible_name in (
+            "Recalculation impact table scroll region",
+            "Audit lineage table scroll region",
+        ):
+            if not table_regions[accessible_name].get("containedHorizontalOverflow"):
+                errors.append(f"desktop dense table does not create contained overflow: {accessible_name}")
+        if _style_number_below(table_regions["Audit lineage table scroll region"].get("rowCount"), 8):
+            errors.append("desktop style matrix does not exercise a dense audit lineage table")
+
+    long_content = matrix.get("longContent")
+    if not isinstance(long_content, dict) or not long_content.get("containedVerticalOverflow"):
+        errors.append("desktop style matrix does not exercise contained long-content scrolling")
+    elif long_content.get("documentOverflow") or not long_content.get("scrolledWithinSurface"):
+        errors.append("desktop long content escapes the document instead of scrolling in its surface")
+
+    lock_recovery = matrix.get("lockRecovery")
+    if not isinstance(lock_recovery, dict) or not all(
+        lock_recovery.get(name) for name in ("locked", "recoveryRequired", "noticeVisible", "focusContained")
+    ):
+        errors.append("desktop style matrix does not exercise the locked recovery boundary")
+    elif lock_recovery.get("documentOverflow"):
+        errors.append("desktop locked recovery boundary overflows horizontally")
+
+    error_state = matrix.get("errorState")
+    if not isinstance(error_state, dict) or not error_state.get("visible"):
+        errors.append("desktop style matrix does not exercise a rendered error notice")
+    elif error_state.get("color") != error_state.get("dangerToken"):
+        errors.append("desktop error notice does not apply the governed danger token")
+    return errors
+
+
+def _style_audit_fixtures() -> dict[str, Any]:
+    project_id = "11111111-1111-4111-8111-111111111111"
+    target_revision_id = "01890f47-eae3-7cc0-98c4-dc0c0c073981"
+
+    def fixture_uuid(index: int) -> str:
+        return f"01890f47-eae3-7cc0-98c4-dc0c0d00{index:04x}"
+
+    knowledge_states = ("inferred", "stale", "verified", "adjudicated")
+    actor_types = ("model", "human", "software", "human")
+    lineage_items = []
+    for index in range(10):
+        lineage_items.append(
+            {
+                "factId": fixture_uuid(100 + index),
+                "relationType": (
+                    "wasDerivedFrom" if index == 0 else "wasInvalidatedBy" if index == 1 else "wasGeneratedBy"
+                ),
+                "entityDirection": "input" if index == 1 else "output",
+                "revisionId": target_revision_id if index == 0 else fixture_uuid(200 + index),
+                "entityId": fixture_uuid(300 + index),
+                "entityKind": "synthesis.sentence" if index == 0 else "evidence.passage",
+                "relatedRevisionId": fixture_uuid(400 + index) if index == 0 else None,
+                "knowledgeStatus": knowledge_states[index % len(knowledge_states)],
+                "rightsStatus": "allowed",
+                "depth": min(index, 7),
+                "eventId": fixture_uuid(500 + index),
+                "eventType": "org.research-observatory.evidence.recorded.v1",
+                "activityId": fixture_uuid(600 + index),
+                "activityType": "evidence.extract",
+                "activityStatus": "succeeded",
+                "configurationId": "model.synthesis-prompt-with-a-long-governed-configuration-identity",
+                "configurationVersion": "3.2.0",
+                "configurationHash": f"sha256:{index + 1:064x}",
+                "agentId": fixture_uuid(700 + index),
+                "agentType": actor_types[index % len(actor_types)],
+                "agentRole": "canonical.research-workflow-reviewer",
+                "occurredAt": f"2026-08-29T{19 - index:02d}:00:00Z",
+            }
+        )
+
+    accepted_intent = {
+        "schemaVersion": "1.0",
+        "intentId": fixture_uuid(800),
+        "revisionId": fixture_uuid(801),
+        "revision": 3,
+        "revisionContentHash": f"sha256:{'a' * 64}",
+        "createdAt": "2026-08-29T19:00:00.000Z",
+        "status": "accepted",
+        "primaryUseCase": "theory-synthesis",
+        "epistemicMode": "theory",
+        "researchObjective": "Explain a bounded evidence-first workflow.",
+        "contributionIntent": "Retain exact researcher authority.",
+        "phenomenon": "Research workflow",
+        "unitOfAnalysis": "Project",
+        "levelOfAnalysis": "System",
+        "sourceKinds": ["peer-reviewed-article"],
+        "evidenceTypes": ["theoretical-work"],
+        "languageCodes": ["en"],
+        "startYear": 2020,
+        "endYear": 2026,
+        "includePrivateReports": False,
+        "noveltyStandard": "theoretical",
+        "noveltyRationale": "Bound novelty against prior theory.",
+        "autonomyLevel": "suggest",
+        "stoppingConditions": ["interpretive-saturation"],
+        "revisionRationale": "Accepted bounded theory workflow.",
+        "unresolvedDecisions": [],
+        "decisionComplete": True,
+        "canRequestAcceptance": False,
+        "launchReady": True,
+    }
+    change_id = fixture_uuid(900)
+    preview = {
+        "schemaVersion": "1.0",
+        "projectId": project_id,
+        "targetRevisionId": target_revision_id,
+        "changeIds": [change_id],
+        "causes": [
+            {
+                "causeId": fixture_uuid(910 + index),
+                "changeId": change_id,
+                "confidence": confidence,
+                "depth": index + 1,
+                "disposition": disposition,
+                "pathRevisionIds": [target_revision_id],
+                "reason": reason,
+                "reviewRequired": review_required,
+            }
+            for index, (confidence, disposition, reason, review_required) in enumerate(
+                (
+                    ("confirmed", "stale", "A verified evidence dependency changed.", False),
+                    (
+                        "conditional",
+                        "stale",
+                        "A researcher-adjudicated claim depends on the changed evidence.",
+                        True,
+                    ),
+                    (
+                        "unknown",
+                        "unknown-impact",
+                        "The downstream impact cannot be proven safely.",
+                        True,
+                    ),
+                )
+            )
+        ],
+        "reusableRevisionIds": [fixture_uuid(920)],
+        "replacementRevisionIds": [fixture_uuid(921)],
+        "planSha256": f"sha256:{'b' * 64}",
+        "policySha256": f"sha256:{'c' * 64}",
+        "deferPreservesStaleVisibility": True,
+    }
+    return {
+        "lineage": {
+            "schemaVersion": "1.0",
+            "revisionId": target_revision_id,
+            "direction": "ancestors",
+            "items": lineage_items,
+            "missingRevisionIds": [fixture_uuid(950)],
+            "nextCursor": None,
+            "truncated": True,
+            "truncationReason": "scan-limit",
+            "integrityState": "integrity-review",
+            "legacyEventCount": 1,
+            "exportAllowed": False,
+            "exportDenialReason": "integrity-review",
+        },
+        "intent": {
+            "schemaVersion": "1.0",
+            "projectId": project_id,
+            "current": accepted_intent,
+            "history": [
+                {
+                    "revision": accepted_intent["revision"],
+                    "revisionId": accepted_intent["revisionId"],
+                    "revisionContentHash": accepted_intent["revisionContentHash"],
+                    "createdAt": accepted_intent["createdAt"],
+                    "status": accepted_intent["status"],
+                    "primaryUseCase": accepted_intent["primaryUseCase"],
+                    "unresolvedDecisionCount": 0,
+                }
+            ],
+        },
+        "preview": preview,
+    }
+
+
 def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
     errors = product_build_errors(repo)
     runtime_path = repo / PRODUCT_ROOT / "assets" / "app.js"
@@ -970,6 +1412,14 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "applicationHelloRecovery": False,
         "responsiveCases": 0,
         "styleGeometry": [],
+        "styleSurfaceMatrix": {
+            "responsive": [],
+            "longProfile": {},
+            "tableRegions": {},
+            "longContent": {},
+            "lockRecovery": {},
+            "errorState": {},
+        },
         "criticalViolations": [],
         "requests": [],
         "designSystem": {},
@@ -999,6 +1449,234 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             if disclosure.get_attribute("open") is None:
                 disclosure.locator("summary").click()
             disclosure.get_by_role("button", name=name, exact=True).click()
+
+        def surface_style_snapshot(page: Any, selector: str) -> dict[str, Any]:
+            node = page.locator(selector).first
+            node.wait_for(state="visible", timeout=5_000)
+            return node.evaluate(
+                """element => {
+                  const style = getComputedStyle(element);
+                  const rect = element.getBoundingClientRect();
+                  const px = (value) => {
+                    const parsed = Number.parseFloat(value);
+                    return Number.isFinite(parsed) ? Math.round(parsed * 1000) / 1000 : null;
+                  };
+                  return {
+                    display: style.display,
+                    rowGap: px(style.rowGap),
+                    columnGap: px(style.columnGap),
+                    paddingInlineStart: px(style.paddingInlineStart),
+                    paddingBlockStart: px(style.paddingBlockStart),
+                    borderRadius: px(style.borderStartStartRadius),
+                    minHeight: px(style.minHeight),
+                    maxHeight: px(style.maxHeight),
+                    width: Math.round(rect.width * 1000) / 1000,
+                    height: Math.round(rect.height * 1000) / 1000,
+                    overflowX: style.overflowX,
+                    overflowY: style.overflowY,
+                    flexWrap: style.flexWrap,
+                    backgroundColor: style.backgroundColor,
+                    borderColor: style.borderTopColor,
+                    color: style.color,
+                    transitionDuration: style.transitionDuration,
+                    animationDuration: style.animationDuration,
+                    containedHorizontalOverflow: element.scrollWidth > element.clientWidth,
+                    containedVerticalOverflow: element.scrollHeight > element.clientHeight,
+                  };
+                }""",
+                selector,
+            )
+
+        def theme_style_snapshot(page: Any) -> dict[str, Any]:
+            return page.evaluate(
+                """() => {
+                  const probe = document.createElement('span');
+                  probe.hidden = true;
+                  document.body.append(probe);
+                  const resolve = (name) => {
+                    probe.style.color = `var(${name})`;
+                    return getComputedStyle(probe).color;
+                  };
+                  const color = (selector, property) => {
+                    const node = document.querySelector(selector);
+                    return node ? getComputedStyle(node)[property] : null;
+                  };
+                  const result = {
+                    theme: document.documentElement.dataset.theme ?? 'light',
+                    surface1: resolve('--surface-1'),
+                    surface2: resolve('--surface-2'),
+                    textDefault: resolve('--text-default'),
+                    danger: resolve('--danger'),
+                    cardBackground: color('.settings-card.ro-card', 'backgroundColor'),
+                    cardColor: color('.settings-card.ro-card', 'color'),
+                    panelBackground: color('.application-settings-workspace > .ro-panel', 'backgroundColor'),
+                    noticeBackground: color('.settings-warning.ro-notice', 'backgroundColor'),
+                  };
+                  probe.remove();
+                  return result;
+                }"""
+            )
+
+        def table_region_snapshot(page: Any, selector: str) -> dict[str, Any]:
+            region = page.locator(selector).first
+            region.wait_for(state="visible", timeout=5_000)
+            page.keyboard.press("Tab")
+            region.focus()
+            return region.evaluate(
+                """element => {
+                  const style = getComputedStyle(element);
+                  const headerCell = element.querySelector('thead th');
+                  const dataCell = element.querySelector('tbody td');
+                  const headerStyle = headerCell ? getComputedStyle(headerCell) : null;
+                  const dataStyle = dataCell ? getComputedStyle(dataCell) : null;
+                  const px = (value) => {
+                    const parsed = Number.parseFloat(value ?? '');
+                    return Number.isFinite(parsed) ? Math.round(parsed * 1000) / 1000 : null;
+                  };
+                  return {
+                    accessibleName: element.getAttribute('aria-label'),
+                    tabIndex: element.tabIndex,
+                    focused: document.activeElement === element,
+                    focusOutlineWidth: Number.parseFloat(style.outlineWidth),
+                    overflowX: style.overflowX,
+                    overflowY: style.overflowY,
+                    containedHorizontalOverflow: element.scrollWidth > element.clientWidth,
+                    clientWidth: element.clientWidth,
+                    scrollWidth: element.scrollWidth,
+                    rowCount: element.querySelectorAll('tbody tr').length,
+                    headerPaddingInlineStart: px(headerStyle?.paddingInlineStart),
+                    headerPaddingInlineEnd: px(headerStyle?.paddingInlineEnd),
+                    headerPaddingBlockStart: px(headerStyle?.paddingBlockStart),
+                    headerPaddingBlockEnd: px(headerStyle?.paddingBlockEnd),
+                    dataPaddingInlineStart: px(dataStyle?.paddingInlineStart),
+                    dataPaddingInlineEnd: px(dataStyle?.paddingInlineEnd),
+                    dataPaddingBlockStart: px(dataStyle?.paddingBlockStart),
+                    dataPaddingBlockEnd: px(dataStyle?.paddingBlockEnd),
+                    headerRowHeight: headerCell?.closest('tr')?.getBoundingClientRect().height ?? null,
+                    dataRowHeight: dataCell?.closest('tr')?.getBoundingClientRect().height ?? null,
+                    longestTextLength: Math.max(0, ...Array.from(element.querySelectorAll('td, code'))
+                      .map((node) => node.textContent?.trim().length ?? 0)),
+                    documentOverflow: document.documentElement.scrollWidth
+                      > document.documentElement.clientWidth,
+                  };
+                }"""
+            )
+
+        def contained_scroll_snapshot(page: Any, selector: str) -> dict[str, Any]:
+            region = page.locator(selector).first
+            region.wait_for(state="visible", timeout=5_000)
+            return region.evaluate(
+                """element => {
+                  const style = getComputedStyle(element);
+                  const containedVerticalOverflow = element.scrollHeight > element.clientHeight;
+                  if (containedVerticalOverflow) element.scrollTop = element.scrollHeight;
+                  return {
+                    overflowY: style.overflowY,
+                    containedVerticalOverflow,
+                    scrolledWithinSurface: !containedVerticalOverflow || element.scrollTop > 0,
+                    clientHeight: element.clientHeight,
+                    scrollHeight: element.scrollHeight,
+                    documentOverflow: document.documentElement.scrollWidth
+                      > document.documentElement.clientWidth,
+                  };
+                }"""
+            )
+
+        def dialog_scale_snapshot(page: Any, initial_root_font_size: float) -> dict[str, Any]:
+            dialog = page.locator(".shortcut-dialog.ro-dialog-surface").first
+            dialog.wait_for(state="visible", timeout=5_000)
+            return dialog.evaluate(
+                """(element, initialRootFontSize) => {
+                  const px = (node, property) => node
+                    ? Number.parseFloat(getComputedStyle(node)[property])
+                    : null;
+                  const style = getComputedStyle(element);
+                  const labelledBy = element.getAttribute('aria-labelledby');
+                  const heading = labelledBy ? document.getElementById(labelledBy) : null;
+                  const rect = element.getBoundingClientRect();
+                  const containedVerticalOverflow = element.scrollHeight > element.clientHeight;
+                  if (containedVerticalOverflow) element.scrollTop = element.scrollHeight;
+                  return {
+                    surface: {
+                      display: style.display,
+                      rowGap: Number.parseFloat(style.rowGap),
+                      columnGap: Number.parseFloat(style.columnGap),
+                      width: rect.width,
+                      height: rect.height,
+                      paddingInlineStart: Number.parseFloat(style.paddingInlineStart),
+                      paddingBlockStart: Number.parseFloat(style.paddingBlockStart),
+                      borderRadius: Number.parseFloat(style.borderTopLeftRadius),
+                      overflowX: style.overflowX,
+                      overflowY: style.overflowY,
+                      flexWrap: style.flexWrap,
+                      backgroundColor: style.backgroundColor,
+                      borderColor: style.borderTopColor,
+                      color: style.color,
+                      transitionDuration: style.transitionDuration,
+                      animationDuration: style.animationDuration,
+                      containedHorizontalOverflow: element.scrollWidth > element.clientWidth,
+                      containedVerticalOverflow,
+                      scrolledWithinSurface: !containedVerticalOverflow || element.scrollTop > 0,
+                      scaledClientHeight: element.clientHeight,
+                      scaledScrollHeight: element.scrollHeight,
+                      focusContained: element.contains(document.activeElement),
+                    },
+                    textScale: {
+                      initialRootFontSize,
+                      rootFontSize: px(document.documentElement, 'fontSize'),
+                      bodyFontSize: px(document.body, 'fontSize'),
+                      dialogFontSize: px(element, 'fontSize'),
+                      headingFontSize: px(heading, 'fontSize'),
+                    },
+                  };
+                }""",
+                initial_root_font_size,
+            )
+
+        def scaled_shortcut_trigger_snapshot(page: Any) -> dict[str, Any]:
+            return page.evaluate(
+                """() => {
+                  const topbar = document.querySelector('.topbar');
+                  const sidebar = document.querySelector('.sidebar');
+                  const trigger = document.querySelector('[data-shortcut-help]');
+                  if (!topbar || !sidebar || !trigger) return {available: false};
+                  const topbarRect = topbar.getBoundingClientRect();
+                  const sidebarRect = sidebar.getBoundingClientRect();
+                  const triggerRect = trigger.getBoundingClientRect();
+                  const actionRects = [...topbar.querySelectorAll('a, button')]
+                    .map((element) => element.getBoundingClientRect());
+                  const maxActionBottom = Math.max(...actionRects.map((rect) => rect.bottom));
+                  const documentRoot = document.documentElement;
+                  const hitTarget = document.elementFromPoint(
+                    triggerRect.left + triggerRect.width / 2,
+                    triggerRect.top + triggerRect.height / 2,
+                  );
+                  return {
+                    available: true,
+                    rootFontSize: Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
+                    bodyFontSize: Number.parseFloat(getComputedStyle(document.body).fontSize),
+                    profileNameLength: document.querySelector('[data-application-settings-trigger]')
+                      ?.textContent?.trim().length ?? 0,
+                    scaledDocumentOverflow: documentRoot.scrollWidth > documentRoot.clientWidth,
+                    documentClientWidth: documentRoot.clientWidth,
+                    documentScrollWidth: documentRoot.scrollWidth,
+                    triggerHitTarget: Boolean(hitTarget
+                      && (hitTarget === trigger || trigger.contains(hitTarget))),
+                    allActionsWithinTopbar: actionRects.every(
+                      (rect) => rect.top >= topbarRect.top - .05 && rect.bottom <= topbarRect.bottom + .05),
+                    sidebarAfterTopbar: sidebarRect.top >= topbarRect.bottom - .05,
+                    topbarTop: topbarRect.top,
+                    topbarBottom: topbarRect.bottom,
+                    topbarHeight: topbarRect.height,
+                    triggerTop: triggerRect.top,
+                    triggerBottom: triggerRect.bottom,
+                    maxActionBottom,
+                    sidebarTop: sidebarRect.top,
+                    hitTargetTag: hitTarget?.tagName ?? null,
+                    hitTargetClass: typeof hitTarget?.className === 'string' ? hitTarget.className : null,
+                  };
+                }"""
+            )
 
         browser_context.route("**/*", serve_application)
         try:
@@ -1260,6 +1938,13 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and exact_json.endswith("\n")
             )
             details["diagnosticsTraceLink"] = "0123456789abcdef0123456789abcdef" in diagnostics_text
+            diagnostics.set_viewport_size({"width": 720, "height": 450})
+            diagnostics.locator(".support-preview details").evaluate("element => { element.open = true; }")
+            details["styleSurfaceMatrix"]["longContent"] = contained_scroll_snapshot(
+                diagnostics, ".support-json-preview"
+            )
+            diagnostic_table = table_region_snapshot(diagnostics, ".diagnostic-table-scroll.ro-table-region")
+            details["styleSurfaceMatrix"]["tableRegions"][diagnostic_table["accessibleName"]] = diagnostic_table
             diagnostics.get_by_role("button", name="Export reviewed bundle").click()
             exported_status = diagnostics.locator(".support-preview [role='status']")
             exported_status.wait_for(state="visible", timeout=5_000)
@@ -1637,6 +2322,70 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             current = projects.locator("[data-current-project]")
             current.get_by_role("button", name="Open project", exact=True).click()
             current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
+            style_audit_fixtures = _style_audit_fixtures()
+            projects.evaluate(
+                """fixtures => {
+                  const originalInvoke = window.__TAURI_INTERNALS__.invoke;
+                  window.__STYLE_REQUESTS__ = [];
+                  window.__STYLE_RESTORE_INVOKE__ = () => {
+                    window.__TAURI_INTERNALS__.invoke = originalInvoke;
+                    delete window.__STYLE_RESTORE_INVOKE__;
+                  };
+                  window.__TAURI_INTERNALS__.invoke = async (command, args) => {
+                    const request = args?.request;
+                    if (command === 'core_api_request') window.__STYLE_REQUESTS__.push(request?.path ?? null);
+                    let response = null;
+                    if (command === 'core_api_request' && request?.path === '/projects/provenance/lineage') {
+                      response = fixtures.lineage;
+                    } else if (
+                      command === 'core_api_request' && request?.path === '/projects/recalculation/preview'
+                    ) {
+                      response = fixtures.preview;
+                    } else if (command === 'core_api_request' && request?.path === '/projects/intent') {
+                      response = fixtures.intent;
+                    }
+                    if (response !== null) {
+                      return {
+                        status: 200,
+                        contentType: 'application/json',
+                        traceId: '0123456789abcdef0123456789abcdef',
+                        etag: null,
+                        body: JSON.stringify(response),
+                      };
+                    }
+                    return originalInvoke(command, args);
+                  };
+                }""",
+                style_audit_fixtures,
+            )
+            projects.set_viewport_size({"width": 720, "height": 450})
+            open_desktop_tool(projects, "Audit & lineage")
+            target_revision_id = style_audit_fixtures["lineage"]["revisionId"]
+            projects.locator("#lineage-revision-id").fill(target_revision_id)
+            projects.get_by_role("button", name="Trace lineage", exact=True).click()
+            try:
+                projects.locator(".lineage-results .lineage-table-scroll.ro-table-region").wait_for(
+                    state="visible", timeout=5_000
+                )
+            except PlaywrightError as error:
+                raise ValueError(
+                    "representative audit lineage state did not render: "
+                    + projects.locator("main").inner_text()
+                    + f"; runtime errors={project_errors}; style requests="
+                    + str(projects.evaluate("window.__STYLE_REQUESTS__"))
+                ) from error
+            projects.get_by_role("button", name="Preview impacts", exact=True).click()
+            projects.locator("[data-recalculation-preview] .lineage-table-scroll.ro-table-region").wait_for(
+                state="visible", timeout=5_000
+            )
+            for table_selector in (
+                "[data-recalculation-preview] .lineage-table-scroll.ro-table-region",
+                ".lineage-results .lineage-table-scroll.ro-table-region",
+            ):
+                table = table_region_snapshot(projects, table_selector)
+                details["styleSurfaceMatrix"]["tableRegions"][table["accessibleName"]] = table
+            projects.evaluate("window.__STYLE_RESTORE_INVOKE__()")
+            projects.set_viewport_size({"width": 1280, "height": 720})
             open_desktop_tool(projects, "Project home")
             projects.locator('[data-project-home-state="ready"]').wait_for(state="visible", timeout=5_000)
             project_home_bootstrap_valid = (
@@ -2664,6 +3413,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 and lock_reconciliation.locator("#application-lock-timeout").input_value() == "0"
                 and "prior setting remains active" not in lock_reconciliation.locator("[data-live-region]").inner_text()
             )
+            error_notice = surface_style_snapshot(lock_reconciliation, ".settings-feedback-danger.ro-notice")
+            details["styleSurfaceMatrix"]["errorState"] = {
+                **error_notice,
+                "visible": True,
+                "dangerToken": theme_style_snapshot(lock_reconciliation)["danger"],
+            }
             lock_reconciliation.evaluate(
                 """(() => {
                   const restored = {
@@ -2881,6 +3636,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   };
                 })()"""
             )
+            hello_recovery.set_viewport_size({"width": 720, "height": 450})
             hello_recovery.goto("http://tauri.localhost/index.html", wait_until="load")
             hello_recovery.locator("[data-application-locked]").wait_for(timeout=5_000)
             hello_recovery.get_by_text(
@@ -2908,6 +3664,19 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             modal_focus = hello_recovery.evaluate(
                 "document.activeElement?.textContent?.trim() === 'Keep application locked'"
             )
+            recovery_notice = surface_style_snapshot(hello_recovery, ".locked-recovery-confirmation.ro-notice")
+            details["styleSurfaceMatrix"]["lockRecovery"] = {
+                "viewport": [720, 450],
+                "locked": hello_recovery.locator("[data-application-locked]").count() == 1,
+                "recoveryRequired": "Windows password recovery" in hello_recovery.locator("body").inner_text(),
+                "noticeVisible": recovery_notice["display"] == "grid",
+                "focusContained": modal_focus,
+                "documentOverflow": hello_recovery.evaluate(
+                    "document.documentElement.scrollWidth > document.documentElement.clientWidth"
+                ),
+                "card": surface_style_snapshot(hello_recovery, ".locked-card.ro-card"),
+                "notice": recovery_notice,
+            }
             modal_background_inert = hello_recovery.evaluate(
                 "document.querySelector('.locked-surface-content')?.inert === true "
                 "&& document.querySelector('.locked-surface-content')?.getAttribute('aria-hidden') === 'true'"
@@ -2990,12 +3759,86 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"desktop Hello recovery runtime error: {'; '.join(hello_recovery_errors)}")
             hello_recovery.close()
 
+            long_profile = browser_context.new_page()
+            long_profile_errors: list[str] = []
+            long_profile.on("pageerror", page_error_collector(long_profile_errors))
+            long_profile.set_viewport_size({"width": 720, "height": 450})
+            long_profile.emulate_media(reduced_motion="reduce")
+            long_profile.add_init_script(
+                r"""(() => {
+                  window.__TAURI_INTERNALS__ = {
+                    transformCallback: () => 1,
+                    invoke: async (command) => {
+                      if (command === 'application_lock_status') return {
+                        schemaVersion: '1.0', state: 'unlocked', signInMode: 'windows-password',
+                        policyRevision: 1, profileName: 'W'.repeat(80), inactivityTimeoutMinutes: 15,
+                        configurationState: 'valid', reason: null,
+                        threatDisclosure: 'Application-session protection only; '
+                          + 'this is not Windows-account isolation.',
+                        retryAfterSeconds: 0, auditSequence: 0
+                      };
+                      if (command === 'plugin:event|listen') return 1;
+                      if (command === 'application_lock_activity'
+                        || command === 'plugin:event|unlisten'
+                        || command === 'core_runtime_stop') return undefined;
+                      if (command === 'core_runtime_start' || command === 'core_runtime_status') return {
+                        state: 'recovery-required', attempt: 0, retryAvailable: true,
+                        diagnosticReference: 'RO-CORE-SUPERVISOR-UNAVAILABLE'
+                      };
+                      throw new Error('unsupported long-profile style adapter command: ' + command);
+                    }
+                  };
+                })()"""
+            )
+            long_profile.goto("http://tauri.localhost/index.html", wait_until="load")
+            long_profile.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            long_profile.wait_for_function(
+                "document.querySelector('[data-application-settings-trigger]')?.textContent?.trim().length === 80",
+                timeout=5_000,
+            )
+            long_profile.evaluate("() => document.fonts.ready.then(() => true)")
+            long_profile_trigger = long_profile.locator("[data-shortcut-help]")
+            long_profile_trigger.scroll_into_view_if_needed(timeout=5_000)
+            long_profile_baseline = scaled_shortcut_trigger_snapshot(long_profile)
+            long_profile_baseline["normalClick"] = False
+            details["styleSurfaceMatrix"]["longProfile"] = {"baseline": long_profile_baseline}
+            long_profile_trigger.click(timeout=5_000)
+            long_profile.locator(".shortcut-dialog.ro-dialog-surface").wait_for(state="visible", timeout=5_000)
+            long_profile.keyboard.press("Escape")
+            long_profile.locator(".shortcut-dialog.ro-dialog-surface").wait_for(state="detached", timeout=5_000)
+            long_profile_baseline["normalClick"] = True
+
+            long_profile.evaluate("document.documentElement.style.setProperty('font-size', '32px', 'important')")
+            long_profile.wait_for_function(
+                """() => getComputedStyle(document.documentElement).fontSize === '32px'
+                  && getComputedStyle(document.body).fontSize === '28px'""",
+                timeout=5_000,
+            )
+            long_profile.evaluate("window.scrollTo(0, 0)")
+            long_profile_trigger.scroll_into_view_if_needed(timeout=5_000)
+            long_profile_scaled = scaled_shortcut_trigger_snapshot(long_profile)
+            long_profile_scaled["normalClick"] = False
+            details["styleSurfaceMatrix"]["longProfile"]["scaled"] = long_profile_scaled
+            long_profile_trigger.click(timeout=5_000)
+            long_profile.locator(".shortcut-dialog.ro-dialog-surface").wait_for(state="visible", timeout=5_000)
+            long_profile_scaled["normalClick"] = True
+            long_profile.keyboard.press("Escape")
+            if long_profile_errors:
+                errors.append(f"desktop long-profile style runtime error: {'; '.join(long_profile_errors)}")
+            long_profile.close()
+
             for width, height in ((1440, 900), (1280, 720), (720, 450)):
                 responsive = browser_context.new_page()
+                responsive_errors: list[str] = []
+                responsive.on("pageerror", page_error_collector(responsive_errors))
                 responsive.set_viewport_size({"width": width, "height": height})
                 responsive.emulate_media(reduced_motion="reduce")
                 responsive.goto("http://tauri.localhost/index.html", wait_until="load")
                 responsive.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+                responsive.evaluate("() => document.fonts.ready.then(() => true)")
+                initial_root_font_size = responsive.evaluate(
+                    "Number.parseFloat(getComputedStyle(document.documentElement).fontSize)"
+                )
                 geometry = responsive.evaluate(
                     """() => {
                       const px = (node, property) => node
@@ -3026,38 +3869,136 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     }"""
                 )
                 details["styleGeometry"].append(geometry)
-                if geometry["documentOverflow"]:
-                    errors.append(f"desktop product overflows horizontally at {width}x{height}")
-                expected_padding = 28 if width == 1440 else 20 if width == 1280 else 16
-                if geometry["mainPaddingInlineStart"] != expected_padding:
-                    errors.append(
-                        f"desktop product page padding is {geometry['mainPaddingInlineStart']}px, "
-                        f"expected {expected_padding}px at {width}x{height}"
+
+                theme_toggle = responsive.locator("[data-theme-toggle]")
+                if responsive.locator("html").get_attribute("data-theme") != "light":
+                    theme_toggle.click()
+                    responsive.wait_for_function("document.documentElement.dataset.theme === 'light'")
+                states = {
+                    "empty": responsive.locator('[data-project-home-state="empty"]').count() == 1,
+                    "recovery": responsive.locator(
+                        '[data-local-service-boundary][data-boundary-state="recovery-required"]'
+                    ).count()
+                    == 1,
+                    "warning": False,
+                }
+                responsive.locator("[data-application-settings-trigger]").click()
+                responsive.locator("[data-application-settings]").wait_for(state="visible", timeout=5_000)
+                surfaces = {
+                    "card": surface_style_snapshot(responsive, ".settings-card.ro-card"),
+                    "panel": surface_style_snapshot(responsive, ".application-settings-workspace > .ro-panel"),
+                    "form": surface_style_snapshot(responsive, ".settings-card.ro-form"),
+                    "control": surface_style_snapshot(responsive, "#application-profile-name"),
+                    "notice": surface_style_snapshot(responsive, ".settings-warning.ro-notice"),
+                    "actionRow": surface_style_snapshot(responsive, ".page-actions.ro-action-row"),
+                }
+                states["warning"] = responsive.locator(".settings-warning.ro-notice").count() == 1
+                themes = {"light": theme_style_snapshot(responsive)}
+                theme_toggle.click()
+                responsive.wait_for_function("document.documentElement.dataset.theme === 'dark'")
+                responsive.evaluate(
+                    "() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
+                )
+                themes["dark"] = theme_style_snapshot(responsive)
+                content_document_overflow = responsive.evaluate(
+                    "document.documentElement.scrollWidth > document.documentElement.clientWidth"
+                )
+
+                text_scale_percent = 100
+                expected_text_sizes = {"root": 16, "body": 14, "dialog": 14, "heading": 18, "padding": 20}
+                if width == 720:
+                    responsive.evaluate(
+                        """() => {
+                          document.documentElement.style.setProperty('font-size', '32px', 'important');
+                          document.documentElement.getBoundingClientRect();
+                        }"""
                     )
-                if geometry["topbarHeight"] != 64:
-                    errors.append(f"desktop product topbar is not 64px at {width}x{height}")
-                if geometry["pageGap"] != 24:
-                    errors.append(f"desktop product section rhythm is not 24px at {width}x{height}")
-                if geometry["gridGap"] != 16:
-                    errors.append(f"desktop product grid gap is not 16px at {width}x{height}")
-                if (geometry["controlHeight"] or 0) < 40 or (geometry["primaryControlHeight"] or 0) < 44:
-                    errors.append(f"desktop product controls are undersized at {width}x{height}")
-                reduced_motion_durations = [
-                    duration.strip() for duration in str(geometry["reducedMotionDuration"] or "").split(",")
-                ]
+                    responsive.wait_for_function(
+                        """() => {
+                          const root = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+                          const body = Number.parseFloat(getComputedStyle(document.body).fontSize);
+                          return Math.abs(root - 32) <= .05 && Math.abs(body - 28) <= .05;
+                        }""",
+                        timeout=5_000,
+                    )
+                    text_scale_percent = 200
+                    expected_text_sizes = {"root": 32, "body": 28, "dialog": 28, "heading": 36, "padding": 40}
+
+                trigger_snapshot = scaled_shortcut_trigger_snapshot(responsive)
+                if width == 720:
+                    details["styleSurfaceMatrix"]["scaledShortcutTrigger"] = trigger_snapshot
+                shortcut_trigger = responsive.locator("[data-shortcut-help]")
                 try:
-                    motion_is_suppressed = bool(reduced_motion_durations) and all(
-                        duration.endswith("s") and float(duration[:-1]) <= 0.00001
-                        for duration in reduced_motion_durations
+                    shortcut_trigger.click(timeout=5_000)
+                except PlaywrightError as exc:
+                    raise ValueError(
+                        f"desktop {text_scale_percent}% text Shortcuts trigger could not be activated: "
+                        + json.dumps(trigger_snapshot, sort_keys=True)
+                    ) from exc
+                dialog_locator = responsive.locator(".shortcut-dialog.ro-dialog-surface")
+                dialog_locator.wait_for(state="visible", timeout=5_000)
+                responsive.wait_for_function(
+                    """expected => {
+                      const closeEnough = (actual, target) => Math.abs(actual - target) <= .05;
+                      const dialog = document.querySelector('.shortcut-dialog.ro-dialog-surface');
+                      const labelledBy = dialog?.getAttribute('aria-labelledby');
+                      const heading = labelledBy ? document.getElementById(labelledBy) : null;
+                      const rootFontSize = Number.parseFloat(
+                        getComputedStyle(document.documentElement).fontSize);
+                      const dialogPadding = dialog
+                        ? Number.parseFloat(getComputedStyle(dialog).paddingInlineStart)
+                        : Number.NaN;
+                      return Boolean(dialog && heading && dialog.contains(document.activeElement)
+                        && closeEnough(rootFontSize, expected.root)
+                        && closeEnough(Number.parseFloat(getComputedStyle(document.body).fontSize), expected.body)
+                        && closeEnough(Number.parseFloat(getComputedStyle(dialog).fontSize), expected.dialog)
+                        && closeEnough(Number.parseFloat(getComputedStyle(heading).fontSize), expected.heading)
+                        && closeEnough(dialogPadding, expected.padding));
+                    }""",
+                    arg=expected_text_sizes,
+                    timeout=5_000,
+                )
+                responsive.keyboard.press("Tab")
+                responsive.wait_for_function(
+                    "document.querySelector('.shortcut-dialog')?.contains(document.activeElement) === true",
+                    timeout=5_000,
+                )
+                responsive.evaluate(
+                    "() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
+                )
+                dialog_snapshot = dialog_scale_snapshot(responsive, initial_root_font_size)
+                dialog_snapshot["textScale"].update(trigger_snapshot)
+                dialog_surface = dialog_snapshot["surface"]
+                surfaces["dialog"] = dialog_surface
+                reduced_motion = [
+                    {
+                        "surface": name,
+                        "transitionDuration": surface["transitionDuration"],
+                        "animationDuration": surface["animationDuration"],
+                    }
+                    for name, surface in surfaces.items()
+                ]
+                responsive_case = {
+                    **geometry,
+                    "contentDocumentOverflow": content_document_overflow,
+                    "states": states,
+                    "surfaces": surfaces,
+                    "themes": themes,
+                    "reducedMotion": reduced_motion,
+                    "textScalePercent": text_scale_percent,
+                    "textScale": dialog_snapshot["textScale"],
+                }
+                details["styleSurfaceMatrix"]["responsive"].append(responsive_case)
+                responsive.keyboard.press("Escape")
+                if width == 720:
+                    responsive.evaluate("document.documentElement.style.removeProperty('font-size')")
+                if responsive_errors:
+                    errors.append(
+                        f"desktop responsive style runtime error at {width}x{height}: " + "; ".join(responsive_errors)
                     )
-                except ValueError:
-                    motion_is_suppressed = False
-                if not motion_is_suppressed:
-                    errors.append(f"desktop product does not suppress motion at {width}x{height}")
-                if width == 1440 and geometry["sidebarWidth"] != 240:
-                    errors.append("desktop product expanded navigation is not 240px at 1440x900")
                 details["responsiveCases"] += 1
                 responsive.close()
+            errors.extend(style_surface_matrix_errors(details["styleSurfaceMatrix"]))
         except (OSError, PlaywrightError, ValueError) as exc:
             errors.append(f"desktop product browser check failed: {exc}")
         finally:

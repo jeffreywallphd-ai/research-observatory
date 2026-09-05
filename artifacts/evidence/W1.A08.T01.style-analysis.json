@@ -1,0 +1,1916 @@
+{
+  "details": {
+    "cssRuleCount": 279,
+    "customPropertyDefinitionCount": 119,
+    "customPropertyReferenceCount": 90,
+    "exceptions": {
+      "declared": 10,
+      "ids": [
+        "W1-A08-T01-C01",
+        "W1-A08-T01-C02",
+        "W1-A08-T01-C03",
+        "W1-A08-T01-C04",
+        "W1-A08-T01-C05",
+        "W1-A08-T01-C06",
+        "W1-A08-T01-C07",
+        "W1-A08-T01-C08",
+        "W1-A08-T01-C09",
+        "W1-A08-T01-C10"
+      ],
+      "used": 10
+    },
+    "materialDeclarationGroups": [
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "9e3c963dd49a5e19cec1f168077a560c7285717d5785506b1218320268d98acf",
+        "occurrences": [
+          "apps/desktop/src/app.css::.task-center-list > li > button"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "b9d0a3fd36bf0f24aeb16dd5a63324e475ffebc75bdec7ea781f92e0c2bd7e25",
+        "occurrences": [
+          "apps/desktop/src/app.css::.command-area"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "4093b040648f317f6edee296264f2d1779cd1546f6309b394f457c2c601634a4",
+        "occurrences": [
+          "apps/desktop/src/app.css::.settings-card"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "1411e0494d9e9a29424d744b3d96e5ca71085e6e2bc4d0ee75d355fd2bf79b34",
+        "occurrences": [
+          "apps/desktop/src/app.css::.recent-diagnostics, .support-preview"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "85971fc7834e280d111662f210f252dafd26c2a536c10097867842a1d8215336",
+        "occurrences": [
+          "apps/desktop/src/app.css::.lineage-trace-form"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "c5ddd30772a7fb49a88e25a31064dddbb0c83ffdf51bd399074050abcf4eacb5",
+        "occurrences": [
+          "apps/desktop/src/app.css::.locked-card"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "ff2ee0429c7a954a1ca2f03dab501de186d5d30b999177e02fc25017431efec6",
+        "occurrences": [
+          "apps/desktop/src/app.css::.settings-save-row"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "01a13e5722a62e3c488695f56a4a4c5e6273964328be4611259f862236094ab7",
+        "occurrences": [
+          "apps/desktop/src/app.css::.task-center-confirmation"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "082f535e07df181075fb1550b57bdc7a7a721006cadbff145d330701214664ee",
+        "occurrences": [
+          "apps/desktop/src/app.css::.locked-recovery-confirmation"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "56a200c2bdd34a0baecec8bedec4115d849fc3277d0060215ebc81b45caf05cf",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-navigation-heading"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "159b2d8d38f9d88c354aa50b6fe0486cf58a3a94e5e2d5def2b42573fd9c8d46",
+        "occurrences": [
+          "apps/desktop/src/app.css::.supporting-tool-context"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "7c1948a567f47718f75545d80b4efb51aa07eb3a9b1110af240b81ecd1d92c11",
+        "occurrences": [
+          "apps/desktop/src/app.css::.task-center-list"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "3263299df219d9f1a291fca0f25323486ffb7655b2e26e7a482f777b0b80c7d3",
+        "occurrences": [
+          "apps/desktop/src/app.css::.intent-history"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "157fed6c9acc147814013bd579cb878823876e21d23ef80df3eb14bc05fa7647",
+        "occurrences": [
+          "apps/desktop/src/app.css::.project-home-revisit-list"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "9e6a01430eef4ad97ca04a5ab30385932b3f298e08b405d271cbca9f55194bd2",
+        "occurrences": [
+          "apps/desktop/src/app.css::.project-home-stale-list"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "e817e3361c37548f7d6fd5e7218a8cef07c30344601d1d5d1cef68dd7ee9a6b2",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::[data-tone=\"danger\"]"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "f57f924f2dc8c7cfb2a88afbc68c30a15f817fd81b19780582e1d3fb3bca27f2",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::[data-tone=\"info\"]"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "bf56556f2ec5a0691ad91d68a31b2d46df40da911409470d5764e62254f782d9",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::[data-tone=\"success\"]"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "ec8ff561ad18f43e7d2508f6edbf7499f4f403af6847ec621345fd5f82046067",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::[data-tone=\"violet\"]"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "ccf459f5e1bc877f8c68601858f959d184a1fe73971d365b51438078e90977f3",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::[data-tone=\"warning\"]"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "007b0e3d62b90684b993cf92f1e1397136f0d9e6e4d69ea1e87d7477388c727c",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state__progress progress"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "56f31dda80e544807a22a37f6f94b162764929e7dec69cb13c9893772e98f4ef",
+        "occurrences": [
+          "apps/desktop/src/app.css::.mode-card input"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "ba714140df150a11c2c76382a0d47cc0c16a6a873a9f10f7493e0a70f7e36a65",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "72f22d881f74ce1205d5b30234ac5c31a5470c10279bfb5f49823a68a6825dfc",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-card, .ro-panel"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "2efb915a5fd79b6a3f66ac0fb1b174cd387afa6b252b76362608a674c7365d16",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-page-region, .ro-stack"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 8,
+        "fingerprintSha256": "a7f5d0a6e666dc8628b8e849ba146736c75539b2afd7ec75fbefed922ae4439d",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-evidence-state, .ro-status-badge, .ro-uncertainty-state"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 9,
+        "fingerprintSha256": "11c01376cd771c5d401dcc977c6c9ff1ef0d8a9923a630430e627c2a04e35234",
+        "occurrences": [
+          "apps/desktop/src/app.css::.topbar"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 8,
+        "fingerprintSha256": "bd05a6339abab07591268783eb194c79a4117a855b9079290165c49454e0c4d3",
+        "occurrences": [
+          "apps/desktop/src/app.css::.all-tools summary"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "82073b54408d508beeac69ccb696344d6f6c9d611a6cfd1ae46ef742be9cfd7b",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state__diagnostic"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 7,
+        "fingerprintSha256": "183abab06bb7ba7b122b526a4d5f4a13821d53f69f4e45e4fc87be614e80b569",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table-pagination"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "23016125a368e1531394d43b7e01b34c0f103dbd8ed12535cd2982b1fdc22eab",
+        "occurrences": [
+          "apps/desktop/src/app.css::.brand"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "8190797d75c3cad834ef1ffaeeada323822bc3bb08de1378ba132bf0859bd678",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-action-row, .ro-cluster"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "1693ebc2b1407c21ba14f9aa7bb023b11c952af5232b6a40504bd4c10cd7c432",
+        "occurrences": [
+          "apps/desktop/src/app.css::.mode-card > span:first-child"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "03bfd96cf776bd8d8f847779f6f08b971fe06e4e765714b47232d67972f12c19",
+        "occurrences": [
+          "apps/desktop/src/app.css::.project-home-revisit-list li"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "4848b218d9ce4dde8fed38d9427c71b7a5d65c0315edcd232a3bf64ba9b3c91f",
+        "occurrences": [
+          "apps/desktop/src/app.css::.recalculation-revision-fields"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "7fa1c8ba1094a7a2ddb2694876317e72282d757b20a1379f5e1080e84e83aefb",
+        "occurrences": [
+          "apps/desktop/src/app.css::.command-results li"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "02e3a3fc281e3c270246cf7f877f8384878c645ea0a3da90a701fa400eee98f9",
+        "occurrences": [
+          "apps/desktop/src/app.css::.settings-field-grid"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "2332871b7f1e3db9012e7ad5e20cfc5f561d97d8183e03f8cf117a751fc7a1e5",
+        "occurrences": [
+          "apps/desktop/src/app.css::.lineage-results-heading"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "4eebb7eb3192404cdea96b0d94ddeaecab969e1f805fdde10055f8539d036fc5",
+        "occurrences": [
+          "apps/desktop/src/app.css::.intent-form fieldset label"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "c44097c46340e16f557a260ba63b6aa776ec433d05b40ff8a718eddaa450b1ae",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-split-row"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "63563b06b479e29def7f00d1d531375cca1acb2437582f18f50728891aae6f71",
+        "occurrences": [
+          "apps/desktop/src/app.css::.consent-boundary"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "bd716e7e7e8e2c91922951b2297d7ce3e38404039f24cefa0625f6de0c93c9d1",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-stage-list button"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "2df0ae05d89919cb83ab0f2a2c25c45ef62b211d88c412fdc5de302405ee303b",
+        "occurrences": [
+          "apps/desktop/src/app.css::.task-center-layout"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "a07634e5f80272e461ac3e682ee689c2a78d735d09777850d8d3b954eb4b0c06",
+        "occurrences": [
+          "apps/desktop/src/app.css::.application-settings-workspace .page-header"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 11,
+        "fingerprintSha256": "7285690cfb80def8c6b9a3f39ede5d4e3a79307d0ec4d9f86767492924611f26",
+        "occurrences": [
+          "apps/desktop/src/app.css::.sidebar button"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "35e5e5523e1c761cd16e2ed19e40caeaaba17d93afc47f5c9852b5995d92094d",
+        "occurrences": [
+          "apps/desktop/src/app.css::.sidebar button[aria-current=\"page\"], .sidebar button[aria-current=\"step\"]"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "cd66d3bc1591821939031298c1ce2757901fbbaaa22db081b9079dd6f985c41d",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-button--primary"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "48cb657b7a8c41e2e8934b677ac7c5c130f8101c6850c8c3de25a2ba61af6b7c",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-stage-list li:where([data-stage-state=\"current\"]) .workflow-stage-number"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 8,
+        "fingerprintSha256": "656750cea3a6a9b1520d05117f9aad00c5f955c6e4c8961e2199bc157a324cbe",
+        "occurrences": [
+          "apps/desktop/src/app.css::.brand-mark"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 9,
+        "fingerprintSha256": "3c838012540412a27fa3823368af1dfb70b3271f0c899b36f5c9b28098b10da2",
+        "occurrences": [
+          "apps/desktop/src/app.css::.skip-link"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "f4df12ba87afdd134d0e1edc7c03b269ab698ae9853ac3c1beed45d6af5b5c04",
+        "occurrences": [
+          "apps/desktop/src/app.css::body"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "aa954e407c18c6e299713926f843f09505740a6ae93e95e63640defd24ccf0b1",
+        "occurrences": [
+          "apps/desktop/src/app.css::html"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "5a998849f8892bc8a1fff6bbc4f10847e42605d6f5453952fa18dbba432d1888",
+        "occurrences": [
+          "apps/desktop/src/app.css::.locked-application"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "f0858ab0806eb5db864c04d1421123f8c23bb4e29cc5cbce5691f5eb4aadf80d",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-button--danger"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 7,
+        "fingerprintSha256": "3555b926e18415649d1defad11e24cb59d9d854e14a7a1980d46466f43fc12e5",
+        "occurrences": [
+          "apps/desktop/src/app.css::.dialog-backdrop"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "42166055dc9cd075f1a98c46473ab45d3bf7c4517a0c9da52eb8b7e577c6fd37",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state:where([data-tone]:not([data-tone=\"neutral\"])), .ro-notification:where([data-tone]:not([data-tone=\"neutral\"])), .ro-panel:where([data-tone]:not([data-tone=\"neutral\"])), .ro-status-badge:where([data-tone]:not([data-tone=\"neutral\"]))"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "746a1ed138a7303bed81efce13444162a1c9edf5f08bd893c4ce9078419a0e2a",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-stage-list li:where([data-stage-state=\"completed\"]) .workflow-stage-number"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 10,
+        "fingerprintSha256": "bcc56d66e272fb77d991608d8bbb18ba5c062cfddf0916f84bceea70875df766",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-stage-number"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "88debf26836f8855f80ba1374ce1de3328faae966a842c33a45880770c3c4bf8",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-dialog, .ro-dialog-surface"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 10,
+        "fingerprintSha256": "b09b0f85aaaff55f4e64e19087d01dd9df9e7a6bdda2f345b4f4f50c134bb7b5",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-button"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "e954017109db7341225c15fabc43f0f055b62a52344818b8398da830a3929994",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-field input, .ro-form :where(input:not([type=\"checkbox\"], [type=\"radio\"]), select, textarea)"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 7,
+        "fingerprintSha256": "b7e56651cef6aa4b6a1d26abae8db1e13dcd42df9c3029f1c106792f167ae095",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state, .ro-card, .ro-notification, .ro-panel"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "ee865c768ad6103205830b566d4a1c4bfe6e5de124149d1679c60ba835905f63",
+        "occurrences": [
+          "apps/desktop/src/app.css::.trust-footer"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "650a72ba9d1e47876bd09ceddfef3b81dc9bf8b5704592ff3090f006ffcae956",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "f15b9e5d82ea59f65a1037bf805c2b976f4ea9cde77cb8afbb40bc002aea3562",
+        "occurrences": [
+          "apps/desktop/src/app.css::.all-tools[open] summary"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "8879128d19c1df46a2daed2648211245351059fa12a6760a210276a46a38510e",
+        "occurrences": [
+          "apps/desktop/src/app.css::kbd"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 7,
+        "fingerprintSha256": "7c4108110b8d162135553bf118000124687f497540be24979e41470c4aa43fac",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-notice"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 10,
+        "fingerprintSha256": "e5ace1add4ec2ba68f664d2ab26b243514cd48df0465b188dc64cc8a9d6e739e",
+        "occurrences": [
+          "apps/desktop/src/app.css::.support-json-preview"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 7,
+        "fingerprintSha256": "95d7f207c2f9106da9c10792b3945e2d466202fee9967ea417772d0fbda6a8b7",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state__diagnostic code"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "a8aa82c496e683465517a5ab7f73f5681e89e93cb10f152d515a09e749229e33",
+        "occurrences": [
+          "apps/desktop/src/app.css::.sidebar"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "3691253464d0a8f8d2806d1b0a17c7dcf481d8a932b5843bd70a77f4827c37be",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state__retained"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "b012428318ad379d70f2d91b963bbc5771fabc55299ce361919a6724bc619b6c",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table-region th"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 9,
+        "fingerprintSha256": "cc49971bb5860eea517e27e2b4a844cc7c09d5086ac2e6b0a4871009f704cf72",
+        "occurrences": [
+          "apps/desktop/src/app.css::.visually-hidden"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "fcc9f26253590a079abe2e994d3e783b4bc19c0d428cfcf487f9df28c2dfa6c4",
+        "occurrences": [
+          "apps/desktop/src/app.css::.choice-fieldset"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "2aa016d7753cb769864f4ea0da0cd422dc55f27eda970989da9025b4e5d77dd4",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table-region, .ro-table-scroll"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 7,
+        "fingerprintSha256": "877ad975238754cdd86bde473db179a1421ff7353d6ca2757339699ced574c42",
+        "occurrences": [
+          "apps/desktop/src/app.css::.intent-form fieldset"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "95a9d360d5aaa910045102fc827266a07bb2176f6baf3fdac531a9a851723477",
+        "occurrences": [
+          "apps/desktop/src/app.css::.shortcut-dialog dl div"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "792343057be0cd796604a1c2f42e4d482fdd0d7d7592332092ac0d74f3e5ab3b",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table-region td, .ro-table-region th"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "b06fef50ab1d7b37f82a4606450d70b5b1d2b89c25c1af2fb072429272829080",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table td, .ro-table th"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "c6bbd61bb6d6460e00685bb3bed4be0103a148e52fd0ea9d81c95759b742446e",
+        "occurrences": [
+          "apps/desktop/src/app.css::.all-tools"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "605b6f3e322799163581d7092cdf60f64d5261ea44f96788f877e13d9662ce6c",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table-region table"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "aa2192eb50e8356bd8b6830d690481919d6c5da2088ca2e46d6a9f5a5629bf55",
+        "occurrences": [
+          "apps/desktop/src/app.css::.mode-card"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "548d3df409be90d22c2df57b82bcc0272e37296ca69fe15bf08eba2ffbcb4efe",
+        "occurrences": [
+          "apps/desktop/src/app.css::.settings-feedback"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "9b33f16d36d755df28ade67d240f65ee6499941ca2daa50b34656c18701fc0a9",
+        "occurrences": [
+          "apps/desktop/src/app.css::.task-center-list > li > button[aria-pressed=\"true\"]"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "4dd61966867e0bf7cd712792f5c7dc70a89d6fe5d3f5bdfa690fe5c6891fb13b",
+        "occurrences": [
+          "apps/desktop/src/app.css::.mode-card:has(input:checked)"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "48bfff40ab357fd4cd25b5ce8ccf996bf156b6de4ecdd850b3b9745dbdab9057",
+        "occurrences": [
+          "apps/desktop/src/app.css::.settings-feedback-danger"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "23792fd8e1bd162bd0e01ecde38175f4c1ae156d3495a3362210445ccbf22e98",
+        "occurrences": [
+          "apps/desktop/src/app.css::.project-delete-boundary"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "32c1d6104bb0db2bb40e3e009c4ceb026752f3237532702bd63bf713f6e5acae",
+        "occurrences": [
+          "apps/desktop/src/app.css::.protection-warning-dialog"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "93db3c6b5c27feb629c713ff2c67e692fcd896a9c223091863fc05bd61bd2bf8",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-notification"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "01191425a40dc26ebabef2be59432f4c5bbf760f568a174093e342737fac33f1",
+        "occurrences": [
+          "packages/ui-components/src/styles.css:::where(a, button, input, select, textarea, summary, main, .ro-table-scroll, .ro-table-region):focus-visible"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "89a8fe16264b889715234ca1af0acb5b08b3822ce2da4db2b94953c9910502e5",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-typography"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "c5a554f0f94728a1f35edd6abd97cfe1810ed0f2238ffe7effe909e13e8b6882",
+        "occurrences": [
+          "apps/desktop/src/app.css::.eyebrow"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "2d4fe549191a940ee11cb1a859369630eb6a5b6fd8ed130cb17a5494cc417a34",
+        "occurrences": [
+          "apps/desktop/src/app.css::.supporting-tool-context > span"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "d1e76d89272fd2d4bcc8615c6717f5f65aa9fb4909ef0eb69f8f1001f8fb952e",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-field"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "8accbc117b6bab73394e7ed35b9dbf7b6c8eb4cdaea647b314971c221b4ae431",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state__progress"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "8f57248264fb7f6e84c6f0ca867b42e407a56e6707be7d225f38dc716a9b9b26",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-form :where(input:not([type=\"checkbox\"], [type=\"radio\"]), select, textarea)"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "740a4d2fbb92323d4af8351d1a8a675b0733bcfb1bf61cb56041554349432219",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-context-actions > span"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "25e88e0d26e36852fcdcd599f03c2a40839ce6401d6990ae0c0c1b18a6487321",
+        "occurrences": [
+          "apps/desktop/src/app.css::.field-help"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "1d8a92cda51a2b4ebcf59b8c74afbd611d28cda74df8a54f53e53f726e9988f8",
+        "occurrences": [
+          "apps/desktop/src/app.css::.field-note, .workflow-context p"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "c010adaeff804b4fb770fa88f5b548f2176eda6ba5382e3a3f1785142a516042",
+        "occurrences": [
+          "apps/desktop/src/app.css::.diagnostic-values dt, .lineage-identity dt",
+          "apps/desktop/src/app.css::.workflow-navigation-heading > span"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "70feca2f3568f46c20b9d1d2643c23f5b404c29192bee96f2cdcd67cc5493c2b",
+        "occurrences": [
+          "apps/desktop/src/app.css::.all-tools button small, .workflow-stage-copy small"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "8ad58d0277287b22a1f2d57415b752d19a9a9c645fc6c3b56050c3912b094943",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-context dt"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "965fc995441fd6e9c20f3a77cbe1434409021ef729448462b74b21434a5e9492",
+        "occurrences": [
+          "apps/desktop/src/app.css::.sidebar > p"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "2d713694cb585e6fbb16607a94bbb0c15bfe62350ca11aea07192236568ad846",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-context-heading span"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "a47bea5b5b96d367f2ceae82590c72205aa913f71d9cd7b987c37085a10259f5",
+        "occurrences": [
+          "apps/desktop/src/app.css::.settings-card-header p"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "1be34439a3f4cc043b14e127955671843eae76f5f4a6cd9d190a45464b918546",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table-region caption"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "ab659bb7f769aa24c5e63504935741d22702b83709a2d185f0341768c2e05a84",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-field label"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "8b5b411ac3a6e170d215e21f0fe229e277f3926f5a9d7a201c3a38540a444367",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-table caption"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "30f41bdd72c1b46966fba473645b8fdfcaf9eaf001895670aa4fea68e3dfa620",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-form :where(label, legend)"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "4f4f02e8fd64640cf764e70d88e3ec9e2c9db31c96cdf065785eea5fbd5e36c7",
+        "occurrences": [
+          "apps/desktop/src/app.css::.diagnostic-values dd",
+          "apps/desktop/src/app.css::.settings-preview dd"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "6b301390f0d174590e9cbb0415c44283efed579cebc93b84e59e9b438e6d21ba",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-field input"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "94704f44970d5fdf9bf3a851d6bb6ac18065c13abee6f5a7e4d79bef34be6b06",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-button:disabled"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "06eccc007453c599d08d5de23682124017534974b23db3a433179a105f542075",
+        "occurrences": [
+          "apps/desktop/src/app.css::.mode-card-disabled"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "8deaf4c6ae0394193123e540c34afe88df3c4db121b3609e5d18b0cbc75b39ad",
+        "occurrences": [
+          "apps/desktop/src/app.css::.sidebar button:disabled"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "7a41ab0b628671afa9a31521235ab0fd69d6e1d7fd60d09036f060791cc05a41",
+        "occurrences": [
+          "apps/desktop/src/app.css::.controlled-recalculation td > code, .controlled-recalculation td > span",
+          "apps/desktop/src/app.css::.lineage-results td > code, .lineage-results td > span, .lineage-results td > time"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "cb40862035c695239aa3b0d6296795d8cf82b9c486980634039e54d532e2c97f",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-boundary-state__actions, .ro-table-pagination__actions"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "95b0e777a0d6c78cda03db936f8e35ddfac26e303931f903b64504a4d2c8ef27",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-dialog__actions"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "cb5ad7ec0ca4d6bfc8b428f7c85f3573d369d41e756f23edf941758775205d6e",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-grid"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "df4a281835d3ad7fa3fbd2d11c00559a0247cc2a1f352f0355fde2e193f6c9ac",
+        "occurrences": [
+          "apps/desktop/src/app.css::.diagnostic-values div, .lineage-identity div"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "df19a27fe021ada2270dc6a4e9a84479047e98a78f56c882642586e6dcb47fd7",
+        "occurrences": [
+          "apps/desktop/src/app.css::.all-tools ul, .workflow-stage-list"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "a5726d61fc4b6586bda8e0a5916e1c3aa84af93f36b2d6c9747d6447bb342749",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-context dl, .workflow-context dl div"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "987940600a99cc217df639da04763873eb00f783f2d30a9571517957984f519d",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-stage-copy"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "dab9488bb584329f19ddc1e0039bf86c5022b7a5d10919be57208093cbb92008",
+        "occurrences": [
+          "apps/desktop/src/app.css::.intent-three-column label",
+          "apps/desktop/src/app.css::.shortcut-dialog dl, .shortcut-dialog dl div"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "c351a276db8e374f976c072ab2acd167a81688ae0af084edd47ed6442a0b10f9",
+        "occurrences": [
+          "apps/desktop/src/app.css::.command-results"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "aa6e63ab0955fef4e4eb7a55b9fb722bbc1e978df724fed39ff4be465b2f40ec",
+        "occurrences": [
+          "apps/desktop/src/app.css::.deletion-limitations"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "a8588a1572d7663e097ecb9f80a7691b880acc1f07748f8896f12e19386ad411",
+        "occurrences": [
+          "apps/desktop/src/app.css::.page-header"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "92cb7ee558066278a0e72bc9ba72e261c4fb78c0d63e703a3ffc32267638c6a6",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-data-table"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "d7019a1a5588a5c77a4d3a451c84dcca0643a589e189ce9082ff19bcf9c83882",
+        "occurrences": [
+          "apps/desktop/src/app.css::.lineage-governed-region ol, .lineage-governed-region ul"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "48dd13a3108a8fa923401db22f5b2719ef667e1082b4623ed4d57907a780230c",
+        "occurrences": [
+          "apps/desktop/src/app.css::.settings-preview"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "21310ca00eb3e2301118e8fdb2260b36f9593709d13211e258df2cff186b7ada",
+        "occurrences": [
+          "apps/desktop/src/app.css::.diagnostic-values, .lineage-identity"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "4fb07e369fadedc43e70433cdb01582397b0c6b41265dced31b7548233148726",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-panel > div"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 6,
+        "fingerprintSha256": "3255c32c24af7bdb78843693a0ba1dbe7285e03c26965a44b01686ce4870816b",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-dialog-surface"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "3bca083a01898390fac0189a1f8337f348d285cec3f46ed8fa21ac53130dbbbc",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-form"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "b98b849c34bf15a665b4978d315425062392d7f3069782c9093472f28dd7e72e",
+        "occurrences": [
+          "apps/desktop/src/app.css::.shell-body"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "d3d695d17252b044b9a8f0412e2bae80de661bee170811faaf184617a7869197",
+        "occurrences": [
+          "apps/desktop/src/app.css::.application-shell"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 4,
+        "fingerprintSha256": "2cddafd8aceb58def6dbb2d37ae4ef880ff236ffbe21b18df9ed7cf4dd5c83c9",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-icon"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "3cb28888e61092a83c0dec314d573fd88bc46ad141e2ed4395793bf1b109beba",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-typography--label"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "9968e6a1969eafc89f908b6bcc9e4b27ef39cdaf1e754930bb3042ff335bc448",
+        "occurrences": [
+          "apps/desktop/src/app.css::.diagnostic-path"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "d032ac0d834f90edb08b5a2589783709f03a4551adb2415f162cc85876ca3029",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-context dd"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "6bd1ccf26bd8c14c11d19d77a3b31d36f2f0cf0c2ba516a6930cd5bae97914ab",
+        "occurrences": [
+          "apps/desktop/src/app.css::.lineage-results code"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "b2afadb53970a0970f1159f21fa8ba51a9d869499cd05b73c47fcf1e515376aa",
+        "occurrences": [
+          "apps/desktop/src/app.css::.controlled-recalculation code"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "459476a4ebba29c57dfb7690c1895ec220d5986ce4aba8da422fe7f0c44faf14",
+        "occurrences": [
+          "apps/desktop/src/app.css::.mode-grid"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "4190cf11b136a7f59a82c638fa739a3cb5ba541432995b84907319925498bdee",
+        "occurrences": [
+          "apps/desktop/src/app.css::.locked-card .brand-mark"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "014535aa199e632ab0fc8d2d4fb97e269589e80ac6b46c8fd4860c59b841c68b",
+        "occurrences": [
+          "apps/desktop/src/app.css::.lineage-notice ul"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "1eac5442a5ef04984cc05065c5a05e8552981061199d5f2ce015d050402e98dd",
+        "occurrences": [
+          "apps/desktop/src/app.css::.support-columns ul"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "15871116d8c9c729ba65c59d52551065ce6f42dd7195a1d59e2350a51301fa4e",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-context"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 5,
+        "fingerprintSha256": "006351828d48444380da78f695bebb65e94d6a84014d89f9730a6092e83701e2",
+        "occurrences": [
+          "apps/desktop/src/app.css::main"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 3,
+        "fingerprintSha256": "908d53a048e9fd85204cb3386d875f647209e819ca8a01d6b0fbf75bcd11e9c5",
+        "occurrences": [
+          "packages/ui-components/src/styles.css::.ro-dialog"
+        ],
+        "paths": [
+          "packages/ui-components/src/styles.css"
+        ]
+      },
+      {
+        "context": "global",
+        "declarationCount": 2,
+        "fingerprintSha256": "3a40590a218fe25f54e88cfd0ccda13b6467ae60af331de6260cf60aae67e1f4",
+        "occurrences": [
+          "apps/desktop/src/app.css::.recent-diagnostics td, .recent-diagnostics th"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "@media (max-width: 50rem)",
+        "declarationCount": 3,
+        "fingerprintSha256": "872299f008dd541531513348f7bcd8e08d03811203a3c109df4b7b44816082af",
+        "occurrences": [
+          "apps/desktop/src/app.css::.sidebar"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "@media (max-width: 50rem)",
+        "declarationCount": 4,
+        "fingerprintSha256": "1edd35ff1aec932111bb8632e707b4f8dca89fb70e8b72331bec16cf5c9c2891",
+        "occurrences": [
+          "apps/desktop/src/app.css::.workflow-stage-list"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "@media (max-width: 50rem)",
+        "declarationCount": 2,
+        "fingerprintSha256": "13d7b1d6a04b8ba1f0db65270d5f60b6b0f56a4fb9175a3c14eb139dc5867f26",
+        "occurrences": [
+          "apps/desktop/src/app.css::.lineage-trace-form .field-note, .lineage-trace-form button, .lineage-trace-form input, .lineage-trace-form label:first-child, .lineage-trace-form label[for=\"lineage-direction\"], .lineage-trace-form select"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      },
+      {
+        "context": "@media (prefers-reduced-motion: reduce)",
+        "declarationCount": 3,
+        "fingerprintSha256": "27c688b7af2b04491622cfffa7c2a7dfa8d577072be6f52e1b3113f79f6e3fbf",
+        "occurrences": [
+          "apps/desktop/src/app.css::*, *::after, *::before"
+        ],
+        "paths": [
+          "apps/desktop/src/app.css"
+        ]
+      }
+    ],
+    "physicalDirectionalDeclarations": [],
+    "rawGeometry": [
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C01",
+        "path": "apps/desktop/src/app.css",
+        "property": "min-height",
+        "selector": ".locked-application",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.locked-application|min-height|100vh",
+        "value": "100vh"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C02",
+        "path": "apps/desktop/src/app.css",
+        "property": "width",
+        "selector": ".locked-card",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.locked-card|width|min(38rem, 100%)",
+        "value": "min(38rem, 100%)"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C03",
+        "path": "apps/desktop/src/app.css",
+        "property": "width",
+        "selector": ".protection-warning-dialog",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.protection-warning-dialog|width|min(34rem, 100%)",
+        "value": "min(34rem, 100%)"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C04",
+        "path": "apps/desktop/src/app.css",
+        "property": "width",
+        "selector": ".shortcut-dialog",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.shortcut-dialog|width|min(32rem, 100%)",
+        "value": "min(32rem, 100%)"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C05",
+        "path": "apps/desktop/src/app.css",
+        "property": "width",
+        "selector": ".task-center-confirmation",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.task-center-confirmation|width|min(34rem, calc(100vw - var(--space-8)))",
+        "value": "min(34rem, calc(100vw - var(--space-8)))"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C06",
+        "path": "apps/desktop/src/app.css",
+        "property": "height",
+        "selector": ".visually-hidden",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.visually-hidden|height|1px",
+        "value": "1px"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C07",
+        "path": "apps/desktop/src/app.css",
+        "property": "margin",
+        "selector": ".visually-hidden",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.visually-hidden|margin|-1px",
+        "value": "-1px"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C08",
+        "path": "apps/desktop/src/app.css",
+        "property": "width",
+        "selector": ".visually-hidden",
+        "signature": "raw-geometry|apps/desktop/src/app.css|global|.visually-hidden|width|1px",
+        "value": "1px"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C09",
+        "path": "packages/ui-components/src/styles.css",
+        "property": "max-height",
+        "selector": ".ro-dialog-surface",
+        "signature": "raw-geometry|packages/ui-components/src/styles.css|global|.ro-dialog-surface|max-height|calc(100vh - var(--space-10))",
+        "value": "calc(100vh - var(--space-10))"
+      },
+      {
+        "context": "global",
+        "exceptionId": "W1-A08-T01-C10",
+        "path": "packages/ui-components/src/styles.css",
+        "property": "min-width",
+        "selector": ".ro-table-region td, .ro-table-region th",
+        "signature": "raw-geometry|packages/ui-components/src/styles.css|global|.ro-table-region td, .ro-table-region th|min-width|12rem",
+        "value": "12rem"
+      }
+    ],
+    "rendererFileCount": 15,
+    "selectorSpecificity": {
+      "highest": [
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".task-center-list > li > button span:nth-last-child(2)",
+          "specificity": [
+            0,
+            2,
+            3
+          ]
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".task-center-list > li > button span:last-child",
+          "specificity": [
+            0,
+            2,
+            3
+          ]
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".workflow-stage-list li[data-stage-state=\"stale\"] button",
+          "specificity": [
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".workflow-stage-list li[data-stage-state=\"current\"] button",
+          "specificity": [
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".workflow-stage-list li[data-stage-state=\"blocked\"] button",
+          "specificity": [
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".workflow-stage-list li[data-stage-state=\"attention-required\"] button",
+          "specificity": [
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".workflow-stage-list li[data-stage-optional=\"true\"] button",
+          "specificity": [
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "selector": ".task-center-list > li > button[aria-pressed=\"true\"]",
+          "specificity": [
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "path": "packages/ui-components/src/styles.css",
+          "selector": ".ro-table[data-density=\"compact\"] th",
+          "specificity": [
+            0,
+            2,
+            1
+          ]
+        },
+        {
+          "path": "packages/ui-components/src/styles.css",
+          "selector": ".ro-table[data-density=\"compact\"] td",
+          "specificity": [
+            0,
+            2,
+            1
+          ]
+        }
+      ],
+      "limits": [
+        0,
+        2,
+        4
+      ],
+      "maximum": [
+        0,
+        2,
+        3
+      ]
+    },
+    "stylePaths": [
+      "apps/desktop/src/app.css",
+      "packages/ui-components/src/styles.css"
+    ]
+  },
+  "errors": [],
+  "ok": true
+}
