@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dedae124f9b41f7307504f318c1903b9b89d0730f86d4332a3b51caee7290141
+source_sha256: ae8ee471496c3d79506249b22c7c22117b61a529660263680a9b2545ac38c43c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1772,7 +1772,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A08.T01 - Consolidate and align production styling
 
-**Status / owner / review:** `IN_PROGRESS` / codex / w1-a08-t01-independent-experience-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / w1-a08-t01-independent-experience-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A08.B00`, `CAP-01.S02.T03`
 
@@ -1797,6 +1797,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A08.T01.json` at `9b4e746928d1381c52a2a720ee6bb47eb433ca3f`
+- `artifacts/evidence/W1.A08.T01.remediation-01.json` at `455546efec1cf972dd0713664c4a130aba1478fb`
 
 #### Review history — W1.A08.T01
 
@@ -1833,7 +1834,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f`
+
+- Candidate / base / branch: `455546efec1cf972dd0713664c4a130aba1478fb` / `9b4e746928d1381c52a2a720ee6bb47eb433ca3f` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-05T00:42:22+00:00`
+- Evidence: `artifacts/evidence/W1.A08.T01.remediation-01.json` / `57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab` / `455546efec1cf972dd0713664c4a130aba1478fb`
+- Acceptance-criteria SHA-256: `c5f799e0c25b1e7a19d20c9b80ba8641cba72cd475522d496c2139d1ca8245b1`
+- Verification-selection SHA-256: `046d7a529c2a2535a0f0cca1cb1003a37e405b136add7e1bd5e897c655cee7e9`
+- Changed paths: `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationSettingsWorkspace.tsx`, `apps/desktop/src/app/ProjectHomeWorkspace.tsx`, `apps/desktop/src/app/TaskCenterWorkspace.tsx`, `apps/desktop/src/app/WorkflowNavigation.tsx`, `artifacts/evidence/W1.A08.T01.json`, `artifacts/evidence/W1.A08.T01.long-profile-before.json`, `artifacts/evidence/W1.A08.T01.product-check-replay-02.json`, `artifacts/evidence/W1.A08.T01.product-check-replay-03.json`, `artifacts/evidence/W1.A08.T01.product-check-replay-04.json`, `artifacts/evidence/W1.A08.T01.product-check-replay-05.json`, `artifacts/evidence/W1.A08.T01.product-check-replay-06.json`, `artifacts/evidence/W1.A08.T01.product-check-replay-07.json`, `artifacts/evidence/W1.A08.T01.product-check-replay-08.json`, `artifacts/evidence/W1.A08.T01.product-check.json`, `artifacts/evidence/W1.A08.T01.review-R01.json`, `artifacts/evidence/W1.A08.T01.style-analysis.json`, `artifacts/evidence/ui-change/W1.A08.T01.json`, `docs/automation/ui-conformance-verification.md`, `docs/planning-implementation-plan.md`, `packages/ui-components/src/index.tsx`, `packages/ui-components/src/styles.css`, `planning/backlog.yaml`, `planning/governance-migrations/GOV-MAINT-0017.json`, `planning/governance-migrations/GOV-MAINT-0017.review-R01.json`, `planning/review-site/enablers/ECR-0007.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `quality-scope.json`, `tests/desktop/test_desktop_app_check.py`, `tests/desktop/test_product_style_check.py`, `tools/desktop_app_check.py`, `tools/product_style_check.py`, `verification/product-style-exceptions.json`
+- Selected checks: `bundled Node 24.19.0: desktop lint and tsc --noEmit; desktop Vitest run; ui-components tsc --noEmit and Vitest run`, `bundled Node 24.19.0: clean-dist; Vite product build; assemble-application; Vite reference-runtime build; assemble-reference`, `.venv\Scripts\python.exe tools/product_style_check.py --repo .; .venv\Scripts\python.exe -m unittest tests.desktop.test_product_style_check`, `.venv\Scripts\python.exe tools/ui_reference_check.py --repo .; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/plan_review_check.py --repo .; .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe artifacts/tmp/w1-a08-t01-style-capture.py; inspect the four generated product captures; git diff --check`, `.venv\Scripts\python.exe -m unittest tests.desktop.test_desktop_app_check tests.desktop.test_product_style_check; Ruff check and format --check; MYPYPATH=services/core-api/src;tools mypy --follow-imports=silent for tools/desktop_app_check.py, tests/desktop/test_desktop_app_check.py, tools/product_style_check.py and tests/desktop/test_product_style_check.py`, `.venv\Scripts\python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/evidence/W1.A08.T01.product-check-replay-07.json; repeat sequentially with artifacts/evidence/W1.A08.T01.product-check-replay-08.json`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base 98d6612d0eb64482d92ea9f754ddcee22b8b79b9 --head 455546efec1cf972dd0713664c4a130aba1478fb; .venv\Scripts\python.exe -m unittest tests.foundation.test_quality_check; git diff --check 9b4e746928d1381c52a2a720ee6bb47eb433ca3f..455546efec1cf972dd0713664c4a130aba1478fb`
+- Deferred checks: `W1.A08.T02 owns the every-implemented-surface viewport/theme/state inventory, hardened reusable qualification entry point, retained deterministic commit-bound product/reference captures and independent visual disposition, plus affected performance qualification.`, `W1.A08.S01 and amendment exit own the accumulated interaction/accessibility/maintainability review and build/smoke/experience checkpoint.`, `Complete Windows-x64 packaging, performance, security, recovery and cross-capability qualification remains due once at W1 exit. Native service/persistence logic is unchanged in this styling remediation.`
+- Selection rationale: R01 exposed an acceptance-closure error: the initial implementation deferred both reusable exhaustive T02 qualification and T01's required focused evidence, instead of distinguishing them. R02 adds negative-first deterministic style analysis and a bounded real-renderer category/state matrix. A later independent replay exposed a mislabeled/mixed pre- and post-scale dialog measurement; actual computed fonts, geometry and focus are now bound together, while the original failed report is retained and its unexplained cause is not invented. Zoom-before-open also exposed a real fixed-height topbar overlap, requiring a minimal reflow correction with operability proof. A valid 80-character profile also reproduced horizontal overflow, closed by shared button wrapping and a shrinkable header; normal and enlarged-text live fixtures cover it. Credible incremental failures are generic declaration duplication, selector or token escapes, raw geometry, directional styling, invalid adapter fixtures, missing computed surfaces, obscured controls, focus/scroll failures, theme/motion regression, stale build inputs, and evidence scope mismatch. Focused Python negatives, full affected TypeScript/component inventories, a rebuilt functional product, repeated live geometry/interaction checks, reference integrity, exact UI-change and planning checks address these risks. GOV-MAINT-0017 only registers committed Python sources and has its own independent exact-commit review; controller behavior and safety authority are unchanged.
+- Prior round / replayed open findings: `R01` / `W1.A08.T01-R01-F01`, `W1.A08.T01-R01-F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by w1-a08-t01-independent-experience-reviewer at `2026-09-04T21:26:47+00:00`
 
