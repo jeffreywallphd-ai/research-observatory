@@ -1,0 +1,404 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "reference-only-fresh-capture-evidence",
+  "generatedAt": "2026-09-05T13:02:35.435332+00:00",
+  "producerCommit": "eb14edfffe5663b6c0ca11bc9d4bd568430395ae",
+  "producerInputs": {
+    "artifacts/evidence/W1.A09.T01.capture-reference-01.py": "e7eb4787931ae01bc0d9037fb97f647ef03e3c1868c758ea2293247e87dbee1b",
+    "packages/contracts/workflow-profile/presentation-compatibility.json": "c87b314c080fe3f8f5c20be30258bfae60fdba2729c04903647fd4e8d0f20e06",
+    "tools/build_manifest.py": "7aa71fb296c8b7e093bec3fe73c9de06f98ca47f3f761077bfe6ab423f7c6dcf",
+    "tools/capability_plan_check.py": "38199d72f6945092e9c490d37ddfe8888af590b091aeeecc267ef0af0b238434",
+    "tools/governance_kernel.py": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7",
+    "tools/planctl.py": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6",
+    "tools/ui_conformance.py": "8a09e3f1fc29f776e7217c4753e2460ee0976a1073979ab543266eb3611acb00",
+    "tools/ui_reference_check.py": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+    "verification/baselines/desktop-ui.json": "2491915e17a3a91cf17de093433e750426a3d7e8ce841f6b3bf98c2692fd62b9",
+    "verification/extensions/desktop-ui.json": "828863e226974b2b0820e700bece1fddd54073ed4cff37ee2612da2c96c356db"
+  },
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+  "referenceApprovalCommit": "0460b2af60643172504e1abe0f185e010f171700",
+  "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+  "witnessSha256": "c87b314c080fe3f8f5c20be30258bfae60fdba2729c04903647fd4e8d0f20e06",
+  "priorBaselineCommit": "715a20572de1c18cb9e8cf97c20fc4633e84a77a",
+  "priorBaselineSha256": "2491915e17a3a91cf17de093433e750426a3d7e8ce841f6b3bf98c2692fd62b9",
+  "baselineSha256": "cdcdc108d3a8bc2d09c2643526cfce2db4816de7b91e3af3dd568fed70118876",
+  "settings": {
+    "baselinePath": "verification/baselines/desktop-ui.json",
+    "platform": "windows-x64",
+    "engine": "chromium",
+    "playwrightVersion": "1.58.0",
+    "browserVersion": "145.0.7632.6",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "responsiveViewports": [
+      {
+        "width": 1280,
+        "height": 720,
+        "label": "minimum-desktop"
+      },
+      {
+        "width": 720,
+        "height": 450,
+        "label": "windows-200-percent-effective"
+      }
+    ],
+    "deviceScaleFactor": 1,
+    "locale": "en-US",
+    "timezoneId": "UTC",
+    "reducedMotion": "reduce",
+    "colorSchemes": [
+      "light",
+      "dark"
+    ],
+    "requiredFonts": [
+      "Segoe UI",
+      "Georgia",
+      "Consolas"
+    ],
+    "animations": "disabled"
+  },
+  "captures": [
+    {
+      "case": "index.html::light",
+      "file": "index--light.png",
+      "sha256": "0574df161dd0b1c66053e0ddfe7105645aa08a0642e9eadd147ea1e522942f57"
+    },
+    {
+      "case": "projects.html::light",
+      "file": "projects--light.png",
+      "sha256": "04a99ea92d9d375d1cf701dc6d15032e8543384ee597a4b643f1f89c2503b024"
+    },
+    {
+      "case": "new-project.html::light",
+      "file": "new-project--light.png",
+      "sha256": "f40a1642ada8844263ed028783b9cb9715db83d7101ba562a4ad0e67ca7313fa"
+    },
+    {
+      "case": "intent-contract.html::light",
+      "file": "intent-contract--light.png",
+      "sha256": "ed215ffd56db32a2a1fa215aa61aace1a4bf2d74a7b601ed59778c3cbb92abd4"
+    },
+    {
+      "case": "help-onboarding.html::light",
+      "file": "help-onboarding--light.png",
+      "sha256": "fde378f5fbd521c97ad3829ce7761d4065ab11a271d78a79e62df04344e53e17"
+    },
+    {
+      "case": "search-studio.html::light",
+      "file": "search-studio--light.png",
+      "sha256": "a9e19cae21d2d577f21c0942b5898398bfac284a05851d1840cdccbf3a1c3885"
+    },
+    {
+      "case": "source-manager.html::light",
+      "file": "source-manager--light.png",
+      "sha256": "53cd42a099c1ca52ccbff7959c1804019aad472f1b091889fe47499b2f545d84"
+    },
+    {
+      "case": "ingestion-reconciliation.html::light",
+      "file": "ingestion-reconciliation--light.png",
+      "sha256": "50b1b0ecaee16b80003a2a25be42c434f2a4de5591d364701cebffda47a08140"
+    },
+    {
+      "case": "corpus-canvas.html::light",
+      "file": "corpus-canvas--light.png",
+      "sha256": "2b936ca0d37205a97ff6d03e4f866e103066b634ea340ce908c2f6549ce28c26"
+    },
+    {
+      "case": "screening.html::light",
+      "file": "screening--light.png",
+      "sha256": "c9cc5d68eed2b188e6a5af8ae9273e8f01b5d851850a49ed5f51964a4ae4ae8d"
+    },
+    {
+      "case": "document-reader.html::light",
+      "file": "document-reader--light.png",
+      "sha256": "f4b16cc579c2c8657e52a755d991651be6fffa175d37f60b8228c6d65d591da5"
+    },
+    {
+      "case": "research-notebook.html::light",
+      "file": "research-notebook--light.png",
+      "sha256": "b08ea6720805a76164a947e790f0657494008b0c1a827e257332fbd3f61182f7"
+    },
+    {
+      "case": "parsing-quality.html::light",
+      "file": "parsing-quality--light.png",
+      "sha256": "ab1168fcf23030a399e9d57ef047326052ee0f8c9b5439fa978574c2c6a54f36"
+    },
+    {
+      "case": "evidence-matrix.html::light",
+      "file": "evidence-matrix--light.png",
+      "sha256": "5df123cca614cd23cc7cd3f44e5962794c6475e5435af4c56df65c38b48e9978"
+    },
+    {
+      "case": "schema-manager.html::light",
+      "file": "schema-manager--light.png",
+      "sha256": "b8da557f749633b008ddefac06ef2d1be38861bc95f7cc48d8ed6ab16da08eeb"
+    },
+    {
+      "case": "claim-graph.html::light",
+      "file": "claim-graph--light.png",
+      "sha256": "f6bbeb98ad3ac3a1b670e75d43a3ee3a6ec3ed1a10ec6d90c5789d9a86416793"
+    },
+    {
+      "case": "theory-map.html::light",
+      "file": "theory-map--light.png",
+      "sha256": "5f1690e821cbea9dbd9f3218fccb81837e00d0ef894159f30e13d403d764fbf1"
+    },
+    {
+      "case": "critical-lens.html::light",
+      "file": "critical-lens--light.png",
+      "sha256": "e999d6bdfee7bfe608d5a333c835ed30625d471682dd2f04ac49bc82097ff59d"
+    },
+    {
+      "case": "opportunity-radar.html::light",
+      "file": "opportunity-radar--light.png",
+      "sha256": "d243012425755691237d6d450ae2352bdea7de067ca16296ca58b55b93a3a487"
+    },
+    {
+      "case": "novelty-audit.html::light",
+      "file": "novelty-audit--light.png",
+      "sha256": "1285fa6da8847a496a7efa2b76fadb20205e9ab6c02c592733b840f107fb0e15"
+    },
+    {
+      "case": "synthesis-studio.html::light",
+      "file": "synthesis-studio--light.png",
+      "sha256": "7ff5ca2eeb753701aa041eef0b1baf044dc8e4e3eb68df74c3c667534013684d"
+    },
+    {
+      "case": "living-monitor.html::light",
+      "file": "living-monitor--light.png",
+      "sha256": "da9f49c129013359f3c57c44a2aba6e5e604023afd6d9a2fb5e6788e64a5578b"
+    },
+    {
+      "case": "task-center.html::light",
+      "file": "task-center--light.png",
+      "sha256": "70efa1c7312e87c04e2ea34005986450d71906f52d30567ecff4f9c03124fccf"
+    },
+    {
+      "case": "audit-lineage.html::light",
+      "file": "audit-lineage--light.png",
+      "sha256": "016e03260dab4dfb45980811af5ff3b2fac32da2763f8140cdd756244bf51b89"
+    },
+    {
+      "case": "model-center.html::light",
+      "file": "model-center--light.png",
+      "sha256": "2c3ca9794037c29f6e7c3d860a4cb1bcc2e5ca66d30a039f0af4e2246ad5eb88"
+    },
+    {
+      "case": "application-settings.html::light",
+      "file": "application-settings--light.png",
+      "sha256": "2f656d434bf485c4f15ca7129e5a4595348a43e766452bc9a7d287f05e530194"
+    },
+    {
+      "case": "project-settings.html::light",
+      "file": "project-settings--light.png",
+      "sha256": "479bda64fc07c205f8b598d044b4d7698e708de1fe649379c6e5195982f13d50"
+    },
+    {
+      "case": "study-design.html::light",
+      "file": "study-design--light.png",
+      "sha256": "08791f786ad34c592a0b8c2fc0881711bed0abb6a7d4e6cbe2739ae795dda81e"
+    },
+    {
+      "case": "manuscript-blueprint.html::light",
+      "file": "manuscript-blueprint--light.png",
+      "sha256": "936d6713c45ad7252e8f8d6f0acb37e3dbc99fb990943e412f48357687147406"
+    },
+    {
+      "case": "technical-reports.html::light",
+      "file": "technical-reports--light.png",
+      "sha256": "c9c93583fdf191234abcec3ab0438a6cc15f9376988c97861fbb741339b6b828"
+    },
+    {
+      "case": "manuscript-studio.html::light",
+      "file": "manuscript-studio--light.png",
+      "sha256": "1b1defc0f9b3057d175f00d2516fb0c6b2d8f2ab0fe8e0cce69d851e626c9b4a"
+    },
+    {
+      "case": "reviewer-simulation.html::light",
+      "file": "reviewer-simulation--light.png",
+      "sha256": "4b1332d48fa983796f684bcc2afb6ca975e68a5481e4ebcc9de928271f8897a1"
+    },
+    {
+      "case": "revision-response.html::light",
+      "file": "revision-response--light.png",
+      "sha256": "f9edca380180296e73a882bcecb7d7ba85e6fc95529c17bc66c8c9d431f7cca1"
+    },
+    {
+      "case": "index.html::dark",
+      "file": "index--dark.png",
+      "sha256": "52668dfc5ccd72e84fbd64597e42e23dfdb8482050bd76b6baf572c99fa679f2"
+    },
+    {
+      "case": "projects.html::dark",
+      "file": "projects--dark.png",
+      "sha256": "88fda6e70f1e10c5cfe4c737c794db68f595fd1f58f83ee420c615a0e1e659ad"
+    },
+    {
+      "case": "new-project.html::dark",
+      "file": "new-project--dark.png",
+      "sha256": "879472103224e176aa304cc705bc2edaed63a9385f90ffde8b91d6697b3b0725"
+    },
+    {
+      "case": "intent-contract.html::dark",
+      "file": "intent-contract--dark.png",
+      "sha256": "a9fe04879c9a7403d906fed4b57abe2635920fef7c1c030aa8091a3b21da8656"
+    },
+    {
+      "case": "help-onboarding.html::dark",
+      "file": "help-onboarding--dark.png",
+      "sha256": "8ba82d4b21726d188b9ceb202704a50e02cd1fe73c6576a311f6b0d0b8de4c8a"
+    },
+    {
+      "case": "search-studio.html::dark",
+      "file": "search-studio--dark.png",
+      "sha256": "42ed239bc4aafd3ab621eb3864a3155b1ad7f555b8b87debfd13aa105e75ff8a"
+    },
+    {
+      "case": "source-manager.html::dark",
+      "file": "source-manager--dark.png",
+      "sha256": "025d8227baa55e82c0bfc7daf7d5f11c57371057e18a509641a99e1e008079d5"
+    },
+    {
+      "case": "ingestion-reconciliation.html::dark",
+      "file": "ingestion-reconciliation--dark.png",
+      "sha256": "3da020e13b051ade400e163f108e79812967b134c4c3b93f5613887698fbdadd"
+    },
+    {
+      "case": "corpus-canvas.html::dark",
+      "file": "corpus-canvas--dark.png",
+      "sha256": "e14fb31b5d765db920bf9133a58d2be8343ec2929305b7488b825c7936ddcbd1"
+    },
+    {
+      "case": "screening.html::dark",
+      "file": "screening--dark.png",
+      "sha256": "b540b991c9ef521ddaff8d38949420ebfa5568b1f29f3d9b18b4623b35400511"
+    },
+    {
+      "case": "document-reader.html::dark",
+      "file": "document-reader--dark.png",
+      "sha256": "4986ac8be8c5ff6ebed2b30db51236d00acd5375f47e0e301ae126e491ab3a7e"
+    },
+    {
+      "case": "research-notebook.html::dark",
+      "file": "research-notebook--dark.png",
+      "sha256": "f4d4b614492d4fe49056d3ea96adf113991294218635d458cd72916736b6ec63"
+    },
+    {
+      "case": "parsing-quality.html::dark",
+      "file": "parsing-quality--dark.png",
+      "sha256": "5a2ee174343c513377c5af970fef01e5ef373082591c591ca2e0e2215900465a"
+    },
+    {
+      "case": "evidence-matrix.html::dark",
+      "file": "evidence-matrix--dark.png",
+      "sha256": "2c71395e9991840eb26f464246c126c682d1e1ed797b34c7ee47363b8e75cfdb"
+    },
+    {
+      "case": "schema-manager.html::dark",
+      "file": "schema-manager--dark.png",
+      "sha256": "ac5c3cb5d4e5349850881c43ef4eca32a328f70f70196112f3dd9553291edd8c"
+    },
+    {
+      "case": "claim-graph.html::dark",
+      "file": "claim-graph--dark.png",
+      "sha256": "baa951182a77232552a9737518bd7a9a921d3387462963d062c2c8cf9677a307"
+    },
+    {
+      "case": "theory-map.html::dark",
+      "file": "theory-map--dark.png",
+      "sha256": "0d224551afe2aa57ad617a0d573d978047404de0dee67383e16c1e9d9e4a3457"
+    },
+    {
+      "case": "critical-lens.html::dark",
+      "file": "critical-lens--dark.png",
+      "sha256": "e1f95fc373d82b0b4f88bca780daeade2bfefe08acf57b67533fa21b18353c12"
+    },
+    {
+      "case": "opportunity-radar.html::dark",
+      "file": "opportunity-radar--dark.png",
+      "sha256": "dc3ea1ba0c47e1f3722826337ce79785977a5f1c3df970246fce2bb62c37b4e3"
+    },
+    {
+      "case": "novelty-audit.html::dark",
+      "file": "novelty-audit--dark.png",
+      "sha256": "aec1e45af4f6925478f3464e8160db30347d90e8c981da1db3b9b0b5d0ca0fb8"
+    },
+    {
+      "case": "synthesis-studio.html::dark",
+      "file": "synthesis-studio--dark.png",
+      "sha256": "965eb2f2fcb5605e6bed8b76b70efbe43f3fe8f83b89bb7c4f19fc24691fe338"
+    },
+    {
+      "case": "living-monitor.html::dark",
+      "file": "living-monitor--dark.png",
+      "sha256": "a77694c69422b4e1f595351a79672609a5c98fae57d3336fe117d919b274c02a"
+    },
+    {
+      "case": "task-center.html::dark",
+      "file": "task-center--dark.png",
+      "sha256": "3bbf6a8c21aca87a48288c76cf7fc38df44ad930cb964c8e488def760e735691"
+    },
+    {
+      "case": "audit-lineage.html::dark",
+      "file": "audit-lineage--dark.png",
+      "sha256": "87484d023003c7669a177d79903699c2524ff2aa7ea50e6be199fe7fb7a70b4c"
+    },
+    {
+      "case": "model-center.html::dark",
+      "file": "model-center--dark.png",
+      "sha256": "bb52fc7419ce104b5490d4301b50c995262d34a86330abbec7a8a21e38764f2a"
+    },
+    {
+      "case": "application-settings.html::dark",
+      "file": "application-settings--dark.png",
+      "sha256": "c5942a938bd2f5fc6a537a4426e87b228b94e2dbcbcd97c5b8b392c0af27b676"
+    },
+    {
+      "case": "project-settings.html::dark",
+      "file": "project-settings--dark.png",
+      "sha256": "10b1f9ce6b36ff4e12f5948bc61c2413a155e822c267a3e14d6960b3e8979d78"
+    },
+    {
+      "case": "study-design.html::dark",
+      "file": "study-design--dark.png",
+      "sha256": "b5d2108e0a1eaa00f7160e7f0a7b0715ac81a24cffb9895af5bfe34fea562207"
+    },
+    {
+      "case": "manuscript-blueprint.html::dark",
+      "file": "manuscript-blueprint--dark.png",
+      "sha256": "fc3f78286ee9dc2730687b550e5f64c1138d816aa9fd86438e350a9a5982f446"
+    },
+    {
+      "case": "technical-reports.html::dark",
+      "file": "technical-reports--dark.png",
+      "sha256": "50b2d95776358b35e9bdaae7aeb1e6ee97d72c572885a519ee15f9b7b8fa9c87"
+    },
+    {
+      "case": "manuscript-studio.html::dark",
+      "file": "manuscript-studio--dark.png",
+      "sha256": "2cd6c1339b50eb58ada5589258bdc8e6d2a807ab76f1e8408d45f510835ba1cd"
+    },
+    {
+      "case": "reviewer-simulation.html::dark",
+      "file": "reviewer-simulation--dark.png",
+      "sha256": "906f370a862af211e77426837fbb6235c0447f1004fea2ad89811a8619b3e314"
+    },
+    {
+      "case": "revision-response.html::dark",
+      "file": "revision-response--dark.png",
+      "sha256": "eebda24c1afd40e3d8f1a8051ec922f959d0707d3f1099a104f0c4a1538f15fa"
+    }
+  ],
+  "changedFromPrior": [
+    "audit-lineage.html::dark",
+    "audit-lineage.html::light",
+    "new-project.html::dark",
+    "new-project.html::light",
+    "projects.html::dark",
+    "projects.html::light"
+  ],
+  "scope": "Fresh approved-reference observations only; not application conformance or independent review.",
+  "errors": []
+}

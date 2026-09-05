@@ -19,14 +19,14 @@
     "audit-lineage.html::dark": {
       "height": 900,
       "page": "audit-lineage.html",
-      "sha256": "b946ba4d3aceed28530527fd79271ae3ded8f08a82e54b3c0044cf2c30a630cc",
+      "sha256": "87484d023003c7669a177d79903699c2524ff2aa7ea50e6be199fe7fb7a70b4c",
       "theme": "dark",
       "width": 1440
     },
     "audit-lineage.html::light": {
       "height": 900,
       "page": "audit-lineage.html",
-      "sha256": "58ade2cec2b66631ff180725dd62b59e3240534cf6ce3dd77462952c28e6a755",
+      "sha256": "016e03260dab4dfb45980811af5ff3b2fac32da2763f8140cdd756244bf51b89",
       "theme": "light",
       "width": 1440
     },
@@ -215,14 +215,14 @@
     "new-project.html::dark": {
       "height": 900,
       "page": "new-project.html",
-      "sha256": "89f814f5f60973923f2425fe1ac5d9fd4c5a678da84049b4f9c8d6f6a193959a",
+      "sha256": "879472103224e176aa304cc705bc2edaed63a9385f90ffde8b91d6697b3b0725",
       "theme": "dark",
       "width": 1440
     },
     "new-project.html::light": {
       "height": 900,
       "page": "new-project.html",
-      "sha256": "db740e03e229d5fca981d4852642425b6467a570947a6565b9eeee41ab94d99c",
+      "sha256": "f40a1642ada8844263ed028783b9cb9715db83d7101ba562a4ad0e67ca7313fa",
       "theme": "light",
       "width": 1440
     },
@@ -285,14 +285,14 @@
     "projects.html::dark": {
       "height": 900,
       "page": "projects.html",
-      "sha256": "e041b7e2a52600d1c3cd1df6e26b38863ab767c3cd5c7dda853e11687aadfae1",
+      "sha256": "88fda6e70f1e10c5cfe4c737c794db68f595fd1f58f83ee420c615a0e1e659ad",
       "theme": "dark",
       "width": 1440
     },
     "projects.html::light": {
       "height": 900,
       "page": "projects.html",
-      "sha256": "db574344a7a04a400bd2229a2c255ff0f9badbde235691ebc5b41f3b3382f26f",
+      "sha256": "04a99ea92d9d375d1cf701dc6d15032e8543384ee597a4b643f1f89c2503b024",
       "theme": "light",
       "width": 1440
     },
@@ -467,9 +467,9 @@
   },
   "platform": "windows-x64",
   "playwrightVersion": "1.58.0",
-  "referenceApprovalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
-  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
-  "referencePackageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
+  "referenceApprovalCommit": "0460b2af60643172504e1abe0f185e010f171700",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+  "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
   "schemaVersion": "1.0",
   "settings": {
     "animations": "disabled",
