@@ -21,3 +21,6 @@ packages/contracts/domain/generated.ts text eol=lf
 tests/fixtures/scholarly-corpus/** -text
 evaluation/** -text
 *.pdf binary
+
+# Extensionless privacy hooks must run on Windows Git too.
+.githooks/* text eol=lf
