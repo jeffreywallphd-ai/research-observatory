@@ -40299,18 +40299,15 @@ wave_amendments:
     - Disposable Core path/access/package/redirect/lock/no-overwrite recovery
     - Real React build/geometry/accessibility and independent security/experience review
     packet_task_sha256: a0870e1b9af87a5bfc2501cd79089229876b98a6f7f921816be5029a746d404a
-    status: REVIEW
+    status: DONE
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 6730524c7fe19e2ba6f2500f367d8e6e5689bb2c
     worktree: C:/ai-projects/research-observatory
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-05T22:01:30+00:00'
-      expires_at: '2026-09-06T06:01:30+00:00'
+    lease: null
     started_at: '2026-09-05T14:24:15+00:00'
-    updated_at: '2026-09-05T22:11:30+00:00'
-    completed_at: null
+    updated_at: '2026-09-05T22:18:10+00:00'
+    completed_at: '2026-09-05T22:18:10+00:00'
     blocker: null
     implementation_notes: Protected shared directory selection, preselected default and exact destination verified; scoped
       actual Windows/Core proofs and 19 passing checks bound to candidate. T04 integrated qualification remains separate.
@@ -40321,144 +40318,180 @@ wave_amendments:
       commit: 30357ec178cc1a57646b7fe64dca3ee7670756d2
       recorded_at: '2026-09-05T22:11:30+00:00'
     verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: 'Reopened: Owner normal-Windows diagnostic 05 passed actual-default create/reopen/protected-storage/no-overwrite
-        checks; its exact 54-source inventory matches current bytes (report a5a829c6df753a37c3f4413e3090072339daa8eca6c91594d72d882a157de617).
-        Resume criterion closure and independent review without changing Core guards.'
+    review: &id126
+      reviewer: agent:/root/t03_acceptance_review
+      result: approved
+      reviewed_at: '2026-09-05T22:18:10+00:00'
+      notes: 'Independent expanded review approves the exact frozen T03 candidate and its seven acceptance criteria. No reproducible
+        acceptance-blocking defect was found in the protected picker, default selection, destination behavior or evidence
+        controls. Real Shell/Tauri observations, native default parity, actual protected Core persistence and explicitly doubled
+        renderer proofs establish their separately stated boundaries. This is task disposition only: it does not approve integrated
+        T04 qualification, a slice, amendment exit/adoption, A08 return, Wave completion, G1, local-main integration through
+        unmet ancestry or remote effects.'
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex
-        submitted_at: '2026-09-05T22:11:30+00:00'
-        candidate_commit: 30357ec178cc1a57646b7fe64dca3ee7670756d2
-        base_commit: 6730524c7fe19e2ba6f2500f367d8e6e5689bb2c
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A09.T03.json
-          sha256: 13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4
-          commit: 30357ec178cc1a57646b7fe64dca3ee7670756d2
-          recorded_at: '2026-09-05T22:11:30+00:00'
-        acceptance_criteria_sha256: 23439777a7754c6fce5855b7461c885ad7baee1820b6eb5c4a87e3ed678b9015
-        changed_paths:
-        - apps/desktop/src-tauri/Cargo.toml
-        - apps/desktop/src-tauri/examples/project_contract_probe.rs
-        - apps/desktop/src-tauri/src/directory_picker.rs
-        - apps/desktop/src-tauri/src/lib.rs
-        - apps/desktop/src/app/ProjectsWorkspace.test.tsx
-        - apps/desktop/src/app/ProjectsWorkspace.tsx
-        - apps/desktop/src/app/directoryPicker.test.ts
-        - apps/desktop/src/app/directoryPicker.ts
-        - artifacts/evidence/W1.A09.T03.binding-review-01.json
-        - artifacts/evidence/W1.A09.T03.build-binding-regressions-01.json
-        - artifacts/evidence/W1.A09.T03.build-binding-regressions-02.json
-        - artifacts/evidence/W1.A09.T03.build-binding-review-01.json
-        - artifacts/evidence/W1.A09.T03.build-binding-review-02.json
-        - artifacts/evidence/W1.A09.T03.default-core-check-01.fresh-current.precommit.json
-        - artifacts/evidence/W1.A09.T03.default-core-check-01.fresh-restart.precommit.json
-        - artifacts/evidence/W1.A09.T03.default-core-check-01.fresh.precommit.json
-        - artifacts/evidence/W1.A09.T03.default-core-check-01.py
-        - artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json
-        - artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-02.json
-        - artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-03.json
-        - artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-04.json
-        - artifacts/evidence/W1.A09.T03.default-core-fresh-serving-principal-01.json
-        - artifacts/evidence/W1.A09.T03.default-core-fresh-two-parent-01.json
-        - artifacts/evidence/W1.A09.T03.default-core-pin-test-01.py
-        - artifacts/evidence/W1.A09.T03.default-diagnostic-01.py
-        - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.json
-        - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.py
-        - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-02.json
-        - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-03.json
-        - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-04.json
-        - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-05.json
-        - artifacts/evidence/W1.A09.T03.default-parity-check-01.json
-        - artifacts/evidence/W1.A09.T03.default-parity-check-01.py
-        - artifacts/evidence/W1.A09.T03.invariants-01.json
-        - artifacts/evidence/W1.A09.T03.native-builds-05.json
-        - artifacts/evidence/W1.A09.T03.native-replay-01.json
-        - artifacts/evidence/W1.A09.T03.native-replay-01.py
-        - artifacts/evidence/W1.A09.T03.native-replay-02.json
-        - artifacts/evidence/W1.A09.T03.native-ui-build-03.json
-        - artifacts/evidence/W1.A09.T03.native-ui-build-04.json
-        - artifacts/evidence/W1.A09.T03.native-ui-observations-01.json
-        - artifacts/evidence/W1.A09.T03.native-ui-observations-02.json
-        - artifacts/evidence/W1.A09.T03.native-ui-observations-03.json
-        - artifacts/evidence/W1.A09.T03.native-ui-observations-04.json
-        - artifacts/evidence/W1.A09.T03.renderer-check-01.default-only.precommit.json
-        - artifacts/evidence/W1.A09.T03.renderer-check-01.final.json
-        - artifacts/evidence/W1.A09.T03.renderer-check-01.fresh-unlock.precommit.json
-        - artifacts/evidence/W1.A09.T03.renderer-check-01.precommit.json
-        - artifacts/evidence/W1.A09.T03.renderer-check-01.py
-        - artifacts/evidence/W1.A09.T03.renderer-check-01.validated-build.precommit.json
-        - artifacts/evidence/W1.A09.T03.renderer-evidence-test-01.py
-        - artifacts/evidence/W1.A09.T03.runtime-principal-check-01.json
-        - artifacts/evidence/W1.A09.T03.runtime-principal-check-01.py
-        - artifacts/evidence/W1.A09.T03.runtime-token-check-01.agent.json
-        - artifacts/evidence/W1.A09.T03.runtime-token-check-01.py
-        - artifacts/evidence/W1.A09.T03.task-start.md
-        - artifacts/evidence/W1.A09.T03.verification-evidence-test-01.py
-        - artifacts/evidence/W1.A09.T03.verification-final-01.json
-        - artifacts/evidence/W1.A09.T03.verification-precommit-01.json
-        - artifacts/evidence/W1.A09.T03.verification-precommit-02.json
-        - artifacts/evidence/W1.A09.T03.verify-01.py
-        - docs/planning-implementation-plan.md
-        - packages/ui-components/src/DirectoryPickerField.tsx
-        - packages/ui-components/src/index.tsx
-        - packages/ui-components/src/styles.css
-        - packages/ui-components/tests/package.test.tsx
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0008.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        - tests/desktop/test_desktop_app_check.py
-        - tests/security/test_application_lock_source.py
-        - tests/service/test_native_project_contract.py
-        - tests/service/test_project_probe_build.py
-        - tools/desktop_app_check.py
-        selected_checks:
-        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.verify-01.py --report artifacts/evidence/W1.A09.T03.verification-final-01.json
-        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.renderer-check-01.py --report artifacts/evidence/W1.A09.T03.renderer-check-01.final.json
-        - Validated build_project_probe debug/release builds; actual authorized Windows selection/manual-lock/main-close fixture
-          observations; independent source/binary bridge verification
-        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.default-parity-check-01.py; owner normal-Windows default-failure-diagnostic-01.py
-          --attempt 5; default-core-check-01.py --mode fresh --report artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json
-        - Build-binding negative regressions and independent native-replay-02; exact source/report authentication in binding-review-01
-        - Exact base-to-tested Git tree comparison; git diff --check; tools/backlog_views.py --repo . --check; tools/plan_review_site.py
-          --repo .
-        deferred_checks:
-        - 'T04: accumulated affected integration union, single packaged renderer/native/Core lifecycle and clean Windows build/packaging
-          smoke, security/restart/recovery/accessibility/performance qualification and independent slice/exit/return bundle.'
-        - T04/W1 qualification retains preexisting all-test-target application_lock.rs Clippy needless-borrow warnings; production/harness
-          library/example Clippy pass here. No test warning is deleted or silently waived.
-        - Returned A08.T02 owns F02/UX01 effective paragraph separation and full-height sidebar. T03 does not close or alter
-          those styling findings.
-        - Fresh blind novice usability retest and retained U01-U06 follow-up remain required at their integrated W1 acceptance
-          boundary; this component/native proof is not the blind retest.
-        - Complete repository/Windows W1 matrix, independent amendment/Wave review and G1 human approval remain due. No local-main
-          integration of unmet A08 ancestry, remote effect or W2 work is authorized.
-        selection_rationale: T03 affects public native IPC, Windows COM modal lifetime, protected-generation cancellation,
-          default-folder selection and project destination UX. Credible failures include widened path authority, stale protected
-          results, blocked shutdown, duplicate mutations, changed retry destinations, unsafe defaults and false build attestation.
-          Narrow component/renderer/native/Core/security checks, real Shell/native resolver and actual DPAPI/SQLCipher proofs
-          close those boundaries. The acceptance-linked build helper corrections receive independent review and retain failing-before
-          evidence. No full repository or deployment profile is asserted.
-        selection_sha256: ee59a4546ae97300c1c0e814a306259b27623b90c6411b6760ac0458f016299f
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - desktop:unit
-        - desktop:application
-        - service:unit
-        - security-local:unit
-        - foundation:backlog-views
-        packet_sha256: 3a998b90f30a6118478f4e474c9100c3dee56e019e21bf19c51b64df9362f1d6
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-05T22:11:30+00:00'
+          candidate_commit: 30357ec178cc1a57646b7fe64dca3ee7670756d2
+          base_commit: 6730524c7fe19e2ba6f2500f367d8e6e5689bb2c
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A09.T03.json
+            sha256: 13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4
+            commit: 30357ec178cc1a57646b7fe64dca3ee7670756d2
+            recorded_at: '2026-09-05T22:11:30+00:00'
+          acceptance_criteria_sha256: 23439777a7754c6fce5855b7461c885ad7baee1820b6eb5c4a87e3ed678b9015
+          changed_paths:
+          - apps/desktop/src-tauri/Cargo.toml
+          - apps/desktop/src-tauri/examples/project_contract_probe.rs
+          - apps/desktop/src-tauri/src/directory_picker.rs
+          - apps/desktop/src-tauri/src/lib.rs
+          - apps/desktop/src/app/ProjectsWorkspace.test.tsx
+          - apps/desktop/src/app/ProjectsWorkspace.tsx
+          - apps/desktop/src/app/directoryPicker.test.ts
+          - apps/desktop/src/app/directoryPicker.ts
+          - artifacts/evidence/W1.A09.T03.binding-review-01.json
+          - artifacts/evidence/W1.A09.T03.build-binding-regressions-01.json
+          - artifacts/evidence/W1.A09.T03.build-binding-regressions-02.json
+          - artifacts/evidence/W1.A09.T03.build-binding-review-01.json
+          - artifacts/evidence/W1.A09.T03.build-binding-review-02.json
+          - artifacts/evidence/W1.A09.T03.default-core-check-01.fresh-current.precommit.json
+          - artifacts/evidence/W1.A09.T03.default-core-check-01.fresh-restart.precommit.json
+          - artifacts/evidence/W1.A09.T03.default-core-check-01.fresh.precommit.json
+          - artifacts/evidence/W1.A09.T03.default-core-check-01.py
+          - artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json
+          - artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-02.json
+          - artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-03.json
+          - artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-04.json
+          - artifacts/evidence/W1.A09.T03.default-core-fresh-serving-principal-01.json
+          - artifacts/evidence/W1.A09.T03.default-core-fresh-two-parent-01.json
+          - artifacts/evidence/W1.A09.T03.default-core-pin-test-01.py
+          - artifacts/evidence/W1.A09.T03.default-diagnostic-01.py
+          - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.json
+          - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.py
+          - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-02.json
+          - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-03.json
+          - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-04.json
+          - artifacts/evidence/W1.A09.T03.default-failure-diagnostic-05.json
+          - artifacts/evidence/W1.A09.T03.default-parity-check-01.json
+          - artifacts/evidence/W1.A09.T03.default-parity-check-01.py
+          - artifacts/evidence/W1.A09.T03.invariants-01.json
+          - artifacts/evidence/W1.A09.T03.native-builds-05.json
+          - artifacts/evidence/W1.A09.T03.native-replay-01.json
+          - artifacts/evidence/W1.A09.T03.native-replay-01.py
+          - artifacts/evidence/W1.A09.T03.native-replay-02.json
+          - artifacts/evidence/W1.A09.T03.native-ui-build-03.json
+          - artifacts/evidence/W1.A09.T03.native-ui-build-04.json
+          - artifacts/evidence/W1.A09.T03.native-ui-observations-01.json
+          - artifacts/evidence/W1.A09.T03.native-ui-observations-02.json
+          - artifacts/evidence/W1.A09.T03.native-ui-observations-03.json
+          - artifacts/evidence/W1.A09.T03.native-ui-observations-04.json
+          - artifacts/evidence/W1.A09.T03.renderer-check-01.default-only.precommit.json
+          - artifacts/evidence/W1.A09.T03.renderer-check-01.final.json
+          - artifacts/evidence/W1.A09.T03.renderer-check-01.fresh-unlock.precommit.json
+          - artifacts/evidence/W1.A09.T03.renderer-check-01.precommit.json
+          - artifacts/evidence/W1.A09.T03.renderer-check-01.py
+          - artifacts/evidence/W1.A09.T03.renderer-check-01.validated-build.precommit.json
+          - artifacts/evidence/W1.A09.T03.renderer-evidence-test-01.py
+          - artifacts/evidence/W1.A09.T03.runtime-principal-check-01.json
+          - artifacts/evidence/W1.A09.T03.runtime-principal-check-01.py
+          - artifacts/evidence/W1.A09.T03.runtime-token-check-01.agent.json
+          - artifacts/evidence/W1.A09.T03.runtime-token-check-01.py
+          - artifacts/evidence/W1.A09.T03.task-start.md
+          - artifacts/evidence/W1.A09.T03.verification-evidence-test-01.py
+          - artifacts/evidence/W1.A09.T03.verification-final-01.json
+          - artifacts/evidence/W1.A09.T03.verification-precommit-01.json
+          - artifacts/evidence/W1.A09.T03.verification-precommit-02.json
+          - artifacts/evidence/W1.A09.T03.verify-01.py
+          - docs/planning-implementation-plan.md
+          - packages/ui-components/src/DirectoryPickerField.tsx
+          - packages/ui-components/src/index.tsx
+          - packages/ui-components/src/styles.css
+          - packages/ui-components/tests/package.test.tsx
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0008.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/desktop/test_desktop_app_check.py
+          - tests/security/test_application_lock_source.py
+          - tests/service/test_native_project_contract.py
+          - tests/service/test_project_probe_build.py
+          - tools/desktop_app_check.py
+          selected_checks:
+          - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.verify-01.py --report artifacts/evidence/W1.A09.T03.verification-final-01.json
+          - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.renderer-check-01.py --report artifacts/evidence/W1.A09.T03.renderer-check-01.final.json
+          - Validated build_project_probe debug/release builds; actual authorized Windows selection/manual-lock/main-close
+            fixture observations; independent source/binary bridge verification
+          - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.default-parity-check-01.py; owner normal-Windows
+            default-failure-diagnostic-01.py --attempt 5; default-core-check-01.py --mode fresh --report artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json
+          - Build-binding negative regressions and independent native-replay-02; exact source/report authentication in binding-review-01
+          - Exact base-to-tested Git tree comparison; git diff --check; tools/backlog_views.py --repo . --check; tools/plan_review_site.py
+            --repo .
+          deferred_checks:
+          - 'T04: accumulated affected integration union, single packaged renderer/native/Core lifecycle and clean Windows
+            build/packaging smoke, security/restart/recovery/accessibility/performance qualification and independent slice/exit/return
+            bundle.'
+          - T04/W1 qualification retains preexisting all-test-target application_lock.rs Clippy needless-borrow warnings;
+            production/harness library/example Clippy pass here. No test warning is deleted or silently waived.
+          - Returned A08.T02 owns F02/UX01 effective paragraph separation and full-height sidebar. T03 does not close or alter
+            those styling findings.
+          - Fresh blind novice usability retest and retained U01-U06 follow-up remain required at their integrated W1 acceptance
+            boundary; this component/native proof is not the blind retest.
+          - Complete repository/Windows W1 matrix, independent amendment/Wave review and G1 human approval remain due. No
+            local-main integration of unmet A08 ancestry, remote effect or W2 work is authorized.
+          selection_rationale: T03 affects public native IPC, Windows COM modal lifetime, protected-generation cancellation,
+            default-folder selection and project destination UX. Credible failures include widened path authority, stale protected
+            results, blocked shutdown, duplicate mutations, changed retry destinations, unsafe defaults and false build attestation.
+            Narrow component/renderer/native/Core/security checks, real Shell/native resolver and actual DPAPI/SQLCipher proofs
+            close those boundaries. The acceptance-linked build helper corrections receive independent review and retain failing-before
+            evidence. No full repository or deployment profile is asserted.
+          selection_sha256: ee59a4546ae97300c1c0e814a306259b27623b90c6411b6760ac0458f016299f
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - desktop:unit
+          - desktop:application
+          - service:unit
+          - security-local:unit
+          - foundation:backlog-views
+          packet_sha256: 3a998b90f30a6118478f4e474c9100c3dee56e019e21bf19c51b64df9362f1d6
+        review: *id126
+        ledger:
+          path: artifacts/evidence/W1.A09.T03.review-R01.json
+          sha256: 04bbbd016f496e82b09c2245909cd70493d04c6cb2d4d37771efda57d92e8642
+        findings: []
+        closures: []
+        telemetry:
+          task_id: W1.A09.T03
+          amendment_id: W1.A09
+          attempt_id: R01
+          submitted_at: '2026-09-05T22:11:30+00:00'
+          reviewed_at: '2026-09-05T22:18:10+00:00'
+          duration_seconds: 400
+          outcome: approved
+          finding_counts:
+            critical: 0
+            high: 0
+            medium: 0
+            low: 0
+            blocking: 0
+            total: 0
+          command_ids:
+          - desktop:unit
+          - desktop:application
+          - service:unit
+          - security-local:unit
+          - foundation:backlog-views
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   - id: W1.A09.T04
     amendment_id: W1.A09
     title: Qualify correction and prepare authenticated return
@@ -40484,14 +40517,14 @@ wave_amendments:
     - Real persistence/authority return binding through reviewed existing adapters
     - Negative source/history/scope and protected-state checks; full matrix at W1 exit
     packet_task_sha256: ecc830ede218ff101b55d9224c14f6906ba3744a3e155e55fd7e33fe0e7853d0
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-09-05T22:18:10+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

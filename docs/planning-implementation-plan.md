@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 42a961589fbff9c9fe2d0ee22bce2bbabb7149d57b2defe1b05f51ac37e2e44a
+source_sha256: dc58b5f03ee1f370091880df02cdd1d09c17a8f9423f8ce06103a41f336e09df
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2075,9 +2075,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A09.T03 - Choose project folders through one protected native dialog
+### - [x] W1.A09.T03 - Choose project folders through one protected native dialog
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `DONE` / codex / agent:/root/t03_acceptance_review (`approved`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T02`
 
@@ -2107,9 +2107,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A09.T03
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `3a998b90f30a6118478f4e474c9100c3dee56e019e21bf19c51b64df9362f1d6`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `3a998b90f30a6118478f4e474c9100c3dee56e019e21bf19c51b64df9362f1d6`
 
 - Candidate / base / branch: `30357ec178cc1a57646b7fe64dca3ee7670756d2` / `6730524c7fe19e2ba6f2500f367d8e6e5689bb2c` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-05T22:11:30+00:00`
@@ -2123,15 +2125,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/t03_acceptance_review / `2026-09-05T22:18:10+00:00`
 
-**Latest notes:** Reopened: Owner normal-Windows diagnostic 05 passed actual-default create/reopen/protected-storage/no-overwrite checks; its exact 54-source inventory matches current bytes (report a5a829c6df753a37c3f4413e3090072339daa8eca6c91594d72d882a157de617). Resume criterion closure and independent review without changing Core guards.
+**Immutable review ledger:** `artifacts/evidence/W1.A09.T03.review-R01.json` / `04bbbd016f496e82b09c2245909cd70493d04c6cb2d4d37771efda57d92e8642`
+
+**Review notes:** Independent expanded review approves the exact frozen T03 candidate and its seven acceptance criteria. No reproducible acceptance-blocking defect was found in the protected picker, default selection, destination behavior or evidence controls. Real Shell/Tauri observations, native default parity, actual protected Core persistence and explicitly doubled renderer proofs establish their separately stated boundaries. This is task disposition only: it does not approve integrated T04 qualification, a slice, amendment exit/adoption, A08 return, Wave completion, G1, local-main integration through unmet ancestry or remote effects.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/t03_acceptance_review at `2026-09-05T22:18:10+00:00`
+
+**Latest notes:** Independent expanded review approves the exact frozen T03 candidate and its seven acceptance criteria. No reproducible acceptance-blocking defect was found in the protected picker, default selection, destination behavior or evidence controls. Real Shell/Tauri observations, native default parity, actual protected Core persistence and explicitly doubled renderer proofs establish their separately stated boundaries. This is task disposition only: it does not approve integrated T04 qualification, a slice, amendment exit/adoption, A08 return, Wave completion, G1, local-main integration through unmet ancestry or remote effects.
 
 **Currently open findings:** -
 
 ### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T03`
 

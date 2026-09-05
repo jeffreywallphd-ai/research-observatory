@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "1.0",
+  "task_id": "W1.A09.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "30357ec178cc1a57646b7fe64dca3ee7670756d2",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "result": "approved",
+  "notes": "Independent expanded review approves the exact frozen T03 candidate and its seven acceptance criteria. No reproducible acceptance-blocking defect was found in the protected picker, default selection, destination behavior or evidence controls. Real Shell/Tauri observations, native default parity, actual protected Core persistence and explicitly doubled renderer proofs establish their separately stated boundaries. This is task disposition only: it does not approve integrated T04 qualification, a slice, amendment exit/adoption, A08 return, Wave completion, G1, local-main integration through unmet ancestry or remote effects.",
+  "findings": [],
+  "closures": [],
+  "review_scope": {
+    "base_commit": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+    "tested_product_commit": "3f4b2153a90eb29ee74c9f55f628eb3d15884922",
+    "submission_delivery_commit": "acb1664f45350337bbfd8f4c63d06653a3131c11",
+    "packet_sha256": "3a998b90f30a6118478f4e474c9100c3dee56e019e21bf19c51b64df9362f1d6",
+    "manifest_path": "artifacts/evidence/W1.A09.T03.json",
+    "manifest_canonical_sha256": "13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4",
+    "manifest_hash_convention": "SHA-256 after CRLF and lone CR normalization to LF, matching taskctl evidence_sha256; this is distinct from canonical parsed-JSON hashing.",
+    "approved_packet_commit": "2160cc9917282d80848189dc9669fe3827979246",
+    "changed_path_count": 75,
+    "acceptance_criterion_count": 7,
+    "prior_attempts": 0,
+    "prior_open_findings": [],
+    "binding_checked_at": "2026-09-05T22:16:05Z",
+    "risk_selection": "Expanded review is warranted by new native IPC, Windows modal ownership and lifetime, lock-generation cancellation, default discovery, asynchronous renderer ownership, and build/persistence evidence controls. Independently replay the narrow adapter, protected-source, build-binding and fixture-safety boundaries; inspect actual native observations and the producer's current native/Core/renderer reports. Do not repeat the full repository/deployment profiles or represent producer platform observations as new reviewer executions."
+  },
+  "authority_and_binding_checks": [
+    {
+      "name": "frozen-submission-and-evidence-delivery",
+      "result": "passed",
+      "detail": "Read T03 from the committed delivery backlog blob and verified REVIEW/R01, candidate/base, seven criteria, 75 exact base-to-candidate changed paths, no prior attempt and no open finding. Independently recomputed packet, acceptance-criteria, selection and LF-normalized manifest hashes. Manifest checks, deferrals and command IDs equal the frozen submission. Current T03 state equals the delivery blob. The tested-to-candidate delta is exactly four evidence reports; candidate-to-delivery changes exactly the manifest, backlog and two generated backlog views. Verified the complete ancestry chain. No product, test or harness input changes after the independently replayed implementation commit.",
+      "tested_to_candidate_paths": [
+        "artifacts/evidence/W1.A09.T03.binding-review-01.json",
+        "artifacts/evidence/W1.A09.T03.invariants-01.json",
+        "artifacts/evidence/W1.A09.T03.renderer-check-01.final.json",
+        "artifacts/evidence/W1.A09.T03.verification-final-01.json"
+      ]
+    },
+    {
+      "name": "source-report-and-git-authentication",
+      "result": "passed",
+      "detail": "Independently verified all 330 final verification inputs, both 161-input native-build inventories, all 54 fresh-final Core inputs and all 54 actual-default diagnostic inputs against current raw bytes. The union contains 346 inputs: all 341 tracked inputs match candidate Git blobs through stat-independent Git clean hashing; five generated product inputs match their raw hashes. Independently compared the 72 candidate changed files outside the three later submission projections with their candidate blobs, allowing only CRLF/LF representation differences. Zero mismatches. The manifest itself matches its delivery blob and frozen digest.",
+      "actual_default_report_raw_sha256": "a5a829c6df753a37c3f4413e3090072339daa8eca6c91594d72d882a157de617",
+      "verification_final_raw_sha256": "b7364569dc73ef2611208d8e48883bee038cd4bf65043b516e6a18c1d459ccff",
+      "renderer_final_raw_sha256": "a5bb53c383d7479cae7b0f5a1663de2ed727e7ef2612b2b093ca6831d2aa4f5a",
+      "fresh_core_final_raw_sha256": "16a792b7c259d60ce42ea19a7b715d479572dd183302c7493d429d0abf092d9a"
+    },
+    {
+      "name": "unchanged-authority-and-core-boundaries",
+      "result": "passed",
+      "detail": "Independently compared all 349 invariant-report Git entries at claim base and candidate. Core source, contracts, governed reference and baselines, renderer capabilities, and existing application-lock, sign-in, verification, supervisor and support owners retain identical Git entries. New picker/lib integration is reviewed separately and is not claimed unchanged. The directory-input inventory is confined to implemented Projects create/open controls; read-only diagnostic paths remain outputs."
+    },
+    {
+      "name": "native-ui-evidence-bridge",
+      "result": "passed",
+      "detail": "Reviewed native-ui-build-04 and observations-04, the later actual native-builds-05 results and the independent binding report. The only old UI-build inventory mismatch is the later verification-helper correction; native and renderer inputs remain identical and the later validated debug executable has the identical f73661fc06c4cb081ac08ac35808b2983fa9d4de4682b3e2343b6eecab6eac8d digest. The original UI observations are retained as observations of those identical product bytes, not relabeled as runs at this later commit. The helper correction now validates renderer inventory and exact Cargo output before PE/hash attestation, with independently replayed negatives."
+    }
+  ],
+  "independent_replays": [
+    {
+      "name": "native-probe-build-binding-negatives",
+      "command": ".venv/Scripts/python.exe -I -B -m unittest discover -s tests/service -p test_project_probe_build.py -v",
+      "exit_code": 0,
+      "tests_passed": 10,
+      "result": "Synthetic sources/artifacts and the real product validator reject stale or modified renderer data, unlisted assets, manifest/path substitution, post-validation changes, changes during compilation, missing compiler-artifact events and alternate Cargo outputs. Valid source/artifact binding passes. Cargo, Git inventory, tool discovery and PE inspection are declared doubles in these tests; no native build or executable launch occurred. TEMP/TMP were set to a fresh reviewer-owned artifacts/tmp namespace."
+    },
+    {
+      "name": "protected-native-source-boundaries",
+      "command": ".venv/Scripts/python.exe -I -B -m unittest discover -s tests/security -p test_application_lock_source.py -v",
+      "exit_code": 0,
+      "tests_passed": 4,
+      "result": "Source checks retain generation acquisition/revalidation, local window ownership, no Core mutex in either folder command, asynchronous close cleanup, production lock composition and unchanged authentication boundaries. These are source contract checks, not actual authentication or dialog observations."
+    },
+    {
+      "name": "directory-adapter-and-destination",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run src/app/directoryPicker.test.ts --root apps/desktop",
+      "exit_code": 0,
+      "tests_passed": 5,
+      "result": "Pinned Vitest tests pass bounded ASCII slugs, accent/Unicode fallback/device-name vectors, path-preserving destinations and length limits, exact path-free failure outcomes, narrow commands, malformed-input denial, and retention of single admission until an aborted native waiter actually finishes. Native invoke is explicitly doubled."
+    },
+    {
+      "name": "fixture-persistence-and-proof-safety",
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.default-core-pin-test-01.py ProofRunnerBoundaryTests.test_revalidation_rechecks_held_and_named_attributes_and_identity ProofRunnerBoundaryTests.test_database_read_uses_no_follow_handle_and_blocks_inflight_replacement ProofRunnerBoundaryTests.test_real_fresh_child_is_stopped_on_observed_drift_after_http_without_cleanup_request ProofRunnerBoundaryTests.test_environment_drops_inherited_python_network_and_profile_configuration ProofRunnerBoundaryTests.test_report_namespace_is_checked_before_filesystem_access ProofRunnerBoundaryTests.test_native_resolver_checks_build_hash_and_manifest_on_both_sides",
+      "exit_code": 0,
+      "tests_passed": 6,
+      "result": "Real Windows fixture handles revalidate held/named identity and reject replacement during a synthetic database read. A real fresh fixture Core serves a read-only catalog request and is terminated after synthetic identity-observation drift, without a shutdown/cleanup request through the suspect authority. Environment poisoning is excluded from a fresh child; report names are rejected before filesystem access; native resolver build hashes/manifest checks reject substitution before or after the declared process double. All storage is newly created synthetic fixture storage; no actual default or user vault/policy is touched."
+    }
+  ],
+  "reviewed_producer_evidence": {
+    "verification_report": "artifacts/evidence/W1.A09.T03.verification-final-01.json",
+    "verification_result": "All 19 selected commands pass at the exact tested implementation commit with stable inputs and HEAD: 28 renderer, five shared-field, 25 production picker, 25 harness picker, six fixture, four protected-source, 18 Core lifecycle, 17 safeguard, two publication, two selection-safety, ten build-binding and one renderer-recovery tests, plus selected lint/types and generated views. This producer evidence is distinguished from the reviewer's 25 independently replayed tests.",
+    "renderer_report": "artifacts/evidence/W1.A09.T03.renderer-check-01.final.json",
+    "renderer_result": "Actual built React and pinned Chromium, with explicit native/Core doubles, cover default-only Create without opening a chooser, six default/cancellation/failure orderings, stable collision retry, user override, protected late-result discard and fresh-unlock empty forms. Both themes, long Unicode paths, reduced motion and 1440x900, 1280x720 and 720x450 geometry pass without horizontal overflow or unexpected network/page errors.",
+    "native_ui_report": "artifacts/evidence/W1.A09.T03.native-ui-observations-04.json",
+    "native_ui_result": "Actual Tauri IPC and Windows Shell observations establish owned modal selection, disabled parent, Escape cancellation and focus return, Return reopening, Unicode path preservation and separate explicit Open affordance. Manual lock and main close dismiss the pending modal without operator cancellation, stop Core and discard protected data. The observed selection run performed neither Create nor Open.",
+    "default_and_persistence_result": "The actual debug/release native resolver comparison identifies the same real Shell/Core default parent without mutation. Owner diagnostic 05 independently binds 54 current sources and records protected create/close/reopen twice and collision preservation at the actual default using a fixture vault. Fresh-final-01 binds the latest 54-source helper inventory and proves isolated first-start provisioning and two protected projects reopening through a fresh Core process. These are separate real proofs, not one integrated packaged application session."
+  },
+  "acceptance_disposition": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "basis": "Both implemented location fields use the shared accessible DirectoryPickerField; the child-directory-name input is removed. Label/help/button/output associations, native selection and read-only preview replace path typing without browser enumeration, an imitation filesystem tree or expanded renderer capability."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "basis": "Core-compatible bounded ASCII derivation, reserved-name prefix, stable random fallback and exact Unicode/spaced-parent preview are covered. Pending mutation freezes request values; explicit retry retains the destination; Core collision evidence preserves existing bytes without silent numbering. Open remains a separate action after selection."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "basis": "The exact purpose/optional-location command, local main-window origin/owner check and narrow pinned COM/Shell adapter enforce filesystem-only selection. Strict tagged outcomes expose paths only on success. Lexical, existence, ancestor/reparse, locality, canonicality and installation checks remain separate from Core operation authority; the read-only default resolver accepts no caller path."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "basis": "Synchronous renderer/native admission prevents overlapping selection and mutation. Cancellation/failure preserve prior selection and draft, actual Escape restores initiating focus, stale/unmounted results are discarded, and user selections win over late defaults. Actual selection/cancellation and renderer counters show no automatic create/open."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "basis": "No Core mutex spans the modal wait. Protected generation is checked around work and delivery; sticky cancellation, same-STA close dispatch, worker-owned reservation and asynchronous main close cover the lifetime. Native fault/race tests and actual pending lock/close observations establish dismissal and cleanup; the built renderer starts with empty protected form/project state after fresh unlock."
+    },
+    {
+      "criterion_index": 6,
+      "result": "satisfied",
+      "basis": "The actual owned Windows modal observations establish keyboard selection/cancellation and pending lock/close. Unchanged Core package, reparse/install/path, exclusive-lock, staging/recovery and no-overwrite boundaries retain focused lifecycle evidence, complemented by real DPAPI/SQLCipher default and fresh-process proofs. The compositional T03 proof does not substitute for T04's explicitly assigned integrated packaged lifecycle qualification."
+    },
+    {
+      "criterion_index": 7,
+      "result": "satisfied",
+      "basis": "The field composes existing shared UI primitives with one reusable token-driven wrapping/selectable location rule. Current built-renderer evidence passes both themes, long paths, reduced motion and 720x450 effective layout without page overflow; component associations and actual keyboard/focus observations complement that geometry."
+    }
+  ],
+  "retained_history_and_residuals": [
+    "Prior verification, build-binding regression, native modal and actual-default diagnostic failures remain retained adverse evidence. Later passing reports do not overwrite or relabel them. The hidden-window regression repair was test-only; the six native repetitions and final native tests pass the corrected observation loop.",
+    "The original manifest-only native build binding and inherited Cargo output-path assumption were corrected within the verification helper. Missing/tampered input and output negatives are independently replayed; original failures and advisory reviews remain visible.",
+    "Diagnostic 05 proves actual-default success in the owner's normal launch context. The precise cause of earlier tool-launch canonical-path drift remains unproven; no claim of a diagnosed environment cause or relaxed Core canonicality is approved.",
+    "The native UI fixture in lib.rs uses share_mode(0x1) for its pinned directories. This may prevent Core staging rename when the integrated fixture performs Create; no such creation is claimed by T03's UI observations. Characterize that fixture publication boundary and make any bounded harness correction under T04 before integrated Create qualification. This is an uncharacterized integration-harness risk, not a demonstrated production-picker defect or a false passing T03 create claim.",
+    "T04 owns the accumulated cross-boundary union, single packaged renderer/native/Core lifecycle, clean Windows build/packaging smoke, security, cancellation/restart/recovery, accessibility/performance and independent slice/exit/return bundle. The same-session packaged default-create proof is not established here.",
+    "Existing application_lock.rs all-test-target Clippy needless-borrow warnings remain qualification follow-up. Passing production/harness library/example Clippy does not silently waive those warnings. No valid test is removed to obtain this disposition.",
+    "Same-Windows-account hostile writers remain outside ADR-0017/0018's account-isolation boundary. Endpoint source hashes are not an atomic snapshot against change-and-restore, and post-operation fixture identity detection cannot undo a prior write. Those disclosed limits are preserved.",
+    "Returned A08.T02 still owns F02/UX01 effective paragraph separation and full-height sidebar. Integrated usability U01-U06 follow-up and a fresh blind novice retest, complete Windows/full-repository W1 qualification, independent amendment/Wave dispositions and human G1 approval remain due."
+  ],
+  "reviewer_safety": "The reviewer made no product, backlog, controller, Git or remote mutation and invoked no native UI or authentication flow. Independent tests used fresh synthetic artifacts/tmp namespaces, including one isolated Core child that was stopped. Only this new review ledger is authored by the reviewer. The protected unrelated W1.A04.B00.json artifact was never opened, read, hashed, copied or modified, and the sibling planning workspace was never accessed."
+}
