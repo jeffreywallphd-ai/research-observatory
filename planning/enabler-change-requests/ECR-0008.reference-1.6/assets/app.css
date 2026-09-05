@@ -199,6 +199,7 @@ body.sidebar-collapsed .main-shell { margin-left: var(--sidebar-collapsed-width)
 .btn-sm { min-height: var(--control-height-sm); padding-inline: var(--space-3); font-size: var(--text-xs); }
 .btn-lg { min-height: var(--control-height-lg); padding-inline: var(--space-5); }
 .btn-icon { width: var(--control-height-md); padding: 0; }
+.btn:focus-visible { box-shadow: var(--focus-ring); }
 
 .badge, .chip {
   min-height: 1.5rem; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.55rem;
