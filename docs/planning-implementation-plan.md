@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 41b8e7e20eab452f793bb676f174050cec529924986951a375dfe6a81ea19a72
+source_sha256: 7c773850f7d695add38f13dfb5dd39be33eff8bc45e8bebbde16fe16ba3fd614
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1939,7 +1939,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T01 - Publish approved reference and preserve semantic1.5
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A09.B00`
 
