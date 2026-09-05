@@ -1,0 +1,1244 @@
+{
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "version": "1.5",
+  "date": "2026-09-02",
+  "product_page_count": 33,
+  "capabilities": [
+    {
+      "capability": "CAP-00",
+      "title": "Delivery foundation and Codex execution system",
+      "status": "covered",
+      "pages": [
+        "prototype-index.html",
+        "style-guide.html"
+      ],
+      "notes": "Repository, capability-campaign task control, experience-reference governance, and conformance automation are represented by the governed design package rather than an end-user page."
+    },
+    {
+      "capability": "CAP-01",
+      "title": "Windows-first desktop shell and supervised local runtime",
+      "status": "covered",
+      "pages": [
+        "index.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-02",
+      "title": "Local projects, durable storage, security, and recovery",
+      "status": "covered",
+      "pages": [
+        "new-project.html",
+        "project-settings.html",
+        "projects.html",
+        "technical-reports.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-03",
+      "title": "Canonical domain, research intent, provenance, and durable workflows",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "help-onboarding.html",
+        "index.html",
+        "intent-contract.html",
+        "manuscript-blueprint.html",
+        "new-project.html",
+        "projects.html",
+        "research-notebook.html",
+        "schema-manager.html",
+        "study-design.html",
+        "task-center.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-04",
+      "title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "status": "covered",
+      "pages": [
+        "corpus-canvas.html",
+        "ingestion-reconciliation.html",
+        "source-manager.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-05",
+      "title": "Document acquisition, parsing, source inspection, and page anchors",
+      "status": "covered",
+      "pages": [
+        "document-reader.html",
+        "parsing-quality.html",
+        "technical-reports.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-06",
+      "title": "Local search, discovery, corpus diagnostics, and screening",
+      "status": "covered",
+      "pages": [
+        "corpus-canvas.html",
+        "screening.html",
+        "search-studio.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-07",
+      "title": "Provider-neutral model gateway and governed AI execution",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "manuscript-studio.html",
+        "model-center.html",
+        "reviewer-simulation.html",
+        "task-center.html",
+        "technical-reports.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-08",
+      "title": "Evidence schemas, extraction, verification, and adjudication",
+      "status": "covered",
+      "pages": [
+        "document-reader.html",
+        "evidence-matrix.html",
+        "schema-manager.html",
+        "study-design.html",
+        "technical-reports.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-09",
+      "title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "claim-graph.html",
+        "manuscript-blueprint.html",
+        "manuscript-studio.html",
+        "research-notebook.html",
+        "schema-manager.html",
+        "synthesis-studio.html",
+        "theory-map.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-10",
+      "title": "Novelty auditing, research opportunities, and plural research modes",
+      "status": "covered",
+      "pages": [
+        "critical-lens.html",
+        "index.html",
+        "living-monitor.html",
+        "novelty-audit.html",
+        "opportunity-radar.html",
+        "research-notebook.html",
+        "reviewer-simulation.html",
+        "study-design.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-11",
+      "title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "status": "covered",
+      "pages": [
+        "help-onboarding.html",
+        "new-project.html",
+        "project-settings.html",
+        "projects.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-12",
+      "title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "status": "intentionally_deferred",
+      "pages": [],
+      "notes": "University administration and collaboration surfaces require the W10 institutional profile and separately approved page contracts."
+    },
+    {
+      "capability": "CAP-13",
+      "title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "status": "intentionally_deferred",
+      "pages": [],
+      "notes": "Managed-cloud administration, tenancy, billing, and operations require the W11 cloud profile and separately approved page contracts."
+    },
+    {
+      "capability": "CAP-14",
+      "title": "Cross-platform desktop qualification and release",
+      "status": "covered",
+      "pages": [
+        "help-onboarding.html",
+        "model-center.html",
+        "new-project.html",
+        "project-settings.html",
+        "prototype-index.html",
+        "style-guide.html"
+      ],
+      "notes": "Cross-platform parity is governed through shared page contracts, style/reference checks, project portability, and platform-specific qualification rather than distinct application pages."
+    },
+    {
+      "capability": "CAP-15",
+      "title": "Empirical study design and protocol development",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "evidence-matrix.html",
+        "help-onboarding.html",
+        "index.html",
+        "intent-contract.html",
+        "new-project.html",
+        "study-design.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-16",
+      "title": "Manuscript blueprint, venue profiles, and article architecture",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "help-onboarding.html",
+        "index.html",
+        "intent-contract.html",
+        "manuscript-blueprint.html",
+        "manuscript-studio.html",
+        "new-project.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-17",
+      "title": "Technical report and study-results integration",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "document-reader.html",
+        "evidence-matrix.html",
+        "help-onboarding.html",
+        "index.html",
+        "manuscript-studio.html",
+        "model-center.html",
+        "parsing-quality.html",
+        "technical-reports.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-18",
+      "title": "Source-grounded manuscript drafting and publication artifacts",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "evidence-matrix.html",
+        "help-onboarding.html",
+        "index.html",
+        "intent-contract.html",
+        "manuscript-blueprint.html",
+        "manuscript-studio.html",
+        "model-center.html",
+        "reviewer-simulation.html",
+        "revision-response.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    },
+    {
+      "capability": "CAP-19",
+      "title": "Reviewer simulation, editorial synthesis, and revision",
+      "status": "covered",
+      "pages": [
+        "audit-lineage.html",
+        "help-onboarding.html",
+        "index.html",
+        "intent-contract.html",
+        "model-center.html",
+        "new-project.html",
+        "reviewer-simulation.html",
+        "revision-response.html"
+      ],
+      "notes": "User-facing aspects are represented; nonvisual algorithms, persistence, security enforcement, and services remain governed by architecture and backlog acceptance criteria."
+    }
+  ],
+  "page_contracts": {
+    "index.html": {
+      "page": "Project Home",
+      "purpose": "Project state, current workflow, progress, corpus, decisions, research-production readiness, quality gates, activity, and next actions.",
+      "capabilities": [
+        "CAP-01",
+        "CAP-03",
+        "CAP-10",
+        "CAP-15",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "primary use case and workflow progress",
+        "ordered workflow map",
+        "recommended next step",
+        "research quality gates",
+        "corpus and decision summaries",
+        "stale outputs",
+        "recent field changes",
+        "recent activity",
+        "next actions",
+        "intent summary"
+      ],
+      "illustrative_values": true
+    },
+    "projects.html": {
+      "page": "Projects",
+      "purpose": "Create, open, import, back up, transfer, recover, and see workflow position for local project homes.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-03",
+        "CAP-11"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "project list",
+        "primary use case per project",
+        "workflow position",
+        "create/open/import actions",
+        "backup/transfer/recovery state"
+      ],
+      "illustrative_values": true
+    },
+    "new-project.html": {
+      "page": "New Project",
+      "purpose": "Choose one of fourteen primary scholarly use cases before configuring the research intent and local project home.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-03",
+        "CAP-11",
+        "CAP-14",
+        "CAP-15",
+        "CAP-16",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "project basics",
+        "fourteen approved use cases",
+        "workflow preview",
+        "reversibility and versioning guidance",
+        "continue to intent",
+        "fourteen approved use cases grouped as explore/synthesize and design/publish",
+        "workflow preview for selected use case",
+        "research-production human-authority guidance"
+      ],
+      "illustrative_values": true
+    },
+    "intent-contract.html": {
+      "page": "Research Intent Contract",
+      "purpose": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-15",
+        "CAP-16",
+        "CAP-18",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "objective and intended contribution",
+        "fourteen approved use cases",
+        "ordered workflow preview",
+        "scope and evidence policy",
+        "AI authority",
+        "novelty standard",
+        "stopping logic",
+        "change-impact warning",
+        "version history"
+      ],
+      "illustrative_values": true
+    },
+    "help-onboarding.html": {
+      "page": "Help, Onboarding & Diagnostics",
+      "purpose": "Use-case catalog, guided workflows, offline sample project, shortcuts, contextual help, and privacy-safe support bundles.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-11",
+        "CAP-14",
+        "CAP-15",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "getting-started checklist",
+        "eight-use-case catalog",
+        "navigation model",
+        "offline sample project",
+        "keyboard and contextual help",
+        "redacted diagnostics support",
+        "fourteen-use-case catalog",
+        "research-production safeguards",
+        "cross-platform diagnostic guidance"
+      ],
+      "illustrative_values": true
+    },
+    "search-studio.html": {
+      "page": "Search Studio",
+      "purpose": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+      "capabilities": [
+        "CAP-06"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "source selection",
+        "query builder",
+        "versioned search tree",
+        "results",
+        "coverage and bias diagnostics",
+        "add-to-corpus/screening actions"
+      ],
+      "illustrative_values": true
+    },
+    "source-manager.html": {
+      "page": "Source Manager",
+      "purpose": "Open, local, licensed, and reference-manager adapters with rights, permissions, and health.",
+      "capabilities": [
+        "CAP-04"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "source/adaptor inventory",
+        "rights and permissions",
+        "connection health",
+        "local/licensed/deferred states",
+        "import-review route",
+        "private technical-report sources",
+        "uploaded manuscript-draft sources",
+        "rights and model-egress policy per source class"
+      ],
+      "illustrative_values": true
+    },
+    "ingestion-reconciliation.html": {
+      "page": "Ingestion & Reconciliation",
+      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+      "capabilities": [
+        "CAP-04"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "import batch provenance",
+        "canonicalization preview",
+        "duplicate/version decisions",
+        "correction/retraction alerts",
+        "rights review",
+        "reversible merge decisions"
+      ],
+      "illustrative_values": true
+    },
+    "corpus-canvas.html": {
+      "page": "Corpus Canvas",
+      "purpose": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+      "capabilities": [
+        "CAP-04",
+        "CAP-06"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "corpus clusters",
+        "citation/semantic discovery paths",
+        "coverage/missingness",
+        "boundary sensitivity",
+        "source-linked inspection"
+      ],
+      "illustrative_values": true
+    },
+    "screening.html": {
+      "page": "Screening",
+      "purpose": "Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics.",
+      "capabilities": [
+        "CAP-06"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "active-learning queue",
+        "inclusion/exclusion controls",
+        "reasons",
+        "audit/uncertainty samples",
+        "conflict adjudication",
+        "stopping diagnostics"
+      ],
+      "illustrative_values": true
+    },
+    "document-reader.html": {
+      "page": "Document Reader",
+      "purpose": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+      "capabilities": [
+        "CAP-05",
+        "CAP-08",
+        "CAP-17"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "secure original/parsed source view",
+        "document outline",
+        "stable page/source anchors",
+        "evidence selection",
+        "rights and parser provenance"
+      ],
+      "illustrative_values": true
+    },
+    "research-notebook.html": {
+      "page": "Research Notebook",
+      "purpose": "Researcher-owned memos, evolving questions, interpretive history, alternative readings, and linked evidence.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-09",
+        "CAP-10"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "researcher-owned memo editor",
+        "memo collections",
+        "linked evidence/claims/search branches",
+        "interpretive version history",
+        "alternative readings",
+        "AI suggestions kept separate"
+      ],
+      "illustrative_values": true
+    },
+    "parsing-quality.html": {
+      "page": "Parsing Quality & Corrections",
+      "purpose": "Structure, page anchors, tables, figures, references, manual corrections, and selective reprocessing.",
+      "capabilities": [
+        "CAP-05",
+        "CAP-17"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "quality queue",
+        "section/anchor/table/figure/reference checks",
+        "manual corrections",
+        "reprocessing impact",
+        "source-reader route"
+      ],
+      "illustrative_values": true
+    },
+    "evidence-matrix.html": {
+      "page": "Evidence Matrix",
+      "purpose": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+      "capabilities": [
+        "CAP-08",
+        "CAP-15",
+        "CAP-17",
+        "CAP-18"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "schema-driven evidence grid",
+        "status and confidence",
+        "verifier/reviewer",
+        "source passage detail",
+        "comparability clusters",
+        "adjudication"
+      ],
+      "illustrative_values": true
+    },
+    "schema-manager.html": {
+      "page": "Schema & Ontology Manager",
+      "purpose": "Versioned domain packs, fields, relations, constraints, and change-impact preview.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-08",
+        "CAP-09"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "ontology/schema version",
+        "field/relation definitions",
+        "constraints",
+        "domain packs",
+        "impact preview",
+        "approval state"
+      ],
+      "illustrative_values": true
+    },
+    "claim-graph.html": {
+      "page": "Claim & Argument Graph",
+      "purpose": "Claims, evidence, support, contradiction, qualification, and dispute review.",
+      "capabilities": [
+        "CAP-09"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "claim/evidence network",
+        "support/contradiction/qualification",
+        "source detail",
+        "disputes and alternatives",
+        "accessible tabular alternative"
+      ],
+      "illustrative_values": true
+    },
+    "theory-map.html": {
+      "page": "Theory & Construct Map",
+      "purpose": "Theory use, definitions, operationalizations, mechanisms, drift, and integration.",
+      "capabilities": [
+        "CAP-09"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "theory and construct map",
+        "definitions and synonyms",
+        "operationalizations",
+        "mechanisms and levels",
+        "drift/integration",
+        "source links"
+      ],
+      "illustrative_values": true
+    },
+    "critical-lens.html": {
+      "page": "Critical Lens",
+      "purpose": "Assumptions, authority, dependency, stakeholder silence, and competing readings.",
+      "capabilities": [
+        "CAP-10"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "assumption candidates",
+        "stakeholders and silences",
+        "authority/dependency",
+        "benefits/burdens",
+        "competing readings",
+        "researcher adjudication"
+      ],
+      "illustrative_values": true
+    },
+    "opportunity-radar.html": {
+      "page": "Opportunity Radar",
+      "purpose": "Plural opportunity types and visible multi-objective comparison.",
+      "capabilities": [
+        "CAP-10"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "plural opportunity types",
+        "visible scoring vector",
+        "Pareto comparison",
+        "evidence and counterevidence",
+        "portfolio/convergence context"
+      ],
+      "illustrative_values": true
+    },
+    "novelty-audit.html": {
+      "page": "Novelty Audit",
+      "purpose": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+      "capabilities": [
+        "CAP-10"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "candidate statement",
+        "facet decomposition",
+        "nearest prior work",
+        "challenger search manifest",
+        "bounded novelty draft",
+        "human disposition"
+      ],
+      "illustrative_values": true
+    },
+    "synthesis-studio.html": {
+      "page": "Synthesis Studio",
+      "purpose": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+      "capabilities": [
+        "CAP-09"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "accepted evidence packet",
+        "outline/narrative",
+        "claim-level citations",
+        "disagreement and uncertainty",
+        "citation audit",
+        "exports/disclosure"
+      ],
+      "illustrative_values": true
+    },
+    "living-monitor.html": {
+      "page": "Living Monitor",
+      "purpose": "Differential retrieval, field changes, impact analysis, and selective recalculation.",
+      "capabilities": [
+        "CAP-10"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "saved monitors",
+        "new-paper triage",
+        "field/graph changes",
+        "affected claims/outputs",
+        "selective recalculation",
+        "reassessment workflow"
+      ],
+      "illustrative_values": true
+    },
+    "task-center.html": {
+      "page": "Task Center",
+      "purpose": "Durable analytical workflows, checkpoints, resource use, failures, cancellation, and human gates.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-07"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "analytical workflow queue",
+        "progress/checkpoints",
+        "failure/cancellation",
+        "resource use",
+        "human gates",
+        "resume/retry"
+      ],
+      "illustrative_values": true
+    },
+    "audit-lineage.html": {
+      "page": "Audit & Lineage",
+      "purpose": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-07",
+        "CAP-09",
+        "CAP-15",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "source-to-output lineage",
+        "model/schema/prompt versions",
+        "rights and egress decisions",
+        "human decisions",
+        "audit events",
+        "exportable manifest",
+        "stale status with material cause and safest next action",
+        "grouped recalculation impact preview",
+        "deferral without clearing staleness",
+        "current privacy, rights, and egress policy status",
+        "selective recalculation schedule",
+        "before-and-after immutable revision comparison",
+        "human-gated restoration review",
+        "study-design lineage",
+        "technical-report and result lineage",
+        "manuscript claim and citation lineage",
+        "review and revision lineage"
+      ],
+      "illustrative_values": true
+    },
+    "model-center.html": {
+      "page": "Model & Privacy Center",
+      "purpose": "Local/remote model routing, egress preview, budgets, evaluation, and offline policy.",
+      "capabilities": [
+        "CAP-07",
+        "CAP-14",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "provider-neutral profiles",
+        "local/remote/deferred status",
+        "task routing",
+        "egress preview",
+        "budgets",
+        "evaluation and offline policy"
+      ],
+      "illustrative_values": true
+    },
+    "application-settings.html": {
+      "page": "Application Settings",
+      "purpose": "Application-wide Security & sign-in, provider status and recovery, appearance, and diagnostics for this Windows account.",
+      "capabilities": [
+        "CAP-02"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "application-wide scope",
+        "no-login default",
+        "Windows password option",
+        "Windows Hello option",
+        "provider availability states",
+        "lock behavior preview",
+        "same-user proof before protection reduction",
+        "explicit recovery without silent fallback",
+        "versioned migration behavior",
+        "Application Settings and Project Settings separation"
+      ],
+      "illustrative_values": true
+    },
+    "project-settings.html": {
+      "page": "Project Settings",
+      "purpose": "Project storage, protection, privacy, backup, accessibility, and Windows/macOS/Linux project portability.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-11",
+        "CAP-14"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "project identity",
+        "protected local storage",
+        "privacy/egress",
+        "backup/restore",
+        "appearance/accessibility",
+        "Application Settings link for app-wide sign-in",
+        "local/deferred project-home profile"
+      ],
+      "illustrative_values": true
+    },
+    "study-design.html": {
+      "page": "Study Design Studio",
+      "purpose": "Compare and formalize evidence-grounded empirical study alternatives, protocol, validity, ethics, analysis, and reproducibility.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-08",
+        "CAP-10",
+        "CAP-15"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "ordered study-design stage rail",
+        "research questions and contribution mechanism",
+        "comparable design alternatives",
+        "selected-design rationale",
+        "sampling and recruitment plan",
+        "construct and measurement plan",
+        "procedure and intervention plan",
+        "analysis and robustness plan",
+        "validity threats and mitigations",
+        "ethics, data management, and preregistration gates",
+        "literature and opportunity evidence inspector",
+        "named researcher approval"
+      ],
+      "illustrative_values": true
+    },
+    "manuscript-blueprint.html": {
+      "page": "Manuscript Blueprint",
+      "purpose": "Create venue- and research-type-aware conference or journal article skeletons, claim plans, word budgets, exhibits, and evidence prerequisites.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-09",
+        "CAP-16",
+        "CAP-18"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "article type and target venue profile",
+        "section outline and purposes",
+        "section word budgets",
+        "planned claim blocks",
+        "required literature, result, or interpretive evidence",
+        "table and figure plan",
+        "contribution and positioning plan",
+        "unresolved prerequisites and blocked claims",
+        "author decisions and blueprint approval"
+      ],
+      "illustrative_values": true
+    },
+    "technical-reports.html": {
+      "page": "Technical Reports & Results",
+      "purpose": "Upload private technical reports and study outputs, extract and verify methods and results, reconcile versions, and map study outputs to manuscript claims.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-05",
+        "CAP-07",
+        "CAP-08",
+        "CAP-17"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "private report library and access status",
+        "report versions and study-run grouping",
+        "parse and verification status",
+        "methods and protocol deviations",
+        "reported results with exact anchors",
+        "tables and figures",
+        "result reconciliation and discrepancies",
+        "unreported-statistic and unsupported-inference warnings",
+        "limitations and null/mixed results",
+        "manuscript impact mapping",
+        "local/model-egress controls",
+        "human result adjudication"
+      ],
+      "illustrative_values": true
+    },
+    "manuscript-studio.html": {
+      "page": "Manuscript Studio",
+      "purpose": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+      "capabilities": [
+        "CAP-07",
+        "CAP-09",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "article outline and section readiness",
+        "venue and research-type blueprint",
+        "manuscript writing surface",
+        "evidence and result inspector",
+        "supported, partial, blocked, and author-written claim states",
+        "citation and source-passage links",
+        "table and figure placement",
+        "word budget and submission requirements",
+        "authorship and AI-contribution markers",
+        "disclosure and reproducibility export",
+        "named author approval"
+      ],
+      "illustrative_values": true
+    },
+    "reviewer-simulation.html": {
+      "page": "Reviewer Simulation",
+      "purpose": "Run extended role-separated simulated reviews over generated or uploaded article drafts and synthesize evidence-linked editorial guidance.",
+      "capabilities": [
+        "CAP-07",
+        "CAP-10",
+        "CAP-18",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "immutable manuscript snapshot and review round",
+        "independent reviewer roles and completion state",
+        "methodological, theoretical, critical, reporting, contribution, and editorial dimensions",
+        "major, moderate, and minor comments",
+        "evidence, manuscript, result, and omitted-literature links",
+        "contradictory reviewer positions",
+        "editorial synthesis after independent reviews",
+        "no acceptance probability",
+        "no named real-reviewer impersonation",
+        "human disposition required"
+      ],
+      "illustrative_values": true
+    },
+    "revision-response.html": {
+      "page": "Revision & Response",
+      "purpose": "Triage simulated or uploaded review comments, govern author dispositions, revise manuscript passages, draft responses, and run targeted re-review.",
+      "capabilities": [
+        "CAP-18",
+        "CAP-19"
+      ],
+      "required_regions": [
+        "application top bar",
+        "project home access",
+        "primary-use-case selector",
+        "ordered guided-workflow navigation",
+        "secondary all-tools inventory",
+        "page title and purpose",
+        "workflow context with previous/next or return action",
+        "theme toggle",
+        "trust/provenance footer",
+        "review issue clusters and severity",
+        "original review comment",
+        "author disposition and rationale",
+        "revision checklist",
+        "before-and-after manuscript diff",
+        "response-to-reviewer editor",
+        "evidence and lineage inspector",
+        "unresolved and declined issues",
+        "targeted re-review result",
+        "revised manuscript and response export"
+      ],
+      "illustrative_values": true
+    }
+  },
+  "workflow_catalog": {
+    "file": "WORKFLOW_CATALOG.json",
+    "workflow_count": 14,
+    "keys": [
+      "rapid-orientation",
+      "systematic-review",
+      "living-review",
+      "theory-synthesis",
+      "hermeneutic-inquiry",
+      "critical-problematization",
+      "technical-landscape",
+      "novelty-audit",
+      "empirical-study-design",
+      "empirical-study-to-article",
+      "empirical-results-to-article",
+      "theory-article-development",
+      "critical-article-development",
+      "manuscript-review-revision"
+    ]
+  },
+  "intentionally_deferred": [
+    "university deployment administration until W10",
+    "institutional identity and shared-project administration until W10",
+    "tenant administration, billing, entitlements, and managed-cloud operations until W11"
+  ]
+}

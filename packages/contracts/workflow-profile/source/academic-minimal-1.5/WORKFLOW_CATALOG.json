@@ -1,0 +1,280 @@
+{
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "version": "1.5",
+  "selection": {
+    "when": "project creation",
+    "governed_by": "Research Intent Contract",
+    "default": "empirical-study-to-article",
+    "change_behavior": "versioned impact preview and human approval",
+    "all_tools_accessible": true
+  },
+  "controlled_recalculation": {
+    "applies_to": "all workflows",
+    "surface": "audit-lineage.html",
+    "trigger": "a material dependency revision makes a downstream object stale",
+    "preview_groups": [
+      "automatic",
+      "review required",
+      "blocked",
+      "informational"
+    ],
+    "deferral": "preserves the stale state, cause, and safest next action",
+    "policy": "re-evaluate current rights and egress policy before scheduling",
+    "revision_rule": "recalculation and restoration create immutable revisions",
+    "human_authority": "an exact human review decision is required before replacing or restoring an approved or adjudicated state"
+  },
+  "workflows": {
+    "rapid-orientation": {
+      "title": "Rapid field orientation",
+      "purpose": "Establish vocabulary, seminal work, schools, and current debates without claiming systematic completeness.",
+      "output": "Field map, reading path, and contested claims",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "document-reader.html",
+        "theory-map.html",
+        "claim-graph.html",
+        "synthesis-studio.html"
+      ]
+    },
+    "systematic-review": {
+      "title": "Systematic / scoping review",
+      "purpose": "Construct and report a reproducible evidence corpus.",
+      "output": "Protocol, corpus, evidence table, cited synthesis, and audit bundle",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "source-manager.html",
+        "search-studio.html",
+        "ingestion-reconciliation.html",
+        "corpus-canvas.html",
+        "screening.html",
+        "parsing-quality.html",
+        "evidence-matrix.html",
+        "synthesis-studio.html",
+        "audit-lineage.html"
+      ]
+    },
+    "living-review": {
+      "title": "Living review",
+      "purpose": "Maintain an existing synthesis as evidence and corrections arrive.",
+      "output": "Change report, updated synthesis, and affected-claim alerts",
+      "cyclical": true,
+      "steps": [
+        "intent-contract.html",
+        "living-monitor.html",
+        "search-studio.html",
+        "ingestion-reconciliation.html",
+        "screening.html",
+        "evidence-matrix.html",
+        "synthesis-studio.html",
+        "audit-lineage.html"
+      ]
+    },
+    "theory-synthesis": {
+      "title": "Theory synthesis",
+      "purpose": "Clarify and integrate constructs, mechanisms, theory use, relationships, and boundaries.",
+      "output": "Theory architecture, construct map, mechanisms, and integration opportunities",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "document-reader.html",
+        "schema-manager.html",
+        "evidence-matrix.html",
+        "theory-map.html",
+        "claim-graph.html",
+        "opportunity-radar.html",
+        "synthesis-studio.html"
+      ]
+    },
+    "hermeneutic-inquiry": {
+      "title": "Hermeneutic inquiry",
+      "purpose": "Deepen understanding through iterative search-read-interpret-memo cycles.",
+      "output": "Interpretive map, evolving questions, and rationale trail",
+      "cyclical": true,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "document-reader.html",
+        "research-notebook.html",
+        "corpus-canvas.html",
+        "theory-map.html",
+        "synthesis-studio.html"
+      ]
+    },
+    "critical-problematization": {
+      "title": "Critical problematization",
+      "purpose": "Surface and challenge assumptions, exclusions, authority arrangements, and foreclosed alternatives.",
+      "output": "Problematization dossier and competing framings",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "document-reader.html",
+        "research-notebook.html",
+        "evidence-matrix.html",
+        "critical-lens.html",
+        "claim-graph.html",
+        "opportunity-radar.html",
+        "synthesis-studio.html"
+      ]
+    },
+    "technical-landscape": {
+      "title": "Technical landscape / benchmark audit",
+      "purpose": "Audit methods, baselines, datasets, compute, controls, and evaluation quality.",
+      "output": "Benchmark map, missing controls, and study-design opportunities",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "source-manager.html",
+        "search-studio.html",
+        "ingestion-reconciliation.html",
+        "corpus-canvas.html",
+        "screening.html",
+        "evidence-matrix.html",
+        "opportunity-radar.html",
+        "synthesis-studio.html"
+      ]
+    },
+    "novelty-audit": {
+      "title": "Novelty & research-opportunity audit",
+      "purpose": "Test a proposed contribution against the closest prior work.",
+      "output": "Bounded novelty statement and opportunity dossier",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "evidence-matrix.html",
+        "opportunity-radar.html",
+        "novelty-audit.html",
+        "synthesis-studio.html"
+      ]
+    },
+    "empirical-study-design": {
+      "title": "Empirical study design",
+      "purpose": "Turn a corroborated research opportunity and literature evidence into an ethical, feasible, reproducible empirical design.",
+      "output": "Study-design dossier, protocol skeleton, validity and ethics review, and analysis plan",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "evidence-matrix.html",
+        "opportunity-radar.html",
+        "novelty-audit.html",
+        "study-design.html",
+        "manuscript-blueprint.html",
+        "audit-lineage.html"
+      ]
+    },
+    "empirical-study-to-article": {
+      "title": "Empirical study to article",
+      "purpose": "Move from literature-grounded opportunity through study design and verified study results to an article and adversarial review.",
+      "output": "Study protocol, verified result package, full empirical manuscript, simulated reviews, revision, and audit bundle",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "screening.html",
+        "evidence-matrix.html",
+        "opportunity-radar.html",
+        "novelty-audit.html",
+        "study-design.html",
+        "manuscript-blueprint.html",
+        "technical-reports.html",
+        "manuscript-studio.html",
+        "reviewer-simulation.html",
+        "revision-response.html",
+        "audit-lineage.html"
+      ]
+    },
+    "empirical-results-to-article": {
+      "title": "Empirical results to article",
+      "purpose": "Begin from completed empirical work and technical reports, reconstruct the evidence context, and produce a source-grounded article.",
+      "output": "Verified result package, literature-grounded empirical manuscript, simulated review, revision, and audit bundle",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "technical-reports.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "evidence-matrix.html",
+        "novelty-audit.html",
+        "manuscript-blueprint.html",
+        "manuscript-studio.html",
+        "reviewer-simulation.html",
+        "revision-response.html",
+        "audit-lineage.html"
+      ]
+    },
+    "theory-article-development": {
+      "title": "Theory article development",
+      "purpose": "Develop a theory paper from evidence-linked integration, problem framing, and bounded contribution through full manuscript and review.",
+      "output": "Theory architecture, article blueprint, full theory manuscript, simulated reviews, revision, and audit bundle",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "document-reader.html",
+        "schema-manager.html",
+        "evidence-matrix.html",
+        "theory-map.html",
+        "claim-graph.html",
+        "opportunity-radar.html",
+        "novelty-audit.html",
+        "manuscript-blueprint.html",
+        "manuscript-studio.html",
+        "reviewer-simulation.html",
+        "revision-response.html",
+        "audit-lineage.html"
+      ]
+    },
+    "critical-article-development": {
+      "title": "Critical article development",
+      "purpose": "Develop an evidence-grounded critical article that challenges assumptions, power relations, exclusions, or dominant problem formulations.",
+      "output": "Problematization architecture, critical article blueprint, full manuscript, simulated reviews, revision, and audit bundle",
+      "cyclical": false,
+      "steps": [
+        "intent-contract.html",
+        "search-studio.html",
+        "corpus-canvas.html",
+        "document-reader.html",
+        "research-notebook.html",
+        "evidence-matrix.html",
+        "critical-lens.html",
+        "claim-graph.html",
+        "opportunity-radar.html",
+        "novelty-audit.html",
+        "manuscript-blueprint.html",
+        "manuscript-studio.html",
+        "reviewer-simulation.html",
+        "revision-response.html",
+        "audit-lineage.html"
+      ]
+    },
+    "manuscript-review-revision": {
+      "title": "Manuscript review & revision",
+      "purpose": "Challenge an uploaded or generated article draft, locate omitted evidence, synthesize independent reviews, and govern revision.",
+      "output": "Review package, editorial synthesis, revision plan, revised manuscript, response document, and audit bundle",
+      "cyclical": true,
+      "steps": [
+        "intent-contract.html",
+        "manuscript-studio.html",
+        "search-studio.html",
+        "novelty-audit.html",
+        "reviewer-simulation.html",
+        "revision-response.html",
+        "manuscript-studio.html",
+        "audit-lineage.html"
+      ]
+    }
+  }
+}

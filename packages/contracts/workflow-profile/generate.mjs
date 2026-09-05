@@ -7,8 +7,10 @@ import { fileURLToPath } from "node:url";
 const root = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(root, "../../..");
 const schemaPath = resolve(root, "workflow-profile.schema.json");
-const workflowCatalogPath = resolve(repo, "design/ui-reference/WORKFLOW_CATALOG.json");
-const pageContractsPath = resolve(repo, "design/ui-reference/CAPABILITY_COVERAGE.json");
+// Presentation versions may change without rewriting persisted scholarly meaning.
+// Fixed approved pins below remain authority, not the adjacent provenance record.
+const workflowCatalogPath = resolve(root, "source/academic-minimal-1.5/WORKFLOW_CATALOG.json");
+const pageContractsPath = resolve(root, "source/academic-minimal-1.5/CAPABILITY_COVERAGE.json");
 const expectedWorkflowCatalogSha256 = "2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca";
 const expectedPageContractsSha256 = "d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d";
 const canonicalText = (value) => value.toString("utf8").replace(/\r\n?/g, "\n");

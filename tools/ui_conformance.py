@@ -427,6 +427,32 @@ def source(context: Context, key: str) -> str:
     return str(context.config["normativeSources"][key])
 
 
+def presentation_mapping_errors(
+    semantic: dict[str, str], presentation: dict[str, str], reference_id: str, version: str
+) -> list[str]:
+    """Permit only two root metadata substitutions, never scholarly/order drift."""
+    names = {"WORKFLOW_CATALOG.json", "CAPABILITY_COVERAGE.json"}
+    if set(semantic) != names or set(presentation) != names:
+        return ["presentation compatibility requires the exact two source documents"]
+    errors: list[str] = []
+    for name in sorted(names):
+        original = semantic[name].replace("\r\n", "\n").replace("\r", "\n")
+        candidate = presentation[name].replace("\r\n", "\n").replace("\r", "\n")
+        expected = original
+        for key, old, new in (
+            ("reference_id", "RO-UI-ACADEMIC-MINIMAL-1.5", reference_id),
+            ("version", "1.5", version),
+        ):
+            prefix = f'  "{key}": '
+            old_line = prefix + json.dumps(old) + ",\n"
+            if original.count(old_line) != 1:
+                errors.append(f"{name}: authenticated semantic root metadata is not exact")
+            expected = expected.replace(old_line, prefix + json.dumps(new) + ",\n", 1)
+        if candidate != expected:
+            errors.append(f"{name}: presentation differs beyond the exact root identity/version mapping")
+    return errors
+
+
 def result(context: Context, check: str, errors: list[str], details: dict[str, Any]) -> dict[str, Any]:
     return {
         "schemaVersion": "1.0",

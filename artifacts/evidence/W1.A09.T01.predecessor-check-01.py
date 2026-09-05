@@ -21,9 +21,10 @@ from tests.e2e.test_workflow_profile_matrix import (  # noqa: E402
     WorkflowProfileMatrixEndToEndTests,
     development_plaintext_database_fixture,
 )
+from tests.service.test_research_intents import draft_request, accept_request  # noqa: E402
 
-PROOF = REPO / "artifacts/evidence/W1.A09.T01.predecessor-before-01.json"
-AFTER = REPO / "artifacts/evidence/W1.A09.T01.predecessor-after-01.json"
+PROOF = REPO / "artifacts/evidence/W1.A09.T01.predecessor-before-02.json"
+AFTER = REPO / "artifacts/evidence/W1.A09.T01.predecessor-after-02.json"
 SEMANTIC_FILES = (
     "packages/contracts/workflow-profile/generated.ts",
     "packages/contracts/workflow-profile/workflow-profile.schema.json",
@@ -91,6 +92,17 @@ def main():
                     assert Path(created["root"]) == Path(root)
                 request(client, "/projects/open", {"root": root})
                 if prepare:
+                    # Real 1.5 profile migration, prior intent revisions and explicit
+                    # synthetic human acceptance precede the presentation replacement.
+                    draft = draft_request(root, expected_revision=1)
+                    preview = intents.preview(draft.to_impact_request())
+                    draft = draft.model_copy(update={"impact_acknowledgement": preview.acknowledgement_token})
+                    saved = intents.save_draft(draft, trace_id="3" * 32, idempotency_key="3" * 32)
+                    accepted = intents.accept(
+                        accept_request(saved).model_copy(update={"root": root}),
+                        trace_id="4" * 32, idempotency_key="4" * 32,
+                    )
+                    assert accepted.status == "accepted" and accepted.revision == 3
                     state = request(client, "/projects/workflow-progress", {"root": root})
                     state = request(client, "/projects/workflow-progress/commands",
                                     test._command(root, state, "start"),
@@ -100,6 +112,7 @@ def main():
                                           supportingPageContractId="application-settings.html"),
                             headers={"Idempotency-Key": "2" * 32})
                 intent = request(client, "/projects/intent", {"root": root})
+                assert intent["current"]["status"] == "accepted"
                 projection = request(client, "/projects/workflow-progress", {"root": root})
                 handoff = projection["supportingHandoff"]
                 assert handoff["returnStageStateRevisionId"] == projection["current"]["stageStateRevisionId"]
@@ -117,6 +130,7 @@ def main():
         "taskId": "W1.A09.T01", "mode": args.mode, "ok": True,
         "checkedAt": datetime.now(timezone.utc).isoformat(),
         "producerCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
+        "helperSha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "boundary": "actual Core API/services and persisted SQLite; explicit synthetic plaintext fixture, not native/encrypted qualification",
         "root": root, "semanticRawHashes": source_hashes(), "catalog": catalog,
         "intent": intent, "projection": projection, "immutableRows": immutable_rows,

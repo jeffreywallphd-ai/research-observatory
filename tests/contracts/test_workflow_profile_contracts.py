@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from hashlib import sha256
 from pathlib import Path
@@ -38,6 +41,86 @@ class WorkflowProfileContractTests(unittest.TestCase):
     def setUp(self) -> None:
         self.catalog = fixture("approved-workflow-profile-catalog.v1.json")
         self.selection = fixture("valid-project-workflow-selection.v1.json")
+
+    def test_semantic_sources_are_original_approved_bytes_and_generate_without_git(self) -> None:
+        source_root = CONTRACT_ROOT / "source/academic-minimal-1.5"
+        authority = json.loads((source_root / "SOURCE_AUTHORITY.json").read_text(encoding="utf-8"))
+        self.assertEqual("7ec1b27d72c189216d7a203586b7339202733531", authority["approvalCommit"])
+        expected = {
+            "WORKFLOW_CATALOG.json": "2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+            "CAPABILITY_COVERAGE.json": "d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+        }
+        self.assertEqual(expected, authority["sourceSha256"])
+        for name, digest in expected.items():
+            approved = subprocess.check_output(
+                ["git", "show", f"{authority['approvalCommit']}:design/ui-reference/{name}"], cwd=REPO
+            )
+            observed = (source_root / name).read_text(encoding="utf-8").encode()
+            self.assertEqual(approved, observed)
+            self.assertEqual(digest, sha256(observed).hexdigest())
+        with tempfile.TemporaryDirectory(prefix="ro-semantic-no-git-") as temporary:
+            root = Path(temporary)
+            shutil.copytree(CONTRACT_ROOT, root / "packages/contracts/workflow-profile")
+            module = "services/core-api/src/research_observatory_core/workflow_profile_contracts.py"
+            (root / module).parent.mkdir(parents=True)
+            shutil.copy2(REPO / module, root / module)
+            bundled_node = REPO / ".local/toolchains/node-v24.19.0-win-x64/node.exe"
+            node = str(bundled_node) if bundled_node.exists() else shutil.which("node")
+            assert node is not None
+            command = [node, "packages/contracts/workflow-profile/generate.mjs", "--check"]
+            checked = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
+            self.assertEqual(0, checked.returncode, checked.stderr)
+            self.assertFalse((root / ".git").exists())
+            self.assertFalse((root / "design").exists())
+            # An adjacent source manifest cannot bless a substituted catalog.
+            copied = root / "packages/contracts/workflow-profile/source/academic-minimal-1.5"
+            changed = (copied / "WORKFLOW_CATALOG.json").read_text().replace("Establish", "Replace", 1)
+            (copied / "WORKFLOW_CATALOG.json").write_text(changed, encoding="utf-8")
+            authority["sourceSha256"]["WORKFLOW_CATALOG.json"] = sha256(changed.encode()).hexdigest()
+            (copied / "SOURCE_AUTHORITY.json").write_text(json.dumps(authority), encoding="utf-8")
+            denied = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
+            self.assertNotEqual(0, denied.returncode)
+
+    def test_presentation_bridge_allows_only_exact_root_metadata_mapping(self) -> None:
+        sys.path.insert(0, str(REPO / "tools"))
+        from ui_conformance import presentation_mapping_errors
+
+        names = ("WORKFLOW_CATALOG.json", "CAPABILITY_COVERAGE.json")
+        # Use the original source even after publication.
+        semantic = {
+            name: subprocess.check_output(
+                ["git", "show", f"7ec1b27d72c189216d7a203586b7339202733531:design/ui-reference/{name}"],
+                cwd=REPO,
+                text=True,
+            )
+            for name in names
+        }
+        presentation = {
+            name: text.replace('"RO-UI-ACADEMIC-MINIMAL-1.5"', '"RO-UI-ACADEMIC-MINIMAL-1.6"', 1).replace(
+                '"version": "1.5"', '"version": "1.6"', 1
+            )
+            for name, text in semantic.items()
+        }
+        self.assertEqual([], presentation_mapping_errors(semantic, presentation, "RO-UI-ACADEMIC-MINIMAL-1.6", "1.6"))
+        name = names[0]
+        original = presentation[name]
+        parsed = json.loads(original)
+        reordered = copy.deepcopy(parsed)
+        reordered["workflows"] = dict(reversed(list(reordered["workflows"].items())))
+        mutations = [
+            original.replace("{", '{"unknown": 1,', 1),
+            original.replace("{", '{"reference_id": "RO-UI-ACADEMIC-MINIMAL-1.6",', 1),
+            original.replace("Establish", "Replace", 1),
+            json.dumps(reordered, indent=2) + "\n",
+        ]
+        steps = copy.deepcopy(parsed)
+        first = next(iter(steps["workflows"].values()))
+        first["steps"] = list(reversed(first["steps"]))
+        mutations.append(json.dumps(steps, indent=2) + "\n")
+        for changed in mutations:
+            with self.subTest(change=changed[:80]):
+                candidate = {**presentation, name: changed}
+                self.assertTrue(presentation_mapping_errors(semantic, candidate, "RO-UI-ACADEMIC-MINIMAL-1.6", "1.6"))
 
     def test_governed_catalog_is_exact_hash_bound_and_has_all_fourteen_profiles(self) -> None:
         schema_text = (
