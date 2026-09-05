@@ -1,0 +1,89 @@
+{
+  "task_id": "W1.A08.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "455546efec1cf972dd0713664c4a130aba1478fb",
+  "submission_record_commit": "69f9238fe4b8ff97fa15b926160247baef168ad9",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent commit-bound remediation review authenticates candidate 455546efec1cf972dd0713664c4a130aba1478fb, its sole-child two-path submission record, the exact 34-path incremental scope, five criteria, immutable original evidence/R01 ledger, and frozen R02 packet. Both prior blocking findings are fixed. The production analyzer now rejects normalized material whole-block duplicates, excessive specificity, raw semantic geometry, token defects, physical-direction declarations, and renderer styling escapes, with ten exact reviewed composition/accessibility exceptions and no duplicate or specificity suppression. The functional renderer now supplies representative named geometry, both computed themes, reduced motion, table names/focus/contained overflow and cell/row geometry, dense and long content, lock/recovery, error/warning/empty states, and actual 200% dialog text/focus/scroll. The incremental reflow correction is directly exercised before opening the dialog: a valid 80-character native profile preserves the 720 px document at normal and enlarged text, header actions remain contained, and ordinary Shortcuts clicks succeed. Independent replay passed 25 focused Python tests, 120 desktop and four shared component tests, affected lint/types, reference integrity, the exact 13-path UI change gate, four quality-control tests, and the built-product browser check. The independent browser report is byte-identical to final reports 07/08. Earlier failed and provisional reports remain visible and are not used as final acceptance; the original unscaled-run cause remains unproven. No new acceptance-bound blocker was found. This approval is only T01's disposition: T02 every-surface retained visual/performance qualification, S01/amendment review, and full W1 release qualification remain outstanding.",
+  "evidence_reproduction": {
+    "remediation_manifest": {
+      "path": "artifacts/evidence/W1.A08.T01.remediation-01.json",
+      "sha256": "57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab",
+      "git_blob": "7259f865f6d55737a005e457b27260b59b46b2bf",
+      "result": "PASS: exact base 9b4e746928d1381c52a2a720ee6bb47eb433ca3f, candidate, branch, superseded attachment, 34 changed paths, all five criteria, risk-selected checks, and downstream deferrals match the frozen R02 submission."
+    },
+    "frozen_packet": {
+      "sha256": "7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f",
+      "result": "PASS: recomputed packet checksum matches; task is REVIEW, owner codex, prior attempt R01, and exactly F01/F02 are frozen for replay. Submission record is the candidate's sole child and changes only backlog plus the remediation manifest."
+    },
+    "preserved_prior_evidence": {
+      "path": "artifacts/evidence/W1.A08.T01.json",
+      "sha256": "8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a",
+      "prior_review_path": "artifacts/evidence/W1.A08.T01.review-R01.json",
+      "prior_review_sha256": "d00a174be797cd47d8542534bbc4de0d8ba1d5d20ccbff7550592d5eb00e2976",
+      "result": "PASS: original attachment and adverse review bytes remain unchanged."
+    },
+    "final_live_reports": {
+      "paths": [
+        "artifacts/evidence/W1.A08.T01.product-check-replay-07.json",
+        "artifacts/evidence/W1.A08.T01.product-check-replay-08.json"
+      ],
+      "independent_replay_path": "artifacts/tmp/W1.A08.T01.R02-independent-product-check.json",
+      "common_sha256": "52f2dbca97a5c57c0fb3f4bc36ef0a162275e926e808e0dd60dd52acafa5ccda",
+      "result": "PASS: independent full built-product replay is byte-identical to both final retained reports, with ok=true, zero errors, no unexpected requests and no critical violations."
+    }
+  },
+  "checks": [
+    {
+      "command": "Authenticate Git ancestry, exact candidate/submission deltas, manifest hash/blob, R02 packet checksum, retained R01 hashes and git diff --check.",
+      "result": "PASS: one linear candidate/submission chain, exact 34 incremental paths and two submission paths, immutable adverse history, frozen evidence/criteria/check selection, and clean patch hygiene."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.desktop.test_product_style_check tests.desktop.test_desktop_app_check",
+      "result": "PASS: 25 tests, including all 13 style-analysis positive/negative cases, complete functional-product browser behavior, named surface/geometry regressions, actual text-scale/long-profile reflow and table-padding/row-height negatives, copied-reference/build rejection, and Task Center interaction preservation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/W1.A08.T01.R02-independent-product-check.json",
+      "result": "PASS: the real source/output-manifest-bound frontend retains 28/20/16 px page padding, normal 64 px topbars, 24 px page and 16 px grid rhythm, 40/44 px controls, named card/panel/form/notice/action/dialog contracts, computed light/dark surfaces, reduced motion, all three named and visibly focused table regions, 38 px compact diagnostic rows and at least 44 px default rows with growth for long content. Actual root/body/dialog/heading font sizes are 32/28/28/36 px at 200%, and dialog client/scroll heights are 368/624 px. Normal and enlarged-text 80-character profile cases both retain a 720 px document, contained header actions, following navigation and successful ordinary Shortcuts clicks."
+    },
+    {
+      "command": "Inspect tools/product_style_check.py, production CSS consolidation and verification/product-style-exceptions.json; compare retained live analysis with independent passing analyzer tests.",
+      "result": "PASS: 279 rules and 15 renderer sources, 119 custom-property definitions, 90 references, ten exact used exceptions and no errors. Normalized whole-block duplicate detection is intentionally bounded and accurately documented; generic residual groups named in R01 are consolidated. No alternate semantic token source, material generic duplicate, directional regression or uncontrolled specificity remains within the checked production boundary."
+    },
+    {
+      "command": "Bundled Node 24.19.0: desktop and ui-components Vitest; desktop lint; TypeScript --noEmit in both packages.",
+      "result": "PASS: 120 desktop tests and four shared-component tests; three existing native-harness cases remain deliberately skipped outside their separate harness. Both package typechecks and desktop lint pass."
+    },
+    {
+      "command": "Ruff check and format --check; MYPYPATH=services/core-api/src;tools mypy --follow-imports=silent for the four changed Python checker/test files.",
+      "result": "PASS: affected Python lint, formatting and strict isolated typing. No full repository quality run is claimed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .; .venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 98d6612d0eb64482d92ea9f754ddcee22b8b79b9 --head 455546efec1cf972dd0713664c4a130aba1478fb; .venv\\Scripts\\python.exe -m unittest tests.foundation.test_quality_check",
+      "result": "PASS: all 55 governed reference files remain approved and reproducible at Academic Minimal 1.5 package SHA-256 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae. The exact UI gate covers all 13 affected UI paths. Four quality discovery/command/failure-propagation tests pass, and the existing gate authenticates GOV-MAINT-0017's independently adopted additive inventory correction."
+    },
+    {
+      "command": "Inspect retained original and replay-02 through replay-08 report dispositions; inspect supporting light/dark settings, narrow dialog and lock captures.",
+      "result": "PASS: original product-check.json remains failed; replay-02 is provisional; 03/04 predate table-row proof; 05 predates the compact row minimum; 06 retains stale build-input rejection. Final 07/08 alone support current acceptance and independently reproduce. Supporting visuals show coherent hierarchy, alignment, density and focus, without treating temporary captures as T02's retained commit-bound visual qualification."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W1.A08.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Independent source review and 13 style-analyzer tests verify normalized material declaration duplicates, selector specificity, raw semantic geometry, undefined/duplicate custom properties, canonical-token authority, physical direction, and renderer styling escapes are enforced. Generic repeated groups are consolidated; all ten remaining exact raw-geometry exceptions have bounded composition/accessibility rationale and stale/missing exceptions fail. The live analyzer passes without duplicate-group or specificity suppression."
+    },
+    {
+      "finding_id": "W1.A08.T01-R01-F02",
+      "disposition": "fixed",
+      "evidence": "The independently replayed built-product matrix covers every named T01 geometry category and required representative state, including actual both-theme token application, reduced motion, all three named/focused scrollable tables with padding and 38/44 px row minima, dense audit and long diagnostics, lock/recovery, errors/warnings/empty states, and dialog focus/contained scrolling at measured 200% text. Zoom-before-open and normal/enlarged valid 80-character profile fixtures directly prove the incremental header reflow correction without masking overlap. The independent report exactly matches final retained 07/08."
+    }
+  ],
+  "prior_findings_replayed": [
+    "W1.A08.T01-R01-F01",
+    "W1.A08.T01-R01-F02"
+  ]
+}
