@@ -62,6 +62,9 @@ describe("functional local projects workspace", () => {
     expect(markup).toContain("Open an existing project");
     expect(markup).toContain('id="project-parent-directory"');
     expect(markup).toContain('id="project-root"');
+    expect(markup).not.toMatch(/<input[^>]+id="project-(parent-directory|directory-name|root)"/);
+    expect(markup).toContain("New project destination");
+    expect(markup).toContain("Choose folder…");
     expect(markup).toContain('id="project-research-objective"');
     expect(markup).toContain('id="project-primary-use-case"');
     expect(markup).toContain("Theory synthesis");

@@ -11,12 +11,33 @@ import {
   BoundaryStatePanel,
   DataTable,
   DialogSurface,
+  DirectoryPickerField,
   EvidenceStateBadge,
   StatusBadge,
   UncertaintyState,
 } from "@research-observatory/ui-components";
 
 describe("ui-components package boundary", () => {
+  it("shares labelled read-only folder selection without a path input or enumeration", () => {
+    const markup = renderToStaticMarkup(<DirectoryPickerField
+      id="parent" label="Parent folder" description="Choose an existing local folder."
+      value={"C:\\研究 Folder"} onChoose={() => undefined}
+    />);
+    expect(markup).toContain('role="group" aria-labelledby="parent-label"');
+    expect(markup).toContain('id="parent-location"');
+    expect(markup).toContain('aria-describedby="parent-description parent-location"');
+    expect(markup).toContain("Change folder…");
+    expect(markup).toContain("C:\\研究 Folder");
+    expect(markup).toContain("ro-directory-location");
+    expect(markup).not.toMatch(/<input|webkitdirectory|contenteditable/i);
+    const pending = renderToStaticMarkup(<DirectoryPickerField
+      id="open" label="Project folder" description="Select before explicit Open."
+      value="" pending disabled onChoose={() => undefined}
+    />);
+    expect(pending).toContain("No folder selected");
+    expect(pending).toContain('aria-busy="true"');
+    expect(pending).toContain("disabled");
+  });
   it("bounds a 10,000-row table to one accessible pagination window", () => {
     const rows = Array.from({ length: 10_000 }, (_value, index) => ({
       id: `record-${index}`,

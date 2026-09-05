@@ -1,0 +1,47 @@
+{
+  "taskId": "W1.A09.T03",
+  "reviewer": "t03_native_replay",
+  "reviewKind": "Independent incremental working-source advisory; not task approval",
+  "reviewedAt": "2026-09-05T21:40:01Z",
+  "predecessor": {
+    "path": "artifacts/evidence/W1.A09.T03.build-binding-review-01.json",
+    "sha256": "2d4b24ae3f06e602f6dc76d4135eb9d0110c0cdfacd8aaa1f789e60489218b24",
+    "preserved": true
+  },
+  "disposition": "The inherited Cargo output-path assumption identified in review 01 is now fail-closed in the helper. No new blocking finding in the incremental correction.",
+  "sourceHashesBefore": {
+    "tests/service/test_native_project_contract.py": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458",
+    "tests/service/test_project_probe_build.py": "be60dc6ef79dbb7b1387f43c6743be6042c1704fcc9fded8a500f9ff371646e5",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf",
+    "tools/ui_conformance.py": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a"
+  },
+  "sourceHashesAfterEqualBefore": true,
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -I -B -m unittest discover -s tests/service -p test_project_probe_build.py -v",
+      "exitCode": 0,
+      "testsRun": 10,
+      "failures": 0,
+      "errors": 0,
+      "scope": "Eight prior regressions plus missing-artifact and alternate-output rejection. Real product validator and synthetic files; Cargo, Git inventory, tool environment and PE verifier remain declared doubles."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check tests/service/test_native_project_contract.py tests/service/test_project_probe_build.py",
+      "exitCode": 0
+    }
+  ],
+  "incrementalAssessment": [
+    "The actual Cargo invocation requests JSON messages. After the existing source/renderer interval validation, the helper requires exactly one compiler-artifact for target project_contract_probe of kind example.",
+    "The reported executable must exactly equal the expected debug/release probe path before PE validation or executable hashing; an older binary at the expected path cannot supply a passing record when Cargo reports a different output or no matching artifact.",
+    "Missing or duplicate matching events, wrong target identity/kind, malformed messages and unequal paths cannot satisfy the new check. The implementation has no permissive fallback to the old assumed path.",
+    "The missing-artifact and alternate-output regressions both assert that PE verification is never reached. All prior manifest/source/artifact race regressions still pass.",
+    "The correction changes the verification helper and its tests only; no production authority or controller is introduced."
+  ],
+  "remainingLimits": [
+    "These tests do not establish real Cargo message compatibility or real debug/release PE results; root's separate actual-build records are required.",
+    "Interval endpoint hashes are not an atomic build snapshot against hostile same-account change-and-restore writes, and this advisory does not establish final executable publication atomicity.",
+    "This increment does not reclassify or independently replay prior native UI observations and is not final commit-bound task approval."
+  ],
+  "newBlockingFindings": [],
+  "mutations": "This append-only advisory record only; no production edit, native build, UI action, Git mutation or task transition."
+}

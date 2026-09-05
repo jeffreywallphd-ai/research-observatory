@@ -16,7 +16,9 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 from desktop_app_check import (  # noqa: E402
+    DIRECTORY_PICKER_FIXTURE,
     QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND,
+    choose_fixture_directory,
     command_plan,
     component_catalog_browser_errors,
     core_workflow_catalog_json,
@@ -1139,7 +1141,7 @@ class ProjectRecoveryInteractionTests(unittest.TestCase):
                 status=200, content_type="text/html; charset=utf-8", body=document
             ) if route.request.url == "http://tauri.localhost/index.html" else route.abort())
             page = context.new_page()
-            page.add_init_script(fixture)
+            page.add_init_script(fixture + DIRECTORY_PICKER_FIXTURE)
             page_errors: list[str] = []
             page.on("pageerror", page_error_collector(page_errors))
 
@@ -1157,8 +1159,7 @@ class ProjectRecoveryInteractionTests(unittest.TestCase):
                 page.wait_for_function("window.__PROJECT_RECOVERY__.statuses > 0", timeout=5000)
                 self.assertEqual(starts, page.evaluate("window.__PROJECT_RECOVERY__.starts"))
                 self.assertEqual(0, page.evaluate("window.__PROJECT_RECOVERY__.reads"))
-                page.locator("#project-parent-directory").fill("C:/Research")
-                page.locator("#project-directory-name").fill("study-one")
+                choose_fixture_directory(page, "project-parent-directory", "C:/Research")
                 page.locator("#project-display-name").fill("Recovery study")
                 page.locator("#project-research-objective").fill("Line one\nLine two\twith context")
                 page.evaluate("window.__PROJECT_RECOVERY__.state = 'ready'")
@@ -1170,13 +1171,16 @@ class ProjectRecoveryInteractionTests(unittest.TestCase):
                 page.get_by_role("button", name="Retry loading use cases", exact=True).click()
                 page.locator("#project-primary-use-case").select_option("theory-synthesis")
                 self.assertEqual("Recovery study", page.locator("#project-display-name").input_value())
-                page.locator("#project-parent-directory").fill("relative-folder")
+                # Directory paths are no longer editable. Invalid selected-path
+                # responses are covered at the picker decoder; keep the local
+                # validation/no-transport assertion using an invalid name.
+                page.locator("#project-display-name").fill("Recovery study\x7f")
                 page.get_by_role("button", name="Create project", exact=True).click()
                 page.get_by_text("Review project details", exact=True).wait_for(timeout=5000)
                 self.assertIn("No project request was sent.", page.locator("main").inner_text())
                 self.assertEqual([], page.evaluate("window.__PROJECT_RECOVERY__.mutations"))
-                self.assertEqual("Recovery study", page.locator("#project-display-name").input_value())
-                page.locator("#project-parent-directory").fill("C:/Research")
+                self.assertEqual("Recovery study\x7f", page.locator("#project-display-name").input_value())
+                page.locator("#project-display-name").fill("Recovery study")
                 page.get_by_role("button", name="Create project", exact=True).click()
                 page.get_by_text("RO-CORE-PROJECT-ACTION-FAILED", exact=True).wait_for(timeout=5000)
                 self.assertEqual(1, page.evaluate("window.__PROJECT_RECOVERY__.mutations.length"))
@@ -1198,6 +1202,203 @@ class ProjectRecoveryInteractionTests(unittest.TestCase):
                 open_tool("Local projects")
                 self.assertNotIn("Late project fixture", page.locator("body").inner_text())
                 self.assertEqual(2, page.evaluate("window.__PROJECT_RECOVERY__.mutations.length"))
+                self.assertEqual([], page_errors)
+            finally:
+                page.close()
+                context.close()
+                browser.close()
+
+
+class DirectorySelectionInteractionTests(unittest.TestCase):
+    """Real renderer interactions with an explicit, controllable native double."""
+
+    def test_default_override_cancellation_late_results_and_explicit_creation(self) -> None:
+        self.assertEqual([], product_build_errors(REPO))
+        document = inline_product_index(REPO)
+        fixture = r"""(() => {
+          const fixture = window.__FOLDERS__ = { defaults: [], selections: [], mutations: [],
+            resolveSelection: null, resolveMutation: null, locked: false };
+          const catalog = __WORKFLOW_CATALOG__;
+          const response = (status, body) => ({status, contentType: status === 200
+            ? 'application/json' : 'application/problem+json',
+            traceId: '0123456789abcdef0123456789abcdef', etag: null, body: JSON.stringify(body)});
+          window.__TAURI_INTERNALS__ = {
+            transformCallback: () => 1,
+            invoke: async (command, args) => {
+              if (command === 'application_lock_status') return {
+                schemaVersion: '1.0', state: fixture.locked ? 'locked' : 'unlocked',
+                signInMode: fixture.locked ? 'windows-password' : 'none', policyRevision: fixture.locked ? 2 : 1,
+                profileName: null, inactivityTimeoutMinutes: 0, configurationState: 'valid',
+                reason: fixture.locked ? 'manual' : null,
+                threatDisclosure: 'Application-session protection only; this is not Windows-account isolation.',
+                retryAfterSeconds: 0, auditSequence: fixture.locked ? 1 : 0
+              };
+              if (command === 'application_lock_activity' || command === 'plugin:event|unlisten') return;
+              if (command === 'plugin:event|listen') return 1;
+              if (command === 'core_runtime_start' || command === 'core_runtime_status') return {
+                state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null
+              };
+              if (command === 'default_project_parent') {
+                return await new Promise(resolve => fixture.defaults.push(resolve));
+              }
+              if (command === 'choose_project_directory') {
+                fixture.selections.push(args.request);
+                return await new Promise(resolve => { fixture.resolveSelection = resolve; });
+              }
+              if (command !== 'core_api_request') throw Error('Unexpected fixture command');
+              if (args.request.path === '/workflow-profiles/catalog') return response(200, catalog);
+              fixture.mutations.push(args.request);
+              return await new Promise(resolve => { fixture.resolveMutation = () => resolve(response(409, {
+                type: 'urn:research-observatory:problem:project-already-exists',
+                title: 'Project location already exists', status: 409, code: 'RO-CORE-PROJECT-ALREADY-EXISTS',
+                retryable: false,
+                detail: 'Creation will not replace an existing filesystem entry.',
+                remediation: 'Choose another directory name or open the existing project.',
+                traceId: '0123456789abcdef0123456789abcdef'
+              })); });
+            }
+          };
+        })();""".replace("__WORKFLOW_CATALOG__", core_workflow_catalog_json(REPO))
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            context = browser.new_context(viewport={"width": 720, "height": 450}, reduced_motion="reduce")
+            context.route("**/*", lambda route: route.fulfill(
+                status=200, content_type="text/html; charset=utf-8", body=document
+            ) if route.request.url == "http://tauri.localhost/index.html" else route.abort())
+            page = context.new_page()
+            page.add_init_script(fixture)
+            page_errors: list[str] = []
+            page.on("pageerror", page_error_collector(page_errors))
+
+            def open_tool(name: str) -> None:
+                tools = page.locator("[data-all-tools]")
+                if tools.get_attribute("open") is None:
+                    tools.locator("summary").click()
+                tools.get_by_role("button", name=name, exact=True).click()
+
+            def settle_selection(result: dict[str, str]) -> None:
+                page.evaluate("result => window.__FOLDERS__.resolveSelection(result)", result)
+                page.get_by_text("Choosing a folder…", exact=True).wait_for(state="detached", timeout=5000)
+
+            try:
+                # A choice attempt is not ownership of a folder. Both orderings
+                # must recover discovery after cancellation, without losing data.
+                for resolved_during_dialog, selection_status in (
+                    (True, "cancelled"), (False, "cancelled"), (True, "failed"), (False, "failed"),
+                    (True, "unavailable"), (False, "unavailable"),
+                ):
+                    page.goto("http://tauri.localhost/index.html", wait_until="load")
+                    page.wait_for_function("document.body.dataset.applicationReady === 'true'")
+                    open_tool("Local projects")
+                    page.wait_for_function("window.__FOLDERS__.defaults.length === 1")
+                    page.locator("#project-display-name").fill("Keep my name")
+                    page.locator("#project-parent-directory-choose").click()
+                    if resolved_during_dialog:
+                        page.evaluate("window.__FOLDERS__.defaults[0]({status:'available',path:'C:/Earlier Default'})")
+                    settle_selection({"status": selection_status})
+                    page.wait_for_function("window.__FOLDERS__.defaults.length === 2", timeout=5000)
+                    if not resolved_during_dialog:
+                        page.evaluate("window.__FOLDERS__.defaults[0]({status:'available',path:'C:/Earlier Default'})")
+                    page.evaluate("window.__FOLDERS__.defaults[1]({status:'available',path:'C:/Recovered Default'})")
+                    page.wait_for_function(
+                        "document.getElementById('project-parent-directory-location')?.textContent"
+                        " === 'C:/Recovered Default'", timeout=5000)
+                    self.assertEqual("Keep my name", page.locator("#project-display-name").input_value())
+                    self.assertEqual([], page.evaluate("window.__FOLDERS__.mutations"))
+
+                page.goto("http://tauri.localhost/index.html", wait_until="load")
+                page.wait_for_function("document.body.dataset.applicationReady === 'true'")
+                open_tool("Local projects")
+                page.wait_for_function("window.__FOLDERS__.defaults.length === 1")
+                page.locator("#project-display-name").fill("研究")
+                page.locator("#project-research-objective").fill("Preserve my draft\nwhile choosing a location.")
+                page.locator("#project-primary-use-case").select_option("theory-synthesis")
+                page.locator("#project-parent-directory-choose").click()
+                self.assertTrue(page.locator("#project-root-choose").is_disabled())
+                self.assertTrue(page.get_by_role("button", name="Create project", exact=True).is_disabled())
+                page.locator("#project-root-choose").evaluate("button => button.click()")
+                self.assertEqual(1, page.evaluate("window.__FOLDERS__.selections.length"))
+                settle_selection({"status": "selected", "path": "C:/研究 Projects"})
+                page.wait_for_function("document.activeElement?.id === 'project-parent-directory-choose'")
+                first_destination = page.locator("#project-destination").inner_text()
+                self.assertRegex(first_destination, r"^C:/研究 Projects/project-[a-f0-9]{12}$")
+                page.evaluate("window.__FOLDERS__.defaults[0]({status:'available', path:'C:/Late Default'})")
+                page.wait_for_timeout(30)
+                self.assertEqual(first_destination, page.locator("#project-destination").inner_text())
+                page.locator("#project-parent-directory-choose").click()
+                settle_selection({"status": "cancelled"})
+                page.wait_for_function("document.activeElement?.id === 'project-parent-directory-choose'")
+                self.assertEqual(first_destination, page.locator("#project-destination").inner_text())
+                self.assertEqual("研究", page.locator("#project-display-name").input_value())
+                self.assertEqual([], page.evaluate("window.__FOLDERS__.mutations"))
+
+                page.locator("#project-parent-directory-choose").click()
+                settle_selection({"status": "failed", "path": "C:/HiddenSecret"})
+                self.assertEqual(first_destination, page.locator("#project-destination").inner_text())
+                self.assertNotIn("HiddenSecret", page.locator("body").inner_text())
+                page.locator("#project-root-choose").click()
+                settle_selection({"status": "selected", "path": "C:/Existing Project"})
+                page.locator("#project-root-choose").click()
+                settle_selection({"status": "cancelled"})
+                self.assertEqual("C:/Existing Project", page.locator("#project-root-location").inner_text())
+                self.assertEqual([], page.evaluate("window.__FOLDERS__.mutations"))
+
+                for theme in ("light", "dark"):
+                    if page.locator("html").get_attribute("data-theme") != theme:
+                        page.locator("[data-theme-toggle]").click()
+                    long_path = "C:/" + "研究 long folder " * 24
+                    page.locator("#project-parent-directory-choose").click()
+                    settle_selection({"status": "selected", "path": long_path.rstrip()})
+                    self.assertTrue(page.evaluate(
+                        "document.documentElement.scrollWidth <= document.documentElement.clientWidth"))
+                    self.assertEqual("text", page.locator("#project-destination").evaluate(
+                        "node => getComputedStyle(node).userSelect"))
+                    page.locator("#project-parent-directory-choose").focus()
+                    page.keyboard.press("Tab")
+                    page.keyboard.press("Shift+Tab")
+                    self.assertEqual("project-parent-directory-choose", page.locator(":focus").get_attribute("id"))
+                    self.assertNotEqual("none", page.locator(":focus").evaluate(
+                        "node => getComputedStyle(node).outlineStyle"))
+
+                # A result belonging to an unmounted form cannot populate its replacement.
+                page.locator("#project-root-choose").click()
+                open_tool("Diagnostics & support")
+                page.evaluate("window.__FOLDERS__.resolveSelection({status:'selected',path:'C:/Late Private'})")
+                open_tool("Local projects")
+                page.wait_for_function("window.__FOLDERS__.defaults.length === 2")
+                self.assertEqual("", page.locator("#project-display-name").input_value())
+                self.assertEqual("No folder selected", page.locator("#project-root-location").inner_text())
+                page.evaluate("window.__FOLDERS__.defaults[1]({status:'available',path:'C:/Default Projects'})")
+                page.wait_for_function(
+                    "document.getElementById('project-parent-directory-location')?.textContent"
+                    " === 'C:/Default Projects'")
+                self.assertNotIn("Late Private", page.locator("body").inner_text())
+                selection_count = page.evaluate("window.__FOLDERS__.selections.length")
+                page.locator("#project-display-name").fill("Default Study")
+                page.locator("#project-research-objective").fill("Create without opening a folder dialog.")
+                page.locator("#project-primary-use-case").select_option("theory-synthesis")
+                page.get_by_role("button", name="Create project", exact=True).click()
+                page.wait_for_function("window.__FOLDERS__.mutations.length === 1")
+                self.assertTrue(page.locator("#project-display-name").is_disabled())
+                self.assertEqual(selection_count, page.evaluate("window.__FOLDERS__.selections.length"))
+                command = page.evaluate("JSON.parse(window.__FOLDERS__.mutations[0].body)")
+                self.assertEqual("C:/Default Projects", command["parentDirectory"])
+                self.assertEqual("default-study", command["directoryName"])
+                page.evaluate("window.__FOLDERS__.resolveMutation()")
+                page.get_by_text("The destination already exists", exact=True).wait_for(timeout=5000)
+                self.assertEqual("Default Study", page.locator("#project-display-name").input_value())
+                page.get_by_role("button", name="Create project", exact=True).click()
+                page.wait_for_function("window.__FOLDERS__.mutations.length === 2")
+                self.assertEqual(command, page.evaluate("JSON.parse(window.__FOLDERS__.mutations[1].body)"))
+                page.evaluate("window.__FOLDERS__.resolveMutation()")
+                page.locator("#project-root-choose").click()
+                page.evaluate("window.__FOLDERS__.locked = true")
+                page.locator("[data-application-locked]").wait_for(timeout=5000)
+                page.evaluate("window.__FOLDERS__.resolveSelection({status:'selected',path:'C:/Late Locked Private'})")
+                page.wait_for_timeout(30)
+                for protected in ("Default Study", "Default Projects", "Late Locked Private", "研究"):
+                    self.assertNotIn(protected, page.locator("body").inner_text())
+                self.assertEqual(2, page.evaluate("window.__FOLDERS__.mutations.length"))
                 self.assertEqual([], page_errors)
             finally:
                 page.close()
@@ -1228,7 +1429,7 @@ class TaskCenterInteractionTests(unittest.TestCase):
             page = context.new_page()
             page_errors: list[str] = []
             page.on("pageerror", page_error_collector(page_errors))
-            page.add_init_script(fixture)
+            page.add_init_script(fixture + DIRECTORY_PICKER_FIXTURE)
 
             def open_desktop_tool(name: str) -> None:
                 disclosure = page.locator("[data-all-tools]")
@@ -1240,8 +1441,7 @@ class TaskCenterInteractionTests(unittest.TestCase):
                 page.goto("http://tauri.localhost/index.html", wait_until="load")
                 page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
                 open_desktop_tool("Local projects")
-                page.locator("#project-parent-directory").fill("C:/Research")
-                page.locator("#project-directory-name").fill("study-one")
+                choose_fixture_directory(page, "project-parent-directory", "C:/Research")
                 page.locator("#project-display-name").fill("Study One")
                 page.locator("#project-research-objective").fill("Explain a bounded workflow.")
                 page.locator("#project-primary-use-case").select_option("theory-synthesis")
@@ -1290,7 +1490,7 @@ class TaskCenterInteractionTests(unittest.TestCase):
                 page.evaluate("window.__DELAY_NEXT_A__()")
                 page.get_by_role("button", name="Refresh", exact=True).click()
                 open_desktop_tool("Local projects")
-                page.locator("#project-root").fill("C:/Research/study-two")
+                choose_fixture_directory(page, "project-root", "C:/Research/study-two")
                 page.locator("form").filter(has=page.locator("#project-root")).get_by_role(
                     "button", name="Open project", exact=True
                 ).click()

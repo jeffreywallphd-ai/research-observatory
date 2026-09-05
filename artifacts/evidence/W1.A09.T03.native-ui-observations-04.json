@@ -1,0 +1,242 @@
+{
+  "taskId": "W1.A09.T03",
+  "status": "PASS_WITHIN_DECLARED_SCOPE",
+  "buildRecord": "artifacts/evidence/W1.A09.T03.native-ui-build-04.json",
+  "sourceHashesAfter": {
+    "target/debug/examples/project_contract_probe.exe": "f73661fc06c4cb081ac08ac35808b2983fa9d4de4682b3e2343b6eecab6eac8d",
+    "apps/desktop/src-tauri/src/directory_picker.rs": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+    "apps/desktop/src-tauri/src/lib.rs": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+    "tests/service/test_native_project_contract.py": "36ef78ec9c222a02489c867940f76a837f2f25562d0003bf0733e0ea3406e5d5"
+  },
+  "buildInputsUnchangedAcrossUi": true,
+  "scope": "Actual Windows user, built React/Tauri/native IPC and Shell modal; fixture policy/vault/WebView/temp/default parent. No actual-default creation, authentication or packaged release qualification.",
+  "method": "Authorized computer-use skill: screenshots and accessibility observations, keyboard and native dialog selection; no saved screenshots or private Shell navigation text.",
+  "runs": [
+    {
+      "nonce": "manual-lock-20260905-c11",
+      "fixture": "artifacts/tmp/directory-dialog-manual-lock-20260905-c11",
+      "draft": "Café lock replay",
+      "keyboardOpened": true,
+      "ownedModalObserved": true,
+      "parentDisabled": true,
+      "coreReadyAtAdmission": true,
+      "nativeAutoLockAfterAdmissionSeconds": 10,
+      "manualLockSucceeded": true,
+      "lockState": "locked",
+      "closePostedHresult": 0,
+      "showReturnedHresult": -2147023673,
+      "result": "cancelled",
+      "pendingAfter": false,
+      "coreAfter": "stopped",
+      "modalGone": true,
+      "draftGone": true,
+      "fixturePathGone": true,
+      "projectFormGone": true,
+      "operatorCancellation": false,
+      "cleanup": "Alt+F4 closed locked fixture without authentication",
+      "exitCode": 0
+    },
+    {
+      "nonce": "main-close-20260905-c12",
+      "fixture": "artifacts/tmp/directory-dialog-main-close-20260905-c12",
+      "ownedModalObserved": true,
+      "parentDisabled": true,
+      "coreReadyAtAdmission": true,
+      "nativeAutoCloseAfterAdmissionSeconds": 10,
+      "mainCloseRequested": true,
+      "closePostedHresult": 0,
+      "showReturnedHresult": -2147023673,
+      "result": "cancelled",
+      "pendingAfter": false,
+      "admissionAfter": false,
+      "coreAfter": "stopped",
+      "fixtureGoneInFreshWindowInventory": true,
+      "operatorCancellation": false,
+      "exitCode": 0
+    },
+    {
+      "nonce": "selection-20260905-c13",
+      "fixture": "artifacts/tmp/directory-dialog-selection-20260905-c13",
+      "draft": "Crème field study",
+      "generatedChild": "creme-field-study",
+      "defaultAlreadySelected": true,
+      "keyboardOpened": true,
+      "ownedModalObserved": true,
+      "parentDisabled": true,
+      "escapeCancelled": true,
+      "formParentAndDestinationPreserved": true,
+      "focusRingReturnedToChangeFolder": true,
+      "returnReopenedFromRestoredFocus": true,
+      "selectedChild": "Étude 数据 🧪",
+      "selectedParentAndDestinationExact": true,
+      "openPurposeTitleVerified": true,
+      "selectionLeftProjectClosed": true,
+      "openRequiresSeparateExplicitButton": true,
+      "createSubmitted": false,
+      "openSubmitted": false,
+      "parentContainsOnlyPrecreatedChild": true,
+      "selectedChildStillEmpty": true,
+      "exitCode": 0,
+      "nativeEvents": [
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "validate-previous"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "configure-options"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "configure-title"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "parse-initial-shell-item"
+        },
+        {
+          "coreState": "ready",
+          "kind": "tauri-directory-admitted",
+          "mode": "selection"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "set-initial-shell-folder"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "create-cancellation-window"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "show"
+        },
+        {
+          "hresult": -2147023673,
+          "kind": "tauri-directory-stage",
+          "stage": "show-returned"
+        },
+        {
+          "kind": "tauri-directory-result",
+          "scope": "actual-tauri-ipc-fixture-storage-no-credential-proof",
+          "status": "cancelled"
+        },
+        {
+          "admissionOpen": true,
+          "coreState": "ready",
+          "kind": "tauri-directory-cleanup",
+          "mode": "selection",
+          "pending": false
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "validate-previous"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "configure-options"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "configure-title"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "parse-initial-shell-item"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "set-initial-shell-folder"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "create-cancellation-window"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "show"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "show-returned"
+        },
+        {
+          "kind": "tauri-directory-result",
+          "scope": "actual-tauri-ipc-fixture-storage-no-credential-proof",
+          "status": "selected"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "validate-previous"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "configure-options"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "configure-title"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "parse-initial-shell-item"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "set-initial-shell-folder"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "create-cancellation-window"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "show"
+        },
+        {
+          "hresult": null,
+          "kind": "tauri-directory-stage",
+          "stage": "show-returned"
+        },
+        {
+          "kind": "tauri-directory-result",
+          "scope": "actual-tauri-ipc-fixture-storage-no-credential-proof",
+          "status": "selected"
+        },
+        {
+          "admissionOpen": false,
+          "exitCode": 0,
+          "fixture": "artifacts/tmp/directory-dialog-selection-20260905-c13",
+          "fixturesRetained": true,
+          "kind": "tauri-directory-exit",
+          "pending": false
+        }
+      ]
+    }
+  ],
+  "credentialsInvoked": false,
+  "fixturesRetained": true,
+  "priorAdverseRecordsRetained": true
+}

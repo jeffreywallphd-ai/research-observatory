@@ -11,9 +11,10 @@ import {
   type WorkflowProfileCatalogProjection,
 } from "@research-observatory/contracts/core-api";
 import { invoke } from "@tauri-apps/api/core";
-import { Button, Field, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
+import { Button, DirectoryPickerField, Field, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 
 import { LocalServiceBoundary, type RuntimeState } from "./LocalServiceBoundary";
+import { chooseProjectDirectory, defaultProjectParent, projectDestination, projectDirectoryName, type DirectoryPurpose } from "./directoryPicker";
 
 export interface ProjectsWorkspaceProps {
   readonly announce: (message: string) => void;
@@ -68,6 +69,12 @@ export function projectCompatibilityGuidance(project: ProjectProjection): {
 
 function safeFailure(error: unknown): { readonly title: string; readonly message: string } {
   if (error instanceof CoreApiClientError) {
+    if (error.problem.code === "RO-CORE-PROJECT-ALREADY-EXISTS") {
+      return {
+        title: "The destination already exists",
+        message: "Change the project name or choose a different parent folder. The existing folder will not be overwritten; your entries are kept.",
+      };
+    }
     return {
       title: `${error.problem.title} (${error.problem.code})`,
       message: `${error.problem.detail} ${error.problem.remediation}`,
@@ -95,7 +102,7 @@ export function ProjectsWorkspace({
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
   const [project, setProject] = useState<ProjectProjection | null>(selectedProject);
   const [parentDirectory, setParentDirectory] = useState("");
-  const [directoryName, setDirectoryName] = useState("");
+  const [folderSuggestionId] = useState(() => globalThis.crypto.randomUUID().replaceAll("-", "").slice(0, 12));
   const [displayName, setDisplayName] = useState("");
   const [researchObjective, setResearchObjective] = useState("");
   const [primaryUseCase, setPrimaryUseCase] = useState<ProjectCreateRequest["primaryUseCase"] | "">(
@@ -112,14 +119,95 @@ export function ProjectsWorkspace({
   const mounted = useRef(false);
   const mutationPending = useRef(false);
   const mutationGeneration = useRef(0);
+  const folderPending = useRef(false);
+  const folderGeneration = useRef(0);
+  const folderRequest = useRef<AbortController | null>(null);
+  const parentChosenByUser = useRef(false);
+  const parentSelectionPending = useRef(false);
+  const parentButton = useRef<HTMLButtonElement>(null);
+  const openButton = useRef<HTMLButtonElement>(null);
+  const restoreFolderFocus = useRef<HTMLButtonElement | null>(null);
+  const [folderBusy, setFolderBusy] = useState<DirectoryPurpose | null>(null);
+  const [folderNotice, setFolderNotice] = useState<{ title: string; message: string; failed: boolean } | null>(null);
+  const [defaultState, setDefaultState] = useState<"waiting" | "loading" | "available" | "unavailable">("waiting");
+  const [defaultAttempt, setDefaultAttempt] = useState(0);
   const observesNativeService = transport === packagedProjectTransport && !initialCatalog;
   const serviceReady = !observesNativeService || serviceState === "ready";
-  const actionsDisabled = busy !== null || !serviceReady;
+  const actionsDisabled = busy !== null || folderBusy !== null || !serviceReady;
+  const directoryName = projectDirectoryName(displayName, folderSuggestionId);
+  const destination = projectDestination(parentDirectory, directoryName);
 
   useEffect(() => {
     mounted.current = true;
-    return () => { mounted.current = false; mutationGeneration.current++; };
+    return () => {
+      mounted.current = false;
+      mutationGeneration.current++;
+      folderGeneration.current++;
+      folderRequest.current?.abort();
+      restoreFolderFocus.current = null;
+    };
   }, []);
+
+  useEffect(() => {
+    if (!serviceReady || parentChosenByUser.current || parentDirectory) return;
+    const controller = new AbortController();
+    setDefaultState("loading");
+    void defaultProjectParent(controller.signal).then((result) => {
+      if (controller.signal.aborted || !mounted.current || parentChosenByUser.current || parentSelectionPending.current) return;
+      if (result.status === "available") {
+        setParentDirectory(result.path);
+        setDefaultState("available");
+      } else setDefaultState("unavailable");
+    });
+    return () => controller.abort();
+  }, [defaultAttempt, parentDirectory, serviceReady]);
+
+  useEffect(() => {
+    if (folderBusy !== null) return;
+    const trigger = restoreFolderFocus.current;
+    restoreFolderFocus.current = null;
+    if (mounted.current && trigger?.isConnected && !trigger.closest("[inert], [hidden]")) trigger.focus();
+  }, [folderBusy]);
+
+  const chooseFolder = async (purpose: DirectoryPurpose): Promise<void> => {
+    if (!mounted.current || mutationPending.current || folderPending.current) return;
+    folderPending.current = true;
+    const generation = ++folderGeneration.current;
+    if (purpose === "create-parent") parentSelectionPending.current = true;
+    const controller = new AbortController();
+    folderRequest.current = controller;
+    setFolderBusy(purpose);
+    setFolderNotice(null);
+    const previousLocation = purpose === "create-parent" ? parentDirectory : openRoot;
+    const result = await chooseProjectDirectory({ purpose, ...(previousLocation ? { previousLocation } : {}) }, controller.signal);
+    folderPending.current = false;
+    if (purpose === "create-parent") parentSelectionPending.current = false;
+    if (controller.signal.aborted || !mounted.current || generation !== folderGeneration.current) return;
+    folderRequest.current = null;
+    if (result.status === "selected") {
+      if (purpose === "create-parent") {
+        parentChosenByUser.current = true;
+        setParentDirectory(result.path);
+      }
+      else setOpenRoot(result.path);
+      announce("Folder selected. No project action was performed.");
+    } else {
+      // An attempted choice is not a selection. A default response discarded
+      // during the dialog must be rediscovered after cancel/failure.
+      if (purpose === "create-parent" && !parentDirectory) setDefaultAttempt((attempt) => attempt + 1);
+      const notice = result.status === "cancelled" ? {
+        title: "Selection cancelled", message: "Your previous folder and form entries are unchanged.", failed: false,
+      } : result.status === "unavailable" ? {
+        title: "The folder chooser is unavailable", message: "Retry from the folder button. No project action was performed.", failed: true,
+      } : {
+        title: "This folder cannot be used", message: "Choose an accessible local folder. Your form entries are unchanged. No project action was performed.", failed: true,
+      };
+      setFolderNotice(notice);
+      announce(`${notice.title}. ${notice.message}`);
+    }
+    restoreFolderFocus.current = purpose === "create-parent" ? parentButton.current : openButton.current;
+    setFolderBusy(null);
+  };
 
   useEffect(() => setProject(selectedProject), [selectedProject]);
 
@@ -147,7 +235,7 @@ export function ProjectsWorkspace({
   const selectedProfile = catalog?.profiles.find((profile) => profile.profileId === primaryUseCase) ?? null;
 
   const run = async (label: string, action: () => Promise<ProjectProjection>): Promise<void> => {
-    if (!serviceReady || mutationPending.current || !mounted.current) return;
+    if (!serviceReady || mutationPending.current || folderPending.current || !mounted.current) return;
     mutationPending.current = true;
     const generation = mutationGeneration.current;
     const ownsResult = (): boolean => mounted.current && mutationGeneration.current === generation;
@@ -174,7 +262,7 @@ export function ProjectsWorkspace({
 
   const createProject = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    if (!serviceReady || catalogState !== "ready" || !selectedProfile || !primaryUseCase || !researchObjective.trim()) return;
+    if (!serviceReady || !destination || catalogState !== "ready" || !selectedProfile || !primaryUseCase || !researchObjective.trim()) return;
     void run("Create project", () => client.createProject({
       parentDirectory,
       directoryName,
@@ -186,6 +274,7 @@ export function ProjectsWorkspace({
 
   const openProject = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    if (!openRoot) return;
     void run("Open project", () => client.openProject({ root: openRoot }));
   };
 
@@ -201,27 +290,36 @@ export function ProjectsWorkspace({
       {failure ? <Notification tone="danger" title={failure.title}>{failure.message}</Notification> : null}
 
       {observesNativeService ? <LocalServiceBoundary announce={announce} observeOnly onStateChange={setServiceState} /> : null}
+      {folderBusy ? <Notification title="Choosing a folder…">
+        Complete or cancel the native dialog. Other folder buttons and project submission remain unavailable while it is open.
+      </Notification> : folderNotice ? <Notification tone={folderNotice.failed ? "warning" : "info"} title={folderNotice.title}>
+        {folderNotice.message}
+      </Notification> : null}
 
       <div className="project-workflow-grid ro-grid">
         <Panel title="Create a local project">
           <form className="project-form ro-form" onSubmit={createProject}>
             <Field
-              id="project-parent-directory"
-              label="Parent directory"
-              description="Enter an existing absolute local directory, for example C:\Research."
-              input={{ value: parentDirectory, onChange: (event) => setParentDirectory(event.currentTarget.value), required: true }}
-            />
-            <Field
-              id="project-directory-name"
-              label="Project directory name"
-              description="Use lowercase letters, numbers, and hyphens."
-              input={{ value: directoryName, onChange: (event) => setDirectoryName(event.currentTarget.value), required: true, pattern: "[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?" }}
-            />
-            <Field
               id="project-display-name"
               label="Project name"
-              input={{ value: displayName, onChange: (event) => setDisplayName(event.currentTarget.value), required: true, maxLength: 120 }}
+              description="Use a descriptive name. The application suggests the new folder name for you."
+              input={{ value: displayName, onChange: (event) => setDisplayName(event.currentTarget.value), required: true, maxLength: 120, disabled: busy !== null }}
             />
+            <DirectoryPickerField id="project-parent-directory" label="Parent folder" value={parentDirectory}
+              description={parentDirectory ? "The new project will be created here. Change folder to choose another local location."
+                : defaultState === "unavailable" ? "A default folder is not available. Choose an existing accessible local folder."
+                  : "Finding your default project folder. You can also choose an existing local folder."}
+              buttonRef={parentButton} disabled={busy !== null || folderBusy !== null} pending={folderBusy === "create-parent"}
+              onChoose={() => void chooseFolder("create-parent")} />
+            <div className="ro-field">
+              <span className="ro-field__label" id="project-destination-label">New project destination</span>
+              <output className="ro-directory-location" id="project-destination" aria-labelledby="project-destination-label">
+                {destination || (parentDirectory && directoryName
+                  ? "This destination cannot be used. Shorten the project name or choose another parent folder."
+                  : "Enter a project name and select a parent folder to see the destination.")}
+              </output>
+              <span className="ro-field__description">Review the destination before Create. Existing folders are never overwritten or automatically numbered.</span>
+            </div>
             <label htmlFor="project-research-objective">Research objective</label>
             <textarea
               id="project-research-objective"
@@ -230,6 +328,7 @@ export function ProjectsWorkspace({
               rows={3}
               maxLength={4000}
               required
+              disabled={busy !== null}
             />
             <label htmlFor="project-primary-use-case">Primary use case</label>
             {catalogState === "failed" ? (
@@ -248,7 +347,7 @@ export function ProjectsWorkspace({
               value={primaryUseCase}
               onChange={(event) => setPrimaryUseCase(event.currentTarget.value as ProjectCreateRequest["primaryUseCase"])}
               required
-              disabled={!catalog || catalogState !== "ready"}
+              disabled={busy !== null || !catalog || catalogState !== "ready"}
             >
               <option value="" disabled>{catalogState === "ready" ? "Select a governed use case" : catalogState === "failed" ? "Use cases unavailable" : catalogState === "waiting" ? "Waiting for local service…" : "Loading governed use cases…"}</option>
               {catalog?.profiles.map((profile) => (
@@ -265,19 +364,17 @@ export function ProjectsWorkspace({
                 <p className="field-note">All tools remain available. The selected workflow does not weaken evidence or provenance requirements.</p>
               </div>
             ) : null}
-            <Button tone="primary" type="submit" disabled={actionsDisabled || catalogState !== "ready" || !selectedProfile || !researchObjective.trim()}>Create project</Button>
+            <Button tone="primary" type="submit" disabled={actionsDisabled || !destination || catalogState !== "ready" || !selectedProfile || !researchObjective.trim()}>Create project</Button>
           </form>
         </Panel>
 
         <Panel title="Open an existing project">
           <form className="project-form ro-form" onSubmit={openProject}>
-            <Field
-              id="project-root"
-              label="Project directory"
-              description="Enter the absolute directory containing project.ro.json."
-              input={{ value: openRoot, onChange: (event) => setOpenRoot(event.currentTarget.value), required: true }}
-            />
-            <Button tone="primary" type="submit" disabled={actionsDisabled}>Open project</Button>
+            <DirectoryPickerField id="project-root" label="Project folder" value={openRoot}
+              description="Choose an existing Research Observatory project folder, then select Open project. Choosing alone does not open it."
+              buttonRef={openButton} disabled={busy !== null || folderBusy !== null} pending={folderBusy === "open-project"}
+              onChoose={() => void chooseFolder("open-project")} />
+            <Button tone="primary" type="submit" disabled={actionsDisabled || !openRoot}>Open project</Button>
           </form>
         </Panel>
       </div>

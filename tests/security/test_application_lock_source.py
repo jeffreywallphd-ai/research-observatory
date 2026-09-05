@@ -101,7 +101,13 @@ class ApplicationLockSourceBoundaryTests(unittest.TestCase):
 
     def test_every_sensitive_native_bridge_checks_or_commits_under_the_lock_generation(self) -> None:
         source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "lib.rs").read_text(encoding="utf-8")
-        for command in ("core_runtime_start", "core_runtime_retry", "core_api_request"):
+        for command in (
+            "core_runtime_start",
+            "core_runtime_retry",
+            "core_api_request",
+            "choose_project_directory",
+            "default_project_parent",
+        ):
             start = source.index(f"fn {command}(")
             next_command = source.find("#[tauri::command]", start + 1)
             body = source[start : next_command if next_command >= 0 else len(source)]
@@ -131,10 +137,40 @@ class ApplicationLockSourceBoundaryTests(unittest.TestCase):
         self.assertIn("support.clear_pending()", source)
         self.assertIn("lock.lock_if_idle()", source)
         self.assertIn('emit("application-lock-changed"', source)
-        self.assertIn("ApplicationLockManager::acquire(&application_data)", source)
+        # The production and isolated fixture paths now share setup. Follow the
+        # production root into that function rather than require a redundant &.
+        production = source.split("pub fn run() {", 1)[1].split("fn application_builder()", 1)[0]
+        self.assertRegex(production, r"let application_data = app\s*\.path\(\)\s*\.app_local_data_dir\(\)")
+        self.assertRegex(
+            production,
+            r"setup_runtime\(\s*app,\s*runtime_config\(app\),\s*&application_data,"
+            r"\s*DirectoryPickerManager::default\(\),?\s*\)",
+        )
+        shared_setup = source.split("fn setup_runtime(", 1)[1].split("/// Disposable composition", 1)[0]
+        self.assertIn("application_data: &std::path::Path", shared_setup)
+        self.assertIn("ApplicationLockManager::acquire(application_data)", shared_setup)
+        self.assertIn("app.manage(lock.clone())", shared_setup)
         self.assertNotIn("ApplicationLockManager::new(&application_data)", source)
         self.assertIn("RO-DESKTOP-ALREADY-RUNNING", policy_source)
         self.assertIn("ApplicationInstanceGuard", lock_source)
+
+    def test_folder_bridges_require_local_window_and_do_not_wait_under_core_authority(self) -> None:
+        source = (REPO / "apps/desktop/src-tauri/src/lib.rs").read_text(encoding="utf-8")
+        for command in ("choose_project_directory", "default_project_parent"):
+            body = source.split(f"fn {command}(", 1)[1].split("#[tauri::command]", 1)[0]
+            signature = body.split(") ->", 1)[0]
+            self.assertIn("window: tauri::WebviewWindow", signature)
+            self.assertNotIn("RuntimeSupervisor", signature)
+            self.assertIn("directory_window_handle(&window)", body)
+            self.assertIn("spawn_blocking", body)
+            self.assertIn("directory_window_handle(&window) != Some(owner)", body)
+            self.assertNotIn("supervisor.", body)
+        lock_body = source.split("async fn application_lock_now(", 1)[1].split("#[tauri::command]", 1)[0]
+        self.assertIn("picker.cancel_pending()", lock_body)
+        builder = source.split("fn application_builder()", 1)[1].split("fn setup_runtime(", 1)[0]
+        self.assertIn("picker.begin_close()", builder)
+        self.assertIn("picker.wait_for_cleanup()", builder)
+        self.assertRegex(builder, r"spawn_blocking\(move \|\| \{\s*picker.wait_for_cleanup\(\)")
 
 
 if __name__ == "__main__":

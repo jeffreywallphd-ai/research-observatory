@@ -40299,14 +40299,17 @@ wave_amendments:
     - Disposable Core path/access/package/redirect/lock/no-overwrite recovery
     - Real React build/geometry/accessibility and independent security/experience review
     packet_task_sha256: a0870e1b9af87a5bfc2501cd79089229876b98a6f7f921816be5029a746d404a
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-09-05T14:21:57+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 6730524c7fe19e2ba6f2500f367d8e6e5689bb2c
+    worktree: C:/ai-projects/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-05T22:01:30+00:00'
+      expires_at: '2026-09-06T06:01:30+00:00'
+    started_at: '2026-09-05T14:24:15+00:00'
+    updated_at: '2026-09-05T22:01:30+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
@@ -40316,7 +40319,9 @@ wave_amendments:
       reviewer: null
       result: null
       reviewed_at: null
-      notes: null
+      notes: 'Reopened: Owner normal-Windows diagnostic 05 passed actual-default create/reopen/protected-storage/no-overwrite
+        checks; its exact 54-source inventory matches current bytes (report a5a829c6df753a37c3f4413e3090072339daa8eca6c91594d72d882a157de617).
+        Resume criterion closure and independent review without changing Core guards.'
   - id: W1.A09.T04
     amendment_id: W1.A09
     title: Qualify correction and prepare authenticated return

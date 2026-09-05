@@ -1,0 +1,82 @@
+{
+  "status": "PASS",
+  "commit": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "productManifestSha256": "afd879fef5f2da5490cfd9a2c976c1cdd1cad9c8067efa84cd4b487fca0f99c2",
+  "outcomes": {
+    "defaultSelectionCancellationStableCollisionRetry": true,
+    "cancelFailureDefaultRaces": 6,
+    "chosenOverrideAndLockDiscard": true,
+    "freshUnlockDoesNotRestoreProtectedFormOrOpenProject": true,
+    "longPathGeometry": [
+      {
+        "theme": "light",
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "outputWidth": 530,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "light",
+        "width": 1280,
+        "height": 720,
+        "scrollWidth": 1280,
+        "viewport": 1280,
+        "outputWidth": 470,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "light",
+        "width": 720,
+        "height": 450,
+        "scrollWidth": 720,
+        "viewport": 720,
+        "outputWidth": 654,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "dark",
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "outputWidth": 530,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "dark",
+        "width": 1280,
+        "height": 720,
+        "scrollWidth": 1280,
+        "viewport": 1280,
+        "outputWidth": 470,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "dark",
+        "width": 720,
+        "height": 450,
+        "scrollWidth": 720,
+        "viewport": 720,
+        "outputWidth": 654,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      }
+    ]
+  },
+  "networkRequests": [],
+  "pageErrors": [],
+  "scope": "Actual built React renderer and pinned Chromium; explicit native/Core doubles. Not Windows dialog, real Core, sign-in or W1 qualification."
+}

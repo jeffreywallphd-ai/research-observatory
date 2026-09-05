@@ -62,7 +62,8 @@
 .ro-button:disabled { cursor: not-allowed; opacity: .68; }
 :where(a, button, input, select, textarea, summary, main, .ro-table-scroll, .ro-table-region):focus-visible { outline: 2px solid var(--brand-600); outline-offset: 2px; box-shadow: var(--focus-ring); }
 .ro-field { display: grid; gap: var(--space-1); color: var(--text-default); font: 400 var(--text-md) / var(--leading-normal) var(--font-sans); }
-.ro-field label { color: var(--text-strong); font-weight: 650; }
+.ro-field label, .ro-field__label { color: var(--text-strong); font-weight: 650; }
+.ro-directory-location { display: block; min-width: 0; max-width: 100%; overflow-wrap: anywhere; white-space: pre-wrap; user-select: text; color: var(--text-strong); font-family: var(--font-mono); }
 .ro-field input { padding: 0 var(--space-3); color: var(--text-strong); }
 .ro-field__description { color: var(--text-muted); }
 .ro-field__error, .ro-field[data-invalid="true"] label { color: var(--danger); }

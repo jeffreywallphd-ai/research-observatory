@@ -1,0 +1,33 @@
+{
+  "taskId": "W1.A09.T03",
+  "scope": "Working-source regression of native build evidence binding; Cargo and PE verifier are declared doubles in these tests. Actual build proof is separate.",
+  "sourceHashes": {
+    "tests/service/test_native_project_contract.py": "36ef78ec9c222a02489c867940f76a837f2f25562d0003bf0733e0ea3406e5d5",
+    "tests/service/test_project_probe_build.py": "bd1b3c8c611df11b215b30a15f841fc519d2a987a6411c2f8206cca7b7d11394",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf",
+    "tools/ui_conformance.py": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a"
+  },
+  "inputsUnchanged": true,
+  "checks": [
+    {
+      "name": "build-boundary-regressions",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_project_probe_build.py -v",
+      "exitCode": 0,
+      "output": "test_artifact_change_during_compilation_cannot_receive_a_build_record (test_project_probe_build.ProjectProbeBuildBindingTests.test_artifact_change_during_compilation_cannot_receive_a_build_record) ... ok\r\ntest_even_consistently_rebuilt_product_during_compilation_is_rejected (test_project_probe_build.ProjectProbeBuildBindingTests.test_even_consistently_rebuilt_product_during_compilation_is_rejected) ... ok\r\ntest_manifest_swap_during_validation_is_rejected_before_using_its_paths (test_project_probe_build.ProjectProbeBuildBindingTests.test_manifest_swap_during_validation_is_rejected_before_using_its_paths) ... ok\r\ntest_modified_renderer_artifact_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_modified_renderer_artifact_is_rejected_before_compilation) ... ok\r\ntest_source_change_after_validation_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_source_change_after_validation_is_rejected_before_compilation) ... ok\r\ntest_stale_renderer_source_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_stale_renderer_source_is_rejected_before_compilation) ... ok\r\ntest_unlisted_artifact_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_unlisted_artifact_is_rejected_before_compilation) ... ok\r\ntest_valid_build_binds_exact_renderer_and_artifact_bytes (test_project_probe_build.ProjectProbeBuildBindingTests.test_valid_build_binds_exact_renderer_and_artifact_bytes) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.802s\r\n\r\nOK\r\n"
+    },
+    {
+      "name": "build-helper-lint",
+      "command": ".venv/Scripts/python.exe -m ruff check tests/service/test_native_project_contract.py tests/service/test_project_probe_build.py",
+      "exitCode": 0,
+      "output": "All checks passed!\n"
+    }
+  ],
+  "status": "PASS",
+  "adverseCharacterization": {
+    "tests": 6,
+    "failures": 4,
+    "errors": 1,
+    "passing": 1,
+    "detail": "Before repair: stale source, altered artifact, unlisted artifact and mid-build artifact mutation were not rejected; successful record omitted renderer hash. Consistent manifest/source swap already failed its manifest hash."
+  }
+}

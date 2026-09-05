@@ -1,0 +1,51 @@
+{
+  "taskId": "W1.A09.T03",
+  "reviewer": "t03_native_replay",
+  "reviewKind": "Independent working-source advisory; not task approval",
+  "reviewedAt": "2026-09-05T21:32:04Z",
+  "workingTreeBase": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "disposition": "The manifest-only P2 is corrected in the reviewed working sources; actual-build and final commit-bound qualification remain separate.",
+  "sourceHashesBefore": {
+    "tests/service/test_native_project_contract.py": "36ef78ec9c222a02489c867940f76a837f2f25562d0003bf0733e0ea3406e5d5",
+    "tests/service/test_project_probe_build.py": "bd1b3c8c611df11b215b30a15f841fc519d2a987a6411c2f8206cca7b7d11394",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf",
+    "tools/ui_conformance.py": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a"
+  },
+  "sourceHashesAfterEqualBefore": true,
+  "rootEvidence": {
+    "path": "artifacts/evidence/W1.A09.T03.build-binding-regressions-01.json",
+    "sha256": "c79db53255c9bf4791c478485f4f3675559bbb0cf4331024ac47a66b20e7e234",
+    "sourceHashesMatch": true
+  },
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -I -B -m unittest discover -s tests/service -p test_project_probe_build.py -v",
+      "exitCode": 0,
+      "testsRun": 8,
+      "failures": 0,
+      "errors": 0,
+      "scope": "Real product validator and synthetic files; declared Cargo, Git inventory, tool-environment and PE-verifier doubles. No native executable built or run."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check tests/service/test_native_project_contract.py tests/service/test_project_probe_build.py",
+      "exitCode": 0,
+      "scope": "Only changed helper and regression module."
+    }
+  ],
+  "assessment": [
+    "The existing product validator requires exact source and artifact inventories, current hashes, approved reference identity, and the intended frontend boundary.",
+    "The helper captures and rereads manifest bytes around validation before deriving paths; this closes the tested manifest replacement window.",
+    "Every observed path is passed through existing canonical confinement and stable regular-file reads. Product hashes must still match the validated manifest.",
+    "The complete observed map is recomputed after Cargo and compared with the pre-build map; stale sources, altered or extra artifacts, mid-build changes, and even a consistent mid-build rebuild are rejected.",
+    "The tests accurately label doubles and prove rejection before compilation or record issuance. They do not claim a real linker, PE or rendered UI result.",
+    "No product authority, production runtime setting, controller, or task state is changed by this correction."
+  ],
+  "limitations": [
+    "The observations establish stable interval endpoints, not an atomic snapshot against a hostile same-account writer that changes and restores bytes during compilation.",
+    "The actual build must establish that its effective Cargo target/output path is the repo target path whose executable is verified and hashed. The existing tool_environment inherits Cargo environment overrides; alternate-target behavior was not exercised because this review prohibited Cargo/build invocation.",
+    "This review does not establish final executable publication atomicity or a final commit-bound task disposition.",
+    "The prior b937 picker bytes were unavailable for independent comparison. Actual native-ui observations remain bound only to their then-source; the later d922 tests do not rewrite that history."
+  ],
+  "newBlockingFindingsInBoundedCorrection": [],
+  "mutations": "This advisory report only; no production edits, Git mutation, task transition, native build or UI action."
+}

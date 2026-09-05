@@ -1,0 +1,93 @@
+{
+  "status": "PASS_WITHIN_METADATA_SCOPE",
+  "inputHashes": {
+    "helper": "2890d7bd7c6a992840bf7d0fbf3bde6db1baae7cb4cef56e971a347673945652",
+    "runner": "544839dacf6cb9afc03e5d8dd32db9271f6a6913268ad1a355c8455a647d3f33",
+    "venv": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "base": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688"
+  },
+  "inputsUnchanged": true,
+  "expectedPythonVersion": "3.14.6",
+  "parent": {
+    "pythonVersion": "3.14.6",
+    "executableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "processImageSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+    "pythonDllSha256": "dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7",
+    "baseExecutableSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+    "sysExecutableEqualsRequestedLauncher": true,
+    "processImageEqualsRequestedLauncher": false,
+    "baseExecutableEqualsParentBase": true,
+    "prefixEqualsBasePrefix": false,
+    "sysExecutableUsesWindowsApps": false,
+    "baseExecutableUsesWindowsApps": false,
+    "processImageUsesWindowsApps": false,
+    "packageIdentityProbeResult": 15700,
+    "packageIdentityClassification": "no-package",
+    "flags": {
+      "noUserSite": 1,
+      "safePath": true,
+      "isolated": 0,
+      "optimize": 0,
+      "noBytecode": true
+    }
+  },
+  "children": [
+    {
+      "launcherRole": "repository-venv",
+      "facts": {
+        "baseExecutableEqualsParentBase": true,
+        "baseExecutableSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "baseExecutableUsesWindowsApps": false,
+        "executableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+        "flags": {
+          "isolated": 0,
+          "noBytecode": true,
+          "noUserSite": 1,
+          "optimize": 0,
+          "safePath": true
+        },
+        "packageIdentityClassification": "no-package",
+        "packageIdentityProbeResult": 15700,
+        "prefixEqualsBasePrefix": false,
+        "processImageEqualsRequestedLauncher": false,
+        "processImageSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "processImageUsesWindowsApps": false,
+        "pythonDllSha256": "dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7",
+        "pythonVersion": "3.14.6",
+        "sysExecutableEqualsRequestedLauncher": true,
+        "sysExecutableUsesWindowsApps": false
+      },
+      "unpublishedStderrBytes": 0
+    },
+    {
+      "launcherRole": "base-interpreter",
+      "facts": {
+        "baseExecutableEqualsParentBase": true,
+        "baseExecutableSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "baseExecutableUsesWindowsApps": false,
+        "executableSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "flags": {
+          "isolated": 0,
+          "noBytecode": true,
+          "noUserSite": 1,
+          "optimize": 0,
+          "safePath": true
+        },
+        "packageIdentityClassification": "no-package",
+        "packageIdentityProbeResult": 15700,
+        "prefixEqualsBasePrefix": true,
+        "processImageEqualsRequestedLauncher": true,
+        "processImageSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "processImageUsesWindowsApps": false,
+        "pythonDllSha256": "dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7",
+        "pythonVersion": "3.14.6",
+        "sysExecutableEqualsRequestedLauncher": true,
+        "sysExecutableUsesWindowsApps": false
+      },
+      "unpublishedStderrBytes": 0
+    }
+  ],
+  "sameLoadedPythonDllAcrossLaunchers": true,
+  "coreEnvironmentProjectionMatchesRunner": true,
+  "scope": "Metadata-only equivalent child launch with the runner's executable/flags/environment shape; no Core imports, service startup, storage, default-project writes, vault or security-setting reads. Existing artifacts/tmp substitutes for the fixture cwd/temp. This is not an actual --serve child or an absence-of-virtualization proof."
+}

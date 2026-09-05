@@ -1,0 +1,23 @@
+{
+  "taskId": "W1.A09.T03",
+  "status": "PASS_WITHIN_READ_ONLY_SCOPE",
+  "buildRecord": "artifacts/evidence/W1.A09.T03.native-builds-05.json",
+  "buildRecordSha256": "fc20b07e47584c654f894023a15b634f60c22d78299d2e52f95917212db4e211",
+  "runnerSha256": "dec0eb22c77764bc6beffa6a6b0257ffdc449e563612142ee5ee71a51f745fd7",
+  "helperSha256": "10c2b8535ac726a743395675ead658c30cb80676fb2f58e3221101a2203d8ffb",
+  "outcomes": [
+    {
+      "profile": "debug",
+      "matchesActualShellCoreParent": true,
+      "executableSha256": "f73661fc06c4cb081ac08ac35808b2983fa9d4de4682b3e2343b6eecab6eac8d"
+    },
+    {
+      "profile": "release",
+      "matchesActualShellCoreParent": true,
+      "executableSha256": "2b68763ba8dd606aa038e48178dc1d29ac15f5d5344039a543b41f2db3f5d361"
+    }
+  ],
+  "inputsUnchanged": true,
+  "parentIdentityAndMtimeUnchanged": true,
+  "scope": "Real debug/release native Shell default resolver only. No project creation, Core startup, vault/policy access or authentication proof."
+}

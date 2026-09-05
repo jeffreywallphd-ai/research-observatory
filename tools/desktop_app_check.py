@@ -35,6 +35,38 @@ from ui_conformance import (
 Runner = Callable[..., subprocess.CompletedProcess[str]]
 PRODUCT_ROOT = "apps/desktop/product-dist"
 PRODUCT_MANIFEST = f"{PRODUCT_ROOT}/application-manifest.json"
+# Explicit renderer-only double. Real Windows dialog/Core proof is separate.
+DIRECTORY_PICKER_FIXTURE = r""";
+(() => {
+  const invoke = window.__TAURI_INTERNALS__.invoke;
+  window.__DIRECTORY_PICKER_FIXTURE__ = { next: null, requests: [], defaults: 0 };
+  window.__TAURI_INTERNALS__.invoke = async (command, args) => {
+    const fixture = window.__DIRECTORY_PICKER_FIXTURE__;
+    if (command === 'default_project_parent') {
+      fixture.defaults++;
+      return {status: 'available', path: 'C:/Research'};
+    }
+    if (command === 'choose_project_directory') {
+      fixture.requests.push(args.request);
+      const next = fixture.next;
+      fixture.next = null;
+      return next === null ? {status: 'cancelled'} : {status: 'selected', path: next};
+    }
+    return invoke(command, args);
+  };
+})();"""
+
+
+def choose_fixture_directory(page: Any, field_id: str, path: str) -> None:
+    """Drive the real shared button through a declared native-result double."""
+    page.evaluate("path => { window.__DIRECTORY_PICKER_FIXTURE__.next = path; }", path)
+    page.locator(f"#{field_id}-choose").click()
+    page.wait_for_function(
+        "([id, path]) => document.getElementById(id + '-location')?.textContent === path",
+        arg=[field_id, path], timeout=5_000,
+    )
+
+
 PRODUCT_MANIFEST_KEYS = {
     "schemaVersion",
     "documentType",
@@ -2978,12 +3010,12 @@ def runtime_frame_errors(
                     }
                   };
                 })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
+            project_adapter += DIRECTORY_PICKER_FIXTURE
             projects.add_init_script(project_adapter)
             projects.goto("http://tauri.localhost/index.html", wait_until="load")
             projects.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             open_desktop_tool(projects, "Local projects")
-            projects.locator("#project-parent-directory").fill("C:/Research")
-            projects.locator("#project-directory-name").fill("study-one")
+            choose_fixture_directory(projects, "project-parent-directory", "C:/Research")
             projects.locator("#project-display-name").fill("Study One")
             projects.locator("#project-research-objective").fill("Explain a bounded evidence-first workflow.")
             implemented_tool_labels = [
@@ -3135,7 +3167,7 @@ def runtime_frame_errors(
             intent_page.goto("http://tauri.localhost/index.html", wait_until="load")
             intent_page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             open_desktop_tool(intent_page, "Local projects")
-            intent_page.locator("#project-root").fill("C:/Research/study-one")
+            choose_fixture_directory(intent_page, "project-root", "C:/Research/study-one")
             intent_page.get_by_role("button", name="Open project", exact=True).click()
             intent_page.locator("[data-current-project]").wait_for(state="visible", timeout=5_000)
             open_desktop_tool(intent_page, "Research intent")
@@ -3241,7 +3273,7 @@ def runtime_frame_errors(
             current.locator("#project-delete-confirmation").fill(confirmation)
             current.get_by_role("button", name="Move to recoverable trash", exact=True).click()
             current.get_by_text("trash", exact=True).wait_for(timeout=5_000)
-            projects.locator("#project-root").fill("C:/Research/newer-study")
+            choose_fixture_directory(projects, "project-root", "C:/Research/newer-study")
             projects.get_by_role("button", name="Open project", exact=True).click()
             current.get_by_text("Read-only inspection open", exact=True).wait_for(timeout=5_000)
             current.get_by_text("Newer project format · read-only", exact=True).wait_for(timeout=5_000)
@@ -3254,7 +3286,7 @@ def runtime_frame_errors(
             )
             current.get_by_role("button", name="Close project", exact=True).click()
             current.get_by_text("Closed", exact=True).wait_for(timeout=5_000)
-            projects.locator("#project-root").fill("C:/Research/newer-archived")
+            choose_fixture_directory(projects, "project-root", "C:/Research/newer-archived")
             projects.get_by_role("button", name="Open project", exact=True).click()
             current.get_by_text("archived", exact=True).wait_for(timeout=5_000)
             archived_incompatible_valid = projects.evaluate(
@@ -3437,13 +3469,12 @@ def runtime_frame_errors(
                       return coreResponse(progress);
                     }
                   };
-                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
+                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json) + DIRECTORY_PICKER_FIXTURE
             )
             revisit.goto("http://tauri.localhost/index.html", wait_until="load")
             revisit.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             open_desktop_tool(revisit, "Local projects")
-            revisit.locator("#project-parent-directory").fill("C:/Research")
-            revisit.locator("#project-directory-name").fill("revisitable-study")
+            choose_fixture_directory(revisit, "project-parent-directory", "C:/Research")
             revisit.locator("#project-display-name").fill("Revisitable Study")
             revisit.locator("#project-research-objective").fill(
                 "Revisit an earlier interpretive stage without losing later work."
@@ -3962,13 +3993,12 @@ def runtime_frame_errors(
                       throw new Error(`unsupported lock reconciliation command: ${command}`);
                     }
                   };
-                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
+                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json) + DIRECTORY_PICKER_FIXTURE
             )
             lock_reconciliation.goto("http://tauri.localhost/index.html", wait_until="load")
             lock_reconciliation.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             open_desktop_tool(lock_reconciliation, "Local projects")
-            lock_reconciliation.locator("#project-parent-directory").fill("C:/Private")
-            lock_reconciliation.locator("#project-directory-name").fill("sensitive-study")
+            choose_fixture_directory(lock_reconciliation, "project-parent-directory", "C:/Private")
             lock_reconciliation.locator("#project-display-name").fill("Sensitive Study")
             lock_reconciliation.locator("#project-research-objective").fill("Preserve a bounded sensitive workflow.")
             lock_reconciliation.locator("#project-primary-use-case").select_option("theory-synthesis")
@@ -4091,7 +4121,7 @@ def runtime_frame_errors(
             lock_reconciliation.get_by_role("button", name="Save draft revision", exact=True).click()
             lock_reconciliation.get_by_role("button", name="Saving locally…", exact=True).wait_for(timeout=5_000)
             open_desktop_tool(lock_reconciliation, "Local projects")
-            lock_reconciliation.locator("#project-root").fill("C:/Private/study-two")
+            choose_fixture_directory(lock_reconciliation, "project-root", "C:/Private/study-two")
             lock_reconciliation.get_by_role("button", name="Open project", exact=True).click()
             lock_reconciliation.locator('[data-current-project="22222222-2222-4222-8222-222222222222"]').wait_for(
                 timeout=5_000
@@ -4113,7 +4143,7 @@ def runtime_frame_errors(
                       .includes('Second Study');
                 }"""
             )
-            lock_reconciliation.locator("#project-root").fill("C:/Private/sensitive-study")
+            choose_fixture_directory(lock_reconciliation, "project-root", "C:/Private/sensitive-study")
             lock_reconciliation.get_by_role("button", name="Open project", exact=True).click()
             lock_reconciliation.locator('[data-current-project="11111111-1111-4111-8111-111111111111"]').wait_for(
                 timeout=5_000
@@ -4129,7 +4159,7 @@ def runtime_frame_errors(
             lock_reconciliation.get_by_role("button", name="Accept intent revision", exact=True).click()
             lock_reconciliation.get_by_text("Acceptance request in progress", exact=False).wait_for(timeout=5_000)
             open_desktop_tool(lock_reconciliation, "Local projects")
-            lock_reconciliation.locator("#project-root").fill("C:/Private/study-two")
+            choose_fixture_directory(lock_reconciliation, "project-root", "C:/Private/study-two")
             lock_reconciliation.get_by_role("button", name="Open project", exact=True).click()
             lock_reconciliation.locator('[data-current-project="22222222-2222-4222-8222-222222222222"]').wait_for(
                 timeout=5_000
@@ -4554,11 +4584,12 @@ def runtime_frame_errors(
                 stable_file_bytes(repo, confined_path(repo, "tests/desktop/fixtures/task_center_interactions.js"))
                 .decode("utf-8")
                 .replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
+                + DIRECTORY_PICKER_FIXTURE
             )
             task_center.goto("http://tauri.localhost/index.html", wait_until="load")
             task_center.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             open_desktop_tool(task_center, "Local projects")
-            task_center.locator("#project-root").fill("C:/Research/study-one")
+            choose_fixture_directory(task_center, "project-root", "C:/Research/study-one")
             task_center.get_by_role("button", name="Open project", exact=True).click()
             task_center.locator("[data-current-project]").wait_for(state="visible", timeout=5_000)
             open_desktop_tool(task_center, "Task Center")

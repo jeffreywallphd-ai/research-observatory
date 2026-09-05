@@ -12,6 +12,7 @@ import {
 } from "@research-observatory/ui-tokens";
 
 export { DESIGN_REFERENCE_ID, DESIGN_TOKEN_CONTRACT_VERSION };
+export { DirectoryPickerField, type DirectoryPickerFieldProps } from "./DirectoryPickerField";
 export const UI_COMPONENT_CONTRACT_VERSION = "1.2.0" as const;
 
 export const boundaryStates = [

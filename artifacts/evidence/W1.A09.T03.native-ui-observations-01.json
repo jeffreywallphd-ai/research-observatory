@@ -1,0 +1,103 @@
+{
+  "status": "CHANGES_REQUIRED",
+  "task": "W1.A09.T03",
+  "observedDate": "2026-09-05",
+  "candidateCommit": null,
+  "claimBaseCommit": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "binarySha256": "52f186004f684eafdfab919084ee9b6e1931e713412ef4dc1c3355706c82320e",
+  "sourceSha256": {
+    "apps/desktop/src-tauri/src/directory_picker.rs": "fd0c82300359a1279718c46b2db4e9b421969ba4e237481d9dcd6d880905561f",
+    "apps/desktop/src-tauri/src/lib.rs": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs": "1bfc1cbe440b11fc3843b0f032a3e0d96930d8136b157e36881342a65ffa37cb",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx": "1b5fae96cf793dca718f2f63e8558e4e770056089c15fe35335de9c715fdf8d6",
+    "apps/desktop/src/app/directoryPicker.ts": "a5dad978d59aed5145999b45a2e5c2f41d006f2e18ce74b82b73e3e439cfcd14",
+    "packages/ui-components/src/DirectoryPickerField.tsx": "07e8d816c86c646597d3f3e8f110b0012e3eb64172f5d8b415587d1a8c50d00a"
+  },
+  "method": "Actual current-Windows-user Tauri fixture and system folder dialogs, operated and observed through authorized Computer Use. Filtered assertions were evaluated against captured accessibility trees; visual observations are separately labelled. No raw Shell navigation tree or account-path screenshot is published.",
+  "fixtureSubstitutions": ["policy-root", "Core-vault", "WebView-data-directory", "Core-temp", "default-project-parent"],
+  "authenticationInvoked": false,
+  "realUserProjectsAccessed": false,
+  "fixturesRetained": true,
+  "cases": [
+    {
+      "fixture": "artifacts/tmp/directory-dialog-selection-20260905-1701-c01",
+      "result": "PASS_WITHIN_SELECTION_SCOPE",
+      "visualObservations": [
+        "Default parent was selected before any dialog; project name Creme with an accented e produced a stable creme-field-study destination.",
+        "Tab focused Change folder; Return opened the actual owned system dialog; Escape cancelled it and visibly returned focus to Change folder.",
+        "Cancellation preserved the friendly name, default parent and destination; read-only fixture inspection found no project child.",
+        "A separately created empty synthetic Unicode/spaces/emoji directory was selected through the actual dialog; the displayed parent and destination preserved its characters.",
+        "Selecting the same empty directory through Open's picker enabled explicit Open but did not open a project; no Open/Create action was submitted."
+      ],
+      "accessibilityAssertions": {
+        "unicodeAndGeneratedDestinationPreserved": true,
+        "projectStillClosedAfterParentSelection": true,
+        "explicitOpenDisabledWithoutSelection": true,
+        "openPickerPurposeTitleMatches": true,
+        "ownerDisabledWhileOpenPickerModal": true,
+        "explicitOpenEnabledAfterSelection": true,
+        "projectStillClosedAfterOpenSelection": true,
+        "selectedUnicodeFolderPreserved": true
+      },
+      "nativeResultSequence": ["cancelled", "selected", "selected"],
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    },
+    {
+      "fixture": "artifacts/tmp/directory-dialog-manual-lock-20260905-1710-c02",
+      "result": "NOT_A_LOCK_PROOF",
+      "reason": "The observer's 180-second admission deadline elapsed before the first chooser action. A visible owned modal and draft were observed, but no automatic lock event occurred. Escape and ordinary close recovered the fixture; no lock success is inferred.",
+      "nativeResultSequence": ["cancelled"],
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    },
+    {
+      "fixture": "artifacts/tmp/directory-dialog-manual-lock-20260905-c03",
+      "result": "FAIL",
+      "acceptanceBoundary": "AC5/AC6: lock must dismiss a pending actual native dialog and clear protected form state",
+      "accessibilityAssertions": {
+        "purposeTitleMatchesBeforeLock": true,
+        "ownerDisabledWhileModal": true,
+        "draftDestinationPresentBeforeLock": true,
+        "lockedViewPresentAfterNativeLock": true,
+        "draftAndWorkspaceClearedAfterLock": true,
+        "modalStillOpenAfterLock": true
+      },
+      "nativeEvents": [
+        {"kind": "tauri-directory-admitted", "mode": "manual-lock", "coreState": "ready"},
+        {"kind": "tauri-directory-manual-lock", "state": "locked", "succeeded": true}
+      ],
+      "recovery": "The operator sent Escape only to the remaining folder dialog, never invoked unlock/authentication, then closed the synthetic locked window.",
+      "eventsAfterOperatorEscape": [
+        {"kind": "tauri-directory-result", "status": "cancelled"},
+        {"kind": "tauri-directory-cleanup", "pending": false, "admissionOpen": true, "coreState": "stopped"}
+      ],
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    },
+    {
+      "fixture": "artifacts/tmp/directory-dialog-main-close-20260905-c04",
+      "result": "FAIL",
+      "acceptanceBoundary": "AC5/AC6: main-window close must dismiss a pending actual native dialog without waiting for user cancellation",
+      "accessibilityAssertions": {
+        "purposeTitleMatchesBeforeClose": true,
+        "ownerDisabledWhileModal": true,
+        "mainWindowStillPresentAfterCloseRequest": true,
+        "modalStillOpenAfterCloseRequest": true
+      },
+      "nativeEvents": [
+        {"kind": "tauri-directory-admitted", "mode": "main-close", "coreState": "ready"},
+        {"kind": "tauri-directory-main-close", "requested": true}
+      ],
+      "recovery": "Operator Escape cancelled the folder dialog; only then did cleanup and the already requested main-window close complete.",
+      "eventsAfterOperatorEscape": [
+        {"kind": "tauri-directory-result", "status": "cancelled"},
+        {"kind": "tauri-directory-cleanup", "pending": false, "admissionOpen": false, "coreState": "stopped"}
+      ],
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    }
+  ],
+  "requiredReplay": "Correct native cancellation delivery; replay actual visible lock and main-close, plus ordinary selection/cancellation on the corrected candidate. Existing manually pumped unshown-COM tests do not prove Shell modal-loop cancellation.",
+  "scopeLimits": [
+    "Working-source observations, not exact-commit task evidence or independent task disposition.",
+    "Not production packaging, Windows authentication, real-account policy, or W1 qualification.",
+    "Default parent in GUI fixture is substituted. Actual debug/release default resolution and real Core creation require separate proof."
+  ]
+}

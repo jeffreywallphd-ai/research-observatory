@@ -1,0 +1,56 @@
+{
+  "status": "CHANGES_REQUIRED",
+  "task": "W1.A09.T03",
+  "observedDate": "2026-09-05",
+  "candidateCommit": null,
+  "claimBaseCommit": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "method": "Authorized actual-Windows-user Computer Use of the isolated Tauri fixture, with actual Shell dialog and filtered accessibility assertions. No raw account paths or Shell navigation trees are published.",
+  "authenticationInvoked": false,
+  "realUserProjectsAccessed": false,
+  "fixturesRetained": true,
+  "cases": [
+    {
+      "fixture": "artifacts/tmp/directory-dialog-manual-lock-20260905-c05",
+      "result": "FAIL",
+      "binarySha256": "e08aa024e95ddc0a2e8c087a835f87d039421f0665d5ba8b74188b65c75662ca",
+      "pickerSourceSha256": "7a19f5565b21129802d4178bf7a35f61174a4cdbd7ccebbfdd5f886197933581",
+      "cargoManifestSha256": "7ff16fd9932ee59c0d46e77e000b8f036496a8d04598db5971bd23ca5c4d8788",
+      "before": {"actualOwnedModalVisible": true, "parentDisabled": true, "draftVisible": true},
+      "nativeStages": ["cancel-notify-returned:0", "cancel-handler-entered", "cancel-close-returned:0"],
+      "nativeLock": {"succeeded": true, "state": "locked"},
+      "after": {"modalDismissed": false, "fixturePathCleared": false, "projectFormCleared": true},
+      "observation": "The owned Shell dialog remained visible more than 30 seconds after native lock. The renderer cleared the protected form. Operator Escape, not programmatic cancellation, finally returned cancelled and allowed cleanup.",
+      "recovery": "Escape dismissed only the folder dialog; Alt+F4 closed the locked synthetic shell. Unlock was never invoked.",
+      "nativeCleanup": {"pending": false, "coreState": "stopped"},
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    },
+    {
+      "fixture": "artifacts/tmp/directory-dialog-manual-lock-20260905-c06",
+      "result": "NOT_A_LOCK_PROOF",
+      "binarySha256": "9f104a0bd4e99eb0557d4f92319baf2f292a471ae24ffdff65bbfc0b11db2207",
+      "pickerSourceSha256": "7b88c2fea67f01fb9bcfd213c4708eb5bcb0c2209fc9f5246d7f271605b38acb",
+      "reason": "The observer admission deadline elapsed across interruption before the first chooser action. The actual owned modal and draft were observed, but no admitted or lock event occurred. No lock success or product cancellation failure is inferred.",
+      "recovery": "Operator Escape preserved the form and returned focus to Change folder. Alt+F4 then closed the fixture.",
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    },
+    {
+      "fixture": "artifacts/tmp/directory-dialog-manual-lock-20260905-c07",
+      "result": "FAIL",
+      "binarySha256": "9f104a0bd4e99eb0557d4f92319baf2f292a471ae24ffdff65bbfc0b11db2207",
+      "pickerSourceSha256": "7b88c2fea67f01fb9bcfd213c4708eb5bcb0c2209fc9f5246d7f271605b38acb",
+      "cargoManifestSha256": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+      "before": {"keyboardOpened": true, "actualOwnedModalVisible": true, "parentDisabled": true, "draftInDestination": true},
+      "nativeAdmission": {"mode": "manual-lock", "coreState": "ready"},
+      "nativeStages": ["cancel-notify-returned:0", "cancel-handler-entered", "cancel-dialog-window-returned:0", "cancel-close-returned:0", "cancel-modal-wake-returned:0"],
+      "nativeLock": {"succeeded": true, "state": "locked"},
+      "after": {"modalDismissed": false, "lockedViewPresent": true, "draftCleared": true, "projectFormCleared": true, "fixturePathCleared": false},
+      "observation": "Despite successful notification, dialog lookup, Close wrapper and WM_NULL-post stages, a fresh screenshot/accessibility observation still showed the Shell modal and fixture path after native lock. No Show return occurred before operator Escape.",
+      "recovery": "Operator Escape returned HRESULT -2147023673 and cancelled; cleanup reported pending false and Core stopped. The locked view was observed without interacting with authentication; Alt+F4 closed it.",
+      "nativeCleanup": {"pending": false, "admissionOpen": true, "coreState": "stopped"},
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    }
+  ],
+  "diagnosticCaveat": "These candidate traces mapped a successful windows-rs Result<()> to integer zero; they do not preserve the exact nonnegative raw COM HRESULT. They establish wrapper success, not necessarily raw S_OK. The actual visible failures stand regardless.",
+  "requiredReplay": "Resolve actual native cancellation, then replay visible lock, main-close and ordinary selection/cancellation on one corrected source-bound candidate.",
+  "scopeLimits": ["Working-source observations, not commit-bound task approval.", "Fixture policy/vault/WebView/temp/default parent; no production packaging, real policy, authentication or actual-default Core proof."]
+}

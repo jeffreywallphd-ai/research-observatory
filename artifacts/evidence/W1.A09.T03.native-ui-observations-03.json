@@ -1,0 +1,78 @@
+{
+  "status": "PASS_WITHIN_NATIVE_FIXTURE_SCOPE",
+  "task": "W1.A09.T03",
+  "observedDate": "2026-09-05",
+  "candidateCommit": null,
+  "claimBaseCommit": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "buildBinding": "artifacts/evidence/W1.A09.T03.native-ui-build-03.json",
+  "binarySha256BeforeAndAfter": "d099d4987be6e082cad54db82ec3ff605f39fd64a2ea83b9417c001c931ad67b",
+  "pickerSourceSha256BeforeAndAfter": "b93741c0a642badbe419834ac95987918e8a6350d633bddf2407fdb1624cf237",
+  "method": "Authorized Computer Use operated and observed the actual built Tauri renderer/IPC and owned Windows Shell dialogs. Booleans below were evaluated against fresh accessibility trees; visual focus observations are labelled separately. Native event records came from the isolated fixture stdout. Raw Shell navigation/account paths and screenshots are not published.",
+  "fixtureSubstitutions": ["policy-root", "Core-vault", "WebView-data-directory", "Core-temp", "default-project-parent"],
+  "authenticationInvoked": false,
+  "realUserProjectsAccessed": false,
+  "fixturesRetained": true,
+  "priorAdverseRecords": ["W1.A09.T03.native-ui-observations-01.json", "W1.A09.T03.native-ui-observations-02.json"],
+  "cases": [
+    {
+      "fixture": "artifacts/tmp/directory-dialog-manual-lock-20260905-c08",
+      "result": "PASS",
+      "acceptanceBoundary": "AC5/AC6 actual lock while native chooser is pending",
+      "before": {"modalVisible": true, "parentDisabled": true, "draftVisible": true},
+      "visualObservations": ["Tab focused Change folder and Return opened the owned system dialog.", "After automatic lock the dialog disappeared without Escape, Cancel or any other operator intervention."],
+      "nativeEvents": [
+        {"kind": "tauri-directory-admitted", "mode": "manual-lock", "coreState": "ready"},
+        {"stage": "cancel-window-close-posted", "hresult": 0},
+        {"kind": "tauri-directory-manual-lock", "state": "locked", "succeeded": true},
+        {"stage": "show-returned", "hresult": -2147023673},
+        {"kind": "tauri-directory-result", "status": "cancelled"},
+        {"kind": "tauri-directory-cleanup", "pending": false, "admissionOpen": true, "coreState": "stopped"}
+      ],
+      "after": {"modalDismissed": true, "locked": true, "draftCleared": true, "fixturePathCleared": true, "projectFormCleared": true},
+      "operatorCleanup": "Alt+F4 closed only the remaining locked synthetic shell; Unlock was never invoked.",
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    },
+    {
+      "fixture": "artifacts/tmp/directory-dialog-main-close-20260905-c09",
+      "result": "PASS",
+      "acceptanceBoundary": "AC5/AC6 main-window close while native chooser is pending",
+      "before": {"modalVisible": true, "parentDisabled": true},
+      "nativeEvents": [
+        {"kind": "tauri-directory-admitted", "mode": "main-close", "coreState": "ready"},
+        {"kind": "tauri-directory-main-close", "requested": true},
+        {"stage": "cancel-window-close-posted", "hresult": 0},
+        {"stage": "show-returned", "hresult": -2147023673},
+        {"kind": "tauri-directory-result", "status": "cancelled"},
+        {"kind": "tauri-directory-cleanup", "pending": false, "admissionOpen": false, "coreState": "stopped"}
+      ],
+      "after": {"syntheticWindowGoneInFreshWindowInventory": true},
+      "operatorInterventionAfterCloseRequest": false,
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    },
+    {
+      "fixture": "artifacts/tmp/directory-dialog-selection-20260905-c10",
+      "result": "PASS",
+      "acceptanceBoundary": "AC1/AC2/AC3/AC4/AC6 ordinary actual folder selection and cancellation",
+      "visualObservations": [
+        "Default parent was selected before dialog use; entering the friendly name Crème Field Study generated creme-field-study without a directory-name input.",
+        "Tab/Return opened the owned picker; Escape cancelled it, preserving the visible name and default destination and restoring the visible focus ring to Change folder.",
+        "Return from restored focus reopened the actual picker. The operator selected the precreated empty Étude 数据 🧪 folder from the list, without typing a path.",
+        "The separate Open picker used the existing-project purpose title; confirming its folder choice enabled explicit Open but did not open a project."
+      ],
+      "cancelAssertions": {"modalGone": true, "cancelNotice": true, "defaultDestinationPreserved": true, "projectClosed": true},
+      "selectedParentAssertions": {"unicodePreserved": true, "destinationPreserved": true, "projectClosed": true},
+      "openPickerAssertions": {"purposeTitleMatches": true, "parentDisabled": true, "unicodePreserved": true, "explicitOpenEnabled": true, "projectStillClosed": true},
+      "nativeResultSequence": ["cancelled", "selected", "selected"],
+      "projectMutationSubmitted": false,
+      "readOnlyFilesystemCheck": "After app shutdown the verified synthetic parent contained only the one precreated Unicode directory, which was still empty. Neither selection nor cancellation created a project.",
+      "nativeExit": {"pending": false, "admissionOpen": false, "exitCode": 0}
+    }
+  ],
+  "correction": "Queue documented WM_CLOSE to the exact IOleWindow dialog HWND after validating current process and STA ownership. Sticky cancellation and late-result suppression remain authoritative; no private Shell message or offset is shipped.",
+  "source": "https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-close",
+  "scopeLimits": [
+    "Working-source observations require final Git/source binding and independent disposition; this is not task completion.",
+    "No actual credential or production policy action was exercised. Fresh-unlock clearing has separate renderer/native fixture evidence.",
+    "The GUI default parent is substituted. Separate actual default-parent Core creation and production packaging/whole-Wave qualification remain required."
+  ]
+}

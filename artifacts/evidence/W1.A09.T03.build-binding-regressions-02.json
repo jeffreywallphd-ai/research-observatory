@@ -1,0 +1,33 @@
+{
+  "taskId": "W1.A09.T03",
+  "scope": "Working-source build-evidence correction replay. Real product validator; Cargo/PE declared doubles. Actual compilation is separate.",
+  "sourceHashes": {
+    "tests/service/test_native_project_contract.py": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458",
+    "tests/service/test_project_probe_build.py": "be60dc6ef79dbb7b1387f43c6743be6042c1704fcc9fded8a500f9ff371646e5",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf",
+    "tools/ui_conformance.py": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a"
+  },
+  "inputsUnchanged": true,
+  "checks": [
+    {
+      "name": "build-boundary-regressions",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_project_probe_build.py -v",
+      "exitCode": 0,
+      "output": "test_artifact_change_during_compilation_cannot_receive_a_build_record (test_project_probe_build.ProjectProbeBuildBindingTests.test_artifact_change_during_compilation_cannot_receive_a_build_record) ... ok\r\ntest_different_cargo_output_cannot_attest_a_stale_expected_binary (test_project_probe_build.ProjectProbeBuildBindingTests.test_different_cargo_output_cannot_attest_a_stale_expected_binary) ... ok\r\ntest_even_consistently_rebuilt_product_during_compilation_is_rejected (test_project_probe_build.ProjectProbeBuildBindingTests.test_even_consistently_rebuilt_product_during_compilation_is_rejected) ... ok\r\ntest_manifest_swap_during_validation_is_rejected_before_using_its_paths (test_project_probe_build.ProjectProbeBuildBindingTests.test_manifest_swap_during_validation_is_rejected_before_using_its_paths) ... ok\r\ntest_missing_compiler_artifact_cannot_attest_a_stale_binary (test_project_probe_build.ProjectProbeBuildBindingTests.test_missing_compiler_artifact_cannot_attest_a_stale_binary) ... ok\r\ntest_modified_renderer_artifact_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_modified_renderer_artifact_is_rejected_before_compilation) ... ok\r\ntest_source_change_after_validation_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_source_change_after_validation_is_rejected_before_compilation) ... ok\r\ntest_stale_renderer_source_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_stale_renderer_source_is_rejected_before_compilation) ... ok\r\ntest_unlisted_artifact_is_rejected_before_compilation (test_project_probe_build.ProjectProbeBuildBindingTests.test_unlisted_artifact_is_rejected_before_compilation) ... ok\r\ntest_valid_build_binds_exact_renderer_and_artifact_bytes (test_project_probe_build.ProjectProbeBuildBindingTests.test_valid_build_binds_exact_renderer_and_artifact_bytes) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 10 tests in 0.999s\r\n\r\nOK\r\n"
+    },
+    {
+      "name": "build-helper-lint",
+      "command": ".venv/Scripts/python.exe -m ruff check tests/service/test_native_project_contract.py tests/service/test_project_probe_build.py",
+      "exitCode": 0,
+      "output": "All checks passed!\n"
+    }
+  ],
+  "status": "PASS",
+  "priorReportRetained": "artifacts/evidence/W1.A09.T03.build-binding-regressions-01.json",
+  "incrementalAdverseCharacterization": {
+    "tests": 3,
+    "failures": 2,
+    "passing": 1,
+    "detail": "Before executable-event binding: absent compiler-artifact or alternate target output could attest the usual stale file; existing stale-renderer denial still passed."
+  }
+}

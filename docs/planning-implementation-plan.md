@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e77bb13812cb974face72ec886551cae4135ea251a669b5d353298091ac4d2a8
+source_sha256: 6746d99f0fcccf757ad11642b1315f488503f806fc0f669b84c469f9ba396b54
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2077,7 +2077,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T03 - Choose project folders through one protected native dialog
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T02`
 
@@ -2107,7 +2107,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: Owner normal-Windows diagnostic 05 passed actual-default create/reopen/protected-storage/no-overwrite checks; its exact 54-source inventory matches current bytes (report a5a829c6df753a37c3f4413e3090072339daa8eca6c91594d72d882a157de617). Resume criterion closure and independent review without changing Core guards.
 
 ### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
 

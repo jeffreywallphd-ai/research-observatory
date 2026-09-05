@@ -1,0 +1,898 @@
+{
+  "taskId": "W1.A09.T03",
+  "observer": "t03_native_replay",
+  "authority": "Independent advisory verification only; not task or release approval",
+  "testedWorkingTreeBase": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "finalWorkingTreeBase": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "sourceHashesBefore": {
+    "Cargo.lock": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+    "Cargo.toml": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+    "apps/desktop/src-tauri/Cargo.toml": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+    "apps/desktop/src-tauri/build.rs": "7d6cdbc1f57d6524b848d02ade919e0099f603cca94dc9f4ed814b6e0cf0aaa4",
+    "apps/desktop/src-tauri/capabilities/main-window.json": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+    "apps/desktop/src-tauri/src/application_lock.rs": "fd99a3176badd6b5d46473d9d4f25ef44f3ee22e949bbf38ef4c0da08da90680",
+    "apps/desktop/src-tauri/src/application_lock_verification.rs": "ca6baced1ce986e6dd50974836b7aeef678f4b3451f4ce203be749218b8c501c",
+    "apps/desktop/src-tauri/src/application_sign_in_policy.rs": "22b40496d7dba34894df3e0442f6dc0961dd4ce49bbbaa878dae6451a4b76646",
+    "apps/desktop/src-tauri/src/directory_picker.rs": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+    "apps/desktop/src-tauri/src/lib.rs": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+    "apps/desktop/src-tauri/src/main.rs": "3d940b77987a20d6c16497618807acb80ff62ca3abd5f23ce71f50d98bed7656",
+    "apps/desktop/src-tauri/src/supervisor.rs": "bf821bc23c2bc304d399662f6d25c9ef4a7820c7edb4b7a54272fd08b2c8d481",
+    "apps/desktop/src-tauri/src/support_bundle.rs": "c610d8c6437e6b02b7af48e89f77f6e0a895d07cb91fc7ab9fbed43e0a1365b2",
+    "apps/desktop/src-tauri/tauri.conf.json": "e192bd016eaf6339d2309e0c9a75f74968c5ae2bee11d60d226fe8bd18b2a380",
+    "artifacts/evidence/W1.A09.T03.native-replay-01.py": "8eb9c6dca83c7b754d10503fcad55659ee10621743b156c14a487d678295d4b7",
+    "artifacts/evidence/W1.A09.T03.verification-precommit-02.json": "6c4b9c3258b9dfd70c2399b7d3cb5dabefc300fdda9f7171824485b10442fcc1",
+    "rust-toolchain.toml": "d378cc6bc4c46cf85f3bc26a191bcb13a6f9efab78f758b39029555f88dc6e79",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf"
+  },
+  "sourceHashesAfter": {
+    "Cargo.lock": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+    "Cargo.toml": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+    "apps/desktop/src-tauri/Cargo.toml": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+    "apps/desktop/src-tauri/build.rs": "7d6cdbc1f57d6524b848d02ade919e0099f603cca94dc9f4ed814b6e0cf0aaa4",
+    "apps/desktop/src-tauri/capabilities/main-window.json": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+    "apps/desktop/src-tauri/src/application_lock.rs": "fd99a3176badd6b5d46473d9d4f25ef44f3ee22e949bbf38ef4c0da08da90680",
+    "apps/desktop/src-tauri/src/application_lock_verification.rs": "ca6baced1ce986e6dd50974836b7aeef678f4b3451f4ce203be749218b8c501c",
+    "apps/desktop/src-tauri/src/application_sign_in_policy.rs": "22b40496d7dba34894df3e0442f6dc0961dd4ce49bbbaa878dae6451a4b76646",
+    "apps/desktop/src-tauri/src/directory_picker.rs": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+    "apps/desktop/src-tauri/src/lib.rs": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+    "apps/desktop/src-tauri/src/main.rs": "3d940b77987a20d6c16497618807acb80ff62ca3abd5f23ce71f50d98bed7656",
+    "apps/desktop/src-tauri/src/supervisor.rs": "bf821bc23c2bc304d399662f6d25c9ef4a7820c7edb4b7a54272fd08b2c8d481",
+    "apps/desktop/src-tauri/src/support_bundle.rs": "c610d8c6437e6b02b7af48e89f77f6e0a895d07cb91fc7ab9fbed43e0a1365b2",
+    "apps/desktop/src-tauri/tauri.conf.json": "e192bd016eaf6339d2309e0c9a75f74968c5ae2bee11d60d226fe8bd18b2a380",
+    "artifacts/evidence/W1.A09.T03.native-replay-01.py": "8eb9c6dca83c7b754d10503fcad55659ee10621743b156c14a487d678295d4b7",
+    "artifacts/evidence/W1.A09.T03.verification-precommit-02.json": "6c4b9c3258b9dfd70c2399b7d3cb5dabefc300fdda9f7171824485b10442fcc1",
+    "rust-toolchain.toml": "d378cc6bc4c46cf85f3bc26a191bcb13a6f9efab78f758b39029555f88dc6e79",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf"
+  },
+  "inputsUnchanged": true,
+  "startedAt": "2026-09-05T21:27:49.462082+00:00",
+  "completedAt": "2026-09-05T21:28:23.891376+00:00",
+  "checks": [
+    {
+      "name": "picker-production-1",
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "expectedTests": 25,
+      "testSummaries": [
+        {
+          "status": "ok",
+          "passed": 25,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 67
+        }
+      ],
+      "testCases": [
+        {
+          "name": "directory_picker::tests::native_paths_and_requests_reject_c1_controls_before_filesystem_access",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::close_is_single_admission_and_waits_without_holding_worker_locks",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::admission_survives_cancel_and_releases_only_after_worker_cleanup",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::dropping_waiter_does_not_drop_native_reservation_or_result_guard",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::authority_changes_before_work_and_after_selection_discard_paths",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::request_and_outcomes_are_exact_and_path_free_on_non_success",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::poisoned_admission_denies_new_work_but_still_cancels_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::errors_and_worker_panics_release_reservation_without_a_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cleanup_with_process_mta_does_not_retain_explicit_initialization",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_owned_modal_close_dispatch_destroys_only_the_target_window",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::paths_reject_invalid_missing_file_installation_and_redirected_default",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_parent_checks_every_ancestor_and_installation_component_boundary",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_unicode_directory_is_preserved_and_discovery_does_not_provision",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_lock_invalidates_ticket_and_cancels_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_none_mode_manual_lock_is_noop_and_does_not_cancel_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_ticket_recheck_discards_late_path_without_cancel_notification",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::fixture_creation_never_reuses_or_removes_an_existing_candidate",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_dialog_interfaces_retain_the_same_com_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_unshown_close_success_does_not_prove_dialog_dismissal",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_panic_releases_com_window_and_pending_handle",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_replays_cancel_before_hwnd_registration_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cancellation_survives_a_filtered_message_pump",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::real_shell_item_preserves_unicode_identity_for_supported_separators",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_timer_detects_generation_invalidation_without_a_cancel_post",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::reparse_parent_and_ancestor_are_rejected_without_following",
+          "outcome": "ok"
+        }
+      ],
+      "selectionSatisfied": true,
+      "outputSha256": "34f6840507ebaa7b18bf62cd0ab0eb26fa4b245b179da4606dae117db24a8a32",
+      "durationSeconds": 20.704
+    },
+    {
+      "name": "picker-harness-1",
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--features",
+        "integration-harness",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "expectedTests": 25,
+      "testSummaries": [
+        {
+          "status": "ok",
+          "passed": 25,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 73
+        }
+      ],
+      "testCases": [
+        {
+          "name": "directory_picker::tests::dropping_waiter_does_not_drop_native_reservation_or_result_guard",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::admission_survives_cancel_and_releases_only_after_worker_cleanup",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::authority_changes_before_work_and_after_selection_discard_paths",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::close_is_single_admission_and_waits_without_holding_worker_locks",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::native_paths_and_requests_reject_c1_controls_before_filesystem_access",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::fixture_creation_never_reuses_or_removes_an_existing_candidate",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_parent_checks_every_ancestor_and_installation_component_boundary",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::paths_reject_invalid_missing_file_installation_and_redirected_default",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_unicode_directory_is_preserved_and_discovery_does_not_provision",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cleanup_with_process_mta_does_not_retain_explicit_initialization",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::request_and_outcomes_are_exact_and_path_free_on_non_success",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::poisoned_admission_denies_new_work_but_still_cancels_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_owned_modal_close_dispatch_destroys_only_the_target_window",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::errors_and_worker_panics_release_reservation_without_a_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_ticket_recheck_discards_late_path_without_cancel_notification",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_lock_invalidates_ticket_and_cancels_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_dialog_interfaces_retain_the_same_com_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_unshown_close_success_does_not_prove_dialog_dismissal",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_none_mode_manual_lock_is_noop_and_does_not_cancel_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_panic_releases_com_window_and_pending_handle",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_replays_cancel_before_hwnd_registration_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cancellation_survives_a_filtered_message_pump",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::real_shell_item_preserves_unicode_identity_for_supported_separators",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_timer_detects_generation_invalidation_without_a_cancel_post",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::reparse_parent_and_ancestor_are_rejected_without_following",
+          "outcome": "ok"
+        }
+      ],
+      "selectionSatisfied": true,
+      "outputSha256": "05213cb90ab8cf4c1e85b0b4489c41883645ed2c3c6b3aa9ecfc99c6a7793165",
+      "durationSeconds": 0.917
+    },
+    {
+      "name": "picker-production-2",
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "expectedTests": 25,
+      "testSummaries": [
+        {
+          "status": "ok",
+          "passed": 25,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 67
+        }
+      ],
+      "testCases": [
+        {
+          "name": "directory_picker::tests::native_paths_and_requests_reject_c1_controls_before_filesystem_access",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::close_is_single_admission_and_waits_without_holding_worker_locks",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::admission_survives_cancel_and_releases_only_after_worker_cleanup",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::dropping_waiter_does_not_drop_native_reservation_or_result_guard",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::authority_changes_before_work_and_after_selection_discard_paths",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::request_and_outcomes_are_exact_and_path_free_on_non_success",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cleanup_with_process_mta_does_not_retain_explicit_initialization",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_parent_checks_every_ancestor_and_installation_component_boundary",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::paths_reject_invalid_missing_file_installation_and_redirected_default",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_unicode_directory_is_preserved_and_discovery_does_not_provision",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::poisoned_admission_denies_new_work_but_still_cancels_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::errors_and_worker_panics_release_reservation_without_a_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_owned_modal_close_dispatch_destroys_only_the_target_window",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::fixture_creation_never_reuses_or_removes_an_existing_candidate",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_ticket_recheck_discards_late_path_without_cancel_notification",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_lock_invalidates_ticket_and_cancels_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_none_mode_manual_lock_is_noop_and_does_not_cancel_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_dialog_interfaces_retain_the_same_com_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_unshown_close_success_does_not_prove_dialog_dismissal",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_panic_releases_com_window_and_pending_handle",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_replays_cancel_before_hwnd_registration_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cancellation_survives_a_filtered_message_pump",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::real_shell_item_preserves_unicode_identity_for_supported_separators",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_timer_detects_generation_invalidation_without_a_cancel_post",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::reparse_parent_and_ancestor_are_rejected_without_following",
+          "outcome": "ok"
+        }
+      ],
+      "selectionSatisfied": true,
+      "outputSha256": "ba8de78e15680b3b433a994ea9eb03f9b174fde8267f7c6e66b2a58e5cbc23b2",
+      "durationSeconds": 0.673
+    },
+    {
+      "name": "picker-harness-2",
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--features",
+        "integration-harness",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "expectedTests": 25,
+      "testSummaries": [
+        {
+          "status": "ok",
+          "passed": 25,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 73
+        }
+      ],
+      "testCases": [
+        {
+          "name": "directory_picker::tests::native_paths_and_requests_reject_c1_controls_before_filesystem_access",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::close_is_single_admission_and_waits_without_holding_worker_locks",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::authority_changes_before_work_and_after_selection_discard_paths",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::admission_survives_cancel_and_releases_only_after_worker_cleanup",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::dropping_waiter_does_not_drop_native_reservation_or_result_guard",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::poisoned_admission_denies_new_work_but_still_cancels_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::request_and_outcomes_are_exact_and_path_free_on_non_success",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::errors_and_worker_panics_release_reservation_without_a_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cleanup_with_process_mta_does_not_retain_explicit_initialization",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_parent_checks_every_ancestor_and_installation_component_boundary",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_owned_modal_close_dispatch_destroys_only_the_target_window",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::paths_reject_invalid_missing_file_installation_and_redirected_default",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::fixture_creation_never_reuses_or_removes_an_existing_candidate",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_ticket_recheck_discards_late_path_without_cancel_notification",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_unicode_directory_is_preserved_and_discovery_does_not_provision",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_lock_invalidates_ticket_and_cancels_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_none_mode_manual_lock_is_noop_and_does_not_cancel_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_unshown_close_success_does_not_prove_dialog_dismissal",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_dialog_interfaces_retain_the_same_com_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_panic_releases_com_window_and_pending_handle",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_replays_cancel_before_hwnd_registration_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cancellation_survives_a_filtered_message_pump",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::real_shell_item_preserves_unicode_identity_for_supported_separators",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_timer_detects_generation_invalidation_without_a_cancel_post",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::reparse_parent_and_ancestor_are_rejected_without_following",
+          "outcome": "ok"
+        }
+      ],
+      "selectionSatisfied": true,
+      "outputSha256": "683b6f6254c778f7394df7526419ec0bf180dec500dd50c412f549f93ddd23a5",
+      "durationSeconds": 0.687
+    },
+    {
+      "name": "picker-production-3",
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "expectedTests": 25,
+      "testSummaries": [
+        {
+          "status": "ok",
+          "passed": 25,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 67
+        }
+      ],
+      "testCases": [
+        {
+          "name": "directory_picker::tests::native_paths_and_requests_reject_c1_controls_before_filesystem_access",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::close_is_single_admission_and_waits_without_holding_worker_locks",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::dropping_waiter_does_not_drop_native_reservation_or_result_guard",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::authority_changes_before_work_and_after_selection_discard_paths",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::admission_survives_cancel_and_releases_only_after_worker_cleanup",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::poisoned_admission_denies_new_work_but_still_cancels_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::request_and_outcomes_are_exact_and_path_free_on_non_success",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::errors_and_worker_panics_release_reservation_without_a_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cleanup_with_process_mta_does_not_retain_explicit_initialization",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_owned_modal_close_dispatch_destroys_only_the_target_window",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::fixture_creation_never_reuses_or_removes_an_existing_candidate",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_parent_checks_every_ancestor_and_installation_component_boundary",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::paths_reject_invalid_missing_file_installation_and_redirected_default",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_unicode_directory_is_preserved_and_discovery_does_not_provision",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_ticket_recheck_discards_late_path_without_cancel_notification",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_unshown_close_success_does_not_prove_dialog_dismissal",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_none_mode_manual_lock_is_noop_and_does_not_cancel_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_lock_invalidates_ticket_and_cancels_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_dialog_interfaces_retain_the_same_com_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_panic_releases_com_window_and_pending_handle",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_replays_cancel_before_hwnd_registration_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cancellation_survives_a_filtered_message_pump",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::real_shell_item_preserves_unicode_identity_for_supported_separators",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_timer_detects_generation_invalidation_without_a_cancel_post",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::reparse_parent_and_ancestor_are_rejected_without_following",
+          "outcome": "ok"
+        }
+      ],
+      "selectionSatisfied": true,
+      "outputSha256": "1f7408122bac6af790fb5690e627d5429ff310911fd8e66a9d9ff71bfa4fddbd",
+      "durationSeconds": 0.707
+    },
+    {
+      "name": "picker-harness-3",
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--features",
+        "integration-harness",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "expectedTests": 25,
+      "testSummaries": [
+        {
+          "status": "ok",
+          "passed": 25,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered": 73
+        }
+      ],
+      "testCases": [
+        {
+          "name": "directory_picker::tests::native_paths_and_requests_reject_c1_controls_before_filesystem_access",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::close_is_single_admission_and_waits_without_holding_worker_locks",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::dropping_waiter_does_not_drop_native_reservation_or_result_guard",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::admission_survives_cancel_and_releases_only_after_worker_cleanup",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::authority_changes_before_work_and_after_selection_discard_paths",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::poisoned_admission_denies_new_work_but_still_cancels_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cleanup_with_process_mta_does_not_retain_explicit_initialization",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::request_and_outcomes_are_exact_and_path_free_on_non_success",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::errors_and_worker_panics_release_reservation_without_a_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_owned_modal_close_dispatch_destroys_only_the_target_window",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_parent_checks_every_ancestor_and_installation_component_boundary",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::fixture_creation_never_reuses_or_removes_an_existing_candidate",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::paths_reject_invalid_missing_file_installation_and_redirected_default",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::existing_unicode_directory_is_preserved_and_discovery_does_not_provision",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_ticket_recheck_discards_late_path_without_cancel_notification",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_none_mode_manual_lock_is_noop_and_does_not_cancel_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_unshown_close_success_does_not_prove_dialog_dismissal",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_dialog_interfaces_retain_the_same_com_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::actual_protected_lock_invalidates_ticket_and_cancels_pending_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_panic_releases_com_window_and_pending_handle",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_replays_cancel_before_hwnd_registration_and_cleans_up",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_cancellation_survives_a_filtered_message_pump",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::real_shell_item_preserves_unicode_identity_for_supported_separators",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::native::tests::real_sta_timer_detects_generation_invalidation_without_a_cancel_post",
+          "outcome": "ok"
+        },
+        {
+          "name": "directory_picker::tests::reparse_parent_and_ancestor_are_rejected_without_following",
+          "outcome": "ok"
+        }
+      ],
+      "selectionSatisfied": true,
+      "outputSha256": "edb7286ea1268ee0d58f2d5b20f22fb2dfc9d725c17b5349e3766b0c5d6bd238",
+      "durationSeconds": 0.577
+    },
+    {
+      "name": "picker-production-test-lint",
+      "command": [
+        "{pinned-cargo}",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 101,
+      "expectedTests": null,
+      "testSummaries": [],
+      "testCases": [],
+      "selectionSatisfied": true,
+      "outputSha256": "ac4c8629a84be2c1b7286401907244031660acaf88110b06295295786dd12c23",
+      "durationSeconds": 6.398
+    },
+    {
+      "name": "picker-harness-test-lint",
+      "command": [
+        "{pinned-cargo}",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--tests",
+        "--features",
+        "integration-harness",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 101,
+      "expectedTests": null,
+      "testSummaries": [],
+      "testCases": [],
+      "selectionSatisfied": true,
+      "outputSha256": "ac4c8629a84be2c1b7286401907244031660acaf88110b06295295786dd12c23",
+      "durationSeconds": 3.729
+    }
+  ],
+  "temporaryNamespace": "artifacts/tmp/t03-native-replay-jjfbivlp",
+  "scope": "Three repeated production and integration-harness picker subsets, and Clippy for library/test targets. No examples compiled or UI driven.",
+  "assessment": [
+    "The test forces unrelated-message-first ordering using a handshake, then pumps to WM_CLOSE or a bounded watchdog rather than trusting the first message.",
+    "Assertions still require target destruction, preserved sibling HWND, rejected foreign-STA/null requests, owner-STA close dispatch, and observed forced noise.",
+    "Retained verification-precommit-02 remains adverse historical evidence.",
+    "The prior full picker source bytes are not available in this review's inputs; the author's claim that the delta is test-only is not independently byte-proven."
+  ],
+  "notEstablished": [
+    "Visible Shell dismissal, renderer assets, default folder/Core creation, release packaging, or final commit-bound disposition"
+  ],
+  "ok": false
+}
