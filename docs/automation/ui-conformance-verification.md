@@ -14,6 +14,43 @@ and functioning keyboard, focus, dialog, theme, live-region, responsive, and
 accessibility behavior. Missing, redirected, stale, incomplete, or
 reference-contaminated product output fails closed.
 
+## Production style reuse
+
+The production style boundary is checked separately from the immutable reference:
+
+```powershell
+.venv\Scripts\python.exe tools\product_style_check.py --repo .
+```
+
+Keep semantic tokens in the approved canonical source and common content-flow,
+control, card, notice, table, and dialog styling in `packages/ui-components`.
+Application CSS should select page composition rather than repeat those rules.
+The analyzer reports material declaration groups, selector specificity, raw
+geometry, custom-property integrity, physical-direction declarations, and
+renderer styling escape hatches. Duplicate detection compares normalized whole
+declaration blocks, not arbitrary CSS equivalence or every shared subset. Its
+negative tests demonstrate that a passing current stylesheet is not sufficient
+to admit those regressions.
+
+Genuine composition or accessibility exceptions are exact, documented records in
+`verification/product-style-exceptions.json`, subject to independent commit-bound
+review. Missing or stale exceptions fail; the record is not a general permission
+to add raw values or copied style groups. Changing the governed experience still
+requires the design-first approval workflow.
+
+The functional-product check also reports a representative `styleSurfaceMatrix`
+alongside shell geometry. It measures actual rendered cards, forms, controls,
+notices, tables, dialogs, and action rows, including contained scrolling and
+focus behavior. Semantic measurements and interaction contracts govern product
+conformance; reference screenshot hash equality is not a product requirement.
+The normal-text shell geometry is distinct from enlarged-text reflow: a top bar
+may grow to contain wrapped controls. Zoom evidence must measure the actual
+computed text size, then prove post-scale overflow, control operability, and
+dialog focus/scrolling; labeling a requested scale or measuring only before
+scaling is insufficient. Valid long labels must remain readable and operable.
+The complete every-surface matrix and retained visual qualification remain the
+distinct W1.A08.T02 acceptance boundary.
+
 ## Checks
 
 The reference-fixture portion validates exact light/dark semantic-token

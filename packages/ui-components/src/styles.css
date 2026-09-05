@@ -47,14 +47,15 @@
 .ro-table-region { background: var(--surface-1); }
 .ro-table-region table { width: 100%; border-collapse: collapse; }
 .ro-table-region caption { padding: var(--space-3); color: var(--text-muted); text-align: start; }
-.ro-table-region th, .ro-table-region td { min-width: 12rem; padding: var(--space-3); border-block-end: 1px solid var(--border-subtle); text-align: start; vertical-align: top; }
+/* Table-cell height supplies the row minimum while wrapped content can still grow. */
+.ro-table-region th, .ro-table-region td { min-width: 12rem; height: var(--ro-table-row-height, var(--table-row-default)); padding: var(--space-3); border-block-end: 1px solid var(--border-subtle); text-align: start; vertical-align: top; }
 .ro-table-region th { color: var(--text-strong); background: var(--surface-2); }
 .ro-table-region td { font-size: var(--text-sm); }
 .ro-dialog-surface, .ro-dialog { color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); }
 .ro-dialog-surface { width: min(var(--drawer-width), 100%); max-height: calc(100vh - var(--space-10)); overflow: auto; display: grid; gap: var(--space-4); padding: var(--ro-dialog-padding, var(--card-padding-lg)); }
 .ro-action-row { justify-content: flex-start; }
 
-.ro-button { min-height: var(--control-height-md); padding: 0 var(--space-4); border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-strong); background: var(--surface-1); font: 650 var(--text-md) / var(--leading-normal) var(--font-sans); cursor: pointer; }
+.ro-button { max-inline-size: 100%; min-height: var(--control-height-md); padding: 0 var(--space-4); border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-strong); background: var(--surface-1); font: 650 var(--text-md) / var(--leading-normal) var(--font-sans); overflow-wrap: anywhere; cursor: pointer; }
 .ro-button--primary { min-height: var(--control-height-lg); color: var(--text-inverse); background: var(--brand-600); border-color: var(--brand-600); }
 .ro-button--danger { color: var(--danger); background: var(--danger-soft); border-color: var(--danger-border); }
 .ro-button:where(:hover:not(:disabled)) { border-color: var(--brand-400); }
