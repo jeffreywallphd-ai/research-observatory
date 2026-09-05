@@ -1,0 +1,32 @@
+{
+  "documentType": "correction-preparation-checks",
+  "ok": true,
+  "candidateCommit": "1750f2b83f7dc6ff7b7c3438090f5b4bad1986b0",
+  "predecessorCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+  "draftCanonicalSha256": "5ef464f02dc7e9dc902da35e141c88fc42775a1ae770e5f231dfdd3279237975",
+  "sourceBindings": 20,
+  "authorityApprovals": 8,
+  "documents": 2,
+  "checkedLocalLinks": 32,
+  "viewports": [
+    {
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "width": 720,
+      "documentWidth": 720
+    }
+  ],
+  "otherNotesControl": "pass; no save/submit/approval operation",
+  "unexpectedRequests": [],
+  "backlogUnchangedByChecks": true,
+  "executionAuthorityGranted": false,
+  "unmetPrerequisites": [
+    "Implemented, real-Git/CAS tested and independently adopted generic entry/return maintenance",
+    "Exact regenerated proposed1.6 bytes with unchanged semantic1.5 compatibility",
+    "Supported canonical correction packet with exact source/consumer-path inventory",
+    "Independent exact-commit canonical packet/reference review",
+    "Explicit human approval at the exact canonical packet/reference commit"
+  ]
+}
