@@ -1,0 +1,23 @@
+name: Publication privacy (not W1 qualification)
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  publication-privacy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13'
+      - name: Test privacy boundaries
+        run: python -m unittest discover -s tests/publication -p 'test_*.py'
+      - name: Verify complete proposed history without exposing raw findings
+        run: python tools/publication_privacy.py --ref HEAD --policy-sha256 10f8cd52cb61c1464f3e5e335672439ae75b1fcc817c807f9cc59e7b34cfa62b
