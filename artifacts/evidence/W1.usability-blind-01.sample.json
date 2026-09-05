@@ -1,0 +1,43 @@
+{
+  "ok": true,
+  "synthetic": true,
+  "root": "C:\\workspace\\research-observatory\\artifacts\\tmp\\ux-blind-20260905a\\Test-Documents\\sample-library-study",
+  "boundary": "actual Core composition; normal Windows DPAPI and encrypted project DB; no mocks",
+  "project": {
+    "schemaVersion": "1.0",
+    "projectId": "ba739485-8b59-44e7-a6cc-085ea0c669b0",
+    "displayName": "Sample Library Study",
+    "templateId": "rapid-orientation",
+    "lifecycleState": "active",
+    "root": "C:\\workspace\\research-observatory\\artifacts\\tmp\\ux-blind-20260905a\\Test-Documents\\sample-library-study",
+    "open": false,
+    "accessMode": "closed",
+    "compatibilityState": "compatible",
+    "packageFormatVersion": "1.0.0",
+    "backupRequiredBeforeRepair": false,
+    "recoveryAction": "none",
+    "revision": 0,
+    "deleteConfirmation": "delete:ba739485-8b59-44e7-a6cc-085ea0c669b0"
+  },
+  "progress": {
+    "schemaVersion": "1.0",
+    "projectId": "ba739485-8b59-44e7-a6cc-085ea0c669b0",
+    "selectionRevisionId": "01a07177-85a5-7ba7-a51c-e23992790319",
+    "selectionRevisionContentHash": "sha256:7e64b9c995e268805fb403fc436d8a12cad362dca9b860bbc25cfebc715547b5",
+    "intentRevisionId": "01a07177-85a4-72c4-8d8e-c587fbe88ac3",
+    "intentRevisionContentHash": "sha256:e119134dff4f285d927cd389a8d0491d80beffa9272704d94986a2c32d5ce184",
+    "profileId": "rapid-orientation",
+    "profileTitle": "Rapid field orientation",
+    "processForm": "linear",
+    "bootstrapRequired": true,
+    "current": null,
+    "recommendedStageKey": "intent-contract-1",
+    "recommendedPageContractId": "intent-contract.html",
+    "recommendedAction": "Start the guided workflow at this researcher-controlled stage.",
+    "checkpointState": "unknown",
+    "checkpointRationale": "No stage-specific checkpoint authority is declared by governed reference 1.5; execution must not infer completion authority.",
+    "supportingHandoff": null,
+    "staleOutputs": [],
+    "history": []
+  }
+}

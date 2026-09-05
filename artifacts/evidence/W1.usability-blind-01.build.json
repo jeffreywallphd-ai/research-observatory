@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "study": "blind-novice-01",
+  "sourceCommit": "14469b14dd6d5967a65babd86d64d550190854a7",
+  "buildConfiguration": {
+    "nativeProfile": "debug",
+    "tauriConfigOverride": {"identifier": "org.researchobservatory.usability20260905a"},
+    "renderer": "production product-dist, not reference fixture",
+    "core": "fresh normal PyInstaller package, no mocked transport",
+    "applicationState": "new application-data identity, default no-login",
+    "cryptography": "normal same-Windows-user DPAPI and Core profile vault; not OS-user isolation",
+    "testData": "new synthetic projects only"
+  },
+  "artifacts": {
+    "artifacts/tmp/ux-blind-20260905a/runtime/research-observatory-desktop.exe": "723cc24d9ef3669cb9bbb39cd07d12535b788dff6a02bb443c2357fd42e6cd6e",
+    "artifacts/tmp/ux-blind-20260905a/runtime/core-sidecar/research-observatory-core-x86_64-pc-windows-msvc.exe": "0ebd3bc60277e5d23fd7be54007ac64d029131ff1f0e32df457d78b6f9c5af9a",
+    "artifacts/evidence/W1.usability-blind-01.core-build.json": "982d1ef35b6964e7cb579444e4e760cdf7ab4890fa5b6aac5b72a18b9f728203",
+    "artifacts/evidence/W1.usability-blind-01.sample.json": "cba261388414063fa5b06486833e7cc7813a1f8dce58207f25e8d7ea58bf0f43",
+    "apps/desktop/product-dist/application-manifest.json": "b4239e18df53977b540076f9ce03630f236699c534f633c10d84b704b57be82e",
+    "apps/desktop/product-dist/assets/app.js": "0f84d56945c1b79e97af01b5b9ce9bb9fd056408dfb518610ace997e503471ee",
+    "apps/desktop/product-dist/assets/app.css": "6a54d2b8c2c132033693651bb013ad368da973df1eead6fa237d998d5d0e9cc6"
+  },
+  "setupChecks": [
+    "Fresh desktop renderer build passed.",
+    "Locked offline native compilation with test-only application identifier passed.",
+    "Core package passed its existing verifier: 710 files, 47943099 bytes.",
+    "Encrypted synthetic sample created, opened, workflow projection read and closed via actual Core composition.",
+    "Initial alternate sidecar output/report rejected by canonical builder guard; reran supported canonical command, no guard changed.",
+    "Initial sandboxed sample setup denied profile authority; exact elevated retry passed, no plaintext/key-provider substitution."
+  ],
+  "limits": [
+    "Agent simulation, not a human-participant test.",
+    "Source copy represents current pre-correction behavior, not completed W1.",
+    "No task, design, release or Wave approval is asserted.",
+    "No real researcher data, credential prompt, security/privacy setting change, deletion or external send is authorized."
+  ]
+}
