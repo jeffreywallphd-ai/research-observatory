@@ -27180,6 +27180,590 @@
       },
       "adoption_checkpoints": [],
       "page": "enablers/ECR-0007.html"
+    },
+    {
+      "change_request_id": "ECR-0008",
+      "amendment_id": "W1.A09",
+      "target_wave": "W1",
+      "classification": "product-scope-security-experience",
+      "proposal_status": "pending-approval",
+      "proposal_execution_state": "non-executable",
+      "packet_path": "planning/enabler-change-requests/ECR-0008.packet.json",
+      "packet_sha256": "0f9d7c2ff84a0c3c33941ea7c82fd76e1d27e9cbe6aa85b7922ce10a1c6d3c2e",
+      "proposal_path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+      "proposal_sha256": "4b091c89eafebd01fdd926a44ef760d5767052c676841398f76a3dd5a2bca537",
+      "review_path": "planning/enabler-change-requests/ECR-0008.execution-review-01.html",
+      "review_sha256": "ceb61487181e55a06d23f7871f879a42f925608e3a519e8bdaaf0ea19751b236",
+      "approval_path": null,
+      "approval_sha256": null,
+      "approval_status": "PENDING",
+      "lifecycle_status": "NOT_MATERIALIZED",
+      "bootstrap_status": "NOT_SUBMITTED",
+      "campaign_status": "NONE",
+      "bootstrap_attempts": [],
+      "slice_contributions": [
+        {
+          "id": "W1.A09.S01",
+          "capabilityId": "CAP-01",
+          "title": "Native project UX and truthful presentation qualification",
+          "objective": "Restore local project usability and truthful reference qualification while retaining semantic1.5 and returning safely to unfinished styling.",
+          "workType": "mixed-refactor-and-new",
+          "refactorTaskIds": [
+            "W1.A09.T01",
+            "W1.A09.T02",
+            "W1.A09.T03"
+          ],
+          "taskIds": [
+            "W1.A09.T01",
+            "W1.A09.T02",
+            "W1.A09.T03",
+            "W1.A09.T04"
+          ],
+          "acceptanceCriteria": [
+            "All reference, native transport/readiness and shared folder-selection task criteria pass together on actual Windows/native/Core boundaries including failure/denial/cancellation/lock/close/recovery.",
+            "Durable semantic1.5 and prior approvals/evidence remain unchanged; presentation1.6 gets truthful fresh baseline and independent control/experience checkpoint.",
+            "Independent task and slice reviews close assigned findings without weakening tests; F02/UX01 remain for existing A08.T02 after return.",
+            "Independent exit/adoption returns to paused unchanged A08; W1 qualification and human G1 remain separate."
+          ]
+        }
+      ],
+      "authorized_task_ids": [
+        "W1.A09.T01",
+        "W1.A09.T02",
+        "W1.A09.T03",
+        "W1.A09.T04"
+      ],
+      "refactor_budget": {
+        "baseline": {
+          "waveId": "W1",
+          "sourceCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+          "sourcePath": "planning/backlog.yaml",
+          "estimateScale": {
+            "S": 1,
+            "M": 3,
+            "L": 5
+          },
+          "tasks": [
+            {
+              "id": "CAP-01.S01.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S02.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S03.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-01.S03.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-01.S04.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S04.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-01.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S02.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S02.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-02.S03.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-02.S04.T04",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S03.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S04.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S04.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S04.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S05.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-03.S06.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T04",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-03.S06.T05",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-07.S01.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-07.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-07.S01.T03",
+              "estimate": "L",
+              "points": 5
+            }
+          ],
+          "totalPoints": 194
+        },
+        "refactorAllocations": [
+          {
+            "taskId": "W1.A09.T01",
+            "estimate": "M",
+            "points": 3
+          },
+          {
+            "taskId": "W1.A09.T02",
+            "estimate": "M",
+            "points": 3
+          },
+          {
+            "taskId": "W1.A09.T03",
+            "estimate": "L",
+            "points": 5
+          }
+        ],
+        "refactorPoints": 11,
+        "refactorSharePercent": 5.7,
+        "limitPolicy": {
+          "mode": "standard-15-percent",
+          "limitPercent": 15
+        },
+        "refactorTaskIds": [
+          "W1.A09.T01",
+          "W1.A09.T02",
+          "W1.A09.T03"
+        ],
+        "method": "Reuse immutable 48 atomic approved-W1 tasks/194 points at 594e63be, S=1/M=3/L=5. All T01-T03 conservatively refactor:3+3+5=11 (5.67%, rounded5.7). Replace original proposed3, do not add or duplicate A08. T04 new verification; generic M=3 maintenance separately bounded. No major refactor."
+      },
+      "governed_experience": {
+        "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+        "approvalRequired": true,
+        "files": [
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/APPROVAL.yaml",
+            "sha256": "5f36eed9496bdf36f77c0ed7e6ce94111799cd485dae84af6bbf2129db5f0e3d"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/CAPABILITY_COVERAGE.json",
+            "sha256": "c5498fbffa61e89081b112fd94db34e8c9bdb07c110b7c9a6eaf470689a599b2"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/CAPABILITY_COVERAGE.md",
+            "sha256": "82fead8684d2557122e614d6cb74e92d3602dd5348f1eed0c8fd4ea981066319"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/PAGE_INVENTORY.md",
+            "sha256": "df5aaae71693676c473297c8ea37b8119290624e80b9aa98e4d7a56e74dab664"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/PAGE_INVENTORY_SOURCE.md",
+            "sha256": "df5aaae71693676c473297c8ea37b8119290624e80b9aa98e4d7a56e74dab664"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/README.md",
+            "sha256": "10649e576b5d4532823217515ac636f81929c4bf48a49c1a87699999e4ab3e02"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/SITE_MANIFEST.json",
+            "sha256": "be22b1a2aab267d4aa4158a0173b42e41be827fd58ae892be881475df517f7eb"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/STYLE_GUIDE.md",
+            "sha256": "3a028fa0cf2b9f7a327cc87e753d0322e0bcf977d3d1b26b4ecb601da9face06"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/STYLE_GUIDE_SOURCE.md",
+            "sha256": "3a028fa0cf2b9f7a327cc87e753d0322e0bcf977d3d1b26b4ecb601da9face06"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/WORKFLOW_CATALOG.json",
+            "sha256": "77af890f285726b43206958fa3c3eb95b55c84ac349cbf0835860f93e760ca7f"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/WORKFLOW_CATALOG.md",
+            "sha256": "1d2a4fa474b288c4106cdbf89fb27bc3c4be643f37b6cef315c906cfe06b3d7a"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/application-settings.html",
+            "sha256": "cd57ddcf89bc26f3e98e82b4dc0444daf1a6fb5479d8109e7e31a187347fbe86"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/app.css",
+            "sha256": "987d624421c93a3d865fd4e89c2a4f5dad9699f42add758cfed68fd21d7c0b54"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/app.js",
+            "sha256": "14cce9a46a84d4481935bbb7df1dd9b15935b9c04620d1c20517652603532c26"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/print.css",
+            "sha256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/style-reference-academic-minimal.png",
+            "sha256": "559c9be853ff91322d76a39b1dfa15ed6ccdf067d7d0094db52eddc4b907124b"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/tokens.css",
+            "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/audit-lineage.html",
+            "sha256": "0a570d1d7fcd65571d799b2c704c5c1670e526fa13fc295a457603708da9eaf8"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/claim-graph.html",
+            "sha256": "315ba878717f32c014faffeb70b690ce74ebe248bc19733573a0c6e11296721c"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/corpus-canvas.html",
+            "sha256": "be871ab379658ef3c56d0d1d54db18f83b89bb86f024bfda0e5a78090e750606"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/critical-lens.html",
+            "sha256": "2088a333732858db59ea28f112806f4b4951b61ae6079a390f5906e2eca78f50"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/document-reader.html",
+            "sha256": "29f2c7011d4bfec9f4ea10ac3967b88bb3af25323eed505811bf030adde53f42"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/evidence-matrix.html",
+            "sha256": "95ecfe97c3b8effdcd9a75cea72ec6ec095ca68d259054fe17d63d72361a7126"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/help-onboarding.html",
+            "sha256": "a2ecbe5b8dad8ffcb3242cd11cfefe7e63562ee6e41fa7f5c3eaeecae0330984"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/index.html",
+            "sha256": "9ef5950deec0f1c3afd1ad099a0892a615ae39feac9b7b7594cdcf9d85bc146d"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/ingestion-reconciliation.html",
+            "sha256": "02ae8a4263d3921be905388671b4c7b8c3bf55c897ae7ca2353e68fa92d5a5e7"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/intent-contract.html",
+            "sha256": "6ff1e82e2763d1bf6f06e65b3f63c2b7761fc03fdf4f878484a59d90086389e8"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/living-monitor.html",
+            "sha256": "49dc05aa943b65f02cef23a1ef49d92bc9369232ae259604e67da12af33dac35"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/manuscript-blueprint.html",
+            "sha256": "bfff3835b8fe5007990fa1243d5bd952b0e421aa857ee269a428a90030b253e2"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/manuscript-studio.html",
+            "sha256": "a045807fe3b8dae754af63e042cd0e45a893417209c50ad3a781edbd0a009515"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/model-center.html",
+            "sha256": "b794cd3c590b91a85da5d83cdd13b4f5341ddf6524b042edd04ca86cf8ee4e5a"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/new-project.html",
+            "sha256": "ae8ff449b1bb1b92a680757978b977e9eda9e0deb17f419c4bab16ed82786bc3"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/novelty-audit.html",
+            "sha256": "db083b2bfdf2de3375633c2c6361825d0bdd6ce55d1854ea54c823f2f5ea412e"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/opportunity-radar.html",
+            "sha256": "689392ead5a7a595673e3d9a478b37ede41377423bbf61ccb68e56aba5c3e68c"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/parsing-quality.html",
+            "sha256": "93f416548bd12f15fa62d1446ae4d12ab3c68cd31fc0ef64da02cf84335f6d1d"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/project-settings.html",
+            "sha256": "851fee93462043a012c815786a6e4dee013e93518e123333937681a990760402"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/projects.html",
+            "sha256": "4a8c96f2d0e3d0ecc2de559ca18e2bb3fc2efc77279847b0327dbb140f5adbf4"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/prototype-index.html",
+            "sha256": "4b68d818e7f1859ec866222ecd08896b43b9b0b1d73c6b66ec1d37653ef257b4"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/research-notebook.html",
+            "sha256": "d3d0fd3983fadc2efb38b615cdb1901a2ec829db3bbc75a0a7e8892b97e32e32"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/reviewer-simulation.html",
+            "sha256": "ae4dc3932d8af8c03f8fc221b231fb3d82c32394c0f4a9d248ff717410b7a03b"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/revision-response.html",
+            "sha256": "b6838195130a645a70897310ea91ef1f7b36bcb93bf36eb19474970b9c1b8c7a"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/schema-manager.html",
+            "sha256": "dc8ff6fc2e6a7d2c88aa1d590726bff4ab7a68564812ef8faf3fc754089ad3f5"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/screening.html",
+            "sha256": "75d381e2b9c02ba049b6ce1a7419b43b7b8ab0e2709aac26551bd6315e23d734"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/scripts/build_mockups.py",
+            "sha256": "6812b7503d5dde56ba86245d068ee76ea7f2f0d263b4f030918eaea1aed226e7"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/scripts/render_previews.py",
+            "sha256": "230b914bbbb0d345357ecb6f87b068bc7b8886bfb7621762bd4929bbb3b5ddbd"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/scripts/smoke_interactions.py",
+            "sha256": "75ebd3d33665cc887a9d45a22ea0ffcf08c0821b88627209d8087d395e52fa85"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/scripts/verify_site.py",
+            "sha256": "891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/search-studio.html",
+            "sha256": "3f6761f689f2c6a4613df7a8f58cce95ed1eb921baccb126a0611eeee74cf09f"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/source-manager.html",
+            "sha256": "e06a29110fce7b395b91b7e2b6743d9239472af61d914612eb8eae116d45c944"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/study-design.html",
+            "sha256": "ff0fc907ecb3bc10398ccff5bd16640f6b235960ee35b10b5664a490898865b6"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/style-guide.html",
+            "sha256": "2e27d6154e843dd34ca5dafb6305b697e31f474b5b741ca0da097f0d95535214"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/synthesis-studio.html",
+            "sha256": "fea7b7391aca91331b3a6a2fc7903eac0ced061c88442181dd12bdbfafc8c4d5"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/task-center.html",
+            "sha256": "ceda33fc85a9fb0d49800e5c12feb04d93d301955706cfb827083168da521cae"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/technical-reports.html",
+            "sha256": "783685a5bb4b1b738b264ac779044b17b3def5d628d268ad980ebb25b5ea0d8c"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/theory-map.html",
+            "sha256": "0dcecc80e351a71d16207c04e0b0b81b1e4a993766e0c25d98288fae50d73534"
+          },
+          {
+            "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/REFERENCE_MANIFEST.yaml",
+            "sha256": "82de58c7a1ace608a4f29cb6e68f2e43c39efb049d1632ccfa4423857e63e093"
+          }
+        ],
+        "referenceApprovalStatus": "proposed"
+      },
+      "scope_addenda": [],
+      "task_reviews": [],
+      "exit_review": {
+        "amendment_id": "W1.A09",
+        "mode": "latest-completion-only",
+        "latest_completion": {
+          "status": null,
+          "reviewer": null,
+          "reviewed_at": null,
+          "evidence": null,
+          "notes": null
+        },
+        "exit_review_control": null
+      },
+      "adoption_checkpoints": [],
+      "page": "enablers/ECR-0008.html"
     }
   ],
   "governance_recoveries": [
