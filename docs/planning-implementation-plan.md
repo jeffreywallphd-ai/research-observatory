@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7f6f76c87ba992f4a1e27d6058fbd6bf5c1183bc9fdde0ced77095b44787f714
+source_sha256: e77bb13812cb974face72ec886551cae4135ea251a669b5d353298091ac4d2a8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2006,9 +2006,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A09.T02 - Restore exact project contracts and explicit recovery
+### - [x] W1.A09.T02 - Restore exact project contracts and explicit recovery
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `DONE` / codex / agent:/root/t01_publication_checkpoint (`approved`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T01`
 
@@ -2035,9 +2035,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A09.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `6015c4c671b4a031d109130d2105f882ec73221b46272a7ee41752d0e6f2e415`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `6015c4c671b4a031d109130d2105f882ec73221b46272a7ee41752d0e6f2e415`
 
 - Candidate / base / branch: `a6a219ce0ec32bc96b151aad13c19c5646ec8db6` / `cc1d0407e6882b724e628caa136dfe4b9569410c` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-05T14:11:49+00:00`
@@ -2051,15 +2053,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/t01_publication_checkpoint / `2026-09-05T14:21:57+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A09.T02.review-R01.json` / `38126680eb82121f0ccd13bf572060296c9250137bc755403af011a27b602dd0`
+
+**Review notes:** Independent expanded review approves the exact frozen T02 candidate and five acceptance criteria. Exact request admission, narrative handling, authentic readiness and explicit read recovery, current-source compiled native/Core persistence, and the bounded neutral-surface measurement correction are supported by authenticated evidence and independent adversarial replays. Prior failures and disclosed limitations remain visible. This is task disposition only, not A09/A08 adoption, slice or Wave approval, release approval, local-main integration authority, or permission for remote effects.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/t01_publication_checkpoint at `2026-09-05T14:21:57+00:00`
+
+**Latest notes:** Independent expanded review approves the exact frozen T02 candidate and five acceptance criteria. Exact request admission, narrative handling, authentic readiness and explicit read recovery, current-source compiled native/Core persistence, and the bounded neutral-surface measurement correction are supported by authenticated evidence and independent adversarial replays. Prior failures and disclosed limitations remain visible. This is task disposition only, not A09/A08 adoption, slice or Wave approval, release approval, local-main integration authority, or permission for remote effects.
 
 **Currently open findings:** -
 
 ### - [ ] W1.A09.T03 - Choose project folders through one protected native dialog
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T02`
 
