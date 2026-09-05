@@ -27776,7 +27776,7 @@
         {
           "task_id": "W1.A09.T01",
           "title": "Publish approved reference and preserve semantic1.5",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

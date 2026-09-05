@@ -39787,14 +39787,17 @@ wave_amendments:
     - Real disposable persisted1.5 project reopen/history/support-return
     - Independent control checkpoint, affected presentation build/conformance and task review
     packet_task_sha256: 748effda0ce6b1ad1f3c6a1a6691584d21f7125204f5cfc7070093befe7e6552
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-09-05T11:51:21+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 92175839dc92a736a6d5ad0330d13efb382701f1
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-05T11:55:48+00:00'
+      expires_at: '2026-09-05T19:55:48+00:00'
+    started_at: '2026-09-05T11:55:48+00:00'
+    updated_at: '2026-09-05T11:55:48+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
