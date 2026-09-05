@@ -1,0 +1,143 @@
+{
+  "documentType": "independent-inert-ux-addendum-preparation-review",
+  "formatVersion": "1",
+  "reviewId": "ECR-0008-ux-preparation-review-01",
+  "changeRequestId": "ECR-0008",
+  "proposedAmendmentId": "W1.A09",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "reviewerTask": "/root/t01_r02_independent_review",
+  "reviewerKind": "independent-ai-agent",
+  "reviewedAt": "2026-09-05T01:59:18Z",
+  "reviewedCommit": "32442677bc73e6182ef907a653168c72029954e9",
+  "predecessorCommit": "13ae0c941d144e3e2fa23bbb50f74cdaaeddec8d",
+  "disposition": "PREPARATION_ACCEPTED",
+  "executionApproval": false,
+  "canonicalEcrApproval": false,
+  "referenceApproval": false,
+  "taskApproval": false,
+  "sliceApproval": false,
+  "amendmentExitApproval": false,
+  "releaseApproval": false,
+  "scope": "Independent commit-bound preparation review of the five added UX proposal, diagnostic and review artifacts. This disposition assesses truthful diagnosis, bounded proposed scope, preserved authority, acceptance and readiness. It is not an executable ECR packet review, implementation qualification, frozen task review round or workflow transition.",
+  "independence": "The reviewer supplied read-only adversarial diagnosis and boundary advice before this proposal, but did not author the proposal, diagnostic files or implementation. The reviewer independently read the frozen artifacts and replayed their narrow observations; preflight advice is not authorship or execution approval. Only this new preparation disposition is written by the reviewer.",
+  "artifacts": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.ux-addendum-01.md",
+      "gitBlob": "a1e614d3afd97385b79eee0157d2e69d24423bd8",
+      "gitBlobSha256": "694872d27297d3a4f142356a06ce37f75d3142e0c30b290b103102018a775924"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.ux-diagnostic-01.json",
+      "gitBlob": "4bcece4aa6b940b6fe18f331cbe66444f277a16b",
+      "gitBlobSha256": "731613d0ecc2441137a7bfc1566ee5c2385519432bb7c5986a315afc6560efe1"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.ux-review-01.html",
+      "gitBlob": "61e3c0eadc89490cd2b3af5a59a65e798f54eb54",
+      "gitBlobSha256": "9d50dee07adba9c943154ebf5701f0b35c835d6e2e80262f6dd6aae06130855c"
+    },
+    {
+      "path": "artifacts/evidence/W1.user-ux-diagnostic-01.py",
+      "gitBlob": "44a2759d558c84a436a33ae9cb63b79443ebae7c",
+      "gitBlobSha256": "ee19582988785c67a344fb60a0c0cc78b21dd91021c271f57ea829367bfa7c43"
+    },
+    {
+      "path": "artifacts/evidence/W1.project-client-diagnostic-01.mjs",
+      "gitBlob": "9593c346ae8cb18a1fa4f25c1368727efc7db661",
+      "gitBlobSha256": "2cb4186df6c12de72ed1bdef3500583bd4d9fe56a6fbf9fa5e965da4a3c1c73a"
+    }
+  ],
+  "findings": [],
+  "assessment": [
+    "The exact candidate has one parent and adds only the five declared preparation files. Original ECR-0008 proposal, draft, HTML and preparation review remain unchanged. No product, reference, baseline, controller, backlog or approval authority is changed.",
+    "The addendum explicitly incorporates the new owner-requested folder-selection and sidebar outcomes while distinguishing them from the original identity-only proposal. Native request and new directory-selection authority are assigned to the proposed correction, not silently added to A08's immutable styling scope. F02 and the shared sidebar remedy remain in existing A08.T02 after authenticated return.",
+    "The six observations are supported by source inspection or narrow diagnostic replay. Catalog and lineage native omissions are distinct from not-ready behavior. Native setup already starts Core asynchronously when unlocked; the proposal preserves that behavior and addresses Projects' missing wait/recovery rather than falsely claiming Core never starts.",
+    "The compiled-library observation in the frozen diagnostic is accurately labeled as producer-unauthenticated. Neither it nor the browser's synthetic adapter is claimed as current-source native/Core qualification or proof of the owner's installed binary. Subsequent root-reported native rebuild evidence is outside this frozen candidate and is not used to upgrade this review's claims.",
+    "The proposed shared folder control, parent-selection plus derived-child destination, explicit Open/Create actions, cancellation preservation, stable retry identity and no-overwrite behavior are coherent with the requested removal of directory typing. A purpose-specific existing-Windows-dependency adapter retains the renderer's narrow authority and Core's final path/project validation. Real owner-window, accessibility, cancellation, lock/close, stale-result and denial proof remains mandatory before implementation closure.",
+    "Catalog recovery is explicitly separated from mutation retry. Input, native/readiness and Core failures require bounded safe messages; no raw exception fallback, fabricated catalog, implicit service readiness or automatic create/open/archive/delete replay is permitted.",
+    "The new presentation is truthfully no longer identity-only. Exact updated reference bytes and human approval are still prerequisites. Durable workflow-profile 1.5, all fourteen workflows and the original metadata-only semantic compatibility comparison remain binding; any necessary additional semantic JSON change must stop for an explicit versioned decision rather than relax the witness.",
+    "The revised estimate uses the unchanged 48-item, 194-point approved W1 baseline. Conservative refactor allocations are 3+3+5=11 points, or 5.67 percent, replacing the original proposed 3-point numerator. Existing A08 work, slice parents and separately bounded governance maintenance are not double counted. These are preparation estimates, not authority to exceed the eventual packet.",
+    "The review page provides the active Wave and prerequisite/detail links, explains retained defects and unavailable execution approval, offers local-only alternatives including Other, and requests no additional preliminary endorsement. The single-owner correction entry and authenticated return to paused A08 remain prerequisites; ordinary W1 resume and G1 are not authorized."
+  ],
+  "verification": {
+    "riskSelection": "Preparation-only scope warrants exact Git/source/authority binding, proposal-view consistency, diagnostic truth, estimate arithmetic, local links and responsive review behavior. No full profile, product mutation, native service launch or real-project action was necessary. Future task, slice, amendment and Wave qualification remains required as specified in the proposal.",
+    "checks": [
+      {
+        "name": "Exact candidate and artifact authentication",
+        "result": "PASS",
+        "observations": "Resolved the full candidate and sole parent; git diff-tree reports exactly five additions. All five working artifacts match their committed Git blobs. SHA-256 values above were computed from git cat-file blob bytes. Targeted predecessor-to-candidate comparison confirms no changes to existing authority, original preparation, product, reference, contract or controller paths."
+      },
+      {
+        "name": "Preparation binding and browser-behavior replay",
+        "result": "PASS",
+        "command": "Run artifacts/tmp/check-w1-ux-addendum.py through runpy with only playwright.sync_api.Page.screenshot patched to return empty bytes, avoiding writes to the existing screenshots.",
+        "observations": "Authenticated 15 source bindings and unchanged original preparation, checked 14 local links, no page errors or non-file requests, Other fields enable/require then disable correctly, document widths equal 1440 and 720, and backlog bytes remain unchanged. Screenshot persistence was intentionally not replayed. Existing root-produced 1440x900 and 720x450 screenshots were separately inspected with view_image and are readable without horizontal clipping."
+      },
+      {
+        "name": "Built-product sidebar diagnosis replay",
+        "result": "PASS",
+        "command": ".venv/Scripts/python.exe artifacts/evidence/W1.user-ux-diagnostic-01.py",
+        "observations": "At unchanged product inputs, reproduced 120.984375 px gap at 1440x900 and 284.984375 px at 1280x720; in-memory max-height removal yields zero for both. The 720x450 stacked geometry and 720 px document width are unchanged. This is a synthetic offline diagnosis, not an applied fix or native qualification."
+      },
+      {
+        "name": "Generated-client no-I/O diagnosis replay",
+        "result": "PASS",
+        "command": "C:/Users/redacted-user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe artifacts/evidence/W1.project-client-diagnostic-01.mjs",
+        "observations": "Single-line objective reaches the sentinel transport exactly once; a two-line objective rejects with RO-CORE-REQUEST-INVALID and zero transport calls. Catalog request is GET /workflow-profiles/catalog with null body, ifMatch and idempotencyKey."
+      },
+      {
+        "name": "Current product-build/source validation",
+        "result": "PASS",
+        "command": ".venv/Scripts/python.exe -c \"import sys; from pathlib import Path; sys.path.insert(0,'tools'); from desktop_app_check import product_build_errors; print(product_build_errors(Path.cwd()))\"",
+        "observations": "Returned an empty error list. This authenticates the functional renderer build used for the sidebar diagnosis, not the historical native library."
+      },
+      {
+        "name": "Baseline estimate and stopped-state authentication",
+        "result": "PASS",
+        "observations": "Recomputed all 48 unique atomic baseline estimates against backlog bytes from approved W1 commit 594e63be501711d67d17a4aef176bb9b6a8748be; total 194, revised allocation 11, share 5.67 percent. Current W1 campaign is PAUSED at amendment-hold, A08 lifecycle/campaign are PAUSED and lease-free, A08.T02 and CAP-07.S01.T02 are BLOCKED and lease-free, and G1 is PENDING."
+      }
+    ]
+  },
+  "retainedOpenFindings": [
+    {
+      "id": "W1.A08.T02-preflight-F01",
+      "severity": "P1",
+      "status": "OPEN",
+      "resolutionBoundary": "Exact lawfully approved successor reference and truthful fresh baseline; preparation cannot close the inherited stale-baseline finding."
+    },
+    {
+      "id": "W1.A08.T02-preflight-F02",
+      "severity": "P2",
+      "status": "OPEN",
+      "resolutionBoundary": "Existing A08.T02 shared-flow remedy and actual effective-child-spacing proof after authenticated return."
+    },
+    { "id": "UX01", "status": "OPEN", "resolutionBoundary": "Existing A08.T02 shared sidebar geometry correction and qualification after return." },
+    { "id": "UX02", "status": "OPEN", "resolutionBoundary": "Exact approved directory-selection experience and bounded native implementation in the proposed correction." },
+    { "id": "UX03", "status": "OPEN", "resolutionBoundary": "Exact catalog-route native parity and real generated-client/native/Core proof." },
+    { "id": "UX04", "status": "OPEN", "resolutionBoundary": "Generated narrative-validator correction and cross-layer parity proof." },
+    { "id": "UX05", "status": "OPEN", "resolutionBoundary": "Authentic startup/readiness and explicit read-only catalog recovery with no mutation replay." },
+    { "id": "UX06", "status": "OPEN", "resolutionBoundary": "Exact lineage-route native parity, denied substitutions and real current-source boundary proof." }
+  ],
+  "readiness": {
+    "preparationComplete": true,
+    "executionReady": false,
+    "canonicalPacketReady": false,
+    "referenceCandidateApproved": false,
+    "taskOrAmendmentComplete": false,
+    "waveExitReady": false,
+    "unmetPrerequisites": [
+      "Independently reviewed generic paused-predecessor entry and return support, without expanding product authority.",
+      "Exact regenerated successor reference candidate and preserved semantic1.5 compatibility witness; any additional semantic delta requires its own explicit versioned decision.",
+      "Revised canonical packet with exact paths, tasks, dependencies, authority and selected verification, independently reviewed at its immutable commit.",
+      "Exact-commit human approval of the successor reference and executable correction packet before product/reference activation."
+    ],
+    "nextAction": "Continue the already selected bounded maintenance and prepare the revised exact packet. Do not seek another preliminary endorsement or treat this disposition as execution, reference, task, amendment-exit or G1 approval."
+  },
+  "safety": {
+    "productOrWorkflowMutations": false,
+    "nativeCoreStartedByReview": false,
+    "realProjectAccess": false,
+    "protectedWitnessAccess": false,
+    "historicalEvidenceRewritten": false
+  }
+}

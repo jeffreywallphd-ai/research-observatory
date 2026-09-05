@@ -1,0 +1,74 @@
+{
+  "documentType": "fresh-build-read-only-native-route-diagnostic",
+  "formatVersion": "1",
+  "producerCommit": "32442677bc73e6182ef907a653168c72029954e9",
+  "sourceParent": "13ae0c941d144e3e2fa23bbb50f74cdaaeddec8d",
+  "classification": "diagnosis-only; no remediation qualification or execution approval",
+  "build": {
+    "command": "cargo build --locked --offline -p research-observatory-desktop --lib",
+    "exitCode": 0,
+    "rustc": "rustc 1.96.1 (31fca3adb 2026-06-26)",
+    "cargo": "cargo 1.96.1 (356927216 2026-06-26)",
+    "package": "research-observatory-desktop",
+    "packageVersion": "0.1.0",
+    "profile": "dev",
+    "library": "target/debug/deps/libresearch_observatory_desktop_lib.rlib",
+    "librarySha256": "581e8f8fe2098e713f976472c45ef204edba7520fb2687738c3d96de13ffd3a0"
+  },
+  "probe": {
+    "source": "artifacts/evidence/W1.native-project-route-diagnostic-01.rs",
+    "command": "rustc --edition=2024 --crate-name w1_native_route_diagnostic artifacts/evidence/W1.native-project-route-diagnostic-01.rs --extern research_observatory_desktop_lib=target/debug/deps/libresearch_observatory_desktop_lib.rlib -L dependency=target/debug/deps -L native=C:/Users/redacted-user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/windows_x86_64_msvc-0.52.6/lib -o target/debug/w1_native_route_diagnostic.exe",
+    "execute": "target/debug/w1_native_route_diagnostic.exe",
+    "compileExitCode": 0,
+    "runExitCode": 0,
+    "configuration": "RuntimeSupervisor::new(Err(\"DIAGNOSTIC_NO_CORE_CONFIGURATION\"))",
+    "observations": [
+      {
+        "method": "GET",
+        "path": "/healthz",
+        "result": "RO-CORE-API-UNAVAILABLE"
+      },
+      {
+        "method": "GET",
+        "path": "/runtime/version",
+        "result": "RO-CORE-API-UNAVAILABLE"
+      },
+      {
+        "method": "GET",
+        "path": "/workflow-profiles/catalog",
+        "result": "RO-CORE-API-REQUEST-INVALID"
+      },
+      {
+        "method": "POST",
+        "path": "/projects/open",
+        "result": "RO-CORE-API-UNAVAILABLE"
+      },
+      {
+        "method": "POST",
+        "path": "/projects/provenance/lineage",
+        "result": "RO-CORE-API-REQUEST-INVALID"
+      }
+    ]
+  },
+  "interpretation": "Both omitted routes are rejected before readiness in a freshly built current-source native library. Allowed controls reach the unavailable-runtime boundary. This is not a running-service, installed-application or repaired-project end-to-end result.",
+  "safety": {
+    "coreStarted": false,
+    "projectDataAccessed": false,
+    "networkRequested": false,
+    "productSourceChanged": false,
+    "backlogChanged": false,
+    "baselineChanged": false,
+    "referenceChanged": false
+  },
+  "retainedHistory": "The earlier existing-library observation in ECR-0008.ux-diagnostic-01.json remains unchanged and explicitly unauthenticated; this new evidence is append-only.",
+  "stillOpen": [
+    "F01",
+    "F02",
+    "UX01",
+    "UX02",
+    "UX03",
+    "UX04",
+    "UX05",
+    "UX06"
+  ]
+}
