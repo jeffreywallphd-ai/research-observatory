@@ -66,6 +66,8 @@
     "tests/desktop/test_desktop_performance_check.py",
     "tests/contracts/test_foundation_contracts.py",
     "tests/security/test_install_trivy.py",
-    "tests/security/test_security_check.py"
+    "tests/security/test_security_check.py",
+    "tools/publication_privacy.py",
+    "tests/publication/test_publication_privacy.py"
   ]
 }
