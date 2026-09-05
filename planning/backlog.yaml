@@ -40118,7 +40118,7 @@ wave_amendments:
     - Real Windows/native/disposable Core integration and lock/restart replay
     - Affected Rust/TS/Python type/lint/build and independent contract/security review
     packet_task_sha256: a1596d263e86b30101e25c81876693113073724d6e3df086bda319cf0c95debc
-    status: IN_PROGRESS
+    status: REVIEW
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: cc1d0407e6882b724e628caa136dfe4b9569410c
@@ -40128,17 +40128,110 @@ wave_amendments:
       claimed_at: '2026-09-05T13:33:11+00:00'
       expires_at: '2026-09-05T21:33:11+00:00'
     started_at: '2026-09-05T13:33:11+00:00'
-    updated_at: '2026-09-05T13:33:11+00:00'
+    updated_at: '2026-09-05T14:11:49+00:00'
     completed_at: null
     blocker: null
-    implementation_notes: ''
-    evidence: []
-    verification_state: null
+    implementation_notes: Exact native project contract and readiness recovery qualification; retained adverse evidence and
+      independent review pending.
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A09.T02.json
+      sha256: 22af4093b462a8f3d97642b36b5a3714f5fa9adc3d0982294a9e2ae3445b08a1
+      commit: a6a219ce0ec32bc96b151aad13c19c5646ec8db6
+      recorded_at: '2026-09-05T14:11:49+00:00'
+    verification_state: passed
     review:
       reviewer: null
       result: null
       reviewed_at: null
       notes: null
+    review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-09-05T14:11:49+00:00'
+        candidate_commit: a6a219ce0ec32bc96b151aad13c19c5646ec8db6
+        base_commit: cc1d0407e6882b724e628caa136dfe4b9569410c
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: criterion-manifest
+          path: artifacts/evidence/W1.A09.T02.json
+          sha256: 22af4093b462a8f3d97642b36b5a3714f5fa9adc3d0982294a9e2ae3445b08a1
+          commit: a6a219ce0ec32bc96b151aad13c19c5646ec8db6
+          recorded_at: '2026-09-05T14:11:49+00:00'
+        acceptance_criteria_sha256: 136deddfc0aa9058b8ba86014ca3d8421e5c16950c80d3a6526a995aed956f2e
+        changed_paths:
+        - apps/desktop/src-tauri/examples/project_contract_probe.rs
+        - apps/desktop/src-tauri/src/supervisor.rs
+        - apps/desktop/src/app/LocalServiceBoundary.tsx
+        - apps/desktop/src/app/ProjectsWorkspace.tsx
+        - artifacts/evidence/W1.A09.T02.invariants-01.json
+        - artifacts/evidence/W1.A09.T02.native-check-01.mjs
+        - artifacts/evidence/W1.A09.T02.product-frame-01.json
+        - artifacts/evidence/W1.A09.T02.task-start.md
+        - artifacts/evidence/W1.A09.T02.verification-01.json
+        - artifacts/evidence/W1.A09.T02.verification-02.json
+        - artifacts/evidence/W1.A09.T02.verification-03.json
+        - artifacts/evidence/W1.A09.T02.verify-01.py
+        - artifacts/evidence/W1.usability-blind-01.follow-up-01.md
+        - docs/planning-implementation-plan.md
+        - packages/contracts/core-api/generated.test.ts
+        - packages/contracts/core-api/generated.ts
+        - planning/backlog.yaml
+        - planning/review-site/enablers/ECR-0008.html
+        - planning/review-site/manifest.json
+        - planning/status-summary.md
+        - tests/desktop/test_desktop_app_check.py
+        - tests/service/test_native_project_contract.py
+        - tools/core_api_contract.py
+        - tools/desktop_app_check.py
+        selected_checks:
+        - .venv/Scripts/python.exe artifacts/evidence/W1.A09.T02.verify-01.py --report artifacts/evidence/W1.A09.T02.verification-02.json
+        - .venv/Scripts/python.exe -m unittest discover -s tests/desktop -p test_desktop_app_check.py -k ProjectRecoveryInteractionTests
+          -v; scoped Ruff; exact previous-input and incremental Git comparison
+        - .venv/Scripts/python.exe -m unittest discover -s tests/service -p test_native_project_contract.py -v (invoked by
+          the exact verifier)
+        - Pinned desktop lint, typecheck and production/reference build; affected generator mypy with MYPYPATH and --follow-imports=silent;
+          tools/backlog_views.py --repo . --check; tools/plan_review_site.py --repo .
+        - Exact git ls-tree comparison at claim base and tested commit for Core source, OpenAPI/schemas, semantic workflow
+          sources, native startup/unlock/generation owners, UI reference and baseline trees
+        deferred_checks:
+        - 'T03: shared native folder chooser, preselected default existing project parent in dev/production, stable destination,
+          cancellation/focus/lock/close and no-overwrite; not implemented or closed here.'
+        - 'T04: real packaged Tauri IPC/window/native dialog/no-fallback qualification and accumulated integration/security/performance/accessibility/recovery.
+          The integration-harness supervisor proof is not that platform/UI qualification.'
+        - 'Returned A08: full-height sidebar and effective paragraph spacing. Existing broad all-target Clippy application_lock
+          test-helper warnings and native fixture PID-reuse isolation remain qualification follow-up; production Clippy and
+          isolated native library tests pass.'
+        - 'Full Core typing remains W1 qualification: manual whole-import mypy exposed preexisting selective_recalculation.py:834
+          unused-ignore/attr-defined diagnostics; scoped generator typing is passing without changing ignores or Core source.'
+        - Usability U01-U04 need integrated closure/fresh no-context retest; U05 comparison completeness is a retained W1
+          acceptance/experience defect and U06 is a retained clarity/design issue. Neither is silently closed or deferred
+          by T02; follow-up-01 records ownership and lawful handling.
+        - Complete repository/Windows W1 matrix, independent slice/amendment/Wave review and G1 approval remain due. No local-main
+          integration of unmet A08 ancestry, remote push or release is authorized by this evidence.
+        selection_rationale: T02 changes public/cross-process request admission, narrative validation, readiness/retry orchestration
+          and canonical native executable path spelling. Risks are overbroad routes/headers/body coercion, stale or fabricated
+          catalog, automatic duplicate mutations, late protected state, weakened startup paths and stale compiled evidence.
+          The selected native/TS/browser/security checks and real protected Core persistence prove these boundaries. The reused
+          success panel exposed an existing neutral-surface measurement defect; a bounded generic evidence correction selects
+          semantic neutral/untoned visible surfaces, preserving all theme equality, geometry, focus and motion assertions
+          and retaining the adverse report. Independent review covers that evidence-control delta. No full repository/deployment
+          profile was invoked.
+        selection_sha256: 31d0ded164b32ae52ef944ab4939484e150a329dba504b983b6a03e402e0a279
+        prior_attempt_id: null
+        open_finding_ids: []
+        root_cause_analysis: null
+        selected_command_ids:
+        - contracts:unit
+        - desktop:unit
+        - desktop:application
+        - service:unit
+        - security-local:unit
+        - foundation:backlog-views
+        packet_sha256: 6015c4c671b4a031d109130d2105f882ec73221b46272a7ee41752d0e6f2e415
   - id: W1.A09.T03
     amendment_id: W1.A09
     title: Choose project folders through one protected native dialog
