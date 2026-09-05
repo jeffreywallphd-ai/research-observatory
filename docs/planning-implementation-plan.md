@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 62f2e972ad05992ea3e5531912cc53896d764c9cda892e3d654a15cfbcd5575b
+source_sha256: cca5f32081e96114d0bf2ab48b842d7bd7b2d2acca4607a5b50d2de573da457d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1875,7 +1875,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A08.T02 - Qualify live-product styling conformance
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A08.B00`, `W1.A08.T01`
 
