@@ -7,9 +7,19 @@ stage state, and explicit profile migration.
 Run `node generate.mjs` after changing the schema, a runtime template, or the
 governed source catalogs. Run `node generate.mjs --check` to prove the committed
 catalog fixtures plus TypeScript and Python decoders are current. Generation
-fails unless `design/ui-reference/WORKFLOW_CATALOG.json` remains the exact
+fails unless `source/academic-minimal-1.5/WORKFLOW_CATALOG.json` remains the exact
 approved `RO-UI-ACADEMIC-MINIMAL-1.5` input and all fourteen profile identities
 remain present in governed order.
+
+The repository-owned catalog/page-contract snapshots retain their original
+approval provenance in `SOURCE_AUTHORITY.json`. Fixed hashes in the generator,
+not replaceable hashes learned from that record, determine valid inputs.
+Generation and runtime need no Git or active presentation directory. Academic
+Minimal 1.6 changes presentation only: the exact-package
+`presentation-compatibility.json` witness and conformance checks permit only
+root reference ID/version substitutions. The independent control checkpoint
+binds that witness before presentation consumers change. Semantic catalog,
+selection, intent and navigation identities remain 1.5; no migration occurs.
 
 The contract is intentionally separate from executor-neutral workflow history.
 A profile describes the primary scholarly path and supporting-tool return

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "referenceVersion": "1.5",
+  "approvalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
+  "sourceRoot": "design/ui-reference",
+  "sourceSha256": {
+    "WORKFLOW_CATALOG.json": "2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+    "CAPABILITY_COVERAGE.json": "d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d"
+  }
+}
