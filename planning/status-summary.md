@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 7c773850f7d695add38f13dfb5dd39be33eff8bc45e8bebbde16fe16ba3fd614
+source_sha256: fc4e2bb8fe1c6b35e841c0081df73159c56e9b6f4e6c7d1a4cc95be2a76d5b7d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,8 +70,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 3 |
-| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 10 |
 
 ## Wave authority and append-only amendments
@@ -572,6 +572,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A06.T01` | `append-only v1` | 1 | `-` | approved / ecr5-planning-authority-reviewer | - |
 | `W1.A07.T01` | `append-only v1` | 1 | `-` | approved / ecr6-planning-authority-reviewer | - |
 | `W1.A08.T01` | `append-only v1` | 2 | `-` | approved / agent:t01-r02-independent-reviewer | - |
+| `W1.A09.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -637,4 +638,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
 | `W1.A08.T02` Qualify live-product styling conformance | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A09.T01` Publish approved reference and preserve semantic1.5 | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A09.T01` Publish approved reference and preserve semantic1.5 | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
