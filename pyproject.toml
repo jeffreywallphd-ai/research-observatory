@@ -33,6 +33,10 @@ package = false
 line-length = 120
 target-version = "py314"
 
+[tool.ruff.per-file-target-version]
+"tools/publication_privacy.py" = "py313"
+"tests/publication/test_publication_privacy.py" = "py313"
+
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 
