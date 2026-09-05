@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -54,6 +55,14 @@ class NativeProjectContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.environment, _, cargo = tool_environment(REPO)
+        native_inputs = subprocess.check_output([
+            "git", "ls-files", "--", "Cargo.toml", "Cargo.lock", "apps/desktop/src-tauri",
+        ], cwd=REPO, text=True, encoding="utf-8").splitlines()
+
+        def hashes() -> dict[str, str]:
+            return {name: hashlib.sha256((REPO / name).read_bytes()).hexdigest() for name in native_inputs}
+
+        before = hashes()
         build = subprocess.run(
             [str(cargo), "build", "--locked", "-p", "research-observatory-desktop", "--features",
              "integration-harness", "--example", "project_contract_probe"],
@@ -61,6 +70,9 @@ class NativeProjectContractTests(unittest.TestCase):
         )
         if build.returncode:
             raise AssertionError(build.stderr)
+        if before != hashes():
+            raise AssertionError("Native inputs changed while Cargo was building the probe.")
+        cls.environment = {**cls.environment, "RO_PROJECT_PROBE_BUILD_INPUTS": json.dumps(before)}
 
     def test_packaged_path_spelling_does_not_admit_redirected_executable(self) -> None:
         import _winapi
@@ -129,6 +141,24 @@ class NativeProjectContractTests(unittest.TestCase):
         self.assertTrue(report["outcomes"]["restartPreservedIntentWorkflowAndLineage"])
         self.assertTrue(report["outcomes"]["readRetryCreatedNothing"])
         print(json.dumps(report, sort_keys=True))
+
+    def test_probe_rejects_missing_or_substituted_build_binding_before_launch(self) -> None:
+        fixture_parent = REPO / "artifacts/tmp"
+        before = {path.name for path in fixture_parent.glob("project-native-contract-*")}
+        substituted = json.loads(self.environment["RO_PROJECT_PROBE_BUILD_INPUTS"])
+        substituted["apps/desktop/src-tauri/src/supervisor.rs"] = "0" * 64
+        for binding in ("null", json.dumps(substituted)):
+            with self.subTest(binding="missing" if binding == "null" else "substituted"):
+                result = subprocess.run(
+                    [str(REPO / ".local/toolchains/node-v24.19.0-win-x64/node.exe"),
+                     str(REPO / "artifacts/evidence/W1.A09.T02.native-check-01.mjs")],
+                    cwd=REPO, env={**self.environment, "RO_PROJECT_PROBE_BUILD_INPUTS": binding},
+                    capture_output=True, text=True, encoding="utf-8", timeout=45,
+                )
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn("native input hashes must match the successful Cargo build interval", result.stderr)
+                self.assertEqual("", result.stdout)
+        self.assertEqual(before, {path.name for path in fixture_parent.glob("project-native-contract-*")})
 
 
 if __name__ == "__main__":
