@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 30bbe36d71ba46273356f0924f9b595c0f3850a30154516ffa0b270b5c6154dd
+source_sha256: 41b8e7e20eab452f793bb676f174050cec529924986951a375dfe6a81ea19a72
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -48,7 +48,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` |
-| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `MATERIALIZED` |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ACTIVE` |
 
 ## Waves
 
@@ -1913,12 +1913,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A09.json` (`08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c`)
 
-**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-05T03:15:45Z` by repository-owner: Record and bind the repository owner's existing explicit preapproval: 'You have preapproval for the project-UX/reference correct gate. Continue past that. Only seek approval for W1 passing.' The owner authorized continuation for the disclosed combined project-UX/reference correction before this exact binding; this record does not claim that the owner personally reviewed the later commit. Independent R02 accepted the matching bounded descendant, closing both R01 findings. Authorize only ECR-0008 at 2160cc9917282d80848189dc9669fe3827979246, its exact proposed Academic Minimal 1.6 package and enumerated activation metadata mapping, bootstrap W1.A09.B00, contribution W1.A09.S01 and tasks W1.A09.T01-T04. Native project contract/readiness repair, shared protected native folder selection, truthful fresh baseline and semantic1.5 preservation must satisfy their exact criteria. Preserve paused A08 and return to it only through independently reviewed correctionReturn; ordinary W1 resume remains after A08 adoption. This approval is not implementation completion, independent task/slice/exit review, G1/W1 passing, W2 authorization, remote/destructive action, spend or broader security authority. The timestamp records this exact binding of the standing owner authorization.
 - `E02` `MATERIALIZED` at `2026-09-05T11:48:05+00:00` by codex: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-09-05T11:51:21+00:00` by codex: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W1.A09
 
@@ -1938,7 +1939,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T01 - Publish approved reference and preserve semantic1.5
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A09.B00`
 

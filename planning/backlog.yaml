@@ -34042,7 +34042,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: null
+  active_amendment: W1.A09
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -39696,7 +39696,7 @@ wave_amendments:
     sha256: 08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c
     introduction_commit: fcf627b4c83af81d0c3472526477bc7aa68d819c
   lifecycle:
-    status: MATERIALIZED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -39718,6 +39718,11 @@ wave_amendments:
       actor: codex
       at: '2026-09-05T11:48:05+00:00'
       rationale: Materialized the exact human-approved task inventory.
+    - id: E03
+      status: ACTIVE
+      actor: codex
+      at: '2026-09-05T11:51:21+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W1.A09.B00
     status: APPROVED
@@ -39739,7 +39744,22 @@ wave_amendments:
         82488fbd: full predecessor/A08 equality, exact owner authority, pending-child freeze, materialization denial and generated-site
         checks pass; no findings. This approves only B00, not product/reference activation, task/slice/exit completion or
         G1.'
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave-amendment
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    worktree: C:/workspace/research-observatory
+    base_sha: cde2bb378d90433bfb1ca4f4ab17718931716800
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-09-05T11:51:21+00:00'
+    updated_at: '2026-09-05T11:51:21+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-05T11:51:21+00:00'
+      expires_at: '2026-09-06T11:51:21+00:00'
   tasks:
   - id: W1.A09.T01
     amendment_id: W1.A09
@@ -39767,14 +39787,14 @@ wave_amendments:
     - Real disposable persisted1.5 project reopen/history/support-return
     - Independent control checkpoint, affected presentation build/conformance and task review
     packet_task_sha256: 748effda0ce6b1ad1f3c6a1a6691584d21f7125204f5cfc7070093befe7e6552
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-09-05T11:51:21+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
