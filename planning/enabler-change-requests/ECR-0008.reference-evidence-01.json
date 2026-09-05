@@ -1,0 +1,1065 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "inert-reference-preparation-evidence",
+  "changeRequestId": "ECR-0008",
+  "referenceCandidateCommit": "5401df8eddc1b84a79047ef91d9ad3b207fea41d",
+  "candidateRoot": "planning/enabler-change-requests/ECR-0008.reference-1.6",
+  "referencePackageSha256": "75b37134ad348afda7b3701bb6f0d8704105263a4c8fb9beb43515b0473f8eb0",
+  "approval": false,
+  "applicationQualification": false,
+  "replay": {
+    "command": ".venv/Scripts/python.exe artifacts/evidence/ECR-0008.reference-preparation-check-01.py",
+    "processLoadedAfterCandidateCommit": true,
+    "exitCode": 0,
+    "okForPreparation": true,
+    "errors": [],
+    "runtime": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "playwright": "1.58.0",
+      "browser": "145.0.7632.6"
+    }
+  },
+  "integrity": {
+    "generatorReproducible": true,
+    "governedFiles": 55,
+    "htmlDocuments": 35,
+    "productPages": 33,
+    "workflowProfiles": 14,
+    "expectedUnapprovedGates": [
+      "reference is not approved: status='proposed'",
+      "manifest is not approved: status='proposed'"
+    ]
+  },
+  "semanticComparisons": [
+    {
+      "path": "WORKFLOW_CATALOG.json",
+      "onlyRootIdentityAndVersionChanged": true
+    },
+    {
+      "path": "CAPABILITY_COVERAGE.json",
+      "onlyRootIdentityAndVersionChanged": true
+    },
+    {
+      "path": "SITE_MANIFEST.json",
+      "onlyRootIdentityAndVersionChanged": true
+    }
+  ],
+  "routeStructure": {
+    "schemaVersion": "1.0",
+    "documentType": "desktop-ui-conformance-report",
+    "check": "routes",
+    "ok": true,
+    "mode": "inert-proposal-preview",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePackageSha256": "75b37134ad348afda7b3701bb6f0d8704105263a4c8fb9beb43515b0473f8eb0",
+    "normativeSources": {
+      "tokens": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/tokens.css",
+      "style": "planning/enabler-change-requests/ECR-0008.reference-1.6/STYLE_GUIDE.md",
+      "routes": "planning/enabler-change-requests/ECR-0008.reference-1.6/SITE_MANIFEST.json",
+      "workflows": "planning/enabler-change-requests/ECR-0008.reference-1.6/WORKFLOW_CATALOG.json",
+      "pages": "planning/enabler-change-requests/ECR-0008.reference-1.6/CAPABILITY_COVERAGE.json",
+      "approval": "planning/enabler-change-requests/ECR-0008.reference-1.6/APPROVAL.yaml"
+    },
+    "illustrativeExclusions": [
+      "mock names",
+      "studies",
+      "sources",
+      "providers",
+      "counts",
+      "dates",
+      "prose",
+      "chart values",
+      "nonfunctional actions"
+    ],
+    "details": {
+      "routes": 33,
+      "uniqueRouteIds": 33,
+      "requiredRegionContracts": 547,
+      "commonRequiredRegions": [
+        "application top bar",
+        "ordered guided-workflow navigation",
+        "page title and purpose",
+        "primary-use-case selector",
+        "project home access",
+        "secondary all-tools inventory",
+        "theme toggle",
+        "trust/provenance footer",
+        "workflow context with previous/next or return action"
+      ]
+    },
+    "errors": []
+  },
+  "proposedVisualObservations": {
+    "application-settings.html::dark": {
+      "page": "application-settings.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "c5942a938bd2f5fc6a537a4426e87b228b94e2dbcbcd97c5b8b392c0af27b676"
+    },
+    "application-settings.html::light": {
+      "page": "application-settings.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2f656d434bf485c4f15ca7129e5a4595348a43e766452bc9a7d287f05e530194"
+    },
+    "audit-lineage.html::dark": {
+      "page": "audit-lineage.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "87484d023003c7669a177d79903699c2524ff2aa7ea50e6be199fe7fb7a70b4c"
+    },
+    "audit-lineage.html::light": {
+      "page": "audit-lineage.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "016e03260dab4dfb45980811af5ff3b2fac32da2763f8140cdd756244bf51b89"
+    },
+    "claim-graph.html::dark": {
+      "page": "claim-graph.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "baa951182a77232552a9737518bd7a9a921d3387462963d062c2c8cf9677a307"
+    },
+    "claim-graph.html::light": {
+      "page": "claim-graph.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "f6bbeb98ad3ac3a1b670e75d43a3ee3a6ec3ed1a10ec6d90c5789d9a86416793"
+    },
+    "corpus-canvas.html::dark": {
+      "page": "corpus-canvas.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "e14fb31b5d765db920bf9133a58d2be8343ec2929305b7488b825c7936ddcbd1"
+    },
+    "corpus-canvas.html::light": {
+      "page": "corpus-canvas.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2b936ca0d37205a97ff6d03e4f866e103066b634ea340ce908c2f6549ce28c26"
+    },
+    "critical-lens.html::dark": {
+      "page": "critical-lens.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "e1f95fc373d82b0b4f88bca780daeade2bfefe08acf57b67533fa21b18353c12"
+    },
+    "critical-lens.html::light": {
+      "page": "critical-lens.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "e999d6bdfee7bfe608d5a333c835ed30625d471682dd2f04ac49bc82097ff59d"
+    },
+    "document-reader.html::dark": {
+      "page": "document-reader.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "4986ac8be8c5ff6ebed2b30db51236d00acd5375f47e0e301ae126e491ab3a7e"
+    },
+    "document-reader.html::light": {
+      "page": "document-reader.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "f4b16cc579c2c8657e52a755d991651be6fffa175d37f60b8228c6d65d591da5"
+    },
+    "evidence-matrix.html::dark": {
+      "page": "evidence-matrix.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2c71395e9991840eb26f464246c126c682d1e1ed797b34c7ee47363b8e75cfdb"
+    },
+    "evidence-matrix.html::light": {
+      "page": "evidence-matrix.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "5df123cca614cd23cc7cd3f44e5962794c6475e5435af4c56df65c38b48e9978"
+    },
+    "help-onboarding.html::dark": {
+      "page": "help-onboarding.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8ba82d4b21726d188b9ceb202704a50e02cd1fe73c6576a311f6b0d0b8de4c8a"
+    },
+    "help-onboarding.html::light": {
+      "page": "help-onboarding.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "fde378f5fbd521c97ad3829ce7761d4065ab11a271d78a79e62df04344e53e17"
+    },
+    "index.html::dark": {
+      "page": "index.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "52668dfc5ccd72e84fbd64597e42e23dfdb8482050bd76b6baf572c99fa679f2"
+    },
+    "index.html::light": {
+      "page": "index.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "0574df161dd0b1c66053e0ddfe7105645aa08a0642e9eadd147ea1e522942f57"
+    },
+    "ingestion-reconciliation.html::dark": {
+      "page": "ingestion-reconciliation.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "3da020e13b051ade400e163f108e79812967b134c4c3b93f5613887698fbdadd"
+    },
+    "ingestion-reconciliation.html::light": {
+      "page": "ingestion-reconciliation.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "50b1b0ecaee16b80003a2a25be42c434f2a4de5591d364701cebffda47a08140"
+    },
+    "intent-contract.html::dark": {
+      "page": "intent-contract.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a9fe04879c9a7403d906fed4b57abe2635920fef7c1c030aa8091a3b21da8656"
+    },
+    "intent-contract.html::light": {
+      "page": "intent-contract.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "ed215ffd56db32a2a1fa215aa61aace1a4bf2d74a7b601ed59778c3cbb92abd4"
+    },
+    "living-monitor.html::dark": {
+      "page": "living-monitor.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a77694c69422b4e1f595351a79672609a5c98fae57d3336fe117d919b274c02a"
+    },
+    "living-monitor.html::light": {
+      "page": "living-monitor.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "da9f49c129013359f3c57c44a2aba6e5e604023afd6d9a2fb5e6788e64a5578b"
+    },
+    "manuscript-blueprint.html::dark": {
+      "page": "manuscript-blueprint.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "fc3f78286ee9dc2730687b550e5f64c1138d816aa9fd86438e350a9a5982f446"
+    },
+    "manuscript-blueprint.html::light": {
+      "page": "manuscript-blueprint.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "936d6713c45ad7252e8f8d6f0acb37e3dbc99fb990943e412f48357687147406"
+    },
+    "manuscript-studio.html::dark": {
+      "page": "manuscript-studio.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2cd6c1339b50eb58ada5589258bdc8e6d2a807ab76f1e8408d45f510835ba1cd"
+    },
+    "manuscript-studio.html::light": {
+      "page": "manuscript-studio.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "1b1defc0f9b3057d175f00d2516fb0c6b2d8f2ab0fe8e0cce69d851e626c9b4a"
+    },
+    "model-center.html::dark": {
+      "page": "model-center.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "bb52fc7419ce104b5490d4301b50c995262d34a86330abbec7a8a21e38764f2a"
+    },
+    "model-center.html::light": {
+      "page": "model-center.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "2c3ca9794037c29f6e7c3d860a4cb1bcc2e5ca66d30a039f0af4e2246ad5eb88"
+    },
+    "new-project.html::dark": {
+      "page": "new-project.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "879472103224e176aa304cc705bc2edaed63a9385f90ffde8b91d6697b3b0725"
+    },
+    "new-project.html::light": {
+      "page": "new-project.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "f40a1642ada8844263ed028783b9cb9715db83d7101ba562a4ad0e67ca7313fa"
+    },
+    "novelty-audit.html::dark": {
+      "page": "novelty-audit.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "aec1e45af4f6925478f3464e8160db30347d90e8c981da1db3b9b0b5d0ca0fb8"
+    },
+    "novelty-audit.html::light": {
+      "page": "novelty-audit.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "1285fa6da8847a496a7efa2b76fadb20205e9ab6c02c592733b840f107fb0e15"
+    },
+    "opportunity-radar.html::dark": {
+      "page": "opportunity-radar.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "dc3ea1ba0c47e1f3722826337ce79785977a5f1c3df970246fce2bb62c37b4e3"
+    },
+    "opportunity-radar.html::light": {
+      "page": "opportunity-radar.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "d243012425755691237d6d450ae2352bdea7de067ca16296ca58b55b93a3a487"
+    },
+    "parsing-quality.html::dark": {
+      "page": "parsing-quality.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "5a2ee174343c513377c5af970fef01e5ef373082591c591ca2e0e2215900465a"
+    },
+    "parsing-quality.html::light": {
+      "page": "parsing-quality.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "ab1168fcf23030a399e9d57ef047326052ee0f8c9b5439fa978574c2c6a54f36"
+    },
+    "project-settings.html::dark": {
+      "page": "project-settings.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "10b1f9ce6b36ff4e12f5948bc61c2413a155e822c267a3e14d6960b3e8979d78"
+    },
+    "project-settings.html::light": {
+      "page": "project-settings.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "479bda64fc07c205f8b598d044b4d7698e708de1fe649379c6e5195982f13d50"
+    },
+    "projects.html::dark": {
+      "page": "projects.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "88fda6e70f1e10c5cfe4c737c794db68f595fd1f58f83ee420c615a0e1e659ad"
+    },
+    "projects.html::light": {
+      "page": "projects.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "04a99ea92d9d375d1cf701dc6d15032e8543384ee597a4b643f1f89c2503b024"
+    },
+    "research-notebook.html::dark": {
+      "page": "research-notebook.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "f4d4b614492d4fe49056d3ea96adf113991294218635d458cd72916736b6ec63"
+    },
+    "research-notebook.html::light": {
+      "page": "research-notebook.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "b08ea6720805a76164a947e790f0657494008b0c1a827e257332fbd3f61182f7"
+    },
+    "reviewer-simulation.html::dark": {
+      "page": "reviewer-simulation.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "906f370a862af211e77426837fbb6235c0447f1004fea2ad89811a8619b3e314"
+    },
+    "reviewer-simulation.html::light": {
+      "page": "reviewer-simulation.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "4b1332d48fa983796f684bcc2afb6ca975e68a5481e4ebcc9de928271f8897a1"
+    },
+    "revision-response.html::dark": {
+      "page": "revision-response.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "eebda24c1afd40e3d8f1a8051ec922f959d0707d3f1099a104f0c4a1538f15fa"
+    },
+    "revision-response.html::light": {
+      "page": "revision-response.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "f9edca380180296e73a882bcecb7d7ba85e6fc95529c17bc66c8c9d431f7cca1"
+    },
+    "schema-manager.html::dark": {
+      "page": "schema-manager.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "ac5c3cb5d4e5349850881c43ef4eca32a328f70f70196112f3dd9553291edd8c"
+    },
+    "schema-manager.html::light": {
+      "page": "schema-manager.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "b8da557f749633b008ddefac06ef2d1be38861bc95f7cc48d8ed6ab16da08eeb"
+    },
+    "screening.html::dark": {
+      "page": "screening.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "b540b991c9ef521ddaff8d38949420ebfa5568b1f29f3d9b18b4623b35400511"
+    },
+    "screening.html::light": {
+      "page": "screening.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "c9cc5d68eed2b188e6a5af8ae9273e8f01b5d851850a49ed5f51964a4ae4ae8d"
+    },
+    "search-studio.html::dark": {
+      "page": "search-studio.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "42ed239bc4aafd3ab621eb3864a3155b1ad7f555b8b87debfd13aa105e75ff8a"
+    },
+    "search-studio.html::light": {
+      "page": "search-studio.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a9e19cae21d2d577f21c0942b5898398bfac284a05851d1840cdccbf3a1c3885"
+    },
+    "source-manager.html::dark": {
+      "page": "source-manager.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "025d8227baa55e82c0bfc7daf7d5f11c57371057e18a509641a99e1e008079d5"
+    },
+    "source-manager.html::light": {
+      "page": "source-manager.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "53cd42a099c1ca52ccbff7959c1804019aad472f1b091889fe47499b2f545d84"
+    },
+    "study-design.html::dark": {
+      "page": "study-design.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "b5d2108e0a1eaa00f7160e7f0a7b0715ac81a24cffb9895af5bfe34fea562207"
+    },
+    "study-design.html::light": {
+      "page": "study-design.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "08791f786ad34c592a0b8c2fc0881711bed0abb6a7d4e6cbe2739ae795dda81e"
+    },
+    "synthesis-studio.html::dark": {
+      "page": "synthesis-studio.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "965eb2f2fcb5605e6bed8b76b70efbe43f3fe8f83b89bb7c4f19fc24691fe338"
+    },
+    "synthesis-studio.html::light": {
+      "page": "synthesis-studio.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "7ff5ca2eeb753701aa041eef0b1baf044dc8e4e3eb68df74c3c667534013684d"
+    },
+    "task-center.html::dark": {
+      "page": "task-center.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "3bbf6a8c21aca87a48288c76cf7fc38df44ad930cb964c8e488def760e735691"
+    },
+    "task-center.html::light": {
+      "page": "task-center.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "70efa1c7312e87c04e2ea34005986450d71906f52d30567ecff4f9c03124fccf"
+    },
+    "technical-reports.html::dark": {
+      "page": "technical-reports.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "50b2d95776358b35e9bdaae7aeb1e6ee97d72c572885a519ee15f9b7b8fa9c87"
+    },
+    "technical-reports.html::light": {
+      "page": "technical-reports.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "c9c93583fdf191234abcec3ab0438a6cc15f9376988c97861fbb741339b6b828"
+    },
+    "theory-map.html::dark": {
+      "page": "theory-map.html",
+      "theme": "dark",
+      "width": 1440,
+      "height": 900,
+      "sha256": "0d224551afe2aa57ad617a0d573d978047404de0dee67383e16c1e9d9e4a3457"
+    },
+    "theory-map.html::light": {
+      "page": "theory-map.html",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "sha256": "5f1690e821cbea9dbd9f3218fccb81837e00d0ef894159f30e13d403d764fbf1"
+    }
+  },
+  "interactionCases": [
+    {
+      "page": "projects.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 1100,
+        "client": 1100,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1440,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "new-project.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 716,
+        "client": 716,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1440,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 1100,
+        "client": 1100,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1440,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "projects.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 1100,
+        "client": 1100,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1440,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "new-project.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 716,
+        "client": 716,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1440,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 1100,
+        "client": 1100,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1440,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "projects.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 980,
+        "client": 980,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1280,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "new-project.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 596,
+        "client": 596,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1280,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 980,
+        "client": 980,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1280,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "projects.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 980,
+        "client": 980,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1280,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "new-project.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 596,
+        "client": 596,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1280,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 980,
+        "client": 980,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1280,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "projects.html",
+      "theme": "light",
+      "viewport": {
+        "width": 720,
+        "height": 450
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 952,
+        "client": 952,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1100,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "new-project.html",
+      "theme": "light",
+      "viewport": {
+        "width": 720,
+        "height": 450
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 952,
+        "client": 952,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1100,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "light",
+      "viewport": {
+        "width": 720,
+        "height": 450
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 952,
+        "client": 952,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1100,
+      "visibleFocusStyle": {
+        "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "projects.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 720,
+        "height": 450
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 952,
+        "client": 952,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1100,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "new-project.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 720,
+        "height": 450
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 952,
+        "client": 952,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1100,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 720,
+        "height": 450
+      },
+      "mockClickPreservedSelection": true,
+      "pathEntryAbsent": true,
+      "longPath": {
+        "scroll": 952,
+        "client": 952,
+        "wrap": "anywhere",
+        "select": "text"
+      },
+      "pageWidthBeforeLongPath": 1100,
+      "visibleFocusStyle": {
+        "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px",
+        "outline": "none"
+      },
+      "keyboardDisclosures": 2
+    }
+  ],
+  "retainedScreenshots": [
+    {
+      "page": "projects.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/projects-1440x900-light.png",
+      "sha256": "04a99ea92d9d375d1cf701dc6d15032e8543384ee597a4b643f1f89c2503b024"
+    },
+    {
+      "page": "new-project.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/new-project-1440x900-light.png",
+      "sha256": "f40a1642ada8844263ed028783b9cb9715db83d7101ba562a4ad0e67ca7313fa"
+    },
+    {
+      "page": "new-project.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "state": "examples-expanded-with-in-memory-long-path-stress",
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/new-project-states-light.png",
+      "sha256": "ef48a177c0370586ecfaa946775345a4ed7da835c62a9656e8e514f7b94afef4"
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/style-guide-1440x900-light.png",
+      "sha256": "4cbc56dbdcc5791c5e0fe61b3c03ea5407326012d5ebde6aa5d2d377db97b8de"
+    },
+    {
+      "page": "projects.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/projects-1440x900-dark.png",
+      "sha256": "88fda6e70f1e10c5cfe4c737c794db68f595fd1f58f83ee420c615a0e1e659ad"
+    },
+    {
+      "page": "new-project.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/new-project-1440x900-dark.png",
+      "sha256": "879472103224e176aa304cc705bc2edaed63a9385f90ffde8b91d6697b3b0725"
+    },
+    {
+      "page": "new-project.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "state": "examples-expanded-with-in-memory-long-path-stress",
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/new-project-states-dark.png",
+      "sha256": "13122e743111d8e41ec5a1bc03ca82c4018dd4b2b32218d06c65842cb6f10b15"
+    },
+    {
+      "page": "style-guide.html",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "planning/enabler-change-requests/ECR-0008.reference-previews-01/style-guide-1440x900-dark.png",
+      "sha256": "ee52866c32f07901152a30a3e5646884222454de2160ebd37b6e5c36348448f6"
+    }
+  ],
+  "otherScreenshots": {
+    "count": 16,
+    "location": "artifacts/tmp/ecr8-reference16-preview-01",
+    "retention": "Reproducible temporary diagnostics, not authority."
+  },
+  "limitations": [
+    "Static reference buttons demonstrate intent only, not native/Core execution.",
+    "The inherited reference shell has a 1100px minimum width. These previews do not qualify the product at 200% scaling.",
+    "No approved baseline is written. Fresh baseline generation and actual product/native qualification require later approved execution."
+  ],
+  "visualInspection": {
+    "observer": "agent:root",
+    "result": "Inspected light/dark create/open, disabled action and expanded state samples. Shared folder labels/help/buttons/read-only wrapping paths remain coherent. Inherited narrow reference overflow is disclosed; product scaling is not claimed."
+  },
+  "sourceScope": "Only the inert reference copy and diagnostic helper changed in candidate. Active product/reference, baseline, workflow payloads, live backlog and prior evidence remain unchanged.",
+  "whitespace": "git diff --check reports 56 inherited two-space Markdown hard-break lines in the copied WORKFLOW_CATALOG.md. Retained intentionally to preserve the original source formatting; this check is not claimed clean.",
+  "independentReview": "Source preflight reported no material finding; exact canonical-packet/reference acceptance is still pending.",
+  "retainedOpenFindings": [
+    "F01",
+    "F02",
+    "UX01",
+    "UX02",
+    "UX03",
+    "UX04",
+    "UX05",
+    "UX06"
+  ]
+}
