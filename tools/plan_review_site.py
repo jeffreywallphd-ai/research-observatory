@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from planctl import _bound_repository_file_errors
+from planctl import _git_blob, governed_experience_binding
 
 try:
     import mistune  # type: ignore[import-not-found]
@@ -686,26 +686,35 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
         governed_experience_files: list[dict[str, Any]] = []
         reference_approval_status = "not-bound"
         governed_file_inventory = governed_experience.get("files") or []
-        governed_file_errors = _bound_repository_file_errors(
-            repo,
-            governed_file_inventory,
-            label=f"{change_id} governed experience",
-        )
+        experience_binding, governed_file_errors = governed_experience_binding(repo, packet)
         if governed_file_errors:
             raise ValueError(governed_file_errors[0])
         for item in governed_file_inventory:
             relative = str(item.get("path") or "")
-            source = repository_file(repo, relative, label=f"{change_id} governed experience")
             expected = str(item.get("sha256") or "").lower()
-            governed_experience_files.append({"path": relative, "sha256": expected})
+            bound_file = {"path": relative, "sha256": expected}
+            historical = bool(experience_binding) and relative.startswith("design/ui-reference/")
+            source = (
+                repo / relative
+                if historical
+                else repository_file(repo, relative, label=f"{change_id} governed experience")
+            )
+            if historical:
+                bound_file["sourceCommit"] = experience_binding["packetCommit"]
+            governed_experience_files.append(bound_file)
             if source.name == "APPROVAL.yaml":
-                approval_record = yaml.safe_load(source.read_text(encoding="utf-8"))
+                source_bytes = (
+                    _git_blob(repo, experience_binding["packetCommit"], relative) if historical else source.read_bytes()
+                )
+                approval_record = yaml.safe_load(source_bytes or b"")
                 if isinstance(approval_record, dict) and approval_record.get("reference_id") == governed_experience.get(
                     "referenceId"
                 ):
                     reference_approval_status = str(approval_record.get("status") or "unknown").lower()
         governed_experience["files"] = governed_experience_files
         governed_experience["referenceApprovalStatus"] = reference_approval_status
+        if experience_binding:
+            governed_experience["sourceBinding"] = experience_binding
 
         packet_relative = packet_path.relative_to(repo).as_posix()
         packet_hash = sha256(packet_path)
@@ -912,6 +921,38 @@ def load_recovery_holds(repo: Path, backlog: dict[str, Any]) -> list[dict[str, A
             }
         )
     return records
+
+
+def governed_experience_html(repo: Path, experience: dict[str, Any]) -> tuple[str, str]:
+    """Keep historical hashes off mutable links and distinguish publication from adoption."""
+    rows = "".join(
+        (
+            f"<li><code>{esc(item.get('sourceCommit'))}:{esc(item.get('path'))}</code>"
+            f" — <code>{esc(item.get('sha256'))}</code> (immutable Git source)</li>"
+            if item.get("sourceCommit")
+            else f'<li><a href="{esc((repo / str(item.get("path"))).resolve().as_uri())}">'
+            f"{esc(item.get('path'))}</a> — <code>{esc(item.get('sha256'))}</code></li>"
+        )
+        for item in experience.get("files", [])
+    )
+    summary = (
+        f"Reference <code>{esc(experience.get('referenceId'))}</code> is already human-approved. "
+        "Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve "
+        "a new reference or authorize bootstrap materialization of reference approval."
+        if experience.get("referenceApprovalStatus") == "approved"
+        else f"Reference <code>{esc(experience.get('referenceId'))}</code> requires human approval: "
+        f"{esc(experience.get('approvalRequired'))}. Approval reserves the reference; bootstrap must "
+        "materialize its canonical approval before renderer implementation."
+    )
+    if experience.get("sourceBinding"):
+        binding = experience["sourceBinding"]
+        summary += (
+            f" Historical binding at <code>{esc(binding['packetCommit'])}</code>. "
+            f"The current published reference is <code>{esc(binding['currentReferenceId'])}</code>; "
+            "publication does not retroactively change this packet's authority. "
+            "Any effective-reference change still requires the successor amendment's qualified adoption."
+        )
+    return summary, rows
 
 
 def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
@@ -1365,20 +1406,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             else f"Standard refactor limit: {esc(refactor_policy.get('limitPercent'))}%"
         )
         governed_experience = record.get("governed_experience") or {}
-        governed_experience_rows = "".join(
-            f'<li><a href="{esc((repo / str(item.get("path"))).resolve().as_uri())}">'
-            f"{esc(item.get('path'))}</a> — <code>{esc(item.get('sha256'))}</code></li>"
-            for item in governed_experience.get("files", [])
-        )
-        governed_experience_summary = (
-            f"Reference <code>{esc(governed_experience.get('referenceId'))}</code> is already human-approved. "
-            "Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve "
-            "a new reference or authorize bootstrap materialization of reference approval."
-            if governed_experience.get("referenceApprovalStatus") == "approved"
-            else f"Reference <code>{esc(governed_experience.get('referenceId'))}</code> requires human approval: "
-            f"{esc(governed_experience.get('approvalRequired'))}. Approval reserves the reference; bootstrap must "
-            "materialize its canonical approval before renderer implementation."
-        )
+        governed_experience_summary, governed_experience_rows = governed_experience_html(repo, governed_experience)
         task_count = len(record["task_inventory"])
         task_completion = (
             "completion and independent approval of the one task"

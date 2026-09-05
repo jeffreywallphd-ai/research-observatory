@@ -2062,7 +2062,7 @@ def independently_rejected_maintenance_baseline_snapshot(
             "--",
             "planning/governance-migrations",
         ).splitlines()
-        matches = []
+        matches: list[dict[str, Any]] = []
         for record_path in inventory:
             if not re.fullmatch(r"planning/governance-migrations/GOV-MAINT-[0-9]{4}\.json", record_path):
                 continue

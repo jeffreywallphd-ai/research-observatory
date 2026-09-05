@@ -32,6 +32,199 @@ from planctl import (  # noqa: E402
 
 
 class PlanctlAmendmentTests(unittest.TestCase):
+    def test_historical_experience_requires_authentic_clean_successor(self) -> None:
+        """Real retained authority plus a disposable, explicitly synthetic publication."""
+        import planctl
+        from ui_reference_check import canonical_payload
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "--quiet",
+                    "--shared",
+                    "--no-checkout",
+                    str(REPO),
+                    str(root),
+                ],
+                check=True,
+            )
+            predecessor = "63d916a56359742a863241c7521d1b7703f24bc7"
+            subprocess.run(["git", "update-ref", "--no-deref", "HEAD", predecessor], cwd=root, check=True)
+            subprocess.run(["git", "read-tree", "HEAD"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "restore", "--source=HEAD", "--", ".gitattributes", "planning", "design/ui-reference"],
+                cwd=root,
+                check=True,
+            )
+            for key, value in (
+                ("user.name", "Historical Reference Fixture"),
+                ("user.email", "fixture@example.invalid"),
+            ):
+                subprocess.run(["git", "config", key, value], cwd=root, check=True)
+            packet = json.loads((root / "planning/enabler-change-requests/ECR-0007.packet.json").read_bytes())
+            successor_packet = json.loads((root / "planning/enabler-change-requests/ECR-0008.packet.json").read_bytes())
+            # Only exact packet-declared files are restored; never enumerate evidence.
+            for item in successor_packet["files"]:
+                relative = item["path"]
+                self.assertNotEqual("artifacts/evidence/W1.A04.B00.json", relative)
+                subprocess.run(["git", "restore", "--source=HEAD", "--", relative], cwd=root, check=True)
+            reference = root / "design/ui-reference"
+            proposal = root / "planning/enabler-change-requests/ECR-0008.reference-1.6"
+            manifest = yaml.safe_load((proposal / "REFERENCE_MANIFEST.yaml").read_bytes())
+            for relative in [*manifest["governed_files"], "REFERENCE_MANIFEST.yaml"]:
+                shutil.copyfile(proposal / relative, reference / relative)
+            record_path = "planning/wave-amendment-approvals/W1.A09.json"
+            record_bytes = (root / record_path).read_bytes()
+            record = json.loads(record_bytes)
+            approval = yaml.safe_load((reference / "APPROVAL.yaml").read_bytes())
+            approval.update(
+                status="approved",
+                approval_kind="human",
+                approved_by=f"human:{record['approvedBy']}",
+                approved_at=record["approvedAt"],
+            )
+            approval["authority"].update(
+                approval_record_sha256=hashlib.sha256(record_bytes).hexdigest(),
+                approval_record_introduction_commit=_approval_introduction_commit(root, record_path),
+            )
+            (reference / "APPROVAL.yaml").write_text(yaml.safe_dump(approval, sort_keys=False), encoding="utf-8")
+            manifest["status"] = "approved"
+            manifest["file_hashes"] = {
+                name: hashlib.sha256(canonical_payload(name, (reference / name).read_bytes())).hexdigest()
+                for name in manifest["governed_files"]
+            }
+            (reference / "REFERENCE_MANIFEST.yaml").write_text(
+                yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8"
+            )
+            subprocess.run(
+                ["git", "-c", "core.safecrlf=false", "add", "--", "design/ui-reference"], cwd=root, check=True
+            )
+            subprocess.run(["git", "commit", "--quiet", "-m", "Synthetic successor publication"], cwd=root, check=True)
+
+            # Characterization: the original helper necessarily rejects this transition.
+            self.assertTrue(_bound_repository_file_errors(root, packet["governedExperience"]["files"], label="old"))
+            binding, errors = planctl.governed_experience_binding(root, packet)
+            self.assertEqual([], errors, "\n".join(errors))
+            self.assertEqual("historical-approved", binding["mode"])
+            self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.6", binding["currentReferenceId"])
+            original = json.loads((root / "planning/wave-amendment-approvals/W1.A08.json").read_bytes())
+            self.assertEqual(original["packet"]["commit"], binding["packetCommit"])
+            self.assertTrue(planctl.governed_experience_binding(root, packet, packet_commit="f" * 40)[1])
+
+            from plan_review_site import governed_experience_html, load_enabler_change_requests
+
+            records = load_enabler_change_requests(root, load_backlog(root)[0])
+            for identity in ("ECR-0005", "ECR-0006", "ECR-0007"):
+                entry = next(item for item in records if item["change_request_id"] == identity)
+                governed = entry["governed_experience"]
+                self.assertEqual("approved", governed["referenceApprovalStatus"])
+                self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.5", governed["referenceId"])
+                self.assertEqual("historical-approved", governed["sourceBinding"]["mode"])
+                self.assertTrue(all(item.get("sourceCommit") for item in governed["files"]))
+                summary, rows = governed_experience_html(root, governed)
+                self.assertIn("Historical binding at", summary)
+                self.assertIn("qualified adoption", summary)
+                self.assertIn("immutable Git source", rows)
+                self.assertNotIn("<a href=", rows)
+            inert = next(item for item in records if item["change_request_id"] == "ECR-0008")["governed_experience"]
+            self.assertEqual("proposed", inert["referenceApprovalStatus"])
+            self.assertNotIn("sourceBinding", inert)
+
+            # A clean successor is not authority to ignore arbitrary live drift.
+            stylesheet = reference / "assets/app.css"
+            original_css = stylesheet.read_bytes()
+            stylesheet.write_bytes(original_css + b"\n/* unauthorized drift */\n")
+            self.assertTrue(planctl.governed_experience_binding(root, packet)[1])
+            stylesheet.write_bytes(original_css)
+            substituted = copy.deepcopy(packet)
+            substituted["governedExperience"]["files"][0]["sha256"] = "f" * 64
+            self.assertTrue(planctl.governed_experience_binding(root, substituted)[1])
+            approval_bytes = (reference / "APPROVAL.yaml").read_bytes()
+            for key, value in (
+                ("status", "proposed"),
+                ("supersedes", "unrelated"),
+                ("reference_id", "RO-UI-ACADEMIC-MINIMAL-1.5"),
+            ):
+                with self.subTest(key=key):
+                    altered = {**approval, key: value}
+                    (reference / "APPROVAL.yaml").write_text(yaml.safe_dump(altered, sort_keys=False), encoding="utf-8")
+                    self.assertTrue(planctl.governed_experience_binding(root, packet)[1])
+                    (reference / "APPROVAL.yaml").write_bytes(approval_bytes)
+            record_original = (root / record_path).read_bytes()
+            (root / record_path).write_bytes(record_original + b" ")
+            self.assertTrue(planctl.governed_experience_binding(root, packet)[1])
+            (root / record_path).write_bytes(record_original)
+            untracked = reference / "untracked-reference.txt"
+            untracked.write_text("not approved", encoding="utf-8")
+            self.assertTrue(planctl.governed_experience_binding(root, packet)[1])
+            untracked.unlink()
+
+            approved_sources = {name: (reference / name).read_bytes() for name in manifest["governed_files"]}
+            publication = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+            # Clean, committed adversarial publications cannot hide behind the
+            # worktree-drift guard. Each is a sibling disposable fixture, not a
+            # rewrite of the retained original approval.
+            for field, replacement, expected in (
+                ("status", "proposed", "identity/status"),
+                ("supersedes", "unrelated", "exactly supersede"),
+                ("reference_id", "RO-UI-ACADEMIC-MINIMAL-1.5", "distinct approved successor"),
+                ("authority", {**approval["authority"], "approval_record_sha256": "f" * 64}, "hash differs"),
+                (
+                    "authority",
+                    {**approval["authority"], "approval_record_introduction_commit": "f" * 40},
+                    "cannot be resolved",
+                ),
+                ("__stylesheet", "unapproved first-publication CSS", "differs from reviewed content"),
+            ):
+                with self.subTest(committed=field, value=replacement):
+                    subprocess.run(["git", "switch", "--quiet", "--detach", predecessor], cwd=root, check=True)
+                    for name, source_bytes in approved_sources.items():
+                        (reference / name).write_bytes(source_bytes)
+                    altered = dict(approval) if field == "__stylesheet" else {**approval, field: replacement}
+                    if field == "__stylesheet":
+                        stylesheet.write_bytes(original_css + b"\n/* never approved */\n")
+                    (reference / "APPROVAL.yaml").write_text(yaml.safe_dump(altered, sort_keys=False), encoding="utf-8")
+                    manifest["file_hashes"] = {
+                        name: hashlib.sha256(canonical_payload(name, (reference / name).read_bytes())).hexdigest()
+                        for name in manifest["governed_files"]
+                    }
+                    (reference / "REFERENCE_MANIFEST.yaml").write_text(
+                        yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8"
+                    )
+                    subprocess.run(
+                        ["git", "-c", "core.safecrlf=false", "add", "--", "design/ui-reference"], cwd=root, check=True
+                    )
+                    subprocess.run(
+                        ["git", "commit", "--quiet", "-m", f"Rejected fixture {field}"], cwd=root, check=True
+                    )
+                    errors = planctl.governed_experience_binding(root, packet)[1]
+                    self.assertTrue(any(expected in error for error in errors), errors)
+            subprocess.run(["git", "switch", "--quiet", "--detach", publication], cwd=root, check=True)
+            packet_relative = "planning/enabler-change-requests/ECR-0007.packet.json"
+            packet_source = (root / packet_relative).read_bytes()
+            (root / packet_relative).write_bytes(packet_source + b" ")
+            subprocess.run(["git", "add", "--", packet_relative], cwd=root, check=True)
+            (root / packet_relative).write_bytes(packet_source)
+            errors = planctl.governed_experience_binding(root, packet)[1]
+            self.assertTrue(any("clean committed authority" in error for error in errors), errors)
+            # Restore only the fixture's staged packet before testing a committed
+            # substitution masked by approved bytes in the fixture worktree.
+            subprocess.run(["git", "add", "--", packet_relative], cwd=root, check=True)
+            (root / packet_relative).write_bytes(packet_source + b" ")
+            subprocess.run(["git", "add", "--", packet_relative], cwd=root, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "Rejected staged authority"], cwd=root, check=True)
+            (root / packet_relative).write_bytes(packet_source)
+            self.assertTrue(planctl.governed_experience_binding(root, packet)[1])
+            (root / packet_relative).write_bytes(packet_source + b" ")
+            subprocess.run(["git", "switch", "--quiet", "--detach", publication], cwd=root, check=True)
+            stylesheet.write_bytes(original_css + b"\n/* committed unauthorized mutation */\n")
+            subprocess.run(["git", "add", "--", "design/ui-reference/assets/app.css"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "Rejected post-approval mutation"], cwd=root, check=True)
+            self.assertTrue(planctl.governed_experience_binding(root, packet)[1])
+
     def paused_git_fixture(self, root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
         from governance_kernel import paused_predecessor_record_hash
 
