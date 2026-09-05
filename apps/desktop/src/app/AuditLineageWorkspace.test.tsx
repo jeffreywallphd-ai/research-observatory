@@ -704,7 +704,7 @@ describe("audit and lineage workspace", () => {
       interactions: Record<string, string>;
       states: string[];
     };
-    expect(contract.referenceId).toBe("RO-UI-ACADEMIC-MINIMAL-1.5");
+    expect(contract.referenceId).toBe("RO-UI-ACADEMIC-MINIMAL-1.6");
     expect(Object.keys(contract.regions)).toEqual([
       "source-to-output-lineage",
       "model-schema-prompt-versions",
