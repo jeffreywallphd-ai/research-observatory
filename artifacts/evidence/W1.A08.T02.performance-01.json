@@ -1,0 +1,214 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "desktop-performance-report",
+  "ok": true,
+  "source": {
+    "commit": "024bd59f22bc707c7a6442e40e82ac2616b49e17",
+    "dirty": false,
+    "dirtyPaths": []
+  },
+  "regressionBaseline": {
+    "path": "verification/baselines/desktop-performance.json",
+    "sha256": "e85f168b4385a640f73bb6d871424e32d29583282fc741e54cb765bda92bac1a",
+    "sourceCommit": "6d69c499c61e698a32281b667f2612884c6bc890"
+  },
+  "platform": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
+  "fixture": {
+    "profile": "windows-x64",
+    "applicationManifest": "apps/desktop/product-dist/application-manifest.json",
+    "applicationManifestSha256": "1e730e2756b524b8e84c613858b539c78aecf045c03953ec469d8ad3aa7ac9a6",
+    "runtimeSha256": "0f84d56945c1b79e97af01b5b9ce9bb9fd056408dfb518610ace997e503471ee",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "referencePackageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
+    "coldRoute": "index.html",
+    "warmRoute": "index.html#commands"
+  },
+  "methodology": {
+    "browserEngine": "chromium",
+    "browserVersion": "145.0.7632.6",
+    "playwrightVersion": "1.58.0",
+    "cpuThrottleRate": 1,
+    "hardwareQualification": "representative measured Windows x64 workstation",
+    "repetitions": 12,
+    "coldState": "new isolated browser context per repetition; browser process startup, an unmeasured data-URL paint-pipeline primer, and browser installation excluded",
+    "warmState": "route navigation after the production index shell is loaded in the same context",
+    "distribution": "nearest-rank p50 and p95 over every measured repetition; no samples discarded",
+    "visibleSkeleton": "elapsed host monotonic time from navigation start until main#main-content is visible",
+    "usable": "elapsed host monotonic time from navigation start until data-application-ready=true",
+    "paint": "Chromium first-contentful-paint from navigation start via buffered PerformancePaintTiming; the CDP Performance-domain value for the same metric is the fail-closed retrieval fallback"
+  },
+  "measurements": {
+    "coldShellFirstContentfulPaint": {
+      "samplesMs": [
+        44.0,
+        44.0,
+        44.0,
+        44.0,
+        32.0,
+        44.0,
+        44.0,
+        44.0,
+        32.0,
+        32.0,
+        32.0,
+        44.0
+      ],
+      "minimumMs": 32.0,
+      "p50Ms": 44.0,
+      "p95Ms": 44.0,
+      "maximumMs": 44.0,
+      "absoluteBudgetMs": 2500.0,
+      "passesAbsoluteBudget": true,
+      "passesRegressionThreshold": true,
+      "futureRegressionThreshold": {
+        "baselineP95Ms": 96.0,
+        "maximumIncreasePercent": 20,
+        "maximumFutureP95Ms": 115.2,
+        "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+      }
+    },
+    "warmRouteVisibleSkeleton": {
+      "samplesMs": [
+        17.332,
+        16.381,
+        18.203,
+        13.855,
+        14.981,
+        16.214,
+        15.34,
+        16.569,
+        13.466,
+        14.231,
+        16.832,
+        16.389
+      ],
+      "minimumMs": 13.466,
+      "p50Ms": 16.214,
+      "p95Ms": 18.203,
+      "maximumMs": 18.203,
+      "absoluteBudgetMs": 150.0,
+      "passesAbsoluteBudget": true,
+      "passesRegressionThreshold": true,
+      "futureRegressionThreshold": {
+        "baselineP95Ms": 73.033,
+        "maximumIncreasePercent": 20,
+        "maximumFutureP95Ms": 87.64,
+        "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+      }
+    },
+    "warmRouteUsable": {
+      "samplesMs": [
+        19.161,
+        18.112,
+        23.204,
+        15.477,
+        16.613,
+        17.758,
+        16.965,
+        18.195,
+        15.165,
+        16.039,
+        18.507,
+        18.118
+      ],
+      "minimumMs": 15.165,
+      "p50Ms": 17.758,
+      "p95Ms": 23.204,
+      "maximumMs": 23.204,
+      "absoluteBudgetMs": 1000.0,
+      "passesAbsoluteBudget": true,
+      "passesRegressionThreshold": true,
+      "futureRegressionThreshold": {
+        "baselineP95Ms": 77.622,
+        "maximumIncreasePercent": 20,
+        "maximumFutureP95Ms": 93.146,
+        "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+      }
+    }
+  },
+  "uiComponentPerformance": {
+    "ok": true,
+    "regressionBaseline": {
+      "path": "verification/baselines/ui-components-data-table-performance.json",
+      "sha256": "ffe08c53f0bc0127b7de99c9d7d3c39a20c155ac50abb4a8ffec29c2964f211a",
+      "sourceCommit": "b09fb7f254763912b999e2e491cd89a083c97ba0"
+    },
+    "fixture": {
+      "version": "data-table-10000-v1",
+      "totalRows": 10000,
+      "columns": 3,
+      "pageSize": 50,
+      "pageCount": 200,
+      "maximumRenderedRows": 50,
+      "firstPageMarkupBytes": 4879,
+      "lastPageMarkupBytes": 4997,
+      "benchmarkEntry": "tests/desktop/fixtures/data-table-10000.tsx",
+      "benchmarkEntrySha256": "94703cee80e3a31f0d36e5cc6b792402cc548fb6d9c6d9e1c3f058a8e5e18053",
+      "benchmarkRunner": "tests/desktop/fixtures/data-table-performance.mjs",
+      "benchmarkRunnerSha256": "f4c3db4b027c048a9ebbb49fb3927e2243f625bebf790e02e72cd737cacd5b0c",
+      "componentContractVersion": "1.2.0"
+    },
+    "methodology": {
+      "runtime": "Node 24.19.0, React 19.2.8 production SSR, Vite 8.2.1",
+      "state": "warm after five unmeasured render batches; the immutable dataset is constructed before timing",
+      "operation": "alternating first/last accessible server-rendered pagination windows",
+      "repetitions": 20,
+      "rendersPerSample": 1000,
+      "warmupBatches": 5,
+      "distribution": "nearest-rank p50 and p95 over every measured batch; no samples discarded",
+      "hardwareQualification": "representative measured Windows x64 workstation",
+      "regressionThresholdPercent": 20
+    },
+    "measurements": {
+      "warmPaginatedRenderBatch": {
+        "samplesMs": [
+          37.137,
+          36.708,
+          36.379,
+          36.413,
+          38.008,
+          42.999,
+          37.109,
+          38.758,
+          38.233,
+          37.76,
+          39.342,
+          37.179,
+          36.766,
+          36.907,
+          39.585,
+          37.818,
+          37.395,
+          37.013,
+          38.018,
+          36.773
+        ],
+        "minimumMs": 36.379,
+        "p50Ms": 37.179,
+        "p95Ms": 39.585,
+        "maximumMs": 42.999,
+        "absoluteBudgetMs": 100.0,
+        "passesAbsoluteBudget": true,
+        "passesRegressionThreshold": true,
+        "futureRegressionThreshold": {
+          "baselineP95Ms": 39.097,
+          "maximumIncreasePercent": 20,
+          "maximumFutureP95Ms": 46.916,
+          "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+        }
+      }
+    },
+    "errors": []
+  },
+  "unexpectedRequests": [],
+  "errors": []
+}

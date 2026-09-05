@@ -1,0 +1,72 @@
+{
+  "check": "visual",
+  "details": {
+    "captures": 66,
+    "settings": {
+      "animations": "disabled",
+      "baselinePath": "verification/baselines/desktop-ui.json",
+      "browserVersion": "145.0.7632.6",
+      "colorSchemes": [
+        "light",
+        "dark"
+      ],
+      "deviceScaleFactor": 1,
+      "engine": "chromium",
+      "locale": "en-US",
+      "platform": "windows-x64",
+      "playwrightVersion": "1.58.0",
+      "reducedMotion": "reduce",
+      "requiredFonts": [
+        "Segoe UI",
+        "Georgia",
+        "Consolas"
+      ],
+      "responsiveViewports": [
+        {
+          "height": 720,
+          "label": "minimum-desktop",
+          "width": 1280
+        },
+        {
+          "height": 450,
+          "label": "windows-200-percent-effective",
+          "width": 720
+        }
+      ],
+      "timezoneId": "UTC",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      }
+    }
+  },
+  "documentType": "desktop-ui-conformance-report",
+  "errors": [
+    "design/ui-reference/CAPABILITY_COVERAGE.json#audit-lineage.html: visual baseline mismatch for audit-lineage.html::dark",
+    "design/ui-reference/CAPABILITY_COVERAGE.json#audit-lineage.html: visual baseline mismatch for audit-lineage.html::light"
+  ],
+  "illustrativeExclusions": [
+    "mock names",
+    "studies",
+    "sources",
+    "providers",
+    "counts",
+    "dates",
+    "prose",
+    "chart values",
+    "nonfunctional actions"
+  ],
+  "mode": "approved-reference-application",
+  "normativeSources": {
+    "approval": "design/ui-reference/APPROVAL.yaml",
+    "pages": "design/ui-reference/CAPABILITY_COVERAGE.json",
+    "routes": "design/ui-reference/SITE_MANIFEST.json",
+    "style": "design/ui-reference/STYLE_GUIDE.md",
+    "tokens": "design/ui-reference/assets/tokens.css",
+    "workflows": "design/ui-reference/WORKFLOW_CATALOG.json"
+  },
+  "ok": false,
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "referencePackageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
+  "schemaVersion": "1.0"
+}
