@@ -5,9 +5,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import math
 import os
+import platform
 import re
 import subprocess
 import sys
@@ -21,7 +23,14 @@ import yaml
 from bs4 import BeautifulSoup
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
-from ui_conformance import confined_path, file_inventory, load_context, stable_file_bytes
+from ui_conformance import (
+    confined_path,
+    file_inventory,
+    font_face_available,
+    inline_page,
+    load_context,
+    stable_file_bytes,
+)
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
 PRODUCT_ROOT = "apps/desktop/product-dist"
@@ -920,6 +929,511 @@ STYLE_TABLE_REGION_NAMES = frozenset(
     }
 )
 
+QUALIFICATION_VIEWPORTS = ((1440, 900), (1280, 720), (720, 450))
+QUALIFICATION_THEMES = ("light", "dark")
+QUALIFICATION_WORKSPACES = (
+    ("projects", "Local projects", ("projects.html", "new-project.html"), "populated-project-list"),
+    ("home", "Project home", ("index.html",), "project-ready"),
+    ("intent", "Research intent", ("intent-contract.html",), "accepted-intent"),
+    ("tasks", "Task Center", ("task-center.html",), "populated-task-center"),
+    ("audit", "Audit & lineage", ("audit-lineage.html",), "populated-lineage"),
+    ("settings", "Project settings", ("project-settings.html",), "project-settings"),
+    (
+        "application-settings",
+        "Application settings",
+        ("application-settings.html",),
+        "application-settings",
+    ),
+    ("diagnostics", "Diagnostics & support", ("help-onboarding.html",), "populated-diagnostics"),
+)
+QUALIFICATION_DESIGNATED_STATES = (
+    ("application-lock", "locked", "application-settings.html"),
+    ("local-service-boundary", "recovery-required", "application-settings.html"),
+    ("shortcut-dialog", "shortcut-dialog", "help-onboarding.html"),
+)
+QUALIFICATION_WORKSPACE_SOURCE = "apps/desktop/src/app/workflowNavigationModel.ts"
+QUALIFICATION_REQUIRED_PRIMITIVES = {
+    "projects": {"card", "form", "control", "action", "grid", "notice"},
+    "home": {"card", "control", "grid"},
+    "intent": {"card", "form", "control", "action", "grid", "notice"},
+    "tasks": {"card", "control", "action", "grid"},
+    "audit": {"card", "form", "control", "table", "notice"},
+    "settings": {"card", "form", "control", "action", "notice"},
+    "application-settings": {"card", "form", "control", "action", "grid", "notice"},
+    "diagnostics": {"card", "control", "grid", "table"},
+    "application-lock": {"card", "control"},
+    "local-service-boundary": {"control"},
+    "shortcut-dialog": {"dialog", "control"},
+}
+QUALIFICATION_STATE_WITNESS = r"""element => ({
+  projects: Boolean(element.querySelector('[data-current-project]')),
+  home: element.getAttribute('data-project-home-state') === 'ready',
+  intent: [...element.querySelectorAll('.ro-status-badge')]
+    .some(node => /Revision \d+ · accepted/.test(node.textContent)),
+  tasks: element.querySelectorAll('.task-center-list li').length > 0,
+  audit: element.querySelectorAll('.lineage-results tbody tr').length >= 10,
+  settings: element.querySelector('#privacy-network-policy')?.value === 'offline',
+  'application-settings': Boolean(element.querySelector('#application-profile-name')),
+  diagnostics: element.querySelectorAll('.diagnostic-table-scroll tbody tr').length > 0,
+  'application-lock': Boolean(element.closest('[data-application-locked]')),
+  'local-service-boundary': element.getAttribute('data-boundary-state') === 'recovery-required',
+  'shortcut-dialog': element.getAttribute('role') === 'dialog' && element.getAttribute('aria-modal') === 'true'
+})"""
+
+
+def qualification_measurement_errors(case: dict[str, Any]) -> list[str]:
+    """Enforce reference token geometry and observed renderer/state witnesses."""
+    errors: list[str] = []
+    if case.get("fonts") != {"Segoe UI": True, "Georgia": True, "Consolas": True}:
+        errors.append("required renderer fonts were not observed")
+    if case.get("observedEnvironment") != {
+        "deviceScaleFactor": 1,
+        "locale": "en-US",
+        "timezoneId": "UTC",
+        "now": 1786190400000,
+        "random": 0.25,
+    }:
+        errors.append("observed renderer environment is not pinned")
+    if case.get("stateVisible") is not True or case.get("focus", {}).get("targetInViewport") is not True:
+        errors.append("state or focused action is not visibly reachable")
+    surface = str(case.get("surfaceId", ""))
+    if case.get("stateWitness", {}).get(surface) is not True:
+        errors.append("actual DOM has not reached the required representative state")
+    if surface in {"application-lock", "local-service-boundary"} and case.get("verticalReachability") != {
+        "headingVisible": True,
+        "actionVisible": True,
+    }:
+        errors.append("normal vertical scrolling must expose the heading and action")
+    if surface in {item[0] for item in QUALIFICATION_WORKSPACES}:
+        padding = 28 if case.get("width") == 1440 else 20 if case.get("width") == 1280 else 16
+        if not _style_number_matches(case.get("geometry", {}).get("mainPadding"), padding):
+            errors.append("responsive page padding differs from reference tokens")
+    semantic = case.get("semantic")
+    if not isinstance(semantic, list) or any(not isinstance(item, dict) for item in semantic):
+        return [*errors, "semantic primitive measurements are missing"]
+    if not QUALIFICATION_REQUIRED_PRIMITIVES.get(surface, set()).issubset({item.get("kind") for item in semantic}):
+        errors.append("required semantic primitive coverage is missing")
+    scale = 2 if surface == "shortcut-dialog" else 1
+    for item in semantic:
+        kind = item.get("kind")
+        numeric = {
+            key: _finite_style_number(item.get(key)) for key in ("padding", "radius", "gap", "minHeight", "height")
+        }
+        if any(value is None or value < 0 for value in numeric.values()):
+            errors.append("semantic primitive has invalid numeric geometry")
+            continue
+        values = {key: float(value) / scale for key, value in numeric.items() if value is not None}
+        if kind in {"card", "notice", "control", "dialog"}:
+            radii = {10, 14} if kind == "card" else {10}
+            paddings = {16, 20, 28} if kind == "card" else {20} if kind == "dialog" else {16}
+            if values["radius"] not in radii or values["padding"] not in paddings:
+                errors.append(f"{kind} padding or radius differs from semantic tokens")
+        if kind == "control" and (values["minHeight"] not in {40, 44} or values["height"] < values["minHeight"] - 0.05):
+            errors.append("control minimum geometry differs from standard/primary contract")
+        if kind in {"card", "form", "notice", "dialog", "stack", "grid"} and item.get("display") != "grid":
+            errors.append(f"{kind} lost its content-flow layout")
+        if kind in {"card", "form", "notice", "dialog", "stack", "grid", "action"} and values["gap"] not in {
+            4,
+            8,
+            12,
+            16,
+            20,
+            24,
+            32,
+        }:
+            errors.append(f"{kind} spacing is outside the governed scale")
+        if kind == "action" and (item.get("display"), item.get("wrap")) != ("flex", "wrap"):
+            errors.append("action row no longer wraps")
+        if kind == "table" and (item.get("overflowX") != "auto" or values["radius"] != 10):
+            errors.append("table lost contained scrolling or semantic radius")
+    return errors
+
+
+def qualification_report_errors(repo: Path, matrix: dict[str, Any]) -> list[str]:
+    errors = product_style_qualification_errors(matrix)
+    visual = json_object(confined_path(repo, "verification/extensions/desktop-ui.json"))["visual"]
+    if matrix.get("renderer") != {key: visual[key] for key in ("platform", "playwrightVersion", "browserVersion")}:
+        errors.append("observed qualification renderer differs from approved pins")
+    if matrix.get("requests") != []:
+        errors.append("qualification made unexpected requests")
+    for case in matrix.get("cases", []) + matrix.get("designatedCases", []):
+        if isinstance(case, dict):
+            errors.extend(f"{case.get('caseId')}: {error}" for error in qualification_measurement_errors(case))
+    return errors
+
+
+def _implemented_workspace_contracts(repo: Path) -> list[dict[str, Any]]:
+    source_path = confined_path(repo, QUALIFICATION_WORKSPACE_SOURCE)
+    source = stable_file_bytes(repo, source_path).decode("utf-8")
+    declaration = re.search(
+        r"export\s+const\s+IMPLEMENTED_WORKSPACES\s*=\s*Object\.freeze\(\[(.*?)\]\s+as\s+const\)\s*;",
+        source,
+        flags=re.DOTALL,
+    )
+    if declaration is None:
+        raise ValueError("desktop implemented-workspace declaration is missing or noncanonical")
+    entries = re.findall(
+        r"\{\s*id:\s*\"([^\"]+)\",\s*label:\s*\"([^\"]+)\",\s*"
+        r"pageContractIds:\s*\[([^\]]+)\]\s*\}",
+        declaration.group(1),
+        flags=re.DOTALL,
+    )
+    state_ids = {workspace_id: state_id for workspace_id, _, _, state_id in QUALIFICATION_WORKSPACES}
+    workspaces = [
+        {
+            "id": workspace_id,
+            "label": label,
+            "pageContractIds": re.findall(r"\"([^\"]+\.html)\"", raw_pages),
+            "referencePage": (re.findall(r"\"([^\"]+\.html)\"", raw_pages) or [None])[0],
+            "stateId": state_ids.get(workspace_id),
+        }
+        for workspace_id, label, raw_pages in entries
+    ]
+    expected = [
+        {
+            "id": workspace_id,
+            "label": label,
+            "pageContractIds": list(page_contract_ids),
+            "referencePage": page_contract_ids[0],
+            "stateId": state_id,
+        }
+        for workspace_id, label, page_contract_ids, state_id in QUALIFICATION_WORKSPACES
+    ]
+    if workspaces != expected:
+        raise ValueError("desktop implemented-workspace identities or page mappings differ from the T02 contract")
+    return workspaces
+
+
+def qualification_capture_contract(repo: Path) -> list[dict[str, Any]]:
+    """Return the exact, persistence-neutral viewport capture inventory for T02."""
+
+    # Resolving the repository here makes traversal and non-repository inputs fail
+    # before a caller can use this inventory as an artifact-write authority.
+    repo = repo.resolve(strict=True)
+    workspaces = _implemented_workspace_contracts(repo)
+    captures: list[dict[str, Any]] = []
+    for workspace in workspaces:
+        workspace_id = workspace["id"]
+        state_id = workspace["stateId"]
+        reference_page = workspace["referencePage"]
+        for width, height in QUALIFICATION_VIEWPORTS:
+            for theme in QUALIFICATION_THEMES:
+                case_id = f"workspace:{workspace_id}:{theme}:{width}x{height}"
+                for role in ("product", "reference"):
+                    captures.append(
+                        {
+                            "caseId": case_id,
+                            "surfaceId": workspace_id,
+                            "stateId": state_id,
+                            "theme": theme,
+                            "viewport": {"width": width, "height": height},
+                            "role": role,
+                            "referencePage": reference_page,
+                            "width": width,
+                            "height": height,
+                        }
+                    )
+    for surface_id, state_id, reference_page in QUALIFICATION_DESIGNATED_STATES:
+        width, height = QUALIFICATION_VIEWPORTS[-1]
+        for theme in QUALIFICATION_THEMES:
+            case_id = f"boundary:{state_id}:{theme}:{width}x{height}"
+            for role in ("product", "reference"):
+                captures.append(
+                    {
+                        "caseId": case_id,
+                        "surfaceId": surface_id,
+                        "stateId": state_id,
+                        "theme": theme,
+                        "viewport": {"width": width, "height": height},
+                        "role": role,
+                        "referencePage": reference_page,
+                        "width": width,
+                        "height": height,
+                    }
+                )
+    return captures
+
+
+def product_style_qualification_errors(matrix: dict[str, Any]) -> list[str]:
+    """Validate the complete, bounded live-product style qualification matrix."""
+
+    errors: list[str] = []
+    expected_workspaces = {
+        workspace_id: {
+            "id": workspace_id,
+            "label": label,
+            "pageContractIds": list(page_contract_ids),
+            "referencePage": page_contract_ids[0],
+            "stateId": state_id,
+        }
+        for workspace_id, label, page_contract_ids, state_id in QUALIFICATION_WORKSPACES
+    }
+    raw_workspaces = matrix.get("workspaces")
+    if not isinstance(raw_workspaces, list):
+        errors.append("desktop qualification must report the eight implemented workspaces")
+    else:
+        observed_workspaces: dict[str, dict[str, Any]] = {}
+        duplicate_workspaces: set[str] = set()
+        for item in raw_workspaces:
+            if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+                errors.append("desktop qualification contains an invalid workspace identity")
+                continue
+            workspace_id = item["id"]
+            if workspace_id in observed_workspaces:
+                duplicate_workspaces.add(workspace_id)
+            observed_workspaces[workspace_id] = item
+        if duplicate_workspaces:
+            errors.append(f"desktop qualification contains duplicate workspaces: {sorted(duplicate_workspaces)}")
+        missing = sorted(set(expected_workspaces) - set(observed_workspaces))
+        unexpected = sorted(set(observed_workspaces) - set(expected_workspaces))
+        if missing:
+            errors.append(f"desktop qualification is missing implemented workspaces: {missing}")
+        if unexpected:
+            errors.append(f"desktop qualification contains unexpected workspaces: {unexpected}")
+        for workspace_id in sorted(set(expected_workspaces) & set(observed_workspaces)):
+            if observed_workspaces[workspace_id] != expected_workspaces[workspace_id]:
+                errors.append(f"desktop qualification workspace mapping differs for {workspace_id}")
+
+    expected_case_keys = {
+        (workspace_id, theme, width, height)
+        for workspace_id in expected_workspaces
+        for width, height in QUALIFICATION_VIEWPORTS
+        for theme in QUALIFICATION_THEMES
+    }
+    raw_cases = matrix.get("cases")
+    observed_case_keys: dict[tuple[str, str, int, int], dict[str, Any]] = {}
+    duplicate_case_keys: set[tuple[str, str, int, int]] = set()
+    duplicate_case_ids: set[str] = set()
+    observed_case_ids: set[str] = set()
+    if not isinstance(raw_cases, list):
+        errors.append("desktop qualification must report 48 workspace cases")
+        raw_cases = []
+    for case in raw_cases:
+        if not isinstance(case, dict):
+            errors.append("desktop qualification contains a non-object workspace case")
+            continue
+        workspace_id = case.get("surfaceId")
+        theme = case.get("theme")
+        viewport = case.get("viewport")
+        width = viewport.get("width") if isinstance(viewport, dict) else None
+        height = viewport.get("height") if isinstance(viewport, dict) else None
+        case_id = case.get("caseId")
+        if isinstance(case_id, str):
+            if case_id in observed_case_ids:
+                duplicate_case_ids.add(case_id)
+            observed_case_ids.add(case_id)
+        else:
+            errors.append("desktop qualification workspace case has no stable case ID")
+        if (
+            not isinstance(workspace_id, str)
+            or not isinstance(theme, str)
+            or isinstance(width, bool)
+            or not isinstance(width, int)
+            or isinstance(height, bool)
+            or not isinstance(height, int)
+        ):
+            errors.append("desktop qualification workspace case has an invalid identity, theme, or viewport")
+            continue
+        key = (workspace_id, theme, width, height)
+        if key in observed_case_keys:
+            duplicate_case_keys.add(key)
+        observed_case_keys[key] = case
+    if duplicate_case_ids:
+        errors.append(f"desktop qualification contains duplicate case IDs: {sorted(duplicate_case_ids)}")
+    if duplicate_case_keys:
+        errors.append(
+            f"desktop qualification contains duplicate workspace/theme/viewport cases: {sorted(duplicate_case_keys)}"
+        )
+    missing_case_keys = sorted(expected_case_keys - set(observed_case_keys))
+    unexpected_case_keys = sorted(set(observed_case_keys) - expected_case_keys)
+    if missing_case_keys:
+        errors.append(f"desktop qualification is missing workspace/theme/viewport cases: {missing_case_keys}")
+    if unexpected_case_keys:
+        errors.append(
+            f"desktop qualification contains unexpected workspace/theme/viewport cases: {unexpected_case_keys}"
+        )
+
+    for key in sorted(expected_case_keys & set(observed_case_keys)):
+        workspace_id, theme, width, height = key
+        case = observed_case_keys[key]
+        expected_workspace = expected_workspaces[workspace_id]
+        expected_case_id = f"workspace:{workspace_id}:{theme}:{width}x{height}"
+        if (
+            case.get("caseId") != expected_case_id
+            or case.get("role") != "product"
+            or case.get("stateId") != expected_workspace["stateId"]
+            or case.get("referencePage") != expected_workspace["referencePage"]
+            or case.get("width") != width
+            or case.get("height") != height
+        ):
+            errors.append(f"desktop qualification case identity differs for {expected_case_id}")
+        geometry = case.get("geometry")
+        geometry_fields = (
+            "documentClientWidth",
+            "documentScrollWidth",
+            "surfaceLeft",
+            "surfaceTop",
+            "surfaceRight",
+            "surfaceBottom",
+            "surfaceWidth",
+            "surfaceHeight",
+        )
+        raw_numbers = (
+            {field: _finite_style_number(geometry.get(field)) for field in geometry_fields}
+            if isinstance(geometry, dict)
+            else {field: None for field in geometry_fields}
+        )
+        numbers = {field: value for field, value in raw_numbers.items() if value is not None}
+        if len(numbers) != len(geometry_fields) or any(
+            numbers[field] <= 0
+            for field in ("documentClientWidth", "documentScrollWidth", "surfaceWidth", "surfaceHeight")
+        ):
+            errors.append(f"desktop qualification has missing or nonfinite geometry for {expected_case_id}")
+        elif (
+            numbers["documentScrollWidth"] > numbers["documentClientWidth"] + 0.5
+            or numbers["surfaceLeft"] < -0.5
+            or numbers["surfaceRight"] > numbers["documentClientWidth"] + 0.5
+            or numbers["surfaceRight"] < numbers["surfaceLeft"]
+            or numbers["surfaceBottom"] < numbers["surfaceTop"]
+        ):
+            errors.append(f"desktop qualification geometry escapes horizontally for {expected_case_id}")
+        focus = case.get("focus")
+        if (
+            not isinstance(focus, dict)
+            or _style_number_below(focus.get("targetCount"), 1)
+            or not focus.get("targetFocused")
+            or not isinstance(focus.get("accessibleName"), str)
+            or not focus["accessibleName"].strip()
+            or _style_number_below(focus.get("outlineWidth"), 2)
+        ):
+            errors.append(f"desktop qualification lacks named visible keyboard focus for {expected_case_id}")
+        overflow = case.get("overflow")
+        if (
+            not isinstance(overflow, dict)
+            or overflow.get("documentHorizontal") is not False
+            or overflow.get("surfaceOverflowX") not in {"visible", "hidden", "clip", "auto", "scroll"}
+            or overflow.get("surfaceOverflowY") not in {"visible", "hidden", "clip", "auto", "scroll"}
+        ):
+            errors.append(f"desktop qualification has invalid overflow containment for {expected_case_id}")
+        theme_tokens = case.get("themeTokens")
+        if (
+            not isinstance(theme_tokens, dict)
+            or theme_tokens.get("theme") != theme
+            or not all(
+                isinstance(theme_tokens.get(name), str) and theme_tokens[name] for name in ("surface1", "textDefault")
+            )
+            or theme_tokens.get("surface1") != theme_tokens.get("workspaceBackground")
+        ):
+            errors.append(f"desktop qualification does not apply {theme} workspace tokens for {expected_case_id}")
+        motion = case.get("reducedMotion")
+        if (
+            not isinstance(motion, dict)
+            or motion.get("mediaMatches") is not True
+            or not _motion_duration_is_suppressed(motion.get("transitionDuration"))
+            or not _motion_duration_is_suppressed(motion.get("animationDuration"))
+        ):
+            errors.append(f"desktop qualification does not suppress motion for {expected_case_id}")
+
+    expected_boundaries = {
+        (surface_id, state_id, theme): (reference_page, width, height)
+        for surface_id, state_id, reference_page in QUALIFICATION_DESIGNATED_STATES
+        for theme in QUALIFICATION_THEMES
+        for width, height in (QUALIFICATION_VIEWPORTS[-1],)
+    }
+    raw_boundaries = matrix.get("designatedCases")
+    observed_boundaries: dict[tuple[str, str, str], dict[str, Any]] = {}
+    duplicate_boundaries: set[tuple[str, str, str]] = set()
+    if not isinstance(raw_boundaries, list):
+        errors.append("desktop qualification must report lock, recovery, and dialog cases in both themes")
+        raw_boundaries = []
+    for case in raw_boundaries:
+        if not isinstance(case, dict):
+            errors.append("desktop qualification contains a non-object designated case")
+            continue
+        boundary_key = (case.get("surfaceId"), case.get("stateId"), case.get("theme"))
+        if not all(isinstance(item, str) for item in boundary_key):
+            errors.append("desktop qualification designated case has an invalid identity")
+            continue
+        typed_key = (str(boundary_key[0]), str(boundary_key[1]), str(boundary_key[2]))
+        if typed_key in observed_boundaries:
+            duplicate_boundaries.add(typed_key)
+        observed_boundaries[typed_key] = case
+    if duplicate_boundaries:
+        errors.append(f"desktop qualification contains duplicate designated cases: {sorted(duplicate_boundaries)}")
+    missing_boundaries = sorted(set(expected_boundaries) - set(observed_boundaries))
+    unexpected_boundaries = sorted(set(observed_boundaries) - set(expected_boundaries))
+    if missing_boundaries:
+        errors.append(f"desktop qualification is missing designated cases: {missing_boundaries}")
+    if unexpected_boundaries:
+        errors.append(f"desktop qualification contains unexpected designated cases: {unexpected_boundaries}")
+    for designated_key in sorted(set(expected_boundaries) & set(observed_boundaries)):
+        _, state_id, theme = designated_key
+        reference_page, width, height = expected_boundaries[designated_key]
+        case = observed_boundaries[designated_key]
+        expected_case_id = f"boundary:{state_id}:{theme}:{width}x{height}"
+        if (
+            case.get("caseId") != expected_case_id
+            or case.get("role") != "product"
+            or case.get("referencePage") != reference_page
+            or case.get("viewport") != {"width": width, "height": height}
+            or case.get("width") != width
+            or case.get("height") != height
+        ):
+            errors.append(f"desktop qualification designated identity differs for {expected_case_id}")
+        geometry = case.get("geometry")
+        if (
+            not isinstance(geometry, dict)
+            or any(
+                _finite_style_number(geometry.get(field)) is None
+                for field in (
+                    "surfaceWidth",
+                    "surfaceHeight",
+                    "surfaceLeft",
+                    "surfaceTop",
+                    "surfaceRight",
+                    "surfaceBottom",
+                )
+            )
+            or _style_number_below(geometry.get("surfaceWidth"), 1)
+            or _style_number_below(geometry.get("surfaceHeight"), 1)
+            or _style_number_below(geometry.get("surfaceLeft"), -0.5)
+            or _style_number_above(geometry.get("surfaceRight"), width + 0.5)
+            or (
+                state_id == "shortcut-dialog"
+                and (
+                    _style_number_below(geometry.get("surfaceTop"), -0.5)
+                    or _style_number_above(geometry.get("surfaceBottom"), height + 0.5)
+                )
+            )
+        ):
+            errors.append(f"desktop qualification designated surface escapes the viewport for {expected_case_id}")
+        focus = case.get("focus")
+        if (
+            not isinstance(focus, dict)
+            or not focus.get("targetFocused")
+            or not focus.get("focusContained")
+            or not isinstance(focus.get("accessibleName"), str)
+            or not focus["accessibleName"].strip()
+            or _style_number_below(focus.get("outlineWidth"), 2)
+        ):
+            errors.append(
+                f"desktop qualification designated surface lacks contained visible focus for {expected_case_id}"
+            )
+        overflow = case.get("overflow")
+        if not isinstance(overflow, dict) or overflow.get("documentHorizontal") is not False:
+            errors.append(f"desktop qualification designated surface escapes horizontally for {expected_case_id}")
+        if state_id == "shortcut-dialog" and (
+            not isinstance(overflow, dict)
+            or overflow.get("containedVertical") is not True
+            or overflow.get("scrolledWithinSurface") is not True
+        ):
+            errors.append(f"desktop qualification dialog does not retain contained scrolling for {expected_case_id}")
+        if state_id != "shortcut-dialog" and (
+            not isinstance(case.get("stateVisible"), bool) or not case["stateVisible"]
+        ):
+            errors.append(f"desktop qualification does not render {state_id} for {expected_case_id}")
+    return errors
+
 
 def _motion_duration_is_suppressed(value: object) -> bool:
     durations = [item.strip() for item in str(value or "").split(",") if item.strip()]
@@ -946,6 +1460,11 @@ def _finite_style_number(value: object) -> float | None:
 def _style_number_below(value: object, minimum: float) -> bool:
     number = _finite_style_number(value)
     return number is None or number < minimum
+
+
+def _style_number_above(value: object, maximum: float) -> bool:
+    number = _finite_style_number(value)
+    return number is None or number > maximum
 
 
 def _style_number_matches(value: object, expected: float, *, tolerance: float = 0.05) -> bool:
@@ -1353,8 +1872,192 @@ def _style_audit_fixtures() -> dict[str, Any]:
     }
 
 
-def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
+class ProductStyleQualification:
+    """Measure existing functional states without duplicating their service adapters."""
+
+    def __init__(self, repo: Path, capture: Callable[[dict[str, Any], bytes], None] | None = None) -> None:
+        self.repo = repo
+        self.context = load_context(repo)
+        self.capture = capture
+        self.contract = qualification_capture_contract(repo)
+        self.report: dict[str, Any] = {
+            "schemaVersion": "1.0",
+            "workspaces": _implemented_workspace_contracts(repo),
+            "cases": [],
+            "designatedCases": [],
+            "renderer": {},
+        }
+
+    def record(self, page: Any, surface_id: str, selector: str) -> None:
+        rows = [row for row in self.contract if row["surfaceId"] == surface_id and row["role"] == "product"]
+        old_viewport = page.viewport_size
+        old_theme = page.locator("html").get_attribute("data-theme") or "light"
+        old_scroll = page.evaluate("({x: scrollX, y: scrollY})")
+        old_focus = page.evaluate_handle("document.activeElement")
+        try:
+            for metadata in rows:
+                page.set_viewport_size(metadata["viewport"])
+                page.emulate_media(color_scheme=metadata["theme"], reduced_motion="reduce")
+                page.locator("html").evaluate("(node, theme) => node.dataset.theme = theme", metadata["theme"])
+                page.evaluate("document.fonts.ready")
+                page.evaluate(
+                    "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
+                )
+                node = page.locator(selector).first
+                node.wait_for(state="visible", timeout=5_000)
+                try:
+                    page.wait_for_function(
+                        "({selector, surface, script}) => { const node = document.querySelector(selector); "
+                        "return node && (0, eval)('(' + script + ')')(node)[surface] === true; }",
+                        arg={"selector": selector, "surface": surface_id, "script": QUALIFICATION_STATE_WITNESS},
+                        timeout=5_000,
+                    )
+                except PlaywrightError as exc:
+                    raise ValueError(
+                        f"{metadata['caseId']} did not reach its representative state: "
+                        f"{node.evaluate(QUALIFICATION_STATE_WITNESS)}; {node.inner_text()[-1800:]}"
+                    ) from exc
+                node.evaluate("element => element.scrollIntoView({block:'start'})")
+                focus = node.locator(
+                    "button:visible:not(:disabled), input:visible:not(:disabled), "
+                    "select:visible:not(:disabled), [tabindex='0']:visible"
+                ).first
+                page.keyboard.press("Tab")
+                focus.focus()
+                page.wait_for_function(
+                    "parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2",
+                    timeout=1_000,
+                )
+                if surface_id in {"application-lock", "local-service-boundary", "shortcut-dialog"}:
+                    node.scroll_into_view_if_needed()
+                focus.scroll_into_view_if_needed()
+                observed = node.evaluate(r"""element => {
+                  const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+                  const active = document.activeElement, focusStyle = getComputedStyle(active);
+                  const activeRect = active.getBoundingClientRect();
+                  const root = document.documentElement;
+                  const probe = document.createElement('span'); probe.hidden = true; element.append(probe);
+                  const resolve = name => { probe.style.color = `var(${name})`; return getComputedStyle(probe).color; };
+                  const panel = element.matches('.ro-panel,.ro-card')
+                    ? element : element.querySelector('.ro-panel,.ro-card');
+                  const semantic = [];
+                  for (const [kind, selector] of Object.entries({
+                    card: '.ro-card,.ro-panel', form: '.ro-form', notice: '.ro-notice',
+                    action: '.ro-action-row', control: '.ro-button', table: '.ro-table-region',
+                    dialog: '.ro-dialog-surface', stack: '.ro-stack', grid: '.ro-grid'
+                  })) {
+                    const nodes = [...element.querySelectorAll(selector)];
+                    if (element.matches(selector)) nodes.unshift(element);
+                    for (const node of nodes.filter(node => node.getClientRects().length)) {
+                      const s = getComputedStyle(node), r = node.getBoundingClientRect();
+                      semantic.push({kind, padding: parseFloat(s.paddingInlineStart),
+                        radius: parseFloat(s.borderRadius),
+                        gap: parseFloat(s.rowGap) || 0, minHeight: parseFloat(s.minHeight) || 0,
+                        height: r.height, display: s.display, wrap: s.flexWrap, overflowX: s.overflowX,
+                        transitionDuration: s.transitionDuration, animationDuration: s.animationDuration});
+                    }
+                  }
+                  const output = {
+                    geometry: {documentClientWidth: root.clientWidth, documentScrollWidth: root.scrollWidth,
+                      surfaceLeft: rect.left, surfaceTop: rect.top, surfaceRight: rect.right,
+                      surfaceBottom: rect.bottom, surfaceWidth: rect.width, surfaceHeight: rect.height,
+                      mainPadding: parseFloat(getComputedStyle(
+                        document.querySelector('main') || element).paddingInlineStart)},
+                    focus: {targetCount: element.querySelectorAll('button,input,select,[tabindex="0"]').length,
+                      targetFocused: element.contains(active), focusContained: element.contains(active),
+                      accessibleName: active.getAttribute('aria-label') || active.labels?.[0]?.textContent?.trim()
+                        || active.textContent?.trim() || active.getAttribute('placeholder'),
+                      outlineWidth: parseFloat(focusStyle.outlineWidth),
+                      targetInViewport: activeRect.top >= -.5 && activeRect.bottom <= innerHeight + .5},
+                    overflow: {documentHorizontal: root.scrollWidth > root.clientWidth,
+                      surfaceOverflowX: style.overflowX, surfaceOverflowY: style.overflowY,
+                      containedVertical: element.scrollHeight > element.clientHeight,
+                      scrolledWithinSurface: false},
+                    themeTokens: {theme: root.dataset.theme, surface1: resolve('--surface-1'),
+                      textDefault: resolve('--text-default'),
+                      workspaceBackground: panel ? getComputedStyle(panel).backgroundColor : null},
+                    reducedMotion: {mediaMatches: matchMedia('(prefers-reduced-motion: reduce)').matches,
+                      transitionDuration: focusStyle.transitionDuration,
+                      animationDuration: focusStyle.animationDuration},
+                    semantic, stateVisible: Boolean(element.textContent.trim()),
+                    captureScroll: {x: scrollX, y: scrollY},
+                    observedEnvironment: {deviceScaleFactor: devicePixelRatio, locale: navigator.language,
+                      timezoneId: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                      now: Date.now(), random: Math.random()}
+                  };
+                  if (output.overflow.containedVertical) {
+                    const top = element.scrollTop; element.scrollTop = element.scrollHeight;
+                    output.overflow.scrolledWithinSurface = element.scrollTop > 0; element.scrollTop = top;
+                  }
+                  if (element.matches('.locked-card,[data-local-service-boundary]')) {
+                    const position = {x: scrollX, y: scrollY};
+                    const heading = element.querySelector('h1,h2,h3');
+                    heading.scrollIntoView({block:'start'});
+                    const r = heading.getBoundingClientRect();
+                    active.scrollIntoView({block:'nearest'});
+                    const a = active.getBoundingClientRect();
+                    output.verticalReachability = {headingVisible: r.top >= -.5 && r.bottom <= innerHeight + .5,
+                      actionVisible: a.top >= -.5 && a.bottom <= innerHeight + .5};
+                    scrollTo(position.x, position.y);
+                  }
+                  probe.remove(); return output;
+                }""")
+                observed["fonts"] = {
+                    font: font_face_available(page, font) for font in self.context.config["visual"]["requiredFonts"]
+                }
+                observed["stateWitness"] = node.evaluate(QUALIFICATION_STATE_WITNESS)
+                destination = "cases" if metadata["caseId"].startswith("workspace:") else "designatedCases"
+                self.report[destination].append({**metadata, **observed})
+                if self.capture:
+                    self.capture(
+                        metadata, page.screenshot(full_page=False, animations="disabled", caret="hide", scale="device")
+                    )
+                    reference = page.context.new_page()
+                    try:
+                        reference.set_viewport_size(metadata["viewport"])
+                        reference.emulate_media(color_scheme=metadata["theme"], reduced_motion="reduce")
+                        reference.set_content(
+                            inline_page(
+                                self.context, metadata["referencePage"], metadata["theme"], root=self.context.reference
+                            ),
+                            wait_until="load",
+                        )
+                        reference.locator("html").evaluate(
+                            "(node, theme) => node.dataset.theme = theme", metadata["theme"]
+                        )
+                        reference.evaluate("document.fonts.ready")
+                        self.capture(
+                            {**metadata, "role": "reference"},
+                            reference.screenshot(full_page=False, animations="disabled", caret="hide", scale="device"),
+                        )
+                    finally:
+                        reference.close()
+        finally:
+            page.set_viewport_size(old_viewport)
+            page.emulate_media(color_scheme=old_theme, reduced_motion="reduce")
+            page.locator("html").evaluate("(node, theme) => node.dataset.theme = theme", old_theme)
+            old_focus.evaluate("node => { if (node.isConnected) node.focus({preventScroll:true}); }")
+            page.evaluate("position => scrollTo(position.x, position.y)", old_scroll)
+            old_focus.dispose()
+
+
+def product_style_qualification_matrix(
+    repo: Path,
+    capture: Callable[[dict[str, Any], bytes], None] | None = None,
+) -> tuple[list[str], dict[str, Any]]:
+    errors, details = runtime_frame_errors(repo, capture)
+    return errors, details.get("styleQualificationMatrix", {})
+
+
+def runtime_frame_errors(
+    repo: Path,
+    capture: Callable[[dict[str, Any], bytes], None] | None = None,
+) -> tuple[list[str], dict[str, Any]]:
+    from product_style_check import product_style_analysis
+
     errors = product_build_errors(repo)
+    analysis = product_style_analysis(repo)
+    errors.extend(analysis["errors"])
     runtime_path = repo / PRODUCT_ROOT / "assets" / "app.js"
     runtime = runtime_path.read_text(encoding="utf-8") if runtime_path.is_file() else ""
     if "process.env.NODE_ENV" in runtime:
@@ -1427,6 +2130,15 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
     }
     if errors:
         return errors, details
+    qualification = ProductStyleQualification(repo, capture)
+    details["styleAnalysis"] = analysis
+    details["styleQualificationMatrix"] = qualification.report
+    visual = qualification.context.config["visual"]
+    if platform.system() != "Windows" or platform.machine().lower() not in {"amd64", "x86_64"}:
+        return ["product style qualification requires windows-x64"], details
+    installed_playwright = importlib.metadata.version("playwright")
+    if installed_playwright != visual["playwrightVersion"]:
+        return ["product style qualification Playwright version differs from approved pin"], details
     document = inline_product_index(repo)
     try:
         workflow_catalog_json = core_workflow_catalog_json(repo)
@@ -1434,8 +2146,30 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         return [*errors, str(error)], details
     workflow_catalog = json.loads(workflow_catalog_json)
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
-        browser_context = browser.new_context()
+        browser = playwright.chromium.launch(
+            headless=True,
+            args=["--disable-font-subpixel-positioning", "--disable-lcd-text", "--force-color-profile=srgb"],
+        )
+        browser_context = browser.new_context(
+            viewport=visual["viewport"],
+            device_scale_factor=visual["deviceScaleFactor"],
+            locale=visual["locale"],
+            timezone_id=visual["timezoneId"],
+            reduced_motion="reduce",
+            color_scheme="light",
+        )
+        browser_context.add_init_script("""
+            Date = class extends Date { constructor(...a){ super(...(a.length ? a : ['2026-08-08T12:00:00Z'])); }
+              static now(){ return 1786190400000; } };
+            Math.random = () => 0.25;
+        """)
+        qualification.report["renderer"] = {
+            "platform": "windows-x64",
+            "playwrightVersion": installed_playwright,
+            "browserVersion": browser.version,
+        }
+        if browser.version != visual["browserVersion"]:
+            errors.append("product style qualification Chromium differs from approved pin")
 
         def serve_application(route: Any) -> None:
             if route.request.url in {"http://tauri.localhost/", "http://tauri.localhost/index.html"}:
@@ -1522,6 +2256,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             region.wait_for(state="visible", timeout=5_000)
             page.keyboard.press("Tab")
             region.focus()
+            page.wait_for_function(
+                "parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2",
+                timeout=1_000,
+            )
             return region.evaluate(
                 """element => {
                   const style = getComputedStyle(element);
@@ -1730,6 +2468,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             page.keyboard.press("Control+K")
             page.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
             details["commandFocus"] = page.evaluate("document.activeElement?.id === 'shell-command'")
+            page.wait_for_function(
+                "parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2",
+                timeout=1_000,
+            )
             details["focusVisible"] = page.evaluate(
                 "parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2"
             )
@@ -1806,6 +2548,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 boundary.get_attribute("data-boundary-state") == "recovery-required"
                 and diagnostic == "RO-CORE-SUPERVISOR-UNAVAILABLE"
             )
+            qualification.record(page, "local-service-boundary", "[data-local-service-boundary]")
             browser_context.grant_permissions(["clipboard-read", "clipboard-write"], origin="http://tauri.localhost")
             boundary.locator("[data-copy-diagnostic]").click()
             page.wait_for_function(
@@ -1945,6 +2688,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             diagnostic_table = table_region_snapshot(diagnostics, ".diagnostic-table-scroll.ro-table-region")
             details["styleSurfaceMatrix"]["tableRegions"][diagnostic_table["accessibleName"]] = diagnostic_table
+            qualification.record(diagnostics, "diagnostics", "[data-diagnostics-workspace]")
             diagnostics.get_by_role("button", name="Export reviewed bundle").click()
             exported_status = diagnostics.locator(".support-preview [role='status']")
             exported_status.wait_for(state="visible", timeout=5_000)
@@ -1961,8 +2705,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             projects = browser_context.new_page()
             project_errors: list[str] = []
             projects.on("pageerror", page_error_collector(project_errors))
-            projects.add_init_script(
-                r"""(() => {
+            project_adapter = r"""(() => {
                   const traceId = '0123456789abcdef0123456789abcdef';
                   const projectId = '11111111-1111-4111-8111-111111111111';
                   let revision = 0;
@@ -2223,7 +2966,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     }
                   };
                 })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
-            )
+            projects.add_init_script(project_adapter)
             projects.goto("http://tauri.localhost/index.html", wait_until="load")
             projects.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
             open_desktop_tool(projects, "Local projects")
@@ -2322,6 +3065,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             current = projects.locator("[data-current-project]")
             current.get_by_role("button", name="Open project", exact=True).click()
             current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
+            qualification.record(projects, "projects", "[data-projects-workspace]")
             style_audit_fixtures = _style_audit_fixtures()
             projects.evaluate(
                 """fixtures => {
@@ -2358,6 +3102,34 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 }""",
                 style_audit_fixtures,
             )
+            intent_page = browser_context.new_page()
+            intent_errors: list[str] = []
+            intent_page.on("pageerror", page_error_collector(intent_errors))
+            intent_page.add_init_script(
+                project_adapter
+                + ";\n"
+                + r"""(() => {
+                  const original = window.__TAURI_INTERNALS__.invoke;
+                  const intent = __ACCEPTED_INTENT__;
+                  window.__TAURI_INTERNALS__.invoke = async (command, args) => {
+                    if (command === 'core_api_request' && args?.request?.path === '/projects/intent') return {
+                      status: 200, contentType: 'application/json', traceId: '0123456789abcdef0123456789abcdef',
+                      etag: null, body: JSON.stringify(intent)
+                    };
+                    return original(command, args);
+                  };
+                })();""".replace("__ACCEPTED_INTENT__", json.dumps(style_audit_fixtures["intent"]))
+            )
+            intent_page.goto("http://tauri.localhost/index.html", wait_until="load")
+            intent_page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            open_desktop_tool(intent_page, "Local projects")
+            intent_page.locator("#project-root").fill("C:/Research/study-one")
+            intent_page.get_by_role("button", name="Open project", exact=True).click()
+            intent_page.locator("[data-current-project]").wait_for(state="visible", timeout=5_000)
+            open_desktop_tool(intent_page, "Research intent")
+            qualification.record(intent_page, "intent", "[data-intent-workspace]")
+            errors.extend(f"accepted intent qualification runtime error: {error}" for error in intent_errors)
+            intent_page.close()
             projects.set_viewport_size({"width": 720, "height": 450})
             open_desktop_tool(projects, "Audit & lineage")
             target_revision_id = style_audit_fixtures["lineage"]["revisionId"]
@@ -2384,10 +3156,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             ):
                 table = table_region_snapshot(projects, table_selector)
                 details["styleSurfaceMatrix"]["tableRegions"][table["accessibleName"]] = table
+            qualification.record(projects, "audit", "[data-audit-lineage-workspace]")
             projects.evaluate("window.__STYLE_RESTORE_INVOKE__()")
             projects.set_viewport_size({"width": 1280, "height": 720})
             open_desktop_tool(projects, "Project home")
             projects.locator('[data-project-home-state="ready"]').wait_for(state="visible", timeout=5_000)
+            qualification.record(projects, "home", "[data-project-home-state]")
             project_home_bootstrap_valid = (
                 "Theory synthesis · Linear workflow" in projects.locator("main").inner_text()
                 and "Not started" in projects.locator("main").inner_text()
@@ -2407,6 +3181,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             open_desktop_tool(projects, "Project settings")
             projects.locator("#privacy-network-policy").wait_for(state="visible", timeout=5_000)
+            qualification.record(projects, "settings", "[data-project-settings-workspace]")
             privacy_defaults_valid = (
                 projects.locator("#privacy-network-policy").input_value() == "offline"
                 and projects.locator("#usage-telemetry").input_value() == "off"
@@ -2814,6 +3589,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             locked.goto("http://tauri.localhost/index.html", wait_until="load")
             locked.locator("[data-application-locked]").wait_for(state="visible", timeout=5_000)
             locked_text = locked.locator("body").inner_text()
+            qualification.record(locked, "application-lock", ".locked-card")
             details["applicationLock"] = (
                 locked.locator("h1").count() == 1
                 and locked.locator("h1").inner_text().strip() == "Research Observatory is locked"
@@ -3759,6 +4535,26 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"desktop Hello recovery runtime error: {'; '.join(hello_recovery_errors)}")
             hello_recovery.close()
 
+            task_center = browser_context.new_page()
+            task_center_errors: list[str] = []
+            task_center.on("pageerror", page_error_collector(task_center_errors))
+            task_center.add_init_script(
+                stable_file_bytes(repo, confined_path(repo, "tests/desktop/fixtures/task_center_interactions.js"))
+                .decode("utf-8")
+                .replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
+            )
+            task_center.goto("http://tauri.localhost/index.html", wait_until="load")
+            task_center.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            open_desktop_tool(task_center, "Local projects")
+            task_center.locator("#project-root").fill("C:/Research/study-one")
+            task_center.get_by_role("button", name="Open project", exact=True).click()
+            task_center.locator("[data-current-project]").wait_for(state="visible", timeout=5_000)
+            open_desktop_tool(task_center, "Task Center")
+            task_center.locator(".task-center-list li").first.wait_for(state="visible", timeout=5_000)
+            qualification.record(task_center, "tasks", "[data-task-center-workspace]")
+            errors.extend(f"task center qualification runtime error: {error}" for error in task_center_errors)
+            task_center.close()
+
             long_profile = browser_context.new_page()
             long_profile_errors: list[str] = []
             long_profile.on("pageerror", page_error_collector(long_profile_errors))
@@ -3884,6 +4680,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 }
                 responsive.locator("[data-application-settings-trigger]").click()
                 responsive.locator("[data-application-settings]").wait_for(state="visible", timeout=5_000)
+                if width == 1440:
+                    qualification.record(responsive, "application-settings", "[data-application-settings]")
                 surfaces = {
                     "card": surface_style_snapshot(responsive, ".settings-card.ro-card"),
                     "panel": surface_style_snapshot(responsive, ".application-settings-workspace > .ro-panel"),
@@ -3999,6 +4797,16 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 details["responsiveCases"] += 1
                 responsive.close()
             errors.extend(style_surface_matrix_errors(details["styleSurfaceMatrix"]))
+            dialog_page = browser_context.new_page()
+            dialog_page.goto("http://tauri.localhost/index.html", wait_until="load")
+            dialog_page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            dialog_page.evaluate("document.documentElement.style.fontSize = '32px'")
+            dialog_page.keyboard.press("Control+/")
+            dialog_page.locator(".shortcut-dialog").wait_for(state="visible", timeout=5_000)
+            qualification.record(dialog_page, "shortcut-dialog", ".shortcut-dialog")
+            dialog_page.close()
+            qualification.report["requests"] = list(details["requests"])
+            errors.extend(qualification_report_errors(repo, qualification.report))
         except (OSError, PlaywrightError, ValueError) as exc:
             errors.append(f"desktop product browser check failed: {exc}")
         finally:

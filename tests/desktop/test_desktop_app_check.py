@@ -23,6 +23,9 @@ from desktop_app_check import (  # noqa: E402
     inline_product_index,
     page_error_collector,
     product_build_errors,
+    product_style_qualification_errors,
+    qualification_capture_contract,
+    qualification_measurement_errors,
     runtime_frame_errors,
     security_errors,
     style_surface_matrix_errors,
@@ -147,6 +150,7 @@ def valid_style_surface_matrix() -> dict[str, Any]:
             "Audit lineage table scroll region",
         )
     }
+
     return {
         "responsive": responsive,
         "longProfile": {
@@ -200,7 +204,316 @@ def valid_style_surface_matrix() -> dict[str, Any]:
     }
 
 
+def valid_product_style_qualification_matrix() -> dict[str, Any]:
+    workspaces = (
+        ("projects", "Local projects", ["projects.html", "new-project.html"], "populated-project-list"),
+        ("home", "Project home", ["index.html"], "project-ready"),
+        ("intent", "Research intent", ["intent-contract.html"], "accepted-intent"),
+        ("tasks", "Task Center", ["task-center.html"], "populated-task-center"),
+        ("audit", "Audit & lineage", ["audit-lineage.html"], "populated-lineage"),
+        ("settings", "Project settings", ["project-settings.html"], "project-settings"),
+        (
+            "application-settings",
+            "Application settings",
+            ["application-settings.html"],
+            "application-settings",
+        ),
+        ("diagnostics", "Diagnostics & support", ["help-onboarding.html"], "populated-diagnostics"),
+    )
+    cases: list[dict[str, Any]] = []
+    for workspace_id, _, pages, state_id in workspaces:
+        for width, height in ((1440, 900), (1280, 720), (720, 450)):
+            for theme in ("light", "dark"):
+                cases.append(
+                    {
+                        "caseId": f"workspace:{workspace_id}:{theme}:{width}x{height}",
+                        "surfaceId": workspace_id,
+                        "stateId": state_id,
+                        "theme": theme,
+                        "viewport": {"width": width, "height": height},
+                        "role": "product",
+                        "referencePage": pages[0],
+                        "width": width,
+                        "height": height,
+                        "geometry": {
+                            "documentClientWidth": width,
+                            "documentScrollWidth": width,
+                            "surfaceLeft": 16,
+                            "surfaceTop": 80,
+                            "surfaceRight": width - 16,
+                            "surfaceBottom": height + 80,
+                            "surfaceWidth": width - 32,
+                            "surfaceHeight": height,
+                        },
+                        "focus": {
+                            "targetCount": 2,
+                            "targetFocused": True,
+                            "accessibleName": "Representative action",
+                            "outlineWidth": 2,
+                        },
+                        "overflow": {
+                            "documentHorizontal": False,
+                            "surfaceOverflowX": "visible",
+                            "surfaceOverflowY": "visible",
+                        },
+                        "themeTokens": {
+                            "theme": theme,
+                            "surface1": "rgb(255, 255, 255)" if theme == "light" else "rgb(11, 31, 55)",
+                            "textDefault": "rgb(36, 59, 85)" if theme == "light" else "rgb(215, 226, 239)",
+                            "workspaceBackground": ("rgb(255, 255, 255)" if theme == "light" else "rgb(11, 31, 55)"),
+                        },
+                        "reducedMotion": {
+                            "mediaMatches": True,
+                            "transitionDuration": "0s",
+                            "animationDuration": "0s",
+                        },
+                    }
+                )
+    designated_cases: list[dict[str, Any]] = []
+    for surface_id, state_id, reference_page in (
+        ("application-lock", "locked", "application-settings.html"),
+        ("local-service-boundary", "recovery-required", "application-settings.html"),
+        ("shortcut-dialog", "shortcut-dialog", "help-onboarding.html"),
+    ):
+        for theme in ("light", "dark"):
+            designated_cases.append(
+                {
+                    "caseId": f"boundary:{state_id}:{theme}:720x450",
+                    "surfaceId": surface_id,
+                    "stateId": state_id,
+                    "theme": theme,
+                    "viewport": {"width": 720, "height": 450},
+                    "role": "product",
+                    "referencePage": reference_page,
+                    "width": 720,
+                    "height": 450,
+                    "geometry": {
+                        "surfaceLeft": 24,
+                        "surfaceTop": 24,
+                        "surfaceRight": 696,
+                        "surfaceBottom": 426,
+                        "surfaceWidth": 672,
+                        "surfaceHeight": 402,
+                    },
+                    "focus": {
+                        "targetFocused": True,
+                        "focusContained": True,
+                        "accessibleName": "Recovery action" if state_id != "shortcut-dialog" else "Close shortcuts",
+                        "outlineWidth": 2,
+                    },
+                    "overflow": {
+                        "documentHorizontal": False,
+                        "containedVertical": state_id == "shortcut-dialog",
+                        "scrolledWithinSurface": state_id == "shortcut-dialog",
+                    },
+                    "stateVisible": True,
+                }
+            )
+    return {
+        "workspaces": [
+            {
+                "id": workspace_id,
+                "label": label,
+                "pageContractIds": pages,
+                "referencePage": pages[0],
+                "stateId": state_id,
+            }
+            for workspace_id, label, pages, state_id in workspaces
+        ],
+        "cases": cases,
+        "designatedCases": designated_cases,
+    }
+
+
 class DesktopAppCheckTests(unittest.TestCase):
+    def test_qualification_measurements_bind_renderer_geometry_and_reachable_states(self) -> None:
+        case = {
+            "surfaceId": "home",
+            "stateId": "project-ready",
+            "width": 1440,
+            "theme": "light",
+            "fonts": {"Segoe UI": True, "Georgia": True, "Consolas": True},
+            "observedEnvironment": {
+                "deviceScaleFactor": 1,
+                "locale": "en-US",
+                "timezoneId": "UTC",
+                "now": 1786190400000,
+                "random": 0.25,
+            },
+            "stateVisible": True,
+            "stateWitness": {"home": True},
+            "focus": {"targetInViewport": True},
+            "geometry": {"mainPadding": 28},
+            "semantic": [
+                {
+                    "kind": "card",
+                    "padding": 16,
+                    "radius": 10,
+                    "gap": 12,
+                    "minHeight": 0,
+                    "height": 120,
+                    "display": "grid",
+                    "wrap": "nowrap",
+                    "overflowX": "visible",
+                },
+                {
+                    "kind": "control",
+                    "padding": 16,
+                    "radius": 10,
+                    "gap": 0,
+                    "minHeight": 40,
+                    "height": 40,
+                    "display": "inline-block",
+                    "wrap": "nowrap",
+                    "overflowX": "visible",
+                },
+                {
+                    "kind": "grid",
+                    "padding": 0,
+                    "radius": 0,
+                    "gap": 16,
+                    "minHeight": 0,
+                    "height": 120,
+                    "display": "grid",
+                    "wrap": "nowrap",
+                    "overflowX": "visible",
+                },
+            ],
+        }
+        self.assertEqual([], qualification_measurement_errors(case))
+        mutations = [
+            lambda item: item["stateWitness"].__setitem__("home", False),
+            lambda item: item["fonts"].__setitem__("Georgia", False),
+            lambda item: item["observedEnvironment"].__setitem__("now", 0),
+            lambda item: item["observedEnvironment"].__setitem__("deviceScaleFactor", 2),
+            lambda item: item["geometry"].__setitem__("mainPadding", 27),
+            lambda item: item["focus"].__setitem__("targetInViewport", False),
+            lambda item: item["semantic"].pop(),
+            lambda item: item["semantic"][0].__setitem__("padding", 17),
+            lambda item: item["semantic"][0].__setitem__("radius", 25),
+            lambda item: item["semantic"][1].__setitem__("minHeight", 24),
+            lambda item: item["semantic"][2].__setitem__("gap", float("nan")),
+        ]
+        for mutate in mutations:
+            changed = copy.deepcopy(case)
+            mutate(changed)
+            self.assertTrue(qualification_measurement_errors(changed))
+
+    def test_product_style_qualification_contract_is_exact_and_rejects_matrix_gaps(self) -> None:
+        capture_contract = qualification_capture_contract(REPO)
+        self.assertEqual(108, len(capture_contract))
+        self.assertEqual(54, len({item["caseId"] for item in capture_contract}))
+        self.assertEqual({"product", "reference"}, {item["role"] for item in capture_contract})
+        self.assertTrue(
+            all(
+                set(item)
+                == {
+                    "caseId",
+                    "surfaceId",
+                    "stateId",
+                    "theme",
+                    "viewport",
+                    "role",
+                    "referencePage",
+                    "width",
+                    "height",
+                }
+                for item in capture_contract
+            )
+        )
+        self.assertTrue(
+            all(item["viewport"] == {"width": item["width"], "height": item["height"]} for item in capture_contract)
+        )
+        baseline = valid_product_style_qualification_matrix()
+        self.assertEqual([], product_style_qualification_errors(baseline))
+
+        mutations = {
+            "missing workspace": (
+                lambda matrix: matrix["workspaces"].pop(),
+                "missing implemented workspaces",
+            ),
+            "duplicate workspace": (
+                lambda matrix: matrix["workspaces"].append(copy.deepcopy(matrix["workspaces"][0])),
+                "duplicate workspaces",
+            ),
+            "workspace mapping": (
+                lambda matrix: matrix["workspaces"][0].__setitem__("pageContractIds", ["new-project.html"]),
+                "workspace mapping differs",
+            ),
+            "missing theme": (
+                lambda matrix: matrix["cases"].__setitem__(
+                    slice(None), [case for case in matrix["cases"] if case["theme"] != "dark"]
+                ),
+                "missing workspace/theme/viewport cases",
+            ),
+            "missing viewport": (
+                lambda matrix: matrix["cases"].__setitem__(
+                    slice(None),
+                    [case for case in matrix["cases"] if case["viewport"] != {"width": 1280, "height": 720}],
+                ),
+                "missing workspace/theme/viewport cases",
+            ),
+            "duplicate workspace theme viewport": (
+                lambda matrix: matrix["cases"].append(copy.deepcopy(matrix["cases"][0])),
+                "duplicate workspace/theme/viewport cases",
+            ),
+            "nonfinite geometry": (
+                lambda matrix: matrix["cases"][0]["geometry"].__setitem__("surfaceWidth", float("nan")),
+                "missing or nonfinite geometry",
+            ),
+            "escaped geometry": (
+                lambda matrix: matrix["cases"][0]["geometry"].__setitem__("surfaceRight", 2000),
+                "geometry escapes horizontally",
+            ),
+            "missing focus name": (
+                lambda matrix: matrix["cases"][0]["focus"].__setitem__("accessibleName", ""),
+                "named visible keyboard focus",
+            ),
+            "invisible focus": (
+                lambda matrix: matrix["cases"][0]["focus"].__setitem__("outlineWidth", 0),
+                "named visible keyboard focus",
+            ),
+            "document overflow": (
+                lambda matrix: matrix["cases"][0]["overflow"].__setitem__("documentHorizontal", True),
+                "invalid overflow containment",
+            ),
+            "wrong theme token": (
+                lambda matrix: matrix["cases"][0]["themeTokens"].__setitem__("workspaceBackground", "red"),
+                "workspace tokens",
+            ),
+            "motion": (
+                lambda matrix: matrix["cases"][0]["reducedMotion"].__setitem__("transitionDuration", "120ms"),
+                "suppress motion",
+            ),
+            "missing designated state": (
+                lambda matrix: matrix["designatedCases"].pop(),
+                "missing designated cases",
+            ),
+            "duplicate designated state": (
+                lambda matrix: matrix["designatedCases"].append(copy.deepcopy(matrix["designatedCases"][0])),
+                "duplicate designated cases",
+            ),
+            "designated viewport escape": (
+                lambda matrix: matrix["designatedCases"][0]["geometry"].__setitem__("surfaceRight", 800),
+                "designated surface escapes the viewport",
+            ),
+            "designated focus containment": (
+                lambda matrix: matrix["designatedCases"][0]["focus"].__setitem__("focusContained", False),
+                "contained visible focus",
+            ),
+            "dialog scroll containment": (
+                lambda matrix: next(case for case in matrix["designatedCases"] if case["stateId"] == "shortcut-dialog")[
+                    "overflow"
+                ].__setitem__("containedVertical", False),
+                "dialog does not retain contained scrolling",
+            ),
+        }
+        for name, (mutate, expected) in mutations.items():
+            with self.subTest(name=name):
+                changed = copy.deepcopy(baseline)
+                mutate(changed)
+                self.assertTrue(any(expected in error for error in product_style_qualification_errors(changed)))
+
     def test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible(self) -> None:
         errors, details = runtime_frame_errors(REPO)
 
