@@ -1,7 +1,7 @@
 # Research Observatory Capability-to-Page Coverage
 
-**Version:** 1.5
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.5`
+**Version:** 1.6
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.6`
 **Product pages:** 33
 **Capabilities:** 20
 

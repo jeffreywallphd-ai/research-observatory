@@ -1,6 +1,6 @@
 # Research Observatory UI Reference
 
-This directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.5**.
+This directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.6**. This copy is an inert ECR-0008 proposal, not the active approved reference. See `APPROVAL.yaml` for its pending status.
 
 ## Start with the workflow
 

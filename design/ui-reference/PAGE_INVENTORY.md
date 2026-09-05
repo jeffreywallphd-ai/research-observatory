@@ -1,6 +1,6 @@
 # Research Observatory Page Inventory
 
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.4`
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.6`
 **Product pages:** 33
 **Additional reference pages:** `style-guide.html`, `prototype-index.html`
 

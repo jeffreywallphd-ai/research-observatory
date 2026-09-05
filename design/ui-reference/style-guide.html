@@ -153,7 +153,7 @@
             </header>
             <section class="workflow-context" data-workflow-context aria-label="Current guided workflow position"></section>
 
-<div class="notice"><span><svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg></span><div><div class="notice-title">Approved experience reference: Academic Minimal 1.3</div><div class="notice-text">Crisp white and cool-gray light surfaces, deep navy dark surfaces, restrained royal-blue interaction accents, serif display headings, compact sans-serif workbench text, and minimal decorative effects. Tokens, semantics, page contracts, and required interaction behavior are normative; names, counts, vendors, sample prose, and inactive mock actions are illustrative.</div></div></div>
+<div class="notice"><span><svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg></span><div><div class="notice-title">Experience reference: Academic Minimal 1.6</div><div class="notice-text">Crisp white and cool-gray light surfaces, deep navy dark surfaces, restrained royal-blue interaction accents, serif display headings, compact sans-serif workbench text, and minimal decorative effects. Tokens, semantics, page contracts, and required interaction behavior are normative; names, counts, vendors, sample prose, and inactive mock actions are illustrative.</div></div></div>
 
 <section class="section" id="principles"><div class="section-header"><div><h2 class="section-title">1. Visual principles</h2><div class="section-description">The interface should communicate rigor before novelty and depth before decoration.</div></div></div><div class="grid grid-4"><article class="card card-lg"><h3 class="card-title">Evidence before prose</h3><p class="small muted">Primary actions expose sources, passages, status, and uncertainty. Generated prose is downstream.</p></article><article class="card card-lg"><h3 class="card-title">Quiet structure</h3><p class="small muted">Use borders, spacing, alignment, and typographic hierarchy before shadows or color.</p></article><article class="card card-lg"><h3 class="card-title">Blue means interaction</h3><p class="small muted">Royal blue identifies selection, active navigation, links, focus, and primary actions—not all data.</p></article><article class="card card-lg"><h3 class="card-title">State colors have fixed meaning</h3><p class="small muted">Semantic and evidence-state colors must not be reassigned by page or chart.</p></article></div></section>
 
@@ -175,13 +175,52 @@
 
 <section class="section" id="workflow-navigation"><div class="section-header"><div><h2 class="section-title">10. Guided workflow and adaptive navigation</h2><div class="section-description">The interface is organized around scholarly objectives rather than presenting every workspace as an equal disconnected tool.</div></div></div><div class="grid grid-3"><article class="card card-lg"><h3 class="card-title">Primary use case</h3><p class="small muted">Selected during project creation and governed by the Research Intent Contract. It controls ordered steps, defaults, checkpoints, recommended outputs, and next-step rationale.</p></article><article class="card card-lg"><h3 class="card-title">Guided workflow</h3><p class="small muted">Numbered steps use 28 px markers, 40 px minimum rows, brand blue for current, success green for complete, neutral slate for upcoming, violet outline for optional, and warning amber only for attention.</p></article><article class="card card-lg"><h3 class="card-title">All tools remain available</h3><p class="small muted">A secondary “All tools” disclosure preserves expert access. When a user opens a supporting tool, the context bar explains that it is outside the primary sequence and offers a return to the current step.</p></article></div><div class="workflow-context example"><div class="workflow-context-main"><span class="badge badge-brand">Theory synthesis</span><strong>Step 6 of 10 · Evidence Matrix</strong><span class="small muted">Verify comparable evidence before building theory and claim relations.</span></div><div class="workflow-context-actions"><button class="btn">← Previous</button><button class="btn btn-primary">Next: Theory Map →</button></div></div><div class="workflow-map" style="margin-top:1rem"><div class="workflow-map-step complete"><span>1</span><small>Intent</small></div><div class="workflow-map-step complete"><span>2</span><small>Search</small></div><div class="workflow-map-step complete"><span>3</span><small>Corpus</small></div><div class="workflow-map-step current"><span>4</span><small>Evidence</small></div><div class="workflow-map-step"><span>5</span><small>Theory</small></div><div class="workflow-map-step"><span>6</span><small>Synthesis</small></div></div><div class="notice" style="margin-top:1rem"><span><svg class="icon" aria-hidden="true"><use href="#icon-info"></use></svg></span><div><div class="notice-title">Workflow rules</div><div class="notice-text">Project creation must offer all fourteen approved use cases. Changing use case is versioned and previews effects. Linear workflows may include optional or cyclical steps, but the user always sees current position, rationale, previous/next actions, incomplete gates, and the full tool inventory.</div></div></div></section>
 
+      <section class="section" id="local-folders"><div class="section-header"><div><h2 class="section-title">11. Local folder selection and project recovery</h2><div class="section-description">Shared controls remove path typing while preserving explicit actions and local security.</div></div></div>
+        <article class="card card-lg">
+
+<div class="field" role="group" aria-labelledby="guide-parent-label">
+  <span class="field-label" id="guide-parent-label">Parent folder</span>
+  <span class="field-help" id="guide-parent-help">Choose an existing local folder. Selecting a folder does not create or open a project.</span>
+  <output class="directory-location" id="guide-parent-location" aria-labelledby="guide-parent-label">No folder selected</output>
+  <div><button type="button" class="btn" id="guide-parent-choose" aria-describedby="guide-parent-help guide-parent-location" data-toast="Reference only: the desktop app opens the native folder dialog. No folder was selected."><svg class="icon" aria-hidden="true"><use href="#icon-folder"></use></svg> Choose folder…<span class="sr-only"> — Parent folder</span></button></div>
+</div>
+
+
+<details class="section">
+  <summary class="field-label">Folder-selection states · separate reference examples</summary>
+  <div class="grid grid-2 section">
+    <article class="notice"><div><div class="notice-title">Choosing a folder…</div><div class="notice-text">Complete or cancel the native dialog. Other folder buttons and project submission remain unavailable while it is open.</div></div></article>
+    <article class="notice"><div><div class="notice-title">Selection cancelled</div><div class="notice-text">Your previous folder and form entries are unchanged. Focus returns to Choose folder or Change folder.</div></div></article>
+    <article class="notice warning"><div><div class="notice-title">This folder cannot be used</div><div class="notice-text">Choose an accessible local folder. Your project name and objective have been kept. No project action was performed.</div></div></article>
+    <article class="notice warning"><div><div class="notice-title">The destination already exists</div><div class="notice-text">Change the project name or choose a different parent folder. The existing folder will not be overwritten.</div></div></article>
+    <article class="notice warning"><div><div class="notice-title">The folder chooser is unavailable</div><div class="notice-text">Retry from the folder button. Do not type a path or grant wider filesystem permissions to bypass this state.</div></div></article>
+    <article class="notice"><div><div class="notice-title">Application locked or closed</div><div class="notice-text">Dismiss the chooser and discard late results. Clear protected form data; a fresh unlock starts without restoring a project or selected location.</div></div></article>
+  </div>
+</details>
+
+
+<details class="section">
+  <summary class="field-label">Readiness and recovery · separate reference examples</summary>
+  <div class="grid grid-2 section">
+    <article class="notice"><div><div class="notice-title">Core is starting…</div><div class="notice-text">Waiting for the local service. Your entries are kept; no project action has been sent.</div></div></article>
+    <article class="notice"><div><div class="notice-title">Loading research workflows…</div><div class="notice-text">Create becomes available after the authentic catalog has loaded and the form is valid. No substitute catalog is used.</div></div></article>
+    <article class="notice warning"><div class="field"><div class="notice-title">Research workflows could not be loaded</div><div class="notice-text">Retry the catalog read. This does not create or open a project.</div><div><button type="button" class="btn" data-toast="Reference only: retry the read-only workflow catalog request.">Retry loading workflows</button></div></div></article>
+    <article class="notice warning"><div class="field"><div class="notice-title">The local service is not ready</div><div class="notice-text">Check Core status, then explicitly retry startup. Project operations are never replayed automatically.</div><div><button type="button" class="btn" data-toast="Reference only: request a bounded local Core startup retry.">Retry Core startup</button></div></div></article>
+    <article class="notice warning"><div class="field"><div class="notice-title">The project action did not complete</div><div class="notice-text">Your entries are kept. Review Core status and the destination before retrying the action; an uncertain outcome is not permission to create a duplicate.</div><code class="small">RO-CORE-PROJECT-ACTION-FAILED</code></div></article>
+    <article class="notice warning"><div><div class="notice-title">Review the project details</div><div class="notice-text">Name the invalid field and associate its help with the control. Narrative objectives accept line breaks; blank or invalid input cannot be submitted.</div></div></article>
+  </div>
+</details>
+
+        </article>
+      </section>
+
             <footer class="trust-footer">
               <div class="trust-points">
                 <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-shield"></use></svg> Evidence and outputs are provenance-tracked</span>
                 <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-link"></use></svg> Citations resolve to source passages</span>
                 <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg> AI judgments remain inspectable and contestable</span>
               </div>
-              <span>Mock data · Academic Minimal v1.5</span>
+              <span>Mock data · Academic Minimal v1.6</span>
             </footer>
           </main>
         </div>

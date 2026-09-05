@@ -1,28 +1,30 @@
-reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
-version: '1.5'
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.6
+version: '1.6'
 status: approved
 approval_kind: human
 approved_by: human:repository-owner
-approved_at: '2026-09-03T07:26:18-04:00'
-approval_basis: The repository owner explicitly approved the provenance-only
-  RO-UI-ACADEMIC-MINIMAL-1.5 authority correction at exact proposal commit
-  68d47cbc77de910484939419ee890e68e50e7a1d on 2026-09-03. The governed
-  experience and implementation scope are unchanged. This approval authorizes
-  application implementation against the corrected reference; it does not
-  represent task, slice, Wave, release, or remote-push approval.
+approved_at: '2026-09-05T03:15:45Z'
+approval_basis: Exact ECR-0008 packet 2160cc9917282d80848189dc9669fe3827979246
+  and its reviewed Academic Minimal 1.6 reference are authorized by the standing
+  owner preapproval bound in W1.A09, introduced at
+  fcf627b4c83af81d0c3472526477bc7aa68d819c. Publication applies only the approved
+  metadata mapping; task completion, independent review, W1 passing and remote
+  actions are not granted by this reference approval.
 authority:
-  wave_id: W1
-  slice_id: CAP-03.S05
-  approved_wave_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
-  proposal_commit: 68d47cbc77de910484939419ee890e68e50e7a1d
-  slice_plan: planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md
-supersedes: RO-UI-ACADEMIC-MINIMAL-1.4
+  amendment_id: W1.A09
+  change_request_id: ECR-0008
+  approval_record: planning/wave-amendment-approvals/W1.A09.json
+  approval_record_sha256: 08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c
+  approval_record_introduction_commit: fcf627b4c83af81d0c3472526477bc7aa68d819c
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.5
 scope:
   normative:
   - design tokens
   - semantic evidence, result, manuscript, review, and revision-state meanings
   - fourteen use-case workflow profiles
   - project-creation selection
+  - shared native directory selection and read-only destination preview
+  - protected cancellation, catalog readiness and explicit recovery
   - adaptive ordered navigation
   - workflow context and previous/next behavior
   - route and page inventory
