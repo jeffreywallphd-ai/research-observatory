@@ -200,7 +200,7 @@
         "W1.A09.B00"
       ],
       "acceptanceCriteria": [
-        "Publish only the exact 5401df8eddc1b84a79047ef91d9ad3b207fea41d proposal, package 75b37134ad348afda7b3701bb6f0d8704105263a4c8fb9beb43515b0473f8eb0, with the canonical proposal's enumerated approval metadata substitutions and derived hashes. Obtain independent control/experience checkpoint before downstream presentation rebinding.",
+        "Publish only the exact bf0050b3dfed874136247df36cd0b5d86934c8cc proposal, package 38dbe5b05c9fd7b6457851a1b28a7c0d0192d18a2d64f2dbc76723bb8260bce0, with the canonical proposal's enumerated approval metadata substitutions and derived hashes. Obtain independent control/experience checkpoint before downstream presentation rebinding.",
         "Preserve exact authenticated original1.5 catalog/page-contract snapshots and pins, byte-identical generated semantic TS/Python payloads and schemas, profile IDs/versions, persisted selection/accepted intent/stage/support-return history; no migration, relabeling or runtime Git requirement.",
         "Bind exact approved presentation-to-semantic witness; only root reference_id/version mapping is permitted. Reject missing/stale/substituted/unapproved witness, duplicate/unknown fields, reordered arrays or changed semantics.",
         "Freshly render all 66 reference observations with unchanged pinned engine/fonts/viewports/tolerances, explain every change, preserve all previous baselines/failures; no same-ID ratification or copied observations.",
@@ -576,7 +576,7 @@
     "files": [
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/APPROVAL.yaml",
-        "sha256": "5f36eed9496bdf36f77c0ed7e6ce94111799cd485dae84af6bbf2129db5f0e3d"
+        "sha256": "c4f777d46e4d00475f2cef6903c10444db25db4b0a5d2c52084d034d39ac291e"
       },
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/CAPABILITY_COVERAGE.json",
@@ -604,11 +604,11 @@
       },
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/STYLE_GUIDE.md",
-        "sha256": "3a028fa0cf2b9f7a327cc87e753d0322e0bcf977d3d1b26b4ecb601da9face06"
+        "sha256": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946"
       },
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/STYLE_GUIDE_SOURCE.md",
-        "sha256": "3a028fa0cf2b9f7a327cc87e753d0322e0bcf977d3d1b26b4ecb601da9face06"
+        "sha256": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946"
       },
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/WORKFLOW_CATALOG.json",
@@ -624,7 +624,7 @@
       },
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/app.css",
-        "sha256": "987d624421c93a3d865fd4e89c2a4f5dad9699f42add758cfed68fd21d7c0b54"
+        "sha256": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee"
       },
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/app.js",
@@ -796,7 +796,7 @@
       },
       {
         "path": "planning/enabler-change-requests/ECR-0008.reference-1.6/REFERENCE_MANIFEST.yaml",
-        "sha256": "82de58c7a1ace608a4f29cb6e68f2e43c39efb049d1632ccfa4423857e63e093"
+        "sha256": "91ad67f4a0e3eddac7ac67e2be59478352ef8ceb5e3ecacdbdcf471a35c0a627"
       }
     ]
   },
@@ -835,7 +835,7 @@
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
-      "sha256": "4b091c89eafebd01fdd926a44ef760d5767052c676841398f76a3dd5a2bca537",
+      "sha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560",
       "role": "canonical-proposal"
     },
     {
@@ -845,7 +845,7 @@
     },
     {
       "path": "planning/enabler-change-requests/ECR-0008.execution-review-01.html",
-      "sha256": "ceb61487181e55a06d23f7871f879a42f925608e3a519e8bdaaf0ea19751b236",
+      "sha256": "a64a35e176f4edb721db0e9c515cb760aab6d7f7c06bc2617b82618821817a9e",
       "role": "human-review"
     }
   ]
