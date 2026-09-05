@@ -1,0 +1,11 @@
+
+
+# Publication privacy: raw machine reports remain local.
+/.local/
+artifacts/tmp/
+.env
+.env.*
+!.env.example
+*.log
+/artifacts/bootstrap/bootstrap-report.json
+/artifacts/bootstrap/setup-verification.json

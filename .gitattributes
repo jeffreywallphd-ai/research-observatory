@@ -1,0 +1,4 @@
+
+
+# Extensionless privacy hooks must run on Windows Git too.
+.githooks/* text eol=lf
