@@ -1,0 +1,178 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-independent-review",
+  "reviewId": "historical-reference-binding.review-01",
+  "reviewedCommit": "81fccc337b92e4911e5937ca1817d0bbad9fa3a0",
+  "predecessorCommit": "63d916a56359742a863241c7521d1b7703f24bc7",
+  "reviewedAt": "2026-09-05T11:46:16Z",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "independence": {
+    "implementer": "agent:root",
+    "implementationAuthoredByReviewer": false,
+    "preflightParticipation": "Read-only adversarial preflight identified publication-content, dirty-authority, historical-path and handoff-shape risks. The reviewer did not author or change the maintenance implementation or tests.",
+    "reviewerWrites": ["artifacts/evidence/historical-reference-binding.review-01.json"]
+  },
+  "disposition": "ACCEPTED",
+  "summary": "The exact five-file maintenance satisfies HR-01 through HR-04 within its explicitly bounded direct-amendment publication scope. No blocking or nonblocking acceptance-bound defect remains. This is independent maintenance acceptance, not reference publication, task completion, a workflow transition, amendment adoption, local-main integration or a W1 exit decision.",
+  "evidence": {
+    "path": "artifacts/evidence/historical-reference-binding.evidence-01.json",
+    "introductionCommit": "a166cd5b6083837cef96cf2c7dd1aaaf52657854",
+    "gitBlob": "094da6400eee5d7d7d8d9cdca4ec5216c3fa8ff5",
+    "sha256": "1354867573b75fa13e5ff804e0e3a6bb41da1fe440b98c147d2257f66dfe9c20",
+    "authentication": "The candidate is the sole child of the named predecessor. The evidence commit is its sole-child evidence-only delivery. All five candidate file hashes and Git blobs independently match the evidence and unchanged working files. The backlog Git blob is unchanged from predecessor through evidence delivery.",
+    "truthAssessment": "The root evidence distinguishes final unchanged-source tests launched before the candidate commit from post-commit static/site checks. Its synthetic publication is explicitly disposable, not a live reference approval. This reviewer independently reran the expanded real-Git regression after candidate commit and obtained PASS in 322.444 seconds. The retained PENDING independent-review field remains truthful historical input; this new disposition does not rewrite it."
+  },
+  "reviewedArtifacts": [
+    {
+      "path": "artifacts/evidence/historical-reference-binding.maintenance-01.md",
+      "gitBlob": "f35a5585ab97f77aa07cdc8d52e081864dfa683b",
+      "sha256": "ea964eb3e1532a64872f73d0ac78b253ae7aa855c2c3f8cc907d0679cbcbdb13"
+    },
+    {
+      "path": "tests/foundation/test_planctl_amendments.py",
+      "gitBlob": "48e474cd70dac72a7a5affe1db15e12c80ab7303",
+      "sha256": "5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f"
+    },
+    {
+      "path": "tools/plan_review_site.py",
+      "gitBlob": "1ed23dd74adfc14363feb617756ab1f22a1e1b09",
+      "sha256": "2e87244db87eaec3a23e3be29383241e78c78d380667ba894e077c7cf318c671"
+    },
+    {
+      "path": "tools/planctl.py",
+      "gitBlob": "892e4d71627b5de3ea48d054be0fb52a94b7c383",
+      "sha256": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6"
+    },
+    {
+      "path": "tools/ui_conformance.py",
+      "gitBlob": "49af150ed5b8d7ebe0aa109a4e5d21b2ec323301",
+      "sha256": "126fb08a2032c465e644b297f12d08f6d43f3dea7e5448c96a245b1f39665721"
+    }
+  ],
+  "independentChecks": [
+    {
+      "id": "IR-historical-successor",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_historical_experience_requires_authentic_clean_successor -v",
+      "result": "PASS",
+      "exitCode": 0,
+      "tests": 1,
+      "durationSeconds": 322.444,
+      "loadTiming": "Launched after exact candidate commit; source remained unchanged. The fixture reads retained Git authority and creates only disposable synthetic publication commits.",
+      "coverage": "Original strict-helper rejection; authenticated historical 1.5 source resolution; ECR5/6/7 historical versus inert ECR8 rendering; wrong source commit/inventory; dirty reference/approval and untracked reference files; clean committed pending/wrong-supersedes/same-ID/invalid-authority publications; self-consistent unapproved first-publication CSS; staged or committed packet substitution masked by restored approved worktree bytes; post-approval content mutation."
+    },
+    {
+      "id": "IR-strict-live-normalization",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_bound_repository_files_use_git_normalized_bytes_for_clean_worktrees -v",
+      "result": "PASS",
+      "exitCode": 0,
+      "tests": 1,
+      "durationSeconds": 0.710,
+      "coverage": "Existing strict live-file behavior, clean CRLF/Git normalization, pending untracked fixture bytes and rejection of content/commit mismatches."
+    },
+    {
+      "id": "IR-paused-chain",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut -v",
+      "result": "PASS",
+      "exitCode": 0,
+      "tests": 1,
+      "durationSeconds": 38.703
+    },
+    {
+      "id": "IR-historical-display",
+      "result": "PASS",
+      "method": "Called the actual governed_experience_html helper with a synthetic historical-only filename that does not exist in the active package. It renders the exact commit-qualified source without a mutable link and retains the publication-versus-qualified-adoption distinction. This is a rendering-unit probe only; authority is separately proved by the real-Git regression. Source inspection also confirms the historical loader branch no longer calls the current-file existence resolver."
+    },
+    {
+      "id": "IR-approved-correction",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0008 --require-approved",
+      "result": "PASS",
+      "exitCode": 0,
+      "observation": "ECR-0008 is approved and history-bound. The known legacy printed canonical link still identifies retained ECR-0008.md; the exact packet binds ECR-0008.execution-01.md. No approval was created or changed."
+    },
+    {
+      "id": "IR-generated-views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "PASS",
+      "exitCode": 0,
+      "observation": "Generated backlog views: PASS - no changes."
+    },
+    {
+      "id": "IR-scope-and-bindings",
+      "result": "PASS",
+      "method": "Matched the exact predecessor/candidate/evidence parent chain, all five declared file hashes and Git blobs, unchanged source and backlog blobs, and the evidence-only delivery scope. Exact-path git diff --check passed. Searches and reads were restricted to named source, test, planning and allowed evidence paths."
+    }
+  ],
+  "criterionDisposition": [
+    {
+      "id": "HR-01",
+      "result": "SATISFIED",
+      "basis": "The real-Git fixture reproduces the unchanged strict helper rejecting a lawful synthetic successor, then authenticates the historical packet's exact declared blobs and approved package through retained approval history. Original packets are unchanged; no identity-specific exemption or live authority mutation is introduced."
+    },
+    {
+      "id": "HR-02",
+      "result": "SATISFIED",
+      "basis": "Historical fallback requires the old immutable approved packet, clean exact authority inputs, a clean committed active reference, genuine successor amendment authority, exact supersedes/ancestry and unchanged approved packages. Initial publication is compared with the complete reviewed proposed inventory and content, allowing only supported approval fields and the derived manifest approval hash. The independent real-Git negative matrix closes the content-substitution and dirty-index preflight gaps. Existing strict normalization behavior remains intact."
+    },
+    {
+      "id": "HR-03",
+      "result": "SATISFIED",
+      "basis": "The actual loader independently replayed historical approved 1.5 sources for ECR5/6/7 and proposed inert ECR8 separately. Historical rows bind the immutable source commit and do not attach old hashes to mutable active-file links. The current-file existence dependency is removed from the historical branch. Ordinary live and non-reference bindings remain strict."
+    },
+    {
+      "id": "HR-04",
+      "result": "SATISFIED",
+      "basis": "Independent exact-candidate successor, normalized-live, paused-chain, current approval and generated-view replays pass. Root's retained seven affected regressions, 492-page site validation, lint, format and full scoped mypy are consistent with the exact source. The ui_conformance delta is only one local list type annotation. No backlog, active reference, baseline, schema, taskctl, product or authority record changed."
+    }
+  ],
+  "preflightReplay": [
+    {
+      "observation": "Initial successor package could previously be self-consistent but not approved.",
+      "disposition": "RESOLVED",
+      "proof": "The new shared publication-content comparison plus committed first-publication CSS negative rejects this case."
+    },
+    {
+      "observation": "Historical display depended on current existence of superseded files.",
+      "disposition": "RESOLVED",
+      "proof": "Historical source selection no longer uses repository_file; the actual rendering helper accepts a historical-only path without current-file access or mutable links."
+    },
+    {
+      "observation": "Same-ID proposed-to-approved Wave/slice handoff was incompatible with the direct predecessor walk.",
+      "disposition": "BOUNDED_LIMITATION_EXPLICITLY_RETAINED",
+      "proof": "The contract and executable error now explicitly restrict new successor resolution to direct amendment publication. No unsupported handoff is silently authorized. Validation of the old Wave/slice-approved 1.5 package itself still passes."
+    },
+    {
+      "observation": "Restored approved worktree bytes could hide staged or committed authority substitution.",
+      "disposition": "RESOLVED",
+      "proof": "Exact authenticated input-path status checks and both real-Git substitution negatives pass."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "verificationSelection": {
+    "rationale": "This control/evidence repair warranted real Git and adversarial authority replay, not a full product or deployment suite. Review replayed the preflight boundaries and incremental content-binding changes, while relying on explicitly retained root static/site regressions for unaffected presentation structure. No native, Core, browser or application was launched.",
+    "retainedReviewerFailures": [
+      "Two initial independent attempts stopped before qualification because Git clone rejected the sandbox account's ownership of the source repository. An exact-path process-local safe.directory attempt did not reach clone upload-pack. The bounded retry was approved for escalated execution and passed; no global Git config was modified."
+    ],
+    "deferred": "All live reference publication/semantic witness/baseline proof, A09 tasks and qualification, returned A08 findings, accumulated integration and complete Windows/W1 qualification remain due through the approved workflow."
+  },
+  "safetyDisclosure": {
+    "thisReviewer": "This review and its maintenance preflight did not access the protected W1.A04.B00 witness. All searches named explicit source/test/planning or allowed evidence paths; this ledger is the only repository file written by the reviewer.",
+    "separateRetainedIncident": "The root evidence reports a possible protected-file scan by a different earlier preflight agent. Root clarified that it concerns /root/t01_f02_live_geometry (Hypatia) during the prior A09.T01 read-only preflight, not this reviewer. Its reported broad rg produced no returned witness content and no mutation, and root disclosed it to the user. This review retains that disclosure without claiming independent verification of the other session or erasing the incident."
+  },
+  "integrationDisposition": {
+    "boundedMaintenanceUse": "ACCEPTED on the current campaign branch after this independent disposition is retained. The existing supported workflow may use this generic resolver within its direct-amendment scope.",
+    "localMain": "DEFERRED. Unmet A08 gates in branch ancestry remain; this maintenance review does not approve that ancestry or authorize a premature merge to main.",
+    "workflowState": "W1 and A08 remain paused; A09 B00 remains approved and unmaterialized with no execution lease. This review performs no state transition."
+  },
+  "authorityLimits": {
+    "newHumanApprovalRequested": false,
+    "referencePublicationApproval": false,
+    "semanticCompatibilityOrBaselineApproval": false,
+    "a09TaskOrExitApproval": false,
+    "a08CompletionApproval": false,
+    "waveResumeApproval": false,
+    "waveExitOrG1Approval": false,
+    "localMainIntegrationApproval": false,
+    "remoteOrDestructiveActionAuthorized": false
+  }
+}
