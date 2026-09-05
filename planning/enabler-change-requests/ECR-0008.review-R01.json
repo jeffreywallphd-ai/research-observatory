@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0008",
+  "proposedAmendmentId": "W1.A09",
+  "targetWave": "W1",
+  "attemptId": "R01",
+  "candidateCommit": "d678d5f1be29d11dab38c402721b13e72694c9d5",
+  "packetSha256": "0f9d7c2ff84a0c3c33941ea7c82fd76e1d27e9cbe6aa85b7922ce10a1c6d3c2e",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "reviewedAt": "2026-09-05T03:02:36Z",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "summary": "Two consolidated acceptance-bound P2 findings must close: the new reference folder button lacks visible keyboard focus, and the strict reference-publication substitution list does not enumerate the supported amendment-authority metadata. The remaining scope, bindings, authority and semantic compatibility design are sound. Neither bounded correction requires another human approval for the unchanged disclosed scope.",
+  "independence": {
+    "implementationOrProposalAuthoredByReviewer": false,
+    "priorParticipation": "Read-only design and implementation preflight plus independent maintenance/preparation reviews. No proposal, reference, product or controller implementation was authored by this reviewer.",
+    "writes": ["planning/enabler-change-requests/ECR-0008.review-R01.json"]
+  },
+  "humanAuthorization": {
+    "status": "EXPLICIT_OWNER_PREAPPROVAL_RECOGNIZED",
+    "quotation": "You have preapproval for the project-UX/reference correct gate. Continue past that. Only seek approval for W1 passing.",
+    "scope": "The disclosed combined ECR-0008 / Academic Minimal 1.6 project-UX, native-contract reliability and reference correction, with return to A08 and no release approval.",
+    "additionalHumanApprovalRequiredForMatchingScope": false,
+    "remainingBarrier": "Independent exact-candidate acceptance, followed by immutable recording of the matching packet/reference and existing owner authorization through supported controls. Preapproval does not close this review finding or waive task/slice/exit evidence."
+  },
+  "bindings": {
+    "canonicalProposal": {
+      "path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+      "sha256": "4b091c89eafebd01fdd926a44ef760d5767052c676841398f76a3dd5a2bca537"
+    },
+    "humanReview": {
+      "path": "planning/enabler-change-requests/ECR-0008.execution-review-01.html",
+      "sha256": "ceb61487181e55a06d23f7871f879a42f925608e3a519e8bdaaf0ea19751b236"
+    },
+    "referenceCandidateCommit": "5401df8eddc1b84a79047ef91d9ad3b207fea41d",
+    "referencePackageSha256": "75b37134ad348afda7b3701bb6f0d8704105263a4c8fb9beb43515b0473f8eb0",
+    "referenceEvidence": {
+      "path": "planning/enabler-change-requests/ECR-0008.reference-evidence-01.json",
+      "sha256": "e5c3c4c9d0723eeaa4639644001ccbf77160d7802fce9f68301008d8a452bf5b"
+    },
+    "authentication": "HEAD was the exact candidate during review. The packet SHA-256 matched; all 59 packet/reference bound file blobs matched the candidate. All eight retained PNG SHA-256 values matched. Independent reference validation reproduced the package identity, 55 governed files, 35 HTML documents, 33 product pages and fourteen profiles.",
+    "legacyPrintedLink": "planctl ecr validate still prints ECR-0008.md as its legacy canonical link. The packet's canonical-proposal role and reviewed execution page bind ECR-0008.execution-01.md; the older proposal remains immutable history and was not substituted for the current scope."
+  },
+  "checks": [
+    {
+      "id": "IR-packet-authority",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0008",
+      "result": "PASS", "exitCode": 0,
+      "observation": "Structurally and historically valid; this read-only check does not approve the packet."
+    },
+    {
+      "id": "IR-reference-integrity",
+      "command": ".venv/Scripts/python.exe -c \"import json,sys; from pathlib import Path; sys.path.insert(0,'tools'); import ui_reference_check as r; print(json.dumps(r.validate(Path('planning/enabler-change-requests/ECR-0008.reference-1.6').absolute()),indent=2))\"",
+      "result": "EXPECTED_PENDING_APPROVAL_ONLY",
+      "observation": "Generator reproducible; package matches. The only returned errors are reference and manifest status='proposed', which are expected for inert preparation. No other integrity error or warning."
+    },
+    {
+      "id": "IR-scope-semantic-arithmetic",
+      "result": "PASS",
+      "observation": "Exact bindings and active-path exclusion were checked. The three catalog/page/site JSON sources differ only in root reference_id/version; tokens, existing JavaScript and print CSS are unchanged. The 48 atomic baseline tasks total194 points; conservative refactor allocation is3+3+5=11, or5.67% (schema rounded5.7%). No active product/reference/baseline/backlog delta exists from the retained maintenance-review boundary."
+    },
+    {
+      "id": "IR-retained-visual-inspection",
+      "result": "PASS_WITH_SEPARATE_FOCUS_FINDING",
+      "inspected": [
+        "planning/enabler-change-requests/ECR-0008.reference-previews-01/projects-1440x900-light.png",
+        "planning/enabler-change-requests/ECR-0008.reference-previews-01/new-project-1440x900-dark.png",
+        "planning/enabler-change-requests/ECR-0008.reference-previews-01/new-project-states-light.png",
+        "planning/enabler-change-requests/ECR-0008.reference-previews-01/style-guide-1440x900-dark.png"
+      ],
+      "observation": "Shared folder labels/help, selectable wrapping read-only destination, visibly disabled Open, multiline objective and separate state examples are coherent. The chooser toast explicitly says no folder was selected. Inherited reference minimum-width behavior is disclosed and is not product200%-layout qualification. These static previews do not prove native/Core behavior."
+    },
+    {
+      "id": "IR-keyboard-focus",
+      "result": "FAIL",
+      "environment": {"platform": "Windows x64", "playwright": "1.58.0", "chromium": "145.0.7632.6", "viewport": {"width": 1440, "height": 900}},
+      "observation": "Independent real Tab traversal of projects.html reaches #open-project-folder-choose after42 tabs in both themes. It is the active element and matches :focus-visible, but outline remains none and box-shadow is identical to the unfocused ordinary shadow. No native action or filesystem selection was invoked."
+    }
+  ],
+  "findings": [
+    {
+      "findingId": "ECR-0008-R01-F01",
+      "severity": "P2",
+      "status": "open",
+      "blocking": true,
+      "title": "The proposed folder button loses its visible keyboard-focus indicator",
+      "acceptanceBinding": [
+        "ECR-0008.packet.json W1.A09.T03 acceptance1: shared accessible DirectoryPickerField",
+        "ECR-0008.packet.json W1.A09.T03 acceptance6/7: keyboard/focus ownership and real accessibility",
+        "ECR-0008.reference-1.6/STYLE_GUIDE.md section10: maintain visible focus",
+        "ECR-0008.ux-addendum-01.md acceptance4: keyboard and focus return"
+      ],
+      "locations": [
+        {"path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/app.css", "line": 19},
+        {"path": "planning/enabler-change-requests/ECR-0008.reference-1.6/assets/app.css", "line": 187},
+        {"path": "artifacts/evidence/ECR-0008.reference-preparation-check-01.py", "symbol": "main: folder-button visibleFocusStyle observation"}
+      ],
+      "cause": "The earlier :focus-visible rule and later .btn rule have equal specificity. The later .btn box-shadow overrides the token focus ring while the focus rule suppresses the outline. The new folder and retry compositions reuse this button. The preview helper records the ordinary shadow under visibleFocusStyle but asserts only activeElement, not a visible keyboard indicator.",
+      "reproduction": {
+        "fixture": "Use the candidate Projects reference in the existing tools/ui_conformance.py pinned-browser Context, with candidate normativeSources and reference package bound above; create a fresh1440x900 page for each theme with ui.new_page and ui.set_page.",
+        "steps": [
+          "Read computed outlineStyle and boxShadow of #open-project-folder-choose before focus.",
+          "Press actual Tab until that button is document.activeElement (42 presses in this candidate); do not substitute a mouse click.",
+          "Read node.matches(':focus-visible'), computed outlineStyle/boxShadow and the --focus-ring token."
+        ],
+        "browserProbe": "node => ({active:node===document.activeElement,focusVisible:node.matches(':focus-visible'),outline:getComputedStyle(node).outlineStyle,shadow:getComputedStyle(node).boxShadow,token:getComputedStyle(node).getPropertyValue('--focus-ring')})",
+        "lightActual": {"active": true, "focusVisible": true, "outline": "none", "shadow": "rgba(15, 35, 61, 0.05) 0px 1px 2px 0px", "expectedToken": "0 0 0 3px rgba(37, 99, 235, 0.28)"},
+        "darkActual": {"active": true, "focusVisible": true, "outline": "none", "shadow": "rgba(0, 0, 0, 0.24) 0px 1px 2px 0px", "expectedToken": "0 0 0 3px rgba(91, 145, 255, 0.36)"}
+      },
+      "requiredResolution": "Make the smallest shared token-based focus cascade correction for the new button composition, without per-page copies, new tokens or a general redesign. Add an actual keyboard-modality assertion that distinguishes focused from unfocused appearance and verifies the intended focus token in both themes; preserve disabled-action behavior. Rebuild/rebind the exact proposed reference, packet, derived hashes and fresh preparation observations at a descendant candidate. Retain this ledger and all prior evidence unchanged, and replay this finding in R02. The owner's existing preapproval covers this acceptance-preserving correction; no additional human approval is requested."
+    },
+    {
+      "findingId": "ECR-0008-R01-F02",
+      "severity": "P2",
+      "status": "open",
+      "blocking": true,
+      "title": "Enumerate the supported amendment-authority publication metadata exactly",
+      "acceptanceBinding": [
+        "ECR-0008.packet.json W1.A09.T01 acceptance1: publish only the exact proposal with enumerated approval metadata substitutions",
+        "ECR-0008.packet.json acceptance2: exact authorization binding and only enumerated substitutions",
+        "ADR-0004: complete authentic approved reference and baseline lineage"
+      ],
+      "locations": [
+        {"path": "planning/enabler-change-requests/ECR-0008.execution-01.md", "section": "Exact reference candidate and activation"},
+        {"path": "planning/enabler-change-requests/ECR-0008.reference-1.6/APPROVAL.yaml", "line": 4},
+        {"path": "tools/ui_conformance.py", "symbol": "APPROVAL_AUTHORITY_KEYS / approval_record_errors / amendment_authority_bound_approval_errors"}
+      ],
+      "origin": "Root raised this activation-boundary concern before the initial ledger was finalized; the independent reviewer verified the actual existing checker and a read-only synthetic rejection.",
+      "cause": "The canonical proposal permits only enumerated metadata substitutions and mentions an actual proposal_commit, but does not explicitly authorize replacing approval_kind=pending-human-review and the arbitrary proposed authority object with the exact supported amendment-authority shape. The existing approved-reference checker requires approval_kind=human, exact five-field amendment authority and approver/time matching the actual A09 approval record. The wave/slice proposal_commit route is a distinct authority protocol, not interchangeable with A09 amendment authority. Manifest status must also become approved, not merely acquire new hashes.",
+      "reproduction": {
+        "method": "In memory only, load the proposed APPROVAL.yaml; apply its expressly listed status, human identity/time, approval_basis and proposal_commit substitutions using clearly synthetic test values; call ui_conformance.approval_record_errors. No approval record or reference file is written.",
+        "actual": [
+          "authority-bound approval must identify an explicit human approver",
+          "authority must contain one exact supported authority field set"
+        ],
+        "sourceConfirmation": "approval_record_errors requires approval_kind=human and exact APPROVAL_AUTHORITY_KEYS. amendment_authority_bound_approval_errors authenticates the five fields against the real approval introduction and requires approved_by='human:'+record.approvedBy and approved_at=record.approvedAt. reference_package_at also requires manifest.status=approved."
+      },
+      "requiredResolution": "Clarify the descendant canonical packet's metadata mapping explicitly: approval_kind=human; approved_by and approved_at derived from the actual immutable A09 approval; authority replaced with exactly amendment_id, change_request_id, approval_record, approval_record_sha256 and approval_record_introduction_commit; manifest status approved and regenerated content hashes. Remove proposed-only authority keys from the active publication, including proposal_commit. Keep the reviewed inert copy and all non-metadata reference content unchanged except the separately reviewed F01 remedy. State the existing direct new-ID amendment-authority sequence: committed A09 authority strictly precedes reference approval, which strictly precedes the new baseline, with the independent control checkpoint before downstream presentation rebinding. Do not use the wave/slice two-commit proposal helper or weaken a checker. This is a bounded readiness clarification, not a new controller, authority expansion or human approval request."
+    }
+  ],
+  "closures": [],
+  "acceptedDesignBoundaries": [
+    "The exact quiescent paused A08 parent binding, bootstrap freeze, sole-owner child execution and independently qualified return to PAUSED A08 preserve the reviewed maintenance contract; explicit parent activation and later ordinary Wave resume remain separate.",
+    "The semantic1.5 snapshot/metadata-only presentation1.6 bridge preserves ADR-0026 identities and history without a migration or runtime Git dependency; task proof must establish exact witness authenticity and fail-closed semantics.",
+    "The native picker uses the existing pinned Windows boundary with bounded purposes, main-window ownership, generation revalidation, no mutex held across user input, late-result rejection and no expanded renderer filesystem permission.",
+    "Native catalog/lineage and narrative fixes are expressly bounded to existing contracts; authentic startup/read-only recovery never replays project mutations.",
+    "The new reference and fresh baseline use a new approved identity, unchanged renderer/tolerances and an independent control checkpoint; same-ID hash replacement and historical failure suppression remain prohibited.",
+    "F02/UX01 remain owned by A08.T02 after return. No future task criterion is claimed complete by this packet or its mock previews."
+  ],
+  "retainedOpenProductFindings": ["W1.A08.T02-preflight-F01", "W1.A08.T02-preflight-F02", "UX01", "UX02", "UX03", "UX04", "UX05", "UX06"],
+  "reviewLimits": "No full product/W1 review was restarted. Root's66 proposed visual observations and18 interaction cases were inspected as preparation evidence, not independently rerendered in full. Independent replay covered integrity/authority plus the credible new keyboard boundary; four retained representative PNGs were viewed. No existing diagnostic output was overwritten.",
+  "authorityLimits": {
+    "productOrReferenceActivated": false,
+    "liveApprovalRecordWritten": false,
+    "taskOrAmendmentTransitionPerformed": false,
+    "w1OrG1Approval": false,
+    "mainIntegrationAuthorizedThroughUnmetGates": false
+  },
+  "safety": "Protected witness entirely untouched. No live backlog/product/reference mutation, project data access, native dialog, credential operation, external effect, commit, merge or push. Only this new independent review ledger was written."
+}
