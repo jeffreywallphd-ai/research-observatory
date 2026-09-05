@@ -453,6 +453,141 @@ def presentation_mapping_errors(
     return errors
 
 
+SEMANTIC_SOURCE_AUTHORITY: dict[str, Any] = {
+    "schemaVersion": "1.0",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "referenceVersion": "1.5",
+    "approvalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
+    "sourceRoot": "design/ui-reference",
+    "sourceSha256": {
+        "WORKFLOW_CATALOG.json": "2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+        "CAPABILITY_COVERAGE.json": "d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
+    },
+}
+PRESENTATION_WITNESS_PATH = "packages/contracts/workflow-profile/presentation-compatibility.json"
+
+
+def unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON field: {key}")
+        result[key] = value
+    return result
+
+
+def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha256: str) -> list[str]:
+    """Authenticate a committed exact-package bridge; never used by runtime/build generation.
+
+    The independent control checkpoint separately binds this witness's digest
+    before consumer rebinding. This verifier proves the witness's contents, not
+    the reviewer's disposition, and cannot grant new reference authority.
+    """
+    label = "presentation compatibility"
+    try:
+        witness_path = confined_path(repo, PRESENTATION_WITNESS_PATH)
+        payload = stable_file_bytes(repo, witness_path)
+        witness = json.loads(payload.decode("utf-8"), object_pairs_hook=unique_json_object)
+        if not isinstance(witness, dict) or set(witness) != {
+            "schemaVersion",
+            "documentType",
+            "semanticSource",
+            "presentation",
+        }:
+            raise ValueError("witness fields must be exact")
+        if (
+            witness["schemaVersion"] != "1.0"
+            or witness["documentType"] != "workflow-profile-presentation-compatibility"
+        ):
+            raise ValueError("witness identity is invalid")
+        if witness["semanticSource"] != SEMANTIC_SOURCE_AUTHORITY:
+            raise ValueError("semantic source authority differs from original approval")
+        presentation = witness["presentation"]
+        if not isinstance(presentation, dict) or set(presentation) != {
+            "referenceId",
+            "version",
+            "approvalCommit",
+            "referencePackageSha256",
+        }:
+            raise ValueError("presentation fields must be exact")
+        version = presentation["version"]
+        approval_commit = presentation["approvalCommit"]
+        if (
+            not isinstance(version, str)
+            or not re.fullmatch(r"[1-9][0-9]*\.[0-9]+", version)
+            or reference_id != f"RO-UI-ACADEMIC-MINIMAL-{version}"
+            or reference_id == SEMANTIC_SOURCE_AUTHORITY["referenceId"]
+            or presentation["referenceId"] != reference_id
+            or not re.fullmatch(r"[0-9a-f]{64}", package_sha256)
+            or presentation["referencePackageSha256"] != package_sha256
+            or not isinstance(approval_commit, str)
+            or not re.fullmatch(r"[0-9a-f]{40}", approval_commit)
+        ):
+            raise ValueError("presentation identity/package/commit is invalid or stale")
+        head = git(repo, "rev-parse", "HEAD")
+        committed, error = git_blob_at(repo, head, PRESENTATION_WITNESS_PATH)
+        if (
+            error
+            or committed is None
+            or canonical_payload(PRESENTATION_WITNESS_PATH, committed)
+            != canonical_payload(PRESENTATION_WITNESS_PATH, payload)
+        ):
+            raise ValueError("witness must match the current committed Git blob")
+        introduction = git(repo, "log", "-1", "--format=%H", head, "--", PRESENTATION_WITNESS_PATH)
+        if (
+            not introduction
+            or introduction == approval_commit
+            or not commit_is_ancestor(repo, approval_commit, introduction)
+            or git(repo, "log", "-1", "--format=%H", approval_commit, "--", "design/ui-reference/APPROVAL.yaml")
+            != approval_commit
+        ):
+            raise ValueError("exact approved reference publication must precede the witness")
+        approval_bytes, approved_package, errors = reference_package_at(repo, approval_commit, reference_id)
+        if errors or approval_bytes is None or approved_package != package_sha256:
+            return [f"{label}: approved presentation package is not authentic", *errors]
+        approval = yaml.safe_load(approval_bytes.decode("utf-8"))
+        if not isinstance(approval, dict) or approval.get("version") != version:
+            raise ValueError("approved presentation version differs")
+        reference = confined_path(repo, "design/ui-reference")
+        validated = validate_reference(reference, None)
+        if (
+            not validated["ok"]
+            or validated["reference_id"] != reference_id
+            or validated["reference_package_sha256"] != package_sha256
+        ):
+            raise ValueError("active presentation does not match the complete approved package")
+        semantic_root = confined_path(repo, "packages/contracts/workflow-profile/source/academic-minimal-1.5")
+        authority = json.loads(
+            stable_file_bytes(repo, confined_path(semantic_root, "SOURCE_AUTHORITY.json")).decode("utf-8"),
+            object_pairs_hook=unique_json_object,
+        )
+        if authority != SEMANTIC_SOURCE_AUTHORITY:
+            raise ValueError("semantic snapshot provenance differs")
+        semantic: dict[str, str] = {}
+        current: dict[str, str] = {}
+        for name, digest in SEMANTIC_SOURCE_AUTHORITY["sourceSha256"].items():
+            original, error = git_blob_at(
+                repo, SEMANTIC_SOURCE_AUTHORITY["approvalCommit"], f"design/ui-reference/{name}"
+            )
+            observed = canonical_payload(name, stable_file_bytes(repo, confined_path(semantic_root, name)))
+            if error or original is None or hashlib.sha256(original).hexdigest() != digest or observed != original:
+                raise ValueError(f"{name}: semantic snapshot is not the original approved bytes")
+            published, error = git_blob_at(repo, approval_commit, f"design/ui-reference/{name}")
+            active = canonical_payload(name, stable_file_bytes(repo, confined_path(reference, name)))
+            if error or published is None or active != canonical_payload(name, published):
+                raise ValueError(f"{name}: active presentation differs from the exact publication")
+            semantic[name] = original.decode("utf-8")
+            current[name] = active.decode("utf-8")
+        if git(repo, "rev-parse", "HEAD") != head or stable_file_bytes(repo, witness_path) != payload:
+            raise ValueError("witness or Git candidate changed during verification")
+        final_reference = validate_reference(reference, None)
+        if not final_reference["ok"] or final_reference["reference_package_sha256"] != package_sha256:
+            raise ValueError("active presentation changed during verification")
+        return presentation_mapping_errors(semantic, current, reference_id, version)
+    except (OSError, ValueError, UnicodeError, yaml.YAMLError, subprocess.SubprocessError) as exc:
+        return [f"{label}: {exc}"]
+
+
 def result(context: Context, check: str, errors: list[str], details: dict[str, Any]) -> dict[str, Any]:
     return {
         "schemaVersion": "1.0",
