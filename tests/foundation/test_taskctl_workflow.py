@@ -7,6 +7,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import types
 import unittest
 from argparse import Namespace
 from contextlib import chdir, redirect_stderr, redirect_stdout
@@ -92,6 +93,416 @@ def sha256_with_synthetic_witness(payload: bytes, *args: Any, **kwargs: Any) -> 
 
 
 class TaskctlWorkflowTests(unittest.TestCase):
+    def paused_correction_workflow(self) -> tuple[tuple[dict, dict, dict, dict, dict], dict, dict, dict]:
+        # Stable quiescent predecessor fixture, not the evolving live campaign.
+        source = subprocess.check_output(
+            ["git", "show", "07473e15a6212995fa48ece9909f0d51be7ebc26:planning/backlog.yaml"], cwd=REPO
+        )
+        data = taskctl_module.yaml.safe_load(source)
+        parent = data["wave_amendments"][-1]
+        self.assertEqual("W1.A08", parent["id"])
+        reference = parent["approval_reference"]
+        approval = json.loads((REPO / reference["path"]).read_bytes())
+        binding = {
+            "id": parent["id"],
+            "changeRequestId": parent["change_request_id"],
+            "status": "PAUSED",
+            "packetCommit": approval["packet"]["commit"],
+            "approvalReference": {
+                "path": reference["path"],
+                "sha256": reference["sha256"],
+                "introductionCommit": reference["introduction_commit"],
+            },
+            "effectiveStateCommit": "07473e15a6212995fa48ece9909f0d51be7ebc26",
+            "recordSha256": canonical_json_sha256(parent),
+            "returnPolicy": "paused-predecessor",
+        }
+        child = json.loads(json.dumps(parent).replace("W1.A08", "W1.A09").replace("ECR-0007", "ECR-0008"))
+        child.update(correction=binding, tasks=[], campaign=None)
+        child["lifecycle"] = {"status": "APPROVED", "history": [child["lifecycle"]["history"][0]]}
+        child["completion"] = {
+            "status": "PENDING",
+            "reviewer": None,
+            "reviewed_at": None,
+            "evidence": [],
+            "notes": None,
+        }
+        packet_task = {
+            "id": "W1.A09.T01",
+            "title": "Fixture correction",
+            "objective": "Prove exact return",
+            "dependencies": ["W1.A09.B00"],
+            "acceptanceCriteria": ["Parent preserved"],
+            "verification": ["fixture-check"],
+        }
+        packet = {
+            "schemaVersion": "4.1-proposal",
+            "authorityChain": {"pausedPredecessor": copy.deepcopy(binding)},
+            "taskInventory": [packet_task],
+        }
+        data["wave_amendments"].append(child)
+        return taskctl_module.index_backlog(data), parent, child, packet
+
+    def test_paused_correction_roles_schema_and_frozen_parent_mutations(self) -> None:
+        context, parent, child, _packet = self.paused_correction_workflow()
+        data = context[0]
+        self.assertEqual([], validate(*context))
+        self.assertEqual([], taskctl_module.backlog_schema_errors(taskctl_module.serializable_backlog(data)))
+        self.assertEqual(["W1.A09"], [item["id"] for item in taskctl_module.blocking_wave_amendments(data, "W1")])
+        self.assertEqual("W1.A09", global_program_position(data, *context[2:])["amendment"]["id"])
+        before = taskctl_module.exact_record_snapshot(data, "wave_amendments", identities={parent["id"]})
+        taskctl_module.refresh_derived_states(*context)
+        self.assertEqual(
+            before, taskctl_module.exact_record_snapshot(data, "wave_amendments", identities={parent["id"]})
+        )
+        with self.assertRaisesRegex(SystemExit, "freezes this predecessor"):
+            taskctl_module.command_amendment_activate(
+                Namespace(amendment=parent["id"], lease_hours=8, profile="LOC", platform="windows-x64"), *context
+            )
+        for mutation in ("task", "history", "bootstrap", "completion", "campaign"):
+            changed = copy.deepcopy(data)
+            prior = changed["wave_amendments"][-2]
+            if mutation == "task":
+                prior["tasks"][1]["implementation_notes"] += " changed"
+            elif mutation == "history":
+                prior["lifecycle"]["history"][-1]["rationale"] += " changed"
+            elif mutation == "bootstrap":
+                prior["bootstrap"]["review"]["notes"] = "changed"
+            elif mutation == "completion":
+                prior["completion"]["notes"] = "changed"
+            else:
+                prior["campaign"]["pause_reason"] = "changed"
+            with self.subTest(mutation=mutation):
+                self.assertTrue(
+                    any(
+                        "predecessor record changed" in error
+                        for error in validate(*taskctl_module.index_backlog(changed))
+                    )
+                )
+        history = amendment_history_snapshot(data)
+        child["correction"]["recordSha256"] = "f" * 64
+        with self.assertRaisesRegex(SystemExit, "Append-only lifecycle history changed"):
+            save_validated("unused", data, expected_amendment_history=history)
+
+    def test_paused_correction_materialization_uses_real_cas_without_half_entry(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "planning" / "backlog.yaml"
+            context, _parent, _child, packet = self.paused_correction_workflow()
+            data = context[0]
+            save_validated(str(path), data)
+            before = path.read_bytes()
+            frozen_parent = canonical_json_sha256(taskctl_module.serializable_backlog(data)["wave_amendments"][-2])
+            approval = {"authorizedTaskIds": ["W1.A09.T01"]}
+            for failure in ("stale", "replace", "lock", None):
+                context = load(str(path))
+                args = Namespace(
+                    amendment="W1.A09",
+                    agent="alice",
+                    file=str(path),
+                    source_sha256="f" * 64 if failure == "stale" else hashlib.sha256(before).hexdigest(),
+                )
+                with (
+                    patch("taskctl.discover_repository", return_value=root),
+                    patch("taskctl.require_clean_repository"),
+                    patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"fixture authority")),
+                    patch("taskctl.require_amendment_packet_integrity"),
+                    # Historical authority is covered separately with real Git;
+                    # retain schema/state checks and the real CAS publication here.
+                    patch(
+                        "taskctl.save_validated",
+                        side_effect=lambda *args, **kwargs: save_validated(*args, **{**kwargs, "repo": None}),
+                    ),
+                ):
+                    if failure == "stale":
+                        with self.assertRaisesRegex(SystemExit, "changed after taskctl loaded"):
+                            taskctl_module.command_amendment_materialize(args, *context)
+                    elif failure == "replace":
+                        with (
+                            patch("taskctl.os.replace", side_effect=OSError("publication interrupted")),
+                            self.assertRaisesRegex(OSError, "publication interrupted"),
+                        ):
+                            taskctl_module.command_amendment_materialize(args, *context)
+                    elif failure == "lock":
+                        with taskctl_module.exclusive_backlog_lock(path), self.assertRaises(SystemExit):
+                            taskctl_module.command_amendment_materialize(args, *context)
+                    else:
+                        taskctl_module.command_amendment_materialize(args, *context)
+                if failure:
+                    self.assertEqual(before, path.read_bytes())
+                    self.assertEqual([], list(path.parent.glob("*.tmp")))
+            updated = load(str(path))[0]
+            self.assertEqual(
+                frozen_parent,
+                canonical_json_sha256(taskctl_module.serializable_backlog(updated)["wave_amendments"][-2]),
+            )
+            self.assertEqual("MATERIALIZED", updated["wave_amendments"][-1]["lifecycle"]["status"])
+            self.assertEqual("W1.A09", taskctl_module.correction_roles(updated)[0]["holdOwner"])
+            with self.assertRaisesRegex(SystemExit, "already been materialized"):
+                taskctl_module.command_amendment_materialize(args, *load(str(path)))
+
+    def test_paused_correction_binding_must_equal_approved_packet_on_every_replay(self) -> None:
+        _context, _parent, child, packet = self.paused_correction_workflow()
+        child["bootstrap"] = None  # Focus the relation boundary, not unrelated bootstrap evidence.
+        approval = {"packet": {"commit": "07473e15a6212995fa48ece9909f0d51be7ebc26"}}
+        for phase in ("APPROVED", "MATERIALIZED", "ADOPTED"):
+            child["lifecycle"]["status"] = phase
+            self.assertEqual([], taskctl_module.bootstrap_packet_errors(REPO, child, approval, packet))
+            for mutation in ("removed", "changed", "extra"):
+                altered = copy.deepcopy(child)
+                if mutation == "removed":
+                    altered.pop("correction")
+                elif mutation == "changed":
+                    altered["correction"]["recordSha256"] = "f" * 64
+                else:
+                    altered["correction"]["newAuthority"] = True
+                with self.subTest(phase=phase, mutation=mutation):
+                    self.assertTrue(
+                        any(
+                            "immutable approved packet" in error
+                            for error in taskctl_module.bootstrap_packet_errors(REPO, altered, approval, packet)
+                        )
+                    )
+        prior_packet = {"packet": {"commit": packet["authorityChain"]["pausedPredecessor"]["packetCommit"]}}
+        self.assertTrue(
+            any(
+                "does not descend" in error
+                for error in taskctl_module.bootstrap_packet_errors(REPO, child, prior_packet, packet)
+            )
+        )
+
+    def test_paused_correction_older_adapter_fails_closed_at_every_hold_phase(self) -> None:
+        legacy = types.ModuleType("fixture_legacy_taskctl")
+        legacy.__file__ = str(REPO / "tools/taskctl.py")
+        source = subprocess.check_output(
+            ["git", "show", "07473e15a6212995fa48ece9909f0d51be7ebc26:tools/taskctl.py"], cwd=REPO
+        )
+        exec(compile(source, legacy.__file__, "exec"), legacy.__dict__)
+        context, _parent, child, packet = self.paused_correction_workflow()
+        for phase in ("APPROVED", "MATERIALIZED", "ADOPTED"):
+            child["lifecycle"]["status"] = phase
+            child["lifecycle"]["history"][-1]["status"] = phase
+            if phase != "APPROVED":
+                child["tasks"] = [taskctl_module.materialized_amendment_task(child["id"], packet["taskInventory"][0])]
+            with self.subTest(phase=phase):
+                errors = legacy.validate(*taskctl_module.index_backlog(context[0]))
+                self.assertTrue(
+                    any("amendment-hold" in error or "latest consecutive" in error for error in errors), errors
+                )
+
+    def test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch(self) -> None:
+        context, parent, child, _packet = self.paused_correction_workflow()
+        data = context[0]
+        binding = copy.deepcopy(child["correction"])
+        data["wave_amendments"].pop()
+        context = taskctl_module.index_backlog(data)
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0007.packet.json")
+            .read_text(encoding="utf-8")
+            .replace("ECR-0007", "ECR-0008")
+            .replace("W1.A08", "W1.A09")
+        )
+        packet.update(schemaVersion="4.1-proposal")
+        packet["authorityChain"]["pausedPredecessor"] = binding
+        approval = {
+            "changeRequestId": "ECR-0008",
+            "approvedBy": "fixture-owner",
+            "approvedAt": "2026-09-04T00:00:00Z",
+            "decision": "Synthetic correction approval for adapter persistence test",
+        }
+        frozen = taskctl_module.exact_record_snapshot(data, "wave_amendments")
+        original_run = subprocess.run
+
+        def ecr_fixture(command: list[str], *args: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+            if len(command) > 1 and str(command[1]).endswith("planctl.py"):
+                return subprocess.CompletedProcess(command, 0, "Fixture approval prevalidated", "")
+            return original_run(command, *args, **kwargs)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "planning/backlog.yaml"
+            save_validated(str(path), data)
+            evidence = root / "bootstrap.json"
+            evidence.write_text("{}\n", encoding="utf-8")
+            args = Namespace(
+                amendment="W1.A09",
+                approval_commit="a" * 40,
+                implementation_commit="b" * 40,
+                evidence=str(evidence),
+                agent="codex",
+                file=str(path),
+                source_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            )
+            with (
+                patch("taskctl.subprocess.run", side_effect=ecr_fixture),
+                patch("taskctl.approval_introduction_commit", return_value="a" * 40),
+                patch("taskctl.git_head_branch", return_value=("b" * 40, "codex/w1-windows-local-runtime")),
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch(
+                    "taskctl.canonical_control_artifact_path",
+                    return_value=("artifacts/evidence/fixture-bootstrap.json", evidence),
+                ),
+                patch("taskctl.require_clean_repository"),
+                patch("taskctl.load_bootstrap_scope_addenda", return_value=([], [])),
+                patch("taskctl.bootstrap_candidate_authorization", return_value=([], [])),
+                patch("taskctl.bootstrap_attempt_errors", return_value=[]),
+                patch(
+                    "taskctl.save_validated", side_effect=lambda *a, **kw: save_validated(*a, **{**kw, "repo": None})
+                ),
+            ):
+                taskctl_module.command_amendment_v4_bootstrap_submit(
+                    args,
+                    data,
+                    context[3],
+                    repo=REPO,
+                    approval=approval,
+                    packet=packet,
+                    approval_payload=b"fixture approval",
+                    frozen_amendments=frozen,
+                    frozen_wave_bases=taskctl_module.exact_record_snapshot(
+                        data, "wave_approval_bases", identity_field="wave_id"
+                    ),
+                )
+            appended = load(str(path))[0]
+            self.assertEqual(binding, appended["wave_amendments"][-1]["correction"])
+            self.assertEqual("APPROVED", appended["wave_amendments"][-1]["lifecycle"]["status"])
+            self.assertEqual("REVIEW", appended["wave_amendments"][-1]["bootstrap"]["status"])
+            self.assertEqual(
+                frozen, taskctl_module.exact_record_snapshot(appended, "wave_amendments", identities=set(frozen))
+            )
+            self.assertEqual(parent["id"], taskctl_module.correction_roles(appended)[0]["holdOwner"])
+            self.assertEqual(
+                "W1.A09",
+                global_program_position(appended, *taskctl_module.index_backlog(appended)[2:])["amendment"]["id"],
+            )
+
+    def test_paused_correction_adoption_returns_once_through_real_git_and_cas(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "planning/backlog.yaml"
+            context, _parent, child, packet = self.paused_correction_workflow()
+            data = context[0]
+            template = next(item for item in data["wave_amendments"] if item["id"] == "W1.A07")
+            fixture_branch = next(wave for wave in data["waves"] if wave["id"] == "W1")["campaign"]["branch"]
+            child["campaign"] = copy.deepcopy(template["campaign"])
+            child["campaign"].update(status="COMPLETE", branch=fixture_branch, worktree=root.as_posix(), lease=None)
+            child["completion"] = json.loads(json.dumps(template["completion"]).replace("W1.A07", "W1.A09"))
+            child["tasks"] = [taskctl_module.materialized_amendment_task(child["id"], packet["taskInventory"][0])]
+            for field in ("status", "completed_at", "evidence", "verification_state", "review"):
+                child["tasks"][0][field] = copy.deepcopy(template["tasks"][0][field])
+            taskctl_module.append_amendment_event(
+                child, "REVIEW", "alice", "Synthetic independently approved exit fixture"
+            )
+            save_validated(str(path), data)
+            before = path.read_bytes()
+            parent_before = canonical_json_sha256(taskctl_module.serializable_backlog(data)["wave_amendments"][-2])
+            checkpoint_count = len(next(wave for wave in data["waves"] if wave["id"] == "W1")["checkpoints"])
+            subprocess.run(["git", "init", "--quiet", "-b", fixture_branch], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Correction Fixture"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=root, check=True)
+            reviewed = self.commit_all(root, "approved exit fixture")
+            evidence_dir = root / "artifacts/evidence"
+            evidence_dir.mkdir(parents=True)
+            manifest = {
+                "documentType": "wave-amendment-adoption-evidence",
+                "amendmentId": "W1.A09",
+                "targetWave": "W1",
+                "candidateCommit": reviewed,
+                "reviewedCompletionCommit": reviewed,
+                "branch": fixture_branch,
+                "correctionReturn": copy.deepcopy(child["correction"]),
+            }
+            for name in ("return", "missing", "wrong"):
+                document = copy.deepcopy(manifest)
+                if name == "missing":
+                    document.pop("correctionReturn")
+                if name == "wrong":
+                    document["correctionReturn"]["returnPolicy"] = "wave"
+                (evidence_dir / f"{name}.json").write_text(json.dumps(document) + "\n", encoding="utf-8")
+            self.commit_all(root, "bound return checkpoints")
+            for failure in ("missing", "wrong", "stale", "replace", "lock", None):
+                context = load(str(path))
+                args = Namespace(
+                    amendment="W1.A09",
+                    agent="alice",
+                    from_path=str(evidence_dir / f"{failure if failure in {'missing', 'wrong'} else 'return'}.json"),
+                    note="Fixture correction return",
+                    file=str(path),
+                    source_sha256="f" * 64 if failure == "stale" else hashlib.sha256(before).hexdigest(),
+                )
+                with (
+                    patch("taskctl.require_runtime_amendment_integrity"),
+                    # Other amendments' historical authority is outside this temp
+                    # repo; the return checkpoint, Git ancestry, schema/state and CAS
+                    # publication all run unmocked.
+                    patch(
+                        "taskctl.save_validated",
+                        side_effect=lambda *a, **kw: save_validated(*a, **{**kw, "repo": None}),
+                    ),
+                ):
+                    if failure in {"missing", "wrong"}:
+                        with self.assertRaisesRegex(SystemExit, "exact paused-predecessor return"):
+                            taskctl_module.command_amendment_adopt(args, *context)
+                    elif failure == "stale":
+                        with self.assertRaisesRegex(SystemExit, "changed after taskctl loaded"):
+                            taskctl_module.command_amendment_adopt(args, *context)
+                    elif failure == "replace":
+                        with (
+                            patch("taskctl.os.replace", side_effect=OSError("interrupted return")),
+                            self.assertRaisesRegex(OSError, "interrupted return"),
+                        ):
+                            taskctl_module.command_amendment_adopt(args, *context)
+                    elif failure == "lock":
+                        with taskctl_module.exclusive_backlog_lock(path), self.assertRaises(SystemExit):
+                            taskctl_module.command_amendment_adopt(args, *context)
+                    else:
+                        taskctl_module.command_amendment_adopt(args, *context)
+                if failure:
+                    self.assertEqual(before, path.read_bytes())
+                    self.assertEqual([], list(path.parent.glob("*.tmp")))
+            context = load(str(path))
+            after = context[0]
+            self.assertEqual([], validate(*context))
+            self.assertEqual(
+                parent_before, canonical_json_sha256(taskctl_module.serializable_backlog(after)["wave_amendments"][-2])
+            )
+            self.assertEqual("W1.A08", taskctl_module.correction_roles(after)[0]["holdOwner"])
+            self.assertEqual("W1.A08", global_program_position(after, *context[2:])["amendment"]["id"])
+            wave = next(item for item in after["waves"] if item["id"] == "W1")
+            self.assertEqual("amendment-hold", wave["campaign"]["scope"])
+            self.assertEqual(checkpoint_count + 1, len(wave["checkpoints"]))
+            with self.assertRaisesRegex(SystemExit, "unadopted REVIEW"):
+                taskctl_module.command_amendment_adopt(args, *context)
+            self.assertEqual(checkpoint_count + 1, len(wave["checkpoints"]))
+
+            returned_commit = self.commit_all(root, "returned paused hold")
+            parent_packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0007.packet.json").read_bytes())
+            activation = Namespace(
+                amendment="W1.A08",
+                agent=wave["campaign"]["owner"],
+                branch=fixture_branch,
+                base_sha=returned_commit,
+                worktree=str(root),
+                profile="LOC",
+                platform="windows-x64",
+                lease_hours=8,
+                file=str(path),
+                source_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            )
+            with (
+                patch("taskctl.load_amendment_authority", return_value=({}, parent_packet, b"fixture authority")),
+                patch("taskctl.require_amendment_packet_integrity"),
+                patch(
+                    "taskctl.save_validated", side_effect=lambda *a, **kw: save_validated(*a, **{**kw, "repo": None})
+                ),
+            ):
+                taskctl_module.command_amendment_activate(activation, *context)
+            resumed = load(str(path))
+            self.assertEqual([], validate(*resumed))
+            self.assertEqual("ACTIVE", resumed[0]["wave_amendments"][-2]["lifecycle"]["status"])
+            self.assertEqual("ADOPTED", resumed[0]["wave_amendments"][-1]["lifecycle"]["status"])
+            self.assertEqual("W1.A08", resumed[0]["control_plane"]["active_amendment"])
+
     def workflow(self) -> tuple[dict, dict, dict, dict, dict]:
         task = {
             "id": "CAP-00.S01.T01",

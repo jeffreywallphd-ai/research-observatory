@@ -98,6 +98,176 @@ class KernelValidationError(ValueError):
     """Raised when an event, checkpoint, or tail fails closed."""
 
 
+class PausedCorrectionProjection(TypedDict):
+    """Validation-only roles; never an approval or permission to mutate."""
+
+    parentId: str
+    correctionId: str
+    phase: str
+    holdOwner: str | None
+    parentFrozen: bool
+
+
+def paused_predecessor_record_hash(record: Mapping[str, Any]) -> str:
+    """Match the compatibility adapter's complete serialized-record binding."""
+    _validate_json_domain(record)
+    return hashlib.sha256(json.dumps(record, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def _validate_correction_identity(record: Mapping[str, Any], binding: Mapping[str, Any], correction_id: str) -> None:
+    """Validate immutable relation fields even after the live parent advances."""
+    expected_fields = {
+        "id",
+        "changeRequestId",
+        "status",
+        "packetCommit",
+        "approvalReference",
+        "effectiveStateCommit",
+        "recordSha256",
+        "returnPolicy",
+    }
+    if set(binding) != expected_fields or binding.get("returnPolicy") != "paused-predecessor":
+        raise KernelValidationError("Paused correction binding or return policy is unsupported")
+    parent_id = str(binding.get("id") or "")
+    match = re.fullmatch(r"(W(?:[0-9]|1[01]))\.A([0-9]{2})", parent_id)
+    if (
+        match is None
+        or correction_id != f"{match[1]}.A{int(match[2]) + 1:02d}"
+        or record.get("id") != parent_id
+        or record.get("target_wave") != match[1]
+        or record.get("change_request_id") != binding.get("changeRequestId")
+        or "correction" in record
+    ):
+        raise KernelValidationError("Paused correction must name its immediate non-correction predecessor")
+    approval = record.get("approval_reference") or {}
+    if binding.get("approvalReference") != {
+        "path": approval.get("path"),
+        "sha256": approval.get("sha256"),
+        "introductionCommit": approval.get("introduction_commit"),
+    }:
+        raise KernelValidationError("Paused correction predecessor approval differs from its binding")
+    for field in ("packetCommit", "effectiveStateCommit"):
+        if not isinstance(binding.get(field), str) or re.fullmatch(r"[0-9a-f]{40}", binding[field]) is None:
+            raise KernelValidationError("Paused correction commit binding is invalid")
+    if binding.get("status") != "PAUSED" or re.fullmatch(r"[0-9a-f]{64}", str(binding.get("recordSha256"))) is None:
+        raise KernelValidationError("Paused correction snapshot status/hash is invalid")
+
+
+def validate_paused_predecessor_record(
+    record: Mapping[str, Any], binding: Mapping[str, Any], correction_id: str
+) -> None:
+    """Validate exact paused bytes; the adapter must also authenticate Git and approval."""
+    _validate_correction_identity(record, binding, correction_id)
+    if binding.get("status") != "PAUSED" or (record.get("lifecycle") or {}).get("status") != "PAUSED":
+        raise KernelValidationError("Correction predecessor must be PAUSED, never assumed adopted")
+    campaign = record.get("campaign") or {}
+    tasks = record.get("tasks") or []
+    if (
+        campaign.get("status") != "PAUSED"
+        or campaign.get("lease") is not None
+        or not tasks
+        or any(task.get("status") in {"IN_PROGRESS", "REVIEW"} or task.get("lease") is not None for task in tasks)
+    ):
+        raise KernelValidationError("Paused correction predecessor is not quiescent and lease-free")
+    if binding.get("recordSha256") != paused_predecessor_record_hash(record):
+        raise KernelValidationError("Paused correction predecessor record changed")
+
+
+def validate_returned_predecessor_history(before: Mapping[str, Any], after: Mapping[str, Any]) -> None:
+    """Return permits new work, never removal of the authenticated prior history."""
+
+    def prefix(prior: Any, current: Any) -> bool:
+        return isinstance(prior, list) and isinstance(current, list) and current[: len(prior)] == prior
+
+    if before.get("bootstrap") != after.get("bootstrap") or not prefix(
+        (before.get("lifecycle") or {}).get("history", []), (after.get("lifecycle") or {}).get("history", [])
+    ):
+        raise KernelValidationError("Returned predecessor bootstrap/lifecycle history changed")
+    prior_exit = ((before.get("completion") or {}).get("exit_review_control") or {}).get("attempts", [])
+    current_exit = ((after.get("completion") or {}).get("exit_review_control") or {}).get("attempts", [])
+    if not prefix(prior_exit, current_exit):
+        raise KernelValidationError("Returned predecessor exit review history changed")
+    prior_tasks, current_tasks = before.get("tasks") or [], after.get("tasks") or []
+    if [item.get("id") for item in prior_tasks] != [item.get("id") for item in current_tasks]:
+        raise KernelValidationError("Returned predecessor task inventory changed")
+    for prior, current in zip(prior_tasks, current_tasks, strict=True):
+        if prior.get("status") == "DONE" and prior != current:
+            raise KernelValidationError("Returned predecessor completed task record changed")
+        if not prefix(
+            (prior.get("review_control") or {}).get("attempts", []),
+            (current.get("review_control") or {}).get("attempts", []),
+        ):
+            raise KernelValidationError("Returned predecessor task review history changed")
+
+
+def project_paused_corrections(amendments: Iterable[Mapping[str, Any]]) -> list[PausedCorrectionProjection]:
+    """Derive single-owner correction roles without performing any mutation.
+
+    Normal legacy records require no new metadata. A pending bootstrap freezes
+    its parent but has not acquired the hold. Materialization owns the hold;
+    qualified adoption returns it to the parent. Existing taskctl still checks
+    every bootstrap/task/exit review, authenticated Git source and atomic write.
+    """
+    records = list(amendments)
+    by_id = {str(item.get("id")): item for item in records}
+    if len(by_id) != len(records):
+        raise KernelValidationError("Duplicate amendment identity in correction projection")
+    projections: list[PausedCorrectionProjection] = []
+    seen_parents: set[str] = set()
+    for child in records:
+        if "correction" not in child:
+            continue
+        binding = child["correction"]
+        if not isinstance(binding, dict):
+            raise KernelValidationError("Paused correction binding must be an object")
+        parent_id = str(binding.get("id") or "")
+        parent = by_id.get(parent_id)
+        child_id = str(child.get("id") or "")
+        wave_records = [item for item in records if item.get("target_wave") == child.get("target_wave")]
+        if (
+            parent is None
+            or parent_id in seen_parents
+            or parent not in wave_records
+            or wave_records.index(child) != wave_records.index(parent) + 1
+            or "correction" in parent
+        ):
+            raise KernelValidationError("Missing, competing, nested or reordered paused correction predecessor")
+        seen_parents.add(parent_id)
+        _validate_correction_identity(parent, binding, child_id)
+        state = (child.get("lifecycle") or {}).get("status")
+        if state not in {"APPROVED", "MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED", "ADOPTED"}:
+            raise KernelValidationError("Correction disposal requires separately reviewed recovery; it is unsupported")
+        frozen = state != "ADOPTED"
+        if frozen:
+            validate_paused_predecessor_record(parent, binding, child_id)
+        else:
+            # The immutable historical parent and binding are authenticated by
+            # the adapter. Only after adoption may the live parent advance.
+            if binding.get("returnPolicy") != "paused-predecessor":
+                raise KernelValidationError("Returned correction has an unsupported return policy")
+            if (parent.get("lifecycle") or {}).get("status") not in {
+                "PAUSED",
+                "ACTIVE",
+                "REVIEW",
+                "BLOCKED",
+                "ADOPTED",
+            }:
+                raise KernelValidationError("Returned correction predecessor has regressed or been disposed")
+        owner: str | None = parent_id if state in {"APPROVED", "ADOPTED"} else child_id
+        if state == "ADOPTED" and (parent.get("lifecycle") or {}).get("status") == "ADOPTED":
+            owner = None
+        projections.append(
+            {
+                "parentId": parent_id,
+                "correctionId": child_id,
+                "phase": "returned" if state == "ADOPTED" else "pending-entry" if state == "APPROVED" else "executing",
+                "holdOwner": owner,
+                "parentFrozen": frozen,
+            }
+        )
+    return projections
+
+
 def _validate_json_domain(value: Any, path: str = "$") -> None:
     if value is None or type(value) in {bool, int, str}:
         return

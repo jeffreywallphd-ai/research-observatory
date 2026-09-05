@@ -19,6 +19,11 @@ from typing import Any
 
 import yaml
 from capability_plan_check import wave_initiation_rollup_errors
+from governance_kernel import (
+    KernelValidationError,
+    validate_paused_predecessor_record,
+    validate_returned_predecessor_history,
+)
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import SchemaError
 
@@ -958,6 +963,98 @@ def _adoption_transition_errors(root: Path, amendment_id: str, commit: str) -> l
     return []
 
 
+def _paused_predecessor_errors(
+    root: Path, binding: dict[str, Any], correction_id: str, *, returned_parent: dict[str, Any] | None = None
+) -> list[str]:
+    """Authenticate the complete paused parent snapshot and its approval in Git."""
+    commit = str(binding.get("effectiveStateCommit") or "")
+    parent_id = str(binding.get("id") or "")
+    if (
+        re.fullmatch(r"[0-9a-f]{40}", commit) is None
+        or not _git_commit_exists(root, commit)
+        or not _git_is_ancestor(root, commit)
+    ):
+        return ["Paused correction predecessor commit is missing or forked"]
+    try:
+        payload = _git_blob(root, commit, "planning/backlog.yaml")
+        source = yaml.safe_load(payload.decode("utf-8")) if payload else {}
+        parent = next(item for item in source.get("wave_amendments", []) if item.get("id") == parent_id)
+        validate_paused_predecessor_record(parent, binding, correction_id)
+        if returned_parent is not None:
+            validate_returned_predecessor_history(parent, returned_parent)
+        wave = next(item for item in source.get("waves", []) if item.get("id") == parent.get("target_wave"))
+    except (UnicodeError, yaml.YAMLError, StopIteration, AttributeError, KernelValidationError) as exc:
+        return [f"Paused correction predecessor snapshot is invalid: {exc}"]
+    campaign = _json_object(wave.get("campaign"))
+    wave_amendments = [
+        item for item in source.get("wave_amendments", []) if item.get("target_wave") == parent.get("target_wave")
+    ]
+    ordinary_tasks = [
+        task
+        for capability in source.get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+        if slice_.get("wave") == parent.get("target_wave")
+        for task in slice_.get("tasks", [])
+    ]
+    if (
+        campaign.get("status") != "PAUSED"
+        or campaign.get("scope") != "amendment-hold"
+        or campaign.get("lease") is not None
+        or _json_object(source.get("control_plane")).get("active_amendment") is not None
+        or not wave_amendments
+        or wave_amendments[-1] != parent
+        or any(
+            task.get("status") in {"IN_PROGRESS", "REVIEW"} or task.get("lease") is not None for task in ordinary_tasks
+        )
+        or any(
+            hold.get("status") == "ACTIVE"
+            for hold in _json_object(source.get("control_plane")).get("recovery_holds", [])
+        )
+        or any(
+            _json_object(item.get("campaign")).get("status") in {"ACTIVE", "REVIEW"}
+            for item in source.get("wave_amendments", [])
+        )
+        or any(
+            item.get("kind") != "migrated-replanning"
+            and _json_object(item.get("lifecycle")).get("status") != "ADOPTED"
+            and not (
+                _json_object(item.get("lifecycle")).get("status") == "SUPERSEDED"
+                and item.get("kind") == "gate-integrity-safety-defect"
+                and item.get("bootstrap") is None
+                and item.get("campaign") is None
+                and item.get("tasks") == []
+            )
+            for item in wave_amendments[:-1]
+        )
+    ):
+        return ["Paused correction source is not the quiescent single-owner amendment hold"]
+    reference = _json_object(binding.get("approvalReference"))
+    relative = str(reference.get("path") or "")
+    if relative != f"planning/wave-amendment-approvals/{parent_id}.json":
+        return ["Paused correction predecessor approval path is not exact"]
+    introduction = str(reference.get("introductionCommit") or "")
+    approval_payload = _git_blob(root, introduction, relative)
+    try:
+        approval = json.loads(approval_payload) if approval_payload else {}
+    except UnicodeError, json.JSONDecodeError:
+        approval = {}
+    if (
+        not approval_payload
+        or hashlib.sha256(approval_payload).hexdigest() != reference.get("sha256")
+        or _git_blob(root, commit, relative) != approval_payload
+        or _approval_introduction_commit(root, relative) != introduction
+        or approval.get("amendmentId") != parent_id
+        or approval.get("targetWave") != parent.get("target_wave")
+        or approval.get("changeRequestId") != binding.get("changeRequestId")
+        or approval.get("status") != "APPROVED"
+        or _json_object(approval.get("packet")).get("commit") != binding.get("packetCommit")
+        or not _git_is_ancestor(root, str(binding.get("packetCommit") or ""), introduction)
+        or not _git_is_ancestor(root, introduction, commit)
+    ):
+        return ["Paused correction predecessor approval is not authentic and ancestor-bound"]
+    return []
+
+
 def _next_global_ecr_id(root: Path, current_id: str) -> str:
     identities: set[str] = set()
     ecr_root = root / "planning" / "enabler-change-requests"
@@ -1060,7 +1157,7 @@ def _approval_record_errors(
         ("packet.proposalSha256", packet_reference.get("proposalSha256"), proposal.get("sha256")),
     )
     expected: tuple[tuple[str, Any, Any], ...]
-    if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal", "4.0-proposal"}:
+    if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal", "4.0-proposal", "4.1-proposal"}:
         expected = (
             *expected_common,
             ("effectiveBase", effective, authority_chain),
@@ -1106,7 +1203,7 @@ def _approval_record_errors(
         errors.append("Wave amendment approval requires an APPROVED independent review of the exact packet commit")
     if review.get("reviewer") == record.get("approvedBy"):
         errors.append("Wave amendment packet reviewer must be independent from the human approver")
-    if packet.get("schemaVersion") == "4.0-proposal":
+    if packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
         errors.extend(_v4_packet_review_errors(root, packet, record))
     packet_commit = packet_reference.get("commit")
     if not isinstance(packet_commit, str) or re.fullmatch(r"[0-9a-f]{40}", packet_commit) is None:
@@ -1123,13 +1220,16 @@ def _approval_record_errors(
             errors.append("Wave amendment approval packet commit does not exist")
         elif _git_blob(root, packet_commit, packet_relative) != packet_payload:
             errors.append("Wave amendment approval packet differs from its immutable Git blob")
-        if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal", "4.0-proposal"}:
+        if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal", "4.0-proposal", "4.1-proposal"}:
             frozen = _json_object(packet.get("authorityChain")).get("orderedAmendments") or []
+            paused = _json_object(packet.get("authorityChain")).get("pausedPredecessor")
+            if paused:
+                frozen = [*frozen, paused]
             latest_state = str(_json_object(frozen[-1]).get("effectiveStateCommit") or "") if frozen else ""
             if latest_state and not _git_is_ancestor(root, latest_state, packet_commit):
                 errors.append("Wave amendment packet does not descend from the latest predecessor effective state")
         errors.extend(_packet_file_errors(root, packet, packet_commit))
-        if packet.get("schemaVersion") == "4.0-proposal":
+        if packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
             errors.extend(
                 _bound_repository_file_errors(
                     root,
@@ -1149,7 +1249,7 @@ def _approval_record_errors(
                 errors.append("Wave amendment approval introduction is not on current history")
             if isinstance(packet_commit, str) and not _git_is_ancestor(root, packet_commit, introduced):
                 errors.append("Wave amendment approval introduction does not descend from its packet commit")
-            if packet.get("schemaVersion") == "4.0-proposal":
+            if packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
                 review_commit = str(_json_object(review.get("ledger")).get("introductionCommit") or "")
                 if not _git_is_ancestor(root, review_commit, introduced):
                     errors.append("Wave amendment approval introduction does not descend from its review ledger")
@@ -1159,7 +1259,7 @@ def _approval_record_errors(
 def _authority_history_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal"}:
         return _authority_chain_v2_errors(root, packet)
-    if packet.get("schemaVersion") == "4.0-proposal":
+    if packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
         return _authority_chain_v4_errors(root, packet)
     errors: list[str] = []
     authority = _json_object(packet.get("authority"))
@@ -1428,6 +1528,37 @@ def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     return errors
 
 
+def _has_committed_amendment_authority(root: Path, amendment: dict[str, Any]) -> bool:
+    """Distinguish a historical approved append from an injected current YAML row."""
+    try:
+        source = yaml.safe_load((_git_blob(root, "HEAD", "planning/backlog.yaml") or b"").decode("utf-8"))
+        prior = next(item for item in source.get("wave_amendments", []) if item.get("id") == amendment.get("id"))
+        fields = ("id", "target_wave", "change_request_id", "kind", "approval_reference", "correction")
+        if any(prior.get(field) != amendment.get(field) for field in fields):
+            return False
+        reference = _json_object(prior.get("approval_reference"))
+        relative = str(reference.get("path") or "")
+        introduced = str(reference.get("introduction_commit") or "")
+        if relative != f"planning/wave-amendment-approvals/{prior['id']}.json":
+            return False
+        payload = _git_blob(root, introduced, relative)
+        if not payload:
+            return False
+        approval = json.loads(payload)
+        return (
+            hashlib.sha256(payload).hexdigest() == reference.get("sha256")
+            and _git_blob(root, "HEAD", relative) == payload
+            and _approval_introduction_commit(root, relative) == introduced
+            and _git_is_ancestor(root, introduced)
+            and approval.get("status") == "APPROVED"
+            and approval.get("amendmentId") == prior.get("id")
+            and approval.get("changeRequestId") == prior.get("change_request_id")
+            and approval.get("targetWave") == prior.get("target_wave")
+        )
+    except UnicodeError, yaml.YAMLError, StopIteration, AttributeError, KeyError, json.JSONDecodeError:
+        return False
+
+
 def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     """Validate post-migration product authority without reviving a recovery hold."""
     errors: list[str] = []
@@ -1454,8 +1585,25 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     reserved = chain.get("reservedAmendments")
     if not isinstance(frozen, list) or not isinstance(reserved, list):
         return [*errors, "ECR v4 ordered or reserved amendment authority is missing"]
+    paused = _json_object(chain.get("pausedPredecessor"))
+    if "pausedPredecessor" in chain:
+        if packet.get("schemaVersion") != "4.1-proposal":
+            errors.append("Paused predecessor authority requires the explicit 4.1 proposal schema")
+        errors.extend(_paused_predecessor_errors(root, paused, proposed))
+        frozen = [*frozen, paused]
     actual_ids = [str(item.get("id")) for item in actual]
     actual_by_id = {str(item.get("id")): item for item in actual}
+    proposed_record = _json_object(actual_by_id.get(proposed))
+    historical_proposed = bool(proposed_record) and _has_committed_amendment_authority(root, proposed_record)
+    returned = bool(paused) and _json_object(proposed_record.get("lifecycle")).get("status") == "ADOPTED"
+    if proposed_record and proposed_record.get("correction") != (paused or None):
+        errors.append("ECR correction relation differs from its materialized authority")
+    if returned:
+        errors.extend(
+            _paused_predecessor_errors(
+                root, paused, proposed, returned_parent=_json_object(actual_by_id.get(str(paused.get("id"))))
+            )
+        )
     frozen_ids = [str(_json_object(item).get("id")) for item in frozen]
     reserved_ids = [str(_json_object(item).get("id")) for item in reserved]
 
@@ -1467,7 +1615,7 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     predecessor_ordinals = [amendment_ordinal(item) for item in predecessor_ids]
     ordered_predecessors = sorted(
         predecessor_ids,
-        key=lambda item: amendment_ordinal(item) if amendment_ordinal(item) is not None else math.inf,
+        key=lambda item: amendment_ordinal(item) or math.inf,
     )
     expected_predecessors = [f"{wave_id}.A{index:02d}" for index in range(1, len(predecessor_ids) + 1)]
     expected_actual = [f"{wave_id}.A{index:02d}" for index in range(1, len(actual_ids) + 1)]
@@ -1504,7 +1652,13 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         expected = (
             (item.get("id"), backlog_item.get("id"), "identity"),
             (item.get("changeRequestId"), backlog_item.get("change_request_id"), "change request"),
-            (item.get("status"), (backlog_item.get("lifecycle") or {}).get("status"), "status"),
+            (
+                item.get("status"),
+                "PAUSED"
+                if returned and item.get("id") == paused.get("id")
+                else (backlog_item.get("lifecycle") or {}).get("status"),
+                "status",
+            ),
             (reference.get("path"), backlog_reference.get("path"), "approval path"),
             (reference.get("sha256"), backlog_reference.get("sha256"), "approval hash"),
             (
@@ -1535,7 +1689,13 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
             errors.append(f"ECR v4 {item.get('id')} packet commit differs from its approval")
         ordered_commits.extend((packet_commit, approval_commit, state_commit))
         ancestry_pairs.extend(((packet_commit, approval_commit), (approval_commit, state_commit)))
-        errors.extend(_adoption_transition_errors(root, str(item.get("id") or ""), state_commit))
+        if not paused or item.get("id") != paused.get("id"):
+            errors.extend(_adoption_transition_errors(root, str(item.get("id") or ""), state_commit))
+        elif not returned:
+            try:
+                validate_paused_predecessor_record(backlog_item, paused, proposed)
+            except KernelValidationError as exc:
+                errors.append(f"ECR v4 paused predecessor is stale or not quiescent: {exc}")
 
     migration = _json_object(packet.get("migrationAuthority"))
     errors.extend(_migration_reference_errors(root, migration))
@@ -1727,13 +1887,16 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         for amendment in backlog.get("wave_amendments", [])
         if _json_object(amendment.get("campaign")).get("status") in {"ACTIVE", "REVIEW"}
     ]
-    if campaign.get("status") != "PAUSED" or campaign.get("scope") != "wave":
-        errors.append("ECR v4 target Wave is not paused at the ordinary Wave boundary")
-    if active_tasks:
+    expected_scope = "amendment-hold" if paused else "wave"
+    if not historical_proposed and (
+        campaign.get("status") != "PAUSED" or campaign.get("scope") != expected_scope or campaign.get("lease")
+    ):
+        errors.append("ECR v4 target Wave is not paused at the required entry boundary")
+    if not historical_proposed and active_tasks:
         errors.append(f"ECR v4 ordinary task work is not quiescent: {active_tasks[0]}")
-    if active_holds:
+    if not historical_proposed and active_holds:
         errors.append("ECR v4 cannot reactivate an incident-specific recovery hold")
-    if active_amendments:
+    if not historical_proposed and active_amendments:
         errors.append("ECR v4 cannot overlap another active amendment campaign")
 
     experience = _json_object(packet.get("governedExperience"))
@@ -1772,6 +1935,7 @@ def ecr_validation_errors(root: Path, change_request_id: str, *, require_approve
         "2.0-proposal": "enabler-change-request.v2.schema.json",
         "3.0-proposal": "enabler-change-request.v3.schema.json",
         "4.0-proposal": "enabler-change-request.v4.schema.json",
+        "4.1-proposal": "enabler-change-request.v4.1.schema.json",
     }.get(str(packet.get("schemaVersion")))
     if schema_name is None:
         errors = [f"ECR packet uses an unsupported schema version: {packet.get('schemaVersion')}"]
@@ -1846,7 +2010,7 @@ def approve_ecr(
         raise ValueError("ECR approval commit must be a full lowercase Git SHA")
     record, payload = _json_document(record_path)
     expected_head = commit
-    if packet.get("schemaVersion") == "4.0-proposal":
+    if packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
         expected_head = str(_json_object(record.get("independentPacketReview")).get("reviewedStateCommit") or "")
     head = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False
