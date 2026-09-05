@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0017",
+  "title": "Register committed product-style verification in the Python quality inventory",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "b706154faf7c972bec0a90d09a01876ec4f89044",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": "W1.A08.T01",
+    "taskStatus": "IN_PROGRESS",
+    "qualityScopePath": "quality-scope.json",
+    "qualityScopeSha256": "d352c3d1ab81f43e28f4e12d232319b93b0315dc2c59c73e578c3d16e3bfc4e2",
+    "qualityScopeGitBlob": "d2efcc9267441b7e348fcd1f66f80af74532d2cf"
+  },
+  "trigger": {
+    "denial": "The governed quality inventory rejects unlisted Python files. T01 now adds a committed product-style analyzer and its negative tests. A pre-existing workflow-profile end-to-end test introduced at 8c1afd658b8161b3ef4c81b61fcdf9ca4daa670a was also omitted from that inventory.",
+    "atomicity": "The independently preflighted F01 product/style-checker increment is frozen at the predecessor. This candidate changes only the quality inventory and this maintenance record. The separate F02 renderer-checker remediation and its documentation remain unstaged work in progress and are not part of this maintenance candidate. No task or Wave transition occurs.",
+    "diagnosis": "The inventory is an explicit discovery equality boundary, so newly committed Python files require additive registration. The UI gate protects quality-scope.json and already admits exact independently reviewed control-only maintenance after product implementation; no gate or controller change is necessary."
+  },
+  "authority": "Preserve all governed roots, every existing ordered inventory entry, all formatter/linter/typechecker commands, source-discovery equality, UI-reference authority, and task/review/release invariants. Add only three existing committed Python paths. This maintenance grants no new product scope, reference change, T01 approval, T02 claim, amendment adoption, W1 resume, G1 approval, main integration, remote push, or external authority. The protected W1.A04 witness is not read, hashed, staged, changed, moved, or removed.",
+  "intendedDelta": {
+    "implementation": "Append tests/desktop/test_product_style_check.py, tests/e2e/test_workflow_profile_matrix.py, and tools/product_style_check.py to pythonFiles without altering any prior item, governed root, policy, or executable checker.",
+    "failClosed": [
+      "All pre-existing quality inventory entries retain their bytes, order, and inclusion.",
+      "Every added entry names an existing committed Python source within an unchanged governed root.",
+      "Discovery still rejects missing, stale, duplicate, unsafe, or unlisted paths.",
+      "Quality command behavior and failure propagation remain unchanged.",
+      "The existing UI gate requires an independent exact-candidate Tier 2 attestation before admitting this control-only inventory delta."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0017.json",
+      "quality-scope.json"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "This inventory-only correction can accidentally omit prior files, alter governed roots, register missing or unsafe paths, or bypass failure reporting. Run the complete focused quality-check unit module, exact predecessor/delta comparison, source existence and Git binding, selected Ruff/format/isolated-mypy checks for the newly registered files, and Git hygiene. Product behavior and the T01 rendered matrix remain outside this maintenance; full repository and Windows qualification remain W1-exit duties.",
+    "results": [
+      {
+        "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_quality_check",
+        "result": "passed",
+        "detail": "All four focused quality tests pass after the additive inventory correction. The previously failing discovery-equality test is green; unlisted-file denial, the exact three-command quality plan, and failure propagation remain covered."
+      },
+      {
+        "command": "Compare quality-scope.json with Git predecessor b706154faf7c972bec0a90d09a01876ec4f89044 and verify each added path with git cat-file -e",
+        "result": "passed",
+        "detail": "The 196-file inventory differs only by the three declared appended entries. All previous fields, roots, and ordered entries are unchanged, and all three added sources exist in the frozen predecessor commit."
+      },
+      {
+        "command": "Ruff check and format --check for the three newly registered Python files; MYPYPATH=services/core-api/src;tools mypy --follow-imports=skip for the same files",
+        "result": "passed",
+        "detail": "Lint, formatting, and isolated strict typing pass for all three registered files. The package path is supplied for the existing Core service imports; no source or checker configuration change was needed. This does not claim a full repository quality or deployment-profile run."
+      },
+      {
+        "command": "git diff --check -- quality-scope.json planning/governance-migrations/GOV-MAINT-0017.json",
+        "result": "passed",
+        "detail": "The exact inventory/maintenance-record patch has no whitespace errors."
+      }
+    ]
+  },
+  "rollback": "If independent review identifies a blocker, preserve the candidate and adverse review append-only, leave T01 in progress and W1 paused, and correct only the inventory delta. Do not weaken quality discovery or discard product work to make registration pass.",
+  "reviewAttempts": [],
+  "review": null
+}
