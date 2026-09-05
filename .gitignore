@@ -33,3 +33,7 @@ Desktop.ini
 
 # Repository-generated scratch output
 artifacts/tmp/
+
+# Publication privacy: raw machine reports remain local.
+/artifacts/bootstrap/bootstrap-report.json
+/artifacts/bootstrap/setup-verification.json
