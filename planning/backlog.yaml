@@ -39648,19 +39648,25 @@ wave_amendments:
     - Obtain independent commit-bound task, slice, and amendment-exit dispositions with all blocking findings closed; run
       the complete affected/full repository and Windows-x64 matrix at W1 exit.
     packet_task_sha256: 673da8285a6b4d1d5a05664fd6d70708c84e6622af0e34dee5e8c21b870a7031
-    status: IN_PROGRESS
+    status: BLOCKED
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 46e88d171795b76a2f1588d69756f4184c01a89b
     worktree: C:/workspace/research-observatory
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-05T00:49:30+00:00'
-      expires_at: '2026-09-05T08:49:30+00:00'
+    lease: null
     started_at: '2026-09-05T00:49:30+00:00'
-    updated_at: '2026-09-05T00:49:30+00:00'
+    updated_at: '2026-09-05T01:27:03+00:00'
     completed_at: null
-    blocker: null
+    blocker:
+      reason: 'Required visual qualification is blocked: Academic Minimal 1.5 audit-page baseline entries still authenticate
+        the historical 1.4 render. Exact current and historical replay proves the mismatch. ECR-0007 forbids baseline rewrites
+        and new reference IDs within W1.A08; independent authority review requires a separate explicit governed decision.'
+      next_action: Preserve the producer, authenticated capture delivery and failed visual report; prepare a minimal append-only
+        reference/amendment correction decision with unchanged intended experience and a truthful newly approved visual identity.
+        After independent packet review, required human approval and lawful activation, reopen W1.A08.T02 and replay visual/task/slice/amendment
+        qualification. CAP-07.S01.T02 and G1 remain blocked/pending.
+      recorded_at: '2026-09-05T01:27:03+00:00'
+      owner: codex
     implementation_notes: ''
     evidence: []
     verification_state: null
