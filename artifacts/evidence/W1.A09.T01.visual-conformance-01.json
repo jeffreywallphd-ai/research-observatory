@@ -1,0 +1,69 @@
+{
+  "check": "visual",
+  "details": {
+    "captures": 66,
+    "settings": {
+      "animations": "disabled",
+      "baselinePath": "verification/baselines/desktop-ui.json",
+      "browserVersion": "145.0.7632.6",
+      "colorSchemes": [
+        "light",
+        "dark"
+      ],
+      "deviceScaleFactor": 1,
+      "engine": "chromium",
+      "locale": "en-US",
+      "platform": "windows-x64",
+      "playwrightVersion": "1.58.0",
+      "reducedMotion": "reduce",
+      "requiredFonts": [
+        "Segoe UI",
+        "Georgia",
+        "Consolas"
+      ],
+      "responsiveViewports": [
+        {
+          "height": 720,
+          "label": "minimum-desktop",
+          "width": 1280
+        },
+        {
+          "height": 450,
+          "label": "windows-200-percent-effective",
+          "width": 720
+        }
+      ],
+      "timezoneId": "UTC",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      }
+    }
+  },
+  "documentType": "desktop-ui-conformance-report",
+  "errors": [],
+  "illustrativeExclusions": [
+    "mock names",
+    "studies",
+    "sources",
+    "providers",
+    "counts",
+    "dates",
+    "prose",
+    "chart values",
+    "nonfunctional actions"
+  ],
+  "mode": "approved-reference-application",
+  "normativeSources": {
+    "approval": "design/ui-reference/APPROVAL.yaml",
+    "pages": "design/ui-reference/CAPABILITY_COVERAGE.json",
+    "routes": "design/ui-reference/SITE_MANIFEST.json",
+    "style": "design/ui-reference/STYLE_GUIDE.md",
+    "tokens": "design/ui-reference/assets/tokens.css",
+    "workflows": "design/ui-reference/WORKFLOW_CATALOG.json"
+  },
+  "ok": true,
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+  "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+  "schemaVersion": "1.0"
+}

@@ -1,0 +1,39 @@
+{
+  "check": "workflows",
+  "details": {
+    "approvedRepeatedRoutes": {
+      "manuscript-review-revision": [
+        "manuscript-studio.html"
+      ]
+    },
+    "browserCases": 139,
+    "keyboardCases": 390,
+    "profiles": 14
+  },
+  "documentType": "desktop-ui-conformance-report",
+  "errors": [],
+  "illustrativeExclusions": [
+    "mock names",
+    "studies",
+    "sources",
+    "providers",
+    "counts",
+    "dates",
+    "prose",
+    "chart values",
+    "nonfunctional actions"
+  ],
+  "mode": "approved-reference-application",
+  "normativeSources": {
+    "approval": "design/ui-reference/APPROVAL.yaml",
+    "pages": "design/ui-reference/CAPABILITY_COVERAGE.json",
+    "routes": "design/ui-reference/SITE_MANIFEST.json",
+    "style": "design/ui-reference/STYLE_GUIDE.md",
+    "tokens": "design/ui-reference/assets/tokens.css",
+    "workflows": "design/ui-reference/WORKFLOW_CATALOG.json"
+  },
+  "ok": true,
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+  "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+  "schemaVersion": "1.0"
+}
