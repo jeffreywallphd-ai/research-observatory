@@ -48,8 +48,44 @@ may grow to contain wrapped controls. Zoom evidence must measure the actual
 computed text size, then prove post-scale overflow, control operability, and
 dialog focus/scrolling; labeling a requested scale or measuring only before
 scaling is insufficient. Valid long labels must remain readable and operable.
-The complete every-surface matrix and retained visual qualification remain the
-distinct W1.A08.T02 acceptance boundary.
+The complete `styleQualificationMatrix` reuses the functional runtime adapters
+and checks all eight registered workspaces at three viewports in both themes,
+plus lock, local-service recovery, and enlarged-text shortcut-dialog states.
+Required states are observed in the DOM (including accepted intent and populated
+task/lineage rows), not inferred from a requested case label. Computed semantic
+geometry, pinned renderer/font witnesses, actual visible focus, and normal or
+contained scrolling remain the deciding contracts. Wait for the focus style to
+settle before measuring it; do not replace the focus assertion with a screenshot.
+
+## Retained product/reference captures
+
+Capture only from a committed, unchanged producer checkout with valid product
+and reference builds. A new directory receives 108 viewport PNGs and a manifest
+published last; interrupted or failed runs have no accepted completion marker.
+Existing directories are never overwritten. The bundle is comparison evidence,
+not a new visual baseline or approval of a design change.
+
+```powershell
+.venv\Scripts\python.exe tools\product_style_check.py --repo . --capture artifacts/evidence/<new-capture-directory>
+# Commit the exact generated bundle as an evidence-only delivery commit.
+.venv\Scripts\python.exe tools\product_style_check.py --repo . --verify-captures artifacts/evidence/<new-capture-directory>/manifest.json --delivery-commit <full-delivery-sha>
+```
+
+The externally supplied delivery commit authenticates the exact manifest and
+PNG inventory. The separate producer commit binds product inputs/outputs,
+approved reference, checker/adapter/Core catalog inputs, and renderer settings.
+Direct Git clean-content hashing detects changed inputs even when index stat
+flags hide them from `git diff`. Windows file/directory guards and complete
+reader snapshots protect the local persistence boundary. Self-declared hashes
+alone are not immutable evidence authentication.
+
+Independent visual review compares hierarchy, alignment, density, overflow,
+theme, focus and state composition. Reference mock data and page-specific
+composition need not match the product. A tall ordinary page or lock card may
+scroll vertically when both its heading and action remain reachable; a modal
+must fit the viewport with contained scrolling. Captures record their actual
+scroll position. Any accepted variance must be explicit and cannot waive a
+semantic, interaction, or accessibility failure.
 
 ## Checks
 

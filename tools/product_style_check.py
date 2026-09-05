@@ -11,10 +11,19 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import struct
+import subprocess
+import zlib
+from collections.abc import Callable
+from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from build_manifest import path_identity, windows_path_locks
+from ui_conformance import confined_path, stable_file_bytes
 
 TOKEN_PATH = "design/ui-reference/assets/tokens.css"
 STYLE_PATHS = (
@@ -802,11 +811,502 @@ def product_style_errors(repo: Path) -> list[str]:
     return list(product_style_analysis(repo)["errors"])
 
 
+CAPTURE_METADATA_KEYS = frozenset(
+    {
+        "caseId",
+        "surfaceId",
+        "stateId",
+        "theme",
+        "viewport",
+        "role",
+        "referencePage",
+        "width",
+        "height",
+    }
+)
+Capture = Callable[[dict[str, Any], bytes], None]
+CaptureRender = Callable[[Capture], tuple[list[str], dict[str, Any]]]
+
+
+def _json_bytes(value: Any) -> bytes:
+    # allow_nan=False rejects nonfinite geometry, including nested values.
+    return (json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n").encode("utf-8")
+
+
+def _canonical_capture_path(repo: Path, relative: str, *, exists: bool = True) -> Path:
+    if any(part in {"", ".", ".."} for part in relative.split("/")):
+        raise ValueError("capture path must have no aliases or traversal")
+    return confined_path(repo, relative, must_exist=exists)
+
+
+def _capture_contract(contract: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    if not contract:
+        raise ValueError("capture contract must not be empty")
+    result: dict[str, dict[str, Any]] = {}
+    identities: set[tuple[str, str]] = set()
+    for metadata in contract:
+        if set(metadata) != CAPTURE_METADATA_KEYS:
+            raise ValueError("capture metadata has unexpected or missing fields")
+        for field in ("caseId", "surfaceId", "stateId", "referencePage"):
+            if not isinstance(metadata[field], str) or not metadata[field].strip():
+                raise ValueError(f"capture {field} must be nonempty text")
+        if metadata["role"] not in {"product", "reference"} or metadata["theme"] not in {"light", "dark"}:
+            raise ValueError("capture role or theme is invalid")
+        dimensions = {field: metadata[field] for field in ("width", "height")}
+        if any(type(value) is not int or not 1 <= value <= 4096 for value in dimensions.values()):
+            raise ValueError("capture dimensions must be bounded positive integers")
+        if metadata["viewport"] != dimensions:
+            raise ValueError("capture dimensions must match the viewport screenshot policy")
+        identity = (metadata["caseId"].casefold(), metadata["role"])
+        if identity in identities:
+            raise ValueError("capture contract contains duplicate case/role identity")
+        identities.add(identity)
+        filename = hashlib.sha256(_json_bytes(metadata)).hexdigest() + ".png"
+        result[filename] = metadata
+    return result
+
+
+def png_dimensions(payload: bytes) -> tuple[int, int]:
+    """Decode the bounded noninterlaced 8-bit RGB(A) PNG form emitted by Chromium.
+
+    Check every chunk CRC, structure, decompression length and row filter; a
+    header alone is not proof of a complete image. No image dependency is needed.
+    """
+    if len(payload) > 50_000_000 or not payload.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("capture must be a bounded PNG")
+    offset = 8
+    compressed = bytearray()
+    width = height = channels = 0
+    idat_closed = ended = False
+    while offset < len(payload):
+        if offset + 12 > len(payload):
+            raise ValueError("truncated PNG chunk")
+        size = struct.unpack_from("!I", payload, offset)[0]
+        kind = payload[offset + 4 : offset + 8]
+        end = offset + 12 + size
+        if end > len(payload):
+            raise ValueError("truncated PNG payload")
+        data = payload[offset + 8 : end - 4]
+        if zlib.crc32(kind + data) != struct.unpack_from("!I", payload, end - 4)[0]:
+            raise ValueError("PNG chunk checksum mismatch")
+        if offset == 8 and kind != b"IHDR":
+            raise ValueError("PNG must start with IHDR")
+        if kind == b"IHDR":
+            if offset != 8 or size != 13:
+                raise ValueError("invalid PNG header")
+            width, height, depth, color, compression, filtering, interlace = struct.unpack("!2I5B", data)
+            if (
+                not (1 <= width <= 4096 and 1 <= height <= 4096)
+                or (depth, compression, filtering, interlace) != (8, 0, 0, 0)
+                or color not in {2, 6}
+            ):
+                raise ValueError("unsupported PNG screenshot encoding or dimensions")
+            channels = 3 if color == 2 else 4
+        elif kind == b"IDAT":
+            if idat_closed:
+                raise ValueError("PNG IDAT chunks must be consecutive")
+            compressed.extend(data)
+        elif kind == b"IEND":
+            if size or end != len(payload) or not compressed:
+                raise ValueError("invalid PNG completion")
+            ended = True
+        elif not kind[:1].islower():
+            raise ValueError("unexpected critical PNG chunk")
+        if compressed and kind != b"IDAT":
+            idat_closed = True
+        offset = end
+    if not ended:
+        raise ValueError("PNG completion chunk is missing")
+    stride = width * channels + 1
+    expected = stride * height
+    decoder = zlib.decompressobj()
+    try:
+        decoded = decoder.decompress(bytes(compressed), expected + 1)
+    except zlib.error as exc:
+        raise ValueError("invalid PNG compressed pixels") from exc
+    if len(decoded) != expected or not decoder.eof or decoder.unused_data or decoder.unconsumed_tail:
+        raise ValueError("PNG pixel payload does not match dimensions")
+    if any(decoded[offset] > 4 for offset in range(0, expected, stride)):
+        raise ValueError("PNG contains an invalid row filter")
+    return width, height
+
+
+def _git_bytes(repo: Path, *args: str) -> bytes:
+    execution = subprocess.run(["git", *args], cwd=repo, capture_output=True, check=False)
+    if execution.returncode:
+        raise ValueError(f"capture Git boundary failed: {' '.join(args[:2])}")
+    return execution.stdout
+
+
+def _full_commit(repo: Path, commit: str) -> str:
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError("capture delivery/producer requires an immutable full Git commit")
+    if _git_bytes(repo, "rev-parse", f"{commit}^{{commit}}").decode().strip() != commit:
+        raise ValueError("invalid capture commit")
+    return commit
+
+
+def write_capture_bundle(
+    repo: Path,
+    relative: str,
+    contract: list[dict[str, Any]],
+    snapshot: Callable[[], dict[str, Any]],
+    render: CaptureRender,
+) -> Path:
+    """Publish once; incomplete runs remain unaccepted without a manifest.
+
+    This is a structural round trip, not immutable evidence authentication. Only
+    read_capture_bundle with an independently supplied delivery commit does that.
+    """
+    repo = repo.resolve(strict=True)
+    expected = _capture_contract(contract)
+    destination = _canonical_capture_path(repo, relative, exists=False)
+    producer = snapshot()
+    _json_bytes(producer)
+    _full_commit(repo, producer["producerCommit"])
+    parents = [repo, *reversed(list(destination.parent.parents))]
+    parents = [path for path in parents if path == repo or repo in path.parents]
+    parents.append(destination.parent)
+    with ExitStack() as held:
+        held.enter_context(windows_path_locks(parents, directories=True))
+        parent_identity = path_identity(destination.parent)
+        destination.mkdir(exist_ok=False)
+        held.enter_context(windows_path_locks([destination], directories=True))
+        directory_identity = path_identity(destination)
+        captures: dict[str, dict[str, Any]] = {}
+
+        def guard() -> None:
+            if (
+                _canonical_capture_path(repo, relative) != destination
+                or path_identity(destination.parent) != parent_identity
+                or path_identity(destination) != directory_identity
+            ):
+                raise ValueError("capture destination identity changed")
+
+        def write_once(path: Path, payload: bytes) -> None:
+            guard()
+            with path.open("xb") as output:
+                output.write(payload)
+                output.flush()
+                os.fsync(output.fileno())
+            held.enter_context(windows_path_locks([path], directories=False))
+            guard()
+            if stable_file_bytes(repo, path) != payload:
+                raise ValueError("capture output changed during publication")
+
+        def capture(metadata: dict[str, Any], payload: bytes) -> None:
+            (filename,) = _capture_contract([metadata])
+            if expected.get(filename) != metadata or filename in captures:
+                raise ValueError("unexpected or duplicate capture")
+            if png_dimensions(payload) != (metadata["width"], metadata["height"]):
+                raise ValueError("PNG dimensions differ from capture contract")
+            write_once(destination / filename, payload)
+            captures[filename] = {**metadata, "file": filename, "sha256": hashlib.sha256(payload).hexdigest()}
+
+        errors, report = render(capture)
+        if errors:
+            raise ValueError("capture geometry/interaction failed: " + "; ".join(errors))
+        if set(captures) != set(expected):
+            raise ValueError("capture inventory is incomplete")
+        if snapshot() != producer:
+            raise ValueError("capture producer changed during rendering")
+        manifest = {
+            "schemaVersion": "1.0",
+            "documentType": "product-style-capture-bundle",
+            "screenshotPolicy": "viewport",
+            "producer": producer,
+            "report": report,
+            "captures": [captures[key] for key in sorted(captures)],
+        }
+        encoded = _json_bytes(manifest)
+        guard()
+        if {path.name for path in destination.iterdir()} != set(captures):
+            raise ValueError("capture destination has unexpected files")
+        for item in captures.values():
+            if hashlib.sha256(stable_file_bytes(repo, destination / item["file"])).hexdigest() != item["sha256"]:
+                raise ValueError("capture changed before completion")
+        write_once(destination / "manifest.json", encoded)
+    return destination / "manifest.json"
+
+
+def read_capture_bundle(
+    repo: Path,
+    manifest_path: Path,
+    delivery_commit: str,
+    contract: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Authenticate exact retained bytes against an external immutable Git ID."""
+    repo = repo.resolve(strict=True)
+    manifest_path = _canonical_capture_path(repo, manifest_path.relative_to(repo).as_posix())
+    directory = manifest_path.parent
+    directories = [directory, *[path for path in directory.parents if path == repo or repo in path.parents]]
+    with windows_path_locks(directories, directories=True):
+        identity = path_identity(directory)
+        paths = sorted(directory.iterdir())
+        for path in paths:
+            _canonical_capture_path(repo, path.relative_to(repo).as_posix())
+            if not path.is_file():
+                raise ValueError("capture directory must contain only regular files")
+        with windows_path_locks(paths, directories=False):
+            before = {path.name: hashlib.sha256(stable_file_bytes(repo, path)).hexdigest() for path in paths}
+            result = _read_capture_bundle_locked(repo, manifest_path, delivery_commit, contract)
+            after = {path.name: hashlib.sha256(stable_file_bytes(repo, path)).hexdigest() for path in paths}
+            if before != after or sorted(directory.iterdir()) != paths or path_identity(directory) != identity:
+                raise ValueError("capture bundle changed during verification")
+            return result
+
+
+def _read_capture_bundle_locked(
+    repo: Path,
+    manifest_path: Path,
+    delivery_commit: str,
+    contract: list[dict[str, Any]],
+) -> dict[str, Any]:
+    repo = repo.resolve(strict=True)
+    delivery = _full_commit(repo, delivery_commit)
+    relative = manifest_path.relative_to(repo).as_posix()
+    manifest_path = _canonical_capture_path(repo, relative)
+    payload = stable_file_bytes(repo, manifest_path)
+    if payload != _git_bytes(repo, "cat-file", "blob", f"{delivery}:{relative}"):
+        raise ValueError("capture manifest differs from immutable delivery")
+    manifest = json.loads(payload)
+    if not isinstance(manifest, dict) or set(manifest) != {
+        "schemaVersion",
+        "documentType",
+        "screenshotPolicy",
+        "producer",
+        "report",
+        "captures",
+    }:
+        raise ValueError("invalid capture manifest fields")
+    if (manifest["schemaVersion"], manifest["documentType"], manifest["screenshotPolicy"]) != (
+        "1.0",
+        "product-style-capture-bundle",
+        "viewport",
+    ):
+        raise ValueError("invalid capture manifest identity")
+    _json_bytes(manifest)
+    producer = _full_commit(repo, manifest["producer"]["producerCommit"])
+    _git_bytes(repo, "merge-base", "--is-ancestor", producer, delivery)
+    expected = _capture_contract(contract)
+    captures = manifest["captures"]
+    if not isinstance(captures, list) or len(captures) != len(expected):
+        raise ValueError("capture manifest inventory is incomplete")
+    names: set[str] = set()
+    for capture in captures:
+        if not isinstance(capture, dict) or set(capture) != CAPTURE_METADATA_KEYS | {"file", "sha256"}:
+            raise ValueError("invalid capture entry")
+        filename = capture["file"]
+        metadata = {key: capture[key] for key in CAPTURE_METADATA_KEYS}
+        if filename in names or expected.get(filename) != metadata:
+            raise ValueError("capture contract identity or filename mismatch")
+        names.add(filename)
+        path = _canonical_capture_path(repo, f"{manifest_path.parent.relative_to(repo).as_posix()}/{filename}")
+        png = stable_file_bytes(repo, path)
+        if hashlib.sha256(png).hexdigest() != capture["sha256"] or png_dimensions(png) != (
+            metadata["width"],
+            metadata["height"],
+        ):
+            raise ValueError("capture PNG content or dimensions changed")
+        if png != _git_bytes(repo, "cat-file", "blob", f"{delivery}:{path.relative_to(repo).as_posix()}"):
+            raise ValueError("capture PNG differs from immutable delivery")
+    if {path.name for path in manifest_path.parent.iterdir()} != names | {"manifest.json"}:
+        raise ValueError("capture directory inventory differs from contract")
+    prefix = manifest_path.parent.relative_to(repo).as_posix() + "/"
+    tracked = _git_bytes(repo, "ls-tree", "-r", "--name-only", "-z", delivery, "--", prefix).decode().split("\0")
+    if {name.removeprefix(prefix) for name in tracked if name} != names | {"manifest.json"}:
+        raise ValueError("immutable delivery capture inventory differs from contract")
+    return manifest
+
+
+CAPTURE_SOURCE_ROOTS = (
+    "design/ui-reference",
+    "services/core-api/src",
+    "packages/contracts",
+    "tests/desktop/fixtures",
+)
+CAPTURE_SOURCE_FILES = (
+    ".gitattributes",
+    "tools/product_style_check.py",
+    "tools/desktop_app_check.py",
+    "tools/ui_conformance.py",
+    "tools/ui_reference_check.py",
+    "tools/build_manifest.py",
+    "verification/desktop-ui.schema.json",
+    "verification/product-style-exceptions.json",
+    "pyproject.toml",
+    "uv.lock",
+)
+
+
+def capture_source_identity(repo: Path, commit: str, files: dict[str, str]) -> dict[str, str]:
+    """Bind a complete caller-derived inventory to tracked, unchanged Git input."""
+    _full_commit(repo, commit)
+    _git_bytes(repo, "merge-base", "--is-ancestor", commit, "HEAD")
+    entries: dict[str, str] = {}
+    for raw in _git_bytes(repo, "ls-tree", "-r", "-z", commit).split(b"\0"):
+        if not raw:
+            continue
+        identity, path_bytes = raw.split(b"\t", 1)
+        path = path_bytes.decode("utf-8")
+        if path not in files:
+            continue
+        mode, kind, blob = identity.decode().split()
+        if mode not in {"100644", "100755"} or kind != "blob":
+            raise ValueError(f"capture producer input is not a regular tracked file: {path}")
+        entries[path] = blob
+    if set(entries) != set(files):
+        raise ValueError("capture producer contains untracked or missing Git inputs")
+    dirty = set(_git_bytes(repo, "diff", "--name-only", "-z", commit).decode().split("\0"))
+    if dirty.intersection(files):
+        raise ValueError("capture producer inputs differ from the immutable source commit")
+    # Index stat flags can conceal changed files from git diff. Hash actual
+    # paths through Git's checkout/clean rules, independently of those flags.
+    ordered_paths = sorted(files)
+    checked_paths = [confined_path(repo, relative) for relative in ordered_paths]
+    with windows_path_locks(checked_paths, directories=False):
+        actual = subprocess.run(
+            ["git", "hash-object", "--stdin-paths"],
+            cwd=repo,
+            check=False,
+            capture_output=True,
+            input=("\n".join(json.dumps(relative) for relative in ordered_paths) + "\n").encode("utf-8"),
+        )
+        if actual.returncode or actual.stdout.decode().splitlines() != [entries[path] for path in ordered_paths]:
+            raise ValueError("capture producer bytes do not authenticate to the immutable Git blobs")
+    for relative, digest in files.items():
+        if hashlib.sha256(stable_file_bytes(repo, confined_path(repo, relative))).hexdigest() != digest:
+            raise ValueError("capture producer input changed during Git binding")
+    return dict(sorted(entries.items()))
+
+
+def capture_producer_snapshot(repo: Path, commit: str | None = None) -> dict[str, Any]:
+    from desktop_app_check import PRODUCT_MANIFEST, product_build_errors
+    from ui_conformance import load_context
+
+    repo = repo.resolve(strict=True)
+    commit = commit or _git_bytes(repo, "rev-parse", "HEAD").decode().strip()
+    errors = product_build_errors(repo)
+    if errors:
+        raise ValueError("capture requires a valid product build: " + "; ".join(errors))
+    context = load_context(repo)
+    product = json.loads(stable_file_bytes(repo, confined_path(repo, PRODUCT_MANIFEST)))
+    reference = json.loads(stable_file_bytes(repo, confined_path(repo, context.config["applicationManifestPath"])))
+    files = dict(product["sourceFiles"])
+    for root in CAPTURE_SOURCE_ROOTS:
+        tracked = set(
+            filter(
+                None, _git_bytes(repo, "ls-tree", "-r", "--name-only", "-z", commit, "--", root).decode().split("\0")
+            )
+        )
+        found: set[str] = set()
+        for directory, child_directories, names in os.walk(confined_path(repo, root), followlinks=False):
+            child_directories[:] = sorted(
+                name for name in child_directories if name not in {"__pycache__", "node_modules", "dist"}
+            )
+            for name in [*child_directories, *names]:
+                path = Path(directory) / name
+                relative = path.relative_to(repo).as_posix()
+                confined_path(repo, relative)
+                if name in names:
+                    found.add(relative)
+                    files[relative] = hashlib.sha256(stable_file_bytes(repo, path)).hexdigest()
+        if found != tracked:
+            raise ValueError(f"capture producer root inventory differs from Git: {root}")
+    for relative in CAPTURE_SOURCE_FILES:
+        files[relative] = hashlib.sha256(stable_file_bytes(repo, confined_path(repo, relative))).hexdigest()
+    blobs = capture_source_identity(repo, commit, files)
+    return {
+        "producerCommit": commit,
+        "inputGitBlobs": blobs,
+        "inputSha256": dict(sorted(files.items())),
+        "productManifest": product,
+        "referenceBuildManifest": reference,
+        "referenceId": context.config["referenceId"],
+        "referencePackageSha256": context.config["referencePackageSha256"],
+        "rendererSettings": context.config["visual"],
+    }
+
+
+def qualify_product_captures(repo: Path, relative: str) -> Path:
+    from desktop_app_check import product_style_qualification_matrix, qualification_capture_contract
+
+    # Never label execution of one checkout's adapters as another's producer.
+    if Path(__file__).resolve() != repo / "tools/product_style_check.py":
+        raise ValueError("capture must execute the producer checkout's checker")
+    static = product_style_analysis(repo)
+    if not static["ok"]:
+        raise ValueError("capture style analysis failed: " + "; ".join(static["errors"]))
+    producer = capture_producer_snapshot(repo)
+    paths = list(producer["inputSha256"])
+    for root, manifest_key in (
+        ("apps/desktop/product-dist", "productManifest"),
+        ("apps/desktop/dist", "referenceBuildManifest"),
+    ):
+        paths.extend(f"{root}/{name}" for name in producer[manifest_key]["artifacts"])
+        paths.append(f"{root}/application-manifest.json")
+    with windows_path_locks([confined_path(repo, path) for path in paths], directories=False):
+        if capture_producer_snapshot(repo) != producer:
+            raise ValueError("producer changed before capture inputs were locked")
+        return write_capture_bundle(
+            repo,
+            relative,
+            qualification_capture_contract(repo),
+            lambda: capture_producer_snapshot(repo),
+            lambda capture: product_style_qualification_matrix(repo, capture),
+        )
+
+
+def verify_product_captures(repo: Path, relative: str, delivery: str) -> dict[str, Any]:
+    from desktop_app_check import qualification_capture_contract, qualification_report_errors
+
+    manifest = read_capture_bundle(
+        repo, _canonical_capture_path(repo, relative), delivery, qualification_capture_contract(repo)
+    )
+    if manifest["producer"] != capture_producer_snapshot(repo, manifest["producer"]["producerCommit"]):
+        raise ValueError("capture producer/build/reference/renderer identity differs from authenticated source")
+    errors = qualification_report_errors(repo, manifest["report"])
+    if errors:
+        raise ValueError("retained capture matrix is invalid: " + "; ".join(errors))
+    return {
+        "ok": True,
+        "deliveryCommit": delivery,
+        "producerCommit": manifest["producer"]["producerCommit"],
+        "manifest": relative,
+        "captureCount": len(manifest["captures"]),
+        "manifestSha256": hashlib.sha256(_git_bytes(repo, "cat-file", "blob", f"{delivery}:{relative}")).hexdigest(),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path.cwd())
+    operation = parser.add_mutually_exclusive_group()
+    operation.add_argument("--capture", help="new repository-relative directory for live product/reference captures")
+    operation.add_argument("--verify-captures", help="repository-relative retained capture manifest")
+    parser.add_argument("--delivery-commit", help="external full immutable Git commit authenticating retained files")
     args = parser.parse_args(argv)
-    result = product_style_analysis(args.repo.resolve())
+    repo = args.repo.resolve(strict=True)
+    try:
+        if args.verify_captures:
+            if not args.delivery_commit:
+                raise ValueError("--verify-captures requires --delivery-commit")
+            result = verify_product_captures(repo, args.verify_captures, args.delivery_commit)
+        elif args.capture:
+            if args.delivery_commit:
+                raise ValueError("delivery authentication is available only after captures are committed")
+            manifest = qualify_product_captures(repo, args.capture)
+            result = {
+                "ok": True,
+                "manifest": manifest.relative_to(repo).as_posix(),
+                "authentication": "structural-only; commit delivery then verify",
+            }
+        elif args.delivery_commit:
+            raise ValueError("--delivery-commit requires --verify-captures")
+        else:
+            result = product_style_analysis(repo)
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        result = {"ok": False, "errors": [str(exc)]}
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["ok"] else 1
 
