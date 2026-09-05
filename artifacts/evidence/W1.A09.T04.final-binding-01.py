@@ -41,7 +41,7 @@ def scoped(relative: str) -> Path:
 
 def identity(info) -> tuple:
     return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_nlink,
-            info.st_mode, getattr(info, "st_file_attributes", 0))
+            stat.S_IFMT(info.st_mode), getattr(info, "st_file_attributes", 0))
 
 
 @contextmanager

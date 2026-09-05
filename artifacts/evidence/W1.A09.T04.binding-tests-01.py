@@ -35,11 +35,12 @@ class BindingTests(unittest.TestCase):
             "selected-report.json": b'{"ok": false}\n',
             "valid-report.json": b'{"ok": true}\n',
             "binary.dat": b"\x00original\r\n",
+            "synthetic.exe": b"synthetic bytes, never executed\n",
         }.items():
             (cls.repo / name).write_bytes(data)
         cls.git("init", "--quiet")
         cls.git("add", "--", ".gitattributes", "valid.txt", "assume.txt", "skip.txt",
-                "selected-report.json", "valid-report.json", "binary.dat", "mutable.txt")
+                "selected-report.json", "valid-report.json", "binary.dat", "mutable.txt", "synthetic.exe")
         cls.git("-c", "user.name=Synthetic fixture", "-c", "user.email=fixture@example.invalid",
                 "commit", "--quiet", "-m", "Synthetic candidate")
         cls.candidate = cls.git("rev-parse", "HEAD").decode().strip()
@@ -126,6 +127,9 @@ class BindingTests(unittest.TestCase):
 
     def test_safe_snapshot(self):
         self.assertEqual(helper.snapshot("valid.txt"), b"original\r\n")
+
+    def test_windows_executable_extension_does_not_change_file_identity(self):
+        self.assertEqual(helper.snapshot("synthetic.exe"), b"synthetic bytes, never executed\n")
 
     def test_valid_git_text_binary_and_report_binding(self):
         binder = helper.CandidateInputs(self.candidate)

@@ -1,0 +1,13 @@
+{
+  "taskId": "W1.A09.T04",
+  "commit": "3a073bbb62e3784ce3b7ba2a66d0dfe766b09b29",
+  "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json",
+  "exitCode": 1,
+  "reportPublished": false,
+  "stage": "snapshot handle/path metadata comparison for the retained synthetic blind-test executable",
+  "diagnostic": {"differentField": "st_mode", "pathValue": 33279, "handleValue": 33206},
+  "rootCause": "Windows path stat synthesizes execute permission bits from the .exe suffix; fstat does not. These are not file type, identity, redirect or content differences. Comparing all permission bits rejected a valid retained executable before reading its contents.",
+  "remediation": "Compare file type (S_IFMT) while retaining device, inode, size, mtime, link count and reparse attributes; retain the held no-write/delete guards. A synthetic .exe-text fixture first reproduces the mismatch without launching anything. No real policy/vault, protected witness, package or source bytes were changed.",
+  "precedingTestRun": {"tests": 10, "passed": 10, "fixture": "artifacts/tmp/W1.A09.T04.binding-tests-bl_n2dix", "ruff": "PASS"},
+  "developmentLintHistory": "Before this committed run, focused tests passed while Ruff reported import/line-length/context formatting and then a loop-closure binding issue. Those authoring defects were corrected and Ruff passed; no test outcome was changed."
+}
