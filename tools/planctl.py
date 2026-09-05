@@ -764,6 +764,241 @@ def _bound_repository_file_errors(
     return errors
 
 
+def _approved_experience_packet_commit(root: Path, packet: dict[str, Any]) -> tuple[str | None, list[str]]:
+    """Authenticate retained authority without recursively resolving its experience."""
+    if not AMENDMENT_ID_PATTERN.fullmatch(str(packet.get("proposedAmendmentId") or "")) or not ECR_ID_PATTERN.fullmatch(
+        str(packet.get("changeRequestId") or "")
+    ):
+        return None, ["Historical experience packet identity is invalid"]
+    relative = f"planning/wave-amendment-approvals/{packet.get('proposedAmendmentId')}.json"
+    path = _safe_repository_file(root, relative)
+    if path is None:
+        return None, ["Historical experience approval path is unsafe"]
+    try:
+        record, payload = _json_document(path)
+        current_packet, _ = _json_document(ecr_packet_path(root, str(packet["changeRequestId"])))
+    except (OSError, ValueError) as exc:
+        return None, [f"Historical experience requires an immutable approved packet: {exc}"]
+    if current_packet != packet or _git_blob(root, "HEAD", relative) != payload:
+        return None, ["Historical experience approval or packet was substituted"]
+    authority_paths = [relative, f"planning/enabler-change-requests/{packet['changeRequestId']}.packet.json"]
+    authority_paths.extend(str(_json_object(item).get("path") or "") for item in packet.get("files", []))
+    ledger_path = _json_object(_json_object(record.get("independentPacketReview")).get("ledger")).get("path")
+    if ledger_path:
+        authority_paths.append(str(ledger_path))
+    if any(not path or _safe_repository_file(root, path) is None for path in authority_paths):
+        return None, ["Historical experience authority input path is unsafe"]
+    clean = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all", "--", *authority_paths],
+        cwd=root,
+        capture_output=True,
+        check=False,
+    )
+    if clean.returncode or clean.stdout:
+        return None, ["Historical experience requires clean committed authority inputs"]
+    errors = _approval_record_errors(
+        root,
+        packet,
+        record,
+        payload,
+        approval_relative=relative,
+        require_committed_history=True,
+        check_governed_experience=False,
+    )
+    commit = _json_object(record.get("packet")).get("commit")
+    return (str(commit) if not errors else None), errors
+
+
+def _reference_publication_content_errors(
+    root: Path,
+    packet: dict[str, Any],
+    packet_commit: str,
+    publication_commit: str,
+) -> list[str]:
+    """Bind direct amendment publication to reviewed bytes, not a self-hashed tree."""
+    from ui_reference_check import canonical_payload
+
+    files = _json_object(packet.get("governedExperience")).get("files")
+    errors = _bound_repository_file_errors(root, files, label="Successor proposal", packet_commit=packet_commit)
+    if errors or not isinstance(files, list):
+        return errors
+    inventory = {str(_json_object(item).get("path")): _json_object(item) for item in files}
+    manifests = [path for path in inventory if path.endswith("/REFERENCE_MANIFEST.yaml")]
+    if len(manifests) != 1 or manifests[0].startswith("design/ui-reference/"):
+        return ["Historical experience requires one separately reviewed proposed reference package"]
+    source_prefix = manifests[0].removesuffix("REFERENCE_MANIFEST.yaml")
+    proposed = _json_object(yaml.safe_load(_git_blob(root, packet_commit, manifests[0]) or b""))
+    published = _json_object(
+        yaml.safe_load(_git_blob(root, publication_commit, "design/ui-reference/REFERENCE_MANIFEST.yaml") or b"")
+    )
+    names = proposed.get("governed_files")
+    if (
+        proposed.get("status") != "proposed"
+        or not isinstance(names, list)
+        or any(not isinstance(name, str) for name in names)
+        or set(inventory) != {f"{source_prefix}{name}" for name in [*names, "REFERENCE_MANIFEST.yaml"]}
+    ):
+        return ["Historical experience successor proposal inventory is incomplete or not proposed"]
+    for name in names:
+        if _safe_repository_file(root, f"design/ui-reference/{name}") is None:
+            errors.append(f"Historical experience successor path is redirected: {name}")
+            continue
+        source = _git_blob(root, packet_commit, f"{source_prefix}{name}")
+        target = _git_blob(root, publication_commit, f"design/ui-reference/{name}")
+        if source is None or target is None:
+            errors.append(f"Historical experience successor source is missing: {name}")
+            continue
+        if name == "APPROVAL.yaml":
+            source_approval = _json_object(yaml.safe_load(source))
+            target_approval = _json_object(yaml.safe_load(target))
+            if source_approval.get("status") != "proposed":
+                errors.append("Historical experience successor approval source is not proposed")
+            # All other approval fields (scope, supersedes, implementation rule,
+            # identity and version) must remain exactly the reviewed proposal.
+            allowed = {"status", "approval_kind", "approved_by", "approved_at", "approval_basis", "authority"}
+            expected = {**source_approval, **{key: target_approval.get(key) for key in allowed}}
+            if target_approval != expected:
+                errors.append("Historical experience successor changed reviewed approval scope")
+        elif canonical_payload(name, source) != canonical_payload(name, target):
+            errors.append(f"Historical experience successor differs from reviewed content: {name}")
+    expected_manifest = {**proposed, "status": "approved", "file_hashes": dict(proposed.get("file_hashes") or {})}
+    approval_bytes = _git_blob(root, publication_commit, "design/ui-reference/APPROVAL.yaml")
+    if approval_bytes is not None:
+        expected_manifest["file_hashes"]["APPROVAL.yaml"] = hashlib.sha256(
+            canonical_payload("APPROVAL.yaml", approval_bytes)
+        ).hexdigest()
+    if published != expected_manifest:
+        errors.append("Historical experience successor manifest differs from reviewed content and allowed metadata")
+    return errors
+
+
+def governed_experience_binding(
+    root: Path,
+    packet: dict[str, Any],
+    *,
+    packet_commit: str | None = None,
+) -> tuple[dict[str, str], list[str]]:
+    """Resolve old reference bytes only through an authenticated approved successor.
+
+    This reads historical evidence; it neither adopts the successor nor changes
+    the execution authority of the old packet. Other bound files stay live.
+    """
+    experience = _json_object(packet.get("governedExperience"))
+    references = experience.get("files") or []
+    label = "ECR governed experience"
+    strict_errors = _bound_repository_file_errors(root, references, label=label, packet_commit=packet_commit)
+    if not strict_errors:
+        return {}, []
+    clean = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all", "--", "design/ui-reference/"],
+        cwd=root,
+        capture_output=True,
+        check=False,
+    )
+    if clean.returncode or clean.stdout:
+        return {}, [*strict_errors, "Historical experience requires a clean committed active reference"]
+    approved_commit, errors = _approved_experience_packet_commit(root, packet)
+    if errors or approved_commit is None:
+        return {}, [*strict_errors, *errors]
+    if packet_commit and approved_commit != packet_commit:
+        return {}, [*strict_errors, "Historical experience packet commit was substituted"]
+    if not isinstance(references, list):
+        return {}, strict_errors
+    active_prefix = "design/ui-reference/"
+    historical: list[dict[str, Any]] = []
+    live: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for value in references:
+        item = _json_object(value)
+        relative = item.get("path")
+        if not isinstance(relative, str) or relative in seen or _safe_repository_file(root, relative) is None:
+            return {}, [*strict_errors, "Historical experience file inventory is unsafe or duplicated"]
+        seen.add(relative)
+        (historical if relative.startswith(active_prefix) else live).append(item)
+    if not historical:
+        return {}, strict_errors
+    errors.extend(_bound_repository_file_errors(root, live, label=label, packet_commit=approved_commit))
+    for item in historical:
+        payload = _git_blob(root, approved_commit, item["path"])
+        if payload is None or hashlib.sha256(payload).hexdigest() != item.get("sha256"):
+            errors.append(f"Historical experience hash differs from approved packet: {item['path']}")
+    if errors:
+        return {}, [*strict_errors, *errors]
+
+    # Reuse the existing strict UI approval/authority/package validators. Import
+    # only on this exceptional historical path, not ordinary planctl startup.
+    from ui_conformance import reference_package_at
+
+    approval_path = f"{active_prefix}APPROVAL.yaml"
+    reference_id = str(experience.get("referenceId") or "")
+    try:
+        old_bytes, old_package, errors = reference_package_at(root, approved_commit, reference_id)
+        current = _json_object(yaml.safe_load(_git_blob(root, "HEAD", approval_path) or b""))
+        current_id = str(current.get("reference_id") or "")
+        if errors or not old_bytes or not old_package or not current_id or current_id == reference_id:
+            return {}, [*strict_errors, *errors, "Historical experience requires a distinct approved successor"]
+        revision = "HEAD"
+        visited: set[str] = set()
+        while current_id != reference_id:
+            if current_id in visited:
+                return {}, [*strict_errors, "Historical experience successor chain repeats an identity"]
+            visited.add(current_id)
+            current_bytes, current_package, package_errors = reference_package_at(root, revision, current_id)
+            errors.extend(package_errors)
+            current = _json_object(yaml.safe_load(current_bytes or b""))
+            approval_commit = subprocess.run(
+                ["git", "log", "-1", "--format=%H", revision, "--", approval_path],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            ).stdout.strip()
+            if not approval_commit or not _git_is_ancestor(root, approved_commit, approval_commit):
+                return {}, [*strict_errors, *errors, "Historical experience successor is not after its packet"]
+            approved_bytes, approved_package, package_errors = reference_package_at(root, approval_commit, current_id)
+            errors.extend(package_errors)
+            if current_bytes != approved_bytes or current_package != approved_package:
+                errors.append("Historical experience successor package changed after approval")
+            if current.get("approval_kind") != "human" or not current.get("authority"):
+                errors.append("Historical experience successor lacks bound human authority")
+            authority = _json_object(current.get("authority"))
+            if "amendment_id" in authority:
+                successor_path = ecr_packet_path(root, str(authority.get("change_request_id")))
+                successor, _ = _json_document(successor_path)
+                successor_commit, authority_errors = _approved_experience_packet_commit(root, successor)
+                errors.extend(authority_errors)
+                if _json_object(successor.get("governedExperience")).get("referenceId") != current_id:
+                    errors.append("Historical experience successor packet does not authorize its reference identity")
+                if successor_commit:
+                    errors.extend(
+                        _reference_publication_content_errors(root, successor, successor_commit, approval_commit)
+                    )
+            else:
+                errors.append("Historical experience resolver supports direct amendment publication only")
+            parent_revision = f"{approval_commit}^"
+            prior = _json_object(yaml.safe_load(_git_blob(root, parent_revision, approval_path) or b""))
+            prior_id = str(prior.get("reference_id") or "")
+            if not prior_id or prior_id == current_id or current.get("supersedes") != prior_id:
+                errors.append("Historical experience successor does not exactly supersede its predecessor")
+            if errors:
+                return {}, [*strict_errors, *errors]
+            revision, current_id = parent_revision, prior_id
+        prior_bytes, prior_package, errors = reference_package_at(root, revision, reference_id)
+        if prior_bytes != old_bytes or prior_package != old_package:
+            errors.append("Historical experience predecessor changed between packet and successor approval")
+        if errors:
+            return {}, [*strict_errors, *errors]
+    except (OSError, ValueError, yaml.YAMLError) as exc:
+        return {}, [*strict_errors, f"Historical experience authority is unreadable: {exc}"]
+    return {
+        "mode": "historical-approved",
+        "packetCommit": approved_commit,
+        "currentReferenceId": str(
+            _json_object(yaml.safe_load(_git_blob(root, "HEAD", approval_path) or b"")).get("reference_id")
+        ),
+    }, []
+
+
 def _migration_reference_errors(root: Path, reference: object) -> list[str]:
     item = _json_object(reference)
     relative = item.get("path")
@@ -1125,6 +1360,7 @@ def _approval_record_errors(
     *,
     approval_relative: str,
     require_committed_history: bool,
+    check_governed_experience: bool = True,
 ) -> list[str]:
     errors = _schema_errors(
         record,
@@ -1229,15 +1465,8 @@ def _approval_record_errors(
             if latest_state and not _git_is_ancestor(root, latest_state, packet_commit):
                 errors.append("Wave amendment packet does not descend from the latest predecessor effective state")
         errors.extend(_packet_file_errors(root, packet, packet_commit))
-        if packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
-            errors.extend(
-                _bound_repository_file_errors(
-                    root,
-                    _json_object(packet.get("governedExperience")).get("files"),
-                    label="ECR v4 governed experience",
-                    packet_commit=packet_commit,
-                )
-            )
+        if check_governed_experience and packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
+            errors.extend(governed_experience_binding(root, packet, packet_commit=packet_commit)[1])
     if require_committed_history:
         introduced = _approval_introduction_commit(root, approval_relative)
         if introduced is None:
@@ -1899,14 +2128,7 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     if not historical_proposed and active_amendments:
         errors.append("ECR v4 cannot overlap another active amendment campaign")
 
-    experience = _json_object(packet.get("governedExperience"))
-    errors.extend(
-        _bound_repository_file_errors(
-            root,
-            experience.get("files"),
-            label="ECR v4 governed experience",
-        )
-    )
+    errors.extend(governed_experience_binding(root, packet)[1])
     for commit in ordered_commits:
         if (
             not re.fullmatch(r"[0-9a-f]{40}", commit)
