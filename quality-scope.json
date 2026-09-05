@@ -205,6 +205,8 @@
     "tests/workflows/test_task_center.py",
     "tests/desktop/test_product_style_check.py",
     "tests/e2e/test_workflow_profile_matrix.py",
-    "tools/product_style_check.py"
+    "tools/product_style_check.py",
+    "tools/publication_privacy.py",
+    "tests/publication/test_publication_privacy.py"
   ]
 }
