@@ -1,0 +1,15 @@
+{
+  "taskId": "W1.A09.T04",
+  "kind": "test-first-R01-remediation",
+  "candidateHelperCommit": "6a078f982815e547a57f4b2c670e50661b2d0bf3",
+  "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py",
+  "exitCode": 1,
+  "tests": 8,
+  "failureSubcases": 14,
+  "errorSubcases": 6,
+  "fixture": "artifacts/tmp/W1.A09.T04.binding-tests-4ezyqyz6",
+  "observation": "Twelve mock lexical alias subcases, one mock reparse case and one real synthetic hardlink case reproduce missing denial. Six subcases fail because the proposed snapshot/CandidateInputs interface does not yet exist; those are test-first interface gaps, not false claims of legacy behavioral reproduction. R01 separately reproduces actual legacy Git binding false acceptance. No helper edit preceded this run.",
+  "protectedAccess": false,
+  "productCodeChanged": false,
+  "fixturesRetained": true
+}

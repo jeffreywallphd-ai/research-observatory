@@ -5,19 +5,22 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import stat
 import subprocess
 import sys
+from contextlib import ExitStack, contextmanager
 from datetime import UTC, datetime
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 import yaml
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).absolute().parents[2]
 BASE = "cd4838e9c64fdbf3adb8f326781f95404a0c945d"
 sys.path.insert(0, str(REPO / "tools"))
+from build_manifest import windows_path_locks  # noqa: E402
 from desktop_app_check import inline_product_index  # noqa: E402
-from desktop_performance_check import canonical_text_sha256  # noqa: E402
 from governance_kernel import paused_predecessor_record_hash  # noqa: E402
 
 
@@ -26,20 +29,117 @@ def git(*args: str) -> str:
 
 
 def scoped(relative: str) -> Path:
-    name = PurePosixPath(relative)
-    assert not name.is_absolute() and ".." not in name.parts and ":" not in relative
-    assert relative != "artifacts/evidence/W1.A04.B00.json"
-    path = (REPO / relative).resolve(strict=True)
-    assert path.is_relative_to(REPO)
-    return path
+    """Lexical validation only: never resolve an untrusted spelling."""
+    assert isinstance(relative, str) and relative
+    assert not any(ord(c) < 32 or c in '\\:<>"|?*~' for c in relative)
+    parts = relative.split("/")
+    assert all(p and p not in (".", "..") and p == p.rstrip(" .") for p in parts)
+    assert all(not re.fullmatch(r"(?:CON|PRN|AUX|NUL|COM[0-9¹²³]|LPT[0-9¹²³])(?:\..*)?", p, re.I) for p in parts)
+    assert relative.casefold() != "artifacts/evidence/w1.a04.b00.json"
+    return REPO.joinpath(*parts)
+
+
+def identity(info) -> tuple:
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_nlink,
+            info.st_mode, getattr(info, "st_file_attributes", 0))
+
+
+@contextmanager
+def held_path(relative: str, *, directory: bool = False):
+    path = scoped(relative)
+    # Inspect top-down before descending; lstat never follows the current entry.
+    # Reuse existing Windows no-delete/write guards, not a new platform adapter.
+    with ExitStack() as locks:
+        for entry in [*reversed(path.parents), path]:
+            is_directory = entry != path or directory
+            before = entry.lstat()
+            assert not stat.S_ISLNK(before.st_mode) and not getattr(before, "st_file_attributes", 0) & 0x400
+            assert stat.S_ISDIR(before.st_mode) if is_directory else stat.S_ISREG(before.st_mode)
+            if not is_directory:
+                assert before.st_nlink == 1, "Linked evidence inputs are not permitted"
+            locks.enter_context(windows_path_locks([entry], directories=is_directory))
+            after = entry.lstat()
+            assert identity(before) == identity(after), "Input identity changed before pinning"
+        yield path
+
+
+def snapshot(relative: str) -> bytes:
+    with held_path(relative) as path:
+        before = path.lstat()
+        assert before.st_size <= 128 * 1024 * 1024, "Input exceeds bounded snapshot size"
+        with path.open("rb") as source:
+            assert identity(os.fstat(source.fileno())) == identity(before)
+            payload = source.read(128 * 1024 * 1024 + 1)
+            assert identity(os.fstat(source.fileno())) == identity(before)
+        assert len(payload) == before.st_size and identity(path.lstat()) == identity(before)
+        return payload
 
 
 def sha(relative: str) -> str:
-    return hashlib.sha256(scoped(relative).read_bytes()).hexdigest()
+    return hashlib.sha256(snapshot(relative)).hexdigest()
 
 
-def read(relative: str) -> dict:
-    return json.loads(scoped(relative).read_text(encoding="utf-8"))
+class CandidateInputs:
+    """Authenticate and parse one snapshot; index flags are never proof."""
+
+    def __init__(self, candidate: str):
+        assert re.fullmatch(r"[a-f0-9]{40}", candidate)
+        self.candidate = candidate
+        self.tree = {}
+        for record in subprocess.check_output(
+            ["git", "ls-tree", "-rz", "--full-tree", candidate], cwd=REPO,
+        ).split(b"\0"):
+            if record:
+                metadata, name = record.split(b"\t", 1)
+                mode, kind, oid = metadata.decode("ascii").split()
+                self.tree[name.decode("utf-8")] = (mode, kind, oid)
+        self.snapshots: dict[str, bytes] = {}
+        self.blobs: dict[str, str] = {}
+        self.artifacts: set[str] = set()
+
+    def bytes(self, relative: str, *, artifact: bool = False) -> bytes:
+        scoped(relative)  # Deny aliases even before consulting the tree.
+        if relative in self.tree:
+            mode, kind, expected = self.tree[relative]
+            assert kind == "blob" and mode in ("100644", "100755")
+        else:
+            assert artifact and (
+                relative == ".venv/pyvenv.cfg"
+                or relative.startswith(("apps/desktop/dist/", "apps/desktop/product-dist/"))
+                or relative in {
+                    "artifacts/tmp/W1.A09.T04.performance-02.json",
+                    "artifacts/tmp/blind-novice-repeat-20260905-d02/runtime/project_contract_probe.exe",
+                }
+            ), "Input is neither a candidate file nor an explicitly qualified artifact"
+            self.artifacts.add(relative)
+        if relative not in self.snapshots:
+            payload = snapshot(relative)
+            if relative in self.tree:
+                actual = subprocess.check_output(
+                    ["git", f"--attr-source={self.candidate}", "hash-object", f"--path={relative}", "--stdin"],
+                    cwd=REPO, input=payload,
+                ).decode("ascii").strip()
+                assert actual == expected, f"Snapshot differs from candidate blob: {relative}"
+                self.blobs[relative] = expected
+            self.snapshots[relative] = payload
+        return self.snapshots[relative]
+
+    def sha(self, relative: str) -> str:
+        return hashlib.sha256(self.bytes(relative, artifact=True)).hexdigest()
+
+    def read(self, relative: str, *, artifact: bool = False) -> dict:
+        return json.loads(self.bytes(relative, artifact=artifact).decode("utf-8"))
+
+    def canonical_text_sha(self, relative: str) -> str:
+        payload = self.bytes(relative)
+        payload.decode("utf-8")
+        normalized = payload.replace(b"\r\n", b"\n")
+        assert b"\r" not in normalized
+        return hashlib.sha256(normalized).hexdigest()
+
+    def verify_unchanged(self) -> None:
+        for relative, payload in self.snapshots.items():
+            assert snapshot(relative) == payload, f"Input changed during binding: {relative}"
 
 
 def main() -> None:
@@ -48,10 +148,11 @@ def main() -> None:
     args = parser.parse_args()
     assert re.fullmatch(r"W1\.A09\.T04\.final-binding-[0-9]{2}\.json", args.report)
     destination = REPO / "artifacts/evidence" / args.report
-    assert not destination.exists(), "Retain earlier observations"
     head = git("rev-parse", "HEAD")
     assert git("merge-base", BASE, head) == BASE
     assert git("branch", "--show-current") == "codex/w1-windows-local-runtime"
+    inputs = CandidateInputs(head)
+    sha, read = inputs.sha, inputs.read
     observed_sources: dict[str, str] = {}
     selected = []
 
@@ -93,7 +194,7 @@ def main() -> None:
     bind(relative, presentation["inputBinding"]["inputFilesRawSha256"])
 
     performance = read("artifacts/evidence/W1.A09.T04.performance-02.json")
-    assert performance == read("artifacts/tmp/W1.A09.T04.performance-02.json")
+    assert performance == read("artifacts/tmp/W1.A09.T04.performance-02.json", artifact=True)
     assert performance["ok"] and not performance["errors"] and not performance["unexpectedRequests"]
     assert performance["methodology"]["repetitions"] == 12
     for measure in performance["measurements"].values():
@@ -106,11 +207,11 @@ def main() -> None:
         assert sha(item["path"]) == item["sha256"]
     component = performance["uiComponentPerformance"]["fixture"]
     for key in ("benchmarkEntry", "benchmarkRunner"):
-        assert canonical_text_sha256(scoped(component[key])) == component[f"{key}Sha256"]
+        assert inputs.canonical_text_sha(component[key]) == component[f"{key}Sha256"]
     copied_probe = "artifacts/tmp/blind-novice-repeat-20260905-d02/runtime/project_contract_probe.exe"
     assert sha(copied_probe) == next(b["executableSha256"] for b in builds if b["profile"] == "debug")
 
-    backlog = yaml.safe_load(scoped("planning/backlog.yaml").read_text(encoding="utf-8"))
+    backlog = yaml.safe_load(inputs.bytes("planning/backlog.yaml").decode("utf-8"))
     amendment = next(a for a in backlog["wave_amendments"] if a["id"] == "W1.A09")
     parent = next(a for a in backlog["wave_amendments"] if a["id"] == "W1.A08")
     prepared = read("artifacts/evidence/W1.A09.T04.return-preparation.json")
@@ -134,7 +235,7 @@ def main() -> None:
     observed_sources["artifacts/evidence/W1.A09.T04.final-binding-01.py"] = sha(
         "artifacts/evidence/W1.A09.T04.final-binding-01.py"
     )
-    tracked = set(git("ls-files").splitlines())
+    tracked = set(inputs.tree)
     nontracked = set(observed_sources) - tracked
     assert all(
         name == ".venv/pyvenv.cfg" or name.startswith(("apps/desktop/dist/", "apps/desktop/product-dist/"))
@@ -146,13 +247,22 @@ def main() -> None:
     ).decode("utf-8").rstrip("\0").split("\0")
     assert set(ignored) == nontracked
     assert inline_product_index(REPO), "Product assembly manifest must validate against current inputs"
-    assert not set(git("diff", "--name-only", "HEAD").splitlines()) & set(observed_sources)
+    inputs.verify_unchanged()
     assert head == git("rev-parse", "HEAD")
     report = {
         "taskId": "W1.A09.T04", "status": "PASS", "observedAt": datetime.now(UTC).isoformat(),
         "candidateCommit": head, "baseCommit": BASE, "selectedReports": selected,
         "sourceHashes": observed_sources, "sourceInputCount": len(observed_sources),
         "currentTrackedObservedInputsMatchCommittedCandidate": True,
+        "candidateBlobIds": inputs.blobs,
+        "authenticatedSnapshotRawSha256": {
+            name: hashlib.sha256(payload).hexdigest() for name, payload in inputs.snapshots.items()
+        },
+        "candidateBindingMethod": (
+            "Single bounded no-follow snapshots; Git-clean hash-object stdin with candidate attributes compared "
+            "directly to candidate ls-tree blobs, independent of index/stat diff. Selected reports authenticated "
+            "before parsing. Raw and field-specific canonical hashes remain distinct."
+        ),
         "nontrackedQualifiedArtifactAndRuntimeInputs": sorted(nontracked),
         "nontrackedInputsMatchObservedHashesAndRemainIgnored": True,
         "productAssemblyManifestValidatesCurrentInputs": True,
@@ -166,10 +276,15 @@ def main() -> None:
             "Mechanical binding of earlier observations, not fresh replay or independent acceptance. "
             "Original observed HEADs and dirty-performance disclosure remain unchanged. "
             "Historic helper mismatches/adverse reports remain retained. "
+            "Windows guards bound each read; portable fallback detects metadata drift. "
+            "Neither is hostile same-account isolation. "
             "No protected witness access, production startup, adoption, A08 activation, Wave or release approval."
         ),
     }
-    with destination.open("x", encoding="utf-8", newline="\n") as output:
+    with (
+        held_path("artifacts/evidence", directory=True),
+        destination.open("x", encoding="utf-8", newline="\n") as output,
+    ):
         json.dump(report, output, indent=2)
         output.write("\n")
     print(json.dumps({"status": "PASS", "candidateCommit": head, "sourceInputCount": len(observed_sources)}))
