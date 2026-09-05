@@ -1,0 +1,186 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-evidence",
+  "candidateCommit": "81fccc337b92e4911e5937ca1817d0bbad9fa3a0",
+  "predecessorCommit": "63d916a56359742a863241c7521d1b7703f24bc7",
+  "recordedAt": "2026-09-05 11:41:35 UTC",
+  "implementer": "agent:root",
+  "riskTier": 2,
+  "authority": "AGENTS.md post-GOV-MIG-0001 bounded generic maintenance; no expanded product, reference, execution or release authority.",
+  "contract": "artifacts/evidence/historical-reference-binding.maintenance-01.md",
+  "selectedChecksStatus": "PASS",
+  "independentReviewStatus": "PENDING",
+  "changedFiles": [
+    {
+      "path": "artifacts/evidence/historical-reference-binding.maintenance-01.md",
+      "sha256": "ea964eb3e1532a64872f73d0ac78b253ae7aa855c2c3f8cc907d0679cbcbdb13",
+      "blob": "f35a5585ab97f77aa07cdc8d52e081864dfa683b"
+    },
+    {
+      "path": "tests/foundation/test_planctl_amendments.py",
+      "sha256": "5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f",
+      "blob": "48e474cd70dac72a7a5affe1db15e12c80ab7303"
+    },
+    {
+      "path": "tools/plan_review_site.py",
+      "sha256": "2e87244db87eaec3a23e3be29383241e78c78d380667ba894e077c7cf318c671",
+      "blob": "1ed23dd74adfc14363feb617756ab1f22a1e1b09"
+    },
+    {
+      "path": "tools/planctl.py",
+      "sha256": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6",
+      "blob": "892e4d71627b5de3ea48d054be0fb52a94b7c383"
+    },
+    {
+      "path": "tools/ui_conformance.py",
+      "sha256": "126fb08a2032c465e644b297f12d08f6d43f3dea7e5448c96a245b1f39665721",
+      "blob": "49af150ed5b8d7ebe0aa109a4e5d21b2ec323301"
+    }
+  ],
+  "checks": [
+    {
+      "id": "historical",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_historical_experience_requires_authentic_clean_successor",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 323.392s\r\n\r\nOK\r\n",
+      "loadTiming": "Launched before candidate commit with final source; no source edits after launch. Final unchanged source matched candidate Git blobs."
+    },
+    {
+      "id": "lint",
+      "command": ".venv/Scripts/python.exe -m ruff check tools/planctl.py tools/plan_review_site.py tools/ui_conformance.py tests/foundation/test_planctl_amendments.py",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": "All checks passed!\n",
+      "loadTiming": "Launched after candidate commit."
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -m ruff format --check tools/planctl.py tools/plan_review_site.py tools/ui_conformance.py tests/foundation/test_planctl_amendments.py",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": "4 files already formatted\n",
+      "loadTiming": "Launched after candidate commit."
+    },
+    {
+      "id": "types",
+      "command": ".venv/Scripts/python.exe -m mypy tools/planctl.py tools/plan_review_site.py tools/ui_conformance.py tests/foundation/test_planctl_amendments.py",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": "Success: no issues found in 4 source files\r\n",
+      "loadTiming": "Launched after candidate commit."
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": "Generated backlog views: PASS - no changes\r\n",
+      "loadTiming": "Launched after candidate commit."
+    },
+    {
+      "id": "site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": "Planning review site: pass - 19 capabilities, 111 slices, 337 tasks, 492 HTML pages\r\n",
+      "loadTiming": "Launched after candidate commit."
+    },
+    {
+      "id": "scope",
+      "command": ".venv/Scripts/python.exe -c \"import hashlib,json,pathlib,subprocess; r=pathlib.Path('.'); c='81fccc337b92e4911e5937ca1817d0bbad9fa3a0'; b='63d916a56359742a863241c7521d1b7703f24bc7'; paths=subprocess.check_output(['git','diff','--name-only',b,c],text=True).splitlines(); rows=[]; allowed={'artifacts/evidence/historical-reference-binding.maintenance-01.md','tools/planctl.py','tools/plan_review_site.py','tools/ui_conformance.py','tests/foundation/test_planctl_amendments.py'}; assert set(paths)==allowed; assert subprocess.check_output(['git','rev-parse',c+'^'],text=True).strip()==b; [rows.append({'path':p,'sha256':hashlib.sha256(subprocess.check_output(['git','show',c+':'+p])).hexdigest(),'blob':subprocess.check_output(['git','rev-parse',c+':'+p],text=True).strip()}) for p in paths]; assert subprocess.run(['git','diff','--quiet',c,'--',*paths]).returncode==0; assert subprocess.run(['git','diff','--check',b,c]).returncode==0; print(json.dumps(rows))\"",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": "[{\"path\": \"artifacts/evidence/historical-reference-binding.maintenance-01.md\", \"sha256\": \"ea964eb3e1532a64872f73d0ac78b253ae7aa855c2c3f8cc907d0679cbcbdb13\", \"blob\": \"f35a5585ab97f77aa07cdc8d52e081864dfa683b\"}, {\"path\": \"tests/foundation/test_planctl_amendments.py\", \"sha256\": \"5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f\", \"blob\": \"48e474cd70dac72a7a5affe1db15e12c80ab7303\"}, {\"path\": \"tools/plan_review_site.py\", \"sha256\": \"2e87244db87eaec3a23e3be29383241e78c78d380667ba894e077c7cf318c671\", \"blob\": \"1ed23dd74adfc14363feb617756ab1f22a1e1b09\"}, {\"path\": \"tools/planctl.py\", \"sha256\": \"fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6\", \"blob\": \"892e4d71627b5de3ea48d054be0fb52a94b7c383\"}, {\"path\": \"tools/ui_conformance.py\", \"sha256\": \"126fb08a2032c465e644b297f12d08f6d43f3dea7e5448c96a245b1f39665721\", \"blob\": \"49af150ed5b8d7ebe0aa109a4e5d21b2ec323301\"}]\r\n",
+      "loadTiming": "Launched after candidate commit."
+    },
+    {
+      "id": "affected-regressions",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_bound_repository_files_use_git_normalized_bytes_for_clean_worktrees tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_v4_successor_accepts_interleaved_adopted_and_reserved_authority tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_v4_historical_packet_remains_valid_after_a_successor_materializes tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_v4_approval_denies_an_invented_review_projection_without_ledger tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_ecr_loader_uses_git_normalized_governed_experience_bytes tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_pending_v4_successor_orders_interleaved_authority_and_reuses_approved_experience tests.foundation.test_plan_review_amendments.PlanReviewAmendmentTests.test_review_checker_validates_enabler_hashes_pages_and_links",
+      "result": "PASS",
+      "exitCode": 0,
+      "tests": 7,
+      "durationSeconds": 101.822,
+      "output": "Ran 7 tests in 101.822s; OK. Planning review site: pass - 19 capabilities, 111 slices, 337 tasks, 492 HTML pages.",
+      "loadTiming": "Launched after final source edits and before candidate commit; no source edits after launch."
+    },
+    {
+      "id": "approved-correction",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0008 --require-approved",
+      "result": "PASS",
+      "exitCode": 0,
+      "output": "ECR-0008 is approved and history-bound.",
+      "loadTiming": "Launched after final source edits and before candidate commit."
+    }
+  ],
+  "criterionEvidence": [
+    {
+      "id": "HR-01",
+      "checks": [
+        "historical",
+        "scope"
+      ],
+      "proof": "A disposable shared-object Git clone is anchored to exact predecessor 63d916a5. The original strict helper rejects a synthetic 1.6 publication; the shared resolver authenticates historical ECR7 sources. Real retained packet/review/approval/package bytes and Git ancestry are used without issuing live reference authority."
+    },
+    {
+      "id": "HR-02",
+      "checks": [
+        "historical",
+        "affected-regressions",
+        "lint",
+        "types"
+      ],
+      "proof": "Clean committed pending/wrong-supersedes/same-ID/wrong-hash/missing-introduction successors are rejected. Initial CSS substitution with recomputed manifest is rejected against reviewed content. Dirty/untracked current reference, substituted predecessor inventory/commit, dirty approval, staged packet with restored worktree, committed packet substitution with restored worktree, and post-approval CSS mutation are rejected. Existing normalized-Git/CRLF behavior remains."
+    },
+    {
+      "id": "HR-03",
+      "checks": [
+        "historical",
+        "site",
+        "affected-regressions"
+      ],
+      "proof": "The actual review loader distinguishes historical approved 1.5 sources for ECR5/6/7 from the still-proposed inert ECR8 source. Source rows show immutable commit-qualified paths without mutable hyperlinks; summary explicitly distinguishes publication from qualified adoption. Historical loader no longer requires old mutable-path existence. Unchanged live site passes all 492 pages."
+    },
+    {
+      "id": "HR-04",
+      "checks": [
+        "affected-regressions",
+        "approved-correction",
+        "scope",
+        "views",
+        "site",
+        "format"
+      ],
+      "proof": "Existing approval/paused-parent/history/site regressions pass. The exact five-path candidate changes no backlog, taskctl, active reference, baseline, application, schema, packet, approval, or review history. ui_conformance change is only a local list annotation exposed by importing its existing package verifier."
+    }
+  ],
+  "preReview": {
+    "reviewer": "agent:t01-r02-independent-reviewer",
+    "role": "Read-only advisory preflight; not formal approval.",
+    "gapsIncorporated": [
+      "Bind initial published content to the complete reviewed proposed package, not merely a self-consistent manifest.",
+      "Do not require superseded bound files at mutable active paths for historical rendering.",
+      "Explicitly document and deny unsupported future Wave/slice two-phase publication in this bounded resolver.",
+      "Check exact authenticated input paths for dirty index/worktree, including restored approved worktree bytes."
+    ]
+  },
+  "limitations": [
+    "Only direct amendment reference publication is supported by the new resolver. Future Wave/slice two-phase successor publication remains explicitly unsupported/fail-closed; existing historical 1.5 Wave/slice authority remains validated.",
+    "No active 1.6 publication, semantic witness, baseline rendering, product changes, task claim, amendment activation/adoption or W1 qualification occurred.",
+    "The isolated fixture reuses real retained approval history solely to test a synthetic publication; its disposable commit is not live approval or execution authority.",
+    "Full product/deployment/W1 qualification is deferred to the approved task/checkpoint/Wave workflow. No renderer, tolerance or substantive UI validator was changed.",
+    "Independent exact-candidate replay/disposition is pending; this evidence does not approve integration."
+  ],
+  "retainedAdverseObservations": [
+    "Initial fixture clone failed at Git ownership under the sandbox account. An exact-path process-local safe.directory attempt did not resolve clone ownership; isolated tests ran with approved escalation. No global Git config was changed.",
+    "The first runnable characterization failed because the resolver did not exist. A subsequent fixture-index setup error omitted authority from the synthetic commit; initializing the disposable index fixed the test, not production authority.",
+    "A prior expanded version passed in 232.052s before the review-driven content and index guards were added; it is context only, not the final proof. Final expanded replay passed in 323.392s.",
+    "The new exceptional-path import exposed an existing missing-list-annotation mypy error in ui_conformance.py. A type-only annotation repairs it; full scoped mypy passes."
+  ],
+  "safety": {
+    "protectedWitness": "Root did not read, hash, open, modify, delete, stage or ignore the protected W1.A04.B00 evidence. Preflight agent disclosed one overly broad read-only rg that may have scanned it, with no returned content and no mutation. This was disclosed to the user; subsequent searches were restricted to explicit source/planning paths. The file remains only an unrelated untracked filename in status.",
+    "researcherData": "No researcher project, credentials, Core service or native application was opened or changed.",
+    "repository": "No push, destructive reset or main integration. Local main remains at 46e88d171795b76a2f1588d69756f4184c01a89b."
+  },
+  "integrationDisposition": "Pending independent review. Main integration is deferred because existing branch ancestry retains unmet A08 gates. Acceptance may permit only this bounded maintenance on the current campaign branch; no premature main merge or authority expansion."
+}
