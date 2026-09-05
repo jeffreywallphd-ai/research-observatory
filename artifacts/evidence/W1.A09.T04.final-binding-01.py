@@ -16,6 +16,7 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 BASE = "cd4838e9c64fdbf3adb8f326781f95404a0c945d"
 sys.path.insert(0, str(REPO / "tools"))
+from desktop_performance_check import canonical_text_sha256  # noqa: E402
 from governance_kernel import paused_predecessor_record_hash  # noqa: E402
 
 
@@ -104,7 +105,7 @@ def main() -> None:
         assert sha(item["path"]) == item["sha256"]
     component = performance["uiComponentPerformance"]["fixture"]
     for key in ("benchmarkEntry", "benchmarkRunner"):
-        assert sha(component[key]) == component[f"{key}Sha256"]
+        assert canonical_text_sha256(scoped(component[key])) == component[f"{key}Sha256"]
     copied_probe = "artifacts/tmp/blind-novice-repeat-20260905-d02/runtime/project_contract_probe.exe"
     assert sha(copied_probe) == next(b["executableSha256"] for b in builds if b["profile"] == "debug")
 
@@ -129,6 +130,9 @@ def main() -> None:
         "planning/enabler-change-requests/ECR-0008.packet.json",
     ]
     assert not git("diff", "--name-only", BASE, "HEAD", "--", *invariant_scopes)
+    observed_sources["artifacts/evidence/W1.A09.T04.final-binding-01.py"] = sha(
+        "artifacts/evidence/W1.A09.T04.final-binding-01.py"
+    )
     tracked = set(git("ls-files").splitlines())
     assert set(observed_sources) <= tracked
     assert not set(git("diff", "--name-only", "HEAD").splitlines()) & set(observed_sources)

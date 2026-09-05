@@ -1,0 +1,11 @@
+{
+  "taskId": "W1.A09.T04",
+  "candidateCommit": "cf0cfab10191503a6a61515bd544ea001ba07ab4",
+  "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-01.json",
+  "exitCode": 1,
+  "failure": "Final binding helper compared raw CRLF text bytes against the desktop benchmark's explicitly LF-canonical benchmarkEntrySha256/benchmarkRunnerSha256 fields.",
+  "failureBoundary": "Before report publication; no passing final binding report was created.",
+  "correction": "Reuse the unchanged benchmark's canonical_text_sha256 only for its two declared text-fixture fields. Keep every other raw input comparison unchanged. Bind the final verifier itself to the candidate's clean tracked source as well.",
+  "productionOrBenchmarkChange": false,
+  "adverseHistoryPreservedAtCommit": true
+}
