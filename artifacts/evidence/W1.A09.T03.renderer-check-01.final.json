@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "commit": "3f4b2153a90eb29ee74c9f55f628eb3d15884922",
+  "productManifestSha256": "58b835c4f5f97ae748d94062bc86dd714429ac0fd276a6679e43df711871cd06",
+  "runnerSha256": "06e09bba20c58f8d3f87fa18447b9b9fa8feaaba2585a6c0ff0d9fb05bc3b4f1",
+  "outcomes": {
+    "explicitDefaultOnlyCreateWithoutChooser_nativeAndCoreDoubles": true,
+    "defaultSelectionCancellationStableCollisionRetry": true,
+    "cancelFailureDefaultRaces": 6,
+    "chosenOverrideAndLockDiscard": true,
+    "freshUnlockDoesNotRestoreProtectedFormOrOpenProject": true,
+    "longPathGeometry": [
+      {
+        "theme": "light",
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "outputWidth": 530,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "light",
+        "width": 1280,
+        "height": 720,
+        "scrollWidth": 1280,
+        "viewport": 1280,
+        "outputWidth": 470,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "light",
+        "width": 720,
+        "height": 450,
+        "scrollWidth": 720,
+        "viewport": 720,
+        "outputWidth": 654,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "dark",
+        "width": 1440,
+        "height": 900,
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "outputWidth": 530,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "dark",
+        "width": 1280,
+        "height": 720,
+        "scrollWidth": 1280,
+        "viewport": 1280,
+        "outputWidth": 470,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      },
+      {
+        "theme": "dark",
+        "width": 720,
+        "height": 450,
+        "scrollWidth": 720,
+        "viewport": 720,
+        "outputWidth": 654,
+        "wrap": "anywhere",
+        "selectable": "text",
+        "reducedMotion": true
+      }
+    ]
+  },
+  "networkRequests": [],
+  "pageErrors": [],
+  "scope": "Actual built React renderer and pinned Chromium; explicit native/Core doubles. Not Windows dialog, real Core, sign-in or W1 qualification."
+}

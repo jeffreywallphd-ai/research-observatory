@@ -1,0 +1,2346 @@
+{
+  "taskId": "W1.A09.T03",
+  "reviewer": "t03_native_replay",
+  "reviewKind": "Read-only source and retained-evidence binding audit; advisory, not task approval",
+  "implementationCommit": "3f4b2153a90eb29ee74c9f55f628eb3d15884922",
+  "reviewedAt": "2026-09-05T22:09:56.142958+00:00",
+  "hashConventions": {
+    "rawSha256": "SHA-256 of exact file bytes",
+    "lfNormalizedSha256": "SHA-256 after replacing CRLF with LF, without other rewriting",
+    "canonicalJsonSha256": "SHA-256 of json.dumps(parsed, sort_keys=True, separators=(comma, colon)), default ensure_ascii=True; matches taskctl canonical_json_sha256"
+  },
+  "reports": [
+    {
+      "path": "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-05.json",
+      "rawSha256": "a5a829c6df753a37c3f4413e3090072339daa8eca6c91594d72d882a157de617",
+      "lfNormalizedSha256": "e50862fb7f29495926b56ab8b9d1ff448daf7971b55a1519a711316131149a01",
+      "canonicalJsonSha256": "48c17f6d2b2e9fbc2f92c5bdf84086b445c24727b53bf72addcadf6e91d96de5",
+      "inputComparisons": [
+        {
+          "location": "/sourceHashes",
+          "entries": 54,
+          "allCurrentRawHashesMatch": true,
+          "mismatches": []
+        }
+      ],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-builds-05.json",
+      "rawSha256": "fc20b07e47584c654f894023a15b634f60c22d78299d2e52f95917212db4e211",
+      "lfNormalizedSha256": "fc20b07e47584c654f894023a15b634f60c22d78299d2e52f95917212db4e211",
+      "canonicalJsonSha256": "eb4428b6fce9e736a2d38c3eb246c78566b8eb7143db4f06c6551755b3db6ddc",
+      "inputComparisons": [
+        {
+          "location": "/builds/0/inputSha256",
+          "entries": 161,
+          "allCurrentRawHashesMatch": true,
+          "mismatches": []
+        },
+        {
+          "location": "/builds/1/inputSha256",
+          "entries": 161,
+          "allCurrentRawHashesMatch": true,
+          "mismatches": []
+        }
+      ],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-ui-build-04.json",
+      "rawSha256": "f9ffd174b2ba82a15ac2da7db26a13bf25ba70e0a2143981d516a0473f468697",
+      "lfNormalizedSha256": "f9ffd174b2ba82a15ac2da7db26a13bf25ba70e0a2143981d516a0473f468697",
+      "canonicalJsonSha256": "d3677345fd746f3f9e8462ebbe4eb327e7367a6ee36659f3f554138d919b5248",
+      "inputComparisons": [
+        {
+          "location": "/inputSha256",
+          "entries": 161,
+          "allCurrentRawHashesMatch": false,
+          "mismatches": [
+            {
+              "path": "tests/service/test_native_project_contract.py",
+              "recordedRawSha256": "36ef78ec9c222a02489c867940f76a837f2f25562d0003bf0733e0ea3406e5d5",
+              "currentRawSha256": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458"
+            }
+          ]
+        }
+      ],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-ui-observations-04.json",
+      "rawSha256": "130a94dd19c648ada946b555e2303cad782be50f9185aede70700ebc8d4cf457",
+      "lfNormalizedSha256": "130a94dd19c648ada946b555e2303cad782be50f9185aede70700ebc8d4cf457",
+      "canonicalJsonSha256": "0de5bce6786e3852db67de18f43be19ea4f27d4eb0202910a0499e4bbb9c6750",
+      "inputComparisons": [
+        {
+          "location": "/sourceHashesAfter",
+          "entries": 4,
+          "allCurrentRawHashesMatch": false,
+          "mismatches": [
+            {
+              "path": "tests/service/test_native_project_contract.py",
+              "recordedRawSha256": "36ef78ec9c222a02489c867940f76a837f2f25562d0003bf0733e0ea3406e5d5",
+              "currentRawSha256": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458"
+            }
+          ]
+        }
+      ],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.default-parity-check-01.json",
+      "rawSha256": "a58d17ad8f5bfb3cbef9447e94e5b443b8f27a78b8757bdb479e2ab206da9c42",
+      "lfNormalizedSha256": "a58d17ad8f5bfb3cbef9447e94e5b443b8f27a78b8757bdb479e2ab206da9c42",
+      "canonicalJsonSha256": "b683844583dd5aaf8ffb3597ea621c6272e2295c3053aff339c62fc2b4a8c1c7",
+      "inputComparisons": [],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.default-core-fresh-two-parent-01.json",
+      "rawSha256": "214a5487f89a492e30f450647df82bb58da93d2e092eaaeab4429dba7da796c2",
+      "lfNormalizedSha256": "675210e6b531b4fa1ae751ba495d2dc1e22aedd047d78a4f6d63b7363c09dda3",
+      "canonicalJsonSha256": "4dc3cfd9b7d35e2c71df323e92de5283e4b5fda0d045f6ef146736364a7599d7",
+      "inputComparisons": [
+        {
+          "location": "/sourceHashes",
+          "entries": 53,
+          "allCurrentRawHashesMatch": false,
+          "mismatches": [
+            {
+              "path": "artifacts/evidence/W1.A09.T03.default-core-check-01.py",
+              "recordedRawSha256": "64e4a785601bdf236ee561d19bc9490cc9f020e1133b37774b86f36e5b7b0c92",
+              "currentRawSha256": "10c2b8535ac726a743395675ead658c30cb80676fb2f58e3221101a2203d8ffb"
+            },
+            {
+              "path": "artifacts/evidence/W1.A09.T03.default-core-pin-test-01.py",
+              "recordedRawSha256": "c2aac5bf06756032736b3f643fd0beb83318f9367ef9bbda0d422d1e3405c8be",
+              "currentRawSha256": "4f7c8fcaf9bc47de65e49f2c8cb256f9bb347726d385689ef82c43a967221dc4"
+            }
+          ]
+        }
+      ],
+      "role": "historical helper-version report, not primary current proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json",
+      "rawSha256": "16a792b7c259d60ce42ea19a7b715d479572dd183302c7493d429d0abf092d9a",
+      "lfNormalizedSha256": "01563ce0fb9f071b19e3a877510077b7f36464b02517e26af5f518f5eb5f667e",
+      "canonicalJsonSha256": "b502a6ddacb8464e60d87f2fe695ea1d88298d8165a16a79b8eaeecd02caf972",
+      "inputComparisons": [
+        {
+          "location": "/sourceHashes",
+          "entries": 54,
+          "allCurrentRawHashesMatch": true,
+          "mismatches": []
+        }
+      ],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.renderer-check-01.validated-build.precommit.json",
+      "rawSha256": "d23331a5fa741914b1f784cdbb307747982d71ec8932fc99e1d72590f12317e1",
+      "lfNormalizedSha256": "4b540839691e5b3bcc168e06774f577ab1eedde31fe87bf5a5d3c3e5bcebf8a0",
+      "canonicalJsonSha256": "aa37dc1522e3e47dc675b4a56953ab974de3a1065d722b21cd166720fbf37488",
+      "inputComparisons": [],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-replay-02.json",
+      "rawSha256": "c40da7786b126cc62d6510c25b33564866b91bc440ad46ffdcc37c3373805702",
+      "lfNormalizedSha256": "c40da7786b126cc62d6510c25b33564866b91bc440ad46ffdcc37c3373805702",
+      "canonicalJsonSha256": "15c2f6239e3e398a1a38216ee566248342769857a7028f8fa661b9dcfea5f6ce",
+      "inputComparisons": [
+        {
+          "location": "/sourceHashesBefore",
+          "entries": 19,
+          "allCurrentRawHashesMatch": true,
+          "mismatches": []
+        },
+        {
+          "location": "/sourceHashesAfter",
+          "entries": 19,
+          "allCurrentRawHashesMatch": true,
+          "mismatches": []
+        }
+      ],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.build-binding-review-02.json",
+      "rawSha256": "e25f288b76654a4dacfd76f0134d63348b8197b81c70e38ae30d46dff318e5cd",
+      "lfNormalizedSha256": "e25f288b76654a4dacfd76f0134d63348b8197b81c70e38ae30d46dff318e5cd",
+      "canonicalJsonSha256": "c5049b720b5c597482acdcd8d135306f6f250e4e1ec3976582d6321cb932a0a5",
+      "inputComparisons": [
+        {
+          "location": "/sourceHashesBefore",
+          "entries": 4,
+          "allCurrentRawHashesMatch": true,
+          "mismatches": []
+        }
+      ],
+      "role": "retained scoped proof"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.renderer-check-01.final.json",
+      "rawSha256": "a5bb53c383d7479cae7b0f5a1663de2ed727e7ef2612b2b093ca6831d2aa4f5a",
+      "lfNormalizedSha256": "1051b760473b4bc3c7c94af36a06c6e283318731aa6606a00e15b10b9e815871",
+      "canonicalJsonSha256": "8948d70a02eac5833b9b91884993e031fd455b3ab347928d72dcad966ac72d15",
+      "inputComparisons": [],
+      "role": "retained scoped proof"
+    }
+  ],
+  "currentInputBindings": {
+    "Cargo.lock": {
+      "rawSha256": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+      "lfNormalizedSha256": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+      "headGitBlobOid": "1607cf7beda405b78db7fdb76db9c040a4a70951",
+      "filteredWorkingGitBlobOid": "1607cf7beda405b78db7fdb76db9c040a4a70951",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+      "workingRawEqualsGitBlob": true
+    },
+    "Cargo.toml": {
+      "rawSha256": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+      "lfNormalizedSha256": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+      "headGitBlobOid": "050af03c7038ee7f7dcc4c641884796b4507c6e5",
+      "filteredWorkingGitBlobOid": "050af03c7038ee7f7dcc4c641884796b4507c6e5",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/README.md": {
+      "rawSha256": "7739188a22e1b69a4602238376d756ca8ae2355348fe746025c528e971385f87",
+      "lfNormalizedSha256": "7739188a22e1b69a4602238376d756ca8ae2355348fe746025c528e971385f87",
+      "headGitBlobOid": "25e32f8217eb18fff20fa6d873f5f403edf89613",
+      "filteredWorkingGitBlobOid": "25e32f8217eb18fff20fa6d873f5f403edf89613",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7739188a22e1b69a4602238376d756ca8ae2355348fe746025c528e971385f87",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/component-manifest.json": {
+      "rawSha256": "47a8362a9d5e7a179b037f13b66a07313b012bc7a68d43a86597b9d403cbb142",
+      "lfNormalizedSha256": "47a8362a9d5e7a179b037f13b66a07313b012bc7a68d43a86597b9d403cbb142",
+      "headGitBlobOid": "5facb8d915627422c3d81b9321794393132dc845",
+      "filteredWorkingGitBlobOid": "5facb8d915627422c3d81b9321794393132dc845",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "47a8362a9d5e7a179b037f13b66a07313b012bc7a68d43a86597b9d403cbb142",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/index.html": {
+      "rawSha256": "01dbeca6df85fbf94c2078d1c3d4078c77fc87d0b35d8dc7bfdfe22bc3f1acb3",
+      "lfNormalizedSha256": "01dbeca6df85fbf94c2078d1c3d4078c77fc87d0b35d8dc7bfdfe22bc3f1acb3",
+      "headGitBlobOid": "3c9c1007d697aaa1d8056c62c547d95542272fe2",
+      "filteredWorkingGitBlobOid": "3c9c1007d697aaa1d8056c62c547d95542272fe2",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "01dbeca6df85fbf94c2078d1c3d4078c77fc87d0b35d8dc7bfdfe22bc3f1acb3",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/package.json": {
+      "rawSha256": "72479db953f51433c696b5c3bbb343b3ab18c859d8ebfc8e440f548d1ef7fbcd",
+      "lfNormalizedSha256": "72479db953f51433c696b5c3bbb343b3ab18c859d8ebfc8e440f548d1ef7fbcd",
+      "headGitBlobOid": "2cf26d2edb8d1254de8ef202e30045ff87cf9fab",
+      "filteredWorkingGitBlobOid": "2cf26d2edb8d1254de8ef202e30045ff87cf9fab",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "72479db953f51433c696b5c3bbb343b3ab18c859d8ebfc8e440f548d1ef7fbcd",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/product-dist/application-manifest.json": {
+      "rawSha256": "58b835c4f5f97ae748d94062bc86dd714429ac0fd276a6679e43df711871cd06",
+      "lfNormalizedSha256": "58b835c4f5f97ae748d94062bc86dd714429ac0fd276a6679e43df711871cd06",
+      "gitStatus": "Generated/native build input, not tracked at implementation commit"
+    },
+    "apps/desktop/product-dist/assets/app.css": {
+      "rawSha256": "0bb9d8835fc535138fbdfcca0885a8c94b31636259382b9f7dd49247d5d1010d",
+      "lfNormalizedSha256": "0bb9d8835fc535138fbdfcca0885a8c94b31636259382b9f7dd49247d5d1010d",
+      "gitStatus": "Generated/native build input, not tracked at implementation commit"
+    },
+    "apps/desktop/product-dist/assets/app.js": {
+      "rawSha256": "70a3e5aba6a8381006b0535c84e1c46f48e37d7bb39132b14cfc08099c6f5f59",
+      "lfNormalizedSha256": "70a3e5aba6a8381006b0535c84e1c46f48e37d7bb39132b14cfc08099c6f5f59",
+      "gitStatus": "Generated/native build input, not tracked at implementation commit"
+    },
+    "apps/desktop/product-dist/assets/app.js.map": {
+      "rawSha256": "f616886257027a42a2e019a5e3c410b901e3e7a60cfce0de64efc9e1a6cb45a6",
+      "lfNormalizedSha256": "f616886257027a42a2e019a5e3c410b901e3e7a60cfce0de64efc9e1a6cb45a6",
+      "gitStatus": "Generated/native build input, not tracked at implementation commit"
+    },
+    "apps/desktop/product-dist/index.html": {
+      "rawSha256": "d3499c13b59f8e03aec1235d8262ab6191f6418ed36029f2e6b3012ad04cd771",
+      "lfNormalizedSha256": "d3499c13b59f8e03aec1235d8262ab6191f6418ed36029f2e6b3012ad04cd771",
+      "gitStatus": "Generated/native build input, not tracked at implementation commit"
+    },
+    "apps/desktop/scripts/application-lock-renderer-integration.mjs": {
+      "rawSha256": "4c0c52681de2e6c6de88b22dddf8dc3978d486124eaa9580de4084774ce748ef",
+      "lfNormalizedSha256": "7ef93f6f3e37a67a5850016290085808eefcd97997d38527a8a043f76e55750a",
+      "headGitBlobOid": "f26b9cb2d151af296b1843d1b9b8568301ff29f2",
+      "filteredWorkingGitBlobOid": "f26b9cb2d151af296b1843d1b9b8568301ff29f2",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7ef93f6f3e37a67a5850016290085808eefcd97997d38527a8a043f76e55750a",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/scripts/assemble-application.mjs": {
+      "rawSha256": "3d838404e6ca47a77acf85320d22d457116ee88134dfe5fd49e5bd36fac63a7d",
+      "lfNormalizedSha256": "e5aabb5479081b9a24449d6fb45f52bbffa1959e6335a86e57488d752537daa3",
+      "headGitBlobOid": "17c33ab5feabd1af9790716278a918872e0166cc",
+      "filteredWorkingGitBlobOid": "17c33ab5feabd1af9790716278a918872e0166cc",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "e5aabb5479081b9a24449d6fb45f52bbffa1959e6335a86e57488d752537daa3",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/scripts/assemble-reference.mjs": {
+      "rawSha256": "dbdc4991188765ebf381868858f345e50bf500e632e52f470b9aed9903fc1f43",
+      "lfNormalizedSha256": "66c53939ddf3ff912a1fff76852d7a3feb7d9b5ec7750a484141fd4ff7eddc37",
+      "headGitBlobOid": "d765fba349e7b5ef4de09ac4222fc33abf0356ac",
+      "filteredWorkingGitBlobOid": "d765fba349e7b5ef4de09ac4222fc33abf0356ac",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "66c53939ddf3ff912a1fff76852d7a3feb7d9b5ec7750a484141fd4ff7eddc37",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/scripts/clean-dist.mjs": {
+      "rawSha256": "4367af124b33f20a42594d8c4521edd5711cd34ba6e2dbe3d4fe80f9cc13ec9f",
+      "lfNormalizedSha256": "d086b0ca01357a76cc23b5ac94533426e60da9587dc06c13a1740f61744727ba",
+      "headGitBlobOid": "d7f202d7815c069546fbff004ef18c593b34fca8",
+      "filteredWorkingGitBlobOid": "d7f202d7815c069546fbff004ef18c593b34fca8",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d086b0ca01357a76cc23b5ac94533426e60da9587dc06c13a1740f61744727ba",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/scripts/intent-native-integration.mjs": {
+      "rawSha256": "702b37ffcf829ba62d11b6536d6e1ebe3a1f8e6e78fe3de0b804a75d25e98766",
+      "lfNormalizedSha256": "c03724c2d72de6f57c530a4df3aa84f1afb24e0c1bc2d9a0b17dbd57568e352e",
+      "headGitBlobOid": "006a45641092f2eeb4f3934f1fab310ffc2a3690",
+      "filteredWorkingGitBlobOid": "006a45641092f2eeb4f3934f1fab310ffc2a3690",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c03724c2d72de6f57c530a4df3aa84f1afb24e0c1bc2d9a0b17dbd57568e352e",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/scripts/lint.mjs": {
+      "rawSha256": "b7b3bdfa9ead1d2646ab05fcda70ec32b048733c587d85b476541c2212d0cb1b",
+      "lfNormalizedSha256": "60756506d2853b7ffa45074d1bc3fb0c1b4e1154c216be23da7a2fa16395bf2d",
+      "headGitBlobOid": "6129eb13b70510b10945a4dfc949125b77711bf1",
+      "filteredWorkingGitBlobOid": "6129eb13b70510b10945a4dfc949125b77711bf1",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "60756506d2853b7ffa45074d1bc3fb0c1b4e1154c216be23da7a2fa16395bf2d",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/Cargo.toml": {
+      "rawSha256": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+      "lfNormalizedSha256": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+      "headGitBlobOid": "10b0b48ce3210a927e82330717444c692ad3525e",
+      "filteredWorkingGitBlobOid": "10b0b48ce3210a927e82330717444c692ad3525e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/build.rs": {
+      "rawSha256": "7d6cdbc1f57d6524b848d02ade919e0099f603cca94dc9f4ed814b6e0cf0aaa4",
+      "lfNormalizedSha256": "6aeeab41bc35efde4e3c2b644a6248f7fc06d24ae30b75c0d33491cbb0c1fa31",
+      "headGitBlobOid": "261851f6b60e0ae6f244b5469289870facc8c997",
+      "filteredWorkingGitBlobOid": "261851f6b60e0ae6f244b5469289870facc8c997",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "6aeeab41bc35efde4e3c2b644a6248f7fc06d24ae30b75c0d33491cbb0c1fa31",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/capabilities/main-window.json": {
+      "rawSha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "lfNormalizedSha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "headGitBlobOid": "5fefb9691587e0516dc6ca8fa92349f36882dea4",
+      "filteredWorkingGitBlobOid": "5fefb9691587e0516dc6ca8fa92349f36882dea4",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/examples/hello_availability_check.rs": {
+      "rawSha256": "3a302fc31266a2b91d1a2bfa32bb107e3124382e34995f36cac4e87cc708f1bf",
+      "lfNormalizedSha256": "757620a815612168ff1030fd6f6eabbb3a1e26b480dff5d24dd85689f0e668f8",
+      "headGitBlobOid": "94f94ab774ee141b553983244f5a716a0cc3a4b6",
+      "filteredWorkingGitBlobOid": "94f94ab774ee141b553983244f5a716a0cc3a4b6",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "757620a815612168ff1030fd6f6eabbb3a1e26b480dff5d24dd85689f0e668f8",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs": {
+      "rawSha256": "1bfc1cbe440b11fc3843b0f032a3e0d96930d8136b157e36881342a65ffa37cb",
+      "lfNormalizedSha256": "1bfc1cbe440b11fc3843b0f032a3e0d96930d8136b157e36881342a65ffa37cb",
+      "headGitBlobOid": "b05601b9972cb39cb1ccf5e699faedc37509648c",
+      "filteredWorkingGitBlobOid": "b05601b9972cb39cb1ccf5e699faedc37509648c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "1bfc1cbe440b11fc3843b0f032a3e0d96930d8136b157e36881342a65ffa37cb",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/examples/supervised_core_harness.rs": {
+      "rawSha256": "56b34b51669c255e76afd0cb596bfd469c8de123604ff2acb33fee4ba99c2cfd",
+      "lfNormalizedSha256": "4d90253de3d0b8306e46added668c8971740b47cb3560df746a4c0518efab7e7",
+      "headGitBlobOid": "c480f733d3ad42104dfa3cb8e06421f731f83a91",
+      "filteredWorkingGitBlobOid": "c480f733d3ad42104dfa3cb8e06421f731f83a91",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "4d90253de3d0b8306e46added668c8971740b47cb3560df746a4c0518efab7e7",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/examples/supervision_check.rs": {
+      "rawSha256": "83b64c4ea634856629b7c71a6646f33c5ac22c11cd5fa792a2832bb93a41aa9a",
+      "lfNormalizedSha256": "362e12e193478f3ed06f673c69c1d4000158e8b75c13a733ad01e3a96e0a6306",
+      "headGitBlobOid": "6c58c3fdbecc2320d0549e52544c55e12dfa550a",
+      "filteredWorkingGitBlobOid": "6c58c3fdbecc2320d0549e52544c55e12dfa550a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "362e12e193478f3ed06f673c69c1d4000158e8b75c13a733ad01e3a96e0a6306",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/examples/supervisor_fixture.rs": {
+      "rawSha256": "04554ab540a803bbc5926b392169c81209e6d5449b96dbefea35a1e29c2a4e1f",
+      "lfNormalizedSha256": "246877b0591397872e30b9a75d6841cc278d1df1bf663244f7652f82bd84863c",
+      "headGitBlobOid": "287b2028e99c99e6dcf1a3bc5af3484ef42be9ca",
+      "filteredWorkingGitBlobOid": "287b2028e99c99e6dcf1a3bc5af3484ef42be9ca",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "246877b0591397872e30b9a75d6841cc278d1df1bf663244f7652f82bd84863c",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/gen/schemas/acl-manifests.json": {
+      "rawSha256": "b8665c2471bd4c59d570c77e226f37410ce396da52525383a15b5cbbff9d786e",
+      "lfNormalizedSha256": "b8665c2471bd4c59d570c77e226f37410ce396da52525383a15b5cbbff9d786e",
+      "headGitBlobOid": "0eebfc46be11e8938c74877b3641c67f11192636",
+      "filteredWorkingGitBlobOid": "0eebfc46be11e8938c74877b3641c67f11192636",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b8665c2471bd4c59d570c77e226f37410ce396da52525383a15b5cbbff9d786e",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/gen/schemas/capabilities.json": {
+      "rawSha256": "11bca6ea5f25944c7e90cd221441a4659b54831234f500729e025f8a83d0a50d",
+      "lfNormalizedSha256": "11bca6ea5f25944c7e90cd221441a4659b54831234f500729e025f8a83d0a50d",
+      "headGitBlobOid": "4e5162038f97cc66d4dac81841f741b4fbefe0c7",
+      "filteredWorkingGitBlobOid": "4e5162038f97cc66d4dac81841f741b4fbefe0c7",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "11bca6ea5f25944c7e90cd221441a4659b54831234f500729e025f8a83d0a50d",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/gen/schemas/desktop-schema.json": {
+      "rawSha256": "f68a9c570ecff07ac6826145d33b966d6fc02f7d680967f44437268b08a6ba78",
+      "lfNormalizedSha256": "f68a9c570ecff07ac6826145d33b966d6fc02f7d680967f44437268b08a6ba78",
+      "headGitBlobOid": "328664596978cc7913c66cc10dbc6b9c0fb14f94",
+      "filteredWorkingGitBlobOid": "328664596978cc7913c66cc10dbc6b9c0fb14f94",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f68a9c570ecff07ac6826145d33b966d6fc02f7d680967f44437268b08a6ba78",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/gen/schemas/windows-schema.json": {
+      "rawSha256": "f68a9c570ecff07ac6826145d33b966d6fc02f7d680967f44437268b08a6ba78",
+      "lfNormalizedSha256": "f68a9c570ecff07ac6826145d33b966d6fc02f7d680967f44437268b08a6ba78",
+      "headGitBlobOid": "328664596978cc7913c66cc10dbc6b9c0fb14f94",
+      "filteredWorkingGitBlobOid": "328664596978cc7913c66cc10dbc6b9c0fb14f94",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f68a9c570ecff07ac6826145d33b966d6fc02f7d680967f44437268b08a6ba78",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/128x128.png": {
+      "rawSha256": "00a1d68578d1b9454f389faee556d1b3634a5130284fecb38b6815f8aedb5e39",
+      "lfNormalizedSha256": "c7824414dacfb304af98518c214e438ce6ec2b06fec98a6a9a17139417a597d6",
+      "headGitBlobOid": "46171f4adadf4e68669a66111e384a21bce5f2aa",
+      "filteredWorkingGitBlobOid": "46171f4adadf4e68669a66111e384a21bce5f2aa",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "00a1d68578d1b9454f389faee556d1b3634a5130284fecb38b6815f8aedb5e39",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/128x128@2x.png": {
+      "rawSha256": "a159fca0b551e2c95210734ed19c8390ed3786717206060eb1b21b58df9b3849",
+      "lfNormalizedSha256": "c13641dd52f7750e7d7bceb74d05dc949386fa7b296dbbaad1f6668bc6f2439d",
+      "headGitBlobOid": "7c8c7a9e0f77208e3fb34a9be2eef8ebc4a5061f",
+      "filteredWorkingGitBlobOid": "7c8c7a9e0f77208e3fb34a9be2eef8ebc4a5061f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a159fca0b551e2c95210734ed19c8390ed3786717206060eb1b21b58df9b3849",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/32x32.png": {
+      "rawSha256": "41c8a4623498f980cd5274cbd2a096ee5eae403e16cc0cc95e6c961a8e096f3d",
+      "lfNormalizedSha256": "304b43c4d0f88da457bba6fbe1e38949784910fa744ac7e9b0db241997f61935",
+      "headGitBlobOid": "1824f4cd05f4bc7697ab5010c3ee79e8bcd09708",
+      "filteredWorkingGitBlobOid": "1824f4cd05f4bc7697ab5010c3ee79e8bcd09708",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "41c8a4623498f980cd5274cbd2a096ee5eae403e16cc0cc95e6c961a8e096f3d",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/64x64.png": {
+      "rawSha256": "d89af4733adad67fc04860398dbf410b22da131420b702b3a25c3e621eb6d1a9",
+      "lfNormalizedSha256": "4fe4e78d814201310a3408ae37895664daeec9184e9f4a43b804ccf9fff2dfb7",
+      "headGitBlobOid": "c7e5caeab106462c8b64a138f7ea5cdd0990dd69",
+      "filteredWorkingGitBlobOid": "c7e5caeab106462c8b64a138f7ea5cdd0990dd69",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d89af4733adad67fc04860398dbf410b22da131420b702b3a25c3e621eb6d1a9",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square107x107Logo.png": {
+      "rawSha256": "7a98a6eb09fa07e3b48b4e5569ba4b00387a4b2853961a93f034dab47d8adc0b",
+      "lfNormalizedSha256": "0960aeffcc0eb5ff0589d23c353388aa9078d28e433de0532a6b9a6d3aad85ee",
+      "headGitBlobOid": "81dd55433870942dd2c3b306007f94ed0ee25f86",
+      "filteredWorkingGitBlobOid": "81dd55433870942dd2c3b306007f94ed0ee25f86",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7a98a6eb09fa07e3b48b4e5569ba4b00387a4b2853961a93f034dab47d8adc0b",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square142x142Logo.png": {
+      "rawSha256": "c562a1c6669c9a7b945fab3f1c049c94b4bc118f47ac025d8f5688554fa862e3",
+      "lfNormalizedSha256": "271cabb6aa7298303a32026c7b5ff054f56ad4622a22f0d396e546856ef3074e",
+      "headGitBlobOid": "0b6c3295cb357b2c23e472f8bd2b90ded3bd2182",
+      "filteredWorkingGitBlobOid": "0b6c3295cb357b2c23e472f8bd2b90ded3bd2182",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c562a1c6669c9a7b945fab3f1c049c94b4bc118f47ac025d8f5688554fa862e3",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square150x150Logo.png": {
+      "rawSha256": "5affae9ddeb2c141ff9f288d1d8803fd155be139e4389b75f566c7a36cb06cec",
+      "lfNormalizedSha256": "199224698d958f1450d4ab2d18fdc4aecbdd8ee907da5e65f4a57787fac3553c",
+      "headGitBlobOid": "e5f1392699867c6cadda978105d8d5b41ac9c53f",
+      "filteredWorkingGitBlobOid": "e5f1392699867c6cadda978105d8d5b41ac9c53f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "5affae9ddeb2c141ff9f288d1d8803fd155be139e4389b75f566c7a36cb06cec",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square284x284Logo.png": {
+      "rawSha256": "a5fe82f9f782ae8afc59b60d35456a5fd2fa160e379760b7deb7170cf22c1593",
+      "lfNormalizedSha256": "c118ce5b520d7b475cd40d92bcddc3fdd39e7152bf82ab90e86067a95a979ef1",
+      "headGitBlobOid": "17d9042157335cf7e755961de49298a8a2420878",
+      "filteredWorkingGitBlobOid": "17d9042157335cf7e755961de49298a8a2420878",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a5fe82f9f782ae8afc59b60d35456a5fd2fa160e379760b7deb7170cf22c1593",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square30x30Logo.png": {
+      "rawSha256": "61f371e07f1326e23a04fd6685a862004f3135b2144d6eb679df27cdba1442aa",
+      "lfNormalizedSha256": "b55a93e7f2cd5954e5c95800ac5bdf929a886ed2fe028393d115d1ea7604cb2c",
+      "headGitBlobOid": "1355a8b64c965c6c7dfe5237b255bd0b9d708c8d",
+      "filteredWorkingGitBlobOid": "1355a8b64c965c6c7dfe5237b255bd0b9d708c8d",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "61f371e07f1326e23a04fd6685a862004f3135b2144d6eb679df27cdba1442aa",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square310x310Logo.png": {
+      "rawSha256": "d263e1f1946cf7f76ce11d2ca81a84857285da2075a6f1149b1cc36108f56b5f",
+      "lfNormalizedSha256": "52897ab1a9cf4b1f905fefdfcfc7d149d74cf5e294cb8dce5abfecf95582de05",
+      "headGitBlobOid": "ddf59976055d8d769a834d379d57d47439999900",
+      "filteredWorkingGitBlobOid": "ddf59976055d8d769a834d379d57d47439999900",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d263e1f1946cf7f76ce11d2ca81a84857285da2075a6f1149b1cc36108f56b5f",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square44x44Logo.png": {
+      "rawSha256": "41b5124a530fe98cea2cf61088da788da02b17315ac7d65217821058ef2d9684",
+      "lfNormalizedSha256": "f59721e8c4b0fd0102a2641cdb0baa48ab0df86c0b66350bbd288254d1b72d26",
+      "headGitBlobOid": "fa496bc9c4f4c03a28e97de8bab7a51341228f2c",
+      "filteredWorkingGitBlobOid": "fa496bc9c4f4c03a28e97de8bab7a51341228f2c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "41b5124a530fe98cea2cf61088da788da02b17315ac7d65217821058ef2d9684",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square71x71Logo.png": {
+      "rawSha256": "092e4d082fbc1ca5d6541438e7d246c32876af62aceeacf7f1c36148e283d38a",
+      "lfNormalizedSha256": "a9fba570ad650f5372805298c4065878f1ce22ffd791fdce8141a050e20217c8",
+      "headGitBlobOid": "e07c5bbdbaedbc4a4106d179a4986884af178f4b",
+      "filteredWorkingGitBlobOid": "e07c5bbdbaedbc4a4106d179a4986884af178f4b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "092e4d082fbc1ca5d6541438e7d246c32876af62aceeacf7f1c36148e283d38a",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/Square89x89Logo.png": {
+      "rawSha256": "ff54476db2582469158c6d1a6d592b57768c59c2cfb37a9bcaff61f5df0cf1fe",
+      "lfNormalizedSha256": "bd29657c717fbe16637fd065630d2c661a323ed21df499ce0bd4ae27edc884a0",
+      "headGitBlobOid": "2000bce376810b45dfb6a2aa10459c5cf7468671",
+      "filteredWorkingGitBlobOid": "2000bce376810b45dfb6a2aa10459c5cf7468671",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ff54476db2582469158c6d1a6d592b57768c59c2cfb37a9bcaff61f5df0cf1fe",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/StoreLogo.png": {
+      "rawSha256": "66173caeb619cf4a386aeb528f2f0d3743feab71a752a4c0892d24b1c8dea760",
+      "lfNormalizedSha256": "16e6338b84bb81d002a90eb9edfebce5da77b95a3033ff496dd0e8d9eb62d897",
+      "headGitBlobOid": "4751347cc7b75191888f4ea15b0b77d857de61c8",
+      "filteredWorkingGitBlobOid": "4751347cc7b75191888f4ea15b0b77d857de61c8",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "66173caeb619cf4a386aeb528f2f0d3743feab71a752a4c0892d24b1c8dea760",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-anydpi-v26/ic_launcher.xml": {
+      "rawSha256": "7fe18cc0bcab884b6cd485758b8e5b3665737390fb8a35dabd37149aae83e1ee",
+      "lfNormalizedSha256": "760d4b8a06bf7163dd010c33ad2cac9e4a75fa0177afaba042f83e311eef0c3e",
+      "headGitBlobOid": "2ffbf24b68988bd935f5c695a59753fcb1a5de0e",
+      "filteredWorkingGitBlobOid": "2ffbf24b68988bd935f5c695a59753fcb1a5de0e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "760d4b8a06bf7163dd010c33ad2cac9e4a75fa0177afaba042f83e311eef0c3e",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-hdpi/ic_launcher.png": {
+      "rawSha256": "2e885e78b5d8d8b5dd2cb597d16306133dee2dc347e2ab6e0ef41a31a040de82",
+      "lfNormalizedSha256": "43d68d77ba9deddaec05d6c25b1245197215556644d93c6fbbd47177e0ea54cf",
+      "headGitBlobOid": "d3b17af03474b37868014278f9defa42f128216e",
+      "filteredWorkingGitBlobOid": "d3b17af03474b37868014278f9defa42f128216e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "2e885e78b5d8d8b5dd2cb597d16306133dee2dc347e2ab6e0ef41a31a040de82",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-hdpi/ic_launcher_foreground.png": {
+      "rawSha256": "c354595a4fd7555ce22e6f24131a425318c0fad02ff38977b16b4f5dc486afb9",
+      "lfNormalizedSha256": "1b7539ebdb2156dd07973d257c88e6be5671113efd750970d64c67991d7cf9cc",
+      "headGitBlobOid": "42a731472504a97b1c1d3e648d94b77c240b9d40",
+      "filteredWorkingGitBlobOid": "42a731472504a97b1c1d3e648d94b77c240b9d40",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c354595a4fd7555ce22e6f24131a425318c0fad02ff38977b16b4f5dc486afb9",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-hdpi/ic_launcher_round.png": {
+      "rawSha256": "b02cd3ca0ab63fd9b8f584f7d39a2e11785d6fca2382ec7919355f3d07e15942",
+      "lfNormalizedSha256": "512f1118cb01d8040dc5d9ce5de868a1ec608d0ec0a9511a161d85ba494724de",
+      "headGitBlobOid": "851f2880d849a254036f2659ff8dc72218e08c73",
+      "filteredWorkingGitBlobOid": "851f2880d849a254036f2659ff8dc72218e08c73",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b02cd3ca0ab63fd9b8f584f7d39a2e11785d6fca2382ec7919355f3d07e15942",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-mdpi/ic_launcher.png": {
+      "rawSha256": "4760d3b2846ef384810c4a292d0bdf2b82ee64ea0a65056d85bb7593316e9067",
+      "lfNormalizedSha256": "2179598c21634f9365c31225b8b16622220d25b59aa53fc97cc3771ebac00717",
+      "headGitBlobOid": "0c563470f994443bb91344e3a5a821bcc5ff65a9",
+      "filteredWorkingGitBlobOid": "0c563470f994443bb91344e3a5a821bcc5ff65a9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "4760d3b2846ef384810c4a292d0bdf2b82ee64ea0a65056d85bb7593316e9067",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-mdpi/ic_launcher_foreground.png": {
+      "rawSha256": "0ec6f236260c664c148fc9988fa9bd3b0a681d804b2b8fd02d2cf08bdab922f2",
+      "lfNormalizedSha256": "33ca196da5d392eda337db245447c443ae2f53d5db312059e4454ed751a1c09e",
+      "headGitBlobOid": "f69eb3bf760d269b4c4e3010161c0b3dafc12371",
+      "filteredWorkingGitBlobOid": "f69eb3bf760d269b4c4e3010161c0b3dafc12371",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0ec6f236260c664c148fc9988fa9bd3b0a681d804b2b8fd02d2cf08bdab922f2",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-mdpi/ic_launcher_round.png": {
+      "rawSha256": "cf8960b2c378247716bea5694dbe2c1c510b6d74066e3a8902c25bf4dbe23848",
+      "lfNormalizedSha256": "250385193ab8c277681fe2057048b79d75ecf0ac89c6c693362cbdbbee18d01f",
+      "headGitBlobOid": "5d8875f14ac056f219083928e27da7669f4d533b",
+      "filteredWorkingGitBlobOid": "5d8875f14ac056f219083928e27da7669f4d533b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "cf8960b2c378247716bea5694dbe2c1c510b6d74066e3a8902c25bf4dbe23848",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xhdpi/ic_launcher.png": {
+      "rawSha256": "baa2808c11b13762a4de9962551ed002283494210b46ebe3510c79ba4651d7d4",
+      "lfNormalizedSha256": "786f430adfe30bc6ccdb1d7ef7f2ab0808866d827aaa3373f7432f8b92f79d42",
+      "headGitBlobOid": "4cfd6931f34ef7a9643ad759328e9d70aabcc465",
+      "filteredWorkingGitBlobOid": "4cfd6931f34ef7a9643ad759328e9d70aabcc465",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "baa2808c11b13762a4de9962551ed002283494210b46ebe3510c79ba4651d7d4",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xhdpi/ic_launcher_foreground.png": {
+      "rawSha256": "843cb6201116b41bf2de92af5c9346c5efe24d04b2e33f27d2926b55e034c3c9",
+      "lfNormalizedSha256": "4a2ee66ddf7e33398e0859e12b964077f588e94454dc3b2d801da722137d6527",
+      "headGitBlobOid": "81f37f7a2bb382f4b1d7fbf4f4fd87a272dcbdfa",
+      "filteredWorkingGitBlobOid": "81f37f7a2bb382f4b1d7fbf4f4fd87a272dcbdfa",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "843cb6201116b41bf2de92af5c9346c5efe24d04b2e33f27d2926b55e034c3c9",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xhdpi/ic_launcher_round.png": {
+      "rawSha256": "2777cb18d5626d2da8131e365524ac85cbc1161d704e39baabca2b08f1a22bff",
+      "lfNormalizedSha256": "76cc420a86058aa346ab0deeaf31597fdf6ec32355df387b0846907f94a909b9",
+      "headGitBlobOid": "7ee7269d76690b17a1287437b7ca434d7230bf0a",
+      "filteredWorkingGitBlobOid": "7ee7269d76690b17a1287437b7ca434d7230bf0a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "2777cb18d5626d2da8131e365524ac85cbc1161d704e39baabca2b08f1a22bff",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xxhdpi/ic_launcher.png": {
+      "rawSha256": "7c72d36f742f60b86e4e30a4fb2e46c90165f7557b072264af371e877a9673d6",
+      "lfNormalizedSha256": "1b6bcfef79d3fc23a1de178d97d92f93ba43910386ae11868e893149f8b382b5",
+      "headGitBlobOid": "ac2a6875b55ce6a3b7477a2dde914356b0cfd8b8",
+      "filteredWorkingGitBlobOid": "ac2a6875b55ce6a3b7477a2dde914356b0cfd8b8",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7c72d36f742f60b86e4e30a4fb2e46c90165f7557b072264af371e877a9673d6",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xxhdpi/ic_launcher_foreground.png": {
+      "rawSha256": "0ff8b61db9bc0b51ce8425ed3e25aab762a9730685614a7536055f92124e4196",
+      "lfNormalizedSha256": "0d5432277eca632e11c7197fbc15b66ef4f67bfe692825a63e430663bea2acbd",
+      "headGitBlobOid": "198d07a491228b2d850c16642796867756d4eb6a",
+      "filteredWorkingGitBlobOid": "198d07a491228b2d850c16642796867756d4eb6a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0ff8b61db9bc0b51ce8425ed3e25aab762a9730685614a7536055f92124e4196",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xxhdpi/ic_launcher_round.png": {
+      "rawSha256": "2295f266eb2a97c056938e7ead01438b207eec5a11851207f1a07dc6c8ac34dc",
+      "lfNormalizedSha256": "d6fff3746e8fb9fff78d63b7cb4844a55b0d7eef2882d98468bb15658d59b567",
+      "headGitBlobOid": "8bdc588f8b4def08b55dc14ae7f8083c1d92c49b",
+      "filteredWorkingGitBlobOid": "8bdc588f8b4def08b55dc14ae7f8083c1d92c49b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "2295f266eb2a97c056938e7ead01438b207eec5a11851207f1a07dc6c8ac34dc",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher.png": {
+      "rawSha256": "a0f83329b2e67d583a446291da38267d5887282002830ed907b8a5833a7912db",
+      "lfNormalizedSha256": "2d6837ee42ede2840fbe36287f8ca892f0b4cfd4d064bdb3a38a312efad7c645",
+      "headGitBlobOid": "752ce387004001257f66da00c20e792c60dd64da",
+      "filteredWorkingGitBlobOid": "752ce387004001257f66da00c20e792c60dd64da",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a0f83329b2e67d583a446291da38267d5887282002830ed907b8a5833a7912db",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher_foreground.png": {
+      "rawSha256": "746ce781717b8b5729174c6763abc89b342201f5625539adc4b85552446ddf03",
+      "lfNormalizedSha256": "0b3c4086fb13c8f575bde47f032318d80b687f31e592d492661121589f20ffc2",
+      "headGitBlobOid": "6e71626a87d4b5597c3d694bb52971d4caa00da4",
+      "filteredWorkingGitBlobOid": "6e71626a87d4b5597c3d694bb52971d4caa00da4",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "746ce781717b8b5729174c6763abc89b342201f5625539adc4b85552446ddf03",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher_round.png": {
+      "rawSha256": "f2e4ec5bed38a8272a34781bd0aeef908c896cf7586c589ea9444fe55515b619",
+      "lfNormalizedSha256": "0122884aeedb7ff9d0276560445a455d26da684b51d061ab86a3286e446a6658",
+      "headGitBlobOid": "404044f68eda35b94bef3f07c6d1d79ca7756232",
+      "filteredWorkingGitBlobOid": "404044f68eda35b94bef3f07c6d1d79ca7756232",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f2e4ec5bed38a8272a34781bd0aeef908c896cf7586c589ea9444fe55515b619",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/android/values/ic_launcher_background.xml": {
+      "rawSha256": "388946bbba99e5a1b91750343f8dbdfd11692d51afb8ba5ea28d7e5ad13b4d79",
+      "lfNormalizedSha256": "0687336f0ccc6f7ee09c7c95110667c63b75931238df779a21af401fb864cd34",
+      "headGitBlobOid": "ea9c223a6cbab0465000584a9d5dd052adffe3c2",
+      "filteredWorkingGitBlobOid": "ea9c223a6cbab0465000584a9d5dd052adffe3c2",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0687336f0ccc6f7ee09c7c95110667c63b75931238df779a21af401fb864cd34",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/icons/app-icon.svg": {
+      "rawSha256": "eb310d09aa79474d40c13fe1bb686499c9f45c0337979f485dbc2b2fec119001",
+      "lfNormalizedSha256": "8515031a0dffdcc4f4f737042e637f188c45d04a9457b8c9c4c28d25a78409c1",
+      "headGitBlobOid": "99f825888ba7fd2875babc4824a63279740fbba2",
+      "filteredWorkingGitBlobOid": "99f825888ba7fd2875babc4824a63279740fbba2",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "8515031a0dffdcc4f4f737042e637f188c45d04a9457b8c9c4c28d25a78409c1",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/icons/icon.icns": {
+      "rawSha256": "2bef0bc46f0fc7a017432daa9606e03c9d2cac5c311a77064e694b6745ef4199",
+      "lfNormalizedSha256": "ad54b2880bf217eaae2ef646a74a8cac9b04150ca5940c3ff95eeed219dfa39f",
+      "headGitBlobOid": "df9562e53139bd2828923c4082f1d8741c11b59c",
+      "filteredWorkingGitBlobOid": "df9562e53139bd2828923c4082f1d8741c11b59c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "2bef0bc46f0fc7a017432daa9606e03c9d2cac5c311a77064e694b6745ef4199",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/icon.ico": {
+      "rawSha256": "ec10d37be4351bde0389de3a15e279273b71d5b082a00a8305c786ff69677b33",
+      "lfNormalizedSha256": "0398ab8fd7b38997a78cab2d475decdd23ade0d79cdc3bbfd4fd89e08fd8df7a",
+      "headGitBlobOid": "e8e29a3c5776e8168062dfcf6fa7c869ce07172e",
+      "filteredWorkingGitBlobOid": "e8e29a3c5776e8168062dfcf6fa7c869ce07172e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ec10d37be4351bde0389de3a15e279273b71d5b082a00a8305c786ff69677b33",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/icon.png": {
+      "rawSha256": "516818a974a59c0379b616a3913eade623f131c2f2202838d98df7649eabc2a0",
+      "lfNormalizedSha256": "6443e374105b33c09e02c7d3fb21f3e294fcf30cdf00af8e554f0db933165526",
+      "headGitBlobOid": "1a9fae768f2898993b1d5a6160169f70c13220b6",
+      "filteredWorkingGitBlobOid": "1a9fae768f2898993b1d5a6160169f70c13220b6",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "516818a974a59c0379b616a3913eade623f131c2f2202838d98df7649eabc2a0",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@1x.png": {
+      "rawSha256": "beb220a1f506e985f1fd5ca737c056b4bdc0d25464b42e167fe129f11ef342bf",
+      "lfNormalizedSha256": "2dd62f1ff2e4283bb761d07c16709a44bc598e1f69bad98a60320aa3c393b926",
+      "headGitBlobOid": "473434121a95412f4d75986c4c66bc69ec036ee4",
+      "filteredWorkingGitBlobOid": "473434121a95412f4d75986c4c66bc69ec036ee4",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "beb220a1f506e985f1fd5ca737c056b4bdc0d25464b42e167fe129f11ef342bf",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@2x-1.png": {
+      "rawSha256": "80e86a7f4134c60d06ae246a1860f14581163e3bd5cdad11c2f59e58e89eb912",
+      "lfNormalizedSha256": "3b4251324ae96771ce78bb56b529a9bb12c95352526bb0ac8c9757a3728e4129",
+      "headGitBlobOid": "90195b64fdc78f8a5fe8041b141b1bf4fb922fe9",
+      "filteredWorkingGitBlobOid": "90195b64fdc78f8a5fe8041b141b1bf4fb922fe9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "80e86a7f4134c60d06ae246a1860f14581163e3bd5cdad11c2f59e58e89eb912",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@2x.png": {
+      "rawSha256": "80e86a7f4134c60d06ae246a1860f14581163e3bd5cdad11c2f59e58e89eb912",
+      "lfNormalizedSha256": "3b4251324ae96771ce78bb56b529a9bb12c95352526bb0ac8c9757a3728e4129",
+      "headGitBlobOid": "90195b64fdc78f8a5fe8041b141b1bf4fb922fe9",
+      "filteredWorkingGitBlobOid": "90195b64fdc78f8a5fe8041b141b1bf4fb922fe9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "80e86a7f4134c60d06ae246a1860f14581163e3bd5cdad11c2f59e58e89eb912",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@3x.png": {
+      "rawSha256": "3c9fe11d59dffb0d565f47d2f54b6104fbb90dad1064fbf85622c98bfcf36872",
+      "lfNormalizedSha256": "7a04e6eb98dc86240ed1ee578c4d74ff2dc85bfd4c8f5ec954a745e6fe7713c8",
+      "headGitBlobOid": "565b21272b372c2f2edfc2ad269e084e0d50e439",
+      "filteredWorkingGitBlobOid": "565b21272b372c2f2edfc2ad269e084e0d50e439",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "3c9fe11d59dffb0d565f47d2f54b6104fbb90dad1064fbf85622c98bfcf36872",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@1x.png": {
+      "rawSha256": "4a975ecd97db7db6872429921055909a866701a3a0aa39e89f026e063a682f81",
+      "lfNormalizedSha256": "7ad9f61d251b3ae7e020c0b3ae47c59a6345f093aae9d1d6d48ea8090f693a96",
+      "headGitBlobOid": "5ed4f94a58c2295d17d6baa05e2143f6d7c47225",
+      "filteredWorkingGitBlobOid": "5ed4f94a58c2295d17d6baa05e2143f6d7c47225",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "4a975ecd97db7db6872429921055909a866701a3a0aa39e89f026e063a682f81",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@2x-1.png": {
+      "rawSha256": "8c170a717a693ad4873827e8b3e122657107cf4ff9ad3a354145b6bf6125e615",
+      "lfNormalizedSha256": "74079042bb0853e1194cc448df259032f61f0d17016c2ccaca97c3b32ab3bf4d",
+      "headGitBlobOid": "0b7a65bcbe54d5b03000048447b092aad6198b0f",
+      "filteredWorkingGitBlobOid": "0b7a65bcbe54d5b03000048447b092aad6198b0f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "8c170a717a693ad4873827e8b3e122657107cf4ff9ad3a354145b6bf6125e615",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@2x.png": {
+      "rawSha256": "8c170a717a693ad4873827e8b3e122657107cf4ff9ad3a354145b6bf6125e615",
+      "lfNormalizedSha256": "74079042bb0853e1194cc448df259032f61f0d17016c2ccaca97c3b32ab3bf4d",
+      "headGitBlobOid": "0b7a65bcbe54d5b03000048447b092aad6198b0f",
+      "filteredWorkingGitBlobOid": "0b7a65bcbe54d5b03000048447b092aad6198b0f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "8c170a717a693ad4873827e8b3e122657107cf4ff9ad3a354145b6bf6125e615",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@3x.png": {
+      "rawSha256": "952e80cd00ea8b6c3ea063b67b166138bef33ddd8e00c464fa6e1f72fc5e0f8d",
+      "lfNormalizedSha256": "ee48992b26391bdb73e01a818571956dcc5439d0cdeba2c94bf251f202eefcb5",
+      "headGitBlobOid": "1b2933b9e94805c96b86fb4b3e6223e747b8cb0f",
+      "filteredWorkingGitBlobOid": "1b2933b9e94805c96b86fb4b3e6223e747b8cb0f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "952e80cd00ea8b6c3ea063b67b166138bef33ddd8e00c464fa6e1f72fc5e0f8d",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@1x.png": {
+      "rawSha256": "80e86a7f4134c60d06ae246a1860f14581163e3bd5cdad11c2f59e58e89eb912",
+      "lfNormalizedSha256": "3b4251324ae96771ce78bb56b529a9bb12c95352526bb0ac8c9757a3728e4129",
+      "headGitBlobOid": "90195b64fdc78f8a5fe8041b141b1bf4fb922fe9",
+      "filteredWorkingGitBlobOid": "90195b64fdc78f8a5fe8041b141b1bf4fb922fe9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "80e86a7f4134c60d06ae246a1860f14581163e3bd5cdad11c2f59e58e89eb912",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@2x-1.png": {
+      "rawSha256": "d994736def8a63179521ed6d6ac7a5bc540779ffe48995737d2d5e05743d7467",
+      "lfNormalizedSha256": "509b8db376705534e9148fd0aa83f46d6c1aaf7e0dda484109076b83b39a8dbe",
+      "headGitBlobOid": "a92f227137b2252108c962c5bc6fae53c300362a",
+      "filteredWorkingGitBlobOid": "a92f227137b2252108c962c5bc6fae53c300362a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d994736def8a63179521ed6d6ac7a5bc540779ffe48995737d2d5e05743d7467",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@2x.png": {
+      "rawSha256": "d994736def8a63179521ed6d6ac7a5bc540779ffe48995737d2d5e05743d7467",
+      "lfNormalizedSha256": "509b8db376705534e9148fd0aa83f46d6c1aaf7e0dda484109076b83b39a8dbe",
+      "headGitBlobOid": "a92f227137b2252108c962c5bc6fae53c300362a",
+      "filteredWorkingGitBlobOid": "a92f227137b2252108c962c5bc6fae53c300362a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d994736def8a63179521ed6d6ac7a5bc540779ffe48995737d2d5e05743d7467",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@3x.png": {
+      "rawSha256": "99aee17f5c03ae530ad0c3bbefb008ceb9139185643c8965489849b78e2d9016",
+      "lfNormalizedSha256": "398eaa80fb116fc2442f98f25457e295bfe2bfcb0d61a870f8977c12f3634978",
+      "headGitBlobOid": "a6d76475a4d773877e60352b1771aa254fe90b23",
+      "filteredWorkingGitBlobOid": "a6d76475a4d773877e60352b1771aa254fe90b23",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "99aee17f5c03ae530ad0c3bbefb008ceb9139185643c8965489849b78e2d9016",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-512@2x.png": {
+      "rawSha256": "0dc07a842b1e1f93d8d06a0b818a2fb5e37fcc2b02f2ef96a389c94524286ec0",
+      "lfNormalizedSha256": "47576606c0c146f08ad091eb2d300f67373487ce794011680cc7549c10c6cf7f",
+      "headGitBlobOid": "39865bd45bcd0c72d972960b89d9e94ce0bdcf4b",
+      "filteredWorkingGitBlobOid": "39865bd45bcd0c72d972960b89d9e94ce0bdcf4b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0dc07a842b1e1f93d8d06a0b818a2fb5e37fcc2b02f2ef96a389c94524286ec0",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-60x60@2x.png": {
+      "rawSha256": "99aee17f5c03ae530ad0c3bbefb008ceb9139185643c8965489849b78e2d9016",
+      "lfNormalizedSha256": "398eaa80fb116fc2442f98f25457e295bfe2bfcb0d61a870f8977c12f3634978",
+      "headGitBlobOid": "a6d76475a4d773877e60352b1771aa254fe90b23",
+      "filteredWorkingGitBlobOid": "a6d76475a4d773877e60352b1771aa254fe90b23",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "99aee17f5c03ae530ad0c3bbefb008ceb9139185643c8965489849b78e2d9016",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-60x60@3x.png": {
+      "rawSha256": "a4fd1a4f341256ab8771c57a5d3e76571bb15468e9239a312bc4fdfa7f7f3134",
+      "lfNormalizedSha256": "aba64d053765e403883a93f6623b5476aafb5c743aed8c80a92d7a3b3504918e",
+      "headGitBlobOid": "09005d4464717293f4b8d1fa55d720a9ce679d59",
+      "filteredWorkingGitBlobOid": "09005d4464717293f4b8d1fa55d720a9ce679d59",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a4fd1a4f341256ab8771c57a5d3e76571bb15468e9239a312bc4fdfa7f7f3134",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-76x76@1x.png": {
+      "rawSha256": "fb4e1acc9258c66f8c36dde94a8702cbff9bc8567f2c3c261a72b42cc552349d",
+      "lfNormalizedSha256": "3d8568275c76a0382bc7fe7a3ca50747b6dd078f044675d801dec4ad03d2330e",
+      "headGitBlobOid": "c5d6a0db96d1ca36998c273c9b3247bdcb7d652e",
+      "filteredWorkingGitBlobOid": "c5d6a0db96d1ca36998c273c9b3247bdcb7d652e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "fb4e1acc9258c66f8c36dde94a8702cbff9bc8567f2c3c261a72b42cc552349d",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-76x76@2x.png": {
+      "rawSha256": "cdca0885865841951e479454d0149606a6e218aa6282ad149a473ce8817f236d",
+      "lfNormalizedSha256": "50d6b190f88693c0d052cc78da144c37207d54bcac4e1003e9dd4779ba1fd51a",
+      "headGitBlobOid": "468b586fcf4d1d3a9b48318a2d7a9a8cfe4e1250",
+      "filteredWorkingGitBlobOid": "468b586fcf4d1d3a9b48318a2d7a9a8cfe4e1250",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "cdca0885865841951e479454d0149606a6e218aa6282ad149a473ce8817f236d",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/icons/ios/AppIcon-83.5x83.5@2x.png": {
+      "rawSha256": "a7d10f9916b0de0173d9301b7e035c54aedcf55554c5547ea1d620a2bf277c36",
+      "lfNormalizedSha256": "ddf05ca29f4085742a0d99c79d7ec49583c6496536340177c4815ceb3653363c",
+      "headGitBlobOid": "e30b30787e31205ee058b7cd478fe545f0f84660",
+      "filteredWorkingGitBlobOid": "e30b30787e31205ee058b7cd478fe545f0f84660",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a7d10f9916b0de0173d9301b7e035c54aedcf55554c5547ea1d620a2bf277c36",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/src/application_lock.rs": {
+      "rawSha256": "fd99a3176badd6b5d46473d9d4f25ef44f3ee22e949bbf38ef4c0da08da90680",
+      "lfNormalizedSha256": "49bdc28bbe13b254eb4cc0c65dd39f4e4111b799fae402a08b61d65fd88d5ad4",
+      "headGitBlobOid": "434f2c1d02b4d5cb67cdd8b71893343a90e47c94",
+      "filteredWorkingGitBlobOid": "434f2c1d02b4d5cb67cdd8b71893343a90e47c94",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "49bdc28bbe13b254eb4cc0c65dd39f4e4111b799fae402a08b61d65fd88d5ad4",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/src/application_lock_verification.rs": {
+      "rawSha256": "ca6baced1ce986e6dd50974836b7aeef678f4b3451f4ce203be749218b8c501c",
+      "lfNormalizedSha256": "58faf672d4eb7d3508b46664a8175f06df23811a9c7609cb1679b38cc05c92ee",
+      "headGitBlobOid": "31077b5d27d59210032c176b64cd571665f6edad",
+      "filteredWorkingGitBlobOid": "31077b5d27d59210032c176b64cd571665f6edad",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "58faf672d4eb7d3508b46664a8175f06df23811a9c7609cb1679b38cc05c92ee",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/src/application_sign_in_policy.rs": {
+      "rawSha256": "22b40496d7dba34894df3e0442f6dc0961dd4ce49bbbaa878dae6451a4b76646",
+      "lfNormalizedSha256": "79a28c81f88a53896ecacc0246bf1eec04becb5974142c68620ac38d450649ce",
+      "headGitBlobOid": "aa03c4ccc1354b6febeb72be419df39560bb9c56",
+      "filteredWorkingGitBlobOid": "aa03c4ccc1354b6febeb72be419df39560bb9c56",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "79a28c81f88a53896ecacc0246bf1eec04becb5974142c68620ac38d450649ce",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/src/directory_picker.rs": {
+      "rawSha256": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+      "lfNormalizedSha256": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+      "headGitBlobOid": "5da4dbdcc174c7d4fd09d28a4fdac54b3235cddf",
+      "filteredWorkingGitBlobOid": "5da4dbdcc174c7d4fd09d28a4fdac54b3235cddf",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/src/lib.rs": {
+      "rawSha256": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+      "lfNormalizedSha256": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+      "headGitBlobOid": "42fbb10b9eaa329c6f90e8b9b5d47bf2d754ec39",
+      "filteredWorkingGitBlobOid": "42fbb10b9eaa329c6f90e8b9b5d47bf2d754ec39",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/src/main.rs": {
+      "rawSha256": "3d940b77987a20d6c16497618807acb80ff62ca3abd5f23ce71f50d98bed7656",
+      "lfNormalizedSha256": "0e8448fe7d494509ac8ad60df4ef9e0ffcef8ee6ee73d2987f1493592215d328",
+      "headGitBlobOid": "05668a2856c89c146cd859cba2fd742d83ec34b1",
+      "filteredWorkingGitBlobOid": "05668a2856c89c146cd859cba2fd742d83ec34b1",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0e8448fe7d494509ac8ad60df4ef9e0ffcef8ee6ee73d2987f1493592215d328",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/src/supervisor.rs": {
+      "rawSha256": "bf821bc23c2bc304d399662f6d25c9ef4a7820c7edb4b7a54272fd08b2c8d481",
+      "lfNormalizedSha256": "bf821bc23c2bc304d399662f6d25c9ef4a7820c7edb4b7a54272fd08b2c8d481",
+      "headGitBlobOid": "b6b47285c21276f68ffe23c9e00124b05e33aa2a",
+      "filteredWorkingGitBlobOid": "b6b47285c21276f68ffe23c9e00124b05e33aa2a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "bf821bc23c2bc304d399662f6d25c9ef4a7820c7edb4b7a54272fd08b2c8d481",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src-tauri/src/support_bundle.rs": {
+      "rawSha256": "c610d8c6437e6b02b7af48e89f77f6e0a895d07cb91fc7ab9fbed43e0a1365b2",
+      "lfNormalizedSha256": "94ed24e7035c25280c3b12cfa3e445529d2e870835e91b1a805bd80abb944efa",
+      "headGitBlobOid": "d7d81964216a7dab7b5e8f9e21bb8be3b76b5a57",
+      "filteredWorkingGitBlobOid": "d7d81964216a7dab7b5e8f9e21bb8be3b76b5a57",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "94ed24e7035c25280c3b12cfa3e445529d2e870835e91b1a805bd80abb944efa",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src-tauri/tauri.conf.json": {
+      "rawSha256": "e192bd016eaf6339d2309e0c9a75f74968c5ae2bee11d60d226fe8bd18b2a380",
+      "lfNormalizedSha256": "e192bd016eaf6339d2309e0c9a75f74968c5ae2bee11d60d226fe8bd18b2a380",
+      "headGitBlobOid": "41203945be8c0d418d2bd940c474fdbd997d5c08",
+      "filteredWorkingGitBlobOid": "41203945be8c0d418d2bd940c474fdbd997d5c08",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "e192bd016eaf6339d2309e0c9a75f74968c5ae2bee11d60d226fe8bd18b2a380",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app.css": {
+      "rawSha256": "99624e30e7c8c03695eec2f15ee144c9e596d9c645d0db6aa5db09613b76d5c1",
+      "lfNormalizedSha256": "99624e30e7c8c03695eec2f15ee144c9e596d9c645d0db6aa5db09613b76d5c1",
+      "headGitBlobOid": "b57061d0b464cdd3144ba865bd63afe3f81e1b2b",
+      "filteredWorkingGitBlobOid": "b57061d0b464cdd3144ba865bd63afe3f81e1b2b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "99624e30e7c8c03695eec2f15ee144c9e596d9c645d0db6aa5db09613b76d5c1",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx": {
+      "rawSha256": "776301bd09a4763bef9715181d8c4b7fcda526782d8cda2a8bb88e08587248cb",
+      "lfNormalizedSha256": "187f5fb909332acf214fc5caccc4021e7263a090d322eb1f1059c84ae7ba9139",
+      "headGitBlobOid": "ae402025a8f56b1edaf59520d8b2c2b4a1c09fd7",
+      "filteredWorkingGitBlobOid": "ae402025a8f56b1edaf59520d8b2c2b4a1c09fd7",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "187f5fb909332acf214fc5caccc4021e7263a090d322eb1f1059c84ae7ba9139",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ApplicationRuntime.tsx": {
+      "rawSha256": "1bda1aa9dc6870728e6a8c1f7e9e085a379d2bed403e39b10c65682043e0ef83",
+      "lfNormalizedSha256": "a10bb27cd69a9a582a7373ce071a3639072e7fc9ad0740e7f323e23c531e94ac",
+      "headGitBlobOid": "d66cba076f31d61a7d64c22fc4272db89d88e16d",
+      "filteredWorkingGitBlobOid": "d66cba076f31d61a7d64c22fc4272db89d88e16d",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a10bb27cd69a9a582a7373ce071a3639072e7fc9ad0740e7f323e23c531e94ac",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.test.tsx": {
+      "rawSha256": "0becab16379e9e7d2afb818664d2f41c1847d37b573029362f74cf9d560ae481",
+      "lfNormalizedSha256": "ceaaf5696eab870afe55e2926a4236f91d3a8ca4b5a208f3eb2b2cf7c45a7d42",
+      "headGitBlobOid": "50275daa7173498ff206d78079420398c0dd32d4",
+      "filteredWorkingGitBlobOid": "50275daa7173498ff206d78079420398c0dd32d4",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ceaaf5696eab870afe55e2926a4236f91d3a8ca4b5a208f3eb2b2cf7c45a7d42",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx": {
+      "rawSha256": "d4c6c2c630c6611c074196f8e233314ff8eab63021ab2727013047884152a603",
+      "lfNormalizedSha256": "b4d347156a0fd0c518c94651ad8d0be54387315841b3267af2596f7095a152a5",
+      "headGitBlobOid": "f0a372bb1e8d14e6584ca0941fdbbc4fdccea6ba",
+      "filteredWorkingGitBlobOid": "f0a372bb1e8d14e6584ca0941fdbbc4fdccea6ba",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b4d347156a0fd0c518c94651ad8d0be54387315841b3267af2596f7095a152a5",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx": {
+      "rawSha256": "339aa9ad36b27e4abaf454f17c13e089a4e42697e3226819588d475d05f5edb1",
+      "lfNormalizedSha256": "7fa23cbb5f354209723bbdb728556b8e4284d5a650973c670a5bfc4015fa24f4",
+      "headGitBlobOid": "be2c7b5797c0e09a0bfed6e9926ef3cb4bb7784c",
+      "filteredWorkingGitBlobOid": "be2c7b5797c0e09a0bfed6e9926ef3cb4bb7784c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7fa23cbb5f354209723bbdb728556b8e4284d5a650973c670a5bfc4015fa24f4",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx": {
+      "rawSha256": "7b68e94696016bfcf0de4103bc209059f1d363c89d5b30d37267b24623d151ba",
+      "lfNormalizedSha256": "7b937812adef62e86e158d6b1810126413b3d04c31defb7aa7808a6d1c7082f3",
+      "headGitBlobOid": "46b4221bd44ebf93927409032713d2118ac2aee3",
+      "filteredWorkingGitBlobOid": "46b4221bd44ebf93927409032713d2118ac2aee3",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7b937812adef62e86e158d6b1810126413b3d04c31defb7aa7808a6d1c7082f3",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/DiagnosticsWorkspace.test.tsx": {
+      "rawSha256": "9e2acb7fcf0b0fe3c19d9f58c79e6057144394bf577a05a3341ceba24e9aaa1a",
+      "lfNormalizedSha256": "9e2acb7fcf0b0fe3c19d9f58c79e6057144394bf577a05a3341ceba24e9aaa1a",
+      "headGitBlobOid": "ae3fba67d9c717e06bc18b975cae4ec79fb882c6",
+      "filteredWorkingGitBlobOid": "ae3fba67d9c717e06bc18b975cae4ec79fb882c6",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "9e2acb7fcf0b0fe3c19d9f58c79e6057144394bf577a05a3341ceba24e9aaa1a",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/DiagnosticsWorkspace.tsx": {
+      "rawSha256": "5d0f36df67c5895f135878eebcbd960f3350d1bd79f8d739d15981901c080544",
+      "lfNormalizedSha256": "5d0f36df67c5895f135878eebcbd960f3350d1bd79f8d739d15981901c080544",
+      "headGitBlobOid": "f1b9a22c45e684ceb26e66d258b894eacd3a7836",
+      "filteredWorkingGitBlobOid": "f1b9a22c45e684ceb26e66d258b894eacd3a7836",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "5d0f36df67c5895f135878eebcbd960f3350d1bd79f8d739d15981901c080544",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/IntentWorkspace.test.tsx": {
+      "rawSha256": "884697bc644509d3e84b253aa58615d6b8297b5fb52bc74758d67e3df5f43cc8",
+      "lfNormalizedSha256": "fc75373eb4b4defedb27680c9f667a9e026786fa523b209fe545a7a36b0d9550",
+      "headGitBlobOid": "5ecd638eedbc58deedc0a65d93afe9cbb19c017f",
+      "filteredWorkingGitBlobOid": "5ecd638eedbc58deedc0a65d93afe9cbb19c017f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "fc75373eb4b4defedb27680c9f667a9e026786fa523b209fe545a7a36b0d9550",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/IntentWorkspace.tsx": {
+      "rawSha256": "ee04b4f6d8fa64ecae63e7d566d8eedc274c5f326898dbff4d8cbc5b3edfeb57",
+      "lfNormalizedSha256": "fc1efd21a8017df70a82e50e3c51687a1e18783310b13c41e75247ec7b169ccf",
+      "headGitBlobOid": "6b3556150b967ae8913d653a16146707285bad62",
+      "filteredWorkingGitBlobOid": "6b3556150b967ae8913d653a16146707285bad62",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "fc1efd21a8017df70a82e50e3c51687a1e18783310b13c41e75247ec7b169ccf",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/LocalServiceBoundary.test.tsx": {
+      "rawSha256": "1e3f0f6a16ab032026f66c1d0cb18859045b6c4d14133cfde6483c94e3bd2419",
+      "lfNormalizedSha256": "fe006fe80266344025caf32af8924c0744524e7b553c3c909bd3b31eb13c858f",
+      "headGitBlobOid": "258126d6d8697ba63462639cf9c029b9874146a9",
+      "filteredWorkingGitBlobOid": "258126d6d8697ba63462639cf9c029b9874146a9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "fe006fe80266344025caf32af8924c0744524e7b553c3c909bd3b31eb13c858f",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/LocalServiceBoundary.tsx": {
+      "rawSha256": "90db63bc75db5c1f88ff1a40f5c5ae188451262a3a3ddb9314d100f874abbf99",
+      "lfNormalizedSha256": "8609a7af9c6dd9c8a1825e31f6e9f0423651d72d691b7300a5a9d055e9b3caef",
+      "headGitBlobOid": "a0381cf8f12b5e07f94b471bb817b160316e2598",
+      "filteredWorkingGitBlobOid": "a0381cf8f12b5e07f94b471bb817b160316e2598",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "8609a7af9c6dd9c8a1825e31f6e9f0423651d72d691b7300a5a9d055e9b3caef",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ProjectHomeWorkspace.test.tsx": {
+      "rawSha256": "20bb50ca2617405ddec555d828c5aeec1a14601960a0f08a9bc47721ae7234a5",
+      "lfNormalizedSha256": "20bb50ca2617405ddec555d828c5aeec1a14601960a0f08a9bc47721ae7234a5",
+      "headGitBlobOid": "1811406f69031fe9ee486649f20026e454610730",
+      "filteredWorkingGitBlobOid": "1811406f69031fe9ee486649f20026e454610730",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "20bb50ca2617405ddec555d828c5aeec1a14601960a0f08a9bc47721ae7234a5",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/ProjectHomeWorkspace.tsx": {
+      "rawSha256": "0c2793fceb0fc85d181a9493b8404ab35d9b90416b557b32ca5191ca4b9cddf6",
+      "lfNormalizedSha256": "0c2793fceb0fc85d181a9493b8404ab35d9b90416b557b32ca5191ca4b9cddf6",
+      "headGitBlobOid": "33ab872bbc047b571db37a398dd668af2c72bc7b",
+      "filteredWorkingGitBlobOid": "33ab872bbc047b571db37a398dd668af2c72bc7b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0c2793fceb0fc85d181a9493b8404ab35d9b90416b557b32ca5191ca4b9cddf6",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/ProjectSettingsWorkspace.test.tsx": {
+      "rawSha256": "2fd3bdefd9e1143388825725739c7a4e147b287bfdeb826782922269d47918a3",
+      "lfNormalizedSha256": "f2281e789d5ac0c3b8c68584305a0742ac2e05412fab30861d1cbdf0ca535b09",
+      "headGitBlobOid": "6e82bf4ef8552b21ec49cdd93699eade42ea4425",
+      "filteredWorkingGitBlobOid": "6e82bf4ef8552b21ec49cdd93699eade42ea4425",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f2281e789d5ac0c3b8c68584305a0742ac2e05412fab30861d1cbdf0ca535b09",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ProjectSettingsWorkspace.tsx": {
+      "rawSha256": "7cf855906f0c327c0352cfc13b602735f652dd3e660458da860ea46cc1d108bf",
+      "lfNormalizedSha256": "9f3e08a620eb3403177bfa194c5c8bfa5d8791f24b240a13e9652fc33741d966",
+      "headGitBlobOid": "eb74ffed722409ed0a2f90142ddc6dbf24f9f375",
+      "filteredWorkingGitBlobOid": "eb74ffed722409ed0a2f90142ddc6dbf24f9f375",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "9f3e08a620eb3403177bfa194c5c8bfa5d8791f24b240a13e9652fc33741d966",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ProjectsWorkspace.test.tsx": {
+      "rawSha256": "2f5944868539ecb685b61c573a164cb833d4683ec8c0d4c1c1fb2579640eb784",
+      "lfNormalizedSha256": "4a22d928608c71a08dca8078068ba9a5336a9ee93e324a095ed6a6f003d4843e",
+      "headGitBlobOid": "c6aa810b96aba2cc4595e5ef9c84e736b165bf97",
+      "filteredWorkingGitBlobOid": "c6aa810b96aba2cc4595e5ef9c84e736b165bf97",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "4a22d928608c71a08dca8078068ba9a5336a9ee93e324a095ed6a6f003d4843e",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ProjectsWorkspace.tsx": {
+      "rawSha256": "1b5fae96cf793dca718f2f63e8558e4e770056089c15fe35335de9c715fdf8d6",
+      "lfNormalizedSha256": "89cb00563ce938d0704a7e524f18f84c1ac83b71195efcfe85bf1e9d3abd34c4",
+      "headGitBlobOid": "dbebbc4a29b88aea6b175298ee7ee22962e82685",
+      "filteredWorkingGitBlobOid": "dbebbc4a29b88aea6b175298ee7ee22962e82685",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "89cb00563ce938d0704a7e524f18f84c1ac83b71195efcfe85bf1e9d3abd34c4",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/ReferenceRuntime.tsx": {
+      "rawSha256": "f41c30f5980e1177b96f441717655830e74cee7d371a9b1778e8f8c4e681e9e9",
+      "lfNormalizedSha256": "3f4e41d455ac262ba17b7d73a7f4202bb89eadfb82173c8e72aea3b92f68e755",
+      "headGitBlobOid": "c042b055961e96f8886a362e6c0cc3e0f6bcdf71",
+      "filteredWorkingGitBlobOid": "c042b055961e96f8886a362e6c0cc3e0f6bcdf71",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "3f4e41d455ac262ba17b7d73a7f4202bb89eadfb82173c8e72aea3b92f68e755",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/TaskCenterWorkspace.test.tsx": {
+      "rawSha256": "a2954386fc814094f13d65c6fe5bdd036378d3f046e8bba56a72c8eeed257cdf",
+      "lfNormalizedSha256": "54875bd8fe1c685f85b6a436003dd96af8135ceb8d2d89601df7be1470428711",
+      "headGitBlobOid": "648906712ec4e3e2eae2c9d86602fa8122f61344",
+      "filteredWorkingGitBlobOid": "648906712ec4e3e2eae2c9d86602fa8122f61344",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "54875bd8fe1c685f85b6a436003dd96af8135ceb8d2d89601df7be1470428711",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx": {
+      "rawSha256": "e4be440bc714c7b82e3f05bf899db4590b43f10f3ee9299f34ea25b9149213c8",
+      "lfNormalizedSha256": "11bff332b8e11ffd9db8966e4b625484b066f740229acd20eea2a662bd54cc60",
+      "headGitBlobOid": "f99f76deb014c7a430fac35da4d7f4d8528226fe",
+      "filteredWorkingGitBlobOid": "f99f76deb014c7a430fac35da4d7f4d8528226fe",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "11bff332b8e11ffd9db8966e4b625484b066f740229acd20eea2a662bd54cc60",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/WorkflowNavigation.test.tsx": {
+      "rawSha256": "1779ce534db0ce92d493ca272938cd2f872f7d8a639012ce191ae7e843b9f3c0",
+      "lfNormalizedSha256": "1779ce534db0ce92d493ca272938cd2f872f7d8a639012ce191ae7e843b9f3c0",
+      "headGitBlobOid": "7ccd0e87a7ee2d648004100e05e754012a99b22b",
+      "filteredWorkingGitBlobOid": "7ccd0e87a7ee2d648004100e05e754012a99b22b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "1779ce534db0ce92d493ca272938cd2f872f7d8a639012ce191ae7e843b9f3c0",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/WorkflowNavigation.tsx": {
+      "rawSha256": "e152d23c1c94c57388f34e6bce11b83b1e1019ae42abf54961145f47e1c7062d",
+      "lfNormalizedSha256": "e152d23c1c94c57388f34e6bce11b83b1e1019ae42abf54961145f47e1c7062d",
+      "headGitBlobOid": "968eb708771c5aa0f9f78bb4723bb95f16bd453b",
+      "filteredWorkingGitBlobOid": "968eb708771c5aa0f9f78bb4723bb95f16bd453b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "e152d23c1c94c57388f34e6bce11b83b1e1019ae42abf54961145f47e1c7062d",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/applicationLock.test.ts": {
+      "rawSha256": "748c70d8324e0c3cc48580ac0d6bda7f500d169be487b196f79f36f734583d83",
+      "lfNormalizedSha256": "f53e5d1effc069bcbae4419270a4db3d093b01f4bdb879ad484705e6b6b61b98",
+      "headGitBlobOid": "694343d4d8ef84e59c3d9fe791ed508e213eef91",
+      "filteredWorkingGitBlobOid": "694343d4d8ef84e59c3d9fe791ed508e213eef91",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f53e5d1effc069bcbae4419270a4db3d093b01f4bdb879ad484705e6b6b61b98",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/applicationLock.ts": {
+      "rawSha256": "7b5899b38192778f8bde6ce3453bbfa2cfa3ca9e734b8db8a345264602742958",
+      "lfNormalizedSha256": "b5d2e71ff12979f57d9166fda179f231df0e0a7c35905c6802a6d7fd110d3993",
+      "headGitBlobOid": "1f29f9639b504e237c9e2960903cb932aaa18aec",
+      "filteredWorkingGitBlobOid": "1f29f9639b504e237c9e2960903cb932aaa18aec",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b5d2e71ff12979f57d9166fda179f231df0e0a7c35905c6802a6d7fd110d3993",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/applicationSettings.native.integration.test.ts": {
+      "rawSha256": "b28d20c214c8983c8ef16abd3cdd0703fba1556effc3e8c278c0c0588018c5f3",
+      "lfNormalizedSha256": "53c39770a302171b9489741b7581289a13fd139befaec54691dcec429e5f8fce",
+      "headGitBlobOid": "0bbad625f45b09ff80723737962aa5abfcec6657",
+      "filteredWorkingGitBlobOid": "0bbad625f45b09ff80723737962aa5abfcec6657",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "53c39770a302171b9489741b7581289a13fd139befaec54691dcec429e5f8fce",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/applicationSettings.test.ts": {
+      "rawSha256": "93bbe55443c670bb04a642e24cb3590c935c24092c5160a3ac061106f7e21c0e",
+      "lfNormalizedSha256": "691217af040a6c026d7964f040c7322727d48e016e68b0ccef14ef0f97179cca",
+      "headGitBlobOid": "3d3b578ffaed384a32a61a5ad072e8bc313d37e3",
+      "filteredWorkingGitBlobOid": "3d3b578ffaed384a32a61a5ad072e8bc313d37e3",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "691217af040a6c026d7964f040c7322727d48e016e68b0ccef14ef0f97179cca",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/applicationSettings.ts": {
+      "rawSha256": "a81fcef1047941e54b65e60048e660e9c389819aced745c6ca9bd341569a2164",
+      "lfNormalizedSha256": "0dcb7e4bce3a940f5f8c744503513c64d81579c3550cee30aabb1a8440b64f4f",
+      "headGitBlobOid": "afcd07f8ded3eb1135ffbbb3124277b975e6572d",
+      "filteredWorkingGitBlobOid": "afcd07f8ded3eb1135ffbbb3124277b975e6572d",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0dcb7e4bce3a940f5f8c744503513c64d81579c3550cee30aabb1a8440b64f4f",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/audit-lineage.conformance.json": {
+      "rawSha256": "ea5731991e1ba1d62cdebdc5992b348bd8b04723591ec53f302d96593cb85895",
+      "lfNormalizedSha256": "ea5731991e1ba1d62cdebdc5992b348bd8b04723591ec53f302d96593cb85895",
+      "headGitBlobOid": "b84accfbcfbf3ea538e372c83568acecdd344a2d",
+      "filteredWorkingGitBlobOid": "b84accfbcfbf3ea538e372c83568acecdd344a2d",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ea5731991e1ba1d62cdebdc5992b348bd8b04723591ec53f302d96593cb85895",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/designSystem.test.tsx": {
+      "rawSha256": "3c67147cd777e79a2144e1b4733a855e386809616f96d963c393bda913de3a99",
+      "lfNormalizedSha256": "7ea48f2ea18f1e79bfa797bb8129766d7628b47f42545446e9468196c4ab48be",
+      "headGitBlobOid": "7341efecc8e531fc05535accea72dc658d0c3c1d",
+      "filteredWorkingGitBlobOid": "7341efecc8e531fc05535accea72dc658d0c3c1d",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7ea48f2ea18f1e79bfa797bb8129766d7628b47f42545446e9468196c4ab48be",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/directoryPicker.test.ts": {
+      "rawSha256": "d68db8b9427d195fac624faa3295d7250c554a80b7620892ec119e5e03a06926",
+      "lfNormalizedSha256": "d68db8b9427d195fac624faa3295d7250c554a80b7620892ec119e5e03a06926",
+      "headGitBlobOid": "77e2e38f1c9f06b9d325b70a998e27a9a0f9902b",
+      "filteredWorkingGitBlobOid": "77e2e38f1c9f06b9d325b70a998e27a9a0f9902b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d68db8b9427d195fac624faa3295d7250c554a80b7620892ec119e5e03a06926",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/directoryPicker.ts": {
+      "rawSha256": "a5dad978d59aed5145999b45a2e5c2f41d006f2e18ce74b82b73e3e439cfcd14",
+      "lfNormalizedSha256": "a5dad978d59aed5145999b45a2e5c2f41d006f2e18ce74b82b73e3e439cfcd14",
+      "headGitBlobOid": "e6f21c1def4b85e89827eef95b98c7c0e85c1c8a",
+      "filteredWorkingGitBlobOid": "e6f21c1def4b85e89827eef95b98c7c0e85c1c8a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a5dad978d59aed5145999b45a2e5c2f41d006f2e18ce74b82b73e3e439cfcd14",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/frame.test.ts": {
+      "rawSha256": "cd165e88274ad2aab9085997d9ff9f9a88648d699622d410064a0f370b681a81",
+      "lfNormalizedSha256": "2586ca4eadd387ee24bdfab90fdcc3acc84a3a71259591434bd76159df16bd88",
+      "headGitBlobOid": "9480f31e7cceafd328b0603c36230fd035ae5764",
+      "filteredWorkingGitBlobOid": "9480f31e7cceafd328b0603c36230fd035ae5764",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "2586ca4eadd387ee24bdfab90fdcc3acc84a3a71259591434bd76159df16bd88",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/frame.ts": {
+      "rawSha256": "e96f43af9ddc4b82840b5105ae5b4b54616ba23b11d33e09d55265c43124b2ab",
+      "lfNormalizedSha256": "b452abfa50b6926c6b5e13881542998a5a0da74f0af4604788f1f935d7b0b35b",
+      "headGitBlobOid": "54cced2e59770745df9a8a6934df4e288be18c1a",
+      "filteredWorkingGitBlobOid": "54cced2e59770745df9a8a6934df4e288be18c1a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b452abfa50b6926c6b5e13881542998a5a0da74f0af4604788f1f935d7b0b35b",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/projectSelection.test.ts": {
+      "rawSha256": "9bbfa7d42e1fa053635ac53da11d02d5ddf6b04c603df0c3e0d0aa658c0ef298",
+      "lfNormalizedSha256": "00acc6919a7d209fc06e0f944e7df3fedc3bd226d39213bc67e1e1a32cb1aa5f",
+      "headGitBlobOid": "7097c5a1c7cf67b0dc408495e9d2e33997816f5e",
+      "filteredWorkingGitBlobOid": "7097c5a1c7cf67b0dc408495e9d2e33997816f5e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "00acc6919a7d209fc06e0f944e7df3fedc3bd226d39213bc67e1e1a32cb1aa5f",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/projectSelection.ts": {
+      "rawSha256": "c9692b09fd05eab33207e22688b8dfdd5681447cff1b2cc80d3beacbe78ad420",
+      "lfNormalizedSha256": "3070bb32c18664cfbaf4882d1a3663b80f7e75acebd1d919867c3664afac74b8",
+      "headGitBlobOid": "a71708ccadc8af0f69cff618dacb5f9688fcb147",
+      "filteredWorkingGitBlobOid": "a71708ccadc8af0f69cff618dacb5f9688fcb147",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "3070bb32c18664cfbaf4882d1a3663b80f7e75acebd1d919867c3664afac74b8",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/routes.test.ts": {
+      "rawSha256": "0c15d57b56aa79d2840a7ca8a337863e4b52bfc3fd646f2c09b0cbf38255e3fe",
+      "lfNormalizedSha256": "9b7d7fe1dd36b323ae90623bb7e7da17eaaf702765bc7eb9275c0b55a6d39aea",
+      "headGitBlobOid": "35c03770c9e323469502a78eefd90d8d20e06db1",
+      "filteredWorkingGitBlobOid": "35c03770c9e323469502a78eefd90d8d20e06db1",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "9b7d7fe1dd36b323ae90623bb7e7da17eaaf702765bc7eb9275c0b55a6d39aea",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/routes.ts": {
+      "rawSha256": "a604d35ef8b86bbd46928b161f33713b0aa36e36d71f1d364db5a4ef272e7182",
+      "lfNormalizedSha256": "c636073263a0c2d9136adb600cbb190c9a8f2dd3d081611d6d6589d5a511c795",
+      "headGitBlobOid": "187ae6ef230ca137e98320c0196c789a84f6b513",
+      "filteredWorkingGitBlobOid": "187ae6ef230ca137e98320c0196c789a84f6b513",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c636073263a0c2d9136adb600cbb190c9a8f2dd3d081611d6d6589d5a511c795",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/session.test.ts": {
+      "rawSha256": "6bde6efac31a31c1c0c4b9a5755eb781f39db85d751de6d7059d769cbf0d35aa",
+      "lfNormalizedSha256": "f2ada17aca8970d1b4bdf840ce5629297c2bfab04a5ba108a8aceebbd7e174b2",
+      "headGitBlobOid": "970b16d812bc4284e6b53834fc5643ee25f11c2c",
+      "filteredWorkingGitBlobOid": "970b16d812bc4284e6b53834fc5643ee25f11c2c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f2ada17aca8970d1b4bdf840ce5629297c2bfab04a5ba108a8aceebbd7e174b2",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/session.ts": {
+      "rawSha256": "2171afd13ae8391579a9dbf6201e225578c032d8f8959fa9c167d16e66b6dfcd",
+      "lfNormalizedSha256": "47c5d23ff93656fd45c8b9e4883efb377a43ce7af4d239ce19622e193947f922",
+      "headGitBlobOid": "4e74bacf9fd7e0c598b1fbab7807e0b1c7d0900b",
+      "filteredWorkingGitBlobOid": "4e74bacf9fd7e0c598b1fbab7807e0b1c7d0900b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "47c5d23ff93656fd45c8b9e4883efb377a43ce7af4d239ce19622e193947f922",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/app/workflowNavigation.test.ts": {
+      "rawSha256": "3501db3a44a5020b00d233d5428a2f59b1520d6dac0fecf446523be24eed59f7",
+      "lfNormalizedSha256": "3501db3a44a5020b00d233d5428a2f59b1520d6dac0fecf446523be24eed59f7",
+      "headGitBlobOid": "4873e0ea9dcb5e067823764c211117bbf6ca2ee0",
+      "filteredWorkingGitBlobOid": "4873e0ea9dcb5e067823764c211117bbf6ca2ee0",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "3501db3a44a5020b00d233d5428a2f59b1520d6dac0fecf446523be24eed59f7",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/app/workflowNavigationModel.ts": {
+      "rawSha256": "eb46221884573585ea8b4b7af6020c9fdfa632610a4e6678eb6d5e66ba824e27",
+      "lfNormalizedSha256": "eb46221884573585ea8b4b7af6020c9fdfa632610a4e6678eb6d5e66ba824e27",
+      "headGitBlobOid": "db739dbf864bf8a7eb4ae2243bf9bc8cbf04b542",
+      "filteredWorkingGitBlobOid": "db739dbf864bf8a7eb4ae2243bf9bc8cbf04b542",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "eb46221884573585ea8b4b7af6020c9fdfa632610a4e6678eb6d5e66ba824e27",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/src/main.tsx": {
+      "rawSha256": "6b08519f7ef7c3f72cf0fd3c51f8e13f16eac9e08bee3cc8476423264cc3abb0",
+      "lfNormalizedSha256": "6a3bddf15ae50106599ce4218cfad793166e8344980b9c71a35c1fa79cf385c5",
+      "headGitBlobOid": "b9864b993abf26091e06a87f609ac277f453d6f9",
+      "filteredWorkingGitBlobOid": "b9864b993abf26091e06a87f609ac277f453d6f9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "6a3bddf15ae50106599ce4218cfad793166e8344980b9c71a35c1fa79cf385c5",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/reference-main.tsx": {
+      "rawSha256": "f5666b8ee2397fe0e14ec1da5cf1162a499f0bf698ed6733a6e00b4af42bb4fc",
+      "lfNormalizedSha256": "2bb25fd31cd4b6f6b39b8c6dc3b59ddc84d09bd892775286a6bd0366ea8fe275",
+      "headGitBlobOid": "ce37a5a2ebd7b8bb7271a87f451eede85561a878",
+      "filteredWorkingGitBlobOid": "ce37a5a2ebd7b8bb7271a87f451eede85561a878",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "2bb25fd31cd4b6f6b39b8c6dc3b59ddc84d09bd892775286a6bd0366ea8fe275",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/src/vite-env.d.ts": {
+      "rawSha256": "8a5e678b1598e4241834bd49b89d3d3dd84711af119db26282004ed9b2a31cd2",
+      "lfNormalizedSha256": "82543b26355db960ec74dc5cabdf871d0c1f5ba4ca8024ed285c2b6ff0c185e3",
+      "headGitBlobOid": "6fc0990f86538812f84fbe2b958be1b1924d8d90",
+      "filteredWorkingGitBlobOid": "6fc0990f86538812f84fbe2b958be1b1924d8d90",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "82543b26355db960ec74dc5cabdf871d0c1f5ba4ca8024ed285c2b6ff0c185e3",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/tsconfig.json": {
+      "rawSha256": "5e81fb96ebee5e85f45e45acd1787794c52aa61796df9fcf7e94d7e7216ae300",
+      "lfNormalizedSha256": "5e81fb96ebee5e85f45e45acd1787794c52aa61796df9fcf7e94d7e7216ae300",
+      "headGitBlobOid": "55bda88d06a38b55b46296d53626aae2c1be9968",
+      "filteredWorkingGitBlobOid": "55bda88d06a38b55b46296d53626aae2c1be9968",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "5e81fb96ebee5e85f45e45acd1787794c52aa61796df9fcf7e94d7e7216ae300",
+      "workingRawEqualsGitBlob": true
+    },
+    "apps/desktop/vite.config.ts": {
+      "rawSha256": "69bfef11c252c3142629d4fcc8d4815c67b3d997ca6780a0a6c9297d11c4799f",
+      "lfNormalizedSha256": "6b8710a20c218c0d76f181fa5e859418a3b817a912c18b46867eeb9a5abbada9",
+      "headGitBlobOid": "d72d0fbb87f65ea2e0262399144a0847a13ba5cd",
+      "filteredWorkingGitBlobOid": "d72d0fbb87f65ea2e0262399144a0847a13ba5cd",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "6b8710a20c218c0d76f181fa5e859418a3b817a912c18b46867eeb9a5abbada9",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "apps/desktop/vite.product.config.ts": {
+      "rawSha256": "79fa0cbb88fe22ed11d7769f31a13f0201280b4edf83424a12a3eeb5a88e55b3",
+      "lfNormalizedSha256": "9724c049086d4068dbf598613f712dcef3021b0874def9a6e5cf6808f12ca48b",
+      "headGitBlobOid": "2a40c4a1f6aeb99175bc046c0b5a45d8fc76c88c",
+      "filteredWorkingGitBlobOid": "2a40c4a1f6aeb99175bc046c0b5a45d8fc76c88c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "9724c049086d4068dbf598613f712dcef3021b0874def9a6e5cf6808f12ca48b",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "artifacts/evidence/W1.A09.T03.default-core-check-01.py": {
+      "rawSha256": "10c2b8535ac726a743395675ead658c30cb80676fb2f58e3221101a2203d8ffb",
+      "lfNormalizedSha256": "10c2b8535ac726a743395675ead658c30cb80676fb2f58e3221101a2203d8ffb",
+      "headGitBlobOid": "9cff93333d3a62a24dcfa7ebdca89397b5eb828e",
+      "filteredWorkingGitBlobOid": "9cff93333d3a62a24dcfa7ebdca89397b5eb828e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "10c2b8535ac726a743395675ead658c30cb80676fb2f58e3221101a2203d8ffb",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.default-core-pin-test-01.py": {
+      "rawSha256": "4f7c8fcaf9bc47de65e49f2c8cb256f9bb347726d385689ef82c43a967221dc4",
+      "lfNormalizedSha256": "4f7c8fcaf9bc47de65e49f2c8cb256f9bb347726d385689ef82c43a967221dc4",
+      "headGitBlobOid": "a44d4faa3bb2eabf6fc87b9a90e27f9289e07c87",
+      "filteredWorkingGitBlobOid": "a44d4faa3bb2eabf6fc87b9a90e27f9289e07c87",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "4f7c8fcaf9bc47de65e49f2c8cb256f9bb347726d385689ef82c43a967221dc4",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.py": {
+      "rawSha256": "a6a9e29097f513314b96950488dadf145997f628992fd581b5dae96c322578ac",
+      "lfNormalizedSha256": "a6a9e29097f513314b96950488dadf145997f628992fd581b5dae96c322578ac",
+      "headGitBlobOid": "80ee7637aaf005c9da686cde5434bc1e3e422411",
+      "filteredWorkingGitBlobOid": "80ee7637aaf005c9da686cde5434bc1e3e422411",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a6a9e29097f513314b96950488dadf145997f628992fd581b5dae96c322578ac",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.default-parity-check-01.py": {
+      "rawSha256": "dec0eb22c77764bc6beffa6a6b0257ffdc449e563612142ee5ee71a51f745fd7",
+      "lfNormalizedSha256": "dec0eb22c77764bc6beffa6a6b0257ffdc449e563612142ee5ee71a51f745fd7",
+      "headGitBlobOid": "f486c97dca6a48e7ed0f5864509e0641f59c5a95",
+      "filteredWorkingGitBlobOid": "f486c97dca6a48e7ed0f5864509e0641f59c5a95",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "dec0eb22c77764bc6beffa6a6b0257ffdc449e563612142ee5ee71a51f745fd7",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.native-replay-01.json": {
+      "rawSha256": "efb2777e3acbf1a70915c04c43ca3c2f519d9d9f520b4dbeae675b51e4ab9328",
+      "lfNormalizedSha256": "efb2777e3acbf1a70915c04c43ca3c2f519d9d9f520b4dbeae675b51e4ab9328",
+      "headGitBlobOid": "696dbb03a19baf5bd0dc0a17ab2918ccfb087399",
+      "filteredWorkingGitBlobOid": "696dbb03a19baf5bd0dc0a17ab2918ccfb087399",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "efb2777e3acbf1a70915c04c43ca3c2f519d9d9f520b4dbeae675b51e4ab9328",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.native-replay-01.py": {
+      "rawSha256": "ddfa3abf13131badc56b18b05c4c9a81afa3131bd95c0594eb2fa9711bee4170",
+      "lfNormalizedSha256": "ddfa3abf13131badc56b18b05c4c9a81afa3131bd95c0594eb2fa9711bee4170",
+      "headGitBlobOid": "55fa4bbbb0435bbfc90d0f2c392eb964757757a1",
+      "filteredWorkingGitBlobOid": "55fa4bbbb0435bbfc90d0f2c392eb964757757a1",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ddfa3abf13131badc56b18b05c4c9a81afa3131bd95c0594eb2fa9711bee4170",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.renderer-check-01.py": {
+      "rawSha256": "06e09bba20c58f8d3f87fa18447b9b9fa8feaaba2585a6c0ff0d9fb05bc3b4f1",
+      "lfNormalizedSha256": "06e09bba20c58f8d3f87fa18447b9b9fa8feaaba2585a6c0ff0d9fb05bc3b4f1",
+      "headGitBlobOid": "839e9947a88d5661ee0233e77126d7b967437e84",
+      "filteredWorkingGitBlobOid": "839e9947a88d5661ee0233e77126d7b967437e84",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "06e09bba20c58f8d3f87fa18447b9b9fa8feaaba2585a6c0ff0d9fb05bc3b4f1",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.runtime-principal-check-01.py": {
+      "rawSha256": "9a9067fc9b4d6c50973507931de349d46b0534cca9a60fc0c5fdaea8a572eb54",
+      "lfNormalizedSha256": "9a9067fc9b4d6c50973507931de349d46b0534cca9a60fc0c5fdaea8a572eb54",
+      "headGitBlobOid": "62477614497874786e688051d7de4cf093b354dd",
+      "filteredWorkingGitBlobOid": "62477614497874786e688051d7de4cf093b354dd",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "9a9067fc9b4d6c50973507931de349d46b0534cca9a60fc0c5fdaea8a572eb54",
+      "workingRawEqualsGitBlob": true
+    },
+    "artifacts/evidence/W1.A09.T03.verification-precommit-02.json": {
+      "rawSha256": "6c4b9c3258b9dfd70c2399b7d3cb5dabefc300fdda9f7171824485b10442fcc1",
+      "lfNormalizedSha256": "6c4b9c3258b9dfd70c2399b7d3cb5dabefc300fdda9f7171824485b10442fcc1",
+      "headGitBlobOid": "26491e7ffc40f7dc5725cdc5179c12b22bde6874",
+      "filteredWorkingGitBlobOid": "26491e7ffc40f7dc5725cdc5179c12b22bde6874",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "6c4b9c3258b9dfd70c2399b7d3cb5dabefc300fdda9f7171824485b10442fcc1",
+      "workingRawEqualsGitBlob": true
+    },
+    "design/ui-reference/SITE_MANIFEST.json": {
+      "rawSha256": "be22b1a2aab267d4aa4158a0173b42e41be827fd58ae892be881475df517f7eb",
+      "lfNormalizedSha256": "be22b1a2aab267d4aa4158a0173b42e41be827fd58ae892be881475df517f7eb",
+      "headGitBlobOid": "a364491b61d536fad67fc1e3234fd5316f93e080",
+      "filteredWorkingGitBlobOid": "a364491b61d536fad67fc1e3234fd5316f93e080",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "be22b1a2aab267d4aa4158a0173b42e41be827fd58ae892be881475df517f7eb",
+      "workingRawEqualsGitBlob": true
+    },
+    "package.json": {
+      "rawSha256": "f09ee8f8647d02a1b46b5fb4c9afd710d8e9bc483f1bedb673ffef2b283bfde9",
+      "lfNormalizedSha256": "f09ee8f8647d02a1b46b5fb4c9afd710d8e9bc483f1bedb673ffef2b283bfde9",
+      "headGitBlobOid": "aeb52ccc961c48a9d86d124e3a6178e8c6e108f6",
+      "filteredWorkingGitBlobOid": "aeb52ccc961c48a9d86d124e3a6178e8c6e108f6",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f09ee8f8647d02a1b46b5fb4c9afd710d8e9bc483f1bedb673ffef2b283bfde9",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-components/README.md": {
+      "rawSha256": "e5753b02bc8be63d70a28373bc234fa0fb85494b560afeb457b1ac6743a53a7f",
+      "lfNormalizedSha256": "e5753b02bc8be63d70a28373bc234fa0fb85494b560afeb457b1ac6743a53a7f",
+      "headGitBlobOid": "855aea63a88dec12b1681a3523c64f999e23b304",
+      "filteredWorkingGitBlobOid": "855aea63a88dec12b1681a3523c64f999e23b304",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "e5753b02bc8be63d70a28373bc234fa0fb85494b560afeb457b1ac6743a53a7f",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-components/catalog.html": {
+      "rawSha256": "1a85afb5023927b58e3dbe135b89d9b8425bcfc91f5629aa575b8ee0536a3334",
+      "lfNormalizedSha256": "1a85afb5023927b58e3dbe135b89d9b8425bcfc91f5629aa575b8ee0536a3334",
+      "headGitBlobOid": "10efab2f36eb5ce7522bf22f2ad21d7807546b8f",
+      "filteredWorkingGitBlobOid": "10efab2f36eb5ce7522bf22f2ad21d7807546b8f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "1a85afb5023927b58e3dbe135b89d9b8425bcfc91f5629aa575b8ee0536a3334",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-components/package.json": {
+      "rawSha256": "6f0d0866dc67ceec5c6b01e0ef52e15aabae418433a06d75093df55cf5f2f5c0",
+      "lfNormalizedSha256": "6f0d0866dc67ceec5c6b01e0ef52e15aabae418433a06d75093df55cf5f2f5c0",
+      "headGitBlobOid": "cbfd40cc6e13ba95fb596b8bdb627f03331b3365",
+      "filteredWorkingGitBlobOid": "cbfd40cc6e13ba95fb596b8bdb627f03331b3365",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "6f0d0866dc67ceec5c6b01e0ef52e15aabae418433a06d75093df55cf5f2f5c0",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-components/src/DirectoryPickerField.tsx": {
+      "rawSha256": "07e8d816c86c646597d3f3e8f110b0012e3eb64172f5d8b415587d1a8c50d00a",
+      "lfNormalizedSha256": "07e8d816c86c646597d3f3e8f110b0012e3eb64172f5d8b415587d1a8c50d00a",
+      "headGitBlobOid": "3178be66ad99ef29541e98393fb1c5c3b08e8717",
+      "filteredWorkingGitBlobOid": "3178be66ad99ef29541e98393fb1c5c3b08e8717",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "07e8d816c86c646597d3f3e8f110b0012e3eb64172f5d8b415587d1a8c50d00a",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-components/src/index.tsx": {
+      "rawSha256": "b69dba38dec1ff69c50076cedc9ffd94ddaa29b23f9762c4af9589d7b7d00a45",
+      "lfNormalizedSha256": "f46d2a0a05e6f05495cc4674227c4dc7141f121a45fd9ddfd0a4b237dd1ef3b0",
+      "headGitBlobOid": "57296476590722185176288ac4e09201fa2a9598",
+      "filteredWorkingGitBlobOid": "57296476590722185176288ac4e09201fa2a9598",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f46d2a0a05e6f05495cc4674227c4dc7141f121a45fd9ddfd0a4b237dd1ef3b0",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "packages/ui-components/src/styles.css": {
+      "rawSha256": "0cd888024e4051caa5f3b97c5f0b29d3a4f326949a38e4b39e5d331169fc507b",
+      "lfNormalizedSha256": "0cd888024e4051caa5f3b97c5f0b29d3a4f326949a38e4b39e5d331169fc507b",
+      "headGitBlobOid": "6ea65d07beb7352979d8808d69f45760ffd6c304",
+      "filteredWorkingGitBlobOid": "6ea65d07beb7352979d8808d69f45760ffd6c304",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0cd888024e4051caa5f3b97c5f0b29d3a4f326949a38e4b39e5d331169fc507b",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-components/tests/package.test.tsx": {
+      "rawSha256": "048f114ea2b28e8d7367630571637689cca54ca588f002bb59f9cabad358790e",
+      "lfNormalizedSha256": "c97c570aa54f83cf69ca36082460ec7ab03643c33da9a0f2aa9c39619040c3fe",
+      "headGitBlobOid": "038c7b71bab87b8d29109934ffd2f69a944b692e",
+      "filteredWorkingGitBlobOid": "038c7b71bab87b8d29109934ffd2f69a944b692e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c97c570aa54f83cf69ca36082460ec7ab03643c33da9a0f2aa9c39619040c3fe",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "packages/ui-components/tsconfig.json": {
+      "rawSha256": "44a344f053f64e2518e5c69abfc849fb4a17c3dc75cc0b965252c68a264db15c",
+      "lfNormalizedSha256": "44a344f053f64e2518e5c69abfc849fb4a17c3dc75cc0b965252c68a264db15c",
+      "headGitBlobOid": "cfc3fc9d742024ef95055cede4df26ec71d1e920",
+      "filteredWorkingGitBlobOid": "cfc3fc9d742024ef95055cede4df26ec71d1e920",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "44a344f053f64e2518e5c69abfc849fb4a17c3dc75cc0b965252c68a264db15c",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-tokens/README.md": {
+      "rawSha256": "117a96df40fa92a81737ff68a1591764e155f5799fc074ffbc697964e0442128",
+      "lfNormalizedSha256": "117a96df40fa92a81737ff68a1591764e155f5799fc074ffbc697964e0442128",
+      "headGitBlobOid": "fbdd908bc5d9913e0e20b082d0db822e7e6e81ca",
+      "filteredWorkingGitBlobOid": "fbdd908bc5d9913e0e20b082d0db822e7e6e81ca",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "117a96df40fa92a81737ff68a1591764e155f5799fc074ffbc697964e0442128",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-tokens/index.css": {
+      "rawSha256": "1b48154642a03be1b37b7fd4af6c095842ed0c4b605def9019b2e5ca27172be1",
+      "lfNormalizedSha256": "1b48154642a03be1b37b7fd4af6c095842ed0c4b605def9019b2e5ca27172be1",
+      "headGitBlobOid": "bd279d69a3c88510bbc6111127a50d478756b4bf",
+      "filteredWorkingGitBlobOid": "bd279d69a3c88510bbc6111127a50d478756b4bf",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "1b48154642a03be1b37b7fd4af6c095842ed0c4b605def9019b2e5ca27172be1",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-tokens/package.json": {
+      "rawSha256": "0204b30dde821fee9fb97e4f1b923d6838d7e15fa2b26fc2a4b367e9d1310d9b",
+      "lfNormalizedSha256": "0204b30dde821fee9fb97e4f1b923d6838d7e15fa2b26fc2a4b367e9d1310d9b",
+      "headGitBlobOid": "86ec7d71bf0f65d15f530376418734dd08024fe9",
+      "filteredWorkingGitBlobOid": "86ec7d71bf0f65d15f530376418734dd08024fe9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0204b30dde821fee9fb97e4f1b923d6838d7e15fa2b26fc2a4b367e9d1310d9b",
+      "workingRawEqualsGitBlob": true
+    },
+    "packages/ui-tokens/src/index.ts": {
+      "rawSha256": "d71bb8ba5e1c064ee3c0144dee98034e3f5a9d57817b40469b4f46eb5ff44d02",
+      "lfNormalizedSha256": "990d021171ee4bcbdbf14c3a8f1e1a734cdb7d08c0f3ef335694c18ffbe381d7",
+      "headGitBlobOid": "9388bf3c5136abc94d27e402d9da41e41f856be5",
+      "filteredWorkingGitBlobOid": "9388bf3c5136abc94d27e402d9da41e41f856be5",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "990d021171ee4bcbdbf14c3a8f1e1a734cdb7d08c0f3ef335694c18ffbe381d7",
+      "workingRawEqualsGitBlob": false,
+      "differenceIsOnlyCrlfToLf": true
+    },
+    "packages/ui-tokens/token-contract.json": {
+      "rawSha256": "911f67c645cb59fffa7c0377cd53954d4f6d9083ed8f35d891cad5a1268eb2e3",
+      "lfNormalizedSha256": "911f67c645cb59fffa7c0377cd53954d4f6d9083ed8f35d891cad5a1268eb2e3",
+      "headGitBlobOid": "5aaedc4a13296fd679688e4a76776afd055ea495",
+      "filteredWorkingGitBlobOid": "5aaedc4a13296fd679688e4a76776afd055ea495",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "911f67c645cb59fffa7c0377cd53954d4f6d9083ed8f35d891cad5a1268eb2e3",
+      "workingRawEqualsGitBlob": true
+    },
+    "pnpm-lock.yaml": {
+      "rawSha256": "6119dce7ba25e58208c5779d2002be7caecef8d3b4f37f70394771014125a508",
+      "lfNormalizedSha256": "6119dce7ba25e58208c5779d2002be7caecef8d3b4f37f70394771014125a508",
+      "headGitBlobOid": "f8e34a78b1eb9d65d78a679521d1f8e94a3ed07e",
+      "filteredWorkingGitBlobOid": "f8e34a78b1eb9d65d78a679521d1f8e94a3ed07e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "6119dce7ba25e58208c5779d2002be7caecef8d3b4f37f70394771014125a508",
+      "workingRawEqualsGitBlob": true
+    },
+    "pnpm-workspace.yaml": {
+      "rawSha256": "f33e52b6dce0b162e02256e9ee61824f0ebf03fe03b23df97a54be8028fa2ca3",
+      "lfNormalizedSha256": "f33e52b6dce0b162e02256e9ee61824f0ebf03fe03b23df97a54be8028fa2ca3",
+      "headGitBlobOid": "d4994e9629959396f5c36133348d4b610a5513bf",
+      "filteredWorkingGitBlobOid": "d4994e9629959396f5c36133348d4b610a5513bf",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "f33e52b6dce0b162e02256e9ee61824f0ebf03fe03b23df97a54be8028fa2ca3",
+      "workingRawEqualsGitBlob": true
+    },
+    "rust-toolchain.toml": {
+      "rawSha256": "d378cc6bc4c46cf85f3bc26a191bcb13a6f9efab78f758b39029555f88dc6e79",
+      "lfNormalizedSha256": "d378cc6bc4c46cf85f3bc26a191bcb13a6f9efab78f758b39029555f88dc6e79",
+      "headGitBlobOid": "cc7a246fc34e682c14fc49f0e275769e8f308dcf",
+      "filteredWorkingGitBlobOid": "cc7a246fc34e682c14fc49f0e275769e8f308dcf",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "d378cc6bc4c46cf85f3bc26a191bcb13a6f9efab78f758b39029555f88dc6e79",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/__init__.py": {
+      "rawSha256": "8e474f05baa97c8439b1124b663b089be4c96d2d86962257d94d9a4266d4656e",
+      "lfNormalizedSha256": "8e474f05baa97c8439b1124b663b089be4c96d2d86962257d94d9a4266d4656e",
+      "headGitBlobOid": "34b04fd31aeaa9699dd83313930520ae6a691569",
+      "filteredWorkingGitBlobOid": "34b04fd31aeaa9699dd83313930520ae6a691569",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "8e474f05baa97c8439b1124b663b089be4c96d2d86962257d94d9a4266d4656e",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/app.py": {
+      "rawSha256": "91f0d3d860c9e0185a4bb211071d3941d684bcd392ffd181c6e9b1d29b1432d0",
+      "lfNormalizedSha256": "91f0d3d860c9e0185a4bb211071d3941d684bcd392ffd181c6e9b1d29b1432d0",
+      "headGitBlobOid": "7b2cdb1a1036861de85e098966c11ab5bd7c5257",
+      "filteredWorkingGitBlobOid": "7b2cdb1a1036861de85e098966c11ab5bd7c5257",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "91f0d3d860c9e0185a4bb211071d3941d684bcd392ffd181c6e9b1d29b1432d0",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/authentication.py": {
+      "rawSha256": "0e400483fe8b62e765a62c8e068ed3085598540229e2f81c1bd5604a83e15b4c",
+      "lfNormalizedSha256": "0e400483fe8b62e765a62c8e068ed3085598540229e2f81c1bd5604a83e15b4c",
+      "headGitBlobOid": "3ad0f48f2a4dbd8c03eb97ff6feb595f23b865cf",
+      "filteredWorkingGitBlobOid": "3ad0f48f2a4dbd8c03eb97ff6feb595f23b865cf",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0e400483fe8b62e765a62c8e068ed3085598540229e2f81c1bd5604a83e15b4c",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/config.py": {
+      "rawSha256": "3171d5ce84d8e76e3397214c16fd0f6128c5340975f7eedb7190da371aff3229",
+      "lfNormalizedSha256": "3171d5ce84d8e76e3397214c16fd0f6128c5340975f7eedb7190da371aff3229",
+      "headGitBlobOid": "97aeee98a33289a146d8e0bd8be1c96b9bac6eab",
+      "filteredWorkingGitBlobOid": "97aeee98a33289a146d8e0bd8be1c96b9bac6eab",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "3171d5ce84d8e76e3397214c16fd0f6128c5340975f7eedb7190da371aff3229",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/contract.py": {
+      "rawSha256": "b12aa392613d14271a1441644a4b2e10e0097f59ae966ca906c8dd2a1fc9ed05",
+      "lfNormalizedSha256": "b12aa392613d14271a1441644a4b2e10e0097f59ae966ca906c8dd2a1fc9ed05",
+      "headGitBlobOid": "4afc42e40bd6d61cd93c7a502f5a5a39ba12ef3f",
+      "filteredWorkingGitBlobOid": "4afc42e40bd6d61cd93c7a502f5a5a39ba12ef3f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b12aa392613d14271a1441644a4b2e10e0097f59ae966ca906c8dd2a1fc9ed05",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/dependency_impacts.py": {
+      "rawSha256": "31adf045f2a1a99227c0e783dcb09b56669f7399769161c2f07b974eab1070cb",
+      "lfNormalizedSha256": "31adf045f2a1a99227c0e783dcb09b56669f7399769161c2f07b974eab1070cb",
+      "headGitBlobOid": "b004a9e8d851535d45e165cc24cb7e903f1c4ecd",
+      "filteredWorkingGitBlobOid": "b004a9e8d851535d45e165cc24cb7e903f1c4ecd",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "31adf045f2a1a99227c0e783dcb09b56669f7399769161c2f07b974eab1070cb",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/domain_compatibility.py": {
+      "rawSha256": "a54c93c779caf956a63c87826e568e1e6d5d6793c08c4f64e8571126b7606327",
+      "lfNormalizedSha256": "a54c93c779caf956a63c87826e568e1e6d5d6793c08c4f64e8571126b7606327",
+      "headGitBlobOid": "cf2fdbf1009f1a9ac0a4fed55afcf9a3ec11d2a3",
+      "filteredWorkingGitBlobOid": "cf2fdbf1009f1a9ac0a4fed55afcf9a3ec11d2a3",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "a54c93c779caf956a63c87826e568e1e6d5d6793c08c4f64e8571126b7606327",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/domain_contracts.py": {
+      "rawSha256": "0fb696920deb89e6ab7aa57e3f122712274a706d36cc0548cca56cedc3375d31",
+      "lfNormalizedSha256": "0fb696920deb89e6ab7aa57e3f122712274a706d36cc0548cca56cedc3375d31",
+      "headGitBlobOid": "15c50158ff9f5951501832c3158b4558ead76ff9",
+      "filteredWorkingGitBlobOid": "15c50158ff9f5951501832c3158b4558ead76ff9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0fb696920deb89e6ab7aa57e3f122712274a706d36cc0548cca56cedc3375d31",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/domain_lifecycles.py": {
+      "rawSha256": "c6999a55c6c0c1b6d6db9af337db6bae01889fb238fb7a2df1f2a187c44ae753",
+      "lfNormalizedSha256": "c6999a55c6c0c1b6d6db9af337db6bae01889fb238fb7a2df1f2a187c44ae753",
+      "headGitBlobOid": "3459d6f6b511414643ce629a21f31c63c534774c",
+      "filteredWorkingGitBlobOid": "3459d6f6b511414643ce629a21f31c63c534774c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c6999a55c6c0c1b6d6db9af337db6bae01889fb238fb7a2df1f2a187c44ae753",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/logging.py": {
+      "rawSha256": "7a11494476f67074a078fe30407c9f13ea73b4b401c0d78db958a54de55241cc",
+      "lfNormalizedSha256": "7a11494476f67074a078fe30407c9f13ea73b4b401c0d78db958a54de55241cc",
+      "headGitBlobOid": "4f3a9ce3344f10b99e952f20c7d3777e5d61d90c",
+      "filteredWorkingGitBlobOid": "4f3a9ce3344f10b99e952f20c7d3777e5d61d90c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7a11494476f67074a078fe30407c9f13ea73b4b401c0d78db958a54de55241cc",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/main.py": {
+      "rawSha256": "71fe80f361784f3e8a95d6ec42b2a0a9937e4f6bd636d5f36284293eb7abb5e7",
+      "lfNormalizedSha256": "71fe80f361784f3e8a95d6ec42b2a0a9937e4f6bd636d5f36284293eb7abb5e7",
+      "headGitBlobOid": "7e3134f51b57aca57d3858de25ff2c375a0f91e6",
+      "filteredWorkingGitBlobOid": "7e3134f51b57aca57d3858de25ff2c375a0f91e6",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "71fe80f361784f3e8a95d6ec42b2a0a9937e4f6bd636d5f36284293eb7abb5e7",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/__init__.py": {
+      "rawSha256": "c70ac009f6a6a6844d3b3cd0e8bdccb5472f021075abea83ee02591948107f52",
+      "lfNormalizedSha256": "c70ac009f6a6a6844d3b3cd0e8bdccb5472f021075abea83ee02591948107f52",
+      "headGitBlobOid": "86106a68ba7a66d4b79f565d044521f1e1acfe6b",
+      "filteredWorkingGitBlobOid": "86106a68ba7a66d4b79f565d044521f1e1acfe6b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c70ac009f6a6a6844d3b3cd0e8bdccb5472f021075abea83ee02591948107f52",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/runner.py": {
+      "rawSha256": "c7283663d36ebb64c5a0cdb85af600a1c201fb6464fce26ad184e3a5eeb6f776",
+      "lfNormalizedSha256": "c7283663d36ebb64c5a0cdb85af600a1c201fb6464fce26ad184e3a5eeb6f776",
+      "headGitBlobOid": "5a90c68702e9678d0c6c465eabde92154dbb922d",
+      "filteredWorkingGitBlobOid": "5a90c68702e9678d0c6c465eabde92154dbb922d",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c7283663d36ebb64c5a0cdb85af600a1c201fb6464fce26ad184e3a5eeb6f776",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/__init__.py": {
+      "rawSha256": "b5c4cfbfda8c200d5020b4a313774ba25bb183420182fa59b366525088edcab0",
+      "lfNormalizedSha256": "b5c4cfbfda8c200d5020b4a313774ba25bb183420182fa59b366525088edcab0",
+      "headGitBlobOid": "0ca17857af0e97ffdab274dbed84eb9230c0e57b",
+      "filteredWorkingGitBlobOid": "0ca17857af0e97ffdab274dbed84eb9230c0e57b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b5c4cfbfda8c200d5020b4a313774ba25bb183420182fa59b366525088edcab0",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0002_schema_history.py": {
+      "rawSha256": "22aa6e7f114ae8e418cb69e0f8457bddb3627570f6075e0de6d5f67ceb9ad59f",
+      "lfNormalizedSha256": "22aa6e7f114ae8e418cb69e0f8457bddb3627570f6075e0de6d5f67ceb9ad59f",
+      "headGitBlobOid": "146a3b120705c01c2c491524dd5b58e1010f3718",
+      "filteredWorkingGitBlobOid": "146a3b120705c01c2c491524dd5b58e1010f3718",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "22aa6e7f114ae8e418cb69e0f8457bddb3627570f6075e0de6d5f67ceb9ad59f",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0003_object_envelopes.py": {
+      "rawSha256": "b2db6c16b255aecc6f3e690de01e9594bf8c461eb48819880ce3d9761007d2ac",
+      "lfNormalizedSha256": "b2db6c16b255aecc6f3e690de01e9594bf8c461eb48819880ce3d9761007d2ac",
+      "headGitBlobOid": "fc1829d26f1063b33718e21fdd2dd86f3abb6ed1",
+      "filteredWorkingGitBlobOid": "fc1829d26f1063b33718e21fdd2dd86f3abb6ed1",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "b2db6c16b255aecc6f3e690de01e9594bf8c461eb48819880ce3d9761007d2ac",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0004_object_envelope_upgrades.py": {
+      "rawSha256": "fd7c570daebfb111811f5a2dcc27b1b230ef6f4ddafdaddb62b4fe34fbe29a56",
+      "lfNormalizedSha256": "fd7c570daebfb111811f5a2dcc27b1b230ef6f4ddafdaddb62b4fe34fbe29a56",
+      "headGitBlobOid": "9f4d16685762971c92837705905f57f619b81e94",
+      "filteredWorkingGitBlobOid": "9f4d16685762971c92837705905f57f619b81e94",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "fd7c570daebfb111811f5a2dcc27b1b230ef6f4ddafdaddb62b4fe34fbe29a56",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py": {
+      "rawSha256": "652898761ebcc80fe52e145c44c59f48a3961feed1e982d395554851d903c357",
+      "lfNormalizedSha256": "652898761ebcc80fe52e145c44c59f48a3961feed1e982d395554851d903c357",
+      "headGitBlobOid": "356cfd3c76c289088328e9fdea6a224379830f55",
+      "filteredWorkingGitBlobOid": "356cfd3c76c289088328e9fdea6a224379830f55",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "652898761ebcc80fe52e145c44c59f48a3961feed1e982d395554851d903c357",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py": {
+      "rawSha256": "810b6f13cf63525b2a5cb743c65570f253742aa242db7aecae8efc1bbb5a4a69",
+      "lfNormalizedSha256": "810b6f13cf63525b2a5cb743c65570f253742aa242db7aecae8efc1bbb5a4a69",
+      "headGitBlobOid": "f75d1ab28be691366fa6c78867368be0a0f1d87e",
+      "filteredWorkingGitBlobOid": "f75d1ab28be691366fa6c78867368be0a0f1d87e",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "810b6f13cf63525b2a5cb743c65570f253742aa242db7aecae8efc1bbb5a4a69",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py": {
+      "rawSha256": "12da0fc9e74ddf06e2af1d7cd90b5f76cf8e419697f30ca77ec49c70fb8e9917",
+      "lfNormalizedSha256": "12da0fc9e74ddf06e2af1d7cd90b5f76cf8e419697f30ca77ec49c70fb8e9917",
+      "headGitBlobOid": "c41d32978032f4e9d74d71219da0ef7ad4500547",
+      "filteredWorkingGitBlobOid": "c41d32978032f4e9d74d71219da0ef7ad4500547",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "12da0fc9e74ddf06e2af1d7cd90b5f76cf8e419697f30ca77ec49c70fb8e9917",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py": {
+      "rawSha256": "78e327519626ce86f7514f5ff597ae7875477354c363ba15ac446e82631f9723",
+      "lfNormalizedSha256": "78e327519626ce86f7514f5ff597ae7875477354c363ba15ac446e82631f9723",
+      "headGitBlobOid": "f889552d4072362fa72075f46b55c258372436f4",
+      "filteredWorkingGitBlobOid": "f889552d4072362fa72075f46b55c258372436f4",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "78e327519626ce86f7514f5ff597ae7875477354c363ba15ac446e82631f9723",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py": {
+      "rawSha256": "ca6f21fab2d27b2de7aa175f472c60e49192f173d8363aba6c0c2577e69c758a",
+      "lfNormalizedSha256": "ca6f21fab2d27b2de7aa175f472c60e49192f173d8363aba6c0c2577e69c758a",
+      "headGitBlobOid": "952f743cd47e08236fca3e5de7d1f55fb0060a6a",
+      "filteredWorkingGitBlobOid": "952f743cd47e08236fca3e5de7d1f55fb0060a6a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ca6f21fab2d27b2de7aa175f472c60e49192f173d8363aba6c0c2577e69c758a",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/model_gateway_contracts.py": {
+      "rawSha256": "e24c77de275c698be52a63a368f46bfb3f353a4497fbc3b00f96096734faf9e8",
+      "lfNormalizedSha256": "e24c77de275c698be52a63a368f46bfb3f353a4497fbc3b00f96096734faf9e8",
+      "headGitBlobOid": "666e4f68ff1d9dd4dfaa1c2d6fbf2655dbf29019",
+      "filteredWorkingGitBlobOid": "666e4f68ff1d9dd4dfaa1c2d6fbf2655dbf29019",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "e24c77de275c698be52a63a368f46bfb3f353a4497fbc3b00f96096734faf9e8",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/models.py": {
+      "rawSha256": "1e8c8a06e9e4511190d2df907f45eb32df0e58f80375868637c60c37f4c8cf52",
+      "lfNormalizedSha256": "1e8c8a06e9e4511190d2df907f45eb32df0e58f80375868637c60c37f4c8cf52",
+      "headGitBlobOid": "ca845eb3b02789c011c16f7b3ea2aa15a256060c",
+      "filteredWorkingGitBlobOid": "ca845eb3b02789c011c16f7b3ea2aa15a256060c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "1e8c8a06e9e4511190d2df907f45eb32df0e58f80375868637c60c37f4c8cf52",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/modules.py": {
+      "rawSha256": "62d7caea0531712efa6a2ea361086b01aca8dfbc3398031a0ca9c17dedb48c4b",
+      "lfNormalizedSha256": "62d7caea0531712efa6a2ea361086b01aca8dfbc3398031a0ca9c17dedb48c4b",
+      "headGitBlobOid": "cfc3d6febcde5c5ad6d5331b44f00c3ae87e772f",
+      "filteredWorkingGitBlobOid": "cfc3d6febcde5c5ad6d5331b44f00c3ae87e772f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "62d7caea0531712efa6a2ea361086b01aca8dfbc3398031a0ca9c17dedb48c4b",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/object_store.py": {
+      "rawSha256": "7b218a654bb8bd7ed96f01d1a42643273b857180256e6951d59de0cb58fbc50c",
+      "lfNormalizedSha256": "7b218a654bb8bd7ed96f01d1a42643273b857180256e6951d59de0cb58fbc50c",
+      "headGitBlobOid": "cd283c6221159c19cc3d61e421b4ec27fbac962c",
+      "filteredWorkingGitBlobOid": "cd283c6221159c19cc3d61e421b4ec27fbac962c",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7b218a654bb8bd7ed96f01d1a42643273b857180256e6951d59de0cb58fbc50c",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/operations.py": {
+      "rawSha256": "966b7bdd08b22a0e5b697a1aac58f95485efeaf6909297511251c83d31016fb4",
+      "lfNormalizedSha256": "966b7bdd08b22a0e5b697a1aac58f95485efeaf6909297511251c83d31016fb4",
+      "headGitBlobOid": "9ad536a6fc4d2170ce12dcc22239c660877c8d19",
+      "filteredWorkingGitBlobOid": "9ad536a6fc4d2170ce12dcc22239c660877c8d19",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "966b7bdd08b22a0e5b697a1aac58f95485efeaf6909297511251c83d31016fb4",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/__init__.py": {
+      "rawSha256": "688091ef4f711ea2ab7ee237af56d4fc020710aec7377406756475e15538567c",
+      "lfNormalizedSha256": "688091ef4f711ea2ab7ee237af56d4fc020710aec7377406756475e15538567c",
+      "headGitBlobOid": "c68cdd7b69e39450e1e1fb742f8455a5fa40d48d",
+      "filteredWorkingGitBlobOid": "c68cdd7b69e39450e1e1fb742f8455a5fa40d48d",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "688091ef4f711ea2ab7ee237af56d4fc020710aec7377406756475e15538567c",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/credential_store.py": {
+      "rawSha256": "2fef7bda1d424833ba59e84849ee1190817a825c063ff805db2fb4ae8d83086d",
+      "lfNormalizedSha256": "2fef7bda1d424833ba59e84849ee1190817a825c063ff805db2fb4ae8d83086d",
+      "headGitBlobOid": "245d19fa05924447ab0e1690f6ea7a8fda5fe2c9",
+      "filteredWorkingGitBlobOid": "245d19fa05924447ab0e1690f6ea7a8fda5fe2c9",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "2fef7bda1d424833ba59e84849ee1190817a825c063ff805db2fb4ae8d83086d",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/database_keys.py": {
+      "rawSha256": "9d2fc296d03ccacb3f7c9d66654d021d6070c4a8b3f0024987ebe4b308037adf",
+      "lfNormalizedSha256": "9d2fc296d03ccacb3f7c9d66654d021d6070c4a8b3f0024987ebe4b308037adf",
+      "headGitBlobOid": "a954051018c3d4567593f35119cdb8c5efd1badc",
+      "filteredWorkingGitBlobOid": "a954051018c3d4567593f35119cdb8c5efd1badc",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "9d2fc296d03ccacb3f7c9d66654d021d6070c4a8b3f0024987ebe4b308037adf",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/object_store.py": {
+      "rawSha256": "9847d24b49803e1d908c8e7e011f02c11b718cb2a87ff53e17937fb47c73685f",
+      "lfNormalizedSha256": "9847d24b49803e1d908c8e7e011f02c11b718cb2a87ff53e17937fb47c73685f",
+      "headGitBlobOid": "f089c4d08941a979cce403fda218d162a19c09a8",
+      "filteredWorkingGitBlobOid": "f089c4d08941a979cce403fda218d162a19c09a8",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "9847d24b49803e1d908c8e7e011f02c11b718cb2a87ff53e17937fb47c73685f",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/object_store_keys.py": {
+      "rawSha256": "0e201809db0ee30efc5513a20260c67d0c5b418c1f9936832872ee5d0004bbb2",
+      "lfNormalizedSha256": "0e201809db0ee30efc5513a20260c67d0c5b418c1f9936832872ee5d0004bbb2",
+      "headGitBlobOid": "33e81fac0bec7c4a205751d0338dd4e3257e4c61",
+      "filteredWorkingGitBlobOid": "33e81fac0bec7c4a205751d0338dd4e3257e4c61",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0e201809db0ee30efc5513a20260c67d0c5b418c1f9936832872ee5d0004bbb2",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/repositories.py": {
+      "rawSha256": "71a042ad119c3e58ff14bc2c597f6ea717ddd7255d1aadf422ff03506ec44724",
+      "lfNormalizedSha256": "71a042ad119c3e58ff14bc2c597f6ea717ddd7255d1aadf422ff03506ec44724",
+      "headGitBlobOid": "64ab96c4c7b20f7c3712e54ae2021c1a6c7c362b",
+      "filteredWorkingGitBlobOid": "64ab96c4c7b20f7c3712e54ae2021c1a6c7c362b",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "71a042ad119c3e58ff14bc2c597f6ea717ddd7255d1aadf422ff03506ec44724",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/ports/workflow_executor.py": {
+      "rawSha256": "22bdc6a3ff1fcde1282aa0be052ee7fcc129168615d9998eeae80761cefd6f1e",
+      "lfNormalizedSha256": "22bdc6a3ff1fcde1282aa0be052ee7fcc129168615d9998eeae80761cefd6f1e",
+      "headGitBlobOid": "4194a06f8481efaa83f8fc3b02ac42891b5ae132",
+      "filteredWorkingGitBlobOid": "4194a06f8481efaa83f8fc3b02ac42891b5ae132",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "22bdc6a3ff1fcde1282aa0be052ee7fcc129168615d9998eeae80761cefd6f1e",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/privacy.py": {
+      "rawSha256": "ab4e7d4daf7e908f2504dcc9cfddb35a0bdfe83857d79a56fa198cb9be654480",
+      "lfNormalizedSha256": "ab4e7d4daf7e908f2504dcc9cfddb35a0bdfe83857d79a56fa198cb9be654480",
+      "headGitBlobOid": "0a3c345ec6c8e5f189dea5e7e0615e41cc150ef0",
+      "filteredWorkingGitBlobOid": "0a3c345ec6c8e5f189dea5e7e0615e41cc150ef0",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ab4e7d4daf7e908f2504dcc9cfddb35a0bdfe83857d79a56fa198cb9be654480",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/projects.py": {
+      "rawSha256": "559f3a30bab296acb42d034814b2b722c0fc868fb2b9d274f4df6e705bea19d7",
+      "lfNormalizedSha256": "559f3a30bab296acb42d034814b2b722c0fc868fb2b9d274f4df6e705bea19d7",
+      "headGitBlobOid": "5ca54657828b66a8455acfdcffe8143cc6b1cd48",
+      "filteredWorkingGitBlobOid": "5ca54657828b66a8455acfdcffe8143cc6b1cd48",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "559f3a30bab296acb42d034814b2b722c0fc868fb2b9d274f4df6e705bea19d7",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/provenance.py": {
+      "rawSha256": "160e7ef544eed50dd939a6fefafb2924568683c969127674ed2263e452463431",
+      "lfNormalizedSha256": "160e7ef544eed50dd939a6fefafb2924568683c969127674ed2263e452463431",
+      "headGitBlobOid": "0b64762b7725bc98fb707f4760ec4346a9952e70",
+      "filteredWorkingGitBlobOid": "0b64762b7725bc98fb707f4760ec4346a9952e70",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "160e7ef544eed50dd939a6fefafb2924568683c969127674ed2263e452463431",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/provenance_contracts.py": {
+      "rawSha256": "c0ab5d78b9142fb9ec5f3222f0eecfbc40e373e7b111c4e2df3c7b2f52d4cf44",
+      "lfNormalizedSha256": "c0ab5d78b9142fb9ec5f3222f0eecfbc40e373e7b111c4e2df3c7b2f52d4cf44",
+      "headGitBlobOid": "12aa4751a8624456d64f7fd2d89204eb975eefef",
+      "filteredWorkingGitBlobOid": "12aa4751a8624456d64f7fd2d89204eb975eefef",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c0ab5d78b9142fb9ec5f3222f0eecfbc40e373e7b111c4e2df3c7b2f52d4cf44",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/recalculation_contracts.py": {
+      "rawSha256": "c5962546e537fcb3a864aac605893aa1b5b289c6ebd5c66789cedd6dec616341",
+      "lfNormalizedSha256": "c5962546e537fcb3a864aac605893aa1b5b289c6ebd5c66789cedd6dec616341",
+      "headGitBlobOid": "f85288d3fb79bc6dce988bf2496b41d654abb543",
+      "filteredWorkingGitBlobOid": "f85288d3fb79bc6dce988bf2496b41d654abb543",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "c5962546e537fcb3a864aac605893aa1b5b289c6ebd5c66789cedd6dec616341",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/repositories.py": {
+      "rawSha256": "43e642c11893965d2c788dfc33ebb13d4aa2a797c432063ae442450072b3fbde",
+      "lfNormalizedSha256": "43e642c11893965d2c788dfc33ebb13d4aa2a797c432063ae442450072b3fbde",
+      "headGitBlobOid": "e77834320dbbcfb18891d7ed6ece3d6cf977f039",
+      "filteredWorkingGitBlobOid": "e77834320dbbcfb18891d7ed6ece3d6cf977f039",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "43e642c11893965d2c788dfc33ebb13d4aa2a797c432063ae442450072b3fbde",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/research_intent_contracts.py": {
+      "rawSha256": "0ccafb9c28c97335c211c1b7e91bfa6c5c0354eed0fd207055aa174e45030078",
+      "lfNormalizedSha256": "0ccafb9c28c97335c211c1b7e91bfa6c5c0354eed0fd207055aa174e45030078",
+      "headGitBlobOid": "0a5d5b4d9d1b20aa870fcbea9aab875feb53e7a5",
+      "filteredWorkingGitBlobOid": "0a5d5b4d9d1b20aa870fcbea9aab875feb53e7a5",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0ccafb9c28c97335c211c1b7e91bfa6c5c0354eed0fd207055aa174e45030078",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/research_intents.py": {
+      "rawSha256": "63bb5894bb1de00581d9cee9c4c8e3e2a510ca1999b5c6dd9292a1d2f8776111",
+      "lfNormalizedSha256": "63bb5894bb1de00581d9cee9c4c8e3e2a510ca1999b5c6dd9292a1d2f8776111",
+      "headGitBlobOid": "78bf7fcb3980ad118ff412291f3d5b26640f3822",
+      "filteredWorkingGitBlobOid": "78bf7fcb3980ad118ff412291f3d5b26640f3822",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "63bb5894bb1de00581d9cee9c4c8e3e2a510ca1999b5c6dd9292a1d2f8776111",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/selective_recalculation.py": {
+      "rawSha256": "ee4f249785146ccc3fa978ac7e2caa98c3489a897cec7c03455a4a5285f350fc",
+      "lfNormalizedSha256": "ee4f249785146ccc3fa978ac7e2caa98c3489a897cec7c03455a4a5285f350fc",
+      "headGitBlobOid": "96be297f1f36051a9a86341fff55bc38b8e8b5a5",
+      "filteredWorkingGitBlobOid": "96be297f1f36051a9a86341fff55bc38b8e8b5a5",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "ee4f249785146ccc3fa978ac7e2caa98c3489a897cec7c03455a4a5285f350fc",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/storage.py": {
+      "rawSha256": "7489f0bb0275ce4bfa91c915c58c5c2ae41e05a96e0f75464493e8bb7fa49d24",
+      "lfNormalizedSha256": "7489f0bb0275ce4bfa91c915c58c5c2ae41e05a96e0f75464493e8bb7fa49d24",
+      "headGitBlobOid": "602089dd96cb31106fd09e062a059430b6c10067",
+      "filteredWorkingGitBlobOid": "602089dd96cb31106fd09e062a059430b6c10067",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "7489f0bb0275ce4bfa91c915c58c5c2ae41e05a96e0f75464493e8bb7fa49d24",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/task_center.py": {
+      "rawSha256": "8051a9d517764906fccfad38be9ee729652b7fb4a9404940ce77af34edf9c348",
+      "lfNormalizedSha256": "8051a9d517764906fccfad38be9ee729652b7fb4a9404940ce77af34edf9c348",
+      "headGitBlobOid": "9e8a46e6c7b3b36f130264188bac8f53d090b1be",
+      "filteredWorkingGitBlobOid": "9e8a46e6c7b3b36f130264188bac8f53d090b1be",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "8051a9d517764906fccfad38be9ee729652b7fb4a9404940ce77af34edf9c348",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/transport.py": {
+      "rawSha256": "14aaf6da50d50a34703307e06d8c53cf23599f76e53e83a991f900d93ac98564",
+      "lfNormalizedSha256": "14aaf6da50d50a34703307e06d8c53cf23599f76e53e83a991f900d93ac98564",
+      "headGitBlobOid": "297a9c6efde104bd2ee7381cda9350ab134e223a",
+      "filteredWorkingGitBlobOid": "297a9c6efde104bd2ee7381cda9350ab134e223a",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "14aaf6da50d50a34703307e06d8c53cf23599f76e53e83a991f900d93ac98564",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/windows_credentials.py": {
+      "rawSha256": "82a0a4d39e88681e2c371955a892387f116bea2e77f42d7c37d8ce383ecd6c83",
+      "lfNormalizedSha256": "82a0a4d39e88681e2c371955a892387f116bea2e77f42d7c37d8ce383ecd6c83",
+      "headGitBlobOid": "e20a8d79c7cc77037dc112e51a773cc41806d0e0",
+      "filteredWorkingGitBlobOid": "e20a8d79c7cc77037dc112e51a773cc41806d0e0",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "82a0a4d39e88681e2c371955a892387f116bea2e77f42d7c37d8ce383ecd6c83",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_contracts.py": {
+      "rawSha256": "013ffebdf9df2ba14546224971ab7bdf5cc74df31f1c01dda17b00d063d91e8f",
+      "lfNormalizedSha256": "013ffebdf9df2ba14546224971ab7bdf5cc74df31f1c01dda17b00d063d91e8f",
+      "headGitBlobOid": "172260c050952bccc4302f93ee373f6da85dd440",
+      "filteredWorkingGitBlobOid": "172260c050952bccc4302f93ee373f6da85dd440",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "013ffebdf9df2ba14546224971ab7bdf5cc74df31f1c01dda17b00d063d91e8f",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_executor.py": {
+      "rawSha256": "5cbd77c819f2e4911401585053c325c808226759e04d4d901013121da429c0fb",
+      "lfNormalizedSha256": "5cbd77c819f2e4911401585053c325c808226759e04d4d901013121da429c0fb",
+      "headGitBlobOid": "0aa028cea5585b1a62ce3dbc9e06202f3f1cce2f",
+      "filteredWorkingGitBlobOid": "0aa028cea5585b1a62ce3dbc9e06202f3f1cce2f",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "5cbd77c819f2e4911401585053c325c808226759e04d4d901013121da429c0fb",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_profile_contracts.py": {
+      "rawSha256": "0a8e47b3216b93b7bbc54e02e541d6ed6defe4b57a8ba7cc5de9db8196d31961",
+      "lfNormalizedSha256": "0a8e47b3216b93b7bbc54e02e541d6ed6defe4b57a8ba7cc5de9db8196d31961",
+      "headGitBlobOid": "2b180a97dda3bfb2f54031f170319cacbfbc8491",
+      "filteredWorkingGitBlobOid": "2b180a97dda3bfb2f54031f170319cacbfbc8491",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "0a8e47b3216b93b7bbc54e02e541d6ed6defe4b57a8ba7cc5de9db8196d31961",
+      "workingRawEqualsGitBlob": true
+    },
+    "services/core-api/src/research_observatory_core/workflow_progress.py": {
+      "rawSha256": "5b82ccf7ea6ce04cf8bca51b34ddbf15348a0b0572de659027918894b2eab5b8",
+      "lfNormalizedSha256": "5b82ccf7ea6ce04cf8bca51b34ddbf15348a0b0572de659027918894b2eab5b8",
+      "headGitBlobOid": "459eb2b89f9914f90969937464f08ffe02179c89",
+      "filteredWorkingGitBlobOid": "459eb2b89f9914f90969937464f08ffe02179c89",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "5b82ccf7ea6ce04cf8bca51b34ddbf15348a0b0572de659027918894b2eab5b8",
+      "workingRawEqualsGitBlob": true
+    },
+    "target/debug/examples/project_contract_probe.exe": {
+      "rawSha256": "f73661fc06c4cb081ac08ac35808b2983fa9d4de4682b3e2343b6eecab6eac8d",
+      "lfNormalizedSha256": "b10136b3f32cc03dfe7b45fa92f729119185c227b10b94ab4c88cd58860d45b8",
+      "gitStatus": "Generated/native build input, not tracked at implementation commit"
+    },
+    "target/release/examples/project_contract_probe.exe": {
+      "rawSha256": "2b68763ba8dd606aa038e48178dc1d29ac15f5d5344039a543b41f2db3f5d361",
+      "lfNormalizedSha256": "b2e41c938348b1835e9d19a7223a6aa7473cff3b04f5c34dc0c34e6eb6346f0c",
+      "gitStatus": "Generated/native build input, not tracked at implementation commit"
+    },
+    "tests/service/test_native_project_contract.py": {
+      "rawSha256": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458",
+      "lfNormalizedSha256": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458",
+      "headGitBlobOid": "454b3247a6ec3e130a052821dfa4a5f282519df3",
+      "filteredWorkingGitBlobOid": "454b3247a6ec3e130a052821dfa4a5f282519df3",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458",
+      "workingRawEqualsGitBlob": true
+    },
+    "tests/service/test_project_probe_build.py": {
+      "rawSha256": "be60dc6ef79dbb7b1387f43c6743be6042c1704fcc9fded8a500f9ff371646e5",
+      "lfNormalizedSha256": "be60dc6ef79dbb7b1387f43c6743be6042c1704fcc9fded8a500f9ff371646e5",
+      "headGitBlobOid": "166cdb50a74d4dfe6711c16dec8357597b3c0eeb",
+      "filteredWorkingGitBlobOid": "166cdb50a74d4dfe6711c16dec8357597b3c0eeb",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "be60dc6ef79dbb7b1387f43c6743be6042c1704fcc9fded8a500f9ff371646e5",
+      "workingRawEqualsGitBlob": true
+    },
+    "tools/desktop_app_check.py": {
+      "rawSha256": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf",
+      "lfNormalizedSha256": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf",
+      "headGitBlobOid": "5c3360943f4ee6a04fdb08aa90c3370e5bfa1b59",
+      "filteredWorkingGitBlobOid": "5c3360943f4ee6a04fdb08aa90c3370e5bfa1b59",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf",
+      "workingRawEqualsGitBlob": true
+    },
+    "tools/ui_conformance.py": {
+      "rawSha256": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a",
+      "lfNormalizedSha256": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a",
+      "headGitBlobOid": "1b2bad553bb4f756bfea66647f1151ecf2fe4384",
+      "filteredWorkingGitBlobOid": "1b2bad553bb4f756bfea66647f1151ecf2fe4384",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a",
+      "workingRawEqualsGitBlob": true
+    },
+    "verification/extensions/desktop-ui.json": {
+      "rawSha256": "24a5b8b65ecc05482421a46f0d0d612868b9e3ea096677f639943dcaea4155c8",
+      "lfNormalizedSha256": "24a5b8b65ecc05482421a46f0d0d612868b9e3ea096677f639943dcaea4155c8",
+      "headGitBlobOid": "95b81d1b9459a53b2121f675e2be56c4e9735fbc",
+      "filteredWorkingGitBlobOid": "95b81d1b9459a53b2121f675e2be56c4e9735fbc",
+      "matchesCommittedGitBlob": true,
+      "headGitBlobSha256": "24a5b8b65ecc05482421a46f0d0d612868b9e3ea096677f639943dcaea4155c8",
+      "workingRawEqualsGitBlob": true
+    }
+  },
+  "committedSourceBinding": {
+    "method": "git ls-tree at implementation commit versus git hash-object --stdin-paths (without -w), with exact git cat-file blob reads when raw working bytes differ",
+    "trackedInputs": 218,
+    "allFilteredWorkingBlobsMatchHead": true,
+    "mismatches": [],
+    "rawToGitDifferences": [
+      "apps/desktop/scripts/application-lock-renderer-integration.mjs",
+      "apps/desktop/scripts/assemble-application.mjs",
+      "apps/desktop/scripts/assemble-reference.mjs",
+      "apps/desktop/scripts/clean-dist.mjs",
+      "apps/desktop/scripts/intent-native-integration.mjs",
+      "apps/desktop/scripts/lint.mjs",
+      "apps/desktop/src-tauri/build.rs",
+      "apps/desktop/src-tauri/examples/hello_availability_check.rs",
+      "apps/desktop/src-tauri/examples/supervised_core_harness.rs",
+      "apps/desktop/src-tauri/examples/supervision_check.rs",
+      "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+      "apps/desktop/src-tauri/icons/android/mipmap-anydpi-v26/ic_launcher.xml",
+      "apps/desktop/src-tauri/icons/android/values/ic_launcher_background.xml",
+      "apps/desktop/src-tauri/icons/app-icon.svg",
+      "apps/desktop/src-tauri/src/application_lock.rs",
+      "apps/desktop/src-tauri/src/application_lock_verification.rs",
+      "apps/desktop/src-tauri/src/application_sign_in_policy.rs",
+      "apps/desktop/src-tauri/src/main.rs",
+      "apps/desktop/src-tauri/src/support_bundle.rs",
+      "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+      "apps/desktop/src/app/ApplicationRuntime.tsx",
+      "apps/desktop/src/app/ApplicationSettingsWorkspace.test.tsx",
+      "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+      "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+      "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+      "apps/desktop/src/app/IntentWorkspace.test.tsx",
+      "apps/desktop/src/app/IntentWorkspace.tsx",
+      "apps/desktop/src/app/LocalServiceBoundary.test.tsx",
+      "apps/desktop/src/app/LocalServiceBoundary.tsx",
+      "apps/desktop/src/app/ProjectSettingsWorkspace.test.tsx",
+      "apps/desktop/src/app/ProjectSettingsWorkspace.tsx",
+      "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+      "apps/desktop/src/app/ProjectsWorkspace.tsx",
+      "apps/desktop/src/app/ReferenceRuntime.tsx",
+      "apps/desktop/src/app/TaskCenterWorkspace.test.tsx",
+      "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+      "apps/desktop/src/app/applicationLock.test.ts",
+      "apps/desktop/src/app/applicationLock.ts",
+      "apps/desktop/src/app/applicationSettings.native.integration.test.ts",
+      "apps/desktop/src/app/applicationSettings.test.ts",
+      "apps/desktop/src/app/applicationSettings.ts",
+      "apps/desktop/src/app/designSystem.test.tsx",
+      "apps/desktop/src/app/frame.test.ts",
+      "apps/desktop/src/app/frame.ts",
+      "apps/desktop/src/app/projectSelection.test.ts",
+      "apps/desktop/src/app/projectSelection.ts",
+      "apps/desktop/src/app/routes.test.ts",
+      "apps/desktop/src/app/routes.ts",
+      "apps/desktop/src/app/session.test.ts",
+      "apps/desktop/src/app/session.ts",
+      "apps/desktop/src/main.tsx",
+      "apps/desktop/src/reference-main.tsx",
+      "apps/desktop/src/vite-env.d.ts",
+      "apps/desktop/vite.config.ts",
+      "apps/desktop/vite.product.config.ts",
+      "packages/ui-components/src/index.tsx",
+      "packages/ui-components/tests/package.test.tsx",
+      "packages/ui-tokens/src/index.ts"
+    ],
+    "allRawToGitDifferencesAreOnlyCrlfToLf": true
+  },
+  "acceptedHelperOnlyBridge": {
+    "oldHelperRawSha256": "36ef78ec9c222a02489c867940f76a837f2f25562d0003bf0733e0ea3406e5d5",
+    "currentHelperRawSha256": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458",
+    "helperPath": "tests/service/test_native_project_contract.py",
+    "nativeAndRendererInventoryOtherwiseIdentical": true,
+    "debugBinaryIdentical": true,
+    "debugExecutableSha256": "f73661fc06c4cb081ac08ac35808b2983fa9d4de4682b3e2343b6eecab6eac8d",
+    "disposition": "Retain native-ui-build-04 and observations-04 as actual UI proof for identical committed product bytes and executable; helper-only Cargo output-event validation was subsequently reviewed in build-binding-review-02 and executed in native-builds-05. No UI rerun is required solely for this helper or commit delta."
+  },
+  "primaryCurrentFreshCoreProof": "artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json",
+  "privacyReview": {
+    "personalDataDetected": false,
+    "checked": "All report keys and values for known local account/profile/machine values, absolute Windows paths, UNC paths and email-shaped values; reviewed scope and fixtures",
+    "emailShapeFalsePositives": 57,
+    "falsePositiveClassification": "Only standard Tauri AppIcon/128x128 retina PNG filenames, not email addresses",
+    "limits": "This audits only the explicitly listed retained reports, not the entire repository or fixture contents."
+  },
+  "accurateFinalManifestTreatment": [
+    "Use default-core-fresh-final-01 for current harness/restart proof; retain fresh-two-parent-01 as historical rather than asserting that its two older harness digests match current source.",
+    "Native build records qualify debug/release integration examples, not production packaging or the W1 exit matrix.",
+    "Native UI c13 establishes selection/cancellation and the separate explicit Open affordance; createSubmitted and openSubmitted are false, so do not claim that this UI run created or opened a project.",
+    "Actual-default Core creation, fresh Core restart, read-only native dev/release default parity and real UI chooser proof are separately scoped observations, not a single combined end-to-end production session.",
+    "Retained precommit report commit fields remain their historical base; bind unchanged measured bytes to the implementation commit through this audit. The final renderer report, when listed, is already bound to the implementation commit.",
+    "All prior adverse reports and snapshot/same-account isolation limitations remain intact. Final task disposition and the running 19-check result remain separate."
+  ],
+  "protectedWitnessAccessed": false,
+  "nativeUiOrBuildInvoked": false,
+  "otherMutations": "Only the new artifacts/evidence/W1.A09.T03.binding-review-01.json advisory record; no product, Git, controller, task-state, build or UI mutation.",
+  "ok": true
+}
