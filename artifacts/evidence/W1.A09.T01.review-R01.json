@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-independent-review",
+  "task_id": "W1.A09.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "7a46e91a4558d9286a94d21aa85b050f6323e286",
+  "base_commit": "92175839dc92a736a6d5ad0330d13efb382701f1",
+  "submission_record_commit": "8d4a6fab77e00cde19aa873bbe40dd7b12fc6a31",
+  "submission_packet_sha256": "643b977c1b875f7b11edd5f1c70e36857fa9796e4d9cb3b980e3ee9535a3bc43",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "reviewed_at": "2026-09-05T13:30:09Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent commit-bound R01 review approves only W1.A09.T01. The exact frozen packet, 165-path candidate inventory, five criteria, verification selection, manifest and nine-path submission delivery authenticate. Candidate 7a46e91a adds only eight retained verification reports/notes to tested product 5e914322. Exact approved presentation1.6 publication preserves semantic1.5 and token1.4 authority; the independently accepted control/experience checkpoint strictly precedes consumer rebinding. Independent replays passed four source/no-Git/mapping/real-Git witness methods and two consumer-orchestration/token/route tests. The before/after proofs retain accepted intent revision3, prior history, exact supporting-return identity and all16 immutable settings rows. All66 retained PNG hashes/dimensions, ten original producer inputs and prior/new baseline hashes authenticate. No acceptance-bound blocking finding remains. The retained broad product command is still failed on four preexisting native Clippy warnings; the existing built-frame-only pass is renderer evidence, not native or packaging qualification. Those warnings and real native/Core/folder, returned A08 styling, amendment and full W1 qualification remain mandatory later work. This disposition does not approve amendment adoption, the effective A08 overlay, local-main integration of unmet ancestry, release or G1.",
+  "independence": {
+    "implementer": "codex",
+    "statement": "The reviewer provided read-only adversarial preflight advice, inspected the implementation and evidence, and performed independent bounded replays. The reviewer did not author the task implementation, publication, baseline, producer reports or submission and has not run a live workflow transition. Only this new review ledger is authored by this reviewer. The separate pre-rebind control/experience checkpoint is attributed to agent:/root/t01_publication_checkpoint, not claimed as this reviewer's execution."
+  },
+  "evidence_bindings": [
+    {
+      "path": "artifacts/evidence/W1.A09.T01.json",
+      "commit": "8d4a6fab77e00cde19aa873bbe40dd7b12fc6a31",
+      "git_blob": "9832915b287f02500e857525f7e53207acb2ab2c",
+      "sha256": "8fcdb044e699f83673998dd5f8f78763a10bf8c5397fd6f47d8b9328bcf5eb3d"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T01.control-experience-checkpoint-01.json",
+      "introduction_commit": "893de39f3ca8287a6e2bb7e84003d9d787d2f32b",
+      "sha256": "376e105cf6b4417f758e1afb8abbb46f135152e64b0061a1bc26602a606f6f6f"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/presentation-compatibility.json",
+      "sha256": "c87b314c080fe3f8f5c20be30258bfae60fdba2729c04903647fd4e8d0f20e06"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T01.reference-captures-01/manifest.json",
+      "producer_commit": "eb14edfffe5663b6c0ca11bc9d4bd568430395ae",
+      "delivery_commit": "607f6fd37fb80ff449b83021063e677384dd6f40",
+      "sha256": "05f968ddaca81ff4abcb925c2dc8b32e16b82d34dd781572f5a8f9f1451a899e"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T01.predecessor-before-02.json",
+      "sha256": "bcb1bc29eb2a101c5bb1ac3ad5798cf1a67557d71cd16a5dc84e2c4980159c21"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T01.predecessor-after-02.json",
+      "sha256": "220fb5b27d926b8433794a05da203feb7590598727be89ddaafc2a225edc24eb"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T01.product-conformance-01.json",
+      "sha256": "48dd3a6649d8a9c4783fc89e29c9bed15c47e3b76919c0d1b3c8398fe315c026",
+      "disposition": "Retained nonpassing broad command; native Clippy follow-up is not waived."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T01.product-frame-conformance-01.json",
+      "sha256": "30cfdbe98731da8ca01723281cfd315023f5dbf528cc1b5305d7e5a80725659d",
+      "disposition": "Passing existing built renderer boundary; not real native qualification."
+    }
+  ],
+  "criterion_dispositions": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "evidence": "The exact reviewed bf0050b3 proposal/package38dbe5b0 is published at0460b2af60643172504e1abe0f185e010f171700 as package8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea. The actual authority-bound verifier authenticates approved packet2160cc99, immutable A09 approval and exact proposed inventory/bytes, permitting only the enumerated approval metadata and derived manifest substitutions. Independent real-Git replay rejects a self-consistent forged initial CSS publication. Checkpoint893de39f is the immediate parent of the downstream rebind5e914322, not a retrospective approval."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "evidence": "Original semantic sources are pinned to approved7ec1b27d72c189216d7a203586b7339202733531; the generator retains fixed acceptable hashes and generates unchanged outputs from a disposable tree without Git or active design sources. Rewritten adjacent authority cannot bless changed semantic input. Independently compared all eight generated semantic/schema/fixture digests at claim base and candidate and compared complete before02/after02 catalog, accepted intent/history, stage/support-return and persisted row projections. Accepted intent is revision3 with three history entries; all16 settings rows, zero aggregate rows and zero schema-migration rows are identical. This actual Core/services/SQLite proof is explicitly synthetic plaintext. It does not establish encrypted/native storage qualification or pretend that zero migration rows exercise a populated database-migration history. No runtime Git, semantic migration or relabeling is added."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "evidence": "The witness binds the exact approved presentation package and immutable semantic authority. Only canonical root reference_id/version text substitutions are admitted; remaining bytes/order must agree. Independent tests reject missing/uncommitted/duplicate/stale witnesses, staged/restored inputs, committed semantic substitutions hidden by stat flags, mutation during verification and self-consistent unapproved publication. The active1.6 load path invokes compatibility validation and the independent missing-witness orchestration test fails closed. This is a build/qualification boundary; runtime catalog generation remains Git-independent."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "evidence": "Independently authenticated all66 distinct committed PNG cases and hashes at1440x900, all ten producer input hashes at their original producer commit, and prior/new baseline hashes. The separate accepted checkpoint independently re-rendered all66 observations with unchanged pinned Windows/Playwright/Chromium/fonts/viewports/settings and visually inspected all six changed observations. This reviewer additionally viewed actual Projects-light and Audit-Lineage-dark PNGs. The assessment truthfully explains the two new-project, two projects and two stale-audit-baseline replacements; the other60 are fresh observations with equal hashes. Existing actual-build visual report is passing and bound to1.6. Historical baselines and failures remain intact; this does not close later product/native experience qualification."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "evidence": "The post-checkpoint delta is limited to enumerated assembly/configuration/audit presentation consumers and affected verification/tests. Both builds and the retained token/route/workflow/accessibility/visual reports pass under presentation1.6; the existing built renderer retains semantic1.5 profiles. Native/Cargo, Core semantic implementation, generated semantic payloads and token transport have no task delta. The complete A08 backlog record remains unchanged through frozen submission. Delivery ECR5/6/7 projections identify their immutable historical1.5 sources and explicitly distinguish published1.6 from an adoption-controlled effective-reference change; they do not rewrite old authority. Separate owner-requested synthetic usability artifacts and the T03 acceptance note are disclosed in the exact inventory, not treated as early implementation or W1 qualification."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_semantic_sources_are_original_approved_bytes_and_generate_without_git tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_bridge_allows_only_exact_root_metadata_mapping tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_witness_rejects_missing_uncommitted_and_duplicate_records tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_witness_authenticates_real_git_publication_and_inputs",
+      "result": "PASS: four tests in63.680s, independently run at candidate7a46e91a during final-review preparation. The real-Git cases modify only disposable fixtures. Owner-context execution avoids the previously demonstrated clone-ownership sandbox limitation without changing Git configuration."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness tests.desktop.test_ui_conformance.UiConformanceTests.test_canonical_token_and_route_contracts_pass_with_normative_mapping",
+      "result": "PASS: two tests in3.660s after frozen R01 submission. No source changed after candidate."
+    },
+    {
+      "command": "Read-only task_submission_packet_errors and exact Git/JSON comparison of frozen task, manifest, candidate and submission delivery",
+      "result": "PASS: R01, owner codex, exact evidence/packet/criteria/verification-selection hashes and165 paths; zero prior task attempts/open findings. Candidate7a46e91a is the eight-evidence-file child of tested5e914322. Submission8d4a6fab is the candidate's sole child and changes exactly nine evidence/backlog/generated-view paths, with no product/reference/test mutation. The complete paused A08 row is unchanged."
+    },
+    {
+      "command": "Read-only exact before02/after02 projection, row, helper hash, ancestry and claim-base/candidate semantic-blob comparison",
+      "result": "PASS: complete catalog/intent/projection/immutableRows equality, accepted revision3 and three history entries, exact supporting return,16 settings rows, eight unchanged semantic digests and identical retained helper hashes. Before producer precedes publication; after producer follows it. This reviewer inspected the helper and reports, not reran the one-shot writer or modified the preserved fixture."
+    },
+    {
+      "command": "Read-only committed capture-manifest inventory, PNG signature/dimension/hash, producer-input and baseline authentication; representative view_image inspection",
+      "result": "PASS:66 unique cases/files at1440x900, ten original producer hashes and both historical/new baseline hashes. Viewed Projects-light and Audit-Lineage-dark. The separate checkpoint's fresh66 rerender is explicitly attributed to its own reviewer and not counted as this reviewer's rerun."
+    },
+    {
+      "command": "Inspect and authenticate retained five conformance reports, product-frame report, broad failed command and scope/deferral note",
+      "result": "PASS for evidence truth and bounded selection: five1.6 reports are ok=true with no errors; product-frame is ok=true with no errors; broad product remains ok=false with native Clippy diagnostics. All inspected committed report/notes bytes authenticate. The root's sixteen-test, lint/types, ten Audit tests and full renderer/build executions are retained implementer evidence, not represented as independent reruns here."
+    }
+  ],
+  "advisory_preflight_replay": [
+    "Prior read-only advice identified self-consistent initial publication substitution. The exact approved-proposal comparator and independently passing forged-publication negative close that bounded implementation risk.",
+    "Prior read-only advice identified semantic-input Git/stability authentication gaps. Independent staged/restored, stat-hidden committed substitution and late mutation cases pass. These were advisory preflight observations, not invented earlier task review rounds."
+  ],
+  "retained_limits_and_follow_up": [
+    "The broad desktop command exits1 after native Clippy exits101. supervisor.rs:1372/1376 nonminimal_bool and application_lock.rs:1336/1346 needless_borrow are preexisting unchanged source diagnostics, not evidence of a demonstrated T01 behavior failure. Deferral is lawful for these five presentation/compatibility criteria only. Close them with affected T02/T03 native work and before T04 qualification without suppressing warnings or weakening assertions.",
+    "T02 retains exact compiled native/Core routes, multiline narrative and startup/readiness/retry proof. T03 retains actual protected native picker, ready-to-use default create parent in dev/production, cancellation/races/no-overwrite proof. Browser adapters do not satisfy those boundaries.",
+    "T04, independent slice/amendment exit and correctionReturn remain pending. A08 effective child spacing/full-height sidebar and its actual product capture/performance qualification remain open after lawful return. W1 full Windows/repository qualification and human G1 approval remain pending.",
+    "The initial draft-only predecessor, earlier fixture/ownership/checkpoint-wrapper failures, vitest-shim failure and broad native failure remain historical observations. This review's first delivery-path assertion was too narrow because it omitted three legitimate regenerated historical ECR pages; exact diff inspection confirmed their immutable-source projection changes, and the corrected exact nine-path replay passed. No product test or evidence was altered to obtain that result.",
+    "This reviewer never accessed the protected W1.A04.B00 witness, the separate planning-initiation worktree, or blind participant transcripts during this task review. Exact filename inventory does not claim transcript-content review. The separate earlier search incident belongs to another agent/session and is not this reviewer's action."
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": [],
+  "authority_limits": {
+    "taskDispositionOnly": true,
+    "amendmentAdoptionApproved": false,
+    "effectiveA08ReferenceOverlayApproved": false,
+    "localMainIntegrationApproved": false,
+    "waveExitApproved": false,
+    "releaseApproved": false
+  }
+}
