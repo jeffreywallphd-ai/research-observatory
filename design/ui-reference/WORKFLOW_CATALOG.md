@@ -1,7 +1,7 @@
 # Research Observatory Use-Case and Workflow Catalog
 
-**Version:** 1.5
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.5`
+**Version:** 1.6
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.6`
 
 The selected use case is stored in the versioned Research Intent Contract. It orders the primary navigation, defaults, checkpoints, and expected outputs. All tools remain accessible as supporting tools.
 

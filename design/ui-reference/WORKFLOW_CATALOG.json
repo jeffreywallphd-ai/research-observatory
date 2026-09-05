@@ -1,6 +1,6 @@
 {
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.5",
-  "version": "1.5",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.6",
+  "version": "1.6",
   "selection": {
     "when": "project creation",
     "governed_by": "Research Intent Contract",

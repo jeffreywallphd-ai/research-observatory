@@ -242,7 +242,7 @@ def shell(page_key: str, title: str, subtitle: str, content: str, actions: str =
                 <span class="trust-point">{icon('link', 'icon icon-sm')} Citations resolve to source passages</span>
                 <span class="trust-point">{icon('eye', 'icon icon-sm')} AI judgments remain inspectable and contestable</span>
               </div>
-              <span>Mock data · Academic Minimal v1.5</span>
+              <span>Mock data · Academic Minimal v1.6</span>
             </footer>
           </main>
         </div>
@@ -345,6 +345,52 @@ def page_home() -> str:
     """)
     return shell("project-home", "Generative AI and Creative Cognition", "Exploring how generative AI shapes creative thought, ideation, evaluation, and scholarly opportunity.", content, actions, "Project home")
 
+def directory_picker(field_id: str, label: str, purpose: str, location: str = "") -> str:
+    """One presentation composition; mock intent only, with no filesystem access."""
+    action = "Change folder…" if location else "Choose folder…"
+    shown_location = escape(location) if location else "No folder selected"
+    return dedent(f"""
+      <div class="field" role="group" aria-labelledby="{field_id}-label">
+        <span class="field-label" id="{field_id}-label">{escape(label)}</span>
+        <span class="field-help" id="{field_id}-help">{escape(purpose)} Selecting a folder does not create or open a project.</span>
+        <output class="directory-location" id="{field_id}-location" aria-labelledby="{field_id}-label">{shown_location}</output>
+        <div><button type="button" class="btn" id="{field_id}-choose" aria-describedby="{field_id}-help {field_id}-location" data-toast="Reference only: the desktop app opens the native folder dialog. No folder was selected.">{icon('folder')} {action}<span class="sr-only"> — {escape(label)}</span></button></div>
+      </div>
+    """)
+
+
+def directory_state_examples() -> str:
+    return dedent("""
+      <details class="section">
+        <summary class="field-label">Folder-selection states · separate reference examples</summary>
+        <div class="grid grid-2 section">
+          <article class="notice"><div><div class="notice-title">Choosing a folder…</div><div class="notice-text">Complete or cancel the native dialog. Other folder buttons and project submission remain unavailable while it is open.</div></div></article>
+          <article class="notice"><div><div class="notice-title">Selection cancelled</div><div class="notice-text">Your previous folder and form entries are unchanged. Focus returns to Choose folder or Change folder.</div></div></article>
+          <article class="notice warning"><div><div class="notice-title">This folder cannot be used</div><div class="notice-text">Choose an accessible local folder. Your project name and objective have been kept. No project action was performed.</div></div></article>
+          <article class="notice warning"><div><div class="notice-title">The destination already exists</div><div class="notice-text">Change the project name or choose a different parent folder. The existing folder will not be overwritten.</div></div></article>
+          <article class="notice warning"><div><div class="notice-title">The folder chooser is unavailable</div><div class="notice-text">Retry from the folder button. Do not type a path or grant wider filesystem permissions to bypass this state.</div></div></article>
+          <article class="notice"><div><div class="notice-title">Application locked or closed</div><div class="notice-text">Dismiss the chooser and discard late results. Clear protected form data; a fresh unlock starts without restoring a project or selected location.</div></div></article>
+        </div>
+      </details>
+    """)
+
+
+def project_recovery_examples() -> str:
+    return dedent("""
+      <details class="section">
+        <summary class="field-label">Readiness and recovery · separate reference examples</summary>
+        <div class="grid grid-2 section">
+          <article class="notice"><div><div class="notice-title">Core is starting…</div><div class="notice-text">Waiting for the local service. Your entries are kept; no project action has been sent.</div></div></article>
+          <article class="notice"><div><div class="notice-title">Loading research workflows…</div><div class="notice-text">Create becomes available after the authentic catalog has loaded and the form is valid. No substitute catalog is used.</div></div></article>
+          <article class="notice warning"><div class="field"><div class="notice-title">Research workflows could not be loaded</div><div class="notice-text">Retry the catalog read. This does not create or open a project.</div><div><button type="button" class="btn" data-toast="Reference only: retry the read-only workflow catalog request.">Retry loading workflows</button></div></div></article>
+          <article class="notice warning"><div class="field"><div class="notice-title">The local service is not ready</div><div class="notice-text">Check Core status, then explicitly retry startup. Project operations are never replayed automatically.</div><div><button type="button" class="btn" data-toast="Reference only: request a bounded local Core startup retry.">Retry Core startup</button></div></div></article>
+          <article class="notice warning"><div class="field"><div class="notice-title">The project action did not complete</div><div class="notice-text">Your entries are kept. Review Core status and the destination before retrying the action; an uncertain outcome is not permission to create a duplicate.</div><code class="small">RO-CORE-PROJECT-ACTION-FAILED</code></div></article>
+          <article class="notice warning"><div><div class="notice-title">Review the project details</div><div class="notice-text">Name the invalid field and associate its help with the control. Narrative objectives accept line breaks; blank or invalid input cannot be submitted.</div></div></article>
+        </div>
+      </details>
+    """)
+
+
 def page_projects() -> str:
     actions = button("Import project bundle", kind="subtle", icon_name="upload", toast="Bundle chooser opened.") + button("New local project", "new-project.html", kind="primary", icon_name="plus")
     cards = []
@@ -358,6 +404,15 @@ def page_projects() -> str:
         cards.append(f"""<article class="card card-lg hoverable"><div class="card-header"><div class="source-logo">RO</div>{badge(state, kind)}</div><h2 class="section-title" style="font-family:var(--font-serif)">{title}</h2><p class="small muted">{mode}</p><div class="divider"></div><div class="grid grid-2"><div><div class="tiny muted">Corpus</div><div class="small strong">{corpus}</div></div><div><div class="tiny muted">Workflow position</div><div class="small strong">{progress}</div></div></div><div class="source-actions" style="margin-top:1rem"><a class="btn btn-primary" href="index.html">Open project</a><button class="btn" data-toast="Project actions opened.">•••</button></div></article>""")
     content = dedent(f"""
       <div class="notice"><span>{icon('info')}</span><div><div class="notice-title">Each project has a primary use case</div><div class="notice-text">The selected use case orders the guided workflow and recommended next steps. The full toolset remains available, and changing use case creates a versioned impact preview rather than rewriting history.</div></div></div>
+      <section class="card card-lg section">
+        <div class="card-header"><div><h2 class="card-title">Open an existing local project</h2><div class="card-subtitle">Browse to its folder; there is no path to remember or type.</div></div>{badge('Local only','success')}</div>
+        <div class="grid">
+          {directory_picker('open-project-folder', 'Project folder', 'Choose an existing Research Observatory project folder.')}
+          <div class="field"><span class="field-help">Choose a folder before Open becomes available. Core will validate the package and access.</span><div><button type="button" class="btn btn-primary" disabled>Open selected project</button></div></div>
+        </div>
+        {directory_state_examples()}
+        {project_recovery_examples()}
+      </section>
       <section class="grid grid-3 section">{''.join(cards)}</section>
       <section class="grid grid-2 section">
         <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">Local project homes</h2><div class="card-subtitle">Complete PC/lab projects remain usable offline.</div></div>{badge('4 projects','success')}</div><div class="list"><div class="list-item"><span class="list-leading">{icon('shield')}</span><span class="list-content"><span class="list-title">Protected project data</span><span class="list-meta">Encrypted local database, rights-aware object storage, Windows credential-backed key</span></span></div><div class="list-item"><span class="list-leading">{icon('download')}</span><span class="list-content"><span class="list-title">Portable project bundles</span><span class="list-meta">Verified backup, transfer, and recovery without hosted dependency</span></span></div></div></article>
@@ -459,7 +514,18 @@ def page_new_project() -> str:
       <div class="stepper"><div class="step complete"><span class="step-number">✓</span><span>Project basics</span></div><div class="step active"><span class="step-number">2</span><span>Primary use case</span></div><div class="step"><span class="step-number">3</span><span>Initial boundaries</span></div><div class="step"><span class="step-number">4</span><span>Review</span></div></div>
       <section class="grid grid-main-aside">
         <div class="grid">
-          <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">Project basics</h2><div class="card-subtitle">A local project home is complete and usable without a server on a supported desktop platform.</div></div>{badge('Local desktop','success')}</div><div class="grid grid-2"><div class="field"><label class="field-label">Project name</label><input class="input" value="Generative AI and Creative Cognition"></div><div class="field"><label class="field-label">Project folder</label><input class="input" value="Research Observatory Projects/GenAI-Creative-Cognition"></div></div></article>
+          <article class="card card-lg">
+            <div class="card-header"><div><h2 class="card-title">Project basics</h2><div class="card-subtitle">A local project home is complete and usable without a hosted service.</div></div>{badge('Local desktop','success')}</div>
+            <div class="grid">
+              <div class="field"><label class="field-label" for="new-project-name">Project name</label><input class="input" id="new-project-name" value="Generative AI and Creative Cognition" aria-describedby="new-project-name-help"><span class="field-help" id="new-project-name-help">Use a descriptive name. The application suggests the new folder name for you.</span></div>
+              {directory_picker('new-project-parent', 'Parent folder', 'Choose where the new project folder will be created.', r'C:\Users\Researcher\Documents\Research Observatory Projects')}
+              <div class="field"><span class="field-label" id="new-project-destination-label">New project destination</span><output class="directory-location" aria-labelledby="new-project-destination-label">C:&#92;Users&#92;Researcher&#92;Documents&#92;Research Observatory Projects&#92;generative-ai-and-creative-cognition</output><span class="field-help">Illustrative location. Review the full destination before Create; existing folders are never overwritten.</span></div>
+              <div class="field"><label class="field-label" for="new-project-objective">Research objective</label><textarea class="textarea" id="new-project-objective" aria-describedby="new-project-objective-help">Understand how generative AI shapes creative cognition.
+Compare mechanisms, boundary conditions, and the strength of available evidence.</textarea><span class="field-help" id="new-project-objective-help">Describe the scholarly objective in your own words. Line breaks are supported.</span></div>
+            </div>
+            {directory_state_examples()}
+            {project_recovery_examples()}
+          </article>
           <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">What are you trying to accomplish?</h2><div class="card-subtitle">Choose the closest primary use case. This controls the ordered workflow, navigation, defaults, checkpoints, and recommended outputs; it does not hide other tools.</div></div>{badge('14 workflows','brand')}</div>{''.join(group_html)}</article>
         </div>
         <aside class="grid" style="align-content:start"><article class="card card-lg sticky-card"><div class="card-header"><h2 class="card-title">Your guided path</h2><span class="badge badge-brand" data-current-workflow-title>Empirical study to article</span></div><div class="workflow-map vertical" data-workflow-map></div></article><article class="notice"><span>{icon('info')}</span><div><div class="notice-title">Reversible and versioned</div><div class="notice-text">You can change use case later through the Research Intent Contract. The platform previews changes to schemas, checkpoints, outputs, and staleness before applying them.</div></div></article><article class="notice warning"><span>{icon('shield')}</span><div><div class="notice-title">Research authority remains human</div><div class="notice-text">Study design, ethics, result interpretation, authorship, reviewer dispositions, and final publication claims require named researcher approval.</div></div></article></aside>
@@ -1102,7 +1168,7 @@ def page_style_guide() -> str:
     def swatches(items):
         return ''.join([f'<div class="token-swatch"><div class="token-color" style="--swatch:{hexv}"></div><div class="token-meta"><div class="token-name">{name}</div><div class="token-value">{token}<br>{hexv}</div></div></div>' for name,hexv,token in items])
     content = dedent(f"""
-      <div class="notice"><span>{icon('info')}</span><div><div class="notice-title">Approved experience reference: Academic Minimal 1.3</div><div class="notice-text">Crisp white and cool-gray light surfaces, deep navy dark surfaces, restrained royal-blue interaction accents, serif display headings, compact sans-serif workbench text, and minimal decorative effects. Tokens, semantics, page contracts, and required interaction behavior are normative; names, counts, vendors, sample prose, and inactive mock actions are illustrative.</div></div></div>
+      <div class="notice"><span>{icon('info')}</span><div><div class="notice-title">Experience reference: Academic Minimal 1.6</div><div class="notice-text">Crisp white and cool-gray light surfaces, deep navy dark surfaces, restrained royal-blue interaction accents, serif display headings, compact sans-serif workbench text, and minimal decorative effects. Tokens, semantics, page contracts, and required interaction behavior are normative; names, counts, vendors, sample prose, and inactive mock actions are illustrative.</div></div></div>
 
       <section class="section" id="principles"><div class="section-header"><div><h2 class="section-title">1. Visual principles</h2><div class="section-description">The interface should communicate rigor before novelty and depth before decoration.</div></div></div><div class="grid grid-4"><article class="card card-lg"><h3 class="card-title">Evidence before prose</h3><p class="small muted">Primary actions expose sources, passages, status, and uncertainty. Generated prose is downstream.</p></article><article class="card card-lg"><h3 class="card-title">Quiet structure</h3><p class="small muted">Use borders, spacing, alignment, and typographic hierarchy before shadows or color.</p></article><article class="card card-lg"><h3 class="card-title">Blue means interaction</h3><p class="small muted">Royal blue identifies selection, active navigation, links, focus, and primary actions—not all data.</p></article><article class="card card-lg"><h3 class="card-title">State colors have fixed meaning</h3><p class="small muted">Semantic and evidence-state colors must not be reassigned by page or chart.</p></article></div></section>
 
@@ -1124,6 +1190,15 @@ def page_style_guide() -> str:
     """)
     content += dedent(f"""
       <section class="section" id="workflow-navigation"><div class="section-header"><div><h2 class="section-title">10. Guided workflow and adaptive navigation</h2><div class="section-description">The interface is organized around scholarly objectives rather than presenting every workspace as an equal disconnected tool.</div></div></div><div class="grid grid-3"><article class="card card-lg"><h3 class="card-title">Primary use case</h3><p class="small muted">Selected during project creation and governed by the Research Intent Contract. It controls ordered steps, defaults, checkpoints, recommended outputs, and next-step rationale.</p></article><article class="card card-lg"><h3 class="card-title">Guided workflow</h3><p class="small muted">Numbered steps use 28 px markers, 40 px minimum rows, brand blue for current, success green for complete, neutral slate for upcoming, violet outline for optional, and warning amber only for attention.</p></article><article class="card card-lg"><h3 class="card-title">All tools remain available</h3><p class="small muted">A secondary “All tools” disclosure preserves expert access. When a user opens a supporting tool, the context bar explains that it is outside the primary sequence and offers a return to the current step.</p></article></div><div class="workflow-context example"><div class="workflow-context-main"><span class="badge badge-brand">Theory synthesis</span><strong>Step 6 of 10 · Evidence Matrix</strong><span class="small muted">Verify comparable evidence before building theory and claim relations.</span></div><div class="workflow-context-actions"><button class="btn">← Previous</button><button class="btn btn-primary">Next: Theory Map →</button></div></div><div class="workflow-map" style="margin-top:1rem"><div class="workflow-map-step complete"><span>1</span><small>Intent</small></div><div class="workflow-map-step complete"><span>2</span><small>Search</small></div><div class="workflow-map-step complete"><span>3</span><small>Corpus</small></div><div class="workflow-map-step current"><span>4</span><small>Evidence</small></div><div class="workflow-map-step"><span>5</span><small>Theory</small></div><div class="workflow-map-step"><span>6</span><small>Synthesis</small></div></div><div class="notice" style="margin-top:1rem"><span>{icon('info')}</span><div><div class="notice-title">Workflow rules</div><div class="notice-text">Project creation must offer all fourteen approved use cases. Changing use case is versioned and previews effects. Linear workflows may include optional or cyclical steps, but the user always sees current position, rationale, previous/next actions, incomplete gates, and the full tool inventory.</div></div></div></section>
+    """)
+    content += dedent(f"""
+      <section class="section" id="local-folders"><div class="section-header"><div><h2 class="section-title">11. Local folder selection and project recovery</h2><div class="section-description">Shared controls remove path typing while preserving explicit actions and local security.</div></div></div>
+        <article class="card card-lg">
+          {directory_picker('guide-parent', 'Parent folder', 'Choose an existing local folder.')}
+          {directory_state_examples()}
+          {project_recovery_examples()}
+        </article>
+      </section>
     """)
     return shell("style-guide", "Academic Minimal Style Guide", "Implementation specification for the preferred Research Observatory visual system across light and dark themes.", content, actions, "Design system")
 
@@ -1153,7 +1228,7 @@ def style_guide_markdown() -> str:
     return (ROOT / "STYLE_GUIDE_SOURCE.md").read_text(encoding="utf-8")
 
 def readme_markdown() -> str:
-    return "# Research Observatory UI Reference\n\nThis directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.5**.\n\n## Start with the workflow\n\nOpen `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, `audit-lineage.html` for controlled recalculation, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.\n\n## Authority\n\n- `assets/tokens.css`, semantic rules in `STYLE_GUIDE.md`, the fourteen profiles in `WORKFLOW_CATALOG.*`, route inventory, required page regions, accessibility behavior, and approved visual baselines are normative once this revision is approved.\n- Mock names, values, studies, providers, dates, prose, charts, and inactive actions are illustrative and do not create backend scope.\n- `APPROVAL.yaml` records approval status; `REFERENCE_MANIFEST.yaml` identifies governed files; `CAPABILITY_COVERAGE.*` maps capabilities to pages.\n- Intentional user-facing changes require an updated proposed reference, validation, human approval, and only then application implementation.\n\n## Open locally\n\n```bash\npython -m http.server 8080\n```\n\nThen open `http://localhost:8080/prototype-index.html`.\n\n## Shared implementation\n\n- `assets/tokens.css` — canonical light/dark tokens.\n- `assets/app.css` — shared shell, workflow navigation, components, layouts, data displays, and responsive behavior.\n- `assets/app.js` — theme, sidebar, tabs, mock actions, use-case selection, adaptive workflow ordering, and context guidance.\n- `STYLE_GUIDE.md` / `style-guide.html` — technical and visual specification.\n- `WORKFLOW_CATALOG.md` / `.json` — authoritative use-case sequences and outputs.\n- `CAPABILITY_COVERAGE.md` / `.json` — page contracts and capability mapping.\n- `scripts/build_mockups.py` — deterministic page generator.\n- `scripts/verify_site.py` — reference integrity checks.\n\nUniversity/cloud administrator consoles remain intentionally deferred and require active W10/W11 requirements and separately approved page contracts.\n"
+    return "# Research Observatory UI Reference\n\nThis directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.6**. This copy is an inert ECR-0008 proposal, not the active approved reference. See `APPROVAL.yaml` for its pending status.\n\n## Start with the workflow\n\nOpen `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, `audit-lineage.html` for controlled recalculation, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.\n\n## Authority\n\n- `assets/tokens.css`, semantic rules in `STYLE_GUIDE.md`, the fourteen profiles in `WORKFLOW_CATALOG.*`, route inventory, required page regions, accessibility behavior, and approved visual baselines are normative once this revision is approved.\n- Mock names, values, studies, providers, dates, prose, charts, and inactive actions are illustrative and do not create backend scope.\n- `APPROVAL.yaml` records approval status; `REFERENCE_MANIFEST.yaml` identifies governed files; `CAPABILITY_COVERAGE.*` maps capabilities to pages.\n- Intentional user-facing changes require an updated proposed reference, validation, human approval, and only then application implementation.\n\n## Open locally\n\n```bash\npython -m http.server 8080\n```\n\nThen open `http://localhost:8080/prototype-index.html`.\n\n## Shared implementation\n\n- `assets/tokens.css` — canonical light/dark tokens.\n- `assets/app.css` — shared shell, workflow navigation, components, layouts, data displays, and responsive behavior.\n- `assets/app.js` — theme, sidebar, tabs, mock actions, use-case selection, adaptive workflow ordering, and context guidance.\n- `STYLE_GUIDE.md` / `style-guide.html` — technical and visual specification.\n- `WORKFLOW_CATALOG.md` / `.json` — authoritative use-case sequences and outputs.\n- `CAPABILITY_COVERAGE.md` / `.json` — page contracts and capability mapping.\n- `scripts/build_mockups.py` — deterministic page generator.\n- `scripts/verify_site.py` — reference integrity checks.\n\nUniversity/cloud administrator consoles remain intentionally deferred and require active W10/W11 requirements and separately approved page contracts.\n"
 
 def inventory_markdown() -> str:
     return (ROOT / "PAGE_INVENTORY_SOURCE.md").read_text(encoding="utf-8")

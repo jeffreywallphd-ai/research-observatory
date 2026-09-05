@@ -1,18 +1,30 @@
 # Research Observatory — Academic Minimal Style and Experience Guide
 
-**Version:** 1.4
-**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.4`
-**Purpose:** Approved implementation specification for the crisp light / deep-navy Research Observatory interface on Windows, macOS, and Linux desktops.
+**Version:** 1.6
+**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.6`
+**Purpose:** Proposed implementation specification; not active authority until exact human approval. The existing crisp light / deep-navy visual system and workflow semantics are retained.
 
 ## 1. Authority and design-first change order
 
-This guide, `assets/tokens.css`, `WORKFLOW_CATALOG.*`, `CAPABILITY_COVERAGE.*`, `SITE_MANIFEST.json`, and the linked HTML pages form the approved experience reference. Tokens, semantic states, page regions, workflow order, accessibility behavior, and approved visual baselines are normative. Mock names, values, studies, vendors, prose, and inactive controls are illustrative.
+This guide, `assets/tokens.css`, `WORKFLOW_CATALOG.*`, `CAPABILITY_COVERAGE.*`, `SITE_MANIFEST.json`, and the linked HTML pages form the proposed experience reference. On approval, tokens, semantic states, page regions, workflow order, accessibility behavior, and approved visual baselines are normative. Mock names, values, studies, vendors, prose, and inactive controls are illustrative.
 
 Intentional experience changes are design-first: update the guide, workflow/page contracts, and affected HTML; run reference validation; obtain explicit human approval and a new reference ID; only then implement application code. Defect fixes may restore the current approved reference without redesign.
 
 ### 1.1 Application-wide security governance form
 
 Application Settings is distinct from Project Settings and preserves the current project and guided-workflow position. Security & sign-in is scoped to the local application on the current Windows account. Consequential choices use keyboard-selectable radio cards that state protection, prerequisites, availability, and recovery effects; the default is labeled in text. Reducing protection requires successful same-user proof before warning and confirmation. Provider cancellation, denial, busy, unavailable, or failure states restore focus, announce the outcome, change nothing, and never trigger a silent fallback. Locked and recovery surfaces disclose no project name, path, command, research content, credential, PIN, or biometric.
+
+### 1.2 Local folders and project recovery
+
+Every editable directory location uses one shared folder-selection composition: a visible label and help text, a clearly named Choose folder… / Change folder… button, and selectable, wrapping read-only location text. The button opens the native operating-system directory dialog. Never require path typing, an editable fallback, browser directory enumeration, or an imitation filesystem tree. Read-only diagnostic paths remain outputs, not selection controls.
+
+Create uses a human project name and an existing parent folder. Derive the child folder name automatically and show the full destination before explicit Create. Preserve spaces and Unicode in the selected parent. Keep the proposed name stable during requests and ambiguous retries; if the name has no usable ASCII slug, show a stable project-identifier suggestion. An existing destination is never overwritten or silently numbered: preserve the form and offer changing the project name or parent folder. Open uses an existing project folder, its read-only preview, then explicit Open. Selection alone never opens, creates, moves or enumerates a project.
+
+Cancel and Escape preserve the prior selection and form data, return focus to the initiating control and perform no project action. Selection failure offers a safe explanation and retry, not raw exception text or a path-entry workaround. Show pending state, prevent overlapping dialogs and duplicate submission, and discard late results after navigation, locking or closing. Locking clears protected paths and form data; a fresh unlock never restores them. Normal Core permissions, path validation, exclusive access, package compatibility and no-overwrite safeguards still apply after selection.
+
+Distinguish Core starting/not ready, catalog loading, catalog failure, input validation and failed project operations. Show the current state near the action it affects, with safe help and a bounded code when available. Read-only Retry reloads the catalog; explicit Retry Core startup may restart the local service. Neither replays a create/open/archive/delete request. Keep valid form input during recoverable errors; do not invent a fallback workflow catalog or announce readiness before native confirmation. The illustrative state examples in Projects and New Project are separate scenarios, not simultaneous application status.
+
+Use existing field, toolbar, notice, card, typography and spacing primitives. A shared location-output rule permits long paths to wrap and be selected; a shared disabled-button state distinguishes unavailable actions without relying on color alone (the nearby help names the prerequisite). Shared button keyboard focus uses the existing focus-ring token, remains visible over ordinary and hovered button shadows, and is verified by real Tab traversal in both themes. Do not repeat per-page folder styling or introduce a second token system. Reference mock buttons explain native intent only: they are not evidence that a native dialog or Core operation has executed.
 
 ## 2. Design character
 
@@ -74,6 +86,8 @@ Body text may not fall below 12 px. Long manuscript text uses a 16–17 px serif
 The top bar contains product identity, current project, universal search, notification/help actions, and user or local-profile controls. The sidebar gives the selected use case an ordered, numbered primary workflow. Completed, current, upcoming, optional, blocked, and attention-required steps must be visually distinguishable. All tools remain accessible in a secondary disclosure. Opening a supporting tool preserves workflow context and offers return to the current step.
 
 Project creation presents the approved workflow catalog. Changing use case previews navigation and output effects and versions the Research Intent Contract. Every workflow page shows current step, rationale, previous/next action, relevant quality gate, and expected output.
+
+In the product's side-by-side layout, the shared sidebar surface reaches the content/footer boundary even when content exceeds the viewport. Navigation remains scrollable and keyboard reachable. In the narrow stacked layout, navigation precedes content without overlap; matching the sidebar bottom to the footer is not applicable. Validate actual rendered boundaries and effective child spacing rather than declared CSS gaps alone.
 
 ## 7. Research-production workspaces
 
