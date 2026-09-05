@@ -1,0 +1,999 @@
+{
+  "schemaVersion": "1.0",
+  "taskId": "W1.A09.T02",
+  "baseCommit": "cc1d0407e6882b724e628caa136dfe4b9569410c",
+  "testedCommit": "3c020e36c67249712621f07036d921fe0ebafedf",
+  "ok": true,
+  "boundary": "Exact Git trees for existing Core semantics, OpenAPI/schemas, semantic workflow sources, native startup/unlock/generation owners, UI reference and baselines; no implementation, migration or governed experience drift in these paths",
+  "treeSha256": "93e5124c3442038cfc72f3bf4e67835f3d7dd8ba10dc6287b710600cdec89d96",
+  "unchangedBlobs": [
+    {
+      "path": "apps/desktop/src-tauri/src/application_lock.rs",
+      "gitBlob": "434f2c1d02b4d5cb67cdd8b71893343a90e47c94"
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/application_lock_verification.rs",
+      "gitBlob": "31077b5d27d59210032c176b64cd571665f6edad"
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/application_sign_in_policy.rs",
+      "gitBlob": "aa03c4ccc1354b6febeb72be419df39560bb9c56"
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/lib.rs",
+      "gitBlob": "47ba555190d1d542c6d53cd2e2d1424a2a4e6219"
+    },
+    {
+      "path": "design/ui-reference/APPROVAL.yaml",
+      "gitBlob": "50f0d7b63cdf5a72df7cdd2d829d2072ec7c58a8"
+    },
+    {
+      "path": "design/ui-reference/CAPABILITY_COVERAGE.json",
+      "gitBlob": "f2bce8dc9ac734f55537543bf6289781f22197f5"
+    },
+    {
+      "path": "design/ui-reference/CAPABILITY_COVERAGE.md",
+      "gitBlob": "bb1b7206e0c6200db11951549383971863c24e45"
+    },
+    {
+      "path": "design/ui-reference/PAGE_INVENTORY.md",
+      "gitBlob": "9b58d84b05f9d6dbcb9fa2d90e115a673690689a"
+    },
+    {
+      "path": "design/ui-reference/PAGE_INVENTORY_SOURCE.md",
+      "gitBlob": "9b58d84b05f9d6dbcb9fa2d90e115a673690689a"
+    },
+    {
+      "path": "design/ui-reference/README.md",
+      "gitBlob": "ee54c4b975620aa93966ee646e4a8d6450f3cb47"
+    },
+    {
+      "path": "design/ui-reference/REFERENCE_MANIFEST.yaml",
+      "gitBlob": "73f0bc46c649bc53174d406b2510aa1c4855b169"
+    },
+    {
+      "path": "design/ui-reference/SHA256SUMS.txt",
+      "gitBlob": "782e99b5ed213bfc889a5bf3539f3232b82e2db6"
+    },
+    {
+      "path": "design/ui-reference/SITE_MANIFEST.json",
+      "gitBlob": "a364491b61d536fad67fc1e3234fd5316f93e080"
+    },
+    {
+      "path": "design/ui-reference/STYLE_GUIDE.md",
+      "gitBlob": "7f1ad75afbb1787768afd04e090bb74e4733ce21"
+    },
+    {
+      "path": "design/ui-reference/STYLE_GUIDE_SOURCE.md",
+      "gitBlob": "7f1ad75afbb1787768afd04e090bb74e4733ce21"
+    },
+    {
+      "path": "design/ui-reference/VALIDATION_REPORT.md",
+      "gitBlob": "dc345a69cd0ccc6e76d8081b18b66107cfc4f78c"
+    },
+    {
+      "path": "design/ui-reference/WORKFLOW_CATALOG.json",
+      "gitBlob": "2636597b6b86f4827e8c73682ef8be46ccb6acc2"
+    },
+    {
+      "path": "design/ui-reference/WORKFLOW_CATALOG.md",
+      "gitBlob": "d859e2c21001d359471b600cd7f59c7fd5d944a8"
+    },
+    {
+      "path": "design/ui-reference/application-settings.html",
+      "gitBlob": "55eabf73f6e3aac29be8b00f8ab81cf103582e8f"
+    },
+    {
+      "path": "design/ui-reference/assets/app.css",
+      "gitBlob": "d5154e5a893372b03275deb82ae11b7216a96bfb"
+    },
+    {
+      "path": "design/ui-reference/assets/app.js",
+      "gitBlob": "bc21c3b2d2400c6fd6c46658048558666db7557f"
+    },
+    {
+      "path": "design/ui-reference/assets/print.css",
+      "gitBlob": "4840c4a329dd0fff329a97f29646ea84a9b3d009"
+    },
+    {
+      "path": "design/ui-reference/assets/style-reference-academic-minimal.png",
+      "gitBlob": "ec58dd51550d5b0652b025d63a2d412041ee427e"
+    },
+    {
+      "path": "design/ui-reference/assets/tokens.css",
+      "gitBlob": "7adcd7c0577308763d07a81404067c3d4a3eee71"
+    },
+    {
+      "path": "design/ui-reference/audit-lineage.html",
+      "gitBlob": "7b4e589a8d875788bbd62a1c4f26677b6f3da843"
+    },
+    {
+      "path": "design/ui-reference/claim-graph.html",
+      "gitBlob": "6e8dae6e709156fe1a8b3240a759578a3d9311ae"
+    },
+    {
+      "path": "design/ui-reference/corpus-canvas.html",
+      "gitBlob": "092c8a590f758bb561a3e4a59aab0f85dda38cbc"
+    },
+    {
+      "path": "design/ui-reference/critical-lens.html",
+      "gitBlob": "e6076d63574fa3794680e9f830d32907e1039d4e"
+    },
+    {
+      "path": "design/ui-reference/document-reader.html",
+      "gitBlob": "8ab358d9dde94e717fbcc1bcbae9498eb8063564"
+    },
+    {
+      "path": "design/ui-reference/evidence-matrix.html",
+      "gitBlob": "637f3787bd7510e2f2b74fa33949fd98829ec3a0"
+    },
+    {
+      "path": "design/ui-reference/help-onboarding.html",
+      "gitBlob": "aad64dd90d2cd259ae61f7c1b22835ff8c783ba3"
+    },
+    {
+      "path": "design/ui-reference/index.html",
+      "gitBlob": "e180f5b26add4feadcbb23d6b1e178d71e2915d4"
+    },
+    {
+      "path": "design/ui-reference/ingestion-reconciliation.html",
+      "gitBlob": "23b5d8c1503ae86a8564c89d9f32586e4cd42ffb"
+    },
+    {
+      "path": "design/ui-reference/intent-contract.html",
+      "gitBlob": "debd37e5d835e920f7af515f760a8e61fc0536bf"
+    },
+    {
+      "path": "design/ui-reference/living-monitor.html",
+      "gitBlob": "135ec530663415914683341ca9950ac0384bb704"
+    },
+    {
+      "path": "design/ui-reference/manuscript-blueprint.html",
+      "gitBlob": "9bfb7925ce8af8f8a7248bd9e7e026071e762f92"
+    },
+    {
+      "path": "design/ui-reference/manuscript-studio.html",
+      "gitBlob": "3963b6f016c9bfbbdd1bfc7ba5c53753523f6100"
+    },
+    {
+      "path": "design/ui-reference/model-center.html",
+      "gitBlob": "355b2695159cb0ca478facf223e28583bb6f9c18"
+    },
+    {
+      "path": "design/ui-reference/new-project.html",
+      "gitBlob": "43f0d3e67ff32d0c3df6e0be4fa6fe7181e1877f"
+    },
+    {
+      "path": "design/ui-reference/novelty-audit.html",
+      "gitBlob": "dfb5af7f3e33e829dd5e3f0bb8775f38c757334d"
+    },
+    {
+      "path": "design/ui-reference/opportunity-radar.html",
+      "gitBlob": "e1582b07845688895ba4d4cf075b3f540d7a5cdd"
+    },
+    {
+      "path": "design/ui-reference/parsing-quality.html",
+      "gitBlob": "077ad9b35ddf40a10e704aecd690af8806b24d12"
+    },
+    {
+      "path": "design/ui-reference/previews/audit-lineage-dark.png",
+      "gitBlob": "b1a4eac66dba70cbde2c6f99c8c8529704781fd7"
+    },
+    {
+      "path": "design/ui-reference/previews/audit-lineage-light.png",
+      "gitBlob": "074a8df578be13659fce2b0ebe6b3c3f93489d2f"
+    },
+    {
+      "path": "design/ui-reference/previews/audit-lineage-theme-comparison.png",
+      "gitBlob": "07c2ce8e2ddad3cd0d28a9716a24f8b6e9d9aa6d"
+    },
+    {
+      "path": "design/ui-reference/previews/claim-graph-dark.png",
+      "gitBlob": "1b736514066894495766be0c2a6096ca08225bde"
+    },
+    {
+      "path": "design/ui-reference/previews/claim-graph-light.png",
+      "gitBlob": "93afeadfb1a462205eb2f3881330ab4b9a334300"
+    },
+    {
+      "path": "design/ui-reference/previews/claim-graph-theme-comparison.png",
+      "gitBlob": "65789afe6e063af90469cb9249bf3ea2de39c51b"
+    },
+    {
+      "path": "design/ui-reference/previews/contact-sheets/ui-pages-1.jpg",
+      "gitBlob": "828b3cdf3b984de71eb70051869249b09b662cae"
+    },
+    {
+      "path": "design/ui-reference/previews/contact-sheets/ui-pages-2.jpg",
+      "gitBlob": "c66af5e24441e6551e799e30802701abde1f7e3d"
+    },
+    {
+      "path": "design/ui-reference/previews/contact-sheets/ui-pages-3.jpg",
+      "gitBlob": "31b8ab8a270f05bad075c4b7492a2335d9c3e9a5"
+    },
+    {
+      "path": "design/ui-reference/previews/contact-sheets/ui-pages-4.jpg",
+      "gitBlob": "726e3f5174ffbefc42a2fc9060f75eef2ca1126a"
+    },
+    {
+      "path": "design/ui-reference/previews/corpus-canvas-dark.png",
+      "gitBlob": "c04daabeb5667863d09432e1f1aa4d4d294105d4"
+    },
+    {
+      "path": "design/ui-reference/previews/corpus-canvas-light.png",
+      "gitBlob": "e057545d521d81aa2fbcbc3e416193018f929247"
+    },
+    {
+      "path": "design/ui-reference/previews/corpus-canvas-theme-comparison.png",
+      "gitBlob": "76387ae1f69c165c4b22dbc32f22cd6d627558dc"
+    },
+    {
+      "path": "design/ui-reference/previews/critical-lens-dark.png",
+      "gitBlob": "18d0fde45a84b7d389e7191fa1027a7c908f6540"
+    },
+    {
+      "path": "design/ui-reference/previews/critical-lens-light.png",
+      "gitBlob": "aae608f9afd480f98d974ef5178591fde85ba4ac"
+    },
+    {
+      "path": "design/ui-reference/previews/critical-lens-theme-comparison.png",
+      "gitBlob": "6ecccedf2a0f8e564354c843a5203198d30767d0"
+    },
+    {
+      "path": "design/ui-reference/previews/document-reader-dark.png",
+      "gitBlob": "b371fea4940e8545b12b3cddef5756c91700e050"
+    },
+    {
+      "path": "design/ui-reference/previews/document-reader-light.png",
+      "gitBlob": "25a346b01776d99415092cf5b0a060f065b0e606"
+    },
+    {
+      "path": "design/ui-reference/previews/document-reader-theme-comparison.png",
+      "gitBlob": "b2642d50486188e5fde2393f577d6ef921a64cb1"
+    },
+    {
+      "path": "design/ui-reference/previews/evidence-matrix-dark.png",
+      "gitBlob": "0831c4f1d1d965aeb95417025913a194714b4774"
+    },
+    {
+      "path": "design/ui-reference/previews/evidence-matrix-light.png",
+      "gitBlob": "e521dc55b549838e0894b1dcdce35c4a828b4f00"
+    },
+    {
+      "path": "design/ui-reference/previews/evidence-matrix-theme-comparison.png",
+      "gitBlob": "57516d768db483c31ec9c2929095b95ca5a93423"
+    },
+    {
+      "path": "design/ui-reference/previews/help-onboarding-dark.png",
+      "gitBlob": "eb1ce2bbb1e1615f9fe52e4bfe4c7d81695b065b"
+    },
+    {
+      "path": "design/ui-reference/previews/help-onboarding-light.png",
+      "gitBlob": "0ce76fbae55c2914339bad19468f6dd12b69169a"
+    },
+    {
+      "path": "design/ui-reference/previews/help-onboarding-theme-comparison.png",
+      "gitBlob": "23fabc08440768ad3938e06fa273995f47d0c939"
+    },
+    {
+      "path": "design/ui-reference/previews/index-dark.png",
+      "gitBlob": "d46f79378bd2e60daf82760fcb4063d0c32eeaa7"
+    },
+    {
+      "path": "design/ui-reference/previews/index-light.png",
+      "gitBlob": "445d51d09df802c15ff2d290786dd8b836a9e6a0"
+    },
+    {
+      "path": "design/ui-reference/previews/index-theme-comparison.png",
+      "gitBlob": "854d4bce052e620e066acf50186f2f1d1261113f"
+    },
+    {
+      "path": "design/ui-reference/previews/ingestion-reconciliation-dark.png",
+      "gitBlob": "e1a4bba4b3913d04543a050d735cb3252a384d64"
+    },
+    {
+      "path": "design/ui-reference/previews/ingestion-reconciliation-light.png",
+      "gitBlob": "d99c3330cf1ef6ccef0ae1d4aa4659d60d309281"
+    },
+    {
+      "path": "design/ui-reference/previews/ingestion-reconciliation-theme-comparison.png",
+      "gitBlob": "87b87fbb5050e9e078a689359c3a6640fb571490"
+    },
+    {
+      "path": "design/ui-reference/previews/intent-contract-dark.png",
+      "gitBlob": "6580d618ba90f51030b7c74a147b86f751aa8bc1"
+    },
+    {
+      "path": "design/ui-reference/previews/intent-contract-light.png",
+      "gitBlob": "0b85c96ecc53945719bfae88edac90da4f06e4ed"
+    },
+    {
+      "path": "design/ui-reference/previews/intent-contract-theme-comparison.png",
+      "gitBlob": "ecd46ebb3badf9ec96b0ecddc3dcefc5e97c4c21"
+    },
+    {
+      "path": "design/ui-reference/previews/living-monitor-dark.png",
+      "gitBlob": "862ad70c8bdf77bb905047c5e65d9fc696083cfb"
+    },
+    {
+      "path": "design/ui-reference/previews/living-monitor-light.png",
+      "gitBlob": "480a1952b6bba8846e1d33f46ab77a27558bb4fd"
+    },
+    {
+      "path": "design/ui-reference/previews/living-monitor-theme-comparison.png",
+      "gitBlob": "16411f5c7752b0f4d0f8662b928147b3bcae6d9a"
+    },
+    {
+      "path": "design/ui-reference/previews/manuscript-blueprint-dark.png",
+      "gitBlob": "ecda7fb01f55ecd8a4a9219b53d78e9662f32912"
+    },
+    {
+      "path": "design/ui-reference/previews/manuscript-blueprint-light.png",
+      "gitBlob": "451cd4420e8cfac58e3f9cb281355a0044b4285c"
+    },
+    {
+      "path": "design/ui-reference/previews/manuscript-blueprint-theme-comparison.png",
+      "gitBlob": "03ec80bd7c7b70c673daf41369e1ad765d7b457e"
+    },
+    {
+      "path": "design/ui-reference/previews/manuscript-studio-dark.png",
+      "gitBlob": "9f1c290064009a4209ab3a6a5a70f2985e97f4b8"
+    },
+    {
+      "path": "design/ui-reference/previews/manuscript-studio-light.png",
+      "gitBlob": "ae5655671abb47e035d990d546639a7e93fb7c15"
+    },
+    {
+      "path": "design/ui-reference/previews/manuscript-studio-theme-comparison.png",
+      "gitBlob": "99efc796711320915a4b02dcad1baa3a31cbcbed"
+    },
+    {
+      "path": "design/ui-reference/previews/model-center-dark.png",
+      "gitBlob": "eea38d98e89973d820bf19790e02559bb76b06f2"
+    },
+    {
+      "path": "design/ui-reference/previews/model-center-light.png",
+      "gitBlob": "47fe399f01738b4bfe2afd1b6db28313e99b3d9b"
+    },
+    {
+      "path": "design/ui-reference/previews/model-center-theme-comparison.png",
+      "gitBlob": "5a2d323cf198a96a313151b83a37b9d9466e201e"
+    },
+    {
+      "path": "design/ui-reference/previews/new-project-dark.png",
+      "gitBlob": "65be365f10c2982d3c008ad1cd403e3b76accfbd"
+    },
+    {
+      "path": "design/ui-reference/previews/new-project-light.png",
+      "gitBlob": "c82fb1076266af722b4bd35ae8209864bce38bd7"
+    },
+    {
+      "path": "design/ui-reference/previews/new-project-theme-comparison.png",
+      "gitBlob": "967ad53bdfe02c4cde6e3cf2f9c58574d733ed3d"
+    },
+    {
+      "path": "design/ui-reference/previews/novelty-audit-dark.png",
+      "gitBlob": "1723552618b8a57af6ebcc167af83174ad918db7"
+    },
+    {
+      "path": "design/ui-reference/previews/novelty-audit-light.png",
+      "gitBlob": "59ec9c719aad557f91863e275fb0564f6a40cf17"
+    },
+    {
+      "path": "design/ui-reference/previews/novelty-audit-theme-comparison.png",
+      "gitBlob": "919414f55d2a65660d5faf161fb9ca9a72b37ded"
+    },
+    {
+      "path": "design/ui-reference/previews/opportunity-radar-dark.png",
+      "gitBlob": "f5dbd22277cb94c8c758338ce1ced14d9636ddef"
+    },
+    {
+      "path": "design/ui-reference/previews/opportunity-radar-light.png",
+      "gitBlob": "80db77427a6f4c96725ecc0b5b2cde5c714b212d"
+    },
+    {
+      "path": "design/ui-reference/previews/opportunity-radar-theme-comparison.png",
+      "gitBlob": "a7a5d3899c86f9c95808ecef6c0ba32fc48d2d95"
+    },
+    {
+      "path": "design/ui-reference/previews/parsing-quality-dark.png",
+      "gitBlob": "8d5d120769e8ab02fcf227a7d9eb119550201385"
+    },
+    {
+      "path": "design/ui-reference/previews/parsing-quality-light.png",
+      "gitBlob": "ed43185e7d7d0dab449fdc3822a0a78825d517a1"
+    },
+    {
+      "path": "design/ui-reference/previews/parsing-quality-theme-comparison.png",
+      "gitBlob": "97d5d9d818001e763e151faf69a3c6fb42aefe5d"
+    },
+    {
+      "path": "design/ui-reference/previews/project-home-theme-comparison.png",
+      "gitBlob": "854d4bce052e620e066acf50186f2f1d1261113f"
+    },
+    {
+      "path": "design/ui-reference/previews/project-settings-dark.png",
+      "gitBlob": "15ab163b0ef3584784ffa8eaec07cba3f9cc258f"
+    },
+    {
+      "path": "design/ui-reference/previews/project-settings-light.png",
+      "gitBlob": "dc501c6e97468260f9cad8ad9760f3685bc2d67f"
+    },
+    {
+      "path": "design/ui-reference/previews/project-settings-theme-comparison.png",
+      "gitBlob": "c086073292832c236f3f46a46b1cc171e3a82115"
+    },
+    {
+      "path": "design/ui-reference/previews/projects-dark.png",
+      "gitBlob": "e79d76b3a43188a184ebce2de5fc1e9f7eb4a0e1"
+    },
+    {
+      "path": "design/ui-reference/previews/projects-light.png",
+      "gitBlob": "38f0845bec936bdf1fafec3ce1ed5cd1633f29b0"
+    },
+    {
+      "path": "design/ui-reference/previews/projects-theme-comparison.png",
+      "gitBlob": "f86d8f182398011d4be72d3c559733958dcc2ece"
+    },
+    {
+      "path": "design/ui-reference/previews/research-notebook-dark.png",
+      "gitBlob": "ebb68dfdbed027787b26e719e66a59534d0273f7"
+    },
+    {
+      "path": "design/ui-reference/previews/research-notebook-light.png",
+      "gitBlob": "632d72f88ddb0cd2f5f6f84f18ecff61ac052d8a"
+    },
+    {
+      "path": "design/ui-reference/previews/research-notebook-theme-comparison.png",
+      "gitBlob": "8497968dfea49c117a686e42bc0bf8a89c142355"
+    },
+    {
+      "path": "design/ui-reference/previews/research-production-contact-sheet.jpg",
+      "gitBlob": "4ff672037416a6ac0b49c84e18deb6cfe4643fa7"
+    },
+    {
+      "path": "design/ui-reference/previews/reviewer-simulation-dark.png",
+      "gitBlob": "77e963c9bfc41114ed8afa7cce19fc5f8c236fa9"
+    },
+    {
+      "path": "design/ui-reference/previews/reviewer-simulation-light.png",
+      "gitBlob": "00d8a0edb968f73c8789b4c3e4545f67cf4b39fa"
+    },
+    {
+      "path": "design/ui-reference/previews/reviewer-simulation-theme-comparison.png",
+      "gitBlob": "eb51389b76be2d089bb8a67872d8cd3c8aca6779"
+    },
+    {
+      "path": "design/ui-reference/previews/revision-response-dark.png",
+      "gitBlob": "3121b593a91711f10633e58f34f8a960a1d61584"
+    },
+    {
+      "path": "design/ui-reference/previews/revision-response-light.png",
+      "gitBlob": "729e0daf82a53f83c69ee9492a5a4152b54ebdb0"
+    },
+    {
+      "path": "design/ui-reference/previews/revision-response-theme-comparison.png",
+      "gitBlob": "548879f5d072f3aeaf8970c1868260a3ec94bb78"
+    },
+    {
+      "path": "design/ui-reference/previews/schema-manager-dark.png",
+      "gitBlob": "4c926db27ad9d967a94df5a412976d1e1a418092"
+    },
+    {
+      "path": "design/ui-reference/previews/schema-manager-light.png",
+      "gitBlob": "55053a0ee32414f3045e6c63d4b7ea821e2fffd6"
+    },
+    {
+      "path": "design/ui-reference/previews/schema-manager-theme-comparison.png",
+      "gitBlob": "84bf4e20c5f330393e9ffbec145ec6a60df10093"
+    },
+    {
+      "path": "design/ui-reference/previews/screening-dark.png",
+      "gitBlob": "391bdc273e4549d2216f262aca6e1e8920154acd"
+    },
+    {
+      "path": "design/ui-reference/previews/screening-light.png",
+      "gitBlob": "348eb89d1fd4740de4764c400e7467dd0aea7e87"
+    },
+    {
+      "path": "design/ui-reference/previews/screening-theme-comparison.png",
+      "gitBlob": "4404f90c0f1c75ef46c7713e8c2eaec417685e56"
+    },
+    {
+      "path": "design/ui-reference/previews/search-studio-dark.png",
+      "gitBlob": "bf06d4f23d9f9f75215716855f8cf7b38ded882a"
+    },
+    {
+      "path": "design/ui-reference/previews/search-studio-light.png",
+      "gitBlob": "56a39edc75843df1897d3f98921ef0f5d2a9f6ff"
+    },
+    {
+      "path": "design/ui-reference/previews/search-studio-theme-comparison.png",
+      "gitBlob": "bb108dcf076002bdb14c6e247c606dcdb782281e"
+    },
+    {
+      "path": "design/ui-reference/previews/source-manager-dark.png",
+      "gitBlob": "48927ede2990c0dcb5a5551d59aa5d9b9d711a26"
+    },
+    {
+      "path": "design/ui-reference/previews/source-manager-light.png",
+      "gitBlob": "97bac0f53f9fb1ceae5b94f72aaa274ddeaf0f65"
+    },
+    {
+      "path": "design/ui-reference/previews/source-manager-theme-comparison.png",
+      "gitBlob": "2c560273cf1a5d7efdaf606beffdc2c1d85fde5f"
+    },
+    {
+      "path": "design/ui-reference/previews/study-design-dark.png",
+      "gitBlob": "d433eb99a87bc195d9ef2518401cbf3731f936d4"
+    },
+    {
+      "path": "design/ui-reference/previews/study-design-light.png",
+      "gitBlob": "8f3b76529a8dc1d572ca560dc6f7a43f04f7bb56"
+    },
+    {
+      "path": "design/ui-reference/previews/study-design-theme-comparison.png",
+      "gitBlob": "680f4a46fdb538d8afaa9a1f1953d4e062d3729d"
+    },
+    {
+      "path": "design/ui-reference/previews/style-guide-dark.png",
+      "gitBlob": "bdf0f154e9fc55bb2054052d5b5ab9eeccc14b4a"
+    },
+    {
+      "path": "design/ui-reference/previews/style-guide-light.png",
+      "gitBlob": "54b577d8cf65eb979590c86e33c1efe2a18f9145"
+    },
+    {
+      "path": "design/ui-reference/previews/style-guide-theme-comparison.png",
+      "gitBlob": "994d4b5a225c74926cec77af8a568b80a8d1b1a9"
+    },
+    {
+      "path": "design/ui-reference/previews/synthesis-studio-dark.png",
+      "gitBlob": "7e1398a537e3db0b75c0b77e359a25da4a4da143"
+    },
+    {
+      "path": "design/ui-reference/previews/synthesis-studio-light.png",
+      "gitBlob": "ee0d8cadbe02ea913e73b608f9f5f9fd2740d7cf"
+    },
+    {
+      "path": "design/ui-reference/previews/synthesis-studio-theme-comparison.png",
+      "gitBlob": "7ad92141f728bbe042e2336fb708e975598b5ea9"
+    },
+    {
+      "path": "design/ui-reference/previews/task-center-dark.png",
+      "gitBlob": "4304d691968f2baf5420cc1bf3aebe5737502ed6"
+    },
+    {
+      "path": "design/ui-reference/previews/task-center-light.png",
+      "gitBlob": "10bd6e543af0fcdfe8e26a86a15c9b42988a6632"
+    },
+    {
+      "path": "design/ui-reference/previews/task-center-theme-comparison.png",
+      "gitBlob": "be32ec7ad3172002a0356c53fdd3b17f510de4e8"
+    },
+    {
+      "path": "design/ui-reference/previews/technical-reports-dark.png",
+      "gitBlob": "f9ae7d636c5b9fc0852d4b70488ecc30354ee640"
+    },
+    {
+      "path": "design/ui-reference/previews/technical-reports-light.png",
+      "gitBlob": "af0e80317b6d3c9ee9af0ce231db02a6d24d45eb"
+    },
+    {
+      "path": "design/ui-reference/previews/technical-reports-theme-comparison.png",
+      "gitBlob": "ddbae45875df6ebb66814be0c9b4d94db9c110bb"
+    },
+    {
+      "path": "design/ui-reference/previews/theory-map-dark.png",
+      "gitBlob": "f15495075d34055a6aef528b6f165c214a481330"
+    },
+    {
+      "path": "design/ui-reference/previews/theory-map-light.png",
+      "gitBlob": "bd013c524b3bebc703fbfb2f5e0ff3aeef2b3472"
+    },
+    {
+      "path": "design/ui-reference/previews/theory-map-theme-comparison.png",
+      "gitBlob": "2097b95754b17ee2ae4fef7c2de3eb07ccbcd1d2"
+    },
+    {
+      "path": "design/ui-reference/project-settings.html",
+      "gitBlob": "6e1a4e40b4c66936f3d2222c5ed2237c43f9f15c"
+    },
+    {
+      "path": "design/ui-reference/projects.html",
+      "gitBlob": "7055cf5a12a5106f3c9e7db38c370319409a5242"
+    },
+    {
+      "path": "design/ui-reference/prototype-index.html",
+      "gitBlob": "8df465a8275d22e91a7241fb8aa55a1caf0b92b9"
+    },
+    {
+      "path": "design/ui-reference/research-notebook.html",
+      "gitBlob": "9b37d79bd9283ae1054de45ede9f7ca1f35a7b8f"
+    },
+    {
+      "path": "design/ui-reference/reviewer-simulation.html",
+      "gitBlob": "e4e41ab7125316efe164fcf0c3eecb16e5481c10"
+    },
+    {
+      "path": "design/ui-reference/revision-response.html",
+      "gitBlob": "b26c71cdf2391767f294e6879581a5c946640685"
+    },
+    {
+      "path": "design/ui-reference/schema-manager.html",
+      "gitBlob": "4436b86f87352da705e4aad15868996c1cb9f576"
+    },
+    {
+      "path": "design/ui-reference/screening.html",
+      "gitBlob": "11d05808f04d732ff70186f971a5dde8d0210c5f"
+    },
+    {
+      "path": "design/ui-reference/scripts/build_mockups.py",
+      "gitBlob": "3011bda105b6f79de4f42845f840d13f490674c0"
+    },
+    {
+      "path": "design/ui-reference/scripts/render_previews.py",
+      "gitBlob": "904e33aab68a72a4b813a9454170c5462d928c6e"
+    },
+    {
+      "path": "design/ui-reference/scripts/smoke_interactions.py",
+      "gitBlob": "5c2270540ba52f200a00bb34a2fd1ab8581c4955"
+    },
+    {
+      "path": "design/ui-reference/scripts/verify_site.py",
+      "gitBlob": "e0f4db86906d418fd24d24452e41f6c4bcae41a4"
+    },
+    {
+      "path": "design/ui-reference/search-studio.html",
+      "gitBlob": "a4d8b0dd9ed905ffaa490994c2bdee713c79aabc"
+    },
+    {
+      "path": "design/ui-reference/source-manager.html",
+      "gitBlob": "5baa88b6dfacc57ad239cc139d13dcc6cb7ceffb"
+    },
+    {
+      "path": "design/ui-reference/study-design.html",
+      "gitBlob": "ae53f76784e65f6e7767d0d735290e2dbb7f74a3"
+    },
+    {
+      "path": "design/ui-reference/style-guide.html",
+      "gitBlob": "70bc0609d0418223d77489822f02d2021c473de6"
+    },
+    {
+      "path": "design/ui-reference/synthesis-studio.html",
+      "gitBlob": "6e710e636d27c74b987a47b06f8f39dc724cfacb"
+    },
+    {
+      "path": "design/ui-reference/task-center.html",
+      "gitBlob": "2a3b262c0cedb26f3c5a2ced78bba08aade07d1f"
+    },
+    {
+      "path": "design/ui-reference/technical-reports.html",
+      "gitBlob": "53c8057cf904b851d9bb08a88facc765b8baa622"
+    },
+    {
+      "path": "design/ui-reference/theory-map.html",
+      "gitBlob": "52ed4ce50ef1427bd69122629b5937220591ef94"
+    },
+    {
+      "path": "design/ui-reference/ui-reference-validation.json",
+      "gitBlob": "43de3c1a68e684fae0fa0554f012666f9133cae1"
+    },
+    {
+      "path": "packages/contracts/core-api/core-runtime.schema.json",
+      "gitBlob": "45fcdd262e2ccbedeba33227e93eaaaccf7b9c0a"
+    },
+    {
+      "path": "packages/contracts/core-api/openapi.json",
+      "gitBlob": "60f570389142de23ee39f0cf3d0bee0df675e4b9"
+    },
+    {
+      "path": "packages/contracts/core-api/runtime-handshake.schema.json",
+      "gitBlob": "186254a3ed526ea7f2f84775053b33ecc494f328"
+    },
+    {
+      "path": "packages/contracts/core-api/sidecar-artifact.schema.json",
+      "gitBlob": "5ef037fc6cb1bb24ce8d6b446081bd819a19e321"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/README.md",
+      "gitBlob": "eed3360b32c4907489b782b702da3d262137f32f"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/fixtures/approved-workflow-profile-catalog.v1.json",
+      "gitBlob": "9b4909f1705122f8a37445e46fc53500691f6a67"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection-change.v1.json",
+      "gitBlob": "02e10f137a3088b21eb0b8cacc929cc9da38eebb"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/fixtures/valid-project-workflow-selection.v1.json",
+      "gitBlob": "c8dca608909ea20c189b460634ed13e733fb34a3"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/fixtures/valid-workflow-profile-migration.v1.json",
+      "gitBlob": "b85d9f58859e1b17d9fc752809d9a6cce5a632dd"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/fixtures/valid-workflow-stage-state.v1.json",
+      "gitBlob": "9e9ae0b53541e748d7e20c93437b306355579f23"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/generate.mjs",
+      "gitBlob": "4732ce1a00591c60f40e9bd01aa42ddeff913879"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/generated.ts",
+      "gitBlob": "53a07fa273bbf404aafded1284348fa87d2f7fce"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/presentation-compatibility.json",
+      "gitBlob": "0000aff6198d9eee7c90703aa544d792ba6e6217"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/source/academic-minimal-1.5/CAPABILITY_COVERAGE.json",
+      "gitBlob": "49dcf1cbf5e3b42947f4c865f91a2595128f0c38"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/source/academic-minimal-1.5/SOURCE_AUTHORITY.json",
+      "gitBlob": "ed6ac41b8d1b4dcf9e8f9dc194299820e98d638d"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/source/academic-minimal-1.5/WORKFLOW_CATALOG.json",
+      "gitBlob": "f8933d183be8ac9e1500eba8b91958b352296a36"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/workflow-profile.schema.json",
+      "gitBlob": "a272bfdca90105e043eee04c85e371f1b92e22b1"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/workflow-profile.template.py.txt",
+      "gitBlob": "9229e88ed2f1c23fbbeaba1170a40d91d5c558ca"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/workflow-profile.template.ts.txt",
+      "gitBlob": "36677b6088da96954b916e41b387ca40a438a3a5"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/workflow-profile.test.ts",
+      "gitBlob": "e6c2f1e35885354d96d1aed0957ceab6dc138ac2"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/__init__.py",
+      "gitBlob": "34b04fd31aeaa9699dd83313930520ae6a691569"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/app.py",
+      "gitBlob": "7b2cdb1a1036861de85e098966c11ab5bd7c5257"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/authentication.py",
+      "gitBlob": "3ad0f48f2a4dbd8c03eb97ff6feb595f23b865cf"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/config.py",
+      "gitBlob": "97aeee98a33289a146d8e0bd8be1c96b9bac6eab"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/contract.py",
+      "gitBlob": "4afc42e40bd6d61cd93c7a502f5a5a39ba12ef3f"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/dependency_impacts.py",
+      "gitBlob": "b004a9e8d851535d45e165cc24cb7e903f1c4ecd"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/domain_compatibility.py",
+      "gitBlob": "cf2fdbf1009f1a9ac0a4fed55afcf9a3ec11d2a3"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/domain_contracts.py",
+      "gitBlob": "15c50158ff9f5951501832c3158b4558ead76ff9"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/domain_lifecycles.py",
+      "gitBlob": "3459d6f6b511414643ce629a21f31c63c534774c"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/logging.py",
+      "gitBlob": "4f3a9ce3344f10b99e952f20c7d3777e5d61d90c"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/main.py",
+      "gitBlob": "7e3134f51b57aca57d3858de25ff2c375a0f91e6"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/__init__.py",
+      "gitBlob": "86106a68ba7a66d4b79f565d044521f1e1acfe6b"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/runner.py",
+      "gitBlob": "5a90c68702e9678d0c6c465eabde92154dbb922d"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/__init__.py",
+      "gitBlob": "0ca17857af0e97ffdab274dbed84eb9230c0e57b"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0002_schema_history.py",
+      "gitBlob": "146a3b120705c01c2c491524dd5b58e1010f3718"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0003_object_envelopes.py",
+      "gitBlob": "fc1829d26f1063b33718e21fdd2dd86f3abb6ed1"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0004_object_envelope_upgrades.py",
+      "gitBlob": "9f4d16685762971c92837705905f57f619b81e94"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py",
+      "gitBlob": "356cfd3c76c289088328e9fdea6a224379830f55"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py",
+      "gitBlob": "f75d1ab28be691366fa6c78867368be0a0f1d87e"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py",
+      "gitBlob": "c41d32978032f4e9d74d71219da0ef7ad4500547"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py",
+      "gitBlob": "f889552d4072362fa72075f46b55c258372436f4"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py",
+      "gitBlob": "952f743cd47e08236fca3e5de7d1f55fb0060a6a"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/model_gateway_contracts.py",
+      "gitBlob": "666e4f68ff1d9dd4dfaa1c2d6fbf2655dbf29019"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/models.py",
+      "gitBlob": "ca845eb3b02789c011c16f7b3ea2aa15a256060c"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/modules.py",
+      "gitBlob": "cfc3d6febcde5c5ad6d5331b44f00c3ae87e772f"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/object_store.py",
+      "gitBlob": "cd283c6221159c19cc3d61e421b4ec27fbac962c"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/operations.py",
+      "gitBlob": "9ad536a6fc4d2170ce12dcc22239c660877c8d19"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/__init__.py",
+      "gitBlob": "c68cdd7b69e39450e1e1fb742f8455a5fa40d48d"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/credential_store.py",
+      "gitBlob": "245d19fa05924447ab0e1690f6ea7a8fda5fe2c9"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/database_keys.py",
+      "gitBlob": "a954051018c3d4567593f35119cdb8c5efd1badc"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/object_store.py",
+      "gitBlob": "f089c4d08941a979cce403fda218d162a19c09a8"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/object_store_keys.py",
+      "gitBlob": "33e81fac0bec7c4a205751d0338dd4e3257e4c61"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/repositories.py",
+      "gitBlob": "64ab96c4c7b20f7c3712e54ae2021c1a6c7c362b"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/workflow_executor.py",
+      "gitBlob": "4194a06f8481efaa83f8fc3b02ac42891b5ae132"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/privacy.py",
+      "gitBlob": "0a3c345ec6c8e5f189dea5e7e0615e41cc150ef0"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/projects.py",
+      "gitBlob": "5ca54657828b66a8455acfdcffe8143cc6b1cd48"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/provenance.py",
+      "gitBlob": "0b64762b7725bc98fb707f4760ec4346a9952e70"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/provenance_contracts.py",
+      "gitBlob": "12aa4751a8624456d64f7fd2d89204eb975eefef"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/recalculation_contracts.py",
+      "gitBlob": "f85288d3fb79bc6dce988bf2496b41d654abb543"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/repositories.py",
+      "gitBlob": "e77834320dbbcfb18891d7ed6ece3d6cf977f039"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/research_intent_contracts.py",
+      "gitBlob": "0a5d5b4d9d1b20aa870fcbea9aab875feb53e7a5"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/research_intents.py",
+      "gitBlob": "78bf7fcb3980ad118ff412291f3d5b26640f3822"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/selective_recalculation.py",
+      "gitBlob": "96be297f1f36051a9a86341fff55bc38b8e8b5a5"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/storage.py",
+      "gitBlob": "602089dd96cb31106fd09e062a059430b6c10067"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/task_center.py",
+      "gitBlob": "9e8a46e6c7b3b36f130264188bac8f53d090b1be"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/transport.py",
+      "gitBlob": "297a9c6efde104bd2ee7381cda9350ab134e223a"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/windows_credentials.py",
+      "gitBlob": "e20a8d79c7cc77037dc112e51a773cc41806d0e0"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/workflow_contracts.py",
+      "gitBlob": "172260c050952bccc4302f93ee373f6da85dd440"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/workflow_executor.py",
+      "gitBlob": "0aa028cea5585b1a62ce3dbc9e06202f3f1cce2f"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
+      "gitBlob": "2b180a97dda3bfb2f54031f170319cacbfbc8491"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/workflow_progress.py",
+      "gitBlob": "459eb2b89f9914f90969937464f08ffe02179c89"
+    },
+    {
+      "path": "verification/baselines/core-sidecar-performance.json",
+      "gitBlob": "e9466a05614c69d33e4d77094b8d0c86a81c8b02"
+    },
+    {
+      "path": "verification/baselines/core-sidecar-performance.sha256",
+      "gitBlob": "d20b98479d4eac1678061ecc7ec5e214b9809dff"
+    },
+    {
+      "path": "verification/baselines/desktop-performance.json",
+      "gitBlob": "fcb4977b1156bec2904fffc7c17205d6da775ea5"
+    },
+    {
+      "path": "verification/baselines/desktop-ui.json",
+      "gitBlob": "779cea387cd154188fe8d03f5c14e44338f0f27c"
+    },
+    {
+      "path": "verification/baselines/project-lifecycle-performance-calibration.json",
+      "gitBlob": "9085598a2d80a0eebe9f9b6ad5cea50c5c2341c1"
+    },
+    {
+      "path": "verification/baselines/project-lifecycle-performance.json",
+      "gitBlob": "632acb12e94548d251d5fe5742fae11b526a7ff7"
+    },
+    {
+      "path": "verification/baselines/storage-maintenance-performance.json",
+      "gitBlob": "48207aa4d251027089201205fcb254f0c046ba67"
+    },
+    {
+      "path": "verification/baselines/ui-components-data-table-performance.json",
+      "gitBlob": "8e965f4f1fba5d30948e76049054c5f8c58a2968"
+    }
+  ]
+}
