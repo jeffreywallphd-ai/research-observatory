@@ -40517,7 +40517,7 @@ wave_amendments:
     - Real persistence/authority return binding through reviewed existing adapters
     - Negative source/history/scope and protected-state checks; full matrix at W1 exit
     packet_task_sha256: ecc830ede218ff101b55d9224c14f6906ba3744a3e155e55fd7e33fe0e7853d0
-    status: IN_PROGRESS
+    status: REVIEW
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: cd4838e9c64fdbf3adb8f326781f95404a0c945d
@@ -40527,17 +40527,142 @@ wave_amendments:
       claimed_at: '2026-09-05T22:20:19+00:00'
       expires_at: '2026-09-06T06:20:19+00:00'
     started_at: '2026-09-05T22:20:19+00:00'
-    updated_at: '2026-09-05T22:20:19+00:00'
+    updated_at: '2026-09-05T23:32:37+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
-    evidence: []
-    verification_state: null
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A09.T04.json
+      sha256: 7de0eacb47370e94cf98b4dd10db4022658c51388638168b43d74528a26cc278
+      commit: 6a078f982815e547a57f4b2c670e50661b2d0bf3
+      recorded_at: '2026-09-05T23:32:37+00:00'
+    verification_state: passed
     review:
       reviewer: null
       result: null
       reviewed_at: null
       notes: null
+    review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-09-05T23:32:37+00:00'
+        candidate_commit: 6a078f982815e547a57f4b2c670e50661b2d0bf3
+        base_commit: cd4838e9c64fdbf3adb8f326781f95404a0c945d
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: criterion-manifest
+          path: artifacts/evidence/W1.A09.T04.json
+          sha256: 7de0eacb47370e94cf98b4dd10db4022658c51388638168b43d74528a26cc278
+          commit: 6a078f982815e547a57f4b2c670e50661b2d0bf3
+          recorded_at: '2026-09-05T23:32:37+00:00'
+        acceptance_criteria_sha256: 7a36e66d2182dbfc662a4717b7f62f0528f2eefab8e9d982fcd1e2ae1133a513
+        changed_paths:
+        - apps/desktop/src-tauri/examples/project_contract_probe.rs
+        - apps/desktop/src-tauri/src/application_lock.rs
+        - apps/desktop/src-tauri/src/lib.rs
+        - artifacts/evidence/W1.A09.T04.authority-return-check-01.json
+        - artifacts/evidence/W1.A09.T04.authority-return-check-02.json
+        - artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json
+        - artifacts/evidence/W1.A09.T04.blind-usability-01.assessment.md
+        - artifacts/evidence/W1.A09.T04.blind-usability-01.transcript.md
+        - artifacts/evidence/W1.A09.T04.final-binding-01.json
+        - artifacts/evidence/W1.A09.T04.final-binding-01.py
+        - artifacts/evidence/W1.A09.T04.final-binding-adverse-01.json
+        - artifacts/evidence/W1.A09.T04.final-binding-adverse-02.json
+        - artifacts/evidence/W1.A09.T04.final-binding-adverse-03.json
+        - artifacts/evidence/W1.A09.T04.fixture-publication-adverse-01.json
+        - artifacts/evidence/W1.A09.T04.maintenance-review-01.json
+        - artifacts/evidence/W1.A09.T04.native-builds-01.json
+        - artifacts/evidence/W1.A09.T04.native-fixture-verification-01.json
+        - artifacts/evidence/W1.A09.T04.native-ui-observations-01.json
+        - artifacts/evidence/W1.A09.T04.package-check-01.py
+        - artifacts/evidence/W1.A09.T04.packaging-production-01.json
+        - artifacts/evidence/W1.A09.T04.packaging-production-02.json
+        - artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json
+        - artifacts/evidence/W1.A09.T04.performance-02.json
+        - artifacts/evidence/W1.A09.T04.performance-output-adverse-01.json
+        - artifacts/evidence/W1.A09.T04.presentation-check-01.json
+        - artifacts/evidence/W1.A09.T04.production-native-build-01.json
+        - artifacts/evidence/W1.A09.T04.redaction-test-01.py
+        - artifacts/evidence/W1.A09.T04.resource-check-01.py
+        - artifacts/evidence/W1.A09.T04.resource-resolution-01.json
+        - artifacts/evidence/W1.A09.T04.return-preparation.json
+        - artifacts/evidence/W1.A09.T04.review-bundle.md
+        - artifacts/evidence/W1.A09.T04.source-binding-audit-01.json
+        - artifacts/evidence/W1.A09.T04.task-start.md
+        - artifacts/evidence/W1.A09.T04.verification-integration-01.json
+        - artifacts/evidence/W1.A09.T04.verification-integration-02.json
+        - artifacts/evidence/W1.A09.T04.verification-native-01.json
+        - artifacts/evidence/W1.A09.T04.verification-native-02.json
+        - artifacts/evidence/W1.A09.T04.verification-units-01.json
+        - artifacts/evidence/W1.A09.T04.verification-units-02.json
+        - artifacts/evidence/W1.A09.T04.verification-units-03.json
+        - artifacts/evidence/W1.A09.T04.verify-01.py
+        - docs/planning-implementation-plan.md
+        - planning/backlog.yaml
+        - planning/review-site/enablers/ECR-0008.html
+        - planning/review-site/manifest.json
+        - planning/status-summary.md
+        - tests/foundation/test_planctl_amendments.py
+        selected_checks:
+        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json
+        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json
+        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json
+        - tests.service.test_native_project_contract.build_project_probe (debug and release)
+        - cargo build --locked --offline --release -p research-observatory-desktop --bin research-observatory-desktop
+        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.package-check-01.py --report W1.A09.T04.packaging-production-02.json
+        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.resource-check-01.py
+        - Authorized native computer-use lifecycle and fresh blind nine-task retest
+        - .venv/Scripts/python.exe tools/desktop_performance_check.py --repo . --report artifacts/tmp/W1.A09.T04.performance-02.json
+          --allow-dirty
+        - .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check tokens/routes/workflows/accessibility/visual (five
+          separate invocations)
+        - .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only
+        - .venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_planctl_amendments.py -k paused_correction
+          -v
+        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.redaction-test-01.py
+        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-01.json
+        - .venv/Scripts/python.exe -m ruff check (five explicitly scoped W1.A09.T04 helpers and paused-correction test)
+        - .venv/Scripts/python.exe tools/plan_review_check.py --repo .
+        - git diff --check
+        deferred_checks:
+        - Independent W1.A09 task/contribution/exit review and exact adoption remain subsequent state transitions, not self-approved
+          by this preparation task.
+        - W1.A08.T02 owns F02/UX01 full-height sidebar/effective spacing after authenticated return; W1.A08 adoption precedes
+          ordinary W1/CAP-07 recovery.
+        - Retained usability U02/U03/U05/U06 require exact W1 acceptance/design handling at a lawful boundary. No full nine-task
+          success or unauthorized new UX is claimed.
+        - Complete repository/Windows W1 matrix, frozen/unmodified-production startup and required release/authentication/installer
+          qualification, independent Wave review and human G1 remain due. No main integration of unmet ancestry, remote action
+          or later Wave authorization.
+        selection_rationale: W1.A09.T04 explicitly requires the accumulated correction union and clean build/packaging smoke.
+          Selected actual cross-process/Core persistence, Windows picker/lock/close, semantic predecessor, reference/product,
+          recovery/security and performance checks close that scope. New code is confined to test composition, test-fixture
+          correction and evidence delivery; expanded independent review is required for their safety/evidence authority. This
+          is not full repository or W1 release qualification.
+        selection_sha256: c01a1d8b20984b88b47e59be5ead1400dd73f537959ccb864a642185bffbbac1
+        prior_attempt_id: null
+        open_finding_ids: []
+        root_cause_analysis: null
+        selected_command_ids:
+        - desktop:unit
+        - desktop:application
+        - desktop:performance
+        - service:unit
+        - packaging:unit
+        - security-local:unit
+        - foundation:unit
+        - foundation:backlog-views
+        - desktop:ui-token
+        - desktop:ui-route-page
+        - desktop:ui-workflow
+        - desktop:ui-accessibility
+        - desktop:ui-visual-regression
+        packet_sha256: b4524611c2c91be1b101834c232ab0608c2f7addb86e37cbb2535d1610181c4e
   completion:
     status: PENDING
     reviewer: null

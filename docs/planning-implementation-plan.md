@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 95c6693d686a9c2b262b4d653cf77f8296e3b43e105936116926c9aa17cf1c0f
+source_sha256: 99388dea7922822fe96c012e7f001aab302b724fe158bbf49c5f9504c986ce69
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2149,7 +2149,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T03`
 
@@ -2170,13 +2170,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Real persistence/authority return binding through reviewed existing adapters
 - Negative source/history/scope and protected-state checks; full matrix at W1 exit
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A09.T04.json` at `6a078f982815e547a57f4b2c670e50661b2d0bf3`
+
 #### Review history — W1.A09.T04
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `b4524611c2c91be1b101834c232ab0608c2f7addb86e37cbb2535d1610181c4e`
+
+- Candidate / base / branch: `6a078f982815e547a57f4b2c670e50661b2d0bf3` / `cd4838e9c64fdbf3adb8f326781f95404a0c945d` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-05T23:32:37+00:00`
+- Evidence: `artifacts/evidence/W1.A09.T04.json` / `7de0eacb47370e94cf98b4dd10db4022658c51388638168b43d74528a26cc278` / `6a078f982815e547a57f4b2c670e50661b2d0bf3`
+- Acceptance-criteria SHA-256: `7a36e66d2182dbfc662a4717b7f62f0528f2eefab8e9d982fcd1e2ae1133a513`
+- Verification-selection SHA-256: `c01a1d8b20984b88b47e59be5ead1400dd73f537959ccb864a642185bffbbac1`
+- Changed paths: `apps/desktop/src-tauri/examples/project_contract_probe.rs`, `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/lib.rs`, `artifacts/evidence/W1.A09.T04.authority-return-check-01.json`, `artifacts/evidence/W1.A09.T04.authority-return-check-02.json`, `artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json`, `artifacts/evidence/W1.A09.T04.blind-usability-01.assessment.md`, `artifacts/evidence/W1.A09.T04.blind-usability-01.transcript.md`, `artifacts/evidence/W1.A09.T04.final-binding-01.json`, `artifacts/evidence/W1.A09.T04.final-binding-01.py`, `artifacts/evidence/W1.A09.T04.final-binding-adverse-01.json`, `artifacts/evidence/W1.A09.T04.final-binding-adverse-02.json`, `artifacts/evidence/W1.A09.T04.final-binding-adverse-03.json`, `artifacts/evidence/W1.A09.T04.fixture-publication-adverse-01.json`, `artifacts/evidence/W1.A09.T04.maintenance-review-01.json`, `artifacts/evidence/W1.A09.T04.native-builds-01.json`, `artifacts/evidence/W1.A09.T04.native-fixture-verification-01.json`, `artifacts/evidence/W1.A09.T04.native-ui-observations-01.json`, `artifacts/evidence/W1.A09.T04.package-check-01.py`, `artifacts/evidence/W1.A09.T04.packaging-production-01.json`, `artifacts/evidence/W1.A09.T04.packaging-production-02.json`, `artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json`, `artifacts/evidence/W1.A09.T04.performance-02.json`, `artifacts/evidence/W1.A09.T04.performance-output-adverse-01.json`, `artifacts/evidence/W1.A09.T04.presentation-check-01.json`, `artifacts/evidence/W1.A09.T04.production-native-build-01.json`, `artifacts/evidence/W1.A09.T04.redaction-test-01.py`, `artifacts/evidence/W1.A09.T04.resource-check-01.py`, `artifacts/evidence/W1.A09.T04.resource-resolution-01.json`, `artifacts/evidence/W1.A09.T04.return-preparation.json`, `artifacts/evidence/W1.A09.T04.review-bundle.md`, `artifacts/evidence/W1.A09.T04.source-binding-audit-01.json`, `artifacts/evidence/W1.A09.T04.task-start.md`, `artifacts/evidence/W1.A09.T04.verification-integration-01.json`, `artifacts/evidence/W1.A09.T04.verification-integration-02.json`, `artifacts/evidence/W1.A09.T04.verification-native-01.json`, `artifacts/evidence/W1.A09.T04.verification-native-02.json`, `artifacts/evidence/W1.A09.T04.verification-units-01.json`, `artifacts/evidence/W1.A09.T04.verification-units-02.json`, `artifacts/evidence/W1.A09.T04.verification-units-03.json`, `artifacts/evidence/W1.A09.T04.verify-01.py`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0008.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_planctl_amendments.py`
+- Selected checks: `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json`, `tests.service.test_native_project_contract.build_project_probe (debug and release)`, `cargo build --locked --offline --release -p research-observatory-desktop --bin research-observatory-desktop`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.package-check-01.py --report W1.A09.T04.packaging-production-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.resource-check-01.py`, `Authorized native computer-use lifecycle and fresh blind nine-task retest`, `.venv/Scripts/python.exe tools/desktop_performance_check.py --repo . --report artifacts/tmp/W1.A09.T04.performance-02.json --allow-dirty`, `.venv/Scripts/python.exe tools/ui_conformance.py --repo . --check tokens/routes/workflows/accessibility/visual (five separate invocations)`, `.venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only`, `.venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_planctl_amendments.py -k paused_correction -v`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.redaction-test-01.py`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-01.json`, `.venv/Scripts/python.exe -m ruff check (five explicitly scoped W1.A09.T04 helpers and paused-correction test)`, `.venv/Scripts/python.exe tools/plan_review_check.py --repo .`, `git diff --check`
+- Deferred checks: `Independent W1.A09 task/contribution/exit review and exact adoption remain subsequent state transitions, not self-approved by this preparation task.`, `W1.A08.T02 owns F02/UX01 full-height sidebar/effective spacing after authenticated return; W1.A08 adoption precedes ordinary W1/CAP-07 recovery.`, `Retained usability U02/U03/U05/U06 require exact W1 acceptance/design handling at a lawful boundary. No full nine-task success or unauthorized new UX is claimed.`, `Complete repository/Windows W1 matrix, frozen/unmodified-production startup and required release/authentication/installer qualification, independent Wave review and human G1 remain due. No main integration of unmet ancestry, remote action or later Wave authorization.`
+- Selection rationale: W1.A09.T04 explicitly requires the accumulated correction union and clean build/packaging smoke. Selected actual cross-process/Core persistence, Windows picker/lock/close, semantic predecessor, reference/product, recovery/security and performance checks close that scope. New code is confined to test composition, test-fixture correction and evidence delivery; expanded independent review is required for their safety/evidence authority. This is not full repository or W1 release qualification.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks

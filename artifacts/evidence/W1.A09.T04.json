@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A09.T04",
+  "commit": "6a078f982815e547a57f4b2c670e50661b2d0bf3",
+  "baseCommit": "cd4838e9c64fdbf3adb8f326781f95404a0c945d",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs",
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "artifacts/evidence/W1.A09.T04.authority-return-check-01.json",
+    "artifacts/evidence/W1.A09.T04.authority-return-check-02.json",
+    "artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json",
+    "artifacts/evidence/W1.A09.T04.blind-usability-01.assessment.md",
+    "artifacts/evidence/W1.A09.T04.blind-usability-01.transcript.md",
+    "artifacts/evidence/W1.A09.T04.final-binding-01.json",
+    "artifacts/evidence/W1.A09.T04.final-binding-01.py",
+    "artifacts/evidence/W1.A09.T04.final-binding-adverse-01.json",
+    "artifacts/evidence/W1.A09.T04.final-binding-adverse-02.json",
+    "artifacts/evidence/W1.A09.T04.final-binding-adverse-03.json",
+    "artifacts/evidence/W1.A09.T04.fixture-publication-adverse-01.json",
+    "artifacts/evidence/W1.A09.T04.maintenance-review-01.json",
+    "artifacts/evidence/W1.A09.T04.native-builds-01.json",
+    "artifacts/evidence/W1.A09.T04.native-fixture-verification-01.json",
+    "artifacts/evidence/W1.A09.T04.native-ui-observations-01.json",
+    "artifacts/evidence/W1.A09.T04.package-check-01.py",
+    "artifacts/evidence/W1.A09.T04.packaging-production-01.json",
+    "artifacts/evidence/W1.A09.T04.packaging-production-02.json",
+    "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json",
+    "artifacts/evidence/W1.A09.T04.performance-02.json",
+    "artifacts/evidence/W1.A09.T04.performance-output-adverse-01.json",
+    "artifacts/evidence/W1.A09.T04.presentation-check-01.json",
+    "artifacts/evidence/W1.A09.T04.production-native-build-01.json",
+    "artifacts/evidence/W1.A09.T04.redaction-test-01.py",
+    "artifacts/evidence/W1.A09.T04.resource-check-01.py",
+    "artifacts/evidence/W1.A09.T04.resource-resolution-01.json",
+    "artifacts/evidence/W1.A09.T04.return-preparation.json",
+    "artifacts/evidence/W1.A09.T04.review-bundle.md",
+    "artifacts/evidence/W1.A09.T04.source-binding-audit-01.json",
+    "artifacts/evidence/W1.A09.T04.task-start.md",
+    "artifacts/evidence/W1.A09.T04.verification-integration-01.json",
+    "artifacts/evidence/W1.A09.T04.verification-integration-02.json",
+    "artifacts/evidence/W1.A09.T04.verification-native-01.json",
+    "artifacts/evidence/W1.A09.T04.verification-native-02.json",
+    "artifacts/evidence/W1.A09.T04.verification-units-01.json",
+    "artifacts/evidence/W1.A09.T04.verification-units-02.json",
+    "artifacts/evidence/W1.A09.T04.verification-units-03.json",
+    "artifacts/evidence/W1.A09.T04.verify-01.py",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0008.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_planctl_amendments.py"
+  ],
+  "bindings": {
+    "testedCandidate": "1a43f45405bc90a6b8736835d4ef277685989996",
+    "deliveryOnly": "Candidate6a078f98 adds only final-binding-01.json to tested1a43f454. All substantive inputs preserve the matched bytes. Original precommit observation HEADs are retained, not relabeled.",
+    "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "semanticReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "reviewBundle": "artifacts/evidence/W1.A09.T04.review-bundle.md",
+    "returnPreparation": "artifacts/evidence/W1.A09.T04.return-preparation.json",
+    "finalBinding": "artifacts/evidence/W1.A09.T04.final-binding-01.json",
+    "sourceAudit": "artifacts/evidence/W1.A09.T04.source-binding-audit-01.json",
+    "maintenanceAdvisory": "artifacts/evidence/W1.A09.T04.maintenance-review-01.json",
+    "packagingScopeReconciliation": "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json",
+    "blindTranscript": "artifacts/evidence/W1.A09.T04.blind-usability-01.transcript.md",
+    "blindAssessment": "artifacts/evidence/W1.A09.T04.blind-usability-01.assessment.md"
+  },
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json",
+      "exitCode": 0,
+      "result": "All15 risk-selected commands passed; current source/helper input hashes unchanged."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json",
+      "exitCode": 0,
+      "result": "All4 production/harness native test and all-test-target Clippy commands passed."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json",
+      "exitCode": 0,
+      "result": "Actual generated native/Core3 and production packaging6 tests passed, including real frozen build and missing-runtime failure/restoration."
+    },
+    {
+      "command": "tests.service.test_native_project_contract.build_project_probe (debug and release)",
+      "exitCode": 0,
+      "result": "Exact current example artifact paths,161 source inputs and CommonControls6/asInvoker binding retained in native-builds-01."
+    },
+    {
+      "command": "cargo build --locked --offline --release -p research-observatory-desktop --bin research-observatory-desktop",
+      "exitCode": 0,
+      "result": "Production native release binary compiled without integration-harness; not launched. production-native-build-01 binds inputs and binary."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.package-check-01.py --report W1.A09.T04.packaging-production-02.json",
+      "exitCode": 0,
+      "result": "Fresh production package02:710-file inventory, frozen --check under System32-only PATH, unchanged source; never ordinary Core startup."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.resource-check-01.py",
+      "exitCode": 0,
+      "result": "Actual release Tauri resource resolution rejects missing package/no fallback and accepts exact verified production copy without starting Core."
+    },
+    {
+      "command": "Authorized native computer-use lifecycle and fresh blind nine-task retest",
+      "exitCode": 0,
+      "result": "Actual create/restart/select/reopen/close observations pass declared lifecycle scope; blind creation/save/reopen succeeds. Fixture-denied work-status/support tasks and other usability residuals remain explicitly qualified, not a full nine-task pass."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/desktop_performance_check.py --repo . --report artifacts/tmp/W1.A09.T04.performance-02.json --allow-dirty",
+      "exitCode": 0,
+      "result": "Complete current performance report passed unchanged pinned engine/baselines and all samples. Parsed evidence copy equals retained original; source dirty-state disclosure and later commit equivalence preserved."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_conformance.py --repo . --check tokens/routes/workflows/accessibility/visual (five separate invocations)",
+      "exitCode": 0,
+      "result": "All five exact commands/outputs/input pins are in presentation-check-01;66 reference captures remain separate from product observations."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only",
+      "exitCode": 0,
+      "result": "Independent current built-product frame checkpoint passed both themes/reflow/a11y/reduced motion with declared native/Core doubles."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_planctl_amendments.py -k paused_correction -v",
+      "exitCode": 0,
+      "result": "Corrected immutable-authority fixture4 tests passed in authority-return-check-02; unchanged-validator failure/negative history retained. Earlier6 workflow real-persistence/authority-return tests and6 UI-authority tests are retained in check01."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.redaction-test-01.py",
+      "exitCode": 0,
+      "result": "Three synthetic tests passed after retained failure; independent14-case redactor replay and scoped privacy scan found no remaining actual identifiers."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-01.json",
+      "exitCode": 0,
+      "result": "PASS at1a43f454 with566 current inputs, exact frozen return and benchmark/artifact identity. Three earlier helper assertions remain retained; current candidate adds only this report."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m ruff check (five explicitly scoped W1.A09.T04 helpers and paused-correction test)",
+      "exitCode": 0,
+      "result": "Risk-selected Python lint passed. Final-binding helper separately passed Ruff and exact NUL-delimited Git identity replay."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "Current generated review site passed:492 pages. Later commits are bounded fixture/evidence delivery; canonical planning/view bytes unchanged since check."
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "No whitespace errors in the bounded changes."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "F01 and UX02–UX06 have commit-bound closure evidence through the independently approved W1.A09.T01–W1.A09.T03 records and W1.A09.T04's accumulated actual renderer/native/Core, reference and protected-folder replays. review-bundle.md maps each identifier to its exact boundary rather than treating a generic installed-app failure as fully diagnosed.",
+        "F02/UX01 remain expressly owned by W1.A08.T02 after authenticated return. The fresh blind retest independently created its own project without path typing, saved and reopened its draft. Its partial task outcomes and retained U02/U03/U05/U06 findings are not falsely closed or confused with ECR UX IDs."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "verification-units-03, verification-native-02 and verification-integration-02 pass all 21 named affected commands with unchanged current helper/input hashes. They cover generated/client, renderer/shared fields/recovery, semantic predecessor, actual native/Core, protected-source/Core lifecycle, build binding and real production packaging failure/restoration. Earlier failures remain retained.",
+        "native-ui-observations-01 proves source-built actual React/Tauri/Core default-None create/open, fresh app/Core restart, actual Windows folder selection and explicit reopen/close with preserved objective. T03's actual cancellation/keyboard/manual-lock/main-close proof is reused only through the source-binding audit's unchanged production mechanisms; new native fixture tests preserve deny-delete/identity checks and characterize reparse risk without claiming same-account isolation.",
+        "Current debug/release native builds, production native release compile, frozen sidecar build/--check/no-system-Python, and actual release resource/no-fallback observation form the explicitly reviewed packaging proof. Frozen-Core ordinary-profile startup remains unproved for later W1 qualification; packaging-scope-review-01 corrects the prior over-specific T03 method description without changing historical records or waiving the approved criterion.",
+        "presentation-check-01 separates 66 reference observations from built-product doubles and real native UI evidence. performance-02 preserves every sample and passes unchanged absolute/20% thresholds: p95 paint 52 ms, route skeleton 20.449 ms, usable 24.294 ms, component batch 38.472 ms. Original dirty-state disclosure, report-location failure and existing benchmark hash conventions remain explicit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "review-bundle.md assembles every contribution criterion and finding owner, exact approved authority, semantic 1.5 preservation, truthful presentation 1.6 observations and Windows/Core proof for independent adversarial slice review. It contains no self-issued disposition.",
+        "final-binding-01.json mechanically authenticates 566 selected source/artifact/runtime inputs against tested1a43f454, including tracked candidate equivalence and separately qualified ignored outputs/configuration. The candidate differs from that tested commit only by this final report. Production renderer/Core/contracts/picker/authority/reference/baseline scopes remain unchanged since the T03-approved base; the only native production-file diffs are the test harness or test-only needless-borrow removal. Independent review remains mandatory for those fixtures and evidence controls.",
+        "The exact stale authority-fixture failure and corrected real-Git replay, output-redaction failures and independent maintenance advisory, and final-binding hash/protocol failures plus root-cause correction are retained. No valid product test, permission, migration, historical authority or token system is weakened."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "review-bundle.md prepares the complete eight-criterion amendment-exit sequence, independent contribution/exit review duties, exact candidate/branch/checkpoint binding requirements and supported submit/review/adopt command shapes. return-preparation.json is explicitly inert and is not an adoption record.",
+        "The final binding checks that correctionReturn equals both live W1.A09 correction authority and the approved packet's paused predecessor, and recomputes the unchanged frozen W1.A08 record hash. All earlier tasks are independently approved; this task cannot approve itself, approve exit, adopt W1.A09 or activate W1.A08."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The exact return is W1.A08 PAUSED, with original packet/approval/history and no live parent lease. Later adoption evidence must bind the independently approved completion commit and exact correctionReturn before the controller returns the hold.",
+        "W1.A08.T02 recovery/qualification/review/adoption precede ordinary W1 resume or CAP-07 recovery. Complete repository/Windows W1 qualification, independent Wave review and human G1 approval remain separate mandatory duties. No premature main integration, remote push, ordinary data/security access or later-Wave work occurred."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "W1.A09.T04 explicitly requires the accumulated correction union and clean build/packaging smoke. Selected actual cross-process/Core persistence, Windows picker/lock/close, semantic predecessor, reference/product, recovery/security and performance checks close that scope. New code is confined to test composition, test-fixture correction and evidence delivery; expanded independent review is required for their safety/evidence authority. This is not full repository or W1 release qualification.",
+    "selectedCommandIds": [
+      "desktop:unit",
+      "desktop:application",
+      "desktop:performance",
+      "service:unit",
+      "packaging:unit",
+      "security-local:unit",
+      "foundation:unit",
+      "foundation:backlog-views",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression"
+    ],
+    "deferred": [
+      "Independent W1.A09 task/contribution/exit review and exact adoption remain subsequent state transitions, not self-approved by this preparation task.",
+      "W1.A08.T02 owns F02/UX01 full-height sidebar/effective spacing after authenticated return; W1.A08 adoption precedes ordinary W1/CAP-07 recovery.",
+      "Retained usability U02/U03/U05/U06 require exact W1 acceptance/design handling at a lawful boundary. No full nine-task success or unauthorized new UX is claimed.",
+      "Complete repository/Windows W1 matrix, frozen/unmodified-production startup and required release/authentication/installer qualification, independent Wave review and human G1 remain due. No main integration of unmet ancestry, remote action or later Wave authorization."
+    ]
+  },
+  "retainedNonpassingAttempts": [
+    "W1.A09.T04.fixture-publication-adverse-01.json",
+    "W1.A09.T04.authority-return-check-01.json",
+    "W1.A09.T04.authority-return-diagnostic-01.json",
+    "W1.A09.T04.verification-units-01.json",
+    "W1.A09.T04.performance-output-adverse-01.json",
+    "W1.A09.T04.final-binding-adverse-01.json",
+    "W1.A09.T04.final-binding-adverse-02.json",
+    "W1.A09.T04.final-binding-adverse-03.json"
+  ],
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "openFindingIds": [],
+    "note": "Pending independent exact-candidate review; this manifest does not approve its task, contribution, amendment, parent or W1."
+  },
+  "preSubmissionObservation": "The first submission preparation stopped before any backlog write because the untracked manifest used a string instead of the existing reviewerDisposition object shape. The manifest was corrected to the existing contract; no controller, review history or task state was changed by that failed invocation."
+}
