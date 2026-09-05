@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "product-style-analysis-exceptions",
+  "authority": "ECR-0007/W1.A08.T01",
+  "reviewBoundary": "independent-commit-bound-task-review",
+  "exceptions": [
+    {
+      "id": "W1-A08-T01-C01",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.locked-application|min-height|100vh",
+      "scope": "composition",
+      "rationale": "The lock boundary must cover the entire effective viewport before the ordinary application shell is available; this is a viewport relationship, not reusable control or card spacing."
+    },
+    {
+      "id": "W1-A08-T01-C02",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.locked-card|width|min(38rem, 100%)",
+      "scope": "composition",
+      "rationale": "The recovery surface needs a wider readable measure for provider diagnostics and protection-boundary copy while remaining constrained by the viewport."
+    },
+    {
+      "id": "W1-A08-T01-C03",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.protection-warning-dialog|width|min(34rem, 100%)",
+      "scope": "composition",
+      "rationale": "The protection warning uses a bounded reading measure for consequential confirmation copy; its width is page composition and does not define reusable dialog padding or control geometry."
+    },
+    {
+      "id": "W1-A08-T01-C04",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.shortcut-dialog|width|min(32rem, 100%)",
+      "scope": "composition",
+      "rationale": "The keyboard shortcut list has a compact content-specific reading measure while the shared dialog surface continues to own its padding, border, radius, and scrolling behavior."
+    },
+    {
+      "id": "W1-A08-T01-C05",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.task-center-confirmation|width|min(34rem, calc(100vw - var(--space-8)))",
+      "scope": "composition",
+      "rationale": "The durable-task confirmation needs a bounded desktop measure plus an explicit small-viewport gutter; the shared dialog primitive owns all generic surface geometry."
+    },
+    {
+      "id": "W1-A08-T01-C06",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.visually-hidden|height|1px",
+      "scope": "accessibility",
+      "rationale": "One physical pixel is part of the established visually-hidden accessibility clipping recipe and must not be replaced by a spacing token that could expose hidden text."
+    },
+    {
+      "id": "W1-A08-T01-C07",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.visually-hidden|margin|-1px",
+      "scope": "accessibility",
+      "rationale": "The negative one-pixel margin is inseparable from the visually-hidden accessibility clipping recipe and is not application spacing or visual composition."
+    },
+    {
+      "id": "W1-A08-T01-C08",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|apps/desktop/src/app.css|global|.visually-hidden|width|1px",
+      "scope": "accessibility",
+      "rationale": "One physical pixel is part of the established visually-hidden accessibility clipping recipe and must not be replaced by a spacing token that could expose hidden text."
+    },
+    {
+      "id": "W1-A08-T01-C09",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|packages/ui-components/src/styles.css|global|.ro-dialog-surface|max-height|calc(100vh - var(--space-10))",
+      "scope": "composition",
+      "rationale": "Dialog height is intentionally related to the effective viewport so the shared surface owns contained scrolling and preserves a canonical tokenized outer gutter."
+    },
+    {
+      "id": "W1-A08-T01-C10",
+      "kind": "raw-geometry",
+      "signature": "raw-geometry|packages/ui-components/src/styles.css|global|.ro-table-region td, .ro-table-region th|min-width|12rem",
+      "scope": "composition",
+      "rationale": "Application data tables preserve a minimum readable cell measure and contain excess width in the focusable table region; spacing, borders, and row geometry remain tokenized."
+    }
+  ]
+}

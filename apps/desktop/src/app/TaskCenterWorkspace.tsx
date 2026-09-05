@@ -235,6 +235,7 @@ export function TaskCenterWorkspace({
         <Field id="task-center-filter" label="Filter workflows" input={{ type: "search", value: filter, onChange: (event) => setFilter(event.currentTarget.value) }} />
         <ul className="task-center-list ro-stack" aria-label="Durable workflows">
           {visible.map((run) => <li key={run.workflowRunId}><button
+            className="ro-card"
             ref={run.workflowRunId === selected?.workflowRunId ? selectedWorkflowRef : undefined}
             type="button"
             aria-pressed={selected?.workflowRunId === run.workflowRunId}

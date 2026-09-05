@@ -142,7 +142,7 @@ export function ProjectHomeWorkspace({
         ) : (
           <ul className="project-home-stale-list ro-stack">
             {progress.staleOutputs.map((output) => (
-              <li key={`${output.outputRevisionId}:${output.causeReferenceHash}`}>
+              <li className="ro-stack ro-stack--tight" key={`${output.outputRevisionId}:${output.causeReferenceHash}`}>
                 <strong>{output.disposition === "unknown-impact" ? "Impact unknown" : "Stale output"}</strong>
                 <span>{output.reason}</span>
                 <small>{output.safestNextAction}</small>

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "W1.A08.T01",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/W1.A08.T01.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+    "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+    "apps/desktop/src/app/DiagnosticsWorkspace.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+    "apps/desktop/src/app/ProjectSettingsWorkspace.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "version": "1.5",
+    "packageSha256": "38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae",
+    "approvalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.4"
+  },
+  "focusedEvidence": [
+    {
+      "command": "Bundled Node 24.19.0: apps/desktop scripts/lint.mjs; TypeScript tsc --noEmit; Vitest run",
+      "result": "passed",
+      "scope": "Desktop lint and strict typing pass. All 120 active desktop tests pass; the same three native-harness-only cases remain skipped. Routes, renderer interactions, local policy and workflow state, keyboard commands, and accessible names retain their existing contracts."
+    },
+    {
+      "command": "Bundled Node 24.19.0: packages/ui-components TypeScript tsc --noEmit; Vitest run",
+      "result": "passed",
+      "scope": "Shared component strict typing and all four component tests pass against the reusable semantic style boundary."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo .",
+      "result": "passed",
+      "scope": "All 55 governed Academic Minimal 1.5 files authenticate, regenerate reproducibly, and remain unchanged, with zero errors or warnings."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/product_style_check.py --repo .; .venv/Scripts/python.exe -m unittest tests.desktop.test_product_style_check",
+      "result": "passed",
+      "scope": "The production style inventory passes with zero unexplained findings. Thirteen positive and adversarial tests cover normalized same-file and cross-file duplicates, bounded specificity, raw physical and logical geometry, canonical token redefinition, undefined/duplicate custom properties, styling escape hatches, dynamically discovered CSS, and exact missing/stale/overbroad exception denial."
+    }
+  ],
+  "implementationScope": "Implement the approved ECR-0007/W1.A08 styling alignment against the unchanged Academic Minimal 1.5 reference. Consolidate semantic page, stack, cluster, grid, card/panel, form, notice, table, dialog, and action-row rules in the shared UI boundary; align shell and implemented workspace spacing, density, responsive composition, themes, focus, and reduced motion. Retain product semantics, routes, local data and security authority, and approved reference bytes. This record repairs the omitted exact task/reference binding in the initial T01 submission; it does not create a new reference, amend scope, approve findings, or authorize W1 release."
+}

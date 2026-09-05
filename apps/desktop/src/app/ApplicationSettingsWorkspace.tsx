@@ -212,7 +212,7 @@ export function ApplicationSettingsWorkspace({
       </Panel>
 
       <section className="settings-card ro-card ro-form" aria-labelledby="sign-in-mode-title">
-        <div className="settings-card-header">
+        <div className="settings-card-header ro-split-row">
           <div>
             <Typography id="sign-in-mode-title" as="h2" variant="section-title">App sign-in mode</Typography>
             <p>No login is the default. Windows remains responsible for account access.</p>
@@ -247,7 +247,7 @@ export function ApplicationSettingsWorkspace({
 
       <div className="settings-grid ro-grid">
         <section className="settings-card ro-card ro-form" aria-labelledby="behavior-preview-title">
-          <div className="settings-card-header">
+          <div className="settings-card-header ro-split-row">
             <Typography id="behavior-preview-title" as="h2" variant="section-title">Lock behavior preview</Typography>
             <StatusBadge tone={draft.mode === "none" ? "info" : "success"}>{draft.mode === "none" ? "Disabled in No login" : "Preview"}</StatusBadge>
           </div>
@@ -285,7 +285,7 @@ export function ApplicationSettingsWorkspace({
         </section>
 
         <section className="settings-card ro-card ro-form" aria-labelledby="provider-status-title">
-          <div className="settings-card-header">
+          <div className="settings-card-header ro-split-row">
             <Typography id="provider-status-title" as="h2" variant="section-title">Provider status &amp; recovery</Typography>
             <StatusBadge tone={hello.tone}>{hello.label}</StatusBadge>
           </div>

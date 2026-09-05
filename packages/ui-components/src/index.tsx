@@ -358,7 +358,7 @@ export function BoundaryStatePanel({
       aria-atomic="true"
       aria-busy={state === "loading" ? true : undefined}
     >
-      <div className="ro-boundary-state__header">
+      <div className="ro-boundary-state__header ro-split-row">
         <Typography as="h3" variant="card-title">{title}</Typography>
         <StatusBadge tone={tone}>State: {BOUNDARY_STATE_LABELS[state]}</StatusBadge>
       </div>
