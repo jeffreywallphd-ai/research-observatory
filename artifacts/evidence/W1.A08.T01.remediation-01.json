@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A08.T01",
+  "baseCommit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A08.T01.json",
+    "sha256": "8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a",
+    "commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
+    "reason": "Bounded R02 remediation of W1.A08.T01-R01-F01 and W1.A08.T01-R01-F02; retains the original evidence and adverse review unchanged."
+  },
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Shared semantic page-region, stack, cluster, grid, card/panel, form, notice, table, dialog, and action-row primitives remain the production content-flow boundary. Shared ro-split-row and tight stack composition replace repeated generic page styles.",
+        "The deterministic product-style analyzer inventories production CSS and renderer sources and rejects excessive specificity, undefined or duplicate semantic custom properties, alternate token sources, physical-direction properties, and inline/CSS-in-JS escapes. Negative fixtures challenge each boundary."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "F01 remediation consolidates material generic declaration duplicates and logical-direction styling. Duplicate analysis compares normalized complete declaration groups, not arbitrary CSS equivalence or every possible shared subset.",
+        "verification/product-style-exceptions.json binds ten exact composition/accessibility exceptions with rationale. Missing, undocumented, or stale exceptions fail closed; no duplicate-group or specificity suppression is present."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Production workspaces consume the shared primitives without changes to service, persistence, security, or domain authority. Complete affected desktop and shared-component tests preserve their behavior.",
+        "F02's built-product representative matrix measures settings cards/panels, form controls, notices and action rows, a real shortcut dialog, all three named application table scroll regions, dense lineage/recalculation, long diagnostics, and lock/recovery and error/warning/empty states. This closes T01's named-category proof without claiming T02's every-surface retained visual qualification."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The real product checks canonical shell/page/section/grid/control geometry at 1440x900,1280x720,720x450 with document overflow separated from intentional contained scrolling.",
+        "The 720x450 check proves actual 200% computed text sizes and samples dialog geometry, contained scrolling, and focus together. Its pre-open control hit test and ordinary click protect enlarged-text topbar reflow instead of masking overlap by opening the modal first.",
+        "A valid 80-character local profile is rendered through the native adapter shape at normal and 200% text. Shared button wrapping and a shrinkable, minimum-height top bar prevent horizontal document overflow without hiding labels; every action stays within the header, navigation follows it, and ordinary Shortcuts clicks succeed.",
+        "All three application tables project actual header/data-cell logical padding and row heights. The shared row minimum uses approved default/compact tokens: diagnostics is 38 px; default lineage/recalculation rows are at least 44 px and grow for wrapped content. Negative fixtures reject undersized rows or padding drift."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Existing routes/workflow, lock and application-settings interactions, local state boundaries, keyboard focus/return behavior, theme switching and reduced motion remain covered by the affected renderer/browser suites.",
+        "Approved Academic Minimal 1.5 package bytes are unchanged. The exact UI-change binding and additive quality-source registration are independently governed; no reference, architecture, product authority, or release gate expands.",
+        "Retained artifacts are explicitly differentiated: product-check.json is the original failed/mixed-scale measurement; replay-02 is provisional open-before-scale proof; replay-03/-04 pass the corrected zoom/long-label boundary but predate explicit table-row proof; replay-05 measures 37.5 px diagnostic rows before the final token-backed row minimum; replay-06 rejects a stale reference manifest after an incomplete rebuild. A clean complete rebuild and final replay-07/-08 close the current candidate. None of those earlier reports is substituted for final acceptance."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 exposed an acceptance-closure error: the initial implementation deferred both reusable exhaustive T02 qualification and T01's required focused evidence, instead of distinguishing them. R02 adds negative-first deterministic style analysis and a bounded real-renderer category/state matrix. A later independent replay exposed a mislabeled/mixed pre- and post-scale dialog measurement; actual computed fonts, geometry and focus are now bound together, while the original failed report is retained and its unexplained cause is not invented. Zoom-before-open also exposed a real fixed-height topbar overlap, requiring a minimal reflow correction with operability proof. A valid 80-character profile also reproduced horizontal overflow, closed by shared button wrapping and a shrinkable header; normal and enlarged-text live fixtures cover it. Credible incremental failures are generic declaration duplication, selector or token escapes, raw geometry, directional styling, invalid adapter fixtures, missing computed surfaces, obscured controls, focus/scroll failures, theme/motion regression, stale build inputs, and evidence scope mismatch. Focused Python negatives, full affected TypeScript/component inventories, a rebuilt functional product, repeated live geometry/interaction checks, reference integrity, exact UI-change and planning checks address these risks. GOV-MAINT-0017 only registers committed Python sources and has its own independent exact-commit review; controller behavior and safety authority are unchanged.",
+    "selectedCommandIds": [
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression"
+    ],
+    "deferred": [
+      "W1.A08.T02 owns the every-implemented-surface viewport/theme/state inventory, hardened reusable qualification entry point, retained deterministic commit-bound product/reference captures and independent visual disposition, plus affected performance qualification.",
+      "W1.A08.S01 and amendment exit own the accumulated interaction/accessibility/maintainability review and build/smoke/experience checkpoint.",
+      "Complete Windows-x64 packaging, performance, security, recovery and cross-capability qualification remains due once at W1 exit. Native service/persistence logic is unchanged in this styling remediation."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-experience-accessibility-maintainability-task-review",
+    "openFindingIds": [
+      "W1.A08.T01-R01-F01",
+      "W1.A08.T01-R01-F02"
+    ],
+    "note": "Authenticate the exact incremental candidate and R02 packet. Replay F01 deterministic style-reuse negatives/exceptions and F02 actual rendered category/state proof, including computed text-scale witnesses and zoom-before-open control operability. Review the retained failed report honestly; compare the final passing reports and their source identities. Confirm no authority or reference expansion and retain distinct T02, slice/amendment, and W1-exit duties."
+  },
+  "checks": [
+    {
+      "command": "bundled Node 24.19.0: desktop lint and tsc --noEmit; desktop Vitest run; ui-components tsc --noEmit and Vitest run",
+      "exitCode": 0,
+      "result": "Desktop lint/typecheck and all 120 desktop tests passed in 19 files, with the same 3 native-harness cases skipped outside their harness. Shared UI types and all 4 component tests passed after the shared button/header correction."
+    },
+    {
+      "command": "bundled Node 24.19.0: clean-dist; Vite product build; assemble-application; Vite reference-runtime build; assemble-reference",
+      "exitCode": 0,
+      "result": "Rebuilt the actual functional product with 4 manifest-bound artifacts and the separate reference-conformance fixture with 42 artifacts. The actual product remains separately authored; reference-only content is not shipped as the application."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/product_style_check.py --repo .; .venv\\Scripts\\python.exe -m unittest tests.desktop.test_product_style_check",
+      "exitCode": 0,
+      "result": "All 13 focused negative/static tests passed. Live source analysis is ok=true with 279 CSS rules, 15 renderer files, 119 custom-property definitions, 90 references, 10 declared/used exact exceptions, and zero errors; see artifacts/evidence/W1.A08.T01.style-analysis.json."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "Approved Academic Minimal 1.5 remains generator-reproducible and valid across 55 governed files with zero errors/warnings. Backlog views match; the 491-page review site passes. Canonical backlog validates 20 capabilities, 117 slices, 367 tasks, 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe artifacts/tmp/w1-a08-t01-style-capture.py; inspect the four generated product captures; git diff --check",
+      "exitCode": 0,
+      "result": "Rebuilt-product light/dark settings, narrow shortcut dialog and locked layout visually retain coherent hierarchy, density, spacing and focus. Temporary captures are supporting inspection only, not T02's retained commit-bound visual qualification. Patch hygiene passes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check tests.desktop.test_product_style_check; Ruff check and format --check; MYPYPATH=services/core-api/src;tools mypy --follow-imports=silent for tools/desktop_app_check.py, tests/desktop/test_desktop_app_check.py, tools/product_style_check.py and tests/desktop/test_product_style_check.py",
+      "exitCode": 0,
+      "result": "All 25 focused Python tests passed after final CSS/checker freeze, including the full functional-browser test and independent style/geometry negatives. All four changed Python verification sources passed Ruff lint, formatting and isolated strict typing. The combined module was run concurrently with final product replay-07 to replay the original execution condition."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/evidence/W1.A08.T01.product-check-replay-07.json; repeat sequentially with artifacts/evidence/W1.A08.T01.product-check-replay-08.json",
+      "exitCode": 0,
+      "result": "Both final-source replays passed with zero errors, no unexpected requests, and no critical violations. Replay-07 ran concurrently with all 25 Python tests; replay-08 ran afterward. Normal shell heights remain 64 px at all three viewports. The matrix proves named card/panel/form/control/notice/action/dialog geometry; both computed themes and reduced motion; all three named/focusable tables with cell padding and 38/44 px compact/default row minima; dense and long-content scrolling; lock/recovery and error/warning/empty states; actual 200% text; pre-open Shortcuts operability and dialog focus/scroll; and an 80-character native-profile fixture that fits the 720 px document at normal and enlarged text."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 98d6612d0eb64482d92ea9f754ddcee22b8b79b9 --head 455546efec1cf972dd0713664c4a130aba1478fb; .venv\\Scripts\\python.exe -m unittest tests.foundation.test_quality_check; git diff --check 9b4e746928d1381c52a2a720ee6bb47eb433ca3f..455546efec1cf972dd0713664c4a130aba1478fb",
+      "exitCode": 0,
+      "result": "The complete exact UI range passes as an approved-reference implementation with all 13 governed UI paths and zero errors. Existing generic maintenance attestation authenticates GOV-MAINT-0017's independently approved additive source inventory. All four focused quality-discovery/command/failure-propagation tests pass and exact-range Git hygiene passes. No full repository quality or deployment-profile run is claimed."
+    }
+  ],
+  "commit": "455546efec1cf972dd0713664c4a130aba1478fb",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+    "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "artifacts/evidence/W1.A08.T01.json",
+    "artifacts/evidence/W1.A08.T01.long-profile-before.json",
+    "artifacts/evidence/W1.A08.T01.product-check-replay-02.json",
+    "artifacts/evidence/W1.A08.T01.product-check-replay-03.json",
+    "artifacts/evidence/W1.A08.T01.product-check-replay-04.json",
+    "artifacts/evidence/W1.A08.T01.product-check-replay-05.json",
+    "artifacts/evidence/W1.A08.T01.product-check-replay-06.json",
+    "artifacts/evidence/W1.A08.T01.product-check-replay-07.json",
+    "artifacts/evidence/W1.A08.T01.product-check-replay-08.json",
+    "artifacts/evidence/W1.A08.T01.product-check.json",
+    "artifacts/evidence/W1.A08.T01.review-R01.json",
+    "artifacts/evidence/W1.A08.T01.style-analysis.json",
+    "artifacts/evidence/ui-change/W1.A08.T01.json",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0017.json",
+    "planning/governance-migrations/GOV-MAINT-0017.review-R01.json",
+    "planning/review-site/enablers/ECR-0007.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/desktop/test_product_style_check.py",
+    "tools/desktop_app_check.py",
+    "tools/product_style_check.py",
+    "verification/product-style-exceptions.json"
+  ]
+}
