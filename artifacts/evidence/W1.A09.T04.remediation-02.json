@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A09.T04",
+  "commit": "6cb1514f2f2349e3e34e40e059986e635cd609cc",
+  "baseCommit": "6a078f982815e547a57f4b2c670e50661b2d0bf3",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A09.T04.json",
+    "sha256": "7de0eacb47370e94cf98b4dd10db4022658c51388638168b43d74528a26cc278",
+    "commit": "6a078f982815e547a57f4b2c670e50661b2d0bf3"
+  },
+  "changedFiles": [
+    "artifacts/evidence/W1.A09.T04.binding-remediation-01.md",
+    "artifacts/evidence/W1.A09.T04.binding-tests-01.py",
+    "artifacts/evidence/W1.A09.T04.binding-tests-adverse-01.json",
+    "artifacts/evidence/W1.A09.T04.binding-tests-adverse-02.json",
+    "artifacts/evidence/W1.A09.T04.binding-verification-02.json",
+    "artifacts/evidence/W1.A09.T04.final-binding-01.py",
+    "artifacts/evidence/W1.A09.T04.final-binding-02.json",
+    "artifacts/evidence/W1.A09.T04.json",
+    "artifacts/evidence/W1.A09.T04.review-R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0008.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md"
+  ],
+  "bindings": {
+    "testedCommit": "494243d307c797d965bb58ec3d7a96839dabec0c",
+    "deliveryDelta": "Candidate adds only binding-verification-02.json and final-binding-02.json to the tested commit. Product, fixture, controller, reference, performance baseline and prior reports are unchanged from R01; only the final binding helper, new focused tests/evidence and supported review projections change.",
+    "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "priorReview": "artifacts/evidence/W1.A09.T04.review-R01.json",
+    "verificationReport": "artifacts/evidence/W1.A09.T04.binding-verification-02.json",
+    "finalBinding": "artifacts/evidence/W1.A09.T04.final-binding-02.json",
+    "reviewBundle": "artifacts/evidence/W1.A09.T04.review-bundle.md",
+    "returnPreparation": "artifacts/evidence/W1.A09.T04.return-preparation.json"
+  },
+  "checks": [
+    {"command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py", "exitCode": 0, "result": "11 passing tests, no skips, including mock-only protected aliases, top-down redirect rejection, synthetic hardlinks, real dummy-Git masked inputs/report rejection and Windows executable metadata compatibility."},
+    {"command": ".venv/Scripts/python.exe -m ruff check artifacts/evidence/W1.A09.T04.final-binding-01.py artifacts/evidence/W1.A09.T04.binding-tests-01.py", "exitCode": 0},
+    {"command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json", "exitCode": 0, "result": "566 accumulated declared source/artifact/runtime inputs match. Tracked inputs and trusted report snapshots directly match candidate Git blobs; parsing and hashes use the same bounded snapshots. Exact PAUSED predecessor return and unchanged product scopes verified."},
+    {"command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check", "exitCode": 0},
+    {"command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .", "exitCode": 0, "result": "492 generated pages pass; checked projection bytes unchanged through candidate."},
+    {"command": "git diff --check", "exitCode": 0}
+  ],
+  "acceptanceCriteria": [
+    {"criterion_index": 1, "evidence": ["Unchanged R01 manifest/review-bundle, independently reviewed criterion-1 disposition and now directly candidate-bound retained reports map F01/UX02-UX06 to W1.A09.T01-T03 plus accumulated W1.A09.T04 proof. F02/UX01 remain W1.A08.T02. Blind transcript/assessment retain partial outcomes and U02/U03/U05/U06; no nine-task success claim or new UX implementation."]},
+    {"criterion_index": 2, "evidence": ["R01 independent criterion-2 disposition and unchanged units-03/native-02/integration-02, native lifecycle/build/package/resource, presentation and performance reports remain the affected union. final-binding-02 authenticates current tracked inputs and report snapshots to the tested candidate, with 49 generated/runtime declared inventory items separately qualified, not Git source. Original native versus renderer-double/reference scopes, benchmark samples, packaging-method reconciliation and ordinary-profile startup residual remain unchanged. No unrelated full product rerun is necessary for this evidence-only correction."]},
+    {"criterion_index": 3, "evidence": ["R01 findings W1.A09.T04.R01.F01 and W1.A09.T04.R01.F02 are replayed by binding-tests-01.py and binding-verification-02.json. The final helper validates canonical spelling/exclusion before lookup, rejects linked/redirecting ancestors/files, uses existing held Windows guards and one bounded snapshot, and directly compares tracked source/report snapshots to explicit candidate tree blobs before parsing. Candidate Git attributes and field-specific LF normalization preserve documented conventions without relying on index/stat diff. final-binding-02.json records all directly checked blob IDs and raw snapshots; the original flawed proof is retained, not rewritten. Eleven tests and lint pass, including the retained test-first failures and .exe metadata counterexample. Independent R02 acceptance remains required; no control/product/permission/history authority expands."]},
+    {"criterion_index": 4, "evidence": ["Unchanged review-bundle and return-preparation remain inert preparation for independent contribution/exit review and supported submit/review/adopt. final-binding-02 confirms exact equality of prepared correctionReturn, live correction and approved paused predecessor plus frozen parent record hash. This task cannot approve or adopt itself."]},
+    {"criterion_index": 5, "evidence": ["W1.A08 remains PAUSED with exact original authority/history. W1.A08.T02 recovery and W1.A08 qualification/adoption precede ordinary W1/CAP-07 recovery. Complete Windows/repository W1 qualification, independent Wave review and human G1 remain mandatory. No main integration across unmet gates, remote operation, ordinary vault/policy/project access or later-Wave activation occurred."]}
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Incremental evidence-only remediation of W1.A09.T04.R01.F01 and W1.A09.T04.R01.F02. Select canonical/no-follow snapshot and real dummy-Git candidate binding tests, Windows path/handle metadata compatibility, lint, fresh direct binding of the retained affected product evidence, and changed backlog/view checks. These are the narrow foundation/evidence maintenance boundaries; actual commands are listed without pretending the full foundation or product suites ran. R01 independently accepted the unchanged product criterion boundaries. No product, native runtime, Core, security authority, reference, baseline, build dependency or controller changes warrant full requalification now. Original adverse reports and review findings remain append-only.",
+    "selectedCommandIds": ["foundation:unit", "foundation:backlog-views"],
+    "deferred": [
+      "Independent W1.A09.T04 R02 finding closures and contribution/amendment exit/adoption remain subsequent supported transitions.",
+      "W1.A08.T02 full-height sidebar/spacing follows exact PAUSED return; W1.A08 adoption precedes ordinary W1/CAP-07 recovery.",
+      "Retained usability issues and requested maximized startup/test-window geometry require their lawful W1 experience handling; no extra product scope is implemented here.",
+      "Full Windows/repository W1 exit matrix, ordinary-profile production startup and required installer/authentication qualification, independent Wave review and human G1 remain due."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "openFindingIds": ["W1.A09.T04.R01.F01", "W1.A09.T04.R01.F02"],
+    "note": "Tests support closure; only the independent reviewer may dispose of the retained findings. No self-issued acceptance."
+  }
+}

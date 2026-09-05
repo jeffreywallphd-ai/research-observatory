@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3cafd91d1f33a97545451ca0bc50b78dc9e0ac9343be35d3a5fc684550ce2294
+source_sha256: 0f739d982288b34c4912e5c42bf395e24d0166bd2c6060bbbe23f27cdd39a0d0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2149,7 +2149,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
 
-**Status / owner / review:** `IN_PROGRESS` / codex / agent:/root/t03_acceptance_review (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / agent:/root/t03_acceptance_review (`changes-requested`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T03`
 
@@ -2173,6 +2173,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A09.T04.json` at `6a078f982815e547a57f4b2c670e50661b2d0bf3`
+- `artifacts/evidence/W1.A09.T04.remediation-02.json` at `6cb1514f2f2349e3e34e40e059986e635cd609cc`
 
 #### Review history — W1.A09.T04
 
@@ -2209,7 +2210,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1`
+
+- Candidate / base / branch: `6cb1514f2f2349e3e34e40e059986e635cd609cc` / `6a078f982815e547a57f4b2c670e50661b2d0bf3` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-05T23:56:21+00:00`
+- Evidence: `artifacts/evidence/W1.A09.T04.remediation-02.json` / `e16fd7421b597c1c3a84078ec87feb34c27d1c92070566546d22efbbbf2167a5` / `6cb1514f2f2349e3e34e40e059986e635cd609cc`
+- Acceptance-criteria SHA-256: `7a36e66d2182dbfc662a4717b7f62f0528f2eefab8e9d982fcd1e2ae1133a513`
+- Verification-selection SHA-256: `c4a8266ab90453207e2e1871bbca8da0c2d754d0bc1a6ece3aa437cac495d193`
+- Changed paths: `artifacts/evidence/W1.A09.T04.binding-remediation-01.md`, `artifacts/evidence/W1.A09.T04.binding-tests-01.py`, `artifacts/evidence/W1.A09.T04.binding-tests-adverse-01.json`, `artifacts/evidence/W1.A09.T04.binding-tests-adverse-02.json`, `artifacts/evidence/W1.A09.T04.binding-verification-02.json`, `artifacts/evidence/W1.A09.T04.final-binding-01.py`, `artifacts/evidence/W1.A09.T04.final-binding-02.json`, `artifacts/evidence/W1.A09.T04.json`, `artifacts/evidence/W1.A09.T04.review-R01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0008.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`
+- Selected checks: `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py`, `.venv/Scripts/python.exe -m ruff check artifacts/evidence/W1.A09.T04.final-binding-01.py artifacts/evidence/W1.A09.T04.binding-tests-01.py`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `.venv/Scripts/python.exe tools/plan_review_check.py --repo .`, `git diff --check`
+- Deferred checks: `Independent W1.A09.T04 R02 finding closures and contribution/amendment exit/adoption remain subsequent supported transitions.`, `W1.A08.T02 full-height sidebar/spacing follows exact PAUSED return; W1.A08 adoption precedes ordinary W1/CAP-07 recovery.`, `Retained usability issues and requested maximized startup/test-window geometry require their lawful W1 experience handling; no extra product scope is implemented here.`, `Full Windows/repository W1 exit matrix, ordinary-profile production startup and required installer/authentication qualification, independent Wave review and human G1 remain due.`
+- Selection rationale: Incremental evidence-only remediation of W1.A09.T04.R01.F01 and W1.A09.T04.R01.F02. Select canonical/no-follow snapshot and real dummy-Git candidate binding tests, Windows path/handle metadata compatibility, lint, fresh direct binding of the retained affected product evidence, and changed backlog/view checks. These are the narrow foundation/evidence maintenance boundaries; actual commands are listed without pretending the full foundation or product suites ran. R01 independently accepted the unchanged product criterion boundaries. No product, native runtime, Core, security authority, reference, baseline, build dependency or controller changes warrant full requalification now. Original adverse reports and review findings remain append-only.
+- Prior round / replayed open findings: `R01` / `W1.A09.T04.R01.F01`, `W1.A09.T04.R01.F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by agent:/root/t03_acceptance_review at `2026-09-05T23:46:30+00:00`
 
