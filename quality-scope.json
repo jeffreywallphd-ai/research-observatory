@@ -202,6 +202,9 @@
     "tests/service/test_workflow_progress.py",
     "tests/workflows/__init__.py",
     "tests/workflows/test_local_workflow_executor.py",
-    "tests/workflows/test_task_center.py"
+    "tests/workflows/test_task_center.py",
+    "tests/desktop/test_product_style_check.py",
+    "tests/e2e/test_workflow_profile_matrix.py",
+    "tools/product_style_check.py"
   ]
 }
