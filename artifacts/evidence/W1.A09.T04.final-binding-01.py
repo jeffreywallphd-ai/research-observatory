@@ -16,6 +16,7 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 BASE = "cd4838e9c64fdbf3adb8f326781f95404a0c945d"
 sys.path.insert(0, str(REPO / "tools"))
+from desktop_app_check import inline_product_index  # noqa: E402
 from desktop_performance_check import canonical_text_sha256  # noqa: E402
 from governance_kernel import paused_predecessor_record_hash  # noqa: E402
 
@@ -134,14 +135,27 @@ def main() -> None:
         "artifacts/evidence/W1.A09.T04.final-binding-01.py"
     )
     tracked = set(git("ls-files").splitlines())
-    assert set(observed_sources) <= tracked
+    nontracked = set(observed_sources) - tracked
+    assert all(
+        name == ".venv/pyvenv.cfg" or name.startswith(("apps/desktop/dist/", "apps/desktop/product-dist/"))
+        for name in nontracked
+    )
+    ignored = subprocess.check_output(
+        ["git", "check-ignore", "--stdin"], cwd=REPO,
+        input="\n".join(sorted(nontracked)) + "\n", text=True, encoding="utf-8",
+    ).splitlines()
+    assert set(ignored) == nontracked
+    assert inline_product_index(REPO), "Product assembly manifest must validate against current inputs"
     assert not set(git("diff", "--name-only", "HEAD").splitlines()) & set(observed_sources)
     assert head == git("rev-parse", "HEAD")
     report = {
         "taskId": "W1.A09.T04", "status": "PASS", "observedAt": datetime.now(UTC).isoformat(),
         "candidateCommit": head, "baseCommit": BASE, "selectedReports": selected,
         "sourceHashes": observed_sources, "sourceInputCount": len(observed_sources),
-        "currentObservedInputsMatchCommittedCandidate": True,
+        "currentTrackedObservedInputsMatchCommittedCandidate": True,
+        "nontrackedQualifiedArtifactAndRuntimeInputs": sorted(nontracked),
+        "nontrackedInputsMatchObservedHashesAndRemainIgnored": True,
+        "productAssemblyManifestValidatesCurrentInputs": True,
         "performanceCopyPreservesParsedReportAndAllSamples": True,
         "performanceBuildAndBaselineHashesMatch": True,
         "blindWorkingCopyMatchesBuiltDebugExecutableAfterNormalClose": True,

@@ -1,0 +1,10 @@
+{
+  "taskId": "W1.A09.T04",
+  "candidateCommit": "30e996aed865d6099e0ff84b2037c5ea7f4b6d52",
+  "exitCode": 1,
+  "failure": "The final helper assumed every hash-bound presentation input was Git-tracked. The existing presentation inventory deliberately includes generated reference/product bundles and the local virtual-environment configuration hash.",
+  "failureBoundary": "Every selected input raw hash matched; the stronger Git-membership assertion failed before report publication.",
+  "correction": "Separate tracked candidate sources from exactly the observed ignored apps/desktop/dist and apps/desktop/product-dist artifacts and .venv/pyvenv.cfg. Keep all hashes mandatory, verify these nontracked inputs remain ignored, and validate the current product assembly manifest. Never stage generated runtime files or local configuration to satisfy a source assertion.",
+  "sourceOrIgnoreChanges": false,
+  "priorAdverseHistoryPreserved": true
+}
