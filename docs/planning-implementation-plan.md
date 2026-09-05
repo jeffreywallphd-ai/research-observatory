@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 99388dea7922822fe96c012e7f001aab302b724fe158bbf49c5f9504c986ce69
+source_sha256: 3cafd91d1f33a97545451ca0bc50b78dc9e0ac9343be35d3a5fc684550ce2294
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2149,7 +2149,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / agent:/root/t03_acceptance_review (`changes-requested`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T03`
 
@@ -2176,9 +2176,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A09.T04
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `b4524611c2c91be1b101834c232ab0608c2f7addb86e37cbb2535d1610181c4e`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `b4524611c2c91be1b101834c232ab0608c2f7addb86e37cbb2535d1610181c4e`
 
 - Candidate / base / branch: `6a078f982815e547a57f4b2c670e50661b2d0bf3` / `cd4838e9c64fdbf3adb8f326781f95404a0c945d` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-05T23:32:37+00:00`
@@ -2192,11 +2194,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / agent:/root/t03_acceptance_review / `2026-09-05T23:46:30+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A09.T04.review-R01.json` / `0845069546686e2ebf9f8e60b147936bcb4ec3c3f1a9565a3c6270a282622389`
 
-**Currently open findings:** -
+**Review notes:** Independent expanded W1.A09.T04 review requests two bounded corrections to the new final-binding evidence helper. Mocked path tests reproduce exclusion/redirect guard bypasses; an isolated dummy Git repository reproduces false candidate binding for masked source changes and an ordinary changed selected report. No actual candidate drift or protected-file access was observed: independent direct comparison confirms 566 recorded inputs and all 517 tracked candidate blobs, and separately all 42 changed non-projection files. Those matching observations do not approve the defective helper. Product/native/Core, packaging, reference/product, performance and return evidence otherwise support their expressly limited task boundaries. This is an adverse task disposition, not contribution/exit/adoption, A08 activation, Wave/release approval or authorization for ordinary-profile startup.
+
+**Findings opened:**
+
+- `W1.A09.T04.R01.F01` `medium` blocking=`True` criterion=`3` — Final evidence reader does not enforce the protected-path exclusion before resolving aliases or redirects; reproduce: In candidate artifacts/evidence/W1.A09.T04.final-binding-01.py:28-42, scoped rejects only the exact excluded filename string, then resolves and reads the path. Compile only the actual scoped AST with PurePosixPath and a fully mocked REPO/Path whose resolve records a call and returns an in-repository identity. The exact excluded spelling is rejected before the resolver, but dot-component, Windows case and backslash aliases reach it and are accepted. A safe-looking dummy name whose mocked resolution returns the excluded in-repository identity is also accepted; a mocked outside redirect is rejected only after the resolver is called. These nine recorded characterization cases never call a real filesystem resolver or read any protected file. The flaw is an evidence-helper safety defect under the explicit no-access exclusion, not a claim that final-binding-01 actually accessed the witness or that product permissions changed.; remediate: Before any filesystem lookup, enforce a canonical repository-relative path grammar and case-insensitive excluded identity check appropriate to Windows; reject noncanonical separators/dot components and other alias spellings. Use bounded no-follow/redirect-rejecting input reads, including relevant ancestors, so a permitted-looking name cannot resolve into an excluded or outside target. Keep the explicit exclusion and historical report unchanged. Add focused mocked lexical/redirect negatives and safe synthetic-only fixtures; never exercise actual protected aliases or targets. Replay the corrected helper with a new report and authenticate its exact source and evidence. This is blocking because newly delivered evidence tooling can otherwise perform explicitly prohibited reads, despite the currently matching benign input inventory. No new controller or product-authority change is required.
+- `W1.A09.T04.R01.F02` `medium` blocking=`True` criterion=`3` — Final binding can assert candidate equivalence without authenticating tracked input and selected-report bytes to that candidate; reproduce: Candidate final-binding-01.py:58-65 and 137-155 validates working-tree source hashes, records working-tree report hashes, and treats an empty intersection of git diff --name-only HEAD with observed_sources as candidate authentication. In the retained dummy Git repository, commit dummy input bytes, set assume-unchanged on one input and skip-worktree on another, then change both through apply_patch. The exact helper AST assertion accepts both while git hash-object --path gives c4e38972aec016eea01d083a839b3f36c8752c99 and HEAD gives 33f91f034bfe135e21aea0e32b8dfb99a2f16091. Separately commit a normal selected-report.json with ok:false and a stable declared source, then change only the report to ok:true without any index flag on it. The exact bind AST records the changed report hash but does not put the report into observed_sources; the exact final assertion accepts even though git diff names selected-report.json and its candidate/current blobs differ. These are isolated helper-boundary characterizations, not a full main invocation, and no real report or repository index was changed. Actual current candidate inputs and selected reports independently match their committed content.; remediate: Authenticate every trusted selected report's exact snapshot and every tracked observed input directly against the explicit frozen candidate Git tree/blob before relying on report status, inventories or candidate-equivalence claims. Do not use index/stat-based git diff alone as that proof. Preserve the existing distinction between tracked source identity, declared raw hashes, field-specific canonical text hashes and the explicitly qualified generated/runtime inputs. Ensure report parsing and digest claims refer to the same bounded snapshot. Add focused synthetic negatives for assume-unchanged, skip-worktree and a changed normal selected report, plus a valid binding case. Retain the original report and adverse history; publish a new corrected report. This is blocking under the criterion's exact independent evidence bundle and repository commit-bound evidence requirement, even though this review independently confirms that the current submitted observations are not drifted. It does not require replaying unrelated product or full-repository suites.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:/root/t03_acceptance_review at `2026-09-05T23:46:30+00:00`
+
+**Latest notes:** Independent expanded W1.A09.T04 review requests two bounded corrections to the new final-binding evidence helper. Mocked path tests reproduce exclusion/redirect guard bypasses; an isolated dummy Git repository reproduces false candidate binding for masked source changes and an ordinary changed selected report. No actual candidate drift or protected-file access was observed: independent direct comparison confirms 566 recorded inputs and all 517 tracked candidate blobs, and separately all 42 changed non-projection files. Those matching observations do not approve the defective helper. Product/native/Core, packaging, reference/product, performance and return evidence otherwise support their expressly limited task boundaries. This is an adverse task disposition, not contribution/exit/adoption, A08 activation, Wave/release approval or authorization for ordinary-profile startup.
+
+**Currently open findings:** `W1.A09.T04.R01.F01`, `W1.A09.T04.R01.F02`
 
 
 # Capability contributions, slices, and tasks

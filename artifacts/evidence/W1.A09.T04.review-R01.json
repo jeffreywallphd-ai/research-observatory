@@ -1,0 +1,208 @@
+{
+  "schemaVersion": "1.0",
+  "task_id": "W1.A09.T04",
+  "attempt_id": "R01",
+  "candidate_commit": "6a078f982815e547a57f4b2c670e50661b2d0bf3",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "result": "changes-requested",
+  "notes": "Independent expanded W1.A09.T04 review requests two bounded corrections to the new final-binding evidence helper. Mocked path tests reproduce exclusion/redirect guard bypasses; an isolated dummy Git repository reproduces false candidate binding for masked source changes and an ordinary changed selected report. No actual candidate drift or protected-file access was observed: independent direct comparison confirms 566 recorded inputs and all 517 tracked candidate blobs, and separately all 42 changed non-projection files. Those matching observations do not approve the defective helper. Product/native/Core, packaging, reference/product, performance and return evidence otherwise support their expressly limited task boundaries. This is an adverse task disposition, not contribution/exit/adoption, A08 activation, Wave/release approval or authorization for ordinary-profile startup.",
+  "findings": [
+    {
+      "id": "W1.A09.T04.R01.F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Final evidence reader does not enforce the protected-path exclusion before resolving aliases or redirects",
+      "reproduction": "In candidate artifacts/evidence/W1.A09.T04.final-binding-01.py:28-42, scoped rejects only the exact excluded filename string, then resolves and reads the path. Compile only the actual scoped AST with PurePosixPath and a fully mocked REPO/Path whose resolve records a call and returns an in-repository identity. The exact excluded spelling is rejected before the resolver, but dot-component, Windows case and backslash aliases reach it and are accepted. A safe-looking dummy name whose mocked resolution returns the excluded in-repository identity is also accepted; a mocked outside redirect is rejected only after the resolver is called. These nine recorded characterization cases never call a real filesystem resolver or read any protected file. The flaw is an evidence-helper safety defect under the explicit no-access exclusion, not a claim that final-binding-01 actually accessed the witness or that product permissions changed.",
+      "required_remediation": "Before any filesystem lookup, enforce a canonical repository-relative path grammar and case-insensitive excluded identity check appropriate to Windows; reject noncanonical separators/dot components and other alias spellings. Use bounded no-follow/redirect-rejecting input reads, including relevant ancestors, so a permitted-looking name cannot resolve into an excluded or outside target. Keep the explicit exclusion and historical report unchanged. Add focused mocked lexical/redirect negatives and safe synthetic-only fixtures; never exercise actual protected aliases or targets. Replay the corrected helper with a new report and authenticate its exact source and evidence. This is blocking because newly delivered evidence tooling can otherwise perform explicitly prohibited reads, despite the currently matching benign input inventory. No new controller or product-authority change is required."
+    },
+    {
+      "id": "W1.A09.T04.R01.F02",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Final binding can assert candidate equivalence without authenticating tracked input and selected-report bytes to that candidate",
+      "reproduction": "Candidate final-binding-01.py:58-65 and 137-155 validates working-tree source hashes, records working-tree report hashes, and treats an empty intersection of git diff --name-only HEAD with observed_sources as candidate authentication. In the retained dummy Git repository, commit dummy input bytes, set assume-unchanged on one input and skip-worktree on another, then change both through apply_patch. The exact helper AST assertion accepts both while git hash-object --path gives c4e38972aec016eea01d083a839b3f36c8752c99 and HEAD gives 33f91f034bfe135e21aea0e32b8dfb99a2f16091. Separately commit a normal selected-report.json with ok:false and a stable declared source, then change only the report to ok:true without any index flag on it. The exact bind AST records the changed report hash but does not put the report into observed_sources; the exact final assertion accepts even though git diff names selected-report.json and its candidate/current blobs differ. These are isolated helper-boundary characterizations, not a full main invocation, and no real report or repository index was changed. Actual current candidate inputs and selected reports independently match their committed content.",
+      "required_remediation": "Authenticate every trusted selected report's exact snapshot and every tracked observed input directly against the explicit frozen candidate Git tree/blob before relying on report status, inventories or candidate-equivalence claims. Do not use index/stat-based git diff alone as that proof. Preserve the existing distinction between tracked source identity, declared raw hashes, field-specific canonical text hashes and the explicitly qualified generated/runtime inputs. Ensure report parsing and digest claims refer to the same bounded snapshot. Add focused synthetic negatives for assume-unchanged, skip-worktree and a changed normal selected report, plus a valid binding case. Retain the original report and adverse history; publish a new corrected report. This is blocking under the criterion's exact independent evidence bundle and repository commit-bound evidence requirement, even though this review independently confirms that the current submitted observations are not drifted. It does not require replaying unrelated product or full-repository suites."
+    }
+  ],
+  "closures": [],
+  "review_scope": {
+    "base_commit": "cd4838e9c64fdbf3adb8f326781f95404a0c945d",
+    "tested_product_commit": "1a43f45405bc90a6b8736835d4ef277685989996",
+    "submission_delivery_commit": "5fb3db891ff79b363378c05be57ae8bac19451c9",
+    "packet_sha256": "b4524611c2c91be1b101834c232ab0608c2f7addb86e37cbb2535d1610181c4e",
+    "manifest_path": "artifacts/evidence/W1.A09.T04.json",
+    "manifest_canonical_sha256": "7de0eacb47370e94cf98b4dd10db4022658c51388638168b43d74528a26cc278",
+    "manifest_hash_convention": "SHA-256 after CRLF and lone CR normalization to LF, matching taskctl evidence_sha256; packet/criteria/selection hashes instead use the controller's sorted compact JSON convention.",
+    "approved_packet_commit": "2160cc9917282d80848189dc9669fe3827979246",
+    "changed_path_count": 47,
+    "acceptance_criterion_count": 5,
+    "selected_check_description_count": 17,
+    "prior_attempts": 0,
+    "prior_open_findings": [],
+    "packet_binding_checked_at": "2026-09-05T23:38:33.940355+00:00",
+    "risk_selection": "Expanded task review covers the new native fixture lifecycle/resume/resource seams, paused-authority compatibility fixture, publication redactors, exact source/evidence binding and the accumulated Windows/Core proof required by W1.A09.T04. Reuse this reviewer's already completed bounded presentation, redactor and authority inspections; independently test new binding negatives and recalculate retained performance values. No new native UI, build, Cargo, benchmark, production startup or full-profile execution is needed to reproduce these evidence-control findings. Remediation should replay the two findings and the incremental helper boundary, not restart the product audit."
+  },
+  "authority_and_binding_checks": [
+    {
+      "name": "frozen-packet-and-delivery",
+      "result": "passed",
+      "detail": "Read W1.A09.T04 from the committed delivery backlog, confirmed REVIEW/R01, candidate/base/branch, five criteria, 47 exact base-to-candidate paths, zero prior attempts and no prior open findings. Recomputed packet, criteria, verification-selection and LF-normalized manifest hashes. Checks, command IDs, deferrals and rationale equal the frozen manifest. The current task equals the delivery task; the current manifest equals its committed delivery bytes after declared newline normalization. Verified base-to-tested-to-candidate-to-delivery ancestry. Tested-to-candidate adds only final-binding-01.json. Candidate-to-delivery changes only the manifest, backlog and four generated projections.",
+      "acceptance_criteria_sha256": "7a36e66d2182dbfc662a4717b7f62f0528f2eefab8e9d982fcd1e2ae1133a513",
+      "selection_sha256": "c01a1d8b20984b88b47e59be5ead1400dd73f537959ccb864a642185bffbbac1"
+    },
+    {
+      "name": "actual-input-and-evidence-authentication-independent-of-helper",
+      "result": "passed-with-helper-findings-kept-open",
+      "detail": "Independently checked safe canonical spelling and non-redirecting declared paths, then all 566 recorded raw input hashes. All 517 tracked inputs match candidate Git blobs through stat-independent Git clean hashing; no mismatch. The other 49 are the declared generated reference/product outputs and .venv/pyvenv.cfg, not falsely called tracked sources. Separately compared all 42 changed files outside the five later submission projections, including the selected reports and all new helpers, with candidate blobs: every one matches. This establishes actual observation identity, not acceptance of the helper's own weaker algorithm, not an atomic defense against malicious same-account change-and-restore, and not fresh replay of every producer check."
+    },
+    {
+      "name": "approved-authority-and-frozen-parent",
+      "result": "passed",
+      "detail": "Independently compared current ECR-0008 packet, execution-01 and ux-addendum-01 bytes with the exact approved commit, permitting only the repository's CRLF representation. Recomputed the live W1.A08 paused-predecessor record and confirmed equality among approved pausedPredecessor, live W1.A09 correction and inert return-preparation. W1.A08 remains PAUSED; no adoption, parent activation or ordinary-Wave authority is supplied by this bundle.",
+      "approved_packet_sha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+      "approved_execution_sha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560",
+      "approved_ux_addendum_sha256": "694872d27297d3a4f142356a06ce37f75d3142e0c30b290b103102018a775924",
+      "paused_parent_record_sha256": "3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506"
+    },
+    {
+      "name": "native-fixture-and-test-maintenance-scope",
+      "result": "no-additional-blocking-finding",
+      "detail": "Reviewed stable lib.rs and project_contract_probe.rs fixture additions: absent fixture policy produces default None, held directory identity and typed resume provenance are revalidated, sharing permits Core publication while denying delete sharing, and resource checking uses a bare release Builder with windows disabled rather than ordinary setup/eventloop. The fixture neither claims malicious same-account isolation nor opens ordinary policy/vaults. Existing protected modal mechanisms remain separate from the new absent-policy lifecycle. application_lock.rs has only two test-local needless-borrow removals. The paused-correction test now uses authentic immutable ECR-0008/paused-parent fixtures while retaining exact-binding and injected-history rejection; no controller change or weakened valid assertion was found. The author's four-test replay is producer evidence, not this reviewer's execution."
+    }
+  ],
+  "independent_replays": [
+    {
+      "name": "isolated-final-binding-path-characterization",
+      "method": "Read the helper source into ast; compile only scoped, supplying actual PurePosixPath and a fake Path/REPO implementing division, resolve and is_relative_to. The fake resolver only records calls. Neither helper imports/main nor any actual path lookup is performed for a test path.",
+      "source_raw_sha256": "e571f6665565b8fc19a2ec7708deb31a46697fda69b7d872c3e5fd9a4164e631",
+      "cases": [
+        {"case": "exact-excluded-name", "denied": true, "mock_resolver_reached": false},
+        {"case": "dot-component-alias", "denied": false, "mock_resolver_reached": true},
+        {"case": "Windows-case-alias", "denied": false, "mock_resolver_reached": true},
+        {"case": "backslash-alias", "denied": false, "mock_resolver_reached": true},
+        {"case": "parent-traversal", "denied": true, "mock_resolver_reached": false},
+        {"case": "drive-path", "denied": true, "mock_resolver_reached": false},
+        {"case": "ordinary-safe-input", "denied": false, "mock_resolver_reached": true},
+        {"case": "mock-in-repository-redirect-to-excluded-identity", "denied": false, "mock_resolver_reached": true},
+        {"case": "mock-outside-redirect", "denied": true, "mock_resolver_reached": true}
+      ],
+      "result": "All nine expected characterization outcomes observed; unsafe acceptance reproduces F01.",
+      "real_test_path_filesystem_access": false,
+      "protected_file_access": false
+    },
+    {
+      "name": "isolated-real-Git-candidate-binding-characterization",
+      "fixture": "artifacts/tmp/W1.A09.T04.review-R01-index-20260905-2339",
+      "method": "Root explicitly authorized a fresh retained dummy Git repository. apply_patch creates/changes only dummy files; Git configuration is command-local with global/system config excluded. Compile and execute the candidate helper's exact AST bind function and final diff-intersection assertion against this fixture. No real repository/index/branch mutation or real report modification occurs.",
+      "masked_input_baseline_commit": "6caa8db2d601f7f59ad1cd0a5999badeb3be6b5a",
+      "selected_report_baseline_commit": "e2bd788c3972a053f1acfd13981f271418377c42",
+      "cases": [
+        {
+          "case": "assume-unchanged-input",
+          "git_diff_output_at_characterization": "",
+          "helper_assertion_accepted": true,
+          "candidate_blob": "33f91f034bfe135e21aea0e32b8dfb99a2f16091",
+          "current_clean_blob": "c4e38972aec016eea01d083a839b3f36c8752c99",
+          "current_raw_sha256": "2779e5023e8bb9fcbc2258a9908ac27a1da2f8870adaf1a090bef3deb87ce649"
+        },
+        {
+          "case": "skip-worktree-input",
+          "git_diff_output_at_characterization": "",
+          "helper_assertion_accepted": true,
+          "candidate_blob": "33f91f034bfe135e21aea0e32b8dfb99a2f16091",
+          "current_clean_blob": "c4e38972aec016eea01d083a839b3f36c8752c99",
+          "current_raw_sha256": "2779e5023e8bb9fcbc2258a9908ac27a1da2f8870adaf1a090bef3deb87ce649"
+        },
+        {
+          "case": "ordinary-tracked-selected-report-changed",
+          "git_diff_output_at_characterization": "selected-report.json",
+          "report_has_masking_flag": false,
+          "committed_report_ok": false,
+          "current_report_ok": true,
+          "helper_bind_and_assertion_accepted": true,
+          "observed_source_names": ["report-source.txt"],
+          "candidate_report_blob": "0c43c01ebc68f57431f1bfceab186c0c4c5b9ba6",
+          "current_clean_report_blob": "465b410de0bfc2c572ffbff0883c4e585f1a2c88",
+          "recorded_working_report_raw_sha256": "a8abe3468e0d2360509734bcf930f46059bce647eae6fb99744225390a2a4a0f"
+        }
+      ],
+      "result": "All three expected false-acceptance outcomes reproduced F02. Retained dummy state includes the two masked source changes and normal report change. No full helper-main PASS is claimed."
+    },
+    {
+      "name": "previously-executed-independent-W1.A09.T04-presentation-checkpoint",
+      "report": "artifacts/evidence/W1.A09.T04.presentation-check-01.json",
+      "report_raw_sha256": "605c3723bea2659f3b86a756cae686a455faff5311e2c18ec5f5a50d04244928",
+      "result": "This reviewer actually ran five separate ui_conformance checks (tokens, routes, workflows, accessibility and visual) plus desktop_app_check --built-frame-only. All six passed with 425 before/after inputs unchanged. Reference captures, including 66 accessibility/responsive/visual observations, remain reference evidence; actual built React-frame checks use explicitly declared native/Core doubles and are not native application observations. These finished checks were not rerun during R01."
+    },
+    {
+      "name": "previously-executed-independent-redactor-negatives",
+      "report": "artifacts/evidence/W1.A09.T04.maintenance-review-01.json",
+      "report_raw_sha256": "2088eb9d389816be98cff4474fe570326fa5872e7a8c304c94224d2930a67637",
+      "result": "This reviewer actually ran 14 AST-isolated cases across the two redactors: plain/repr profile and repository paths, forward-slash profile path, Git principal/SID diagnostics and preservation of adverse outcome/relative paths. All passed. The earlier output-only integration-report leak was corrected before publication while original result and inventory fields remained unchanged. The bounded privacy scan and four author-owned authority tests are documented separately; the earlier advisory did not cover the later final-binding helper or constitute task approval."
+    },
+    {
+      "name": "performance-distribution-and-copy-recalculation",
+      "report": "artifacts/evidence/W1.A09.T04.performance-02.json",
+      "report_raw_sha256": "6ed44782174c5ee008d8f3ea08f75df53f8f90d354b98c2681e4abd96050e6ad",
+      "result": "Independently confirmed parsed equality with the retained artifacts/tmp report and recalculated min/max and nearest-rank p50/p95 for every sample: 12 paint, 12 skeleton, 12 usable and 20 component batches. p95 values are 52, 20.449, 24.294 and 38.472 ms. All absolute and unchanged 20-percent regression comparisons agree with recorded values. This is arithmetic/report verification, not another benchmark execution or an ordinary-profile performance claim."
+    }
+  ],
+  "reviewed_evidence_raw_sha256": {
+    "artifacts/evidence/W1.A09.T04.final-binding-01.json": "0455085dc0512e79c2bc2f520f39b631f1b02dc78aaa9d5cefa6a99141943473",
+    "artifacts/evidence/W1.A09.T04.final-binding-01.py": "e571f6665565b8fc19a2ec7708deb31a46697fda69b7d872c3e5fd9a4164e631",
+    "artifacts/evidence/W1.A09.T04.verification-units-03.json": "e891fc75a2a2227e753212843aa0ae1908e658d4157f509b3bc8efed80fb9db7",
+    "artifacts/evidence/W1.A09.T04.verification-native-02.json": "470235ace7eaaf6fdb2db927c9a52cda408a134ccaa03ce96809392f0db34332",
+    "artifacts/evidence/W1.A09.T04.verification-integration-02.json": "eb9386469e61066d9bca993169e48af5d58ae7576930b16790725604bc8cbe17",
+    "artifacts/evidence/W1.A09.T04.native-builds-01.json": "2666fb7ff47311ede643b99f4db3dddceb79e680933b64373e050f6f465b14fb",
+    "artifacts/evidence/W1.A09.T04.native-ui-observations-01.json": "6dae910f41e88057e24b8a58240d6bd34583218c65a0174c4680b2bcb3980c64",
+    "artifacts/evidence/W1.A09.T04.packaging-production-02.json": "55098533839d9a765b3f40d6afb6659aaa72cf4ebc7b380bd2196eb2e0ada0f0",
+    "artifacts/evidence/W1.A09.T04.production-native-build-01.json": "27c24727c98eccd3b657e2839f6e247cc39f1fe7df9736cb57b58297068e6c7c",
+    "artifacts/evidence/W1.A09.T04.resource-resolution-01.json": "d01e8120040f9ad3b2740f0434e1a162e92042dccb4796428172a575ee3f43c4",
+    "artifacts/evidence/W1.A09.T04.authority-return-check-02.json": "07c4a002b68ecba21d15832dbe588d67c9080ec192a09df2cfc5fabfb96b19ab",
+    "artifacts/evidence/W1.A09.T04.source-binding-audit-01.json": "8caaf45a83a16c1b76458bea9b193d5d10d2a4a9db15c7cca04a248964a9a561",
+    "artifacts/evidence/W1.A09.T04.review-bundle.md": "0582ebb1567bf14bd49bd491c7132064cd2206a22c4c4de66952f4452072de3c",
+    "artifacts/evidence/W1.A09.T04.return-preparation.json": "7817d1293d7e684abbded3f50aff4622a6b2a066d54c00d8825b2f6e36638517",
+    "artifacts/evidence/W1.A09.T04.blind-usability-01.transcript.md": "1017f9812ca598f222427e24fc080c2a0b6b5dba2fdc8a72d87c2a0b346bc2ff",
+    "artifacts/evidence/W1.A09.T04.blind-usability-01.assessment.md": "7ec4d91c9a9a69da40d36344ab6c28b4250bdc780fe3404b873240880f0b5668",
+    "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json": "5d0434b8d32724b1ec817ca7029905273823d14c9c2c1189d562b9e1cb82da10"
+  },
+  "acceptance_disposition": [
+    {
+      "criterion_index": 1,
+      "result": "supported-without-additional-finding",
+      "basis": "The bundle maps F01/UX02-UX06 to approved W1.A09.T01-T03 and accumulated W1.A09.T04 evidence, while F02/UX01 remain W1.A08.T02 duties. The fresh blind novice transcript actually reaches project creation without path typing and draft save/reopen; partial downstream results and U02/U03/U05/U06 are retained, not confused with ECR UX IDs or falsely closed. Overall task approval remains withheld for criterion 3."
+    },
+    {
+      "criterion_index": 2,
+      "result": "supported-without-additional-finding",
+      "basis": "Current producer units-03/native-02/integration-02 report 21 selected passing commands with matched input/helper inventories; this reviewer distinguishes them from its actual replays. Actual embedded React/Tauri/Core fixture create/open, fresh app/Core restart, Windows folder selection and explicit reopen/close complement prior-source T03 modal/cancellation/lock/close observations only where the production mechanisms remain unchanged. New fixture publication/reparse/resume risks have current tests and actual lifecycle observations. Fresh production package --check, clean build, failure/restoration and release resource/no-fallback proofs are scoped separately from native UI. Independent reference/product checks and retained benchmark samples complete the assigned presentation/performance boundaries. This supports the approved accumulated union plus packaging smoke, not a claim of a fully frozen ordinary-profile lifecycle."
+    },
+    {
+      "criterion_index": 3,
+      "result": "not-satisfied",
+      "basis": "The authority/semantic/native review bundle is assembled and actual current source/report identity matches the candidate. Nevertheless F01 and F02 are reproducible defects in the newly delivered evidence controls: excluded path identity is not safely enforced and the helper's candidate assertion can accept changed inputs/reports. Both require bounded correction and independent incremental replay before this exact-evidence/no-widened-permission criterion can be approved. No separate product correctness blocker was demonstrated."
+    },
+    {
+      "criterion_index": 4,
+      "result": "supported-without-additional-finding",
+      "basis": "The eight-criterion amendment-exit and exact correctionReturn preparation are explicitly inert; independent contribution/exit review and supported submit/review/adopt remain later duties. The task does not approve itself or activate the parent. The helper corrections must be carried through new evidence and supported remediation before any such disposition."
+    },
+    {
+      "criterion_index": 5,
+      "result": "supported-without-additional-finding",
+      "basis": "Exact paused W1.A08 authority/hash remains unchanged and the return procedure keeps its history and PAUSED state. W1.A08.T02 recovery, qualification and adoption precede ordinary W1/CAP-07 recovery. Full W1 qualification, independent Wave review and human G1 remain explicitly mandatory. No parent activation or release approval is inferred."
+    }
+  ],
+  "retained_history_and_residuals": [
+    "The original fixture-publication failure, stale paused-authority fixture failure/diagnostic, redaction/unit failure, performance output-location rejection and all three final-binding assertion failures remain retained. No later PASS relabels those runs, source inventories or original helper hashes.",
+    "The three final-binding adverse reports explain raw-versus-canonical benchmark hashes, declared ignored artifacts versus tracked inputs, and Windows newline versus NUL Git path protocol. Those fixes address their demonstrated assertions, but they did not cover the new R01 path and candidate-authentication findings. R01 records the missing negative boundaries without rewriting the earlier history.",
+    "Append-only packaging-scope-review-01 corrects this reviewer's earlier W1.A09.T03 phrase 'single packaged renderer/native/Core lifecycle'. The immutable approved W1.A09.T04 criterion requires the accumulated real Windows/native/Core union plus clean build/packaging smoke; a single frozen lifecycle is a possible method, not a new criterion. The original W1.A09.T03 evidence/ledger remain unchanged. Frozen/unmodified-production ordinary-profile startup and required installer/authentication/release qualification are still unproved and remain later W1 duties, not silently waived.",
+    "The blind participant used a fresh actual built fixture and received only tool-entry help, not navigation coaching. Its task-center/support denials are explicitly caused by fixture request/invoke restrictions and do not demonstrate an ordinary-production endpoint regression. Metadata-only version comparison and retained usability findings are not closed by this task review. No full nine-task success is claimed.",
+    "Prior T03 protected modal observations are prior-source observations plus current mechanism equivalence, not a fresh T04 protected-modal GUI run. The source-binding audit author also authored the harness and is not an independent approver of that work. This review separately inspected those changed boundaries.",
+    "Fixture receipts and held-handle revalidation establish provenance and bounded mutation detection, not malicious same-Windows-account isolation or race-free rollback. Resource-root checking does not run ordinary Tauri setup or start the frozen Core. Generated/reference frames and renderer doubles remain distinct from actual native/Core behavior.",
+    "One reviewer authority-check invocation used a nonexistent ux-addendum filename lacking the -01 suffix and stopped with FileNotFoundError after completing performance arithmetic. A filename-only listing identified the canonical path; the corrected exact three-authority comparison passed. This was reviewer command setup, not a product/authority failure; no real protected path was involved. Durable output omits account/path diagnostics."
+  ],
+  "reviewer_safety": "Only this new review ledger and explicitly authorized synthetic dummy files were authored. The synthetic Git repository is retained under its dedicated artifacts/tmp namespace and used no real project data. The real repository index/branches, product/helpers, backlog/controller, ordinary policy/vault/credentials and native UI were not mutated or launched. No build, Cargo, performance rerun, remote operation or sibling workspace access occurred. The protected unrelated W1.A04.B00.json artifact was never opened, read, hashed, copied or modified; alias/redirect tests used mocks only and performed zero real protected-filesystem access. Filename/status mentions in existing scoped evidence were not followed."
+}
