@@ -39715,7 +39715,7 @@ wave_amendments:
         records this exact binding of the standing owner authorization.'
   bootstrap:
     id: W1.A09.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex
     implementation_commit: d849d6699cbc0295e3b94f5efda9e338822d7c9e
     submission_branch: codex/w1-windows-local-runtime
@@ -39727,10 +39727,13 @@ wave_amendments:
       commit: d849d6699cbc0295e3b94f5efda9e338822d7c9e
       recorded_at: '2026-09-05T03:21:27+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: agent:t01-r02-independent-reviewer
+      result: approved
+      reviewed_at: '2026-09-05T03:28:14+00:00'
+      notes: 'Independent review artifacts/evidence/W1.A09.B00.review-R01.json approves exact candidate d849d669 and delivery
+        82488fbd: full predecessor/A08 equality, exact owner authority, pending-child freeze, materialization denial and generated-site
+        checks pass; no findings. This approves only B00, not product/reference activation, task/slice/exit completion or
+        G1.'
   campaign: null
   tasks: []
   completion:
