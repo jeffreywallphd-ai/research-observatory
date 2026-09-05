@@ -1,0 +1,246 @@
+    <!doctype html>
+    <html lang="en" data-theme="light">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Generative AI and Creative Cognition · Research Observatory</title>
+      <meta name="description" content="Static UI reference for the Research Observatory research-development and literature-analysis platform.">
+      <link rel="stylesheet" href="assets/tokens.css">
+      <link rel="stylesheet" href="assets/app.css">
+      <link rel="stylesheet" href="assets/print.css" media="print">
+      <script defer src="assets/app.js"></script>
+    </head>
+    <body data-page="project-home">
+
+<svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+  <symbol id="icon-observatory" viewBox="0 0 24 24"><path d="M3 20h18M5 20v-4h14v4M7 16v-4a5 5 0 0 1 10 0v4M9 12h6M12 4v3M8.5 5.5 10 8M15.5 5.5 14 8"/></symbol>
+  <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="icon-clipboard" viewBox="0 0 24 24"><path d="M9 5h6M9 3h6v4H9z"/><rect x="5" y="5" width="14" height="16" rx="2"/><path d="m8 14 2 2 5-5"/></symbol>
+  <symbol id="icon-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16M15 4v16"/></symbol>
+  <symbol id="icon-network" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="7" r="2"/><circle cx="12" cy="18" r="2"/><path d="m8 7 8 0M7 8l4 8M17 9l-4 7"/></symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></symbol>
+  <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/></symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.2 8.4-8 10-4.8-1.6-8-5-8-10V6l8-3Z"/><path d="m9 12 2 2 4-5"/></symbol>
+  <symbol id="icon-pen" viewBox="0 0 24 24"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"/><path d="m14 7 3 3M4 20h8"/></symbol>
+  <symbol id="icon-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/><circle cx="12" cy="12" r="10"/></symbol>
+  <symbol id="icon-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1A1.7 1.7 0 0 0 4.6 15 1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
+  <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z"/></symbol>
+  <symbol id="icon-document" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></symbol>
+  <symbol id="icon-book" viewBox="0 0 24 24"><path d="M4 5a3 3 0 0 1 3-2h5v17H7a3 3 0 0 0-3 2V5Z"/><path d="M20 5a3 3 0 0 0-3-2h-5v17h5a3 3 0 0 1 3 2V5Z"/></symbol>
+  <symbol id="icon-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+  <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h8M16 18h4"/><circle cx="16" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="14" cy="18" r="2"/></symbol>
+  <symbol id="icon-tasks" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1 1 2-2M3 12l1 1 2-2M3 18l1 1 2-2"/></symbol>
+  <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+  <symbol id="icon-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
+  <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+  <symbol id="icon-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.3 2.3 0 1 1 3.5 2c-.8.5-1.3 1-1.3 2M12 17h.01"/></symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
+  <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18 12a6 6 0 0 0-10-4L4 12M6 12a6 6 0 0 0 10 4l4-4"/></symbol>
+  <symbol id="icon-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z"/></symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="icon-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v7H4V6h7"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="icon-warning" viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></symbol>
+  <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 4a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5"/></symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5M4 3h16"/></symbol>
+  <symbol id="icon-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/></symbol>
+  <symbol id="icon-blueprint" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h4M14 12h3M7 16h10"/></symbol>
+  <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13 7 4 4"/></symbol>
+  <symbol id="icon-review" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4V4Z"/><path d="M8 8h8M8 12h5"/></symbol>
+  <symbol id="icon-comments" viewBox="0 0 24 24"><path d="M3 5h14v10H7l-4 4V5Z"/><path d="M9 9h8v8h-3l-3 3v-3"/></symbol>
+  <symbol id="icon-figure" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m6 16 4-5 3 3 2-3 3 5"/><circle cx="9" cy="8" r="1"/></symbol>
+</svg>
+
+      <div class="app-shell">
+        <header class="topbar">
+          <a class="brand" href="index.html" aria-label="Research Observatory project home">
+            <span class="brand-mark"><svg class="icon icon-lg" aria-hidden="true"><use href="#icon-observatory"></use></svg></span>
+            <span class="brand-name">Research Observatory</span>
+          </a>
+          <div class="topbar-center">
+            <a class="project-switcher" href="projects.html" aria-label="Open project selector">
+              <span><span class="tiny muted">Current project</span><br><strong>Generative AI and Creative Cognition</strong></span>
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+            </a>
+            <label class="global-search">
+              <span class="sr-only">Search across this project</span>
+              <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+              <input type="search" placeholder="Search across project…">
+              <span class="shortcut">Ctrl K</span>
+            </label>
+          </div>
+          <div class="topbar-actions">
+            <a class="icon-button" href="task-center.html" aria-label="Task center" title="Task center"><svg class="icon" aria-hidden="true"><use href="#icon-tasks"></use></svg><span class="notification-dot">4</span></a>
+            <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode"><span data-theme-icon><svg class="icon" aria-hidden="true"><use href="#icon-moon"></use></svg></span></button>
+            <a class="icon-button" href="help-onboarding.html" aria-label="Help and onboarding" title="Help and onboarding"><svg class="icon" aria-hidden="true"><use href="#icon-help"></use></svg></a>
+            <a class="avatar" href="application-settings.html#security-sign-in" aria-label="Application settings for local profile">JW</a>
+          </div>
+        </header>
+
+        <aside class="sidebar" aria-label="Project and application navigation">
+          <nav class="nav-scroll">
+            <a class="nav-item active" href="index.html" aria-current="page" title="Project Home"><svg class="icon" aria-hidden="true"><use href="#icon-home"></use></svg><span>Project Home</span></a>
+            <div class="workflow-selector-card">
+              <label class="workflow-selector-label" for="workflow-profile">Primary use case</label>
+              <select class="select workflow-select" id="workflow-profile" data-workflow-select><optgroup label="Explore and synthesize"><option value="rapid-orientation">Rapid field orientation</option><option value="systematic-review">Systematic / scoping review</option><option value="living-review">Living review</option><option value="theory-synthesis">Theory synthesis</option><option value="hermeneutic-inquiry">Hermeneutic inquiry</option><option value="critical-problematization">Critical problematization</option><option value="technical-landscape">Technical landscape / benchmark audit</option><option value="novelty-audit">Novelty & research-opportunity audit</option></optgroup><optgroup label="Design and publish"><option value="empirical-study-design">Empirical study design</option><option value="empirical-study-to-article" selected>Empirical study to article</option><option value="empirical-results-to-article">Empirical results to article</option><option value="theory-article-development">Theory article development</option><option value="critical-article-development">Critical article development</option><option value="manuscript-review-revision">Manuscript review & revision</option></optgroup></select>
+              <div class="workflow-progress-row"><span data-workflow-progress-label>Step 1 of 10</span><a href="intent-contract.html">Edit</a></div>
+              <div class="progress" data-workflow-progress style="--value:10%"><span></span></div>
+            </div>
+            <div class="nav-group-label">Guided workflow</div>
+            <div class="workflow-nav" data-workflow-nav aria-label="Ordered steps for the selected use case"></div>
+            <details class="all-tools" data-all-tools>
+              <summary><svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg><span>All tools</span><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></summary>
+              <div class="all-tools-list"><a class="nav-item active" href="index.html" aria-current="page" title="Project Home"><svg class="icon" aria-hidden="true"><use href="#icon-home"></use></svg><span>Project Home</span></a>
+<a class="nav-item" href="search-studio.html" title="Search Studio"><svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg><span>Search Studio</span></a>
+<a class="nav-item" href="corpus-canvas.html" title="Corpus Canvas"><svg class="icon" aria-hidden="true"><use href="#icon-grid"></use></svg><span>Corpus Canvas</span></a>
+<a class="nav-item" href="screening.html" title="Screening"><svg class="icon" aria-hidden="true"><use href="#icon-clipboard"></use></svg><span>Screening</span></a>
+<a class="nav-item" href="evidence-matrix.html" title="Evidence Matrix"><svg class="icon" aria-hidden="true"><use href="#icon-table"></use></svg><span>Evidence Matrix</span></a>
+<a class="nav-item" href="claim-graph.html" title="Claim Graph"><svg class="icon" aria-hidden="true"><use href="#icon-network"></use></svg><span>Claim Graph</span></a>
+<a class="nav-item" href="theory-map.html" title="Theory Map"><svg class="icon" aria-hidden="true"><use href="#icon-layers"></use></svg><span>Theory Map</span></a>
+<a class="nav-item" href="critical-lens.html" title="Critical Lens"><svg class="icon" aria-hidden="true"><use href="#icon-eye"></use></svg><span>Critical Lens</span></a>
+<a class="nav-item" href="opportunity-radar.html" title="Opportunity Radar"><svg class="icon" aria-hidden="true"><use href="#icon-target"></use></svg><span>Opportunity Radar</span></a>
+<a class="nav-item" href="novelty-audit.html" title="Novelty Audit"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg><span>Novelty Audit</span></a>
+<a class="nav-item" href="synthesis-studio.html" title="Synthesis Studio"><svg class="icon" aria-hidden="true"><use href="#icon-pen"></use></svg><span>Synthesis Studio</span></a>
+<a class="nav-item" href="study-design.html" title="Study Design Studio"><svg class="icon" aria-hidden="true"><use href="#icon-flask"></use></svg><span>Study Design Studio</span></a>
+<a class="nav-item" href="manuscript-blueprint.html" title="Manuscript Blueprint"><svg class="icon" aria-hidden="true"><use href="#icon-blueprint"></use></svg><span>Manuscript Blueprint</span></a>
+<a class="nav-item" href="technical-reports.html" title="Technical Reports"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg><span>Technical Reports</span></a>
+<a class="nav-item" href="manuscript-studio.html" title="Manuscript Studio"><svg class="icon" aria-hidden="true"><use href="#icon-edit"></use></svg><span>Manuscript Studio</span></a>
+<a class="nav-item" href="reviewer-simulation.html" title="Reviewer Simulation"><svg class="icon" aria-hidden="true"><use href="#icon-review"></use></svg><span>Reviewer Simulation</span></a>
+<a class="nav-item" href="revision-response.html" title="Revision & Response"><svg class="icon" aria-hidden="true"><use href="#icon-comments"></use></svg><span>Revision & Response</span></a>
+<a class="nav-item" href="living-monitor.html" title="Living Monitor"><svg class="icon" aria-hidden="true"><use href="#icon-pulse"></use></svg><span>Living Monitor</span></a></div>
+            </details>
+            <div class="nav-group-label">Project operations</div>
+            <a class="nav-item" href="projects.html" title="All Projects"><svg class="icon" aria-hidden="true"><use href="#icon-folder"></use></svg><span>All Projects</span></a>
+<a class="nav-item" href="intent-contract.html" title="Research Intent"><svg class="icon" aria-hidden="true"><use href="#icon-document"></use></svg><span>Research Intent</span></a>
+<a class="nav-item" href="source-manager.html" title="Source Manager"><svg class="icon" aria-hidden="true"><use href="#icon-database"></use></svg><span>Source Manager</span></a>
+<a class="nav-item" href="ingestion-reconciliation.html" title="Ingestion Review"><svg class="icon" aria-hidden="true"><use href="#icon-refresh"></use></svg><span>Ingestion Review</span></a>
+<a class="nav-item" href="document-reader.html" title="Document Reader"><svg class="icon" aria-hidden="true"><use href="#icon-book"></use></svg><span>Document Reader</span></a>
+<a class="nav-item" href="parsing-quality.html" title="Parsing Quality"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg><span>Parsing Quality</span></a>
+<a class="nav-item" href="schema-manager.html" title="Schema Manager"><svg class="icon" aria-hidden="true"><use href="#icon-sliders"></use></svg><span>Schema Manager</span></a>
+<a class="nav-item" href="task-center.html" title="Task Center"><svg class="icon" aria-hidden="true"><use href="#icon-tasks"></use></svg><span>Task Center</span></a>
+<a class="nav-item" href="audit-lineage.html" title="Audit & Lineage"><svg class="icon" aria-hidden="true"><use href="#icon-history"></use></svg><span>Audit & Lineage</span></a>
+<a class="nav-item" href="model-center.html" title="Model & Privacy"><svg class="icon" aria-hidden="true"><use href="#icon-cpu"></use></svg><span>Model & Privacy</span></a>
+<a class="nav-item" href="help-onboarding.html" title="Help & Onboarding"><svg class="icon" aria-hidden="true"><use href="#icon-help"></use></svg><span>Help & Onboarding</span></a>
+          </nav>
+          <div class="sidebar-bottom">
+            <a class="nav-item" href="application-settings.html" title="Application settings"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg><span>Application Settings</span></a>
+            <a class="nav-item" href="project-settings.html" title="Project settings"><svg class="icon" aria-hidden="true"><use href="#icon-gear"></use></svg><span>Project Settings</span></a>
+            <button class="nav-item sidebar-toggle" type="button" data-sidebar-toggle title="Collapse sidebar"><svg class="icon" aria-hidden="true"><use href="#icon-chevron-left"></use></svg><span>Collapse</span></button>
+          </div>
+        </aside>
+
+        <div class="main-shell">
+          <main class="page-content" id="main-content">
+            <header class="page-header">
+              <div>
+                <div class="eyebrow">Project home</div>
+                <h1 class="page-title">Generative AI and Creative Cognition</h1>
+                <p class="page-subtitle">Exploring how generative AI shapes creative thought, ideation, evaluation, and scholarly opportunity.</p>
+              </div>
+              <div class="page-actions"><a class="btn" href="intent-contract.html"><svg class="icon" aria-hidden="true"><use href="#icon-document"></use></svg><span>Edit workflow &amp; intent</span></a><a class="btn btn-primary" href="study-design.html"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg><span>Continue workflow</span></a></div>
+            </header>
+            <section class="workflow-context" data-workflow-context aria-label="Current guided workflow position"></section>
+
+<div class="status-row">
+  <span class="badge badge-success">Active</span> <span class="badge badge-brand">Empirical study to article</span> <span class="badge badge-info">Local project</span> <span class="badge">Updated 2 hours ago</span>
+</div>
+
+<section class="card card-lg workflow-overview section">
+  <div class="card-header"><div><h2 class="card-title">Current guided workflow</h2><div class="card-subtitle">The ordered path is selected at project creation and may be revised through the Research Intent Contract.</div></div><div class="toolbar"><span class="badge badge-brand" data-current-workflow-title>Empirical study to article</span><a class="card-link" href="help-onboarding.html#workflows">Compare use cases →</a></div></div>
+  <div class="workflow-map" data-workflow-map></div>
+  <div class="workflow-next-callout"><div><div class="tiny muted">Recommended next step</div><div class="strong" data-workflow-next-title>Study Design Studio</div><div class="small muted" data-workflow-next-description>Compare viable designs and formalize the study protocol before data collection.</div></div><a class="btn btn-primary" data-workflow-next-link href="study-design.html">Continue →</a></div>
+</section>
+
+<section class="kpi-strip section">
+  <section class="card metric-card"><div><div class="metric-top"><span class="metric-label">Corpus size</span><span class="text-brand"><svg class="icon" aria-hidden="true"><use href="#icon-database"></use></svg></span></div><div class="metric-value">18,742</div><div class="metric-unit">canonical works</div></div><div class="metric-delta positive">+1,246 this month</div></section>
+  <section class="card metric-card"><div><div class="metric-top"><span class="metric-label">Active corpus</span><span class="text-brand"><svg class="icon" aria-hidden="true"><use href="#icon-book"></use></svg></span></div><div class="metric-value">12,356</div><div class="metric-unit">included works</div></div><div class="metric-delta ">66% of total</div></section>
+  <section class="card metric-card"><div><div class="metric-top"><span class="metric-label">Unresolved decisions</span><span class="text-brand"><svg class="icon" aria-hidden="true"><use href="#icon-tasks"></use></svg></span></div><div class="metric-value">14</div><div class="metric-unit">researcher decisions</div></div><div class="metric-delta ">Across 5 domains</div></section>
+  <section class="card metric-card"><div><div class="metric-top"><span class="metric-label">Opportunity candidates</span><span class="text-brand"><svg class="icon" aria-hidden="true"><use href="#icon-target"></use></svg></span></div><div class="metric-value">27</div><div class="metric-unit">provisional candidates</div></div><div class="metric-delta ">12 new this week</div></section>
+</section>
+
+<section class="grid grid-3">
+  <article class="card card-lg">
+    <div class="card-header"><div><h2 class="card-title">Stale outputs</h2><div class="card-subtitle">Outputs affected by newer evidence or decisions.</div></div><span class="badge badge-warning">6</span></div>
+    <div class="list">
+      <a class="list-item" href="evidence-matrix.html"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-table"></use></svg></span><span class="list-content"><span class="list-title">Evidence Matrix v3</span><span class="list-meta">19 days since verification sample</span></span><span class="list-trailing text-warning">Review</span></a>
+      <a class="list-item" href="claim-graph.html"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-network"></use></svg></span><span class="list-content"><span class="list-title">Claim Graph v2</span><span class="list-meta">Three affected relations</span></span><span class="list-trailing">14 days</span></a>
+      <a class="list-item" href="theory-map.html"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-layers"></use></svg></span><span class="list-content"><span class="list-title">Theory Map v1</span><span class="list-meta">One construct definition changed</span></span><span class="list-trailing">9 days</span></a>
+    </div>
+  </article>
+
+  <article class="card card-lg">
+    <div class="card-header"><div><h2 class="card-title">Recent field changes</h2><div class="card-subtitle">New literature and material shifts detected.</div></div><a class="card-link" href="living-monitor.html">View monitor →</a></div>
+    <div class="metric-value">+228</div><div class="metric-unit">new records across seven saved monitors</div>
+    <svg class="sparkline" viewBox="0 0 100 42" preserveAspectRatio="none" aria-label="Trend chart"><path class="area" d="M0,34 L12,32 L24,30 L36,22 L48,27 L60,15 L72,19 L84,8 L100,11 L100,42 L0,42 Z"/><polyline class="line" points="0,34 12,32 24,30 36,22 48,27 60,15 72,19 84,8 100,11"/></svg>
+    <div class="chip-row"><span class="chip">AI agents for ideation</span><span class="chip">Creative evaluation</span><span class="chip">Human oversight</span></div>
+  </article>
+
+  <article class="card card-lg">
+    <div class="card-header"><div><h2 class="card-title">Research quality gates</h2><div class="card-subtitle">Methodological and epistemic checks for this project—not software delivery gates.</div></div><span class="badge badge-brand">3 of 5 ready</span></div>
+    <div class="progress" style="--value: 60%"><span></span></div>
+    <div class="list">
+      <div class="list-item"><span class="list-leading text-success"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg></span><span class="list-content"><span class="list-title">Intent and boundaries</span><span class="list-meta">Adjudicated contract v1.3</span></span><span class="badge badge-success">Passed</span></div>
+      <div class="list-item"><span class="list-leading text-warning"><svg class="icon" aria-hidden="true"><use href="#icon-warning"></use></svg></span><span class="list-content"><span class="list-title">Corpus sufficiency</span><span class="list-meta">Language coverage requires review</span></span><span class="badge badge-warning">At risk</span></div>
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg></span><span class="list-content"><span class="list-title">Novelty challenge</span><span class="list-meta">Four candidates still require adversarial search</span></span><span class="badge">Pending</span></div>
+    </div>
+  </article>
+</section>
+
+<section class="grid grid-2 section">
+  <article class="card card-lg">
+    <div class="card-header"><div><h2 class="card-title">Recent activity</h2><div class="card-subtitle">Research and system events with provenance.</div></div><a class="card-link" href="audit-lineage.html">Open audit →</a></div>
+    <div class="list">
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-table"></use></svg></span><span class="list-content"><span class="list-title">Evidence Matrix updated</span><span class="list-meta">342 new evidence records extracted; 31 queued for verification</span></span><span class="list-trailing">2h ago</span></div>
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg></span><span class="list-content"><span class="list-title">Search branch completed</span><span class="list-meta">“creative cognition” × evaluation methods</span></span><span class="list-trailing">5h ago</span></div>
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-pen"></use></svg></span><span class="list-content"><span class="list-title">Interpretive memo linked</span><span class="list-meta">Construct drift between creativity and creative productivity</span></span><span class="list-trailing">Yesterday</span></div>
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-target"></use></svg></span><span class="list-content"><span class="list-title">Opportunity candidate generated</span><span class="list-meta">Measurement sensitivity in human–AI co-creation research</span></span><span class="list-trailing">2d ago</span></div>
+    </div>
+  </article>
+
+  <article class="card card-lg">
+    <div class="card-header"><div><h2 class="card-title">Next actions</h2><div class="card-subtitle">Ordered around the current use case; consequential decisions remain human-gated.</div></div><a class="card-link" href="task-center.html">Open task center →</a></div>
+    <div class="list">
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-eye"></use></svg></span><span class="list-content"><span class="list-title">Verify 31 extracted evidence records</span><span class="list-meta">Required before advancing to Theory Map</span></span><span class="badge badge-brand">Workflow</span></div>
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-tasks"></use></svg></span><span class="list-content"><span class="list-title">Review 14 unresolved decisions</span><span class="list-meta">Inclusion, construct boundary, and model-policy decisions</span></span><span class="badge badge-danger">High</span></div>
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-warning"></use></svg></span><span class="list-content"><span class="list-title">Resolve source-quality gate</span><span class="list-meta">Review proceedings and preprint treatment</span></span><span class="badge badge-warning">Medium</span></div>
+      <div class="list-item"><span class="list-leading"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg></span><span class="list-content"><span class="list-title">Prepare novelty challenge</span><span class="list-meta">Available after theory and claim integration</span></span><span class="badge">Upcoming</span></div>
+    </div>
+  </article>
+</section>
+
+<section class="card card-lg section">
+  <div class="card-header"><div><h2 class="card-title">Research Intent Contract</h2><div class="card-subtitle">The versioned contract governs the use case, epistemic mode, evidence, autonomy, scope, and stopping logic.</div></div><a class="card-link" href="intent-contract.html">View contract →</a></div>
+  <blockquote style="margin:0;padding:0 1.25rem;border-left:3px solid var(--brand-400);font-family:var(--font-serif);font-size:var(--text-lg);color:var(--text-strong);font-style:italic;line-height:1.55">Develop an evidence-grounded account of how generative AI changes creative cognition across ideation, evaluation, and elaboration, while identifying mechanisms, construct drift, boundary conditions, and consequential research opportunities.</blockquote>
+  <div class="grid grid-4" style="margin-top:1.25rem">
+    <div><div class="tiny muted">Owner</div><div class="small strong">Dr. Maya Chen</div></div>
+    <div><div class="tiny muted">Primary use case</div><div class="small strong" data-current-workflow-title>Empirical study to article</div></div>
+    <div><div class="tiny muted">Last revised</div><div class="small strong">May 16, 2026</div></div>
+    <div><div class="tiny muted">Version</div><div class="small strong">1.3 · Adjudicated</div></div>
+  </div>
+</section>
+
+            <footer class="trust-footer">
+              <div class="trust-points">
+                <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-shield"></use></svg> Evidence and outputs are provenance-tracked</span>
+                <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-link"></use></svg> Citations resolve to source passages</span>
+                <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg> AI judgments remain inspectable and contestable</span>
+              </div>
+              <span>Mock data · Academic Minimal v1.6</span>
+            </footer>
+          </main>
+        </div>
+      </div>
+    </body>
+    </html>

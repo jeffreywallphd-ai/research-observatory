@@ -1,0 +1,395 @@
+{
+  "name": "Research Observatory Academic Minimal UI Reference",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.6",
+  "version": "1.6",
+  "generated_at": "2026-09-02",
+  "approval": "APPROVAL.yaml",
+  "capability_coverage": "CAPABILITY_COVERAGE.json",
+  "workflow_catalog": "WORKFLOW_CATALOG.json",
+  "delivery_priority": "Windows PC/lab first, then macOS and Linux desktop parity before hosted delivery",
+  "theme": {
+    "name": "Academic Minimal",
+    "light": "crisp white/slate with restrained royal blue",
+    "dark": "deep navy/cool blue",
+    "canonical_tokens": "assets/tokens.css",
+    "shared_components": "assets/app.css",
+    "shared_behavior": "assets/app.js"
+  },
+  "entry_points": {
+    "prototype_index": "prototype-index.html",
+    "project_creation": "new-project.html",
+    "project_home": "index.html",
+    "style_guide_html": "style-guide.html",
+    "style_guide_markdown": "STYLE_GUIDE.md",
+    "workflow_catalog": "WORKFLOW_CATALOG.md"
+  },
+  "product_page_count": 33,
+  "html_document_count": 35,
+  "pages": [
+    {
+      "file": "index.html",
+      "page": "Project Home",
+      "purpose": "Project state, current workflow, progress, corpus, decisions, research-production readiness, quality gates, activity, and next actions.",
+      "capabilities": [
+        "CAP-01",
+        "CAP-03",
+        "CAP-10",
+        "CAP-15",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ]
+    },
+    {
+      "file": "projects.html",
+      "page": "Projects",
+      "purpose": "Create, open, import, back up, transfer, recover, and see workflow position for local project homes.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-03",
+        "CAP-11"
+      ]
+    },
+    {
+      "file": "new-project.html",
+      "page": "New Project",
+      "purpose": "Choose one of fourteen primary scholarly use cases before configuring the research intent and local project home.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-03",
+        "CAP-11",
+        "CAP-14",
+        "CAP-15",
+        "CAP-16",
+        "CAP-19"
+      ]
+    },
+    {
+      "file": "intent-contract.html",
+      "page": "Research Intent Contract",
+      "purpose": "Declare purpose, use case, ordered workflow, scope, evidence, AI authority, novelty standard, and stopping logic.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-15",
+        "CAP-16",
+        "CAP-18",
+        "CAP-19"
+      ]
+    },
+    {
+      "file": "help-onboarding.html",
+      "page": "Help, Onboarding & Diagnostics",
+      "purpose": "Use-case catalog, guided workflows, offline sample project, shortcuts, contextual help, and privacy-safe support bundles.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-11",
+        "CAP-14",
+        "CAP-15",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ]
+    },
+    {
+      "file": "search-studio.html",
+      "page": "Search Studio",
+      "purpose": "Structured, semantic, citation, and branch-based discovery with coverage diagnostics.",
+      "capabilities": [
+        "CAP-06"
+      ]
+    },
+    {
+      "file": "source-manager.html",
+      "page": "Source Manager",
+      "purpose": "Open, local, licensed, and reference-manager adapters with rights, permissions, and health.",
+      "capabilities": [
+        "CAP-04"
+      ]
+    },
+    {
+      "file": "ingestion-reconciliation.html",
+      "page": "Ingestion & Reconciliation",
+      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+      "capabilities": [
+        "CAP-04"
+      ]
+    },
+    {
+      "file": "corpus-canvas.html",
+      "page": "Corpus Canvas",
+      "purpose": "Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity.",
+      "capabilities": [
+        "CAP-04",
+        "CAP-06"
+      ]
+    },
+    {
+      "file": "screening.html",
+      "page": "Screening",
+      "purpose": "Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics.",
+      "capabilities": [
+        "CAP-06"
+      ]
+    },
+    {
+      "file": "document-reader.html",
+      "page": "Document Reader",
+      "purpose": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+      "capabilities": [
+        "CAP-05",
+        "CAP-08",
+        "CAP-17"
+      ]
+    },
+    {
+      "file": "research-notebook.html",
+      "page": "Research Notebook",
+      "purpose": "Researcher-owned memos, evolving questions, interpretive history, alternative readings, and linked evidence.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-09",
+        "CAP-10"
+      ]
+    },
+    {
+      "file": "parsing-quality.html",
+      "page": "Parsing Quality & Corrections",
+      "purpose": "Structure, page anchors, tables, figures, references, manual corrections, and selective reprocessing.",
+      "capabilities": [
+        "CAP-05",
+        "CAP-17"
+      ]
+    },
+    {
+      "file": "evidence-matrix.html",
+      "page": "Evidence Matrix",
+      "purpose": "Extraction, verification, alternative candidates, comparability, and adjudication.",
+      "capabilities": [
+        "CAP-08",
+        "CAP-15",
+        "CAP-17",
+        "CAP-18"
+      ]
+    },
+    {
+      "file": "schema-manager.html",
+      "page": "Schema & Ontology Manager",
+      "purpose": "Versioned domain packs, fields, relations, constraints, and change-impact preview.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-08",
+        "CAP-09"
+      ]
+    },
+    {
+      "file": "claim-graph.html",
+      "page": "Claim & Argument Graph",
+      "purpose": "Claims, evidence, support, contradiction, qualification, and dispute review.",
+      "capabilities": [
+        "CAP-09"
+      ]
+    },
+    {
+      "file": "theory-map.html",
+      "page": "Theory & Construct Map",
+      "purpose": "Theory use, definitions, operationalizations, mechanisms, drift, and integration.",
+      "capabilities": [
+        "CAP-09"
+      ]
+    },
+    {
+      "file": "critical-lens.html",
+      "page": "Critical Lens",
+      "purpose": "Assumptions, authority, dependency, stakeholder silence, and competing readings.",
+      "capabilities": [
+        "CAP-10"
+      ]
+    },
+    {
+      "file": "opportunity-radar.html",
+      "page": "Opportunity Radar",
+      "purpose": "Plural opportunity types and visible multi-objective comparison.",
+      "capabilities": [
+        "CAP-10"
+      ]
+    },
+    {
+      "file": "novelty-audit.html",
+      "page": "Novelty Audit",
+      "purpose": "Facet decomposition, nearest-prior work, independent challenge, and bounded disposition.",
+      "capabilities": [
+        "CAP-10"
+      ]
+    },
+    {
+      "file": "synthesis-studio.html",
+      "page": "Synthesis Studio",
+      "purpose": "Evidence packets, cited research syntheses, disagreement preservation, disclosure, and reproducibility exports; not the primary full-manuscript editor.",
+      "capabilities": [
+        "CAP-09"
+      ]
+    },
+    {
+      "file": "living-monitor.html",
+      "page": "Living Monitor",
+      "purpose": "Differential retrieval, field changes, impact analysis, and selective recalculation.",
+      "capabilities": [
+        "CAP-10"
+      ]
+    },
+    {
+      "file": "task-center.html",
+      "page": "Task Center",
+      "purpose": "Durable analytical workflows, checkpoints, resource use, failures, cancellation, and human gates.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-07"
+      ]
+    },
+    {
+      "file": "audit-lineage.html",
+      "page": "Audit & Lineage",
+      "purpose": "Source-to-output lineage, dependency impacts, controlled recalculation, audit events, rights decisions, and human adjudications.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-07",
+        "CAP-09",
+        "CAP-15",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ]
+    },
+    {
+      "file": "model-center.html",
+      "page": "Model & Privacy Center",
+      "purpose": "Local/remote model routing, egress preview, budgets, evaluation, and offline policy.",
+      "capabilities": [
+        "CAP-07",
+        "CAP-14",
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ]
+    },
+    {
+      "file": "application-settings.html",
+      "page": "Application Settings",
+      "purpose": "Application-wide Security & sign-in, provider status and recovery, appearance, and diagnostics for this Windows account.",
+      "capabilities": [
+        "CAP-02"
+      ]
+    },
+    {
+      "file": "project-settings.html",
+      "page": "Project Settings",
+      "purpose": "Project storage, protection, privacy, backup, accessibility, and Windows/macOS/Linux project portability.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-11",
+        "CAP-14"
+      ]
+    },
+    {
+      "file": "study-design.html",
+      "page": "Study Design Studio",
+      "purpose": "Compare and formalize evidence-grounded empirical study alternatives, protocol, validity, ethics, analysis, and reproducibility.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-08",
+        "CAP-10",
+        "CAP-15"
+      ]
+    },
+    {
+      "file": "manuscript-blueprint.html",
+      "page": "Manuscript Blueprint",
+      "purpose": "Create venue- and research-type-aware conference or journal article skeletons, claim plans, word budgets, exhibits, and evidence prerequisites.",
+      "capabilities": [
+        "CAP-03",
+        "CAP-09",
+        "CAP-16",
+        "CAP-18"
+      ]
+    },
+    {
+      "file": "technical-reports.html",
+      "page": "Technical Reports & Results",
+      "purpose": "Upload private technical reports and study outputs, extract and verify methods and results, reconcile versions, and map study outputs to manuscript claims.",
+      "capabilities": [
+        "CAP-02",
+        "CAP-05",
+        "CAP-07",
+        "CAP-08",
+        "CAP-17"
+      ]
+    },
+    {
+      "file": "manuscript-studio.html",
+      "page": "Manuscript Studio",
+      "purpose": "Draft or revise empirical, theory, and critical conference or journal articles from approved blueprints, literature evidence, verified results, and researcher decisions.",
+      "capabilities": [
+        "CAP-07",
+        "CAP-09",
+        "CAP-16",
+        "CAP-17",
+        "CAP-18"
+      ]
+    },
+    {
+      "file": "reviewer-simulation.html",
+      "page": "Reviewer Simulation",
+      "purpose": "Run extended role-separated simulated reviews over generated or uploaded article drafts and synthesize evidence-linked editorial guidance.",
+      "capabilities": [
+        "CAP-07",
+        "CAP-10",
+        "CAP-18",
+        "CAP-19"
+      ]
+    },
+    {
+      "file": "revision-response.html",
+      "page": "Revision & Response",
+      "purpose": "Triage simulated or uploaded review comments, govern author dispositions, revise manuscript passages, draft responses, and run targeted re-review.",
+      "capabilities": [
+        "CAP-18",
+        "CAP-19"
+      ]
+    }
+  ],
+  "workflows": [
+    "rapid-orientation",
+    "systematic-review",
+    "living-review",
+    "theory-synthesis",
+    "hermeneutic-inquiry",
+    "critical-problematization",
+    "technical-landscape",
+    "novelty-audit",
+    "empirical-study-design",
+    "empirical-study-to-article",
+    "empirical-results-to-article",
+    "theory-article-development",
+    "critical-article-development",
+    "manuscript-review-revision"
+  ],
+  "intentionally_deferred": [
+    "university deployment administration until W10",
+    "institutional identity and shared-project administration until W10",
+    "tenant administration, billing, entitlements, and managed-cloud operations until W11"
+  ],
+  "validation": {
+    "local_links": "required",
+    "shared_assets": "required",
+    "landmarks_labels_and_unique_ids": "required",
+    "workflow_contracts": "required",
+    "capability_coverage": "required",
+    "reference_approval": "approved",
+    "cross_platform_theme_parity": "required",
+    "research_production_safeguards": "required",
+    "implementation_conformance": "enforced by repository automation"
+  }
+}
