@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0017",
   "title": "Register committed product-style verification in the Python quality inventory",
-  "status": "candidate",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -63,6 +63,26 @@
     ]
   },
   "rollback": "If independent review identifies a blocker, preserve the candidate and adverse review append-only, leave T01 in progress and W1 paused, and correct only the inventory delta. Do not weaken quality discovery or discard product work to make registration pass.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0017.R01",
+      "reviewedCommit": "03d517bc502cf159c471a2de754b6044d152f75e",
+      "reviewer": "agent:a08-evidence-preflight",
+      "reviewedAt": "2026-09-05T00:12:37.5919053Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0017.review-R01.json",
+      "sha256": "cb40a7382c20fcfd2cba5da796d9e5a2a588c69165a1cdda35f4da315a4cbff5"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0017.R01",
+    "reviewedCommit": "03d517bc502cf159c471a2de754b6044d152f75e",
+    "reviewer": "agent:a08-evidence-preflight",
+    "reviewedAt": "2026-09-05T00:12:37.5919053Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0017.review-R01.json",
+    "sha256": "cb40a7382c20fcfd2cba5da796d9e5a2a588c69165a1cdda35f4da315a4cbff5"
+  }
 }

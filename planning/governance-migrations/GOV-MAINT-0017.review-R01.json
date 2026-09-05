@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0017",
+  "reviewId": "GOV-MAINT-0017.R01",
+  "reviewedCommit": "03d517bc502cf159c471a2de754b6044d152f75e",
+  "reviewer": "agent:a08-evidence-preflight",
+  "reviewedAt": "2026-09-05T00:12:37.5919053Z",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0017.json",
+    "quality-scope.json"
+  ],
+  "findings": []
+}
