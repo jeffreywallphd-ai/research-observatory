@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 
 import {
   CoreApiClientError,
@@ -12,6 +12,8 @@ import {
 } from "@research-observatory/contracts/core-api";
 import { invoke } from "@tauri-apps/api/core";
 import { Button, Field, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
+
+import { LocalServiceBoundary, type RuntimeState } from "./LocalServiceBoundary";
 
 export interface ProjectsWorkspaceProps {
   readonly announce: (message: string) => void;
@@ -71,6 +73,12 @@ function safeFailure(error: unknown): { readonly title: string; readonly message
       message: `${error.problem.detail} ${error.problem.remediation}`,
     };
   }
+  if (error instanceof Error && error.message === "RO-CORE-REQUEST-INVALID") {
+    return {
+      title: "Review project details",
+      message: "Check the project name, location, research objective and selected use case. No project request was sent.",
+    };
+  }
   return {
     title: "RO-CORE-PROJECT-ACTION-FAILED",
     message: "The local project action did not complete. Review Core status and retry once.",
@@ -98,47 +106,75 @@ export function ProjectsWorkspace({
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
+  const [serviceState, setServiceState] = useState<RuntimeState>("starting");
+  const [catalogState, setCatalogState] = useState<"waiting" | "loading" | "ready" | "failed">(initialCatalog ? "ready" : "waiting");
+  const [catalogAttempt, setCatalogAttempt] = useState(0);
+  const mounted = useRef(false);
+  const mutationPending = useRef(false);
+  const mutationGeneration = useRef(0);
+  const observesNativeService = transport === packagedProjectTransport && !initialCatalog;
+  const serviceReady = !observesNativeService || serviceState === "ready";
+  const actionsDisabled = busy !== null || !serviceReady;
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; mutationGeneration.current++; };
+  }, []);
 
   useEffect(() => setProject(selectedProject), [selectedProject]);
 
   useEffect(() => {
     if (initialCatalog) {
       setCatalog(initialCatalog);
+      setCatalogState("ready");
+      return;
+    }
+    if (!serviceReady) {
+      setCatalog(null);
+      setCatalogState("waiting");
       return;
     }
     let cancelled = false;
+    setCatalogState("loading");
     void client.workflowProfileCatalog().then((next) => {
-      if (!cancelled) setCatalog(next);
-    }).catch((error: unknown) => {
-      if (!cancelled) setFailure(safeFailure(error));
+      if (!cancelled) { setCatalog(next); setCatalogState("ready"); }
+    }).catch(() => {
+      if (!cancelled) { setCatalog(null); setCatalogState("failed"); }
     });
     return () => { cancelled = true; };
-  }, [client, initialCatalog]);
+  }, [catalogAttempt, client, initialCatalog, serviceReady]);
 
   const selectedProfile = catalog?.profiles.find((profile) => profile.profileId === primaryUseCase) ?? null;
 
   const run = async (label: string, action: () => Promise<ProjectProjection>): Promise<void> => {
+    if (!serviceReady || mutationPending.current || !mounted.current) return;
+    mutationPending.current = true;
+    const generation = mutationGeneration.current;
+    const ownsResult = (): boolean => mounted.current && mutationGeneration.current === generation;
     setBusy(label);
     setFailure(null);
     try {
       const next = await action();
+      if (!ownsResult()) return;
       setProject(next);
       onProjectChange?.(next);
       setOpenRoot(next.root);
       setDeleteConfirmation("");
       announce(`${label} completed.`);
     } catch (error) {
+      if (!ownsResult()) return;
       const safe = safeFailure(error);
       setFailure(safe);
       announce(`${label} did not complete. ${safe.title}`);
     } finally {
-      setBusy(null);
+      mutationPending.current = false;
+      if (ownsResult()) setBusy(null);
     }
   };
 
   const createProject = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    if (!primaryUseCase || !researchObjective.trim()) return;
+    if (!serviceReady || catalogState !== "ready" || !selectedProfile || !primaryUseCase || !researchObjective.trim()) return;
     void run("Create project", () => client.createProject({
       parentDirectory,
       directoryName,
@@ -163,6 +199,8 @@ export function ProjectsWorkspace({
       </div>
 
       {failure ? <Notification tone="danger" title={failure.title}>{failure.message}</Notification> : null}
+
+      {observesNativeService ? <LocalServiceBoundary announce={announce} observeOnly onStateChange={setServiceState} /> : null}
 
       <div className="project-workflow-grid ro-grid">
         <Panel title="Create a local project">
@@ -194,14 +232,25 @@ export function ProjectsWorkspace({
               required
             />
             <label htmlFor="project-primary-use-case">Primary use case</label>
+            {catalogState === "failed" ? (
+              <Notification tone="danger" title="Could not load use cases">
+                <p>Your entries are unchanged. Load the available research types before creating a project.</p>
+                <p><code>RO-CORE-CATALOG-FAILED</code></p>
+                <Button disabled={!serviceReady || busy !== null} onClick={() => setCatalogAttempt((attempt) => attempt + 1)}>
+                  Retry loading use cases
+                </Button>
+              </Notification>
+            ) : catalogState !== "ready" ? (
+              <p role="status">{catalogState === "waiting" ? "Waiting for the local service. Your entries are kept here." : "Loading research use cases…"}</p>
+            ) : null}
             <select
               id="project-primary-use-case"
               value={primaryUseCase}
               onChange={(event) => setPrimaryUseCase(event.currentTarget.value as ProjectCreateRequest["primaryUseCase"])}
               required
-              disabled={!catalog}
+              disabled={!catalog || catalogState !== "ready"}
             >
-              <option value="" disabled>{catalog ? "Select a governed use case" : "Loading governed use cases…"}</option>
+              <option value="" disabled>{catalogState === "ready" ? "Select a governed use case" : catalogState === "failed" ? "Use cases unavailable" : catalogState === "waiting" ? "Waiting for local service…" : "Loading governed use cases…"}</option>
               {catalog?.profiles.map((profile) => (
                 <option key={profile.profileId} value={profile.profileId}>{profile.title}</option>
               ))}
@@ -216,7 +265,7 @@ export function ProjectsWorkspace({
                 <p className="field-note">All tools remain available. The selected workflow does not weaken evidence or provenance requirements.</p>
               </div>
             ) : null}
-            <Button tone="primary" type="submit" disabled={busy !== null || !catalog || !primaryUseCase || !researchObjective.trim()}>Create project</Button>
+            <Button tone="primary" type="submit" disabled={actionsDisabled || catalogState !== "ready" || !selectedProfile || !researchObjective.trim()}>Create project</Button>
           </form>
         </Panel>
 
@@ -228,7 +277,7 @@ export function ProjectsWorkspace({
               description="Enter the absolute directory containing project.ro.json."
               input={{ value: openRoot, onChange: (event) => setOpenRoot(event.currentTarget.value), required: true }}
             />
-            <Button tone="primary" type="submit" disabled={busy !== null}>Open project</Button>
+            <Button tone="primary" type="submit" disabled={actionsDisabled}>Open project</Button>
           </form>
         </Panel>
       </div>
@@ -255,18 +304,18 @@ export function ProjectsWorkspace({
             </div>
             <div className="project-actions ro-action-row" aria-label="Current project actions">
               {project.lifecycleState === "active" ? (
-                <Button disabled={busy !== null} onClick={() => void run(
+                <Button disabled={actionsDisabled} onClick={() => void run(
                   project.open ? "Close project" : "Open project",
                   () => project.open ? client.closeProject({ root: project.root }) : client.openProject({ root: project.root }),
                 )}>{project.open ? "Close project" : project.compatibilityState === "compatible" ? "Open project" : "Open read-only"}</Button>
               ) : null}
               {project.lifecycleState === "active" && !project.open && project.compatibilityState === "compatible" ? (
-                <Button disabled={busy !== null} onClick={() => void run("Archive project", () => client.archiveProject({ root: project.root }))}>
+                <Button disabled={actionsDisabled} onClick={() => void run("Archive project", () => client.archiveProject({ root: project.root }))}>
                   Archive project
                 </Button>
               ) : null}
               {project.lifecycleState === "archived" && project.compatibilityState === "compatible" ? (
-                <Button disabled={busy !== null} onClick={() => void run("Restore project", () => client.restoreProject({ root: project.root }))}>
+                <Button disabled={actionsDisabled} onClick={() => void run("Restore project", () => client.restoreProject({ root: project.root }))}>
                   Restore project
                 </Button>
               ) : null}
@@ -282,7 +331,7 @@ export function ProjectsWorkspace({
                   input={{ value: deleteConfirmation, onChange: (event) => setDeleteConfirmation(event.currentTarget.value), autoComplete: "off" }}
                 />
                 <Button
-                  disabled={busy !== null || deleteConfirmation !== project.deleteConfirmation}
+                  disabled={actionsDisabled || deleteConfirmation !== project.deleteConfirmation}
                   onClick={() => void run("Move project to recoverable trash", () => client.deleteProject({
                     root: project.root,
                     confirmation: deleteConfirmation,

@@ -1037,6 +1037,126 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(any("semantics are incomplete" in error for error in browser_errors), browser_errors)
 
 
+class ProjectRecoveryInteractionTests(unittest.TestCase):
+    def test_readiness_catalog_retry_and_late_mutation_are_separate(self) -> None:
+        self.assertEqual([], product_build_errors(REPO))
+        document = inline_product_index(REPO)
+        fixture = r"""(() => {
+          const fixture = window.__PROJECT_RECOVERY__ = {
+            state: 'starting', starts: 0, statuses: 0, reads: 0,
+            catalog: 'failed', mutation: 'failed', mutations: [], resolveMutation: null
+          };
+          const catalog = __WORKFLOW_CATALOG__;
+          const response = body => ({status: 200, contentType: 'application/json',
+            traceId: '0123456789abcdef0123456789abcdef', etag: null, body: JSON.stringify(body)});
+          const status = () => ({state: fixture.state, attempt: 1,
+            retryAvailable: fixture.state === 'stopped',
+            diagnosticReference: fixture.state === 'ready' ? null
+              : fixture.state === 'starting' ? 'RO-CORE-STARTING' : 'RO-CORE-STOPPED'});
+          window.__TAURI_INTERNALS__ = {
+            transformCallback: () => 1,
+            invoke: async (command, args) => {
+              if (command === 'application_lock_status') return {
+                schemaVersion: '1.0', state: 'unlocked', signInMode: 'none', policyRevision: 1,
+                profileName: null, inactivityTimeoutMinutes: 0, configurationState: 'valid', reason: null,
+                threatDisclosure: 'Application-session protection only; this is not Windows-account isolation.',
+                retryAfterSeconds: 0, auditSequence: 0
+              };
+              if (command === 'application_lock_activity' || command === 'plugin:event|unlisten') return;
+              if (command === 'plugin:event|listen') return 1;
+              if (command === 'core_runtime_status') { fixture.statuses++; return status(); }
+              if (command === 'core_runtime_start') {
+                fixture.starts++;
+                if (fixture.state === 'stopped') fixture.state = 'ready';
+                return status();
+              }
+              if (command !== 'core_api_request') throw new Error('Unexpected fixture command');
+              const request = args.request;
+              if (request.path === '/workflow-profiles/catalog') {
+                fixture.reads++;
+                if (fixture.state !== 'ready' || fixture.catalog === 'failed') {
+                  throw new Error('Bearer fixture-not-a-real-secret C:/private/fixture');
+                }
+                return response(catalog);
+              }
+              fixture.mutations.push(request);
+              if (fixture.mutation === 'failed') throw new Error('Bearer fixture-not-a-real-secret C:/private/fixture');
+              return await new Promise(resolve => { fixture.resolveMutation = () => resolve(response({
+                schemaVersion: '1.0', projectId: '11111111-1111-4111-8111-111111111111',
+                displayName: 'Late project fixture', templateId: 'theory-synthesis', lifecycleState: 'active',
+                root: 'C:/Research/study-one', open: false, accessMode: 'closed', compatibilityState: 'compatible',
+                packageFormatVersion: '1.0.0', backupRequiredBeforeRepair: false, recoveryAction: 'none', revision: 0,
+                deleteConfirmation: 'delete:11111111-1111-4111-8111-111111111111'
+              })); });
+            }
+          };
+        })();""".replace("__WORKFLOW_CATALOG__", core_workflow_catalog_json(REPO))
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            context = browser.new_context()
+            context.route("**/*", lambda route: route.fulfill(
+                status=200, content_type="text/html; charset=utf-8", body=document
+            ) if route.request.url == "http://tauri.localhost/index.html" else route.abort())
+            page = context.new_page()
+            page.add_init_script(fixture)
+            page_errors: list[str] = []
+            page.on("pageerror", page_error_collector(page_errors))
+
+            def open_tool(name: str) -> None:
+                tools = page.locator("[data-all-tools]")
+                if tools.get_attribute("open") is None:
+                    tools.locator("summary").click()
+                tools.get_by_role("button", name=name, exact=True).click()
+
+            try:
+                page.goto("http://tauri.localhost/index.html", wait_until="load")
+                page.wait_for_function("document.body.dataset.applicationReady === 'true'")
+                starts = page.evaluate("window.__PROJECT_RECOVERY__.starts")
+                open_tool("Local projects")
+                page.wait_for_function("window.__PROJECT_RECOVERY__.statuses > 0", timeout=5000)
+                self.assertEqual(starts, page.evaluate("window.__PROJECT_RECOVERY__.starts"))
+                self.assertEqual(0, page.evaluate("window.__PROJECT_RECOVERY__.reads"))
+                page.locator("#project-parent-directory").fill("C:/Research")
+                page.locator("#project-directory-name").fill("study-one")
+                page.locator("#project-display-name").fill("Recovery study")
+                page.locator("#project-research-objective").fill("Line one\nLine two\twith context")
+                page.evaluate("window.__PROJECT_RECOVERY__.state = 'ready'")
+                page.get_by_text("Could not load use cases", exact=True).wait_for(timeout=5000)
+                self.assertNotIn("RO-CORE-PROJECT-ACTION-FAILED", page.locator("main").inner_text())
+                self.assertNotIn("fixture-not-a-real-secret", page.locator("body").inner_text())
+                self.assertEqual([], page.evaluate("window.__PROJECT_RECOVERY__.mutations"))
+                page.evaluate("window.__PROJECT_RECOVERY__.catalog = 'ready'")
+                page.get_by_role("button", name="Retry loading use cases", exact=True).click()
+                page.locator("#project-primary-use-case").select_option("theory-synthesis")
+                self.assertEqual("Recovery study", page.locator("#project-display-name").input_value())
+                page.get_by_role("button", name="Create project", exact=True).click()
+                page.get_by_text("RO-CORE-PROJECT-ACTION-FAILED", exact=True).wait_for(timeout=5000)
+                self.assertEqual(1, page.evaluate("window.__PROJECT_RECOVERY__.mutations.length"))
+                page.evaluate("window.__PROJECT_RECOVERY__.state = 'stopped'")
+                service = page.locator("[data-local-service-boundary]")
+                service.get_by_role("button", name="Retry", exact=True).wait_for(timeout=5000)
+                service.get_by_role("button", name="Retry", exact=True).click()
+                page.wait_for_function("window.__PROJECT_RECOVERY__.reads === 3", timeout=5000)
+                self.assertEqual(1, page.evaluate("window.__PROJECT_RECOVERY__.mutations.length"))
+                self.assertEqual(
+                    "Line one\nLine two\twith context", page.locator("#project-research-objective").input_value()
+                )
+                page.evaluate("window.__PROJECT_RECOVERY__.mutation = 'pending'")
+                page.get_by_role("button", name="Create project", exact=True).click()
+                page.wait_for_function("window.__PROJECT_RECOVERY__.resolveMutation !== null")
+                self.assertTrue(page.get_by_role("button", name="Create project", exact=True).is_disabled())
+                open_tool("Diagnostics & support")
+                page.evaluate("window.__PROJECT_RECOVERY__.resolveMutation()")
+                open_tool("Local projects")
+                self.assertNotIn("Late project fixture", page.locator("body").inner_text())
+                self.assertEqual(2, page.evaluate("window.__PROJECT_RECOVERY__.mutations.length"))
+                self.assertEqual([], page_errors)
+            finally:
+                page.close()
+                context.close()
+                browser.close()
+
+
 class TaskCenterInteractionTests(unittest.TestCase):
     def test_commands_focus_failure_and_project_switch_are_bound_to_current_projection(self) -> None:
         self.assertEqual([], product_build_errors(REPO))

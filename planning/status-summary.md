@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dc72a6f2017972fe3aa8b60943b98660101a1476dbc2886b968aa174d83b8fa9
+source_sha256: f7b9d0110e52bd2a507265031ddddc55a03cdf6d8906f1a1204b5a47526521d2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,7 +70,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 2 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
 | `DONE` | 11 |
 
@@ -638,3 +638,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
 | `W1.A08.T02` Qualify live-product styling conformance | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A09.T02` Restore exact project contracts and explicit recovery | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |

@@ -195,7 +195,10 @@ impl SupervisorConfig {
             return Err("RO-CORE-INTEGRITY-FAILED");
         }
         let canonical = dunce::canonicalize(&executable).map_err(|_| "RO-CORE-INTEGRITY-FAILED")?;
-        if canonical != executable {
+        // Windows resource_dir may use the equivalent verbatim disk prefix.
+        // Simplification strips only forms proven safe by the pinned adapter;
+        // canonicalization still rejects redirects and noncanonical components.
+        if canonical != dunce::simplified(&executable) {
             return Err("RO-CORE-INTEGRITY-FAILED");
         }
         let working_directory = canonical
@@ -1369,11 +1372,11 @@ fn validate_workflow_progress_api_request(path: &str, body: &str) -> bool {
             .get("expectedSelectionRevisionContentHash")
             .is_some_and(workflow_content_hash)
         && !(action == "start" && (stage_precondition || revisit_precondition))
-        && !(action == "revisit" && !revisit_precondition)
+        && (action != "revisit" || revisit_precondition)
         && !(!["start", "revisit"].contains(&action) && !stage_precondition)
         && !(action != "revisit" && revisit_precondition)
         && evidence_valid
-        && (action == "complete") == !evidence.is_empty()
+        && (action == "complete") != evidence.is_empty()
         && supporting_valid
         && (action == "open-supporting") == supporting_present
         && rationale_valid
@@ -1430,7 +1433,10 @@ fn validate_project_api_request(path: &str, body: &str) -> bool {
                 .is_some_and(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit())
             && bounded_project_text(display, 1, 120)
             && intent_member(primary_use_case, PRIMARY_USE_CASES)
-            && bounded_intent_narrative(research_objective, 1);
+            && bounded_intent_narrative(research_objective, 1)
+            && research_objective
+                .as_str()
+                .is_some_and(|text| !text.trim().is_empty());
     }
     if matches!(
         path,
@@ -1704,6 +1710,32 @@ fn validate_recalculation_api_request(path: &str, body: &str) -> bool {
     }
 }
 
+fn validate_lineage_api_request(body: &str) -> bool {
+    #[derive(Deserialize)]
+    #[serde(rename_all = "camelCase", deny_unknown_fields)]
+    struct LineageRequest {
+        root: String,
+        revision_id: String,
+        direction: String,
+        cursor: u32,
+        page_size: u32,
+        max_depth: u32,
+    }
+    if body.is_empty() || body.len() > 32_768 {
+        return false;
+    }
+    // Typed deserialization also rejects duplicate fields and numeric coercion.
+    let Ok(command) = serde_json::from_str::<LineageRequest>(body) else {
+        return false;
+    };
+    canonical_project_root(&command.root)
+        && canonical_uuid_v7(&command.revision_id)
+        && matches!(command.direction.as_str(), "ancestors" | "descendants")
+        && command.cursor <= 10_000
+        && (1..=100).contains(&command.page_size)
+        && (1..=16).contains(&command.max_depth)
+}
+
 fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
@@ -1715,7 +1747,12 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     {
         return Err("RO-CORE-API-REQUEST-INVALID");
     }
-    if request.method == "GET" && matches!(request.path.as_str(), "/runtime/version" | "/healthz") {
+    if request.method == "GET"
+        && matches!(
+            request.path.as_str(),
+            "/runtime/version" | "/healthz" | "/workflow-profiles/catalog"
+        )
+    {
         return if request.body.is_none()
             && request.if_match.is_none()
             && request.idempotency_key.is_none()
@@ -1762,6 +1799,17 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
         {
             return Ok(());
         }
+    }
+    if request.method == "POST"
+        && request.path == "/projects/provenance/lineage"
+        && request.if_match.is_none()
+        && request.idempotency_key.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(validate_lineage_api_request)
+    {
+        return Ok(());
     }
     if request.method == "POST"
         && request.if_match.is_none()
@@ -2655,6 +2703,264 @@ mod tests {
             if_match: None,
             idempotency_key: idempotency_key.map(str::to_owned),
         }
+    }
+
+    #[test]
+    fn project_catalog_route_is_exact_before_service_readiness() {
+        let request = CoreApiRequest {
+            method: "GET".to_owned(),
+            path: "/workflow-profiles/catalog".to_owned(),
+            body: None,
+            if_match: None,
+            idempotency_key: None,
+        };
+        assert!(validate_api_request(&request).is_ok());
+        let supervisor = RuntimeSupervisor::new(Err("RO-CORE-NOT-PACKAGED"));
+        assert_eq!(
+            supervisor.api_request(&request),
+            Err("RO-CORE-API-UNAVAILABLE")
+        );
+        for path in [
+            "/workflow-profiles/catalog/",
+            "/workflow-profiles/catalog?limit=1",
+            "/workflow-profiles/Catalog",
+            "/workflow-profiles/unknown",
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    path: path.to_owned(),
+                    ..request.clone()
+                })
+                .is_err()
+            );
+        }
+        for method in ["POST", "get", "HEAD", "DELETE"] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: method.to_owned(),
+                    ..request.clone()
+                })
+                .is_err()
+            );
+        }
+        for value in ["", "{}", "null"] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    body: Some(value.to_owned()),
+                    ..request.clone()
+                })
+                .is_err()
+            );
+        }
+        assert!(
+            validate_api_request(&CoreApiRequest {
+                if_match: Some("\"one\"".to_owned()),
+                ..request.clone()
+            })
+            .is_err()
+        );
+        assert!(
+            validate_api_request(&CoreApiRequest {
+                idempotency_key: Some("a".repeat(32)),
+                ..request
+            })
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn project_lineage_route_has_strict_body_and_envelope() {
+        let body = serde_json::json!({
+            "root": "C:/Research/study-one", "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d005",
+            "direction": "ancestors", "cursor": 0, "pageSize": 50, "maxDepth": 8
+        });
+        let request = intent_request("/projects/provenance/lineage", body.clone(), None);
+        assert!(validate_api_request(&request).is_ok());
+        for (key, value) in [
+            ("direction", serde_json::json!("descendants")),
+            ("cursor", serde_json::json!(10000)),
+            ("pageSize", serde_json::json!(1)),
+            ("pageSize", serde_json::json!(100)),
+            ("maxDepth", serde_json::json!(1)),
+            ("maxDepth", serde_json::json!(16)),
+        ] {
+            let mut candidate = body.clone();
+            candidate[key] = value;
+            assert!(validate_api_request(&intent_request(&request.path, candidate, None)).is_ok());
+        }
+        for (key, value) in [
+            ("root", serde_json::json!("relative/study")),
+            (
+                "revisionId",
+                serde_json::json!("018f47a2-4d6b-4f78-9f2e-7fb76c86d005"),
+            ),
+            (
+                "revisionId",
+                serde_json::json!("018F47A2-4d6b-7f78-9f2e-7fb76c86d005"),
+            ),
+            ("direction", serde_json::json!("both")),
+            ("cursor", serde_json::json!(-1)),
+            ("cursor", serde_json::json!(10001)),
+            ("cursor", serde_json::json!(true)),
+            ("cursor", serde_json::json!(0.5)),
+            ("cursor", serde_json::json!("0")),
+            ("pageSize", serde_json::json!(0)),
+            ("pageSize", serde_json::json!(101)),
+            ("maxDepth", serde_json::json!(0)),
+            ("maxDepth", serde_json::json!(17)),
+            ("extra", serde_json::json!(null)),
+        ] {
+            let mut candidate = body.clone();
+            candidate[key] = value;
+            assert!(
+                validate_api_request(&intent_request(&request.path, candidate, None)).is_err(),
+                "{key}"
+            );
+        }
+        for key in [
+            "root",
+            "revisionId",
+            "direction",
+            "cursor",
+            "pageSize",
+            "maxDepth",
+        ] {
+            let mut candidate = body.clone();
+            candidate.as_object_mut().unwrap().remove(key);
+            assert!(validate_api_request(&intent_request(&request.path, candidate, None)).is_err());
+        }
+        let duplicate = request
+            .body
+            .as_ref()
+            .unwrap()
+            .replacen('{', "{\"cursor\":0,", 1);
+        for body in [
+            None,
+            Some(duplicate),
+            Some(format!(
+                "{}{}",
+                " ".repeat(32769),
+                request.body.as_ref().unwrap()
+            )),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    body,
+                    ..request.clone()
+                })
+                .is_err()
+            );
+        }
+        for path in [
+            "/projects/provenance/lineage/",
+            "/projects/provenance/lineage?cursor=0",
+            "/projects/provenance/other",
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    path: path.to_owned(),
+                    ..request.clone()
+                })
+                .is_err()
+            );
+        }
+        for method in ["GET", "post", "DELETE"] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: method.to_owned(),
+                    ..request.clone()
+                })
+                .is_err()
+            );
+        }
+        assert!(
+            validate_api_request(&CoreApiRequest {
+                if_match: Some("\"one\"".to_owned()),
+                ..request.clone()
+            })
+            .is_err()
+        );
+        assert!(
+            validate_api_request(&CoreApiRequest {
+                idempotency_key: Some("a".repeat(32)),
+                ..request
+            })
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn project_creation_narrative_preserves_newlines_and_rejects_blank_controls() {
+        let mut body = serde_json::json!({
+            "parentDirectory": "C:/Research", "directoryName": "study-one", "displayName": "Study One",
+            "primaryUseCase": "theory-synthesis", "researchObjective": "A\r\nB\tC"
+        });
+        for objective in [
+            "A\nB".to_owned(),
+            "A\rB".to_owned(),
+            "A\tB".to_owned(),
+            "x".repeat(4000),
+        ] {
+            body["researchObjective"] = serde_json::json!(objective);
+            assert!(validate_api_request(&intent_request("/projects", body.clone(), None)).is_ok());
+        }
+        for objective in [
+            "".to_owned(),
+            " \r\n\t ".to_owned(),
+            "x".repeat(4001),
+            "A\0B".to_owned(),
+            "A\u{b}B".to_owned(),
+            "A\u{7f}B".to_owned(),
+        ] {
+            body["researchObjective"] = serde_json::json!(objective);
+            assert!(
+                validate_api_request(&intent_request("/projects", body.clone(), None)).is_err()
+            );
+        }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn packaged_core_accepts_equivalent_verbatim_path_only() {
+        use std::{
+            fs,
+            time::{SystemTime, UNIX_EPOCH},
+        };
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let parent = dunce::canonicalize(std::env::temp_dir()).unwrap();
+        let root = parent.join(format!("ro-core-path-{}-{unique}", std::process::id()));
+        fs::create_dir(&root).unwrap();
+        let executable = root.join(super::EXPECTED_EXECUTABLE);
+        fs::write(
+            &executable,
+            b"synthetic path-validation fixture; never executed",
+        )
+        .unwrap();
+        let plain = dunce::canonicalize(&executable).unwrap();
+        let verbatim = fs::canonicalize(&executable).unwrap();
+        let plain_result = super::SupervisorConfig::new(plain);
+        let verbatim_result = super::SupervisorConfig::new(verbatim);
+        let missing_result = super::SupervisorConfig::new(root.join("missing.exe"));
+        let wrong = root.join("wrong.exe");
+        fs::write(&wrong, b"fixture").unwrap();
+        let wrong_result = super::SupervisorConfig::new(wrong);
+        let nested = root.join("child");
+        fs::create_dir(&nested).unwrap();
+        let noncanonical_result =
+            super::SupervisorConfig::new(nested.join("..").join(super::EXPECTED_EXECUTABLE));
+        let directory_result = super::SupervisorConfig::new(root.clone());
+        assert_eq!(dunce::canonicalize(&root).unwrap(), root);
+        assert_eq!(root.parent(), Some(parent.as_path()));
+        fs::remove_dir_all(&root).unwrap();
+        assert!(plain_result.is_ok());
+        assert!(verbatim_result.is_ok());
+        assert!(missing_result.is_err());
+        assert!(wrong_result.is_err());
+        assert!(noncanonical_result.is_err());
+        assert!(directory_result.is_err());
     }
 
     #[test]

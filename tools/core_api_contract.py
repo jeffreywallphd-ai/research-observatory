@@ -1424,7 +1424,7 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         || !/^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/.test(command.directoryName)
         || !boundedText(command.displayName, 1, 120)
         || !member(command.primaryUseCase, INTENT_PRIMARY_USE_CASES)
-        || !boundedText(command.researchObjective, 1, 4000)
+        || !boundedNarrative(command.researchObjective, 1)
         || !command.researchObjective.trim()) {
         throw new Error("RO-CORE-REQUEST-INVALID");
       }
