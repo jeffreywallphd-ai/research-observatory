@@ -39225,6 +39225,15 @@ wave_amendments:
     - Obtain independent commit-bound experience/accessibility/maintainability review and record broader cross-capability,
       packaging, performance, and Windows-x64 coverage deferred to T02, slice review, amendment exit, and W1 exit.
     packet_task_sha256: af5fcfca8f2c2302ede9ddbd334e7bb40af2fde351c4a640cddeb51e26825d7b
+    experience_change:
+      kind: approved-reference-implementation
+      contract_path: artifacts/evidence/ui-change/W1.A08.T01.json
+      reference_id: RO-UI-ACADEMIC-MINIMAL-1.5
+      reference_version: '1.5'
+      reference_package_sha256: 38435454e7128264e74492b3e372843d5cc5e02641611624a96bc85b92af38ae
+      reference_approval_commit: 7ec1b27d72c189216d7a203586b7339202733531
+      previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.4
+      implementation_agent: agent:codex
     status: IN_PROGRESS
     owner: codex
     branch: codex/w1-windows-local-runtime

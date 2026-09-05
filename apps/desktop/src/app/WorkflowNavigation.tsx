@@ -52,6 +52,7 @@ function AllTools({
           return (
             <li key={tool.id}>
               <button
+                className="ro-stack ro-stack--tight"
                 type="button"
                 disabled={disabled}
                 aria-label={tool.label}
