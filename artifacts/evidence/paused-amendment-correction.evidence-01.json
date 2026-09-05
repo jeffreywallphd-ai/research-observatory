@@ -1,0 +1,265 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-evidence",
+  "candidateCommit": "c6cff6f3c99beb23e0adc3890941f2e8ef8b7ce3",
+  "predecessorCommit": "07473e15a6212995fa48ece9909f0d51be7ebc26",
+  "recordedAt": "2026-09-05 02:33:30 UTC",
+  "implementer": "agent:root",
+  "riskTier": 2,
+  "authority": "AGENTS.md post-GOV-MIG-0001 bounded generic maintenance; no expanded product/reference/release authority.",
+  "contract": "artifacts/evidence/paused-amendment-correction.maintenance-01.md",
+  "selectedChecksStatus": "PASS",
+  "independentReviewStatus": "PENDING",
+  "changedFiles": [
+    {
+      "path": "artifacts/evidence/paused-amendment-correction.maintenance-01.md",
+      "blob": "75f6d12e2db977558f333dbfa171fde2804b721b",
+      "sha256": "a4ca06fef325a03b0b17753cb6bf6116cdfb600b09e08ce8a62bd6176ed3dead"
+    },
+    {
+      "path": "docs/automation/governance-automation-simplification.md",
+      "blob": "1d61a4ae6c1554de281644799973195a0143b6d9",
+      "sha256": "29e160162f36e199d880e18258c4c049624429ef2f5a9b701b2c67ea7751a0d1"
+    },
+    {
+      "path": "planning/backlog.schema.json",
+      "blob": "81588092472db0957d9a7d623850119192089e82",
+      "sha256": "793c0f1186bba263460009a300b8f3c09c4e8b47e62982743a9551db8dfa208d"
+    },
+    {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "blob": "19b189a21b89ad07366d2c49e1a540e6c81c2e3c",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c"
+    },
+    {
+      "path": "tests/foundation/test_governance_kernel.py",
+      "blob": "e4b84840708fdbcf96f33dc408525ae7905a6ac1",
+      "sha256": "aa14da5719605f412dd28263138653fd81e7c996cb3f8c9e4bda8e80233f2170"
+    },
+    {
+      "path": "tests/foundation/test_planctl_amendments.py",
+      "blob": "5449277f9bdaaf691267ebe30b8228c9845d5c13",
+      "sha256": "54bbeac3415033bd26cad710e1115075c9f26fb581c95cc54a97c02b6c166e56"
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "blob": "5b4bb302387b03a94201beef945df77022c988a3",
+      "sha256": "ebb08cdff65dd53512ba00f6e08b38fc3c2361c1179103e3e10584e26eca441f"
+    },
+    {
+      "path": "tools/governance_kernel.py",
+      "blob": "b780a5c616ab473afd9efc1016c55c9aeb14a3bc",
+      "sha256": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7"
+    },
+    {
+      "path": "tools/planctl.py",
+      "blob": "fb42cc6062215e91fbbb65234009d54467125cb0",
+      "sha256": "ffe446154eefeb1d588f9374baa57658288adc057e7a64364efd3d97bbe65aec"
+    },
+    {
+      "path": "tools/taskctl.py",
+      "blob": "204344a4fb2c3fe472b35255ec713b98f8f3657f",
+      "sha256": "40e5e014b343cde302d93d215150c269769c62e1edaebd371a31f1f7d4784d60"
+    }
+  ],
+  "checks": [
+    {
+      "id": "correction-workflow",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_taskctl_workflow.py -k paused_correction",
+      "startedAt": "2026-09-05 02:30:33 UTC",
+      "completedAt": "2026-09-05 02:32:40 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 92.564s\r\n\r\nOK\r\nAdopted W1.A09; returned the hold to PAUSED W1.A08; explicit activation is required\r\nActivated Wave amendment W1.A08\r\nAppended reserved history and submitted W1.A09.B00 for independent review\r\nMaterialized W1.A09.T01 from W1.A09\r\n"
+    },
+    {
+      "id": "correction-git-schema",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_planctl_amendments.py -k paused_correction",
+      "startedAt": "2026-09-05 02:30:33 UTC",
+      "completedAt": "2026-09-05 02:32:07 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 51.311s\r\n\r\nOK\r\n"
+    },
+    {
+      "id": "kernel",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_governance_kernel.py",
+      "startedAt": "2026-09-05 02:30:33 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "...........\r\n----------------------------------------------------------------------\r\nRan 11 tests in 0.005s\r\n\r\nOK\r\n"
+    },
+    {
+      "id": "lint",
+      "command": ".venv/Scripts/ruff.exe check tools/governance_kernel.py tools/planctl.py tools/taskctl.py tests/foundation/test_governance_kernel.py tests/foundation/test_planctl_amendments.py tests/foundation/test_taskctl_workflow.py",
+      "startedAt": "2026-09-05 02:31:17 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "All checks passed!\n"
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/ruff.exe format --check tools/governance_kernel.py tools/planctl.py tools/taskctl.py tests/foundation/test_governance_kernel.py tests/foundation/test_planctl_amendments.py tests/foundation/test_taskctl_workflow.py",
+      "startedAt": "2026-09-05 02:31:17 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "6 files already formatted\n"
+    },
+    {
+      "id": "types",
+      "command": ".venv/Scripts/python.exe -m mypy --no-namespace-packages tools/governance_kernel.py tools/planctl.py tools/taskctl.py tests/foundation/test_governance_kernel.py tests/foundation/test_planctl_amendments.py tests/foundation/test_taskctl_workflow.py",
+      "startedAt": "2026-09-05 02:31:17 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "Success: no issues found in 6 source files\r\n"
+    },
+    {
+      "id": "generated-views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "startedAt": "2026-09-05 02:31:17 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "Generated backlog views: PASS - no changes\r\n"
+    },
+    {
+      "id": "diff-whitespace",
+      "command": "git diff --check",
+      "startedAt": "2026-09-05 02:31:17 UTC",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": ""
+    },
+    {
+      "id": "candidate-scope",
+      "command": ".venv/Scripts/python.exe -c \"import subprocess; c='c6cff6f3c99beb23e0adc3890941f2e8ef8b7ce3'; b='07473e15a6212995fa48ece9909f0d51be7ebc26'; paths=subprocess.check_output(['git','diff','--name-only',b,c],text=True).splitlines(); pairs=[(p,subprocess.check_output(['git','hash-object','--path='+p,p],text=True).strip(),subprocess.check_output(['git','rev-parse',c+':'+p],text=True).strip()) for p in paths]; assert all(a==z for p,a,z in pairs),pairs; protected=['planning/backlog.yaml','design/ui-reference','verification/baselines','apps','packages','services','planning/enabler-change-requests/ECR-0008.md','planning/enabler-change-requests/ECR-0008.draft.json','planning/enabler-change-requests/ECR-0008.ux-addendum-01.md']; assert not subprocess.check_output(['git','diff','--name-only',b,c,'--',*protected]).strip(); print('PASS: 10 candidate source blobs match working bytes; live/product/reference/preparation authority unchanged')\"",
+      "exitCode": 0,
+      "result": "PASS",
+      "output": "PASS: 10 candidate source blobs match working bytes; live/product/reference/preparation authority unchanged\r\n"
+    }
+  ],
+  "criterionCoverage": [
+    {
+      "id": "MA-01",
+      "checks": [
+        "correction-git-schema",
+        "correction-workflow"
+      ],
+      "proof": "Real Git approval/snapshot ancestry, historical snapshot quiescence, exact paused record and immutable packet relation; stale/fork/substituted/missing/extra metadata rejected, including after child adoption."
+    },
+    {
+      "id": "MA-02",
+      "checks": [
+        "kernel",
+        "correction-workflow"
+      ],
+      "proof": "One hold owner during bootstrap, execution and return; frozen parent cannot activate; child selected by next-action; real adoption then explicit parent activation succeeds; repeat adoption denied."
+    },
+    {
+      "id": "MA-03",
+      "checks": [
+        "kernel",
+        "correction-git-schema",
+        "correction-workflow"
+      ],
+      "proof": "Old v4 schema Git bytes unchanged; v4.1 explicit separate identity; older adapter fails closed for pending/executing/returned holds; prior lifecycle/bootstrap/completed-task/task-review histories preserved; valid new returned-parent history permitted."
+    },
+    {
+      "id": "MA-04",
+      "checks": [
+        "correction-workflow",
+        "correction-git-schema"
+      ],
+      "proof": "Actual temp Git checkpoints and actual schema/state/CAS writes: wrong return, missing return, stale writer, lock contention and interrupted replacement preserve exact predecessor file; successful retry publishes one transition only. Isolated authority fixtures are declared in test source; no synthetic approval is product authority."
+    },
+    {
+      "id": "MA-05",
+      "checks": [
+        "diff-whitespace",
+        "generated-views",
+        "candidate-scope"
+      ],
+      "proof": "Git changed-path inventory is only maintenance code/schema/tests/docs. Product/native/contracts/services, active design reference/baseline, live backlog and ECR-0008 preparation bytes are unchanged against the predecessor."
+    },
+    {
+      "id": "MA-06",
+      "checks": [
+        "kernel",
+        "correction-workflow",
+        "correction-git-schema",
+        "lint",
+        "format",
+        "types",
+        "generated-views"
+      ],
+      "proof": "Risk-selected deterministic control/contract/persistence/reader checks; no product runtime or deployment behavior changed."
+    }
+  ],
+  "preCommitRegressionContext": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_planctl_amendments.py",
+      "result": "PASS",
+      "tests": 14,
+      "durationSeconds": 271.032
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_taskctl_workflow.py -k amendment",
+      "result": "PASS",
+      "tests": 15,
+      "durationSeconds": 55.674
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_taskctl_schema.py",
+      "result": "PASS",
+      "tests": 27,
+      "durationSeconds": 50.05
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_governancectl.py",
+      "result": "PASS",
+      "tests": 7,
+      "durationSeconds": 3.676
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/foundation -p test_plan_review_amendments.py",
+      "result": "PASS",
+      "tests": 17,
+      "durationSeconds": 21.27
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "PASS",
+      "summary": "20 capabilities, 117 slices, 367 tasks, 12 release gates"
+    }
+  ],
+  "preCommitContextLimitation": "These development regression runs are additional context, not a claim that their process loaded the final candidate commit. The checks array was run after candidate commit; independent review replays the exact candidate.",
+  "integration": {
+    "status": "DEFERRED",
+    "localMain": "46e88d171795b76a2f1588d69756f4184c01a89b",
+    "reason": "Branch ancestry contains paused A08 work with unmet review gates; no switch to main, force move, merge or remote push performed."
+  },
+  "unchangedAuthority": {
+    "wave": "W1",
+    "waveCampaign": "PAUSED",
+    "scope": "amendment-hold",
+    "parentAmendment": "W1.A08",
+    "parentCampaign": "PAUSED",
+    "activeAmendment": null,
+    "materializedCorrection": false,
+    "releaseGate": "G1",
+    "gateStatus": "PENDING",
+    "newReferenceApproved": false,
+    "productFixesImplemented": false
+  },
+  "deferredCoverage": "New UX/native/reference execution and required Windows product integration remain gated by exact approved correction/reference packet. Full repository/deployment matrix and independent W1 exit review remain at Wave exit.",
+  "openProductFindings": [
+    "F01",
+    "F02",
+    "UX01",
+    "UX02",
+    "UX03",
+    "UX04",
+    "UX05",
+    "UX06"
+  ],
+  "safety": "Protected witness untouched (no content access, hashing, staging, ignore, move or deletion). No researcher data, native app session, project operation, Windows credential setting, live backlog mutation, external action or release approval."
+}
