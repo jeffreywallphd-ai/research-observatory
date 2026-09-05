@@ -49,3 +49,23 @@ Repository branches can be rewritten, but GitHub caches, old Actions artifacts,
 forks and downloaded clones are separate copies. This notice is not a claim
 that every external copy has been erased. Contact the maintainer before using
 historical governance artifacts as evidence of a release.
+
+## Existing CI and historical views
+
+The **Publication privacy (not W1 qualification)** workflow checks this public
+copy's privacy boundaries. It does not qualify the application or approve W1.
+
+The retained **Continuous integration** workflow also checks original governance
+records. Its September 5, 2026 run reported stale backlog views because their
+documentary `source_sha256` fields still identify the original private backlog;
+the rest of each generated view matched its sanitized source. Those historical
+hashes have deliberately not been rebound to imply transferred authority.
+The same run retained pre-existing expired/stale security-exception failures.
+These failures remain visible; checks and original approvals have not been
+weakened or relabeled as passing.
+
+The new publication Python files are registered with the ordinary quality
+inventory and have explicit Python 3.13 formatter targets, matching their
+standalone CI runtime. Ordinary formatting, lint, type and privacy checks still
+apply to them. Continue governed W1 execution in the private original, not by
+regenerating or approving historical public records here.

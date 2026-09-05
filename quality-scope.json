@@ -86,6 +86,8 @@
     "tests/contracts/test_support_bundle_contract.py",
     "tests/security/test_install_trivy.py",
     "tests/security/test_security_check.py",
-    "tests/service/test_core_api.py"
+    "tests/service/test_core_api.py",
+    "tools/publication_privacy.py",
+    "tests/publication/test_publication_privacy.py"
   ]
 }
