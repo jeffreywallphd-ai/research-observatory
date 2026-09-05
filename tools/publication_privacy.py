@@ -90,12 +90,13 @@ def object_contents(repo: Path, oids: list[str]):
         stderr=subprocess.PIPE,
     )
     assert proc.stdin is not None and proc.stdout is not None
+    input_stream = proc.stdin
     writer_errors: list[Exception] = []
 
     def send() -> None:
         try:
-            proc.stdin.write(("\n".join(oids) + "\n").encode("ascii"))
-            proc.stdin.close()
+            input_stream.write(("\n".join(oids) + "\n").encode("ascii"))
+            input_stream.close()
         except Exception as error:
             writer_errors.append(error)
 
@@ -168,7 +169,7 @@ def complete_history_names(repo: Path, refs: list[str]) -> dict[str, set[str]]:
 
     @cache
     def flatten(oid: str) -> tuple[tuple[str, str], ...]:
-        result = []
+        result: list[tuple[str, str]] = []
         for mode, name, child in trees[oid]:
             if mode == b"40000":
                 result.extend((name + "/" + path, blob) for path, blob in flatten(child))
@@ -181,8 +182,8 @@ def complete_history_names(repo: Path, refs: list[str]) -> dict[str, set[str]]:
     names = {key: {""} for key, kind in types.items() if kind in {"commit", "tag"}}
     roots = set(git(repo, "log", "--format=%T", *refs, "--").decode().splitlines())
     for root in roots:
-        for path, oid in flatten(root):
-            names.setdefault(oid, set()).add(path)
+        for relative_path, blob_oid in flatten(root):
+            names.setdefault(blob_oid, set()).add(relative_path)
     return names
 
 
