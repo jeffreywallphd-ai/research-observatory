@@ -1,19 +1,19 @@
 reference_id: RO-UI-ACADEMIC-MINIMAL-1.6
 version: '1.6'
 status: proposed
-approval_kind: pending-human-review
+approval_kind: pending-human
 approved_by: null
 approved_at: null
-approval_basis: Inert ECR-0008 proposal only. Exact candidate and correction packet
-  require independent review and explicit human approval before activation.
-  Earlier preparation approval does not approve these bytes. No application,
-  task, amendment, Wave, release, or remote-push authority is granted.
+approval_basis: Inert ECR-0008 proposal only. Owner preapproval covers the disclosed
+  correction scope; exact independent acceptance and immutable authority binding
+  remain pending. This proposed copy is not active approval. No application,
+  task, amendment, Wave, release, or remote-push authority is granted by this file.
 authority:
-  wave_id: W1
-  proposed_amendment_id: W1.A09
-  approved_wave_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
-  proposal_commit: null
-  preparation_addendum: planning/enabler-change-requests/ECR-0008.ux-addendum-01.md
+  amendment_id: W1.A09
+  change_request_id: ECR-0008
+  approval_record: planning/wave-amendment-approvals/W1.A09.json
+  approval_record_sha256: null
+  approval_record_introduction_commit: null
 supersedes: RO-UI-ACADEMIC-MINIMAL-1.5
 scope:
   normative:
