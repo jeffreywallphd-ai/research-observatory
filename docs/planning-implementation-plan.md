@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f7b9d0110e52bd2a507265031ddddc55a03cdf6d8906f1a1204b5a47526521d2
+source_sha256: 7f6f76c87ba992f4a1e27d6058fbd6bf5c1183bc9fdde0ced77095b44787f714
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2008,7 +2008,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T02 - Restore exact project contracts and explicit recovery
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T01`
 
@@ -2029,13 +2029,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Real Windows/native/disposable Core integration and lock/restart replay
 - Affected Rust/TS/Python type/lint/build and independent contract/security review
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A09.T02.json` at `a6a219ce0ec32bc96b151aad13c19c5646ec8db6`
+
 #### Review history — W1.A09.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `6015c4c671b4a031d109130d2105f882ec73221b46272a7ee41752d0e6f2e415`
+
+- Candidate / base / branch: `a6a219ce0ec32bc96b151aad13c19c5646ec8db6` / `cc1d0407e6882b724e628caa136dfe4b9569410c` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-05T14:11:49+00:00`
+- Evidence: `artifacts/evidence/W1.A09.T02.json` / `22af4093b462a8f3d97642b36b5a3714f5fa9adc3d0982294a9e2ae3445b08a1` / `a6a219ce0ec32bc96b151aad13c19c5646ec8db6`
+- Acceptance-criteria SHA-256: `136deddfc0aa9058b8ba86014ca3d8421e5c16950c80d3a6526a995aed956f2e`
+- Verification-selection SHA-256: `31d0ded164b32ae52ef944ab4939484e150a329dba504b983b6a03e402e0a279`
+- Changed paths: `apps/desktop/src-tauri/examples/project_contract_probe.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app/LocalServiceBoundary.tsx`, `apps/desktop/src/app/ProjectsWorkspace.tsx`, `artifacts/evidence/W1.A09.T02.invariants-01.json`, `artifacts/evidence/W1.A09.T02.native-check-01.mjs`, `artifacts/evidence/W1.A09.T02.product-frame-01.json`, `artifacts/evidence/W1.A09.T02.task-start.md`, `artifacts/evidence/W1.A09.T02.verification-01.json`, `artifacts/evidence/W1.A09.T02.verification-02.json`, `artifacts/evidence/W1.A09.T02.verification-03.json`, `artifacts/evidence/W1.A09.T02.verify-01.py`, `artifacts/evidence/W1.usability-blind-01.follow-up-01.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0008.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/desktop/test_desktop_app_check.py`, `tests/service/test_native_project_contract.py`, `tools/core_api_contract.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv/Scripts/python.exe artifacts/evidence/W1.A09.T02.verify-01.py --report artifacts/evidence/W1.A09.T02.verification-02.json`, `.venv/Scripts/python.exe -m unittest discover -s tests/desktop -p test_desktop_app_check.py -k ProjectRecoveryInteractionTests -v; scoped Ruff; exact previous-input and incremental Git comparison`, `.venv/Scripts/python.exe -m unittest discover -s tests/service -p test_native_project_contract.py -v (invoked by the exact verifier)`, `Pinned desktop lint, typecheck and production/reference build; affected generator mypy with MYPYPATH and --follow-imports=silent; tools/backlog_views.py --repo . --check; tools/plan_review_site.py --repo .`, `Exact git ls-tree comparison at claim base and tested commit for Core source, OpenAPI/schemas, semantic workflow sources, native startup/unlock/generation owners, UI reference and baseline trees`
+- Deferred checks: `T03: shared native folder chooser, preselected default existing project parent in dev/production, stable destination, cancellation/focus/lock/close and no-overwrite; not implemented or closed here.`, `T04: real packaged Tauri IPC/window/native dialog/no-fallback qualification and accumulated integration/security/performance/accessibility/recovery. The integration-harness supervisor proof is not that platform/UI qualification.`, `Returned A08: full-height sidebar and effective paragraph spacing. Existing broad all-target Clippy application_lock test-helper warnings and native fixture PID-reuse isolation remain qualification follow-up; production Clippy and isolated native library tests pass.`, `Full Core typing remains W1 qualification: manual whole-import mypy exposed preexisting selective_recalculation.py:834 unused-ignore/attr-defined diagnostics; scoped generator typing is passing without changing ignores or Core source.`, `Usability U01-U04 need integrated closure/fresh no-context retest; U05 comparison completeness is a retained W1 acceptance/experience defect and U06 is a retained clarity/design issue. Neither is silently closed or deferred by T02; follow-up-01 records ownership and lawful handling.`, `Complete repository/Windows W1 matrix, independent slice/amendment/Wave review and G1 approval remain due. No local-main integration of unmet A08 ancestry, remote push or release is authorized by this evidence.`
+- Selection rationale: T02 changes public/cross-process request admission, narrative validation, readiness/retry orchestration and canonical native executable path spelling. Risks are overbroad routes/headers/body coercion, stale or fabricated catalog, automatic duplicate mutations, late protected state, weakened startup paths and stale compiled evidence. The selected native/TS/browser/security checks and real protected Core persistence prove these boundaries. The reused success panel exposed an existing neutral-surface measurement defect; a bounded generic evidence correction selects semantic neutral/untoned visible surfaces, preserving all theme equality, geometry, focus and motion assertions and retaining the adverse report. Independent review covers that evidence-control delta. No full repository/deployment profile was invoked.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W1.A09.T03 - Choose project folders through one protected native dialog
 

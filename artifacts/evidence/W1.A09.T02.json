@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A09.T02",
+  "commit": "a6a219ce0ec32bc96b151aad13c19c5646ec8db6",
+  "baseCommit": "cc1d0407e6882b724e628caa136dfe4b9569410c",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/LocalServiceBoundary.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+    "artifacts/evidence/W1.A09.T02.invariants-01.json",
+    "artifacts/evidence/W1.A09.T02.native-check-01.mjs",
+    "artifacts/evidence/W1.A09.T02.product-frame-01.json",
+    "artifacts/evidence/W1.A09.T02.task-start.md",
+    "artifacts/evidence/W1.A09.T02.verification-01.json",
+    "artifacts/evidence/W1.A09.T02.verification-02.json",
+    "artifacts/evidence/W1.A09.T02.verification-03.json",
+    "artifacts/evidence/W1.A09.T02.verify-01.py",
+    "artifacts/evidence/W1.usability-blind-01.follow-up-01.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0008.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/service/test_native_project_contract.py",
+    "tools/core_api_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "bindings": {
+    "testedProductCommit": "3c020e36c67249712621f07036d921fe0ebafedf",
+    "evidenceDeliveryOnly": "Product/native/contract inputs remain those of full tested3c020e36. The only subsequent test input change is the seven-line explicit local-validation regression at00797f56, independently replayed and exactly bound in verification-03. Candidate a6a219ce adds only that incremental report to00797f56; prior4db843c6 adds only verification-02/invariants reports.",
+    "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "semanticReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "report": "artifacts/evidence/W1.A09.T02.verification-02.json",
+    "latestTestCommit": "00797f5673e87dcd31bf552540e7107213acbbc4"
+  },
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe artifacts/evidence/W1.A09.T02.verify-01.py --report artifacts/evidence/W1.A09.T02.verification-02.json",
+      "exitCode": 0,
+      "result": "13 risk-selected checks passed at tested3c020e36 with all pre/post input hashes and HEAD unchanged. Retains raw commands, outputs, durations and exact source hashes. Generated contract check; affected Ruff; scoped generator mypy; native library64 passed/1 intentionally ignored renderer witness; production Clippy; generated client43 tests; renderer23 tests; renderer lint/types and contract types; native security source3 tests; actual native/Core3 tests; browser/security8 tests, including the existing complete product frame and new neutral-measurement negatives."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/desktop -p test_desktop_app_check.py -k ProjectRecoveryInteractionTests -v; scoped Ruff; exact previous-input and incremental Git comparison",
+      "exitCode": 0,
+      "result": "verification-03 binds the seven-line test-only delta at00797f56 and passing focused replay: invalid relative parent produces local field-validation help, zero native mutations and retained name before the distinct actual operation failure/retry cases. Every other verification-02 source input remains unchanged; no product code changed. This incremental check avoids replaying unaffected native/full-frame coverage."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_native_project_contract.py -v (invoked by the exact verifier)",
+      "exitCode": 0,
+      "result": "Before/after Cargo native inputs are carried to the Node generated-client runner and checked before launch and after execution; absent/substituted binding fails before fixture creation. Actual async native supervisor/current-user authenticated Core and isolated DPAPI/SQLCipher persistence load14 catalog profiles, preserve multiline creation text, draft/selection after close/reopen/restart, and six lineage nodes with the exact predecessor. Fourteen live route/envelope substitutions are denied, unknown/wrong-project lineage stays empty integrity-review/export-denied, and explicit read recovery creates no project. Packaged-path plain/verbatim spelling is accepted while actual NTFS-junction redirects are denied; optional symlink creation is explicitly unavailable due Windows privilege1314, not claimed passing."
+    },
+    {
+      "command": "Pinned desktop lint, typecheck and production/reference build; affected generator mypy with MYPYPATH and --follow-imports=silent; tools/backlog_views.py --repo . --check; tools/plan_review_site.py --repo .",
+      "exitCode": 0,
+      "result": "Both application build roles passed (four product and42 reference artifacts); the exact candidate frame test validates current build/source roles. No product/build input changed in the evidence-only descendant. The generated review site is current and backlog views match. Scoped mypy analyzes the changed generator and imported types, not a full Core typing pass."
+    },
+    {
+      "command": "Exact git ls-tree comparison at claim base and tested commit for Core source, OpenAPI/schemas, semantic workflow sources, native startup/unlock/generation owners, UI reference and baseline trees",
+      "exitCode": 0,
+      "result": "247 Git blobs unchanged; tree SHA-25693e5124c3442038cfc72f3bf4e67835f3d7dd8ba10dc6287b710600cdec89d96. Retained machine report: artifacts/evidence/W1.A09.T02.invariants-01.json. No semantic migration, relabeling, schema, lock-policy, reference or baseline change."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "supervisor.rs admits only exact catalog GET and lineage POST before readiness/I/O, retaining envelope denial. Typed deny_unknown_fields lineage deserialization rejects duplicate/missing/unknown fields and boolean/fraction/string numeric coercion; root/UUID/direction/range/body-size bounds are checked. Existing protected Tauri request ownership is unchanged.",
+        "Native unit negative matrices and actual compiled native/Core proof in verification-02 exercise valid requests and substituted methods, paths, query strings, headers and bodies. Unknown/wrong-project lineage returns its existing empty integrity-review/export-denied contract rather than invented HTTP denial."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The generator reuses boundedNarrative for project creation with unchanged minimum1/maximum4000 and nonblank validation. The generated TypeScript and native creation checks preserve LF/CR/TAB and deny blank, oversized, NUL and disallowed-control narratives.",
+        "Failing-before/fixed-after TS and native tests plus actual generated-client/native/Core multiline creation preserve exact text. Invariants-01 authenticates unchanged OpenAPI and semantic schemas/catalogs. Existing Python code-point/DEL differences are explicitly retained, not a claim of complete Unicode accepted-input equivalence."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Projects reuses the authentic decoded native LocalServiceBoundary in status-only mode and waits for ready before catalog reads. Existing native asynchronous startup/unlock and generation-owner source blobs are unchanged. Equivalent safe Windows verbatim resource-path spelling is accepted without relaxing file/canonical/redirect validation.",
+        "The focused browser test observes starting without another startup or catalog request, then distinct catalog failure and read retry, preserved entered multiline fields, generated field-validation help and bounded operation failure. Existing full product-frame and lock/recovery/generation checks pass; the real native/Core test independently observes asynchronous starting/ready and restart."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Catalog retry changes only the read attempt. Core retry remains explicit and uses the existing native restart budget. Project mutation admission is single-flight and guarded against delivery to unmounted/locked forms; neither readiness effects nor retries invoke create/open/archive/delete.",
+        "Browser mutation-count and late-result tests pass, including unknown operation failure, explicit Core recovery, no repeated mutation, and a pending creation result arriving after leaving Projects. Native/Core read recovery preserves creation count and existing persisted intent/workflow/lineage. Catalog failure uses bounded fixed help and no raw exception/fallback catalog."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The principal test imports the actual generated TypeScript client, builds the actual Rust integration example and dispatches through the production asynchronous supervisor into a real disposable authenticated Core with isolated Windows protected persistence. Its build-to-run source hashes and binary hash are retained.",
+        "Catalog14, exact multiline project create/open/close/reopen, saved intent revision/hash, exact selection identity/hash and real retained lineage survive service restart. Canonical lineage fixture revisions are appended through the real unit of work while the encrypted synthetic project is closed; this is explicit fixture preparation, not a mocked read. Browser adapters remain separate and are not represented as this native boundary."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T02 changes public/cross-process request admission, narrative validation, readiness/retry orchestration and canonical native executable path spelling. Risks are overbroad routes/headers/body coercion, stale or fabricated catalog, automatic duplicate mutations, late protected state, weakened startup paths and stale compiled evidence. The selected native/TS/browser/security checks and real protected Core persistence prove these boundaries. The reused success panel exposed an existing neutral-surface measurement defect; a bounded generic evidence correction selects semantic neutral/untoned visible surfaces, preserving all theme equality, geometry, focus and motion assertions and retaining the adverse report. Independent review covers that evidence-control delta. No full repository/deployment profile was invoked.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "desktop:unit",
+      "desktop:application",
+      "service:unit",
+      "security-local:unit",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "T03: shared native folder chooser, preselected default existing project parent in dev/production, stable destination, cancellation/focus/lock/close and no-overwrite; not implemented or closed here.",
+      "T04: real packaged Tauri IPC/window/native dialog/no-fallback qualification and accumulated integration/security/performance/accessibility/recovery. The integration-harness supervisor proof is not that platform/UI qualification.",
+      "Returned A08: full-height sidebar and effective paragraph spacing. Existing broad all-target Clippy application_lock test-helper warnings and native fixture PID-reuse isolation remain qualification follow-up; production Clippy and isolated native library tests pass.",
+      "Full Core typing remains W1 qualification: manual whole-import mypy exposed preexisting selective_recalculation.py:834 unused-ignore/attr-defined diagnostics; scoped generator typing is passing without changing ignores or Core source.",
+      "Usability U01-U04 need integrated closure/fresh no-context retest; U05 comparison completeness is a retained W1 acceptance/experience defect and U06 is a retained clarity/design issue. Neither is silently closed or deferred by T02; follow-up-01 records ownership and lawful handling.",
+      "Complete repository/Windows W1 matrix, independent slice/amendment/Wave review and G1 approval remain due. No local-main integration of unmet A08 ancestry, remote push or release is authorized by this evidence."
+    ]
+  },
+  "retainedNonpassingAttempts": [
+    {
+      "path": "artifacts/evidence/W1.A09.T02.verification-01.json",
+      "exitCode": 1,
+      "disposition": "Exact initial commit-bound run retained: all but one browser group passed; six Projects neutral-theme observations measured the preceding valid success-tone panel instead of a neutral surface. Corrected generically without product/CSS/reference changes, assertions, tolerance relaxation or erased history."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T02.product-frame-01.json",
+      "exitCode": 1,
+      "disposition": "Complete original six-failure frame measurements retained; corrected full-frame assertion passes in verification-02."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T02.task-start.md",
+      "disposition": "Retains failing-before route/narrative/path/readiness observations, invalid early lineage-fixture assumptions, initial wrong fixture executable basename, native PID-reuse fixture contamination followed by isolated replay, explicit symlink privilege unavailability and scoped-vs-full-import mypy limitations."
+    }
+  ],
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "openFindingIds": [],
+    "note": "Review the exact frozen candidate and five criteria, incremental evidence-control maintenance, real native/Core and source/build binding. Independent advisory preflight/replays are not formal task approval."
+  }
+}
