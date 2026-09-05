@@ -1,0 +1,2 @@
+#!/bin/sh
+exec python tools/publication_privacy.py --staged
