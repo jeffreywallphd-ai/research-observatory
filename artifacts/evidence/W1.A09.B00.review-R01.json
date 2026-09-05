@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-review",
+  "amendmentId": "W1.A09",
+  "taskId": "W1.A09.B00",
+  "attemptId": "R01",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "reviewedAt": "2026-09-05T03:27:38Z",
+  "result": "approved",
+  "candidateCommit": "d849d6699cbc0295e3b94f5efda9e338822d7c9e",
+  "baseCommit": "fcf627b4c83af81d0c3472526477bc7aa68d819c",
+  "submissionCommit": "82488fbdb31e5906b0986d1369c768b8cddda50c",
+  "independence": {
+    "implementer": "codex",
+    "statement": "The reviewer independently inspected the immutable candidate, authority, evidence and actual delivered state, and performed read-only replays. The reviewer did not author the candidate, submit the bootstrap, mutate the backlog, or implement this bootstrap. Prior independent packet and generic-maintenance reviews are retained, not substituted for this actual append review."
+  },
+  "artifactBindings": [
+    {
+      "path": "artifacts/evidence/W1.A09.B00.json",
+      "sha256": "75222f0993c050df6a6579052f263c5e30b5fc175ea55b80f1bd32d5febdd6f4",
+      "gitBlob": "285eeecba2c5ebbb855ddfea2d06b4926be65e15",
+      "commit": "82488fbdb31e5906b0986d1369c768b8cddda50c"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W1.A09.json",
+      "sha256": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+      "gitBlob": "d8ff4c860175e29e6a2ae22d781c5aec834bdd3f",
+      "introductionCommit": "fcf627b4c83af81d0c3472526477bc7aa68d819c"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.packet.json",
+      "sha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+      "gitBlob": "c6feece6b55be2da0e853cc624fb2e4aa48a8dc0",
+      "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.review-R02.json",
+      "sha256": "8785f8a3b174e793d5080615ebe858d26fd10280db1f5d3163d8213b5925b2f5",
+      "gitBlob": "1a027652841038b3546faeb5d660307ef310622d",
+      "introductionCommit": "56656807f9a051e6fd240950e2d0a45d2978caf2"
+    }
+  ],
+  "scope": {
+    "candidateChangedFiles": [
+      "planning/review-site/enablers/ECR-0008.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json"
+    ],
+    "deliveryChangedFiles": [
+      "artifacts/evidence/W1.A09.B00.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0008.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W1.html",
+      "planning/status-summary.md"
+    ],
+    "boundary": "Review of B00 authority projection and actual append only. Product, active reference, semantic source, baseline, native/runtime implementation, task completion, amendment exit, release and local-main integration are not approved by this disposition."
+  },
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied",
+      "evidence": "The approved packet, retained independent R02 and owner-preapproval record match the supplied exact hashes and delivered Git blobs. Candidate d849d669 is the sole child of approval introduction fcf627b4. Read-only planctl require-approved replay passed the history-bound authority check. The record truthfully binds standing owner authorization to the independently accepted matching packet; it does not claim that the owner personally inspected the later commit or approved W1 passing."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied",
+      "evidence": "Delivery 82488fbd is the sole child of d849d669. Independently parsing both Git backlog blobs, removing only the final A09 row from delivery reproduces the entire predecessor object exactly, including every earlier amendment and every other top-level field. The sole append is A09 lifecycle APPROVED, B00 REVIEW, exact candidate/evidence/approval bindings, no campaign and an empty task list. S01/T01-T04 remain the approved packet inventory, not falsely materialized tasks. This actual delivery comparison supplies the post-submit proof explicitly deferred by the pre-submit manifest."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied",
+      "evidence": "The complete A08 record equals its immutable 5329e538d853a36b46d123b9fc97caabb7d4735a snapshot and canonical SHA-256 3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506. The A09 correction metadata exactly equals the packet pausedPredecessor binding. W1 remains PAUSED/amendment-hold without lease, A08 remains PAUSED and lease-free, and its blocked task/history are untouched. The actual pure projection returns pending-entry, holdOwner W1.A08 and parentFrozen true. The actual materialization entry guard, invoked against an in-memory copy with persistence methods forbidden, rejects B00 REVIEW before any mutation. Negative in-memory parent status and pause-reason alterations are rejected."
+    },
+    {
+      "criterionIndex": 4,
+      "result": "satisfied",
+      "evidence": "The candidate diff is exactly the three authorized review projections. Delivery adds only the evidence, sole backlog append and derived review/status views. Explicit Git comparisons show no apps, services, packages, design or tools delta. The active reference and product remain unchanged. The delivered planning-site check passes all 492 HTML pages, generated backlog views report no changes, and exact-path diff hygiene passes."
+    }
+  ],
+  "independentChecks": [
+    {
+      "check": "Exact Git parent, path, artifact and complete predecessor comparison",
+      "result": "passed",
+      "method": "Read only the named candidate/delivery Git blobs; compare all prior amendment records and all other backlog fields, exact artifact SHA-256 and Git blobs, packet correction binding and historical A08 full-record hash. Working copies of the four named evidence/authority artifacts also match their delivery blobs."
+    },
+    {
+      "check": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0008 --require-approved",
+      "result": "passed",
+      "observation": "ECR-0008 is approved and history-bound. This read-only review-session replay began while submission completion was awaited; exact candidate/delivery identities and state preservation were separately authenticated from immutable Git objects. The known legacy printed canonical link names retained ECR-0008.md; the packet and review source binding correctly identify ECR-0008.execution-01.md."
+    },
+    {
+      "check": "Actual pending-correction projection, denied materialization and frozen-parent negatives",
+      "result": "passed",
+      "method": "Authenticated current taskctl.py and governance_kernel.py bytes against delivery, then called the pure role projection and the early materialization guard on an in-memory parsed delivery copy. Patched persistence entry points to raise if reached; data remained unchanged. Changed parent campaign status and pause reason were independently rejected. No live transition was attempted."
+    },
+    {
+      "check": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed",
+      "observation": "Generated backlog views: PASS - no changes."
+    },
+    {
+      "check": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "result": "passed",
+      "observation": "Planning review site: pass - 19 capabilities, 111 slices, 337 tasks, 492 HTML pages at the delivered state. Unmaterialized A09 tasks remain excluded from executable task counts."
+    },
+    {
+      "check": "Exact-path git diff --check from fcf627b4 to 82488fbd",
+      "result": "passed"
+    }
+  ],
+  "verificationSelection": {
+    "rationale": "A three-file generated authority projection and existing-controller append justify exact history/state/Git verification and the materialization denial boundary, not another product or full historical-controller audit. The inherited independently reviewed generic correction implementation and its real Git/CAS regressions were not relabeled as freshly rerun B00 tests.",
+    "reviewerCommandErrors": [
+      "One exploratory rg pattern failed to parse because of PowerShell quoting; the corrected read-only search succeeded. This did not exercise or modify repository behavior."
+    ],
+    "deferred": [
+      "Real materialization and activation through the supported controller after this disposition is retained and applied.",
+      "T01 active reference publication, semantic1.5 compatibility, fresh baseline and independent control checkpoint.",
+      "T02-T04 compiled native/Core, actual Windows dialog, security/recovery and accumulated qualification.",
+      "Return to paused A08, its remaining styling findings, ordinary W1 work and complete independent W1 qualification before separate human G1 approval."
+    ]
+  },
+  "findings": [],
+  "closures": [],
+  "retainedProductFindings": "No product finding is closed by B00. The stale reference baseline, effective child spacing, sidebar geometry and native/project UX findings remain assigned to their approved downstream work.",
+  "disposition": "Accept this exact B00 candidate and delivered append for the supported independent bootstrap-review transition. After recording that transition, only the already approved exact correction inventory may be materialized and activated through the existing controller. This ledger itself does not mutate state or bypass that transition.",
+  "authorityLimits": {
+    "newHumanApprovalRequested": false,
+    "productTaskApproval": false,
+    "activeReferencePublicationApproval": false,
+    "amendmentExitApproval": false,
+    "waveResumeApproval": false,
+    "waveExitOrReleaseApproval": false,
+    "localMainIntegrationApproval": false,
+    "protectedWitnessAccessed": false
+  }
+}
