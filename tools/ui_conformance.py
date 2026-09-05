@@ -533,6 +533,17 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
             != canonical_payload(PRESENTATION_WITNESS_PATH, payload)
         ):
             raise ValueError("witness must match the current committed Git blob")
+        semantic_relative = "packages/contracts/workflow-profile/source/academic-minimal-1.5"
+        input_paths = [
+            PRESENTATION_WITNESS_PATH,
+            "design/ui-reference/",
+            *[
+                f"{semantic_relative}/{name}"
+                for name in ["SOURCE_AUTHORITY.json", *SEMANTIC_SOURCE_AUTHORITY["sourceSha256"]]
+            ],
+        ]
+        if git(repo, "status", "--porcelain", "--untracked-files=all", "--", *input_paths):
+            raise ValueError("presentation witness inputs must be clean committed files")
         introduction = git(repo, "log", "-1", "--format=%H", head, "--", PRESENTATION_WITNESS_PATH)
         if (
             not introduction
@@ -548,6 +559,29 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
         approval = yaml.safe_load(approval_bytes.decode("utf-8"))
         if not isinstance(approval, dict) or approval.get("version") != version:
             raise ValueError("approved presentation version differs")
+        authority = approval.get("authority")
+        if not isinstance(authority, dict) or set(authority) != APPROVAL_AUTHORITY_KEYS:
+            raise ValueError("presentation witness requires exact amendment publication authority")
+        authority_payload, error = git_blob_at(
+            repo, authority["approval_record_introduction_commit"], authority["approval_record"]
+        )
+        if error or authority_payload is None:
+            raise ValueError("presentation approval record is missing")
+        authority_record = json.loads(authority_payload.decode("utf-8"), object_pairs_hook=unique_json_object)
+        packet_binding = authority_record["packet"]
+        packet_payload, error = git_blob_at(repo, packet_binding["commit"], packet_binding["path"])
+        if error or packet_payload is None:
+            raise ValueError("presentation approved packet is missing")
+        packet_record = json.loads(packet_payload.decode("utf-8"), object_pairs_hook=unique_json_object)
+        # Lazy reuse has no module-initialization cycle: this helper compares
+        # Git bytes only and does not call reference_package_at or this verifier.
+        from planctl import _reference_publication_content_errors
+
+        publication_errors = _reference_publication_content_errors(
+            repo, packet_record, packet_binding["commit"], approval_commit
+        )
+        if publication_errors:
+            return [f"{label}: publication differs from approved proposal", *publication_errors]
         reference = confined_path(repo, "design/ui-reference")
         validated = validate_reference(reference, None)
         if (
@@ -556,9 +590,20 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
             or validated["reference_package_sha256"] != package_sha256
         ):
             raise ValueError("active presentation does not match the complete approved package")
-        semantic_root = confined_path(repo, "packages/contracts/workflow-profile/source/academic-minimal-1.5")
+        semantic_root = confined_path(repo, semantic_relative)
+        semantic_payloads: dict[str, bytes] = {}
+        for name in ["SOURCE_AUTHORITY.json", *SEMANTIC_SOURCE_AUTHORITY["sourceSha256"]]:
+            observed_payload = stable_file_bytes(repo, confined_path(semantic_root, name))
+            committed_payload, error = git_blob_at(repo, head, f"{semantic_relative}/{name}")
+            if (
+                error
+                or committed_payload is None
+                or canonical_payload(name, observed_payload) != canonical_payload(name, committed_payload)
+            ):
+                raise ValueError(f"{name}: semantic input must match the current committed Git blob")
+            semantic_payloads[name] = observed_payload
         authority = json.loads(
-            stable_file_bytes(repo, confined_path(semantic_root, "SOURCE_AUTHORITY.json")).decode("utf-8"),
+            semantic_payloads["SOURCE_AUTHORITY.json"].decode("utf-8"),
             object_pairs_hook=unique_json_object,
         )
         if authority != SEMANTIC_SOURCE_AUTHORITY:
@@ -569,7 +614,7 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
             original, error = git_blob_at(
                 repo, SEMANTIC_SOURCE_AUTHORITY["approvalCommit"], f"design/ui-reference/{name}"
             )
-            observed = canonical_payload(name, stable_file_bytes(repo, confined_path(semantic_root, name)))
+            observed = canonical_payload(name, semantic_payloads[name])
             if error or original is None or hashlib.sha256(original).hexdigest() != digest or observed != original:
                 raise ValueError(f"{name}: semantic snapshot is not the original approved bytes")
             published, error = git_blob_at(repo, approval_commit, f"design/ui-reference/{name}")
@@ -583,6 +628,15 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
         final_reference = validate_reference(reference, None)
         if not final_reference["ok"] or final_reference["reference_package_sha256"] != package_sha256:
             raise ValueError("active presentation changed during verification")
+        for name, initial_payload in semantic_payloads.items():
+            if stable_file_bytes(repo, confined_path(semantic_root, name)) != initial_payload:
+                raise ValueError(f"{name}: semantic input changed during verification")
+        if (
+            git(repo, "rev-parse", "HEAD") != head
+            or stable_file_bytes(repo, witness_path) != payload
+            or git(repo, "status", "--porcelain", "--untracked-files=all", "--", *input_paths)
+        ):
+            raise ValueError("presentation witness candidate changed during verification")
         return presentation_mapping_errors(semantic, current, reference_id, version)
     except (OSError, ValueError, UnicodeError, yaml.YAMLError, subprocess.SubprocessError) as exc:
         return [f"{label}: {exc}"]
