@@ -8,12 +8,14 @@ import { createInterface } from "node:readline";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const nativeInputs = execFileSync("git", ["ls-files", "--", "Cargo.toml", "Cargo.lock", "apps/desktop/src-tauri"], { cwd: repo, encoding: "utf8" }).trim().split(/\r?\n/);
 const coreInputs = execFileSync("git", ["ls-files", "--", "services/core-api/src"], { cwd: repo, encoding: "utf8" }).trim().split(/\r?\n/);
-const inputs = ["Cargo.toml", "Cargo.lock", "apps/desktop/src-tauri/Cargo.toml", "apps/desktop/src-tauri/src/lib.rs", "apps/desktop/src-tauri/src/supervisor.rs", "apps/desktop/src-tauri/examples/project_contract_probe.rs", "packages/contracts/core-api/generated.ts", "tests/service/fixtures/native_integration_sidecar.py", "tests/service/test_native_project_contract.py", "tests/service/test_provenance.py", "artifacts/evidence/W1.A09.T02.native-check-01.mjs", "target/debug/examples/project_contract_probe.exe", ...coreInputs];
+const inputs = [...new Set(["packages/contracts/core-api/generated.ts", "tests/service/fixtures/native_integration_sidecar.py", "tests/service/test_native_project_contract.py", "tests/service/test_provenance.py", "artifacts/evidence/W1.A09.T02.native-check-01.mjs", "target/debug/examples/project_contract_probe.exe", ...nativeInputs, ...coreInputs])];
 async function hashes() {
   return Object.fromEntries(await Promise.all(inputs.map(async relative => [relative, createHash("sha256").update(await readFile(path.join(repo, relative))).digest("hex")])));
 }
 const sourceHashes = await hashes();
+assert.deepEqual(JSON.parse(process.env.RO_PROJECT_PROBE_BUILD_INPUTS ?? "null"), Object.fromEntries(nativeInputs.map(name => [name, sourceHashes[name]])), "native input hashes must match the successful Cargo build interval");
 const { createCoreApiClient } = await import(pathToFileURL(path.join(repo, "packages/contracts/core-api/generated.ts")).href);
 const temporary = await mkdtemp(path.join(repo, "artifacts/tmp/project-native-contract-"));
 const vault = path.join(temporary, "vault");

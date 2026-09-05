@@ -1872,6 +1872,16 @@ def _style_audit_fixtures() -> dict[str, Any]:
     }
 
 
+QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND = r"""element => {
+  const selector = '.ro-panel[data-tone="neutral"],.ro-panel:not([data-tone]),'
+    + '.ro-card[data-tone="neutral"],.ro-card:not([data-tone])';
+  const candidates = [element, ...element.querySelectorAll(selector)];
+  const panel = candidates.find(node => node.matches(selector) && node.getClientRects().length
+    && getComputedStyle(node).visibility === 'visible');
+  return panel ? getComputedStyle(panel).backgroundColor : null;
+}"""
+
+
 class ProductStyleQualification:
     """Measure existing functional states without duplicating their service adapters."""
 
@@ -1931,15 +1941,17 @@ class ProductStyleQualification:
                 if surface_id in {"application-lock", "local-service-boundary", "shortcut-dialog"}:
                     node.scroll_into_view_if_needed()
                 focus.scroll_into_view_if_needed()
-                observed = node.evaluate(r"""element => {
+                observed = node.evaluate(
+                    "element => { const neutralSurfaceBackground = ("
+                    + QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND
+                    + ")(element);"
+                    + r"""
                   const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
                   const active = document.activeElement, focusStyle = getComputedStyle(active);
                   const activeRect = active.getBoundingClientRect();
                   const root = document.documentElement;
                   const probe = document.createElement('span'); probe.hidden = true; element.append(probe);
                   const resolve = name => { probe.style.color = `var(${name})`; return getComputedStyle(probe).color; };
-                  const panel = element.matches('.ro-panel,.ro-card')
-                    ? element : element.querySelector('.ro-panel,.ro-card');
                   const semantic = [];
                   for (const [kind, selector] of Object.entries({
                     card: '.ro-card,.ro-panel', form: '.ro-form', notice: '.ro-notice',
@@ -1975,7 +1987,7 @@ class ProductStyleQualification:
                       scrolledWithinSurface: false},
                     themeTokens: {theme: root.dataset.theme, surface1: resolve('--surface-1'),
                       textDefault: resolve('--text-default'),
-                      workspaceBackground: panel ? getComputedStyle(panel).backgroundColor : null},
+                      workspaceBackground: neutralSurfaceBackground},
                     reducedMotion: {mediaMatches: matchMedia('(prefers-reduced-motion: reduce)').matches,
                       transitionDuration: focusStyle.transitionDuration,
                       animationDuration: focusStyle.animationDuration},

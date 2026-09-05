@@ -16,6 +16,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 from desktop_app_check import (  # noqa: E402
+    QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND,
     command_plan,
     component_catalog_browser_errors,
     core_workflow_catalog_json,
@@ -326,6 +327,46 @@ def valid_product_style_qualification_matrix() -> dict[str, Any]:
 
 
 class DesktopAppCheckTests(unittest.TestCase):
+    def test_neutral_workspace_measurement_is_not_replaced_by_tonal_or_hidden_panels(self) -> None:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page()
+                for theme, background in (("light", "rgb(255, 255, 255)"), ("dark", "rgb(11, 31, 55)")):
+                    page.set_content(
+                        '<section id="workspace"><div class="ro-panel" data-tone="success" '
+                        'style="background:rgb(0, 128, 0)">Ready</div>'
+                        '<div class="ro-card" style="display:none;background:rgb(255,0,0)">Hidden</div>'
+                        f'<div class="ro-panel" data-tone="neutral" style="background:{background}">'
+                        'Create a project</div></section>'
+                    )
+                    workspace = page.locator("#workspace")
+                    self.assertEqual(background, workspace.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND))
+                    neutral = page.locator('[data-tone="neutral"]')
+                    self.assertEqual(background, neutral.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND))
+                    neutral.evaluate("node => node.style.background = 'rgb(255, 0, 0)'")
+                    measured = workspace.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND)
+                    self.assertEqual("rgb(255, 0, 0)", measured)
+                    self.assertNotEqual(background, measured)
+                    for invalid in (measured, None):
+                        matrix = valid_product_style_qualification_matrix()
+                        case = next(item for item in matrix["cases"]
+                                    if item["surfaceId"] == "projects" and item["theme"] == theme)
+                        case["themeTokens"]["workspaceBackground"] = invalid
+                        self.assertTrue(any(
+                            f"apply {theme} workspace tokens" in error
+                            for error in product_style_qualification_errors(matrix)
+                        ))
+                    neutral.evaluate("node => node.style.visibility = 'hidden'")
+                    self.assertIsNone(workspace.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND))
+                    neutral.evaluate("node => node.style.visibility = 'visible'")
+                    neutral.evaluate("node => node.hidden = true")
+                    self.assertIsNone(workspace.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND))
+                    neutral.evaluate("node => node.remove()")
+                    self.assertIsNone(workspace.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND))
+            finally:
+                browser.close()
+
     def test_qualification_measurements_bind_renderer_geometry_and_reachable_states(self) -> None:
         case = {
             "surfaceId": "home",

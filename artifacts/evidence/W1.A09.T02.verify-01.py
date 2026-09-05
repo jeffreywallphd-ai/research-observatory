@@ -30,7 +30,8 @@ def main() -> int:
     # files. A unique namespace prevents an older PID's fixture contaminating
     # this run; it does not fix that existing test-isolation weakness.
     temporary = Path(tempfile.mkdtemp(prefix="project-qualification-", dir=REPO / "artifacts/tmp"))
-    environment = {**environment, "TEMP": str(temporary), "TMP": str(temporary)}
+    environment = {**environment, "TEMP": str(temporary), "TMP": str(temporary),
+                   "MYPYPATH": str(REPO / "services/core-api/src")}
     python = str(REPO / ".venv/Scripts/python.exe")
     node = str(REPO / ".local/toolchains/node-v24.19.0-win-x64/node.exe")
     pnpm = str(REPO / ".local/toolchains/corepack/v1/pnpm/11.20.0/bin/pnpm.cjs")
@@ -58,8 +59,11 @@ def main() -> int:
     commands = [
         ("generated-contract", REPO, [python, "tools/core_api_contract.py", "--check"]),
         ("python-lint", REPO, [python, "-m", "ruff", "check", "tools/core_api_contract.py",
+                              "tools/desktop_app_check.py",
                               "tests/service/test_native_project_contract.py",
                               "tests/desktop/test_desktop_app_check.py", str(Path(__file__))]),
+        ("changed-generator-types", REPO, [python, "-m", "mypy", "--follow-imports=silent",
+                                          "tools/core_api_contract.py"]),
         ("native-boundaries", REPO, [str(cargo), "test", "--locked", "-p",
                                     "research-observatory-desktop", "--lib"]),
         ("native-production-lint", REPO, [str(cargo), "clippy", "--locked", "-p",
@@ -81,6 +85,8 @@ def main() -> int:
         ("renderer-recovery-security", REPO, [python, "-m", "unittest", "discover", "-s", "tests/desktop",
                                              "-p", "test_desktop_app_check.py", "-v",
                                              "-k", "ProjectRecoveryInteractionTests",
+                                             "-k", "test_neutral_workspace_measurement",
+                                             "-k", "test_product_style_qualification_contract_is_exact",
                                              "-k", "test_security_boundary_and_complete_command_plan",
                                              "-k", "test_external_development_url_and_privilege_fail_closed",
                                              "-k", "test_event_capability_rejects",
