@@ -7,9 +7,11 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import contextmanager
 from hashlib import sha256
 from pathlib import Path
 from typing import Any, cast
+from unittest.mock import patch
 
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -170,6 +172,136 @@ class WorkflowProfileContractTests(unittest.TestCase):
                 json.dumps(valid_shape).replace('"version": "1.6"', '"version":"1.6","version":"1.6"'), encoding="utf-8"
             )
             self.assertIn("duplicate JSON field", " ".join(presentation_compatibility_errors(*arguments)))
+
+    def test_presentation_witness_authenticates_real_git_publication_and_inputs(self) -> None:
+        sys.path.insert(0, str(REPO / "tools"))
+        import ui_conformance as ui
+        import yaml
+
+        witness_relative = ui.PRESENTATION_WITNESS_PATH
+        base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+        with tempfile.TemporaryDirectory(prefix="ro-witness-git-") as temporary:
+            root = Path(temporary) / "fixture"
+            cloned = subprocess.run(
+                ["git", "clone", "--shared", "--no-checkout", str(REPO), str(root)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, cloned.returncode, cloned.stderr)
+
+            def git(*args: str) -> str:
+                return subprocess.check_output(
+                    [
+                        "git",
+                        "-c",
+                        "core.autocrlf=false",
+                        "-c",
+                        "user.name=Contract fixture",
+                        "-c",
+                        "user.email=fixture@example.invalid",
+                        *args,
+                    ],
+                    cwd=root,
+                    text=True,
+                    stderr=subprocess.PIPE,
+                ).strip()
+
+            git("checkout", "--detach", base)
+            witness = json.loads((root / witness_relative).read_text(encoding="utf-8"))
+            presentation = witness["presentation"]
+            arguments = (root, presentation["referenceId"], presentation["referencePackageSha256"])
+            self.assertEqual([], ui.presentation_compatibility_errors(*arguments))
+            semantic = "packages/contracts/workflow-profile/source/academic-minimal-1.5/WORKFLOW_CATALOG.json"
+
+            @contextmanager
+            def changed_fixture(*paths: str):
+                originals = {name: (root / name).read_bytes() for name in paths}
+                try:
+                    yield
+                finally:
+                    for name, payload in originals.items():
+                        (root / name).write_bytes(payload)
+                    # This is a disposable clone, not the user's worktree. Keep
+                    # adverse commits in its object store while restoring only
+                    # this fixture's HEAD/index for the next independent case.
+                    git("update-ref", "HEAD", base)
+                    git("read-tree", base)
+
+            for name in (witness_relative, semantic):
+                with self.subTest(staged_then_restored=name), changed_fixture(name):
+                    original = (root / name).read_bytes()
+                    (root / name).write_bytes(original + b"\n")
+                    git("add", "--", name)
+                    (root / name).write_bytes(original)
+                    self.assertIn("clean committed", " ".join(ui.presentation_compatibility_errors(*arguments)))
+
+            with changed_fixture(semantic):
+                original = (root / semantic).read_bytes()
+                (root / semantic).write_bytes(original + b"\n")
+                git("add", "--", semantic)
+                git("commit", "-m", "Negative fixture: substituted semantic input")
+                (root / semantic).write_bytes(original)
+                # Content authentication cannot rely only on Git stat flags.
+                git("update-index", "--assume-unchanged", "--", semantic)
+                self.assertIn("current committed Git blob", " ".join(ui.presentation_compatibility_errors(*arguments)))
+                git("update-index", "--no-assume-unchanged", "--", semantic)
+
+            with changed_fixture(semantic):
+                original_reader = ui.stable_file_bytes
+                semantic_reads = 0
+
+                def mutate_after_read(repo: Path, path: Path) -> bytes:
+                    nonlocal semantic_reads
+                    payload = original_reader(repo, path)
+                    if path == root / semantic:
+                        semantic_reads += 1
+                        if semantic_reads == 1:
+                            path.write_bytes(payload + b"\n")
+                    return payload
+
+                with patch.object(ui, "stable_file_bytes", side_effect=mutate_after_read):
+                    self.assertIn(
+                        "changed during verification", " ".join(ui.presentation_compatibility_errors(*arguments))
+                    )
+
+            with changed_fixture(witness_relative):
+                stale = copy.deepcopy(witness)
+                stale["presentation"]["referencePackageSha256"] = "0" * 64
+                (root / witness_relative).write_text(json.dumps(stale), encoding="utf-8")
+                git("add", "--", witness_relative)
+                git("commit", "-m", "Negative fixture: stale witness")
+                self.assertIn("invalid or stale", " ".join(ui.presentation_compatibility_errors(*arguments)))
+
+            # A forged first publication must fail even when the complete
+            # replacement package, manifest and witness are self-consistent.
+            css_name = "design/ui-reference/assets/app.css"
+            manifest_name = "design/ui-reference/REFERENCE_MANIFEST.yaml"
+            with changed_fixture(css_name, manifest_name, witness_relative):
+                publication = presentation["approvalCommit"]
+                git("update-ref", "HEAD", git("rev-parse", f"{publication}^"))
+                git("read-tree", publication)
+                css = root / css_name
+                css.write_bytes(css.read_bytes() + b"\n/* unapproved initial publication */\n")
+                manifest = yaml.safe_load((root / manifest_name).read_text(encoding="utf-8"))
+                manifest["file_hashes"]["assets/app.css"] = sha256(css.read_bytes()).hexdigest()
+                (root / manifest_name).write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+                git("add", "--", css_name, manifest_name)
+                git("commit", "-m", "Negative fixture: forged first publication")
+                forged_publication = git("rev-parse", "HEAD")
+                validated = ui.validate_reference(root / "design/ui-reference", None)
+                self.assertTrue(validated["ok"], validated["errors"])
+                forged = copy.deepcopy(witness)
+                forged["presentation"]["approvalCommit"] = forged_publication
+                forged["presentation"]["referencePackageSha256"] = validated["reference_package_sha256"]
+                (root / witness_relative).write_text(json.dumps(forged), encoding="utf-8")
+                git("add", "--", witness_relative)
+                git("commit", "-m", "Negative fixture: self-consistent forged witness")
+                errors = ui.presentation_compatibility_errors(
+                    root, presentation["referenceId"], validated["reference_package_sha256"]
+                )
+                self.assertIn("publication differs from approved proposal", " ".join(errors))
+                self.assertIn("assets/app.css", " ".join(errors))
 
     def test_governed_catalog_is_exact_hash_bound_and_has_all_fourteen_profiles(self) -> None:
         schema_text = (
