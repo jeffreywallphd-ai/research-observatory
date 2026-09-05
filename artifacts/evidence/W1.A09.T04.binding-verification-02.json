@@ -1,0 +1,24 @@
+{
+  "taskId": "W1.A09.T04",
+  "status": "PASS_WITHIN_R01_REMEDIATION_SCOPE",
+  "candidateCommit": "494243d307c797d965bb58ec3d7a96839dabec0c",
+  "sourceHashes": {
+    "artifacts/evidence/W1.A09.T04.final-binding-01.py": "61c36a60b1d0b553d4432dd94f9df5c88247273813bac25e6d36f721f848623c",
+    "artifacts/evidence/W1.A09.T04.binding-tests-01.py": "cc4b3763ef4e6410e6b34a3e2836895d76a6648c5a38f1ad1d11347ee449e992"
+  },
+  "checks": [
+    {"command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py", "exitCode": 0, "tests": 11, "failures": 0, "errors": 0, "skipped": 0, "fixture": "artifacts/tmp/W1.A09.T04.binding-tests-6h03_e_f"},
+    {"command": ".venv/Scripts/python.exe -m ruff check artifacts/evidence/W1.A09.T04.final-binding-01.py artifacts/evidence/W1.A09.T04.binding-tests-01.py", "exitCode": 0},
+    {"command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json", "exitCode": 0, "sourceInputCount": 566},
+    {"command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check", "exitCode": 0, "scope": "Recorded review-projection bytes, unchanged through the tested commit."},
+    {"command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .", "exitCode": 0, "htmlPages": 492, "scope": "Recorded review-projection bytes, unchanged through the tested commit."},
+    {"command": "git diff --check", "exitCode": 0}
+  ],
+  "findingReplay": {
+    "W1.A09.T04.R01.F01": "17 lexical exclusion/alias/device/control spelling subcases use mocks only; root and intermediate/leaf reparse mocks deny before resolution/content access. Real synthetic hardlink rejected. Valid text/binary/executable snapshots pass with held ancestor/file guards and stable metadata.",
+    "W1.A09.T04.R01.F02": "Fresh dummy real-Git test rejects assume-unchanged and skip-worktree modifications even when diff omits them; rejects changed normal report before JSON parsing; accepts candidate text (CRLF worktree), binary and valid report. Cached snapshot is consistent and later mutation is rejected. Fresh full helper binding authenticates selected report snapshots and tracked inputs directly to candidate blobs."
+  },
+  "adverseHistory": ["W1.A09.T04.review-R01.json", "W1.A09.T04.binding-tests-adverse-01.json", "W1.A09.T04.binding-tests-adverse-02.json"],
+  "executableMetadataCharacterizationFixture": "artifacts/tmp/W1.A09.T04.binding-tests-8qw8471q",
+  "scope": "Author-owned focused replay, not independent acceptance. No product/native/Core/reference/baseline/controller changes or full-suite replay. All synthetic fixtures retained. No protected witness, ordinary projects/policy/vaults, credentials, sibling workspace, remote writes or account/security changes. R01 independent observations remain the accumulated task proof; W1.A08 remains PAUSED and W1 release qualification remains due."
+}
