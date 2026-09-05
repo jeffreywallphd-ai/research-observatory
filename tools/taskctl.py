@@ -28,6 +28,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
+from governance_kernel import KernelValidationError, project_paused_corrections
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import SchemaError, ValidationError
 
@@ -254,6 +255,9 @@ def amendment_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...
         snapshot[f"{amendment_id}:exit-review"] = tuple(
             json.dumps(attempt, sort_keys=True, separators=(",", ":"))
             for attempt in ((amendment.get("completion") or {}).get("exit_review_control") or {}).get("attempts", [])
+        )
+        snapshot[f"{amendment_id}:correction"] = (
+            json.dumps(amendment.get("correction"), sort_keys=True, separators=(",", ":")),
         )
     return snapshot
 
@@ -681,13 +685,27 @@ def active_amendment_campaigns(data: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def blocking_wave_amendments(data: dict[str, Any], wave_id: str) -> list[dict[str, Any]]:
+    relations = correction_roles(data)
+    frozen = {relation["parentId"] for relation in relations if relation["parentFrozen"]}
     return [
         amendment
         for amendment in data.get("wave_amendments", [])
         if amendment.get("target_wave") == wave_id
         and amendment.get("kind") != "migrated-replanning"
         and (amendment.get("lifecycle") or {}).get("status") not in AMENDMENT_TERMINAL_STATES
+        and amendment.get("id") not in frozen
     ]
+
+
+def correction_roles(data: dict[str, Any]) -> list[dict[str, Any]]:
+    """Use only serialized authority, never index_backlog's task annotations."""
+    try:
+        return [
+            dict(relation)
+            for relation in project_paused_corrections(serializable_backlog(data).get("wave_amendments", []))
+        ]
+    except KernelValidationError as exc:
+        raise SystemExit(f"Invalid paused amendment correction: {exc}") from exc
 
 
 def is_unexecuted_superseded_reservation(amendment: dict[str, Any]) -> bool:
@@ -1065,7 +1083,10 @@ def refresh_derived_states(
     gates: dict[str, dict[str, Any]],
 ) -> int:
     changed = 0
+    frozen_parents = {relation["parentId"] for relation in correction_roles(data) if relation["parentFrozen"]}
     for task in tasks.values():
+        if task.get("_amendment_id") in frozen_parents:
+            continue
         if task["status"] not in {"NOT_STARTED", "READY"}:
             continue
         new_status = "READY" if task_can_be_ready(data, capabilities, slices, tasks, gates, task) else "NOT_STARTED"
@@ -2436,13 +2457,26 @@ def bootstrap_packet_errors(
     *,
     require_current_branch: bool = False,
 ) -> list[str]:
+    errors: list[str] = []
+    expected_correction = (packet.get("authorityChain") or {}).get("pausedPredecessor")
+    if amendment.get("correction") != expected_correction:
+        errors.append(f"{amendment.get('id')}: correction relation differs from its immutable approved packet")
+    if expected_correction is not None:
+        from planctl import _paused_predecessor_errors
+
+        errors.extend(_paused_predecessor_errors(repo, expected_correction, str(amendment.get("id"))))
+        if not git_is_ancestor(
+            repo,
+            str(expected_correction.get("effectiveStateCommit") or ""),
+            str((approval.get("packet") or {}).get("commit") or ""),
+        ):
+            errors.append(f"{amendment.get('id')}: correction packet does not descend from its paused predecessor")
     bootstrap = amendment.get("bootstrap") or {}
     if not bootstrap:
-        return []
+        return errors
     amendment_id = str(amendment.get("id"))
     bootstrap_id = str(bootstrap.get("id") or "")
     packet_unit = packet.get("bootstrapUnit") or {}
-    errors: list[str] = []
     if approval.get("status") != "APPROVED" or approval.get("amendmentId") != amendment_id:
         errors.append(f"{amendment_id}: bootstrap does not descend from an approved amendment record")
     if bootstrap_id != packet_unit.get("id"):
@@ -3904,7 +3938,7 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
                 except SystemExit as exc:
                     errors.append(f"control revision 12 maintenance authority is invalid: {exc}")
                 else:
-                    if packet.get("schemaVersion") != "4.0-proposal" or packet.get(
+                    if packet.get("schemaVersion") not in {"4.0-proposal", "4.1-proposal"} or packet.get(
                         "migrationAuthority"
                     ) != increment.get("migration_reference"):
                         errors.append("control revision 12 maintenance increment differs from its v4 authority")
@@ -4644,6 +4678,15 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
         return errors
     waves = wave_map(data)
     base_map = wave_approval_base_map(data)
+    for amendment in amendments:
+        if "correction" in amendment and (amendment.get("lifecycle") or {}).get("status") == "ADOPTED":
+            from planctl import _paused_predecessor_errors
+
+            binding = amendment["correction"]
+            parent = wave_amendment_map(serializable_backlog(data)).get(str(binding.get("id")))
+            errors.extend(
+                _paused_predecessor_errors(repo, binding, str(amendment.get("id")), returned_parent=parent or {})
+            )
     for wave_id, base in base_map.items():
         approval = base.get("approval") or {}
         if canonical_json_sha256(approval) != base.get("canonical_sha256"):
@@ -5330,6 +5373,17 @@ def validate(
         errors.append("control plane active_amendment does not exactly match the sole ACTIVE amendment campaign")
     ordered_amendments: dict[str, list[dict[str, Any]]] = {}
     executable_hold_states = {"MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED"}
+    try:
+        relations = project_paused_corrections(serializable_backlog(data).get("wave_amendments", []))
+    except KernelValidationError as exc:
+        errors.append(f"Invalid paused amendment correction: {exc}")
+        relations = []
+    suspended_parents = {relation["parentId"] for relation in relations if relation["phase"] == "executing"}
+    owner_exceptions = {
+        (relation["parentId"], relation["correctionId"])
+        for relation in relations
+        if relation["phase"] in {"pending-entry", "returned"}
+    }
     hold_owners: dict[str, list[dict[str, Any]]] = {}
     for amendment in data.get("wave_amendments", []):
         target_wave = str(amendment.get("target_wave"))
@@ -5337,6 +5391,7 @@ def validate(
         if (
             amendment.get("kind") != "migrated-replanning"
             and ((amendment.get("lifecycle") or {}).get("status")) in executable_hold_states
+            and amendment.get("id") not in suspended_parents
         ):
             hold_owners.setdefault(target_wave, []).append(amendment)
     for wave_id, ordered in ordered_amendments.items():
@@ -5350,13 +5405,20 @@ def validate(
             else:
                 owner = owners[0]
                 owner_position = ordered.index(owner)
-                if owner_position != len(ordered) - 1:
+                if owner_position != len(ordered) - 1 and not (
+                    owner_position == len(ordered) - 2
+                    and (str(owner.get("id")), str(ordered[-1].get("id"))) in owner_exceptions
+                ):
                     errors.append(f"{wave_id}: amendment-hold owner is not the latest consecutive amendment")
                 for predecessor in ordered[:owner_position]:
                     if (
                         predecessor.get("kind") != "migrated-replanning"
                         and ((predecessor.get("lifecycle") or {}).get("status")) != "ADOPTED"
                         and not is_unexecuted_superseded_reservation(predecessor)
+                        and not (
+                            predecessor.get("id") in suspended_parents
+                            and (owner.get("correction") or {}).get("id") == predecessor.get("id")
+                        )
                     ):
                         errors.append(
                             f"{predecessor.get('id')}: predecessor of the amendment-hold owner is neither ADOPTED "
@@ -5424,7 +5486,13 @@ def validate(
                 )
                 if valid_hold_predecessor and len(owners) == 1 and amendment in ordered:
                     later_owner = ordered.index(owners[0]) > ordered.index(amendment)
-                if wave_campaign.get("scope") != "wave" and not later_owner:
+                returned_owner = any(
+                    relation["correctionId"] == amendment_id
+                    and relation["phase"] == "returned"
+                    and relation["holdOwner"] == (owners[0].get("id") if len(owners) == 1 else None)
+                    for relation in relations
+                )
+                if wave_campaign.get("scope") != "wave" and not later_owner and not returned_owner:
                     errors.append(f"{amendment_id}: terminal lifecycle did not restore ordinary Wave scope")
         if campaign:
             if campaign.get("status") in {"ACTIVE", "REVIEW"} and (
@@ -6316,6 +6384,10 @@ def amendment_adoption_reference_errors(
         return errors
     if manifest.get("targetWave") != amendment.get("target_wave"):
         errors.append(f"{amendment_id}: adoption evidence target Wave mismatch")
+    if manifest.get("correctionReturn") != amendment.get("correction") or (
+        "correctionReturn" in manifest and "correction" not in amendment
+    ):
+        errors.append(f"{amendment_id}: adoption evidence does not bind the exact correction return")
     completion = amendment.get("completion") or {}
     attempts = (completion.get("exit_review_control") or {}).get("attempts") or []
     if not attempts:
@@ -7361,6 +7433,9 @@ def command_amendment_v4_bootstrap_submit(
     chain = packet.get("authorityChain") or {}
     ordered = chain.get("orderedAmendments") or []
     reserved = chain.get("reservedAmendments") or []
+    paused = chain.get("pausedPredecessor")
+    if paused is not None:
+        ordered = [*ordered, paused]
     adopted_ids = [str(item.get("id") or "") for item in ordered]
     reserved_ids = [str(item.get("id") or "") for item in reserved]
 
@@ -7415,7 +7490,7 @@ def command_amendment_v4_bootstrap_submit(
     if (
         activation.get("waveStatus") != "PAUSED"
         or campaign.get("status") != "PAUSED"
-        or campaign.get("scope") != "wave"
+        or campaign.get("scope") != ("amendment-hold" if paused is not None else "wave")
         or campaign.get("lease") is not None
     ):
         raise SystemExit("Target Wave is not at the exact paused Wave-scope activation boundary")
@@ -7560,6 +7635,7 @@ def command_amendment_v4_bootstrap_submit(
                 "evidence": [],
                 "notes": None,
             },
+            **({"correction": copy.deepcopy(paused)} if paused is not None else {}),
         }
     )
     after_snapshot = amendment_identity_snapshot(data)
@@ -7632,7 +7708,7 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
     wave_id = match.group(1)
     frozen_waves = exact_record_snapshot(data, "waves", identities={wave_id})
     approval, packet, approval_payload = load_amendment_authority(repo, args.amendment)
-    if packet.get("schemaVersion") == "4.0-proposal":
+    if packet.get("schemaVersion") in {"4.0-proposal", "4.1-proposal"}:
         command_amendment_v4_bootstrap_submit(
             args,
             data,
@@ -8247,6 +8323,10 @@ def command_amendment_materialize(args, data, capabilities, slices, tasks, gates
 def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
+    if any(role["parentId"] == args.amendment and role["parentFrozen"] for role in correction_roles(data)):
+        raise SystemExit(
+            "A correction freezes this predecessor until independently qualified adoption returns its hold"
+        )
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
     lifecycle = (amendment.get("lifecycle") or {}).get("status")
     completion = amendment.get("completion") or {}
@@ -8627,6 +8707,8 @@ def command_amendment_review(args, data, capabilities, slices, tasks, gates) -> 
 
 def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> None:
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    if (amendment.get("lifecycle") or {}).get("status") != "REVIEW":
+        raise SystemExit("Only an unadopted REVIEW amendment may publish its adoption checkpoint")
     require_runtime_amendment_integrity(args.file, amendment)
     completion = amendment.get("completion") or {}
     campaign = amendment.get("campaign") or {}
@@ -8671,6 +8753,11 @@ def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> N
         or latest_review.get("result") != "approved"
     ):
         raise SystemExit("Adoption checkpoint does not bind the exact approved amendment exit history")
+    correction = amendment.get("correction")
+    if correction is not None and manifest.get("correctionReturn") != correction:
+        raise SystemExit("Correction adoption checkpoint must bind the exact paused-predecessor return relation")
+    if correction is None and "correctionReturn" in manifest:
+        raise SystemExit("Ordinary amendment adoption cannot acquire an unapproved correction return")
     reference = {
         "type": "amendment-adoption-evidence",
         "amendment_id": str(amendment["id"]),
@@ -8694,11 +8781,16 @@ def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> N
             "notes": args.note or f"Adopted {args.amendment} control-plane amendment.",
         }
     )
-    wave_campaign["scope"] = "wave"
+    wave_campaign["scope"] = "amendment-hold" if correction is not None else "wave"
     data["control_plane"]["active_amendment"] = None
     append_amendment_event(amendment, "ADOPTED", actor, args.note or f"Adopted via {checkpoint_id}.")
     persist(args, data)
-    print(f"Adopted {args.amendment}; {wave['id']} remains PAUSED until an explicit Wave resume")
+    if correction is not None:
+        print(
+            f"Adopted {args.amendment}; returned the hold to PAUSED {correction['id']}; explicit activation is required"
+        )
+    else:
+        print(f"Adopted {args.amendment}; {wave['id']} remains PAUSED until an explicit Wave resume")
 
 
 def command_amendment_dispose(args, data, capabilities, slices, tasks, gates) -> None:

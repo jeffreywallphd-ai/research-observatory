@@ -1,14 +1,107 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 import sys
 import unittest
 from pathlib import Path
+from typing import Any
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import governance_kernel  # noqa: E402
+
+
+class PausedAmendmentCorrectionTests(unittest.TestCase):
+    def pair(self) -> tuple[dict, dict]:
+        parent: dict[str, Any] = {
+            "id": "W2.A03",
+            "target_wave": "W2",
+            "change_request_id": "ECR-0100",
+            "approval_reference": {
+                "path": "planning/wave-amendment-approvals/W2.A03.json",
+                "sha256": "a" * 64,
+                "introduction_commit": "b" * 40,
+            },
+            "lifecycle": {"status": "PAUSED", "history": [{"id": "E01", "status": "PAUSED"}]},
+            "campaign": {"status": "PAUSED", "lease": None},
+            "tasks": [{"id": "W2.A03.T01", "status": "BLOCKED", "lease": None}],
+        }
+        binding = {
+            "id": parent["id"],
+            "changeRequestId": parent["change_request_id"],
+            "status": "PAUSED",
+            "packetCommit": "c" * 40,
+            "approvalReference": {
+                "path": parent["approval_reference"]["path"],
+                "sha256": "a" * 64,
+                "introductionCommit": "b" * 40,
+            },
+            "effectiveStateCommit": "d" * 40,
+            "recordSha256": hashlib.sha256(
+                json.dumps(parent, sort_keys=True, separators=(",", ":")).encode()
+            ).hexdigest(),
+            "returnPolicy": "paused-predecessor",
+        }
+        child = {"id": "W2.A04", "target_wave": "W2", "correction": binding, "lifecycle": {"status": "APPROVED"}}
+        return parent, child
+
+    def test_pending_entry_execution_and_return_preserve_one_owner(self) -> None:
+        parent, child = self.pair()
+        before = copy.deepcopy([parent, child])
+        projection = governance_kernel.project_paused_corrections([parent, child])
+        self.assertEqual("W2.A03", projection[0]["holdOwner"])
+        self.assertEqual("pending-entry", projection[0]["phase"])
+        self.assertEqual(before, [parent, child])
+        for status in ("MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED"):
+            child["lifecycle"]["status"] = status
+            projection = governance_kernel.project_paused_corrections([parent, child])
+            self.assertEqual("W2.A04", projection[0]["holdOwner"])
+            self.assertTrue(projection[0]["parentFrozen"])
+        child["lifecycle"]["status"] = "ADOPTED"
+        projection = governance_kernel.project_paused_corrections([parent, child])
+        self.assertEqual("W2.A03", projection[0]["holdOwner"])
+        self.assertFalse(projection[0]["parentFrozen"])
+        parent["lifecycle"]["status"] = "ACTIVE"
+        self.assertEqual("W2.A03", governance_kernel.project_paused_corrections([parent, child])[0]["holdOwner"])
+        parent["lifecycle"]["status"] = "ADOPTED"
+        self.assertIsNone(governance_kernel.project_paused_corrections([parent, child])[0]["holdOwner"])
+
+    def test_active_lease_review_and_changed_parent_fail_even_with_rehashed_state(self) -> None:
+        for field, value in (("status", "IN_PROGRESS"), ("status", "REVIEW"), ("lease", {"claimed_by": "x"})):
+            parent, child = self.pair()
+            parent["tasks"][0][field] = value
+            child["correction"]["recordSha256"] = hashlib.sha256(
+                json.dumps(parent, sort_keys=True, separators=(",", ":")).encode()
+            ).hexdigest()
+            with self.assertRaises(governance_kernel.KernelValidationError):
+                governance_kernel.project_paused_corrections([parent, child])
+        parent, child = self.pair()
+        parent["tasks"][0]["status"] = "READY"
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "record"):
+            governance_kernel.project_paused_corrections([parent, child])
+
+    def test_wrong_parent_nested_relation_and_unsupported_disposal_fail(self) -> None:
+        for mutation in ("wrong-parent", "nested", "disposal", "bad-approval", "bad-return"):
+            parent, child = self.pair()
+            if mutation == "wrong-parent":
+                child["correction"]["id"] = "W2.A02"
+            elif mutation == "nested":
+                parent["correction"] = copy.deepcopy(child["correction"])
+            elif mutation == "disposal":
+                child["lifecycle"]["status"] = "WITHDRAWN"
+            elif mutation == "bad-approval":
+                child["correction"]["approvalReference"]["sha256"] = "f" * 64
+            else:
+                child["correction"]["returnPolicy"] = "wave"
+            with self.subTest(mutation=mutation), self.assertRaises(governance_kernel.KernelValidationError):
+                governance_kernel.project_paused_corrections([parent, child])
+
+    def test_no_opt_in_relation_does_not_change_legacy_projection(self) -> None:
+        parent, _ = self.pair()
+        self.assertEqual([], governance_kernel.project_paused_corrections([parent]))
 
 
 class GovernanceKernelTests(unittest.TestCase):

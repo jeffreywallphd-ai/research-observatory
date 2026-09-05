@@ -152,6 +152,25 @@ authority and validation input. No new incident-numbered controller should be
 created. Until the generic journal becomes live authority, `taskctl` remains the
 bounded compatibility mutation adapter for ordinary W1 transitions.
 
+## Paused-predecessor corrections in the compatibility adapter
+
+An independently reviewed, explicitly approved correction packet may use the
+v4.1 proposal schema to name its immediate, quiescent PAUSED predecessor. The
+binding includes the exact serialized predecessor hash, Git state commit,
+approval reference and `paused-predecessor` return policy. The earlier v4 schema
+and approved packets are unchanged. This is an optional relation in the existing
+adapter, not a new control revision or a live-journal cutover.
+
+Successful bootstrap append freezes the predecessor; approval alone does not.
+The predecessor retains the hold until correction materialization, which
+transfers sole ownership. Execution uses the existing task, review, exit and
+checkpoint commands. The adoption checkpoint must bind the exact return
+relation; reviewed adoption returns the hold to the still-paused predecessor,
+which requires explicit activation. Prior completed tasks and append-only
+review history remain immutable after return. Nested, competing and unsupported
+disposal paths fail closed. Correction approval does not authorize ordinary
+Wave execution or any release gate.
+
 ## Invariants retained
 
 - Exact source hashes and compare-and-swap publication.

@@ -21,6 +21,8 @@ from planctl import (  # noqa: E402
     _approval_introduction_commit,
     _authority_chain_v4_errors,
     _bound_repository_file_errors,
+    _has_committed_amendment_authority,
+    _paused_predecessor_errors,
     _schema_errors,
     _v4_packet_review_errors,
     approve_ecr,
@@ -30,6 +32,210 @@ from planctl import (  # noqa: E402
 
 
 class PlanctlAmendmentTests(unittest.TestCase):
+    def paused_git_fixture(self, root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+        from governance_kernel import paused_predecessor_record_hash
+
+        (root / "planning/wave-amendment-approvals").mkdir(parents=True)
+        subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
+        subprocess.run(["git", "config", "user.name", "Correction Fixture"], cwd=root, check=True)
+        subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=root, check=True)
+        (root / "parent-packet.json").write_text('{"fixture": true}\n', encoding="utf-8")
+        packet_commit = self.commit_paused_fixture(root, "parent packet")
+        relative = "planning/wave-amendment-approvals/W2.A01.json"
+        approval = {
+            "amendmentId": "W2.A01",
+            "changeRequestId": "ECR-0200",
+            "targetWave": "W2",
+            "status": "APPROVED",
+            "packet": {"commit": packet_commit},
+        }
+        payload = (json.dumps(approval) + "\n").encode()
+        (root / relative).write_bytes(payload)
+        introduced = self.commit_paused_fixture(root, "parent approval")
+        parent = {
+            "id": "W2.A01",
+            "target_wave": "W2",
+            "kind": "product-scope-security-experience",
+            "change_request_id": "ECR-0200",
+            "approval_reference": {
+                "path": relative,
+                "sha256": hashlib.sha256(payload).hexdigest(),
+                "introduction_commit": introduced,
+            },
+            "lifecycle": {"status": "PAUSED", "history": [{"id": "E01", "status": "PAUSED"}]},
+            "campaign": {"status": "PAUSED", "lease": None},
+            "tasks": [
+                {
+                    "id": "W2.A01.T01",
+                    "status": "BLOCKED",
+                    "lease": None,
+                    "review_control": {"attempts": [{"id": "R01", "result": "changes-requested"}]},
+                }
+            ],
+        }
+        source = {
+            "wave_amendments": [parent],
+            "waves": [{"id": "W2", "campaign": {"status": "PAUSED", "scope": "amendment-hold", "lease": None}}],
+            "control_plane": {"active_amendment": None},
+            "capabilities": [],
+        }
+        (root / "planning/backlog.yaml").write_text(json.dumps(source) + "\n", encoding="utf-8")
+        state = self.commit_paused_fixture(root, "parent paused")
+        binding = {
+            "id": parent["id"],
+            "changeRequestId": parent["change_request_id"],
+            "status": "PAUSED",
+            "packetCommit": packet_commit,
+            "approvalReference": {
+                "path": relative,
+                "sha256": hashlib.sha256(payload).hexdigest(),
+                "introductionCommit": introduced,
+            },
+            "effectiveStateCommit": state,
+            "recordSha256": paused_predecessor_record_hash(parent),
+            "returnPolicy": "paused-predecessor",
+        }
+        return source, binding
+
+    def commit_paused_fixture(self, root: Path, message: str) -> str:
+        # Only this test's freshly created temporary repository is staged.
+        subprocess.run(["git", "add", "."], cwd=root, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "--quiet", "-m", message], cwd=root, check=True)
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+
+    def test_paused_correction_authenticates_real_git_and_returned_history(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source, binding = self.paused_git_fixture(root)
+            self.assertEqual([], _paused_predecessor_errors(root, binding, "W2.A02"))
+            parent = source["wave_amendments"][0]
+            self.assertTrue(_has_committed_amendment_authority(root, parent))
+            injected = {field: parent[field] for field in ("id", "target_wave", "change_request_id", "kind")}
+            self.assertFalse(_has_committed_amendment_authority(root, injected))
+            changed = copy.deepcopy(parent)
+            changed["lifecycle"]["status"] = "ACTIVE"
+            changed["lifecycle"]["history"].append({"id": "E02", "status": "ACTIVE"})
+            changed["tasks"][0]["review_control"]["attempts"].append({"id": "R02", "result": "approved"})
+            self.assertEqual([], _paused_predecessor_errors(root, binding, "W2.A02", returned_parent=changed))
+            for mutation in ("lifecycle", "review-control", "review-attempt"):
+                broken = copy.deepcopy(changed)
+                if mutation == "lifecycle":
+                    broken["lifecycle"]["history"].pop(0)
+                elif mutation == "review-control":
+                    broken["tasks"][0].pop("review_control")
+                else:
+                    broken["tasks"][0]["review_control"]["attempts"][0]["result"] = "approved"
+                with self.subTest(mutation=mutation):
+                    self.assertTrue(
+                        any(
+                            "history changed" in error
+                            for error in _paused_predecessor_errors(root, binding, "W2.A02", returned_parent=broken)
+                        )
+                    )
+            tree = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], cwd=root, text=True).strip()
+            orphan = subprocess.check_output(
+                ["git", "commit-tree", tree, "-m", "unrelated history"], cwd=root, text=True
+            ).strip()
+            forked = {**binding, "effectiveStateCommit": orphan}
+            self.assertTrue(any("forked" in error for error in _paused_predecessor_errors(root, forked, "W2.A02")))
+            rehashed = copy.deepcopy(binding)
+            rehashed["approvalReference"]["sha256"] = "f" * 64
+            self.assertTrue(_paused_predecessor_errors(root, rehashed, "W2.A02"))
+
+    def test_paused_correction_snapshot_itself_must_be_quiescent(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source, binding = self.paused_git_fixture(root)
+            for case in ("ordinary-task", "recovery-hold", "prior-owner", "later-amendment", "wave-lease"):
+                changed = copy.deepcopy(source)
+                if case == "ordinary-task":
+                    changed["capabilities"] = [{"slices": [{"wave": "W2", "tasks": [{"status": "REVIEW"}]}]}]
+                elif case == "recovery-hold":
+                    changed["control_plane"]["recovery_holds"] = [{"status": "ACTIVE"}]
+                elif case == "prior-owner":
+                    changed["wave_amendments"].insert(
+                        0, {"id": "W2.A00", "target_wave": "W2", "lifecycle": {"status": "PAUSED"}}
+                    )
+                elif case == "later-amendment":
+                    changed["wave_amendments"].append(
+                        {"id": "W2.A02", "target_wave": "W2", "lifecycle": {"status": "APPROVED"}}
+                    )
+                else:
+                    changed["waves"][0]["campaign"]["lease"] = {"owner": "other"}
+                (root / "planning/backlog.yaml").write_text(json.dumps(changed) + "\n", encoding="utf-8")
+                commit = self.commit_paused_fixture(root, case)
+                with self.subTest(case=case):
+                    errors = _paused_predecessor_errors(root, {**binding, "effectiveStateCommit": commit}, "W2.A02")
+                    self.assertTrue(any("single-owner" in error for error in errors), errors)
+
+    def test_paused_correction_schema_is_explicit_and_keeps_v4_bytes(self) -> None:
+        relative = "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
+        original = subprocess.check_output(
+            ["git", "show", f"07473e15a6212995fa48ece9909f0d51be7ebc26:{relative}"], cwd=REPO
+        )
+        self.assertEqual(original, (REPO / relative).read_bytes().replace(b"\r\n", b"\n"))
+        old = REPO / relative
+        new = REPO / relative.replace("v4.schema", "v4.1.schema")
+        self.assertNotEqual(json.loads(old.read_bytes())["$id"], json.loads(new.read_bytes())["$id"])
+        with tempfile.TemporaryDirectory() as temporary:
+            _, binding = self.paused_git_fixture(Path(temporary))
+            packet = self._post_migration_v4_packet()
+            packet["authorityChain"]["pausedPredecessor"] = binding
+            self.assertTrue(_schema_errors(packet, old, "old reader"))
+            packet["schemaVersion"] = "4.1-proposal"
+            packet["$schema"] = "./enabler-change-request.v4.1.schema.json"
+            self.assertEqual([], _schema_errors(packet, new, "explicit extension"))
+
+    def test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut(self) -> None:
+        from governance_kernel import paused_predecessor_record_hash
+
+        source = subprocess.check_output(
+            ["git", "show", "07473e15a6212995fa48ece9909f0d51be7ebc26:planning/backlog.yaml"], cwd=REPO
+        )
+        backlog = yaml.safe_load(source)
+        parent = backlog["wave_amendments"][-1]
+        reference = parent["approval_reference"]
+        approval = json.loads((REPO / reference["path"]).read_bytes())
+        binding = {
+            "id": parent["id"],
+            "changeRequestId": parent["change_request_id"],
+            "status": "PAUSED",
+            "packetCommit": approval["packet"]["commit"],
+            "approvalReference": {
+                "path": reference["path"],
+                "sha256": reference["sha256"],
+                "introductionCommit": reference["introduction_commit"],
+            },
+            "effectiveStateCommit": "07473e15a6212995fa48ece9909f0d51be7ebc26",
+            "recordSha256": paused_predecessor_record_hash(parent),
+            "returnPolicy": "paused-predecessor",
+        }
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0007.packet.json")
+            .read_text(encoding="utf-8")
+            .replace("ECR-0007", "ECR-0008")
+            .replace("W1.A08", "W1.A09")
+        )
+        packet.update(schemaVersion="4.1-proposal")
+        packet["$schema"] = "./enabler-change-request.v4.1.schema.json"
+        packet["authorityChain"]["pausedPredecessor"] = binding
+        with patch("planctl.load_backlog", return_value=(backlog, REPO / "planning/backlog.yaml")):
+            self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
+        injected = {
+            "id": "W1.A09",
+            "change_request_id": "ECR-0008",
+            "target_wave": "W1",
+            "kind": packet["classification"],
+            "correction": binding,
+        }
+        backlog["wave_amendments"].append(injected)
+        next(wave for wave in backlog["waves"] if wave["id"] == "W1")["campaign"].update(
+            status="ACTIVE", scope="wave", lease={"owner": "other"}
+        )
+        with patch("planctl.load_backlog", return_value=(backlog, REPO / "planning/backlog.yaml")):
+            errors = self._fixture_authority_chain_v4_errors(packet)
+            self.assertTrue(any("required entry boundary" in error for error in errors), errors)
+
     def test_bound_repository_files_use_git_normalized_bytes_for_clean_worktrees(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -327,6 +533,10 @@ class PlanctlAmendmentTests(unittest.TestCase):
         pre_bootstrap["wave_amendments"] = [
             item for item in pre_bootstrap["wave_amendments"] if item["id"] in {"W1.A01", "W1.A02", "W1.A03"}
         ]
+        # This is the ordinary pre-entry fixture, not the later live amendment hold.
+        next(wave for wave in pre_bootstrap["waves"] if wave["id"] == "W1")["campaign"].update(
+            status="PAUSED", scope="wave", lease=None
+        )
         with patch("planctl.load_backlog", return_value=(pre_bootstrap, REPO / "planning/backlog.yaml")):
             self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
 
