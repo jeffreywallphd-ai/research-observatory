@@ -1,0 +1,104 @@
+{
+  "documentType": "independent-inert-correction-preparation-review",
+  "formatVersion": "1",
+  "reviewId": "ECR-0008-preparation-review-01",
+  "changeRequestId": "ECR-0008",
+  "proposedAmendmentId": "W1.A09",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "reviewerTask": "/root/t01_r02_independent_review",
+  "reviewerKind": "independent-ai-agent",
+  "reviewedAt": "2026-09-05T01:43:03.5214331Z",
+  "reviewedCommit": "1750f2b83f7dc6ff7b7c3438090f5b4bad1986b0",
+  "predecessorCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+  "disposition": "PREPARATION_ACCEPTED",
+  "executionApproval": false,
+  "canonicalEcrApproval": false,
+  "referenceApproval": false,
+  "taskApproval": false,
+  "releaseApproval": false,
+  "scope": "Independent commit-bound review of the completeness, source truth, bounded proposed design, compatibility obligations, retained findings and human-facing readiness distinctions of three inert preparation artifacts. This is not an executable ECR packet review, a frozen W1.A08.T02 review round, an implementation approval or an authority transition.",
+  "independence": "The reviewer performed read-only adversarial assessment and replay, did not author the proposal or its implementation, and writes only this independent disposition. Prior preflight advice does not substitute for implementation or future canonical packet review.",
+  "artifacts": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.md",
+      "gitBlob": "c44444caf21b43a320b5bb309f0ceb632b77e8a2",
+      "gitBlobSha256": "a1ff94efb55bc5437a5feeb141ab9ac231e3c8982bf6c30fdab69ecb7b7ca01c"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.draft.json",
+      "gitBlob": "43aa15eee9490a4e35e4feb2800b16c5ec7bccd4",
+      "gitBlobSha256": "5ef464f02dc7e9dc902da35e141c88fc42775a1ae770e5f231dfdd3279237975"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008-review.html",
+      "gitBlob": "082fc6e89c1a0194dc2719393a950c1f290c9f3a",
+      "gitBlobSha256": "f9e068adb548eddf40546257accf87f138012a61c8720c5d0bf437f65edf4710"
+    }
+  ],
+  "findings": [],
+  "assessment": [
+    "The candidate is the sole child of the lawfully paused predecessor and adds only the three preparation files. The draft neither materializes W1.A09 nor publishes an approval, new reference or baseline.",
+    "The proposed entry and return relation preserves unfinished A08 and one executor. It explicitly identifies current ECR v4 and hold/adoption incompatibilities as prerequisites, rather than falsely claiming readiness or weakening predecessor history.",
+    "ADR-0004's new-reference and same-ID baseline protections remain binding. All 33 current pages and 66 light/dark observations must be freshly qualified, with every changed entry explained; old failed observations remain historical evidence.",
+    "The proposed effective-reference overlay is bounded to current and subsequent qualification and cannot rewrite A08 acceptance strings, historical reviews or captured producer identity.",
+    "Section 5.1 preserves ADR-0026 semantic workflow-profile 1.5, exact source hashes, generated payloads, Core literals and persisted identities. The presentation compatibility comparison permits only the two enumerated root metadata fields; real persisted-project proof and adversarial substitution tests are mandatory. This is a viable proposed route, not a claim that the adaptation or witness already exists.",
+    "The mixed T01 estimate is conservatively allocated entirely to refactoring: 3 of the exact 194-point approved W1 baseline, rounded to 1.5 percent. T02, the slice and existing A08 work are not double counted. Broad architecture replacement or governance cutover is expressly excluded.",
+    "The review page prominently states that preparation is not execution approval, explains both findings and their different resolution owners, links the prerequisites, and offers local-only alternatives including Other without an approval operation or another preliminary endorsement request."
+  ],
+  "verification": {
+    "riskSelection": "Preparation-only changes warrant exact Git/source binding, source and authority review, proposal/view consistency, local links and responsive review-page behavior. Product, controller and full-profile suites were not rerun because none of those implementations changed; their planned checks remain explicit readiness and execution duties.",
+    "checks": [
+      {
+        "name": "Independent preparation checker replay",
+        "command": ".venv\\Scripts\\python.exe artifacts/tmp/check-ecr0008-draft.py",
+        "result": "PASS",
+        "candidateCommit": "1750f2b83f7dc6ff7b7c3438090f5b4bad1986b0",
+        "observations": "Authenticated 20 predecessor source bindings, eight inherited/current amendment approvals, two draft-bound documents and 32 local links. Backlog and HEAD were unchanged. No canonical packet, W1.A09 approval or materialized amendment exists."
+      },
+      {
+        "name": "Exact candidate and artifact authentication",
+        "result": "PASS",
+        "observations": "git rev-list --parents confirms the exact sole predecessor; git diff --name-status confirms only the three declared additions; working candidate artifacts equal their committed blobs. SHA-256 values above were computed directly from git cat-file blob output."
+      },
+      {
+        "name": "Independent review-page behavior and visual inspection",
+        "result": "PASS",
+        "observations": "1440x900 and 720x450 browser replay produced document widths 1440 and 720 respectively, no unexpected network requests, and correctly enabled/required then disabled Other fields. Both rendered screenshots were independently inspected; content is readable and the page has no save, submit or approval operation."
+      },
+      {
+        "name": "Authority, compatibility and inventory source inspection",
+        "result": "PASS",
+        "observations": "Read the complete proposal, draft and HTML; inspected current amendment pause/hold/adoption and ECR v4 boundaries, ADR-0004, ADR-0026 and exact workflow-generator source pins. Current coverage and visual baseline contain 33 pages and 66 entries. These support the proposal's stated constraints, not implementation readiness."
+      }
+    ]
+  },
+  "retainedOpenFindings": [
+    {
+      "id": "W1.A08.T02-preflight-F01",
+      "severity": "P1",
+      "status": "OPEN",
+      "resolutionBoundary": "Lawfully approved and qualified successor reference/correction; preparation does not close the stale-baseline finding."
+    },
+    {
+      "id": "W1.A08.T02-preflight-F02",
+      "severity": "P2",
+      "status": "OPEN",
+      "resolutionBoundary": "Existing A08.T02 shared-flow remedy and actual effective-spacing proof after authenticated return; the correction cannot close this finding."
+    }
+  ],
+  "readiness": {
+    "preparationComplete": true,
+    "executionReady": false,
+    "executionApprovalLegallyAvailable": false,
+    "unmetPrerequisites": [
+      "Implemented, real-Git/CAS tested and independently adopted generic entry/return maintenance preserving every stated invariant.",
+      "Exact regenerated proposed reference 1.6 bytes and authenticated semantic 1.5 compatibility inputs/witness, with no semantic or persisted identity change.",
+      "Supported canonical correction packet with complete exact consumer-path and source inventory.",
+      "Independent exact-commit canonical packet and reference review.",
+      "Explicit human approval of the exact canonical packet and reference before their authorized execution."
+    ],
+    "nextStep": "Prepare the bounded prerequisite maintenance under the existing repository workflow. Do not request another preliminary endorsement or treat this disposition as permission to execute the proposed amendment, activate reference 1.6, reopen T02, resume ordinary W1 or approve G1."
+  },
+  "protectedWitnessAccess": false,
+  "workflowMutationsByReviewer": false
+}
