@@ -39787,18 +39787,15 @@ wave_amendments:
     - Real disposable persisted1.5 project reopen/history/support-return
     - Independent control checkpoint, affected presentation build/conformance and task review
     packet_task_sha256: 748effda0ce6b1ad1f3c6a1a6691584d21f7125204f5cfc7070093befe7e6552
-    status: REVIEW
+    status: DONE
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 92175839dc92a736a6d5ad0330d13efb382701f1
     worktree: C:/workspace/research-observatory
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-05T11:55:48+00:00'
-      expires_at: '2026-09-05T19:55:48+00:00'
+    lease: null
     started_at: '2026-09-05T11:55:48+00:00'
-    updated_at: '2026-09-05T13:23:47+00:00'
-    completed_at: null
+    updated_at: '2026-09-05T13:31:01+00:00'
+    completed_at: '2026-09-05T13:31:01+00:00'
     blocker: null
     implementation_notes: Exact approved presentation1.6 publication and semantic1.5 preservation; independent pre-rebind
       checkpoint committed before consumer binding. Retained nonpassing native check and T02/T03/T04 obligations explicitly
@@ -39810,241 +39807,292 @@ wave_amendments:
       commit: 7a46e91a4558d9286a94d21aa85b050f6323e286
       recorded_at: '2026-09-05T13:23:47+00:00'
     verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+    review: &id124
+      reviewer: agent:t01-r02-independent-reviewer
+      result: approved
+      reviewed_at: '2026-09-05T13:31:01+00:00'
+      notes: Independent commit-bound R01 review approves only W1.A09.T01. The exact frozen packet, 165-path candidate inventory,
+        five criteria, verification selection, manifest and nine-path submission delivery authenticate. Candidate 7a46e91a
+        adds only eight retained verification reports/notes to tested product 5e914322. Exact approved presentation1.6 publication
+        preserves semantic1.5 and token1.4 authority; the independently accepted control/experience checkpoint strictly precedes
+        consumer rebinding. Independent replays passed four source/no-Git/mapping/real-Git witness methods and two consumer-orchestration/token/route
+        tests. The before/after proofs retain accepted intent revision3, prior history, exact supporting-return identity and
+        all16 immutable settings rows. All66 retained PNG hashes/dimensions, ten original producer inputs and prior/new baseline
+        hashes authenticate. No acceptance-bound blocking finding remains. The retained broad product command is still failed
+        on four preexisting native Clippy warnings; the existing built-frame-only pass is renderer evidence, not native or
+        packaging qualification. Those warnings and real native/Core/folder, returned A08 styling, amendment and full W1 qualification
+        remain mandatory later work. This disposition does not approve amendment adoption, the effective A08 overlay, local-main
+        integration of unmet ancestry, release or G1.
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex
-        submitted_at: '2026-09-05T13:23:47+00:00'
-        candidate_commit: 7a46e91a4558d9286a94d21aa85b050f6323e286
-        base_commit: 92175839dc92a736a6d5ad0330d13efb382701f1
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A09.T01.json
-          sha256: 8fcdb044e699f83673998dd5f8f78763a10bf8c5397fd6f47d8b9328bcf5eb3d
-          commit: 7a46e91a4558d9286a94d21aa85b050f6323e286
-          recorded_at: '2026-09-05T13:23:47+00:00'
-        acceptance_criteria_sha256: 5e1fd12cf9becd033d38d4c34d1176d3b4c197c623bcd12edb38cae06e162d08
-        changed_paths:
-        - apps/desktop/scripts/assemble-application.mjs
-        - apps/desktop/scripts/assemble-reference.mjs
-        - apps/desktop/src/app/AuditLineageWorkspace.test.tsx
-        - apps/desktop/src/app/audit-lineage.conformance.json
-        - artifacts/evidence/W1.A09.T01.accessibility-conformance-01.json
-        - artifacts/evidence/W1.A09.T01.capture-reference-01.py
-        - artifacts/evidence/W1.A09.T01.control-experience-checkpoint-01.json
-        - artifacts/evidence/W1.A09.T01.predecessor-after-02.json
-        - artifacts/evidence/W1.A09.T01.predecessor-before-01.json
-        - artifacts/evidence/W1.A09.T01.predecessor-before-02.json
-        - artifacts/evidence/W1.A09.T01.predecessor-check-01.py
-        - artifacts/evidence/W1.A09.T01.product-conformance-01.json
-        - artifacts/evidence/W1.A09.T01.product-frame-conformance-01.json
-        - artifacts/evidence/W1.A09.T01.reference-capture-assessment-01.md
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/application-settings--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/application-settings--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/audit-lineage--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/audit-lineage--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/claim-graph--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/claim-graph--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/corpus-canvas--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/corpus-canvas--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/critical-lens--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/critical-lens--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/document-reader--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/document-reader--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/evidence-matrix--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/evidence-matrix--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/help-onboarding--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/help-onboarding--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/index--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/index--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/ingestion-reconciliation--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/ingestion-reconciliation--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/intent-contract--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/intent-contract--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/living-monitor--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/living-monitor--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/manifest.json
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-blueprint--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-blueprint--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-studio--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-studio--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/model-center--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/model-center--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/new-project--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/new-project--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/novelty-audit--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/novelty-audit--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/opportunity-radar--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/opportunity-radar--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/parsing-quality--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/parsing-quality--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/project-settings--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/project-settings--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/projects--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/projects--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/research-notebook--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/research-notebook--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/reviewer-simulation--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/reviewer-simulation--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/revision-response--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/revision-response--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/schema-manager--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/schema-manager--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/screening--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/screening--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/search-studio--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/search-studio--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/source-manager--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/source-manager--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/study-design--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/study-design--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/synthesis-studio--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/synthesis-studio--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/task-center--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/task-center--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/technical-reports--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/technical-reports--light.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/theory-map--dark.png
-        - artifacts/evidence/W1.A09.T01.reference-captures-01/theory-map--light.png
-        - artifacts/evidence/W1.A09.T01.routes-conformance-01.json
-        - artifacts/evidence/W1.A09.T01.task-start.md
-        - artifacts/evidence/W1.A09.T01.tokens-conformance-01.json
-        - artifacts/evidence/W1.A09.T01.verification-01.md
-        - artifacts/evidence/W1.A09.T01.visual-conformance-01.json
-        - artifacts/evidence/W1.A09.T01.workflows-conformance-01.json
-        - artifacts/evidence/W1.A09.T03.task-start.md
-        - artifacts/evidence/W1.usability-blind-01.assessment.md
-        - artifacts/evidence/W1.usability-blind-01.build.json
-        - artifacts/evidence/W1.usability-blind-01.core-build.json
-        - artifacts/evidence/W1.usability-blind-01.moderator.md
-        - artifacts/evidence/W1.usability-blind-01.report.md
-        - artifacts/evidence/W1.usability-blind-01.resource-probe.rs
-        - artifacts/evidence/W1.usability-blind-01.sample.json
-        - artifacts/evidence/W1.usability-blind-01.seed.py
-        - artifacts/evidence/W1.usability-blind-01.session-02.transcript.md
-        - artifacts/evidence/W1.usability-blind-01.startup-diagnostic-02.md
-        - artifacts/evidence/W1.usability-blind-01.transcript.md
-        - design/ui-reference/APPROVAL.yaml
-        - design/ui-reference/CAPABILITY_COVERAGE.json
-        - design/ui-reference/CAPABILITY_COVERAGE.md
-        - design/ui-reference/PAGE_INVENTORY.md
-        - design/ui-reference/PAGE_INVENTORY_SOURCE.md
-        - design/ui-reference/README.md
-        - design/ui-reference/REFERENCE_MANIFEST.yaml
-        - design/ui-reference/SITE_MANIFEST.json
-        - design/ui-reference/STYLE_GUIDE.md
-        - design/ui-reference/STYLE_GUIDE_SOURCE.md
-        - design/ui-reference/WORKFLOW_CATALOG.json
-        - design/ui-reference/WORKFLOW_CATALOG.md
-        - design/ui-reference/application-settings.html
-        - design/ui-reference/assets/app.css
-        - design/ui-reference/audit-lineage.html
-        - design/ui-reference/claim-graph.html
-        - design/ui-reference/corpus-canvas.html
-        - design/ui-reference/critical-lens.html
-        - design/ui-reference/document-reader.html
-        - design/ui-reference/evidence-matrix.html
-        - design/ui-reference/help-onboarding.html
-        - design/ui-reference/index.html
-        - design/ui-reference/ingestion-reconciliation.html
-        - design/ui-reference/intent-contract.html
-        - design/ui-reference/living-monitor.html
-        - design/ui-reference/manuscript-blueprint.html
-        - design/ui-reference/manuscript-studio.html
-        - design/ui-reference/model-center.html
-        - design/ui-reference/new-project.html
-        - design/ui-reference/novelty-audit.html
-        - design/ui-reference/opportunity-radar.html
-        - design/ui-reference/parsing-quality.html
-        - design/ui-reference/project-settings.html
-        - design/ui-reference/projects.html
-        - design/ui-reference/prototype-index.html
-        - design/ui-reference/research-notebook.html
-        - design/ui-reference/reviewer-simulation.html
-        - design/ui-reference/revision-response.html
-        - design/ui-reference/schema-manager.html
-        - design/ui-reference/screening.html
-        - design/ui-reference/scripts/build_mockups.py
-        - design/ui-reference/search-studio.html
-        - design/ui-reference/source-manager.html
-        - design/ui-reference/study-design.html
-        - design/ui-reference/style-guide.html
-        - design/ui-reference/synthesis-studio.html
-        - design/ui-reference/task-center.html
-        - design/ui-reference/technical-reports.html
-        - design/ui-reference/theory-map.html
-        - docs/planning-implementation-plan.md
-        - packages/contracts/workflow-profile/README.md
-        - packages/contracts/workflow-profile/generate.mjs
-        - packages/contracts/workflow-profile/presentation-compatibility.json
-        - packages/contracts/workflow-profile/source/academic-minimal-1.5/CAPABILITY_COVERAGE.json
-        - packages/contracts/workflow-profile/source/academic-minimal-1.5/SOURCE_AUTHORITY.json
-        - packages/contracts/workflow-profile/source/academic-minimal-1.5/WORKFLOW_CATALOG.json
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0008.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        - tests/contracts/test_workflow_profile_contracts.py
-        - tests/desktop/test_desktop_app_check.py
-        - tests/desktop/test_ui_conformance.py
-        - tools/ui_conformance.py
-        - verification/baselines/desktop-ui.json
-        - verification/extensions/desktop-ui.json
-        selected_checks:
-        - .venv/Scripts/python.exe -m unittest tests.contracts.test_workflow_profile_contracts plus six selected tests.desktop.test_ui_conformance.UiConformanceTests
-          (historical1.5 authority, active1.6 authority, missing witness and canonical token/route contracts)
-        - Changed Python Ruff checks and mypy tools/ui_conformance.py; desktop lint and typecheck; pinned Node running apps/desktop/node_modules/vitest/vitest.mjs
-          run src/app/AuditLineageWorkspace.test.tsx
-        - Pinned desktop production and reference builds; tools/ui_reference_check.py --repo .; tools/planctl.py --repo .
-          ecr validate ECR-0008 --require-approved
-        - .venv/Scripts/python.exe artifacts/evidence/W1.A09.T01.capture-reference-01.py; independent exact-input and fresh-render
-          checkpoint
-        - .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check tokens/routes/workflows/accessibility/visual (five
-          separate selected invocations, each with its own retained report)
-        - .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/W1.A09.T01.product-frame-conformance-01.json
-        - .venv/Scripts/python.exe artifacts/evidence/W1.A09.T01.predecessor-check-01.py prepare/reopen (separate before-02
-          and after-02 processes); exact base-to-candidate semantic/native/token Git comparison
-        deferred_checks:
-        - 'T02: exact native/Core routes, multiline narrative, real startup/readiness and read-only retry. Replay and close
-          the two unchanged supervisor nonminimal_bool warnings with affected native work.'
-        - 'T03: native protected directory selection and preselected default existing project parent in dev/production, cancellation/races/no-overwrite.
-          Replay and close the two unchanged application_lock test-helper needless_borrow warnings before T04 native qualification.'
-        - 'T04/returned A08: actual packaged native/Core project lifecycle and dialog integration, full-height sidebar/effective
-          spacing, independent usability/experience qualification. Browser adapter checks are not substitutions.'
-        - Complete affected repository and Windows-x64 happy/failure/denial/cancellation/migration/restart/recovery/security/accessibility/performance/packaging
-          matrix and independent W1 exit review remain due. No W1/G1 approval is claimed.
-        selection_rationale: T01 changes exact governed publication, source preservation, verification-only witness and enumerated
-          presentation consumers. Credible failures are unauthorized publication, self-consistent forged authority, dirty/stale/stat-hidden
-          inputs, semantic drift/migration, dishonest copied/ratified visual evidence, stale build roles and reference/semantic/token
-          identity confusion. Selected checks authenticate real Git and persisted predecessor boundaries, exact source/generator
-          outputs, independent fresh rendering and all affected build/UI contracts. Native Rust/Cargo files are unchanged.
-          A mistakenly broad full-product command reached preexisting native Clippy warnings; that failure is retained, not
-          passed or waived. The passing built-frame-only selection closes T01 presentation criteria, not native qualification.
-        selection_sha256: 2f3e4b7df446aa18275cf1f0c367f9e2da6d3af05d3a31b4f6de0430e2c14860
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - contracts:unit
-        - desktop:unit
-        - foundation:ui-reference
-        - desktop:application
-        - desktop:ui-reference-integrity
-        - desktop:ui-token
-        - desktop:ui-route-page
-        - desktop:ui-workflow
-        - desktop:ui-accessibility
-        - desktop:ui-visual-regression
-        - e2e-local:system
-        packet_sha256: 643b977c1b875f7b11edd5f1c70e36857fa9796e4d9cb3b980e3ee9535a3bc43
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-09-05T13:23:47+00:00'
+          candidate_commit: 7a46e91a4558d9286a94d21aa85b050f6323e286
+          base_commit: 92175839dc92a736a6d5ad0330d13efb382701f1
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A09.T01.json
+            sha256: 8fcdb044e699f83673998dd5f8f78763a10bf8c5397fd6f47d8b9328bcf5eb3d
+            commit: 7a46e91a4558d9286a94d21aa85b050f6323e286
+            recorded_at: '2026-09-05T13:23:47+00:00'
+          acceptance_criteria_sha256: 5e1fd12cf9becd033d38d4c34d1176d3b4c197c623bcd12edb38cae06e162d08
+          changed_paths:
+          - apps/desktop/scripts/assemble-application.mjs
+          - apps/desktop/scripts/assemble-reference.mjs
+          - apps/desktop/src/app/AuditLineageWorkspace.test.tsx
+          - apps/desktop/src/app/audit-lineage.conformance.json
+          - artifacts/evidence/W1.A09.T01.accessibility-conformance-01.json
+          - artifacts/evidence/W1.A09.T01.capture-reference-01.py
+          - artifacts/evidence/W1.A09.T01.control-experience-checkpoint-01.json
+          - artifacts/evidence/W1.A09.T01.predecessor-after-02.json
+          - artifacts/evidence/W1.A09.T01.predecessor-before-01.json
+          - artifacts/evidence/W1.A09.T01.predecessor-before-02.json
+          - artifacts/evidence/W1.A09.T01.predecessor-check-01.py
+          - artifacts/evidence/W1.A09.T01.product-conformance-01.json
+          - artifacts/evidence/W1.A09.T01.product-frame-conformance-01.json
+          - artifacts/evidence/W1.A09.T01.reference-capture-assessment-01.md
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/application-settings--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/application-settings--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/audit-lineage--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/audit-lineage--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/claim-graph--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/claim-graph--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/corpus-canvas--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/corpus-canvas--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/critical-lens--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/critical-lens--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/document-reader--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/document-reader--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/evidence-matrix--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/evidence-matrix--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/help-onboarding--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/help-onboarding--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/index--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/index--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/ingestion-reconciliation--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/ingestion-reconciliation--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/intent-contract--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/intent-contract--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/living-monitor--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/living-monitor--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/manifest.json
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-blueprint--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-blueprint--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-studio--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/manuscript-studio--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/model-center--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/model-center--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/new-project--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/new-project--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/novelty-audit--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/novelty-audit--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/opportunity-radar--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/opportunity-radar--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/parsing-quality--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/parsing-quality--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/project-settings--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/project-settings--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/projects--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/projects--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/research-notebook--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/research-notebook--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/reviewer-simulation--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/reviewer-simulation--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/revision-response--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/revision-response--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/schema-manager--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/schema-manager--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/screening--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/screening--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/search-studio--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/search-studio--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/source-manager--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/source-manager--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/study-design--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/study-design--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/synthesis-studio--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/synthesis-studio--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/task-center--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/task-center--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/technical-reports--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/technical-reports--light.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/theory-map--dark.png
+          - artifacts/evidence/W1.A09.T01.reference-captures-01/theory-map--light.png
+          - artifacts/evidence/W1.A09.T01.routes-conformance-01.json
+          - artifacts/evidence/W1.A09.T01.task-start.md
+          - artifacts/evidence/W1.A09.T01.tokens-conformance-01.json
+          - artifacts/evidence/W1.A09.T01.verification-01.md
+          - artifacts/evidence/W1.A09.T01.visual-conformance-01.json
+          - artifacts/evidence/W1.A09.T01.workflows-conformance-01.json
+          - artifacts/evidence/W1.A09.T03.task-start.md
+          - artifacts/evidence/W1.usability-blind-01.assessment.md
+          - artifacts/evidence/W1.usability-blind-01.build.json
+          - artifacts/evidence/W1.usability-blind-01.core-build.json
+          - artifacts/evidence/W1.usability-blind-01.moderator.md
+          - artifacts/evidence/W1.usability-blind-01.report.md
+          - artifacts/evidence/W1.usability-blind-01.resource-probe.rs
+          - artifacts/evidence/W1.usability-blind-01.sample.json
+          - artifacts/evidence/W1.usability-blind-01.seed.py
+          - artifacts/evidence/W1.usability-blind-01.session-02.transcript.md
+          - artifacts/evidence/W1.usability-blind-01.startup-diagnostic-02.md
+          - artifacts/evidence/W1.usability-blind-01.transcript.md
+          - design/ui-reference/APPROVAL.yaml
+          - design/ui-reference/CAPABILITY_COVERAGE.json
+          - design/ui-reference/CAPABILITY_COVERAGE.md
+          - design/ui-reference/PAGE_INVENTORY.md
+          - design/ui-reference/PAGE_INVENTORY_SOURCE.md
+          - design/ui-reference/README.md
+          - design/ui-reference/REFERENCE_MANIFEST.yaml
+          - design/ui-reference/SITE_MANIFEST.json
+          - design/ui-reference/STYLE_GUIDE.md
+          - design/ui-reference/STYLE_GUIDE_SOURCE.md
+          - design/ui-reference/WORKFLOW_CATALOG.json
+          - design/ui-reference/WORKFLOW_CATALOG.md
+          - design/ui-reference/application-settings.html
+          - design/ui-reference/assets/app.css
+          - design/ui-reference/audit-lineage.html
+          - design/ui-reference/claim-graph.html
+          - design/ui-reference/corpus-canvas.html
+          - design/ui-reference/critical-lens.html
+          - design/ui-reference/document-reader.html
+          - design/ui-reference/evidence-matrix.html
+          - design/ui-reference/help-onboarding.html
+          - design/ui-reference/index.html
+          - design/ui-reference/ingestion-reconciliation.html
+          - design/ui-reference/intent-contract.html
+          - design/ui-reference/living-monitor.html
+          - design/ui-reference/manuscript-blueprint.html
+          - design/ui-reference/manuscript-studio.html
+          - design/ui-reference/model-center.html
+          - design/ui-reference/new-project.html
+          - design/ui-reference/novelty-audit.html
+          - design/ui-reference/opportunity-radar.html
+          - design/ui-reference/parsing-quality.html
+          - design/ui-reference/project-settings.html
+          - design/ui-reference/projects.html
+          - design/ui-reference/prototype-index.html
+          - design/ui-reference/research-notebook.html
+          - design/ui-reference/reviewer-simulation.html
+          - design/ui-reference/revision-response.html
+          - design/ui-reference/schema-manager.html
+          - design/ui-reference/screening.html
+          - design/ui-reference/scripts/build_mockups.py
+          - design/ui-reference/search-studio.html
+          - design/ui-reference/source-manager.html
+          - design/ui-reference/study-design.html
+          - design/ui-reference/style-guide.html
+          - design/ui-reference/synthesis-studio.html
+          - design/ui-reference/task-center.html
+          - design/ui-reference/technical-reports.html
+          - design/ui-reference/theory-map.html
+          - docs/planning-implementation-plan.md
+          - packages/contracts/workflow-profile/README.md
+          - packages/contracts/workflow-profile/generate.mjs
+          - packages/contracts/workflow-profile/presentation-compatibility.json
+          - packages/contracts/workflow-profile/source/academic-minimal-1.5/CAPABILITY_COVERAGE.json
+          - packages/contracts/workflow-profile/source/academic-minimal-1.5/SOURCE_AUTHORITY.json
+          - packages/contracts/workflow-profile/source/academic-minimal-1.5/WORKFLOW_CATALOG.json
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0008.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/contracts/test_workflow_profile_contracts.py
+          - tests/desktop/test_desktop_app_check.py
+          - tests/desktop/test_ui_conformance.py
+          - tools/ui_conformance.py
+          - verification/baselines/desktop-ui.json
+          - verification/extensions/desktop-ui.json
+          selected_checks:
+          - .venv/Scripts/python.exe -m unittest tests.contracts.test_workflow_profile_contracts plus six selected tests.desktop.test_ui_conformance.UiConformanceTests
+            (historical1.5 authority, active1.6 authority, missing witness and canonical token/route contracts)
+          - Changed Python Ruff checks and mypy tools/ui_conformance.py; desktop lint and typecheck; pinned Node running apps/desktop/node_modules/vitest/vitest.mjs
+            run src/app/AuditLineageWorkspace.test.tsx
+          - Pinned desktop production and reference builds; tools/ui_reference_check.py --repo .; tools/planctl.py --repo
+            . ecr validate ECR-0008 --require-approved
+          - .venv/Scripts/python.exe artifacts/evidence/W1.A09.T01.capture-reference-01.py; independent exact-input and fresh-render
+            checkpoint
+          - .venv/Scripts/python.exe tools/ui_conformance.py --repo . --check tokens/routes/workflows/accessibility/visual
+            (five separate selected invocations, each with its own retained report)
+          - .venv/Scripts/python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/W1.A09.T01.product-frame-conformance-01.json
+          - .venv/Scripts/python.exe artifacts/evidence/W1.A09.T01.predecessor-check-01.py prepare/reopen (separate before-02
+            and after-02 processes); exact base-to-candidate semantic/native/token Git comparison
+          deferred_checks:
+          - 'T02: exact native/Core routes, multiline narrative, real startup/readiness and read-only retry. Replay and close
+            the two unchanged supervisor nonminimal_bool warnings with affected native work.'
+          - 'T03: native protected directory selection and preselected default existing project parent in dev/production,
+            cancellation/races/no-overwrite. Replay and close the two unchanged application_lock test-helper needless_borrow
+            warnings before T04 native qualification.'
+          - 'T04/returned A08: actual packaged native/Core project lifecycle and dialog integration, full-height sidebar/effective
+            spacing, independent usability/experience qualification. Browser adapter checks are not substitutions.'
+          - Complete affected repository and Windows-x64 happy/failure/denial/cancellation/migration/restart/recovery/security/accessibility/performance/packaging
+            matrix and independent W1 exit review remain due. No W1/G1 approval is claimed.
+          selection_rationale: T01 changes exact governed publication, source preservation, verification-only witness and
+            enumerated presentation consumers. Credible failures are unauthorized publication, self-consistent forged authority,
+            dirty/stale/stat-hidden inputs, semantic drift/migration, dishonest copied/ratified visual evidence, stale build
+            roles and reference/semantic/token identity confusion. Selected checks authenticate real Git and persisted predecessor
+            boundaries, exact source/generator outputs, independent fresh rendering and all affected build/UI contracts. Native
+            Rust/Cargo files are unchanged. A mistakenly broad full-product command reached preexisting native Clippy warnings;
+            that failure is retained, not passed or waived. The passing built-frame-only selection closes T01 presentation
+            criteria, not native qualification.
+          selection_sha256: 2f3e4b7df446aa18275cf1f0c367f9e2da6d3af05d3a31b4f6de0430e2c14860
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - contracts:unit
+          - desktop:unit
+          - foundation:ui-reference
+          - desktop:application
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - desktop:ui-visual-regression
+          - e2e-local:system
+          packet_sha256: 643b977c1b875f7b11edd5f1c70e36857fa9796e4d9cb3b980e3ee9535a3bc43
+        review: *id124
+        ledger:
+          path: artifacts/evidence/W1.A09.T01.review-R01.json
+          sha256: 8609e02b527340c3da3efd4cd465c81c7cc136d083f6998bb9ff43a975f92e00
+        findings: []
+        closures: []
+        telemetry:
+          task_id: W1.A09.T01
+          amendment_id: W1.A09
+          attempt_id: R01
+          submitted_at: '2026-09-05T13:23:47+00:00'
+          reviewed_at: '2026-09-05T13:31:01+00:00'
+          duration_seconds: 434
+          outcome: approved
+          finding_counts:
+            critical: 0
+            high: 0
+            medium: 0
+            low: 0
+            blocking: 0
+            total: 0
+          command_ids:
+          - contracts:unit
+          - desktop:unit
+          - foundation:ui-reference
+          - desktop:application
+          - desktop:ui-reference-integrity
+          - desktop:ui-token
+          - desktop:ui-route-page
+          - desktop:ui-workflow
+          - desktop:ui-accessibility
+          - desktop:ui-visual-regression
+          - e2e-local:system
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   - id: W1.A09.T02
     amendment_id: W1.A09
     title: Restore exact project contracts and explicit recovery
@@ -40070,14 +40118,14 @@ wave_amendments:
     - Real Windows/native/disposable Core integration and lock/restart replay
     - Affected Rust/TS/Python type/lint/build and independent contract/security review
     packet_task_sha256: a1596d263e86b30101e25c81876693113073724d6e3df086bda319cf0c95debc
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-09-05T13:31:01+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

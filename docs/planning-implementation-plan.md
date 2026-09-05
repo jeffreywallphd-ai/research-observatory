@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fc4e2bb8fe1c6b35e841c0081df73159c56e9b6f4e6c7d1a4cc95be2a76d5b7d
+source_sha256: dc72a6f2017972fe3aa8b60943b98660101a1476dbc2886b968aa174d83b8fa9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1937,9 +1937,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W1.A09.T01 - Publish approved reference and preserve semantic1.5
+### - [x] W1.A09.T01 - Publish approved reference and preserve semantic1.5
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `DONE` / codex / agent:t01-r02-independent-reviewer (`approved`)
 
 **Dependencies:** `W1.A09.B00`
 
@@ -1966,9 +1966,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A09.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `643b977c1b875f7b11edd5f1c70e36857fa9796e4d9cb3b980e3ee9535a3bc43`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `643b977c1b875f7b11edd5f1c70e36857fa9796e4d9cb3b980e3ee9535a3bc43`
 
 - Candidate / base / branch: `7a46e91a4558d9286a94d21aa85b050f6323e286` / `92175839dc92a736a6d5ad0330d13efb382701f1` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-05T13:23:47+00:00`
@@ -1982,15 +1984,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:t01-r02-independent-reviewer / `2026-09-05T13:31:01+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A09.T01.review-R01.json` / `8609e02b527340c3da3efd4cd465c81c7cc136d083f6998bb9ff43a975f92e00`
+
+**Review notes:** Independent commit-bound R01 review approves only W1.A09.T01. The exact frozen packet, 165-path candidate inventory, five criteria, verification selection, manifest and nine-path submission delivery authenticate. Candidate 7a46e91a adds only eight retained verification reports/notes to tested product 5e914322. Exact approved presentation1.6 publication preserves semantic1.5 and token1.4 authority; the independently accepted control/experience checkpoint strictly precedes consumer rebinding. Independent replays passed four source/no-Git/mapping/real-Git witness methods and two consumer-orchestration/token/route tests. The before/after proofs retain accepted intent revision3, prior history, exact supporting-return identity and all16 immutable settings rows. All66 retained PNG hashes/dimensions, ten original producer inputs and prior/new baseline hashes authenticate. No acceptance-bound blocking finding remains. The retained broad product command is still failed on four preexisting native Clippy warnings; the existing built-frame-only pass is renderer evidence, not native or packaging qualification. Those warnings and real native/Core/folder, returned A08 styling, amendment and full W1 qualification remain mandatory later work. This disposition does not approve amendment adoption, the effective A08 overlay, local-main integration of unmet ancestry, release or G1.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t01-r02-independent-reviewer at `2026-09-05T13:31:01+00:00`
+
+**Latest notes:** Independent commit-bound R01 review approves only W1.A09.T01. The exact frozen packet, 165-path candidate inventory, five criteria, verification selection, manifest and nine-path submission delivery authenticate. Candidate 7a46e91a adds only eight retained verification reports/notes to tested product 5e914322. Exact approved presentation1.6 publication preserves semantic1.5 and token1.4 authority; the independently accepted control/experience checkpoint strictly precedes consumer rebinding. Independent replays passed four source/no-Git/mapping/real-Git witness methods and two consumer-orchestration/token/route tests. The before/after proofs retain accepted intent revision3, prior history, exact supporting-return identity and all16 immutable settings rows. All66 retained PNG hashes/dimensions, ten original producer inputs and prior/new baseline hashes authenticate. No acceptance-bound blocking finding remains. The retained broad product command is still failed on four preexisting native Clippy warnings; the existing built-frame-only pass is renderer evidence, not native or packaging qualification. Those warnings and real native/Core/folder, returned A08 styling, amendment and full W1 qualification remain mandatory later work. This disposition does not approve amendment adoption, the effective A08 overlay, local-main integration of unmet ancestry, release or G1.
 
 **Currently open findings:** -
 
 ### - [ ] W1.A09.T02 - Restore exact project contracts and explicit recovery
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T01`
 
