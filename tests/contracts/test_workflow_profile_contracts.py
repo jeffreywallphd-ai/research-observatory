@@ -122,6 +122,55 @@ class WorkflowProfileContractTests(unittest.TestCase):
                 candidate = {**presentation, name: changed}
                 self.assertTrue(presentation_mapping_errors(semantic, candidate, "RO-UI-ACADEMIC-MINIMAL-1.6", "1.6"))
 
+    def test_presentation_witness_rejects_missing_uncommitted_and_duplicate_records(self) -> None:
+        sys.path.insert(0, str(REPO / "tools"))
+        from ui_conformance import SEMANTIC_SOURCE_AUTHORITY, presentation_compatibility_errors
+
+        with tempfile.TemporaryDirectory(prefix="ro-witness-negative-") as temporary:
+            root = Path(temporary)
+            subprocess.run(["git", "init", "-b", "main"], cwd=root, check=True, capture_output=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=Contract fixture",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "commit",
+                    "--allow-empty",
+                    "-m",
+                    "Seed witness boundary fixture",
+                ],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            )
+            arguments = (root, "RO-UI-ACADEMIC-MINIMAL-1.6", "1" * 64)
+            self.assertTrue(presentation_compatibility_errors(*arguments))
+            witness = root / "packages/contracts/workflow-profile/presentation-compatibility.json"
+            witness.parent.mkdir(parents=True)
+            for payload in ("{}", '{"schemaVersion":"1.0","schemaVersion":"1.0"}', "[]"):
+                with self.subTest(payload=payload):
+                    witness.write_text(payload, encoding="utf-8")
+                    self.assertTrue(presentation_compatibility_errors(*arguments))
+            valid_shape = {
+                "schemaVersion": "1.0",
+                "documentType": "workflow-profile-presentation-compatibility",
+                "semanticSource": SEMANTIC_SOURCE_AUTHORITY,
+                "presentation": {
+                    "referenceId": arguments[1],
+                    "version": "1.6",
+                    "approvalCommit": "2" * 40,
+                    "referencePackageSha256": arguments[2],
+                },
+            }
+            witness.write_text(json.dumps(valid_shape), encoding="utf-8")
+            self.assertIn("current committed Git blob", " ".join(presentation_compatibility_errors(*arguments)))
+            witness.write_text(
+                json.dumps(valid_shape).replace('"version": "1.6"', '"version":"1.6","version":"1.6"'), encoding="utf-8"
+            )
+            self.assertIn("duplicate JSON field", " ".join(presentation_compatibility_errors(*arguments)))
+
     def test_governed_catalog_is_exact_hash_bound_and_has_all_fourteen_profiles(self) -> None:
         schema_text = (
             (CONTRACT_ROOT / "workflow-profile.schema.json")
