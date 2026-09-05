@@ -1,0 +1,216 @@
+{
+  "documentType": "inert-user-ux-diagnostic",
+  "formatVersion": "1",
+  "sourceCommit": "13ae0c941d144e3e2fa23bbb50f74cdaaeddec8d",
+  "executionAuthority": false,
+  "productChanged": false,
+  "referenceChanged": false,
+  "baselineChanged": false,
+  "backlogChanged": false,
+  "installedBinaryIdentity": "not established",
+  "historicalPreparationPreserved": true,
+  "sourceBindings": [
+    {
+      "path": "apps/desktop/src/app.css",
+      "gitBlob": "b57061d0b464cdd3144ba865bd63afe3f81e1b2b",
+      "worktreeRawSha256": "99624e30e7c8c03695eec2f15ee144c9e596d9c645d0db6aa5db09613b76d5c1"
+    },
+    {
+      "path": "apps/desktop/src/app/ProjectsWorkspace.tsx",
+      "gitBlob": "6faa688830157f1a2cbdf5e3ef5b310493a80cb1",
+      "worktreeRawSha256": "9ad2d338d8ec42982c387cd6cf30000d514943ae337482fa9e2fb6c2c95bd389"
+    },
+    {
+      "path": "apps/desktop/src/app/LocalServiceBoundary.tsx",
+      "gitBlob": "0aba96d04c2d23d2ad97574c3d5cb765aea211e2",
+      "worktreeRawSha256": "323c0d45b82e7269cda34eb94d4d77ef82f2096bf89354fd44bb7f47b58ccd1c"
+    },
+    {
+      "path": "apps/desktop/src/app/ApplicationRuntime.tsx",
+      "gitBlob": "d66cba076f31d61a7d64c22fc4272db89d88e16d",
+      "worktreeRawSha256": "1bda1aa9dc6870728e6a8c1f7e9e085a379d2bed403e39b10c65682043e0ef83"
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/supervisor.rs",
+      "gitBlob": "9113b8a2a3e59b6e3ce501482e502cd1218f5ecd",
+      "worktreeRawSha256": "e314d36b820498d9497fe9379c72cae4c94c1b4639a025609e284a851c6d317a"
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/lib.rs",
+      "gitBlob": "47ba555190d1d542c6d53cd2e2d1424a2a4e6219",
+      "worktreeRawSha256": "2c55849d498b10998a0a31fe3fb974e27dae74268e03a1cb887d0db956351b0b"
+    },
+    {
+      "path": "apps/desktop/src-tauri/Cargo.toml",
+      "gitBlob": "bcc95c2364f178cfbe3b6e66a17abffed6665c7e",
+      "worktreeRawSha256": "530bfc4264000732905b53cefcc7e59cc2bdfec13a437dc121965a11577157ee"
+    },
+    {
+      "path": "packages/contracts/core-api/generated.ts",
+      "gitBlob": "bc3a6a3e985140a7b26bcdb6f2703aa0788fb311",
+      "worktreeRawSha256": "2de654e1190952e74ac636577de140eb617555f2260358fb11519ff2f93b1c0f"
+    },
+    {
+      "path": "tools/core_api_contract.py",
+      "gitBlob": "9a6c238b9d87bd6ef497c93a47561b78ccbd10f3",
+      "worktreeRawSha256": "e89b2529a1f4c5a856091dfc78e71c001ec844c3463c6eefd3b901129905a979"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/models.py",
+      "gitBlob": "ca845eb3b02789c011c16f7b3ea2aa15a256060c",
+      "worktreeRawSha256": "1e8c8a06e9e4511190d2df907f45eb32df0e58f80375868637c60c37f4c8cf52"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/app.py",
+      "gitBlob": "7b2cdb1a1036861de85e098966c11ab5bd7c5257",
+      "worktreeRawSha256": "91f0d3d860c9e0185a4bb211071d3941d684bcd392ffd181c6e9b1d29b1432d0"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/projects.py",
+      "gitBlob": "5ca54657828b66a8455acfdcffe8143cc6b1cd48",
+      "worktreeRawSha256": "559f3a30bab296acb42d034814b2b722c0fc868fb2b9d274f4df6e705bea19d7"
+    },
+    {
+      "path": "planning/backlog.yaml",
+      "gitBlob": "3390c53106b1b8966d4260742d70e38bf87a2015",
+      "worktreeRawSha256": "db07dcd4f33bcc7a9fc3bbbadd26a1de8c73b16b2ae0f1666adbf384f3a1fd68"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.draft.json",
+      "gitBlob": "43aa15eee9490a4e35e4feb2800b16c5ec7bccd4",
+      "worktreeRawSha256": "5ef464f02dc7e9dc902da35e141c88fc42775a1ae770e5f231dfdd3279237975"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0008.preparation-review-01.json",
+      "gitBlob": "d98a81b0288f45013742ec10d9bfd35e065beb0f",
+      "worktreeRawSha256": "3772a0eb5ef3efb1383620484c857066096d47de1789e521ac4363a1557bedc7"
+    }
+  ],
+  "observations": {
+    "productBuildSourceValidation": {
+      "errors": [],
+      "command": ".venv/Scripts/python.exe -c \"import sys; from pathlib import Path; sys.path.insert(0, 'tools'); from desktop_app_check import product_build_errors; print(product_build_errors(Path.cwd()))\""
+    },
+    "sidebar": {
+      "scope": "Built product with synthetic offline adapter; not native/project qualification",
+      "reproduction": "artifacts/evidence/W1.user-ux-diagnostic-01.py",
+      "cases": [
+        {
+          "viewport": [
+            1440,
+            900
+          ],
+          "currentGapPx": 120.984375,
+          "inMemoryUncappedGapPx": 0,
+          "documentWidth": 1440
+        },
+        {
+          "viewport": [
+            1280,
+            720
+          ],
+          "currentGapPx": 284.984375,
+          "inMemoryUncappedGapPx": 0,
+          "documentWidth": 1280
+        },
+        {
+          "viewport": [
+            720,
+            450
+          ],
+          "layout": "stacked",
+          "equalityCriterionApplicable": false,
+          "layoutUnchangedByExperiment": true,
+          "documentWidth": 720
+        }
+      ],
+      "appliedFix": false
+    },
+    "generatedClient": {
+      "reproduction": "artifacts/evidence/W1.project-client-diagnostic-01.mjs",
+      "transport": "no-I/O sentinel",
+      "cases": [
+        {
+          "researchObjective": "First line.",
+          "transportCalls": 1,
+          "result": "DIAGNOSTIC-TRANSPORT-REACHED"
+        },
+        {
+          "researchObjective": "First line.\nSecond line.",
+          "transportCalls": 0,
+          "result": "RO-CORE-REQUEST-INVALID"
+        }
+      ],
+      "catalog": {
+        "method": "GET",
+        "path": "/workflow-profiles/catalog",
+        "body": null,
+        "ifMatch": null,
+        "idempotencyKey": null
+      }
+    },
+    "nativeSourceInventory": {
+      "missingCatalogRoute": true,
+      "missingLineageRoute": true,
+      "setupStartsCoreAsynchronously": true,
+      "projectsWaitsForReadiness": false,
+      "projectsRetriesCatalogOnReadiness": false,
+      "folderPickerImplemented": false,
+      "allOtherGeneratedFamilies": "source branches found; not exhaustive shape proof"
+    },
+    "existingCompiledLibraryProbe": {
+      "producerIdentity": "not authenticated; not exact-current-source qualification",
+      "librarySha256": "8cfccb5be562049dbdde90d383743ea8c4b32d74d4975e191977a65e216dfb71",
+      "coreStarted": false,
+      "projectIo": false,
+      "observations": [
+        {
+          "path": "/healthz",
+          "result": "RO-CORE-API-UNAVAILABLE"
+        },
+        {
+          "path": "/runtime/version",
+          "result": "RO-CORE-API-UNAVAILABLE"
+        },
+        {
+          "path": "/workflow-profiles/catalog",
+          "result": "RO-CORE-API-REQUEST-INVALID"
+        },
+        {
+          "path": "/projects/open",
+          "result": "RO-CORE-API-UNAVAILABLE"
+        },
+        {
+          "path": "/projects/provenance/lineage",
+          "result": "RO-CORE-API-REQUEST-INVALID"
+        }
+      ]
+    }
+  },
+  "qualificationStatus": "NOT_RUN_FOR_REMEDY",
+  "originalFindingsStillOpen": [
+    "F01",
+    "F02"
+  ],
+  "addedFindingsOpen": [
+    "UX01",
+    "UX02",
+    "UX03",
+    "UX04",
+    "UX05",
+    "UX06"
+  ],
+  "requiredBeforeExecution": [
+    "independently reviewed generic paused-predecessor entry/return support",
+    "exact generated successor reference",
+    "revised canonical execution packet and independent review",
+    "exact-commit human reference and packet approval"
+  ],
+  "estimatedRefactor": {
+    "points": 11,
+    "approvedAtomicWaveBaselinePoints": 194,
+    "sharePercent": 5.67,
+    "replacesOriginalDraftNumerator": true,
+    "originalA08AllocationUnchanged": true
+  }
+}

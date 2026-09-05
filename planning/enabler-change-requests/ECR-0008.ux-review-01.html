@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>W1 — folder selection, project reliability and sidebar correction</title>
+  <link rel="stylesheet" href="../review-site/assets/review.css">
+</head>
+<body data-page-type="inert-user-ux-addendum">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header"><a class="brand" href="../review-site/waves/W1.html"><span class="brand-mark" aria-hidden="true">RO</span><span><strong>Research Observatory</strong><small>W1 user-requested corrections</small></span></a></header>
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Review navigation"><nav class="cap-nav" aria-label="Prerequisites">
+      <a class="nav-item" href="../review-site/waves/W1.html"><span>W1</span><small>Wave packet and release criteria</small></a>
+      <a class="nav-item" href="ECR-0008-review.html"><span>Original correction</span><small>Reference measurements and safe return</small></a>
+      <a class="nav-item active" href="#main-content" aria-current="page"><span>Project UX additions</span><small>Preparation — not an applied fix</small></a>
+      <a class="nav-item" href="../review-site/enablers/ECR-0007.html"><span>Styling campaign</span><small>W1.A08 / ECR-0007</small></a>
+      <a class="nav-item" href="../review-site/CAP-07/CAP-07.S01.html"><span>Model gateway</span><small>Waiting contribution</small></a>
+      <a class="nav-item" href="../review-site/CAP-07/CAP-07.S01.T02.html"><span>CAP-07.S01.T02</span><small>Not styling T02</small></a>
+    </nav></aside>
+    <main id="main-content" class="main-panel">
+      <section class="hero compact">
+        <p class="eyebrow">Owner-requested scope addition · proposed W1.A09</p>
+        <h1>Choose folders. Make project actions work. Finish the sidebar.</h1>
+        <p class="lead">Use native folder selection, correct the real project-service request boundary, and extend the shared navigation background to the footer.</p>
+        <p><a class="button" href="ECR-0008.ux-addendum-01.md">Complete scope and acceptance plan</a> <a class="button button-quiet" href="ECR-0008.ux-diagnostic-01.json">Bound diagnostic observations</a></p>
+      </section>
+      <section class="callout callout-warning" aria-labelledby="state-title"><div>
+        <h2 id="state-title">Diagnosed and proposed — not yet fixed in the application</h2>
+        <p>The original correction remains preparation-only. This adds the owner's new requests without rewriting its review or claiming approval of an unprepared reference. W1/A08 remain paused; G1 is not approvable.</p>
+      </div></section>
+      <section class="section-card" aria-labelledby="findings-title">
+        <h2 id="findings-title">What is actually wrong</h2>
+        <div class="table-wrap"><table><thead><tr><th>Area</th><th>Evidence</th><th>Remedy</th></tr></thead><tbody>
+          <tr><td>Sidebar height</td><td>The viewport-height cap leaves about 121 px / 285 px above the footer in desktop / compact Local Projects.</td><td>One shared shell rule; measure actual bottom edges on short and long pages.</td></tr>
+          <tr><td>Directory fields</td><td>Parent folder, child directory name and open-project directory require typing.</td><td>Shared native folder chooser and read-only destination preview; derive the child name from the human project name.</td></tr>
+          <tr><td>Local Projects error</td><td>The native allowlist rejects the catalog request before Core receives it.</td><td>Restore the exact approved route and test generated client → native → Core.</td></tr>
+          <tr><td>Multiline objectives</td><td>The generated client rejects newlines accepted by the textarea, native validator and Core.</td><td>Repair the generator and verify cross-layer narrative rules.</td></tr>
+          <tr><td>Startup/recovery</td><td>Projects does not wait for asynchronous native startup or retry a failed catalog read.</td><td>Authentic readiness and explicit read-only retry, never automatic mutation replay.</td></tr>
+          <tr><td>Related lineage route</td><td>The already implemented lineage endpoint is also missing from the native allowlist.</td><td>Exact existing-contract restoration and negative request-shape tests.</td></tr>
+        </tbody></table></div>
+        <p>These source defects are reproduced or directly evidenced. The owner's installed binary and original action have not been identified. Original stale-baseline and paragraph-spacing findings remain open.</p>
+      </section>
+      <section class="section-card" aria-labelledby="ux-title">
+        <h2 id="ux-title">Folder selection behavior</h2>
+        <ol>
+          <li>Create: name the project, choose its parent folder, review the proposed full destination, then create. No separate directory-name typing.</li>
+          <li>Open: choose an existing project folder, review its location, then open it.</li>
+          <li>Cancel: keep all previous form values, return focus to the chooser button, and perform no project action.</li>
+          <li>Invalid, inaccessible or existing destination: explain the issue and let the user change the folder or project name. Never overwrite or silently retry creation.</li>
+          <li>Lock or close while the dialog is pending: dismiss it, discard late results and clear protected locations from the view.</li>
+        </ol>
+        <p>One reusable accessible control uses existing style tokens. A narrow protected native command opens the Windows system dialog; it does not grant renderer filesystem access. Read-only diagnostic and current-project paths remain outputs.</p>
+      </section>
+      <section class="section-card" aria-labelledby="scope-title">
+        <h2 id="scope-title">One explicit scope addition, preserved history</h2>
+        <p>The eventual correction packet will include exact updated reference examples, native request repairs, folder-selection implementation and Windows integration proof. A08.T02 retains the original spacing repair and shared sidebar correction after the safe return.</p>
+        <p>Durable workflow-profile 1.5, existing projects, all fourteen workflows, researcher authority, privacy and release gates remain unchanged. New presentation bytes do not silently relabel project history.</p>
+        <p>The revised proposed refactor allocation is 11 of the existing 194 W1 points (5.67%). It replaces the old proposed correction allocation rather than double-counting it. The original A08 allocation is unchanged.</p>
+      </section>
+      <section class="section-card" aria-labelledby="next-title">
+        <h2 id="next-title">Readiness and recommended next step</h2>
+        <p>Continue the already selected bounded workflow entry/return repair. Then prepare the exact new reference and revised canonical execution packet, obtain independent review and exact-commit human approval, and execute the corrections. No further preliminary endorsement is needed.</p>
+        <p>Execution approval is unavailable while that workflow repair, exact reference and canonical packet are incomplete. No candidate reference or baseline has been activated. Both styling T02 and CAP-07.S01.T02 remain blocked; G1 remains pending.</p>
+        <p>After the correction's independently approved task/slice/exit results, adoption returns to paused A08. Explicit reactivation, styling correction and qualification precede A08 adoption; only then may ordinary W1 resume.</p>
+        <p><a href="ECR-0008.md">Original transition contract and command families</a> · <a href="ECR-0008.preparation-review-01.json">Original independent preparation review</a> · <a href="ECR-0008.ux-addendum-01.md">Exact criteria, risks, alternatives and primary references</a></p>
+      </section>
+      <section class="decision-card" aria-labelledby="alternatives-title">
+        <h2 id="alternatives-title">Alternatives</h2>
+        <p>Review notes only: these controls do not save, submit or approve work.</p>
+        <fieldset><legend>Handling</legend>
+          <label class="decision-option"><input type="radio" name="handling" value="continue" checked><span>Continue prerequisites, then execute the single revised correction — recommended</span></label>
+          <label class="decision-option"><input type="radio" name="handling" value="defer"><span>Defer W1 with these defects unresolved</span></label>
+          <label class="decision-option"><input type="radio" name="handling" value="replan"><span>Explicitly replan the affected W1 scope with rationale</span></label>
+          <label class="decision-option"><input type="radio" name="handling" value="other"><span>Other — brief description and detailed rationale required</span></label>
+        </fieldset>
+        <p><label for="other-description">Other: brief description</label><br><input id="other-description" maxlength="240" disabled></p>
+        <p><label for="other-rationale">Other: detailed rationale</label><br><textarea id="other-rationale" rows="4" disabled></textarea></p>
+      </section>
+    </main>
+  </div>
+  <script>
+    const fields = [document.getElementById('other-description'), document.getElementById('other-rationale')];
+    function updateOther() {
+      const selected = document.querySelector('input[name="handling"]:checked').value === 'other';
+      for (const field of fields) { field.disabled = !selected; field.required = selected; }
+    }
+    for (const choice of document.querySelectorAll('input[name="handling"]')) choice.addEventListener('change', updateOther);
+    updateOther();
+  </script>
+</body>
+</html>
