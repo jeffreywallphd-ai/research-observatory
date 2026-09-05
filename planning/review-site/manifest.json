@@ -26848,13 +26848,13 @@
         {
           "task_id": "W1.A08.T01",
           "title": "Consolidate and align production styling",
-          "status": "REVIEW",
+          "status": "DONE",
           "mode": "append-only",
           "latest_review": {
-            "reviewer": "w1-a08-t01-independent-experience-reviewer",
-            "result": "changes-requested",
-            "reviewed_at": "2026-09-04T21:26:47+00:00",
-            "notes": "The frozen submission is the candidate's sole child, the exact 19-path base-to-candidate inventory and two-path submission projection authenticate, and the criterion evidence reproduces SHA-256 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a with Git blob ceca1048851c48fa85fe3ed8d905ad9e9667fbe9. Independent replay confirms the candidate removes the undefined style variables, uses the approved canonical token transport, preserves RO-UI-ACADEMIC-MINIMAL-1.5 bytes, passes the shared and desktop renderer suites, and gives the initial functional product exact 28/20/16 px page padding, 64 px topbar, 24 px section rhythm, 16 px grid, 40/44 px controls, reduced motion, focus/theme behavior, and no horizontal document overflow at the three controlled viewports. Approval remains unavailable because T01's required deterministic duplicate-declaration, selector-specificity, raw-geometry, and documented-composition-exception analysis is absent, and the live geometry check samples only the initial shell's first generic elements rather than the named panels/forms/tables/dialogs/notices/action rows and representative in-scope states. Those T01 checks cannot be wholly deferred to T02's later reusable exhaustive harness."
+            "reviewer": "agent:t01-r02-independent-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-09-05T00:46:34+00:00",
+            "notes": "Independent commit-bound remediation review authenticates candidate 455546efec1cf972dd0713664c4a130aba1478fb, its sole-child two-path submission record, the exact 34-path incremental scope, five criteria, immutable original evidence/R01 ledger, and frozen R02 packet. Both prior blocking findings are fixed. The production analyzer now rejects normalized material whole-block duplicates, excessive specificity, raw semantic geometry, token defects, physical-direction declarations, and renderer styling escapes, with ten exact reviewed composition/accessibility exceptions and no duplicate or specificity suppression. The functional renderer now supplies representative named geometry, both computed themes, reduced motion, table names/focus/contained overflow and cell/row geometry, dense and long content, lock/recovery, error/warning/empty states, and actual 200% dialog text/focus/scroll. The incremental reflow correction is directly exercised before opening the dialog: a valid 80-character native profile preserves the 720 px document at normal and enlarged text, header actions remain contained, and ordinary Shortcuts clicks succeed. Independent replay passed 25 focused Python tests, 120 desktop and four shared component tests, affected lint/types, reference integrity, the exact 13-path UI change gate, four quality-control tests, and the built-product browser check. The independent browser report is byte-identical to final reports 07/08. Earlier failed and provisional reports remain visible and are not used as final acceptance; the original unscaled-run cause remains unproven. No new acceptance-bound blocker was found. This approval is only T01's disposition: T02 every-surface retained visual/performance qualification, S01/amendment review, and full W1 release qualification remain outstanding."
           },
           "review_control": {
             "version": 1,
@@ -26990,104 +26990,172 @@
                     "closed_finding_ids": []
                   }
                 }
+              },
+              {
+                "submission": {
+                  "id": "R02",
+                  "submitted_by": "codex",
+                  "submitted_at": "2026-09-05T00:42:22+00:00",
+                  "candidate_commit": "455546efec1cf972dd0713664c4a130aba1478fb",
+                  "base_commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
+                  "branch": "codex/w1-windows-local-runtime",
+                  "evidence_reference": {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/W1.A08.T01.remediation-01.json",
+                    "sha256": "57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab",
+                    "commit": "455546efec1cf972dd0713664c4a130aba1478fb",
+                    "recorded_at": "2026-09-05T00:42:22+00:00"
+                  },
+                  "acceptance_criteria_sha256": "c5f799e0c25b1e7a19d20c9b80ba8641cba72cd475522d496c2139d1ca8245b1",
+                  "changed_paths": [
+                    "apps/desktop/src/app.css",
+                    "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+                    "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+                    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+                    "apps/desktop/src/app/WorkflowNavigation.tsx",
+                    "artifacts/evidence/W1.A08.T01.json",
+                    "artifacts/evidence/W1.A08.T01.long-profile-before.json",
+                    "artifacts/evidence/W1.A08.T01.product-check-replay-02.json",
+                    "artifacts/evidence/W1.A08.T01.product-check-replay-03.json",
+                    "artifacts/evidence/W1.A08.T01.product-check-replay-04.json",
+                    "artifacts/evidence/W1.A08.T01.product-check-replay-05.json",
+                    "artifacts/evidence/W1.A08.T01.product-check-replay-06.json",
+                    "artifacts/evidence/W1.A08.T01.product-check-replay-07.json",
+                    "artifacts/evidence/W1.A08.T01.product-check-replay-08.json",
+                    "artifacts/evidence/W1.A08.T01.product-check.json",
+                    "artifacts/evidence/W1.A08.T01.review-R01.json",
+                    "artifacts/evidence/W1.A08.T01.style-analysis.json",
+                    "artifacts/evidence/ui-change/W1.A08.T01.json",
+                    "docs/automation/ui-conformance-verification.md",
+                    "docs/planning-implementation-plan.md",
+                    "packages/ui-components/src/index.tsx",
+                    "packages/ui-components/src/styles.css",
+                    "planning/backlog.yaml",
+                    "planning/governance-migrations/GOV-MAINT-0017.json",
+                    "planning/governance-migrations/GOV-MAINT-0017.review-R01.json",
+                    "planning/review-site/enablers/ECR-0007.html",
+                    "planning/review-site/manifest.json",
+                    "planning/status-summary.md",
+                    "quality-scope.json",
+                    "tests/desktop/test_desktop_app_check.py",
+                    "tests/desktop/test_product_style_check.py",
+                    "tools/desktop_app_check.py",
+                    "tools/product_style_check.py",
+                    "verification/product-style-exceptions.json"
+                  ],
+                  "selected_checks": [
+                    "bundled Node 24.19.0: desktop lint and tsc --noEmit; desktop Vitest run; ui-components tsc --noEmit and Vitest run",
+                    "bundled Node 24.19.0: clean-dist; Vite product build; assemble-application; Vite reference-runtime build; assemble-reference",
+                    ".venv\\Scripts\\python.exe tools/product_style_check.py --repo .; .venv\\Scripts\\python.exe -m unittest tests.desktop.test_product_style_check",
+                    ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+                    ".venv\\Scripts\\python.exe artifacts/tmp/w1-a08-t01-style-capture.py; inspect the four generated product captures; git diff --check",
+                    ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check tests.desktop.test_product_style_check; Ruff check and format --check; MYPYPATH=services/core-api/src;tools mypy --follow-imports=silent for tools/desktop_app_check.py, tests/desktop/test_desktop_app_check.py, tools/product_style_check.py and tests/desktop/test_product_style_check.py",
+                    ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/evidence/W1.A08.T01.product-check-replay-07.json; repeat sequentially with artifacts/evidence/W1.A08.T01.product-check-replay-08.json",
+                    ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 98d6612d0eb64482d92ea9f754ddcee22b8b79b9 --head 455546efec1cf972dd0713664c4a130aba1478fb; .venv\\Scripts\\python.exe -m unittest tests.foundation.test_quality_check; git diff --check 9b4e746928d1381c52a2a720ee6bb47eb433ca3f..455546efec1cf972dd0713664c4a130aba1478fb"
+                  ],
+                  "deferred_checks": [
+                    "W1.A08.T02 owns the every-implemented-surface viewport/theme/state inventory, hardened reusable qualification entry point, retained deterministic commit-bound product/reference captures and independent visual disposition, plus affected performance qualification.",
+                    "W1.A08.S01 and amendment exit own the accumulated interaction/accessibility/maintainability review and build/smoke/experience checkpoint.",
+                    "Complete Windows-x64 packaging, performance, security, recovery and cross-capability qualification remains due once at W1 exit. Native service/persistence logic is unchanged in this styling remediation."
+                  ],
+                  "selection_rationale": "R01 exposed an acceptance-closure error: the initial implementation deferred both reusable exhaustive T02 qualification and T01's required focused evidence, instead of distinguishing them. R02 adds negative-first deterministic style analysis and a bounded real-renderer category/state matrix. A later independent replay exposed a mislabeled/mixed pre- and post-scale dialog measurement; actual computed fonts, geometry and focus are now bound together, while the original failed report is retained and its unexplained cause is not invented. Zoom-before-open also exposed a real fixed-height topbar overlap, requiring a minimal reflow correction with operability proof. A valid 80-character profile also reproduced horizontal overflow, closed by shared button wrapping and a shrinkable header; normal and enlarged-text live fixtures cover it. Credible incremental failures are generic declaration duplication, selector or token escapes, raw geometry, directional styling, invalid adapter fixtures, missing computed surfaces, obscured controls, focus/scroll failures, theme/motion regression, stale build inputs, and evidence scope mismatch. Focused Python negatives, full affected TypeScript/component inventories, a rebuilt functional product, repeated live geometry/interaction checks, reference integrity, exact UI-change and planning checks address these risks. GOV-MAINT-0017 only registers committed Python sources and has its own independent exact-commit review; controller behavior and safety authority are unchanged.",
+                  "selection_sha256": "046d7a529c2a2535a0f0cca1cb1003a37e405b136add7e1bd5e897c655cee7e9",
+                  "prior_attempt_id": "R01",
+                  "open_finding_ids": [
+                    "W1.A08.T01-R01-F01",
+                    "W1.A08.T01-R01-F02"
+                  ],
+                  "root_cause_analysis": null,
+                  "selected_command_ids": [
+                    "foundation:ui-reference",
+                    "foundation:ui-change",
+                    "foundation:quality",
+                    "foundation:backlog",
+                    "desktop:application",
+                    "desktop:unit",
+                    "desktop:ui-reference-integrity",
+                    "desktop:ui-token",
+                    "desktop:ui-route-page",
+                    "desktop:ui-workflow",
+                    "desktop:ui-accessibility",
+                    "desktop:ui-visual-regression"
+                  ],
+                  "packet_sha256": "7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f"
+                },
+                "review": {
+                  "reviewer": "agent:t01-r02-independent-reviewer",
+                  "result": "approved",
+                  "reviewed_at": "2026-09-05T00:46:34+00:00",
+                  "notes": "Independent commit-bound remediation review authenticates candidate 455546efec1cf972dd0713664c4a130aba1478fb, its sole-child two-path submission record, the exact 34-path incremental scope, five criteria, immutable original evidence/R01 ledger, and frozen R02 packet. Both prior blocking findings are fixed. The production analyzer now rejects normalized material whole-block duplicates, excessive specificity, raw semantic geometry, token defects, physical-direction declarations, and renderer styling escapes, with ten exact reviewed composition/accessibility exceptions and no duplicate or specificity suppression. The functional renderer now supplies representative named geometry, both computed themes, reduced motion, table names/focus/contained overflow and cell/row geometry, dense and long content, lock/recovery, error/warning/empty states, and actual 200% dialog text/focus/scroll. The incremental reflow correction is directly exercised before opening the dialog: a valid 80-character native profile preserves the 720 px document at normal and enlarged text, header actions remain contained, and ordinary Shortcuts clicks succeed. Independent replay passed 25 focused Python tests, 120 desktop and four shared component tests, affected lint/types, reference integrity, the exact 13-path UI change gate, four quality-control tests, and the built-product browser check. The independent browser report is byte-identical to final reports 07/08. Earlier failed and provisional reports remain visible and are not used as final acceptance; the original unscaled-run cause remains unproven. No new acceptance-bound blocker was found. This approval is only T01's disposition: T02 every-surface retained visual/performance qualification, S01/amendment review, and full W1 release qualification remain outstanding."
+                },
+                "ledger": {
+                  "path": "artifacts/evidence/W1.A08.T01.review-R02.json",
+                  "sha256": "792770c30e5ac7d5af02f36fa21742a9d936c30437a13a41c2d7240a62762101"
+                },
+                "findings": [],
+                "closures": [
+                  {
+                    "finding_id": "W1.A08.T01-R01-F01",
+                    "disposition": "fixed",
+                    "evidence": "Independent source review and 13 style-analyzer tests verify normalized material declaration duplicates, selector specificity, raw semantic geometry, undefined/duplicate custom properties, canonical-token authority, physical direction, and renderer styling escapes are enforced. Generic repeated groups are consolidated; all ten remaining exact raw-geometry exceptions have bounded composition/accessibility rationale and stale/missing exceptions fail. The live analyzer passes without duplicate-group or specificity suppression."
+                  },
+                  {
+                    "finding_id": "W1.A08.T01-R01-F02",
+                    "disposition": "fixed",
+                    "evidence": "The independently replayed built-product matrix covers every named T01 geometry category and required representative state, including actual both-theme token application, reduced motion, all three named/focused scrollable tables with padding and 38/44 px row minima, dense audit and long diagnostics, lock/recovery, errors/warnings/empty states, and dialog focus/contained scrolling at measured 200% text. Zoom-before-open and normal/enlarged valid 80-character profile fixtures directly prove the incremental header reflow correction without masking overlap. The independent report exactly matches final retained 07/08."
+                  }
+                ],
+                "telemetry": {
+                  "task_id": "W1.A08.T01",
+                  "amendment_id": "W1.A08",
+                  "attempt_id": "R02",
+                  "submitted_at": "2026-09-05T00:42:22+00:00",
+                  "reviewed_at": "2026-09-05T00:46:34+00:00",
+                  "duration_seconds": 252,
+                  "outcome": "approved",
+                  "finding_counts": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "blocking": 0,
+                    "total": 0
+                  },
+                  "command_ids": [
+                    "foundation:ui-reference",
+                    "foundation:ui-change",
+                    "foundation:quality",
+                    "foundation:backlog",
+                    "desktop:application",
+                    "desktop:unit",
+                    "desktop:ui-reference-integrity",
+                    "desktop:ui-token",
+                    "desktop:ui-route-page",
+                    "desktop:ui-workflow",
+                    "desktop:ui-accessibility",
+                    "desktop:ui-visual-regression"
+                  ],
+                  "remediation": {
+                    "prior_attempt_id": "R01",
+                    "replayed_finding_ids": [
+                      "W1.A08.T01-R01-F01",
+                      "W1.A08.T01-R01-F02"
+                    ],
+                    "closed_finding_ids": [
+                      "W1.A08.T01-R01-F01",
+                      "W1.A08.T01-R01-F02"
+                    ]
+                  }
+                }
               }
             ],
-            "current_submission": {
-              "id": "R02",
-              "submitted_by": "codex",
-              "submitted_at": "2026-09-05T00:42:22+00:00",
-              "candidate_commit": "455546efec1cf972dd0713664c4a130aba1478fb",
-              "base_commit": "9b4e746928d1381c52a2a720ee6bb47eb433ca3f",
-              "branch": "codex/w1-windows-local-runtime",
-              "evidence_reference": {
-                "type": "criterion-manifest",
-                "path": "artifacts/evidence/W1.A08.T01.remediation-01.json",
-                "sha256": "57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab",
-                "commit": "455546efec1cf972dd0713664c4a130aba1478fb",
-                "recorded_at": "2026-09-05T00:42:22+00:00"
-              },
-              "acceptance_criteria_sha256": "c5f799e0c25b1e7a19d20c9b80ba8641cba72cd475522d496c2139d1ca8245b1",
-              "changed_paths": [
-                "apps/desktop/src/app.css",
-                "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
-                "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
-                "apps/desktop/src/app/TaskCenterWorkspace.tsx",
-                "apps/desktop/src/app/WorkflowNavigation.tsx",
-                "artifacts/evidence/W1.A08.T01.json",
-                "artifacts/evidence/W1.A08.T01.long-profile-before.json",
-                "artifacts/evidence/W1.A08.T01.product-check-replay-02.json",
-                "artifacts/evidence/W1.A08.T01.product-check-replay-03.json",
-                "artifacts/evidence/W1.A08.T01.product-check-replay-04.json",
-                "artifacts/evidence/W1.A08.T01.product-check-replay-05.json",
-                "artifacts/evidence/W1.A08.T01.product-check-replay-06.json",
-                "artifacts/evidence/W1.A08.T01.product-check-replay-07.json",
-                "artifacts/evidence/W1.A08.T01.product-check-replay-08.json",
-                "artifacts/evidence/W1.A08.T01.product-check.json",
-                "artifacts/evidence/W1.A08.T01.review-R01.json",
-                "artifacts/evidence/W1.A08.T01.style-analysis.json",
-                "artifacts/evidence/ui-change/W1.A08.T01.json",
-                "docs/automation/ui-conformance-verification.md",
-                "docs/planning-implementation-plan.md",
-                "packages/ui-components/src/index.tsx",
-                "packages/ui-components/src/styles.css",
-                "planning/backlog.yaml",
-                "planning/governance-migrations/GOV-MAINT-0017.json",
-                "planning/governance-migrations/GOV-MAINT-0017.review-R01.json",
-                "planning/review-site/enablers/ECR-0007.html",
-                "planning/review-site/manifest.json",
-                "planning/status-summary.md",
-                "quality-scope.json",
-                "tests/desktop/test_desktop_app_check.py",
-                "tests/desktop/test_product_style_check.py",
-                "tools/desktop_app_check.py",
-                "tools/product_style_check.py",
-                "verification/product-style-exceptions.json"
-              ],
-              "selected_checks": [
-                "bundled Node 24.19.0: desktop lint and tsc --noEmit; desktop Vitest run; ui-components tsc --noEmit and Vitest run",
-                "bundled Node 24.19.0: clean-dist; Vite product build; assemble-application; Vite reference-runtime build; assemble-reference",
-                ".venv\\Scripts\\python.exe tools/product_style_check.py --repo .; .venv\\Scripts\\python.exe -m unittest tests.desktop.test_product_style_check",
-                ".venv\\Scripts\\python.exe tools/ui_reference_check.py --repo .; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
-                ".venv\\Scripts\\python.exe artifacts/tmp/w1-a08-t01-style-capture.py; inspect the four generated product captures; git diff --check",
-                ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check tests.desktop.test_product_style_check; Ruff check and format --check; MYPYPATH=services/core-api/src;tools mypy --follow-imports=silent for tools/desktop_app_check.py, tests/desktop/test_desktop_app_check.py, tools/product_style_check.py and tests/desktop/test_product_style_check.py",
-                ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --built-frame-only --report artifacts/evidence/W1.A08.T01.product-check-replay-07.json; repeat sequentially with artifacts/evidence/W1.A08.T01.product-check-replay-08.json",
-                ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 98d6612d0eb64482d92ea9f754ddcee22b8b79b9 --head 455546efec1cf972dd0713664c4a130aba1478fb; .venv\\Scripts\\python.exe -m unittest tests.foundation.test_quality_check; git diff --check 9b4e746928d1381c52a2a720ee6bb47eb433ca3f..455546efec1cf972dd0713664c4a130aba1478fb"
-              ],
-              "deferred_checks": [
-                "W1.A08.T02 owns the every-implemented-surface viewport/theme/state inventory, hardened reusable qualification entry point, retained deterministic commit-bound product/reference captures and independent visual disposition, plus affected performance qualification.",
-                "W1.A08.S01 and amendment exit own the accumulated interaction/accessibility/maintainability review and build/smoke/experience checkpoint.",
-                "Complete Windows-x64 packaging, performance, security, recovery and cross-capability qualification remains due once at W1 exit. Native service/persistence logic is unchanged in this styling remediation."
-              ],
-              "selection_rationale": "R01 exposed an acceptance-closure error: the initial implementation deferred both reusable exhaustive T02 qualification and T01's required focused evidence, instead of distinguishing them. R02 adds negative-first deterministic style analysis and a bounded real-renderer category/state matrix. A later independent replay exposed a mislabeled/mixed pre- and post-scale dialog measurement; actual computed fonts, geometry and focus are now bound together, while the original failed report is retained and its unexplained cause is not invented. Zoom-before-open also exposed a real fixed-height topbar overlap, requiring a minimal reflow correction with operability proof. A valid 80-character profile also reproduced horizontal overflow, closed by shared button wrapping and a shrinkable header; normal and enlarged-text live fixtures cover it. Credible incremental failures are generic declaration duplication, selector or token escapes, raw geometry, directional styling, invalid adapter fixtures, missing computed surfaces, obscured controls, focus/scroll failures, theme/motion regression, stale build inputs, and evidence scope mismatch. Focused Python negatives, full affected TypeScript/component inventories, a rebuilt functional product, repeated live geometry/interaction checks, reference integrity, exact UI-change and planning checks address these risks. GOV-MAINT-0017 only registers committed Python sources and has its own independent exact-commit review; controller behavior and safety authority are unchanged.",
-              "selection_sha256": "046d7a529c2a2535a0f0cca1cb1003a37e405b136add7e1bd5e897c655cee7e9",
-              "prior_attempt_id": "R01",
-              "open_finding_ids": [
-                "W1.A08.T01-R01-F01",
-                "W1.A08.T01-R01-F02"
-              ],
-              "root_cause_analysis": null,
-              "selected_command_ids": [
-                "foundation:ui-reference",
-                "foundation:ui-change",
-                "foundation:quality",
-                "foundation:backlog",
-                "desktop:application",
-                "desktop:unit",
-                "desktop:ui-reference-integrity",
-                "desktop:ui-token",
-                "desktop:ui-route-page",
-                "desktop:ui-workflow",
-                "desktop:ui-accessibility",
-                "desktop:ui-visual-regression"
-              ],
-              "packet_sha256": "7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f"
-            }
+            "current_submission": null
           }
         },
         {
           "task_id": "W1.A08.T02",
           "title": "Qualify live-product styling conformance",
-          "status": "NOT_STARTED",
+          "status": "READY",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

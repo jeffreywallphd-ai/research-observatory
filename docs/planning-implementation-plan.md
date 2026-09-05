@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ae8ee471496c3d79506249b22c7c22117b61a529660263680a9b2545ac38c43c
+source_sha256: 62f2e972ad05992ea3e5531912cc53896d764c9cda892e3d654a15cfbcd5575b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1770,9 +1770,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W1.A08.T01 - Consolidate and align production styling
+### - [x] W1.A08.T01 - Consolidate and align production styling
 
-**Status / owner / review:** `REVIEW` / codex / w1-a08-t01-independent-experience-reviewer (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / agent:t01-r02-independent-reviewer (`approved`)
 
 **Dependencies:** `W1.A08.B00`, `CAP-01.S02.T03`
 
@@ -1801,7 +1801,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A08.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -1834,7 +1834,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f`
 
 - Candidate / base / branch: `455546efec1cf972dd0713664c4a130aba1478fb` / `9b4e746928d1381c52a2a720ee6bb47eb433ca3f` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-05T00:42:22+00:00`
@@ -1848,15 +1850,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A08.T01-R01-F01`, `W1.A08.T01-R01-F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by w1-a08-t01-independent-experience-reviewer at `2026-09-04T21:26:47+00:00`
+**Disposition / reviewer / time:** `approved` / agent:t01-r02-independent-reviewer / `2026-09-05T00:46:34+00:00`
 
-**Latest notes:** The frozen submission is the candidate's sole child, the exact 19-path base-to-candidate inventory and two-path submission projection authenticate, and the criterion evidence reproduces SHA-256 8ffc3a093684778eb14b4bb2eafb6b0ea4cd753d895cf7d9e05aa73d9191195a with Git blob ceca1048851c48fa85fe3ed8d905ad9e9667fbe9. Independent replay confirms the candidate removes the undefined style variables, uses the approved canonical token transport, preserves RO-UI-ACADEMIC-MINIMAL-1.5 bytes, passes the shared and desktop renderer suites, and gives the initial functional product exact 28/20/16 px page padding, 64 px topbar, 24 px section rhythm, 16 px grid, 40/44 px controls, reduced motion, focus/theme behavior, and no horizontal document overflow at the three controlled viewports. Approval remains unavailable because T01's required deterministic duplicate-declaration, selector-specificity, raw-geometry, and documented-composition-exception analysis is absent, and the live geometry check samples only the initial shell's first generic elements rather than the named panels/forms/tables/dialogs/notices/action rows and representative in-scope states. Those T01 checks cannot be wholly deferred to T02's later reusable exhaustive harness.
+**Immutable review ledger:** `artifacts/evidence/W1.A08.T01.review-R02.json` / `792770c30e5ac7d5af02f36fa21742a9d936c30437a13a41c2d7240a62762101`
 
-**Currently open findings:** `W1.A08.T01-R01-F01`, `W1.A08.T01-R01-F02`
+**Review notes:** Independent commit-bound remediation review authenticates candidate 455546efec1cf972dd0713664c4a130aba1478fb, its sole-child two-path submission record, the exact 34-path incremental scope, five criteria, immutable original evidence/R01 ledger, and frozen R02 packet. Both prior blocking findings are fixed. The production analyzer now rejects normalized material whole-block duplicates, excessive specificity, raw semantic geometry, token defects, physical-direction declarations, and renderer styling escapes, with ten exact reviewed composition/accessibility exceptions and no duplicate or specificity suppression. The functional renderer now supplies representative named geometry, both computed themes, reduced motion, table names/focus/contained overflow and cell/row geometry, dense and long content, lock/recovery, error/warning/empty states, and actual 200% dialog text/focus/scroll. The incremental reflow correction is directly exercised before opening the dialog: a valid 80-character native profile preserves the 720 px document at normal and enlarged text, header actions remain contained, and ordinary Shortcuts clicks succeed. Independent replay passed 25 focused Python tests, 120 desktop and four shared component tests, affected lint/types, reference integrity, the exact 13-path UI change gate, four quality-control tests, and the built-product browser check. The independent browser report is byte-identical to final reports 07/08. Earlier failed and provisional reports remain visible and are not used as final acceptance; the original unscaled-run cause remains unproven. No new acceptance-bound blocker was found. This approval is only T01's disposition: T02 every-surface retained visual/performance qualification, S01/amendment review, and full W1 release qualification remain outstanding.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A08.T01-R01-F01` `fixed` — Independent source review and 13 style-analyzer tests verify normalized material declaration duplicates, selector specificity, raw semantic geometry, undefined/duplicate custom properties, canonical-token authority, physical direction, and renderer styling escapes are enforced. Generic repeated groups are consolidated; all ten remaining exact raw-geometry exceptions have bounded composition/accessibility rationale and stale/missing exceptions fail. The live analyzer passes without duplicate-group or specificity suppression.
+- `W1.A08.T01-R01-F02` `fixed` — The independently replayed built-product matrix covers every named T01 geometry category and required representative state, including actual both-theme token application, reduced motion, all three named/focused scrollable tables with padding and 38/44 px row minima, dense audit and long diagnostics, lock/recovery, errors/warnings/empty states, and dialog focus/contained scrolling at measured 200% text. Zoom-before-open and normal/enlarged valid 80-character profile fixtures directly prove the incremental header reflow correction without masking overlap. The independent report exactly matches final retained 07/08.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:t01-r02-independent-reviewer at `2026-09-05T00:46:34+00:00`
+
+**Latest notes:** Independent commit-bound remediation review authenticates candidate 455546efec1cf972dd0713664c4a130aba1478fb, its sole-child two-path submission record, the exact 34-path incremental scope, five criteria, immutable original evidence/R01 ledger, and frozen R02 packet. Both prior blocking findings are fixed. The production analyzer now rejects normalized material whole-block duplicates, excessive specificity, raw semantic geometry, token defects, physical-direction declarations, and renderer styling escapes, with ten exact reviewed composition/accessibility exceptions and no duplicate or specificity suppression. The functional renderer now supplies representative named geometry, both computed themes, reduced motion, table names/focus/contained overflow and cell/row geometry, dense and long content, lock/recovery, error/warning/empty states, and actual 200% dialog text/focus/scroll. The incremental reflow correction is directly exercised before opening the dialog: a valid 80-character native profile preserves the 720 px document at normal and enlarged text, header actions remain contained, and ordinary Shortcuts clicks succeed. Independent replay passed 25 focused Python tests, 120 desktop and four shared component tests, affected lint/types, reference integrity, the exact 13-path UI change gate, four quality-control tests, and the built-product browser check. The independent browser report is byte-identical to final reports 07/08. Earlier failed and provisional reports remain visible and are not used as final acceptance; the original unscaled-run cause remains unproven. No new acceptance-bound blocker was found. This approval is only T01's disposition: T02 every-surface retained visual/performance qualification, S01/amendment review, and full W1 release qualification remain outstanding.
+
+**Currently open findings:** -
 
 ### - [ ] W1.A08.T02 - Qualify live-product styling conformance
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A08.B00`, `W1.A08.T01`
 

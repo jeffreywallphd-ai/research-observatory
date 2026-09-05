@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: ae8ee471496c3d79506249b22c7c22117b61a529660263680a9b2545ac38c43c
+source_sha256: 62f2e972ad05992ea3e5531912cc53896d764c9cda892e3d654a15cfbcd5575b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,9 +68,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 1 |
-| `REVIEW` | 1 |
-| `DONE` | 9 |
+| `READY` | 1 |
+| `DONE` | 10 |
 
 ## Wave authority and append-only amendments
 
@@ -554,7 +553,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A05.T04` | `append-only v1` | 3 | `-` | approved / agent:t04-r03-independent-reviewer | - |
 | `W1.A06.T01` | `append-only v1` | 1 | `-` | approved / ecr5-planning-authority-reviewer | - |
 | `W1.A07.T01` | `append-only v1` | 1 | `-` | approved / ecr6-planning-authority-reviewer | - |
-| `W1.A08.T01` | `append-only v1` | 1 | `R02` | changes-requested / w1-a08-t01-independent-experience-reviewer | `W1.A08.T01-R01-F01`, `W1.A08.T01-R01-F02` |
+| `W1.A08.T01` | `append-only v1` | 2 | `-` | approved / agent:t01-r02-independent-reviewer | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -619,4 +618,3 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A08.T01` Consolidate and align production styling | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
