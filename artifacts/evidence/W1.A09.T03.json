@@ -1,0 +1,233 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A09.T03",
+  "commit": "30357ec178cc1a57646b7fe64dca3ee7670756d2",
+  "baseCommit": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs",
+    "apps/desktop/src-tauri/src/directory_picker.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+    "apps/desktop/src/app/directoryPicker.test.ts",
+    "apps/desktop/src/app/directoryPicker.ts",
+    "artifacts/evidence/W1.A09.T03.binding-review-01.json",
+    "artifacts/evidence/W1.A09.T03.build-binding-regressions-01.json",
+    "artifacts/evidence/W1.A09.T03.build-binding-regressions-02.json",
+    "artifacts/evidence/W1.A09.T03.build-binding-review-01.json",
+    "artifacts/evidence/W1.A09.T03.build-binding-review-02.json",
+    "artifacts/evidence/W1.A09.T03.default-core-check-01.fresh-current.precommit.json",
+    "artifacts/evidence/W1.A09.T03.default-core-check-01.fresh-restart.precommit.json",
+    "artifacts/evidence/W1.A09.T03.default-core-check-01.fresh.precommit.json",
+    "artifacts/evidence/W1.A09.T03.default-core-check-01.py",
+    "artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json",
+    "artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-02.json",
+    "artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-03.json",
+    "artifacts/evidence/W1.A09.T03.default-core-fresh-safeguards-04.json",
+    "artifacts/evidence/W1.A09.T03.default-core-fresh-serving-principal-01.json",
+    "artifacts/evidence/W1.A09.T03.default-core-fresh-two-parent-01.json",
+    "artifacts/evidence/W1.A09.T03.default-core-pin-test-01.py",
+    "artifacts/evidence/W1.A09.T03.default-diagnostic-01.py",
+    "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.json",
+    "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.py",
+    "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-02.json",
+    "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-03.json",
+    "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-04.json",
+    "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-05.json",
+    "artifacts/evidence/W1.A09.T03.default-parity-check-01.json",
+    "artifacts/evidence/W1.A09.T03.default-parity-check-01.py",
+    "artifacts/evidence/W1.A09.T03.invariants-01.json",
+    "artifacts/evidence/W1.A09.T03.native-builds-05.json",
+    "artifacts/evidence/W1.A09.T03.native-replay-01.json",
+    "artifacts/evidence/W1.A09.T03.native-replay-01.py",
+    "artifacts/evidence/W1.A09.T03.native-replay-02.json",
+    "artifacts/evidence/W1.A09.T03.native-ui-build-03.json",
+    "artifacts/evidence/W1.A09.T03.native-ui-build-04.json",
+    "artifacts/evidence/W1.A09.T03.native-ui-observations-01.json",
+    "artifacts/evidence/W1.A09.T03.native-ui-observations-02.json",
+    "artifacts/evidence/W1.A09.T03.native-ui-observations-03.json",
+    "artifacts/evidence/W1.A09.T03.native-ui-observations-04.json",
+    "artifacts/evidence/W1.A09.T03.renderer-check-01.default-only.precommit.json",
+    "artifacts/evidence/W1.A09.T03.renderer-check-01.final.json",
+    "artifacts/evidence/W1.A09.T03.renderer-check-01.fresh-unlock.precommit.json",
+    "artifacts/evidence/W1.A09.T03.renderer-check-01.precommit.json",
+    "artifacts/evidence/W1.A09.T03.renderer-check-01.py",
+    "artifacts/evidence/W1.A09.T03.renderer-check-01.validated-build.precommit.json",
+    "artifacts/evidence/W1.A09.T03.renderer-evidence-test-01.py",
+    "artifacts/evidence/W1.A09.T03.runtime-principal-check-01.json",
+    "artifacts/evidence/W1.A09.T03.runtime-principal-check-01.py",
+    "artifacts/evidence/W1.A09.T03.runtime-token-check-01.agent.json",
+    "artifacts/evidence/W1.A09.T03.runtime-token-check-01.py",
+    "artifacts/evidence/W1.A09.T03.task-start.md",
+    "artifacts/evidence/W1.A09.T03.verification-evidence-test-01.py",
+    "artifacts/evidence/W1.A09.T03.verification-final-01.json",
+    "artifacts/evidence/W1.A09.T03.verification-precommit-01.json",
+    "artifacts/evidence/W1.A09.T03.verification-precommit-02.json",
+    "artifacts/evidence/W1.A09.T03.verify-01.py",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/src/DirectoryPickerField.tsx",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css",
+    "packages/ui-components/tests/package.test.tsx",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0008.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/security/test_application_lock_source.py",
+    "tests/service/test_native_project_contract.py",
+    "tests/service/test_project_probe_build.py",
+    "tools/desktop_app_check.py"
+  ],
+  "bindings": {
+    "testedProductCommit": "3f4b2153a90eb29ee74c9f55f628eb3d15884922",
+    "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "semanticReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "verificationReport": "artifacts/evidence/W1.A09.T03.verification-final-01.json",
+    "independentBindingReport": "artifacts/evidence/W1.A09.T03.binding-review-01.json",
+    "evidenceDeliveryOnly": "The candidate descends from tested3f4b2153 with only final reports/bindings. All product, test and harness inputs retain the tested Git blobs. Precommit native/owner observations are authenticated by exact source hashes and the identical rebuilt debug executable; they are not represented as originally run at this later commit.",
+    "proofComposition": "Actual built React with declared native/Core doubles; actual Tauri/Windows Shell selection, keyboard cancellation, lock/close in isolated fixtures; real debug/release native default resolvers; unchanged actual Core/DPAPI/SQLCipher default creation and fresh-process fixture restart. A single packaged renderer-to-native-to-Core create is reserved for T04, not claimed here.",
+    "actualDefaultDiagnostic": "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-05.json",
+    "diagnosticRawSha256": "a5a829c6df753a37c3f4413e3090072339daa8eca6c91594d72d882a157de617"
+  },
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.verify-01.py --report artifacts/evidence/W1.A09.T03.verification-final-01.json",
+      "exitCode": 0,
+      "result": "All19 risk-selected commands passed at3f4b2153 with unchanged input hashes/HEAD:28 renderer tests,5 shared-field tests, renderer/shared types and lint, Python lint,25 production-picker and25 harness-picker tests,6 fixture-boundary tests, production/harness Clippy,4 protected-source tests,18 Core lifecycle tests,17 default-proof safeguards,2 renderer report-publication tests,2 nonvacuous-test-selection tests,10 native build-binding regressions,1 renderer recovery scenario and generated backlog-view check. Exact commands, outputs, durations and source inventory are retained."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.renderer-check-01.py --report artifacts/evidence/W1.A09.T03.renderer-check-01.final.json",
+      "exitCode": 0,
+      "result": "Current validated built React/pinned Chromium at3f4b2153: default-only explicit Create without chooser, six cancellation/failure/default-arrival races, stable collision/retry destination, chosen override, unmounted/locked late-result discard and fresh-unlock empty form. Six light/dark geometries at1440x900/1280x720/720x450, long Unicode paths, reduced motion, selectable wrapping text and no horizontal overflow. No unexpected network or page errors. Native/Core are explicitly doubled in this renderer proof."
+    },
+    {
+      "command": "Validated build_project_probe debug/release builds; actual authorized Windows selection/manual-lock/main-close fixture observations; independent source/binary bridge verification",
+      "exitCode": 0,
+      "result": "native-builds-05 validates161 inputs per actual debug/release build, Cargo exact executable event and CommonControls6/asInvoker PE. Native UI build04/observations04 exercise the actual system modal, main-window ownership/disabled parent, Tab/Return/Escape and focus return, Unicode folder selection and explicit Open preparation without project mutation. Automatic fixture manual-lock/main-close dismiss without operator cancellation, stop Core, clear/discard protected data and release admission. Later helper-only correction rebuilt identical debug executable f73661fc06c4cb081ac08ac35808b2983fa9d4de4682b3e2343b6eecab6eac8d; production/native/renderer bytes remain identical. Guard negatives and cleanup are separately exercised by the final25+25+6 native tests."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T03.default-parity-check-01.py; owner normal-Windows default-failure-diagnostic-01.py --attempt 5; default-core-check-01.py --mode fresh --report artifacts/evidence/W1.A09.T03.default-core-fresh-final-01.json",
+      "exitCode": 0,
+      "result": "Actual native debug/release resolvers match the real Shell/Core LocalAppData product parent without changing its identity/mtime or starting Core. Owner diagnostic05 matches all54 current Core/runner inputs and proves fresh/actual-default encrypted creation, twice close/reopen,409 ALREADY_EXISTS with unchanged database bytes and no silent numbering. Two unclassified ProjectLifecycleProblem records are asserted collision negatives. Latest fresh-final-01 separately proves first startup creates the isolated product/vault chain without a project mutation and two encrypted projects reopen after a fresh Core process. No real policy/vault is read; fixture vaults and projects are retained. Earlier tool-launch drift cause remains unproven."
+    },
+    {
+      "command": "Build-binding negative regressions and independent native-replay-02; exact source/report authentication in binding-review-01",
+      "exitCode": 0,
+      "result": "The native probe helper validates the full renderer/source/artifact inventory before trusting manifest paths, checks inputs before/after Cargo, and requires its exact compiler output before PE/hash attestation. Ten regressions reject stale/tampered/unlisted artifacts, changed or swapped manifests/sources, consistent rebuilds during Cargo, and missing/alternate output. Retained failing-before records and independent build-binding reviews preserve the correction history. Six independent native picker repetitions each pass25 tests; current commit-bound replay passes too. Endpoint bindings do not claim atomicity against a hostile same-account change-and-restore attack."
+    },
+    {
+      "command": "Exact base-to-tested Git tree comparison; git diff --check; tools/backlog_views.py --repo . --check; tools/plan_review_site.py --repo .",
+      "exitCode": 0,
+      "result": "invariants-01 authenticates349 unchanged Git entries across Core, contracts, governed reference/baselines, renderer capabilities and existing security/runtime owners. The new picker and lib.rs integration are separately reviewed, not claimed unchanged. Generated views/review site were refreshed after T03 reopened; no approved packet/reference, schema, migration, Core path guard, security settings or permissions changed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The implemented directory-input inventory is the create parent, separate child directory name and open root in ProjectsWorkspace. Both location controls use exported DirectoryPickerField with label/help/button/output associations; the child input is removed in favor of a read-only generated destination. Other current paths are outputs, not directory inputs.",
+        "Shared component and adapter tests plus actual renderer/Windows observations verify no editable path fallback, webkitdirectory, renderer enumeration, custom tree or broader filesystem capability. The default is preselected where validated and Change folder remains available."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "directoryPicker unit vectors cover ASCII1-64 bounds, accents, Unicode-only stable fallback, reserved device names, long names, absolute local selected paths and exact result decoding. Renderer tests preserve friendly name, Unicode parent and full target, freeze mutation identity, retain destination on409 and never silently number a retry.",
+        "Actual Windows selection preserves the precreated Unicode child; no project operation follows selection alone. Actual Core reports prove closed creation, explicit open/close twice, protected database and unchanged bytes after exact collision. Open selection previews the folder before the explicit Open action."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "choose_project_directory admits exact purpose/optional prior-location JSON only, checks local main-window origin/owner and protected generation, then runs the pinned Windows COM/Shell filesystem-only dialog on its owning STA. Strict tagged outcomes carry paths only for selected. The zero-argument read-only default resolver admits no caller path and shares local-main/protected checks.",
+        "Native tests cover invalid/unknown fields and purposes, non-directory/non-filesystem, inaccessible/deleted/redirected and install-excluded locations, owner/lifetime validation and safe outcomes; actual owned Shell observations establish the native principal boundary. Renderer capabilities and dependencies outside minimal pinned Windows features remain unchanged."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Shared controller/ProjectsWorkspace single admission preserves prior selected value and form on cancellation/failure, prevents overlapping picker requests and duplicate submission, ignores unmounted/late results, and lets a user override win over late default discovery.",
+        "Actual Escape preserves the draft/default target and restores the Change folder focus ring; Return reopens the system picker. Unicode selection and Open preparation leave fixture folders empty and project closed. Renderer counters verify zero mutation on mount/default/selection/cancel and explicit stable retry only."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The picker owns a separate admission/lifetime manager, not Core's mutex during Show. Protected generation is checked before/after, cancellation is sticky through STA registration, and reservation survives until actual cleanup. Lifecycle entry points cancel/dismiss on lock/policy/main close; late results are discarded.",
+        "Final native race/fault tests exercise admission, before-registration/Show/result cancellation, thread/error/normal cleanup and lock-generation changes. Actual fixture manual-lock/main-close dismiss the modal without operator cancellation, stop Core and clear protected form/path state; built-renderer fresh-unlock proof starts empty and does not reopen a project. No authentication action is claimed."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "native-ui-observations-04 records actual Windows selection/cancel, keyboard/focus ownership and pending lock/close on the exact native/renderer binary authenticated through native-builds-05 and binding-review-01. Native unit tests complement, not replace, these observations.",
+        "The unchanged Core lifecycle18 tests retain package/manifest validation, canonical path/install/reparse exclusions, exclusive locks, staging/failed-create/no-overwrite, read-only compatibility and backup-first recovery. Actual unchanged Core/DPAPI/SQLCipher fixture and actual-default reports additionally establish protected creation, collisions and fresh-process fixture restart. Same-Windows-account malicious writers remain outside accepted ADR0017/0018, not an isolation claim."
+      ]
+    },
+    {
+      "criterion_index": 7,
+      "evidence": [
+        "DirectoryPickerField composes existing shared field/button/description/stack/notice primitives; one reusable location style supplies wrapping/selectability and a shared waiting affordance, with no per-page folder-style duplication or second token system.",
+        "Current built-renderer final report passes both themes, long Unicode paths, reduced motion and all three viewports including720x450 without horizontal page overflow. Native keyboard/focus observations and component associations complement layout checks. A08 sidebar/effective paragraph-spacing findings remain open for the approved return task."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T03 affects public native IPC, Windows COM modal lifetime, protected-generation cancellation, default-folder selection and project destination UX. Credible failures include widened path authority, stale protected results, blocked shutdown, duplicate mutations, changed retry destinations, unsafe defaults and false build attestation. Narrow component/renderer/native/Core/security checks, real Shell/native resolver and actual DPAPI/SQLCipher proofs close those boundaries. The acceptance-linked build helper corrections receive independent review and retain failing-before evidence. No full repository or deployment profile is asserted.",
+    "selectedCommandIds": [
+      "desktop:unit",
+      "desktop:application",
+      "service:unit",
+      "security-local:unit",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "T04: accumulated affected integration union, single packaged renderer/native/Core lifecycle and clean Windows build/packaging smoke, security/restart/recovery/accessibility/performance qualification and independent slice/exit/return bundle.",
+      "T04/W1 qualification retains preexisting all-test-target application_lock.rs Clippy needless-borrow warnings; production/harness library/example Clippy pass here. No test warning is deleted or silently waived.",
+      "Returned A08.T02 owns F02/UX01 effective paragraph separation and full-height sidebar. T03 does not close or alter those styling findings.",
+      "Fresh blind novice usability retest and retained U01-U06 follow-up remain required at their integrated W1 acceptance boundary; this component/native proof is not the blind retest.",
+      "Complete repository/Windows W1 matrix, independent amendment/Wave review and G1 human approval remain due. No local-main integration of unmet A08 ancestry, remote effect or W2 work is authorized."
+    ]
+  },
+  "retainedNonpassingAttempts": [
+    {
+      "path": "artifacts/evidence/W1.A09.T03.verification-precommit-01.json",
+      "disposition": "A zero-test fixture filter produced exit0 and cannot prove fixture coverage. Retained unchanged; corrected runner requires nonvacuous native selections and final6 fixture tests pass."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.verification-precommit-02.json",
+      "disposition": "Retains the hidden-window test's incorrect first-message assumption. Test-only correction handles unrelated messages while retaining cancellation/watchdog assertions; final run and six independent repetitions pass."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-replay-01.json",
+      "disposition": "Retains expanded test-target Clippy warnings in unchanged application-lock tests; not mislabeled as passing or erased."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-ui-observations-01.json",
+      "disposition": "Original modal Close attempt did not dismiss without operator Escape; retained adverse Windows evidence."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-ui-observations-02.json",
+      "disposition": "Further original modal failure retained. Production same-STA exact-window WM_CLOSE correction has fresh passing observations04."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.default-failure-diagnostic-01.json",
+      "disposition": "Retains earlier tool-launch canonical-parent drift failure; attempts02-04 also remain unchanged. Owner05 passes unchanged Core, without claiming exact drift cause."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.task-start.md",
+      "disposition": "Retains the task-start map, initial missing/stale build bindings and failing-before tests, actual UI failures, privacy/platform limits and stopped/resumed boundaries. Later evidence does not rewrite those historical observations."
+    }
+  ],
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "openFindingIds": [],
+    "note": "Formal independent commit-bound R01 disposition follows submission; advisory reviews are not approval."
+  }
+}
