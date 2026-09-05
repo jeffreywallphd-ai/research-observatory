@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 74d8a4938557db2dc59901ca5128f8f910e7de4a642a6b080d1aeaf03177cff7
+source_sha256: 30bbe36d71ba46273356f0924f9b595c0f3850a30154516ffa0b270b5c6154dd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 11 |
+| Enabler tasks | 15 |
 | Waves | 12 |
 | Wave approval bases | 1 |
 | Wave amendments | 9 |
@@ -48,7 +48,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` |
-| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `APPROVED` |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -1913,11 +1913,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A09.json` (`08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-05T03:15:45Z` by repository-owner: Record and bind the repository owner's existing explicit preapproval: 'You have preapproval for the project-UX/reference correct gate. Continue past that. Only seek approval for W1 passing.' The owner authorized continuation for the disclosed combined project-UX/reference correction before this exact binding; this record does not claim that the owner personally reviewed the later commit. Independent R02 accepted the matching bounded descendant, closing both R01 findings. Authorize only ECR-0008 at 2160cc9917282d80848189dc9669fe3827979246, its exact proposed Academic Minimal 1.6 package and enumerated activation metadata mapping, bootstrap W1.A09.B00, contribution W1.A09.S01 and tasks W1.A09.T01-T04. Native project contract/readiness repair, shared protected native folder selection, truthful fresh baseline and semantic1.5 preservation must satisfy their exact criteria. Preserve paused A08 and return to it only through independently reviewed correctionReturn; ordinary W1 resume remains after A08 adoption. This approval is not implementation completion, independent task/slice/exit review, G1/W1 passing, W2 authorization, remote/destructive action, spend or broader security authority. The timestamp records this exact binding of the standing owner authorization.
+- `E02` `MATERIALIZED` at `2026-09-05T11:48:05+00:00` by codex: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W1.A09
 
@@ -1934,6 +1935,133 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W1.A09.T01 - Publish approved reference and preserve semantic1.5
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A09.B00`
+
+**Objective:** Publish the exact preapproved 1.6 reference with truthful baseline and independently checked presentation/semantic compatibility.
+
+**Acceptance criteria:**
+
+- Publish only the exact bf0050b3dfed874136247df36cd0b5d86934c8cc proposal, package 38dbe5b05c9fd7b6457851a1b28a7c0d0192d18a2d64f2dbc76723bb8260bce0, with the canonical proposal's enumerated approval metadata substitutions and derived hashes. Obtain independent control/experience checkpoint before downstream presentation rebinding.
+- Preserve exact authenticated original1.5 catalog/page-contract snapshots and pins, byte-identical generated semantic TS/Python payloads and schemas, profile IDs/versions, persisted selection/accepted intent/stage/support-return history; no migration, relabeling or runtime Git requirement.
+- Bind exact approved presentation-to-semantic witness; only root reference_id/version mapping is permitted. Reject missing/stale/substituted/unapproved witness, duplicate/unknown fields, reordered arrays or changed semantics.
+- Freshly render all 66 reference observations with unchanged pinned engine/fonts/viewports/tolerances, explain every change, preserve all previous baselines/failures; no same-ID ratification or copied observations.
+- Rebind only enumerated presentation consumers; retain token transport1.4 and semantic1.5 identities, original A08 task/history and adopted-only effective-reference overlay.
+
+**Verification:**
+
+- Reference generator/hash/link/route and new-ID visual controls
+- Semantic source/generator identity and adversarial witness fixtures
+- Real disposable persisted1.5 project reopen/history/support-return
+- Independent control checkpoint, affected presentation build/conformance and task review
+
+#### Review history — W1.A09.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W1.A09.T02 - Restore exact project contracts and explicit recovery
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A09.B00`, `W1.A09.T01`
+
+**Objective:** Repair missing native catalog/lineage routes, multiline objective validation and authentic readiness-aware catalog recovery.
+
+**Acceptance criteria:**
+
+- Exact generated GET /workflow-profiles/catalog and POST /projects/provenance/lineage reach compiled native and actual disposable Core; unknown/substituted method/path/query/body/header requests remain denied.
+- Correct the generator and regenerate TypeScript narrative validation to match Python/native LF/CR/TAB while retaining 1-4000 bounds, nonblank and disallowed-control/NUL rejection; preserve semantic catalog/schema literals.
+- Preserve real native asynchronous startup/unlock behavior. Distinguish Core starting/not-ready, catalog loading/failure, field validation and failed project operations; retain valid form input, safe bounded help and authentic catalog/readiness.
+- Explicit read-only catalog retry or bounded Core startup retry never automatically replays create/open/archive/delete or creates duplicates on ambiguous outcomes; no fake catalog or raw exception disclosure.
+- Generated request -> current-source compiled native -> actual Core proves catalog, multiline create, close/reopen, retained workflow and lineage; browser invoke stubs do not satisfy this boundary.
+
+**Verification:**
+
+- Generated-client and native allowlist negative matrix
+- Renderer readiness/error/retry and mutation-count tests
+- Real Windows/native/disposable Core integration and lock/restart replay
+- Affected Rust/TS/Python type/lint/build and independent contract/security review
+
+#### Review history — W1.A09.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W1.A09.T03 - Choose project folders through one protected native dialog
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A09.B00`, `W1.A09.T02`
+
+**Objective:** Replace all implemented W1 directory-entry fields with shared native selection and stable read-only destinations.
+
+**Acceptance criteria:**
+
+- Inventory every implemented W1 directory input, replacing absolute parent/open and child-directory-name typing with shared accessible DirectoryPickerField; no editable fallback, webkitdirectory, enumeration or imitation tree. Read-only diagnostics stay outputs.
+- Derive unchanged-Core-compatible 1-64 ASCII child name from friendly name, safe reserved-device prefix and stable short-ID fallback; preserve Unicode/spaces in selected parent, full destination preview and request/retry identity. No overwrite or silent numbering. Explicit Open follows selection.
+- Use one typed create-parent/open-project native command with optional validated prior location, main-window-owned pinned Windows COM/Shell dialog and selected/cancelled/unavailable/failed outcomes; only selected carries path. Reject invalid fields/purpose/nonfilesystem/unsafe selection without wider renderer privileges.
+- Selection/cancel performs no project operation; cancellation/failure preserve prior value/form and focus. Prevent overlapping dialogs/duplicate submission; discard unmounted/late results.
+- Do not hold Core mutex while waiting. Revalidate application-lock generation before/after; lock/close dismisses dialog and clears/discards protected data. Guard cleanup covers cancel/error/thread/lock/close/success; fresh unlock never restores paths/form/project.
+- Real Windows selection/cancel, keyboard/focus ownership and lock/close while pending pass. Core path/package/reparse/install exclusion, exclusive lock, atomic staging/recovery and no-overwrite protections remain effective.
+- Shared token-driven field/button/notice/location styling passes both themes, long paths, reduced motion and real product 720x450 effective layout without horizontal page overflow.
+
+**Verification:**
+
+- Component/renderer field inventory and interaction tests
+- Slug Unicode/reserved/long-name collision/retry fixtures
+- Real Windows dialog/keyboard/lock/close proof plus native lifetime/race negatives
+- Disposable Core path/access/package/redirect/lock/no-overwrite recovery
+- Real React build/geometry/accessibility and independent security/experience review
+
+#### Review history — W1.A09.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A09.B00`, `W1.A09.T03`
+
+**Objective:** Qualify accumulated boundaries and prepare exact exit/return evidence without self-approving adoption.
+
+**Acceptance criteria:**
+
+- F01 and UX02-UX06 have commit-bound closure evidence; F02/UX01 remain explicitly owned by existing A08.T02 after return and are not falsely closed.
+- Run accumulated affected unit/contract/renderer/native/Core union plus clean Windows build/packaging smoke, security, failure, cancel, restart/recovery, accessibility and performance paths; static reference captures are distinct from product/native evidence.
+- Prepare complete independent slice review bundle establishing exact authority, semantic compatibility and Windows/Core proof; no weakened tests, widened permissions, historical rewrite or second token system.
+- Prepare amendment-exit evidence and exact correctionReturn checkpoint for subsequent independent exit review/adoption; this task does not self-approve its reviews, adopt itself or activate the parent.
+- Return procedure preserves frozen A08 history and PAUSED parent; no ordinary W1 resume or CAP-07 recovery before A08 adoption. Full W1 qualification and human G1 remain required.
+
+**Verification:**
+
+- Accumulated cross-boundary suite and clean build/packaging smoke
+- Independent slice/adversarial review and exit-evidence preparation
+- Real persistence/authority return binding through reviewed existing adapters
+- Negative source/history/scope and protected-state checks; full matrix at W1 exit
+
+#### Review history — W1.A09.T04
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 # Capability contributions, slices, and tasks

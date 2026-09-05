@@ -27198,7 +27198,7 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A09.json",
       "approval_sha256": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
       "approval_status": "APPROVED",
-      "lifecycle_status": "APPROVED",
+      "lifecycle_status": "MATERIALIZED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
@@ -27772,7 +27772,60 @@
         "referenceApprovalStatus": "proposed"
       },
       "scope_addenda": [],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W1.A09.T01",
+          "title": "Publish approved reference and preserve semantic1.5",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W1.A09.T02",
+          "title": "Restore exact project contracts and explicit recovery",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W1.A09.T03",
+          "title": "Choose project folders through one protected native dialog",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W1.A09.T04",
+          "title": "Qualify correction and prepare authenticated return",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W1.A09",
         "mode": "latest-completion-only",

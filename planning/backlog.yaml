@@ -39696,7 +39696,7 @@ wave_amendments:
     sha256: 08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c
     introduction_commit: fcf627b4c83af81d0c3472526477bc7aa68d819c
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -39713,6 +39713,11 @@ wave_amendments:
         ordinary W1 resume remains after A08 adoption. This approval is not implementation completion, independent task/slice/exit
         review, G1/W1 passing, W2 authorization, remote/destructive action, spend or broader security authority. The timestamp
         records this exact binding of the standing owner authorization.'
+    - id: E02
+      status: MATERIALIZED
+      actor: codex
+      at: '2026-09-05T11:48:05+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W1.A09.B00
     status: APPROVED
@@ -39735,7 +39740,188 @@ wave_amendments:
         checks pass; no findings. This approves only B00, not product/reference activation, task/slice/exit completion or
         G1.'
   campaign: null
-  tasks: []
+  tasks:
+  - id: W1.A09.T01
+    amendment_id: W1.A09
+    title: Publish approved reference and preserve semantic1.5
+    objective: Publish the exact preapproved 1.6 reference with truthful baseline and independently checked presentation/semantic
+      compatibility.
+    dependencies:
+    - W1.A09.B00
+    acceptance_criteria:
+    - Publish only the exact bf0050b3dfed874136247df36cd0b5d86934c8cc proposal, package 38dbe5b05c9fd7b6457851a1b28a7c0d0192d18a2d64f2dbc76723bb8260bce0,
+      with the canonical proposal's enumerated approval metadata substitutions and derived hashes. Obtain independent control/experience
+      checkpoint before downstream presentation rebinding.
+    - Preserve exact authenticated original1.5 catalog/page-contract snapshots and pins, byte-identical generated semantic
+      TS/Python payloads and schemas, profile IDs/versions, persisted selection/accepted intent/stage/support-return history;
+      no migration, relabeling or runtime Git requirement.
+    - Bind exact approved presentation-to-semantic witness; only root reference_id/version mapping is permitted. Reject missing/stale/substituted/unapproved
+      witness, duplicate/unknown fields, reordered arrays or changed semantics.
+    - Freshly render all 66 reference observations with unchanged pinned engine/fonts/viewports/tolerances, explain every
+      change, preserve all previous baselines/failures; no same-ID ratification or copied observations.
+    - Rebind only enumerated presentation consumers; retain token transport1.4 and semantic1.5 identities, original A08 task/history
+      and adopted-only effective-reference overlay.
+    verification_commands:
+    - Reference generator/hash/link/route and new-ID visual controls
+    - Semantic source/generator identity and adversarial witness fixtures
+    - Real disposable persisted1.5 project reopen/history/support-return
+    - Independent control checkpoint, affected presentation build/conformance and task review
+    packet_task_sha256: 748effda0ce6b1ad1f3c6a1a6691584d21f7125204f5cfc7070093befe7e6552
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A09.T02
+    amendment_id: W1.A09
+    title: Restore exact project contracts and explicit recovery
+    objective: Repair missing native catalog/lineage routes, multiline objective validation and authentic readiness-aware
+      catalog recovery.
+    dependencies:
+    - W1.A09.B00
+    - W1.A09.T01
+    acceptance_criteria:
+    - Exact generated GET /workflow-profiles/catalog and POST /projects/provenance/lineage reach compiled native and actual
+      disposable Core; unknown/substituted method/path/query/body/header requests remain denied.
+    - Correct the generator and regenerate TypeScript narrative validation to match Python/native LF/CR/TAB while retaining
+      1-4000 bounds, nonblank and disallowed-control/NUL rejection; preserve semantic catalog/schema literals.
+    - Preserve real native asynchronous startup/unlock behavior. Distinguish Core starting/not-ready, catalog loading/failure,
+      field validation and failed project operations; retain valid form input, safe bounded help and authentic catalog/readiness.
+    - Explicit read-only catalog retry or bounded Core startup retry never automatically replays create/open/archive/delete
+      or creates duplicates on ambiguous outcomes; no fake catalog or raw exception disclosure.
+    - Generated request -> current-source compiled native -> actual Core proves catalog, multiline create, close/reopen, retained
+      workflow and lineage; browser invoke stubs do not satisfy this boundary.
+    verification_commands:
+    - Generated-client and native allowlist negative matrix
+    - Renderer readiness/error/retry and mutation-count tests
+    - Real Windows/native/disposable Core integration and lock/restart replay
+    - Affected Rust/TS/Python type/lint/build and independent contract/security review
+    packet_task_sha256: a1596d263e86b30101e25c81876693113073724d6e3df086bda319cf0c95debc
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A09.T03
+    amendment_id: W1.A09
+    title: Choose project folders through one protected native dialog
+    objective: Replace all implemented W1 directory-entry fields with shared native selection and stable read-only destinations.
+    dependencies:
+    - W1.A09.B00
+    - W1.A09.T02
+    acceptance_criteria:
+    - Inventory every implemented W1 directory input, replacing absolute parent/open and child-directory-name typing with
+      shared accessible DirectoryPickerField; no editable fallback, webkitdirectory, enumeration or imitation tree. Read-only
+      diagnostics stay outputs.
+    - Derive unchanged-Core-compatible 1-64 ASCII child name from friendly name, safe reserved-device prefix and stable short-ID
+      fallback; preserve Unicode/spaces in selected parent, full destination preview and request/retry identity. No overwrite
+      or silent numbering. Explicit Open follows selection.
+    - Use one typed create-parent/open-project native command with optional validated prior location, main-window-owned pinned
+      Windows COM/Shell dialog and selected/cancelled/unavailable/failed outcomes; only selected carries path. Reject invalid
+      fields/purpose/nonfilesystem/unsafe selection without wider renderer privileges.
+    - Selection/cancel performs no project operation; cancellation/failure preserve prior value/form and focus. Prevent overlapping
+      dialogs/duplicate submission; discard unmounted/late results.
+    - Do not hold Core mutex while waiting. Revalidate application-lock generation before/after; lock/close dismisses dialog
+      and clears/discards protected data. Guard cleanup covers cancel/error/thread/lock/close/success; fresh unlock never
+      restores paths/form/project.
+    - Real Windows selection/cancel, keyboard/focus ownership and lock/close while pending pass. Core path/package/reparse/install
+      exclusion, exclusive lock, atomic staging/recovery and no-overwrite protections remain effective.
+    - Shared token-driven field/button/notice/location styling passes both themes, long paths, reduced motion and real product
+      720x450 effective layout without horizontal page overflow.
+    verification_commands:
+    - Component/renderer field inventory and interaction tests
+    - Slug Unicode/reserved/long-name collision/retry fixtures
+    - Real Windows dialog/keyboard/lock/close proof plus native lifetime/race negatives
+    - Disposable Core path/access/package/redirect/lock/no-overwrite recovery
+    - Real React build/geometry/accessibility and independent security/experience review
+    packet_task_sha256: a0870e1b9af87a5bfc2501cd79089229876b98a6f7f921816be5029a746d404a
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A09.T04
+    amendment_id: W1.A09
+    title: Qualify correction and prepare authenticated return
+    objective: Qualify accumulated boundaries and prepare exact exit/return evidence without self-approving adoption.
+    dependencies:
+    - W1.A09.B00
+    - W1.A09.T03
+    acceptance_criteria:
+    - F01 and UX02-UX06 have commit-bound closure evidence; F02/UX01 remain explicitly owned by existing A08.T02 after return
+      and are not falsely closed.
+    - Run accumulated affected unit/contract/renderer/native/Core union plus clean Windows build/packaging smoke, security,
+      failure, cancel, restart/recovery, accessibility and performance paths; static reference captures are distinct from
+      product/native evidence.
+    - Prepare complete independent slice review bundle establishing exact authority, semantic compatibility and Windows/Core
+      proof; no weakened tests, widened permissions, historical rewrite or second token system.
+    - Prepare amendment-exit evidence and exact correctionReturn checkpoint for subsequent independent exit review/adoption;
+      this task does not self-approve its reviews, adopt itself or activate the parent.
+    - Return procedure preserves frozen A08 history and PAUSED parent; no ordinary W1 resume or CAP-07 recovery before A08
+      adoption. Full W1 qualification and human G1 remain required.
+    verification_commands:
+    - Accumulated cross-boundary suite and clean build/packaging smoke
+    - Independent slice/adversarial review and exit-evidence preparation
+    - Real persistence/authority return binding through reviewed existing adapters
+    - Negative source/history/scope and protected-state checks; full matrix at W1 exit
+    packet_task_sha256: ecc830ede218ff101b55d9224c14f6906ba3744a3e155e55fd7e33fe0e7853d0
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null
