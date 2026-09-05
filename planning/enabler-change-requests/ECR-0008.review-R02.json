@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0008",
+  "proposedAmendmentId": "W1.A09",
+  "targetWave": "W1",
+  "attemptId": "R02",
+  "candidateCommit": "2160cc9917282d80848189dc9669fe3827979246",
+  "packetSha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "reviewedAt": "2026-09-05T03:13:55Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "summary": "Both R01 findings are closed at the exact descendant candidate. The shared keyboard-focus correction and supported amendment-authority publication mapping are narrow, independently replayed and within the owner's existing preapproval. No new acceptance-bound finding remains. After this ledger is committed as the required ledger-only child, the existing authorization may be recorded against this matching packet/reference through the supported controls; no further human correction approval is required.",
+  "independence": {
+    "proposalOrImplementationAuthoredByReviewer": false,
+    "priorParticipation": "Independent read-only preflight and R01 review; the reviewer supplied findings but did not author their implementation, reference or evidence remedies.",
+    "persistentWrites": ["planning/enabler-change-requests/ECR-0008.review-R02.json"],
+    "replayIsolation": "Focused browser replay used a fresh temporary directory beneath artifacts/tmp, verified to remain there, and cleaned up only its own generated scratch captures. Existing evidence, helpers and captures were not overwritten."
+  },
+  "predecessorReview": {
+    "path": "planning/enabler-change-requests/ECR-0008.review-R01.json",
+    "introductionCommit": "7740f71151549ada996671471c8da998b0c9b071",
+    "sha256": "48a4c167e6ccf8cee4f2bd2a6477184f523b9e2c0f1687fbe88976b46d4e260d",
+    "result": "changes-requested",
+    "preservedUnchanged": true
+  },
+  "bindings": {
+    "canonicalProposal": {
+      "path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+      "sha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560"
+    },
+    "humanReview": {
+      "path": "planning/enabler-change-requests/ECR-0008.execution-review-01.html",
+      "sha256": "a64a35e176f4edb721db0e9c515cb760aab6d7f7c06bc2617b82618821817a9e"
+    },
+    "referenceCandidateCommit": "bf0050b3dfed874136247df36cd0b5d86934c8cc",
+    "referencePackageSha256": "38dbe5b05c9fd7b6457851a1b28a7c0d0192d18a2d64f2dbc76723bb8260bce0",
+    "referenceEvidence": {
+      "path": "planning/enabler-change-requests/ECR-0008.reference-evidence-02.json",
+      "sha256": "f80f94bf8399f31aa93c8a93af49ea76266b93ac14c62306e42a6345538cad05"
+    },
+    "authentication": "HEAD was the exact candidate. All 59 packet/reference file blobs matched it; packet and evidence SHA-256 values matched; all ten retained PNG hashes matched. Independent integrity replay reproduced the package hash, 55 governed files and generator output. Candidate sources and helper remained clean during replay."
+  },
+  "reviewScope": {
+    "method": "Replay both R01 findings plus the incremental shared-focus, disabled/hover, publication-metadata and evidence-binding risks. The accepted portions of R01's scope/authority/semantic/native-design assessment remain applicable; no full product audit was restarted.",
+    "incrementalChanges": "One shared .btn:focus-visible declaration using the unchanged focus token; corresponding guide language; explicitly pending amendment-authority metadata; exact canonical activation mapping/sequence; derived hashes and review projections; append-only helper, evidence and captures.",
+    "historyAndAuthorityExclusions": "The R01 ledger, helper01, evidence01 and previews01 are unchanged. Active reference/baseline, product/packages/services and live backlog have no delta from the R01 retention boundary. No additional task, outcome, permission, controller, renderer, token, tolerance or release authority was added."
+  },
+  "checks": [
+    {
+      "id": "IR-R02-focus-and-metadata",
+      "result": "PASS",
+      "method": "Imported the exact artifacts/evidence/ECR-0008.reference-preparation-check-02.py module, redirected only prep.OUT to a fresh isolated temporary directory, and called focus_replay() and metadata_replay(). The original helper main/report destination was not invoked or overwritten.",
+      "positivePageThemeCases": 6,
+      "negativeOldCssCases": 2,
+      "scope": "Actual Tab traversal and focus-token equality on Projects, New Project and style-guide folder controls plus their two recovery buttons in both themes; hover retains the ring; disabled Open retains no focus shadow; exact R01 CSS fails in both themes. Synthetic supported metadata shape passes and the rejected R01 mapping still fails."
+    },
+    {
+      "id": "IR-R02-reference-integrity",
+      "result": "PASS_WITH_EXPECTED_INERT_GATES",
+      "method": "Called ui_reference_check.validate on the exact inert package and asserted the expected package hash and exact error list.",
+      "generatorReproducible": true,
+      "errors": ["reference is not approved: status='proposed'", "manifest is not approved: status='proposed'"],
+      "interpretation": "These two status errors correctly preserve inert preparation; they are not missing approval evidence that the synthetic fixture can satisfy. All other integrity checks passed."
+    },
+    {
+      "id": "IR-R02-packet-authority",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0008",
+      "result": "PASS", "exitCode": 0,
+      "observation": "Structurally and historically valid. The inherited printed canonical link still names the retained ECR-0008.md; the packet role and human review correctly bind ECR-0008.execution-01.md."
+    },
+    {
+      "id": "IR-R02-bound-scope-history",
+      "result": "PASS",
+      "observation": "Inspected the exact R01-retention-to-candidate diff; authenticated59 source blobs,10 retained image hashes and the unchanged R01 hash. Explicit-path Git checks confirm prior helper/evidence/captures and active reference/product/backlog are unchanged."
+    },
+    {
+      "id": "IR-R02-visual-focus",
+      "result": "PASS",
+      "inspected": [
+        "planning/enabler-change-requests/ECR-0008.reference-previews-02/projects-keyboard-focus-light.png",
+        "planning/enabler-change-requests/ECR-0008.reference-previews-02/projects-keyboard-focus-dark.png"
+      ],
+      "observation": "Both actual-keyboard-plus-hover captures visibly show the shared focus ring around Choose folder. Disabled Open remains visually distinct. These are reference observations, not native-dialog or product qualification."
+    },
+    {
+      "id": "IR-R02-whitespace",
+      "command": "git diff --check 7740f711 2160cc9917282d80848189dc9669fe3827979246",
+      "result": "PASS", "exitCode": 0
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "ECR-0008-R01-F01",
+      "disposition": "closed",
+      "closedAtCommit": "2160cc9917282d80848189dc9669fe3827979246",
+      "basis": "The shared .btn:focus-visible rule follows the button variants and wins the intended cascade without new tokens or page-specific styling. Independent actual-Tab replay on all three affected reference pages and their recovery actions produces exact browser-resolved focus-token shadows in both themes, including hover, while disabled state is retained. Replacing only the application stylesheet with exact rejected R01 CSS reproduces the original failure in both themes; the assertion is not merely checking focusability or a nonempty shadow.",
+      "lightFocusShadow": "rgba(37, 99, 235, 0.28) 0px 0px 0px 3px",
+      "darkFocusShadow": "rgba(91, 145, 255, 0.36) 0px 0px 0px 3px",
+      "evidence": ["IR-R02-focus-and-metadata", "IR-R02-visual-focus", "planning/enabler-change-requests/ECR-0008.reference-evidence-02.json"]
+    },
+    {
+      "findingId": "ECR-0008-R01-F02",
+      "disposition": "closed",
+      "closedAtCommit": "2160cc9917282d80848189dc9669fe3827979246",
+      "basis": "The canonical proposal explicitly maps approval_kind=human, approver/time from the actual A09 record, the exact five amendment-authority fields and approved manifest status with derived hashes; it excludes proposal_commit and preserves non-metadata scope/content. It selects the existing direct new-ID amendment-authority route with authority introduction before reference approval before baseline, not the wave/slice helper. The inert placeholder remains proposed with null human/time/hash/introduction values. Independent synthetic shape replay accepts the supported mapping and rejects the old mapping; actual immutable authority, hashes and Git ancestry remain explicitly required at T01 rather than claimed complete now.",
+      "evidence": ["IR-R02-focus-and-metadata", "IR-R02-packet-authority", "planning/enabler-change-requests/ECR-0008.execution-01.md"]
+    }
+  ],
+  "priorFindingsReplayed": ["ECR-0008-R01-F01", "ECR-0008-R01-F02"],
+  "evidenceTruth": {
+    "assessment": "The frozen evidence's six keyboard cases, two exact old-CSS negatives and synthetic metadata distinction match independent replay. The66 proposed renders and18 layout cases are retained producer evidence, not represented as independently rerendered in this narrow remediation review. Root's preparatory failures and original whitespace observation remain disclosed and unchanged.",
+    "reviewerDiagnosticFailure": "One initial inline Python integrity assertion did not execute because of PowerShell quoting. It was rerun successfully via stdin; this was a reviewer command-format error, not a candidate failure or hidden qualification pass."
+  },
+  "readiness": {
+    "exactPacketReviewAccepted": true,
+    "humanPreapprovalRecognized": true,
+    "additionalHumanCorrectionApprovalRequired": false,
+    "recordingCondition": "Commit this exact ledger as the sole change in a child of the reviewed candidate, then bind the matching candidate/packet/reference and actual owner preapproval in the immutable approval record through planctl. The accepted proposed reference is not active merely because this review is approved.",
+    "executionCondition": "Supported approval validation, independent bootstrap review, materialization, activation and task claims remain required before product work. Independent task/slice/exit evidence and exact correctionReturn precede return to PAUSED A08.",
+    "w1ApprovalAvailable": false,
+    "mainIntegration": "Still deferred behind prior A08 branch gates; this review does not authorize merging unmet ancestry."
+  },
+  "retainedOpenProductFindings": ["W1.A08.T02-preflight-F01", "W1.A08.T02-preflight-F02", "UX01", "UX02", "UX03", "UX04", "UX05", "UX06"],
+  "authorityLimits": {
+    "referenceActivated": false,
+    "immutableHumanApprovalRecordWritten": false,
+    "productTaskOrAmendmentApprovedComplete": false,
+    "liveWorkflowTransitionPerformed": false,
+    "w1OrG1Approval": false,
+    "remoteOrDestructiveAuthority": false
+  },
+  "safety": "The protected witness was never accessed, hashed or changed. No researcher data, native dialog, project action, credential, live backlog, active reference, product source or external system was touched. No commit, merge or push was performed. Existing evidence remains immutable; the sole new persistent artifact is this review."
+}
