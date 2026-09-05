@@ -27155,7 +27155,7 @@
         {
           "task_id": "W1.A08.T02",
           "title": "Qualify live-product styling conformance",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

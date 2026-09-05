@@ -39648,14 +39648,17 @@ wave_amendments:
     - Obtain independent commit-bound task, slice, and amendment-exit dispositions with all blocking findings closed; run
       the complete affected/full repository and Windows-x64 matrix at W1 exit.
     packet_task_sha256: 673da8285a6b4d1d5a05664fd6d70708c84e6622af0e34dee5e8c21b870a7031
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-09-05T00:46:34+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 46e88d171795b76a2f1588d69756f4184c01a89b
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-05T00:49:30+00:00'
+      expires_at: '2026-09-05T08:49:30+00:00'
+    started_at: '2026-09-05T00:49:30+00:00'
+    updated_at: '2026-09-05T00:49:30+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
