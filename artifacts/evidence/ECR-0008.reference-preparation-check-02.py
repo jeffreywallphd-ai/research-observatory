@@ -38,7 +38,7 @@ def prior_blob(relative: str) -> str:
 
 def keyboard_focus(page, button) -> dict:
     before = button.evaluate("node => getComputedStyle(node).boxShadow")
-    for presses in range(1, 301):
+    for _presses in range(1, 301):
         page.keyboard.press("Tab")
         if button.evaluate("node => node === document.activeElement"):
             break
@@ -57,7 +57,7 @@ def keyboard_focus(page, button) -> dict:
         outline:getComputedStyle(node).outlineStyle,
         label:node.textContent.trim()};
     }""")
-    state.update(tabPresses=presses, unfocusedShadow=before)
+    state.update(tabPresses=_presses, unfocusedShadow=before)
     assert state["focusVisible"], "Actual keyboard modality lost"
     assert state["shadow"] != before, f"No visible keyboard change: {state}"
     assert state["shadow"] == state["tokenShadow"] != "none", f"Focus token overridden: {state}"
@@ -69,7 +69,7 @@ def keyboard_focus(page, button) -> dict:
 
 
 def focus_replay() -> dict:
-    config = json.loads((ROOT / "verification/extensions/desktop-ui.json").read_text())
+    config = json.loads((ROOT / "verification/extensions/desktop-ui.json").read_text(encoding="utf-8"))
     integrity = prep.integrity.validate(prep.CANDIDATE)
     config.update(
         mode="inert-proposal-preview",
@@ -80,9 +80,9 @@ def focus_replay() -> dict:
         key: value.replace("design/ui-reference", PREFIX.rstrip("/"))
         for key, value in config["normativeSources"].items()
     }
-    site = json.loads((prep.CANDIDATE / "SITE_MANIFEST.json").read_text())
-    workflows = json.loads((prep.CANDIDATE / "WORKFLOW_CATALOG.json").read_text())["workflows"]
-    contracts = json.loads((prep.CANDIDATE / "CAPABILITY_COVERAGE.json").read_text())["page_contracts"]
+    site = json.loads((prep.CANDIDATE / "SITE_MANIFEST.json").read_text(encoding="utf-8"))
+    workflows = json.loads((prep.CANDIDATE / "WORKFLOW_CATALOG.json").read_text(encoding="utf-8"))["workflows"]
+    contracts = json.loads((prep.CANDIDATE / "CAPABILITY_COVERAGE.json").read_text(encoding="utf-8"))["page_contracts"]
     context = prep.ui.Context(
         ROOT,
         config,
@@ -103,6 +103,13 @@ def focus_replay() -> dict:
                     prep.ui.set_page(page, context, name, theme)
                     button = page.locator('[role="group"][aria-labelledby]:has(.directory-location) button')
                     chosen = keyboard_focus(page, button)
+                    capture = prep.OUT / f"{Path(name).stem}-keyboard-focus-{theme}.png"
+                    payload = page.screenshot(path=str(capture), animations="disabled", caret="hide", scale="device")
+                    chosen["capture"] = {
+                        "path": capture.relative_to(ROOT).as_posix(),
+                        "sha256": prep.hashlib.sha256(payload).hexdigest(),
+                        "state": "actual-keyboard-focus-with-hover",
+                    }
                     summaries = page.locator("details > summary").filter(has_text="separate reference examples")
                     for summary in summaries.all():
                         summary.focus()
@@ -165,7 +172,7 @@ def focus_replay() -> dict:
 def metadata_replay() -> dict:
     # Clearly synthetic shape-only fixture. Actual authority ancestry, hashes and
     # owner authorization must be authenticated at T01; no fixture is persisted.
-    proposed = yaml.safe_load((prep.CANDIDATE / "APPROVAL.yaml").read_text())
+    proposed = yaml.safe_load((prep.CANDIDATE / "APPROVAL.yaml").read_text(encoding="utf-8"))
     mapped = dict(
         proposed,
         status="approved",
