@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f8949fa85b5e390b3eb2eb64556045b19bd96d52cb72489ae0b9881ef62c8cf9
+source_sha256: 1064069098cb73ddc62a42d45b09ffb70b8191f5181dbd8b9ad8932347e5c2c9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -47,7 +47,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
-| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ACTIVE` |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` |
 
 ## Waves
 
@@ -1746,13 +1746,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A08.json` (`9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `PAUSED` / `APPROVED` / `PAUSED` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-04T16:33:03.7400050-04:00` by repository-owner: The repository owner approved ECR-0007/W1.A08 in direct response to the exact-commit approval request for 07b21b270dfb967ad3fd7e35217978c0860c8116. Authorize only bootstrap W1.A08.B00, contribution W1.A08.S01, and tasks W1.A08.T01 and W1.A08.T02 as hash-bound in the packet. Reaffirm the already approved RO-UI-ACADEMIC-MINIMAL-1.5 reference unchanged and authorize bounded production styling alignment plus live-product conformance. Keep W1 paused and CAP-07.S01.T02 blocked until W1.A08 adoption and explicit ordinary resume and task recovery.
 - `E02` `MATERIALIZED` at `2026-09-04T20:50:01+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-09-04T20:53:50+00:00` by codex: Activated the bounded amendment campaign.
+- `E04` `PAUSED` at `2026-09-05T01:34:16+00:00` by codex: Preparing the user-requested inert correction packet for independently reproduced stale reference baseline. T02 remains BLOCKED; release the amendment lease without adopting A08, changing its authority, or restoring ordinary W1 scope.
 
 ### Amendment-exit review and adoption — W1.A08
 

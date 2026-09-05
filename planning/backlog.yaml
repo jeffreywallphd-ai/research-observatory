@@ -34042,7 +34042,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: W1.A08
+  active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -39125,7 +39125,7 @@ wave_amendments:
     sha256: 9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960
     introduction_commit: 979486506a62b5dbf1b7a0af711079bdaa34cd44
   lifecycle:
-    status: ACTIVE
+    status: PAUSED
     history:
     - id: E01
       status: APPROVED
@@ -39146,6 +39146,13 @@ wave_amendments:
       actor: codex
       at: '2026-09-04T20:53:50+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E04
+      status: PAUSED
+      actor: codex
+      at: '2026-09-05T01:34:16+00:00'
+      rationale: Preparing the user-requested inert correction packet for independently reproduced stale reference baseline.
+        T02 remains BLOCKED; release the amendment lease without adopting A08, changing its authority, or restoring ordinary
+        W1 scope.
   bootstrap:
     id: W1.A08.B00
     status: APPROVED
@@ -39171,7 +39178,7 @@ wave_amendments:
         is active. ECR authority, 491-page site, backlog views, UI reference, focused tests, hashes, ancestry, and diff hygiene
         pass; no product, reference, architecture, schema, or release change.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -39180,12 +39187,11 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-04T20:53:50+00:00'
-    updated_at: '2026-09-04T20:53:50+00:00'
-    pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-04T20:53:50+00:00'
-      expires_at: '2026-09-05T20:53:50+00:00'
+    updated_at: '2026-09-05T01:34:16+00:00'
+    pause_reason: Preparing the user-requested inert correction packet for independently reproduced stale reference baseline.
+      T02 remains BLOCKED; release the amendment lease without adopting A08, changing its authority, or restoring ordinary
+      W1 scope.
+    lease: null
   tasks:
   - id: W1.A08.T01
     amendment_id: W1.A08
