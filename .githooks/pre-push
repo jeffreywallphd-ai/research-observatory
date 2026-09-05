@@ -1,0 +1,3 @@
+#!/bin/sh
+# Check destination names and the complete union of proposed histories once.
+exec python tools/publication_privacy.py --pre-push
