@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "taskId": "W1.A09.T02",
+  "testedCommit": "00797f5673e87dcd31bf552540e7107213acbbc4",
+  "priorFullReport": "artifacts/evidence/W1.A09.T02.verification-02.json",
+  "priorTestedCommit": "3c020e36c67249712621f07036d921fe0ebafedf",
+  "startedAt": "2026-09-05T14:11:03.217911+00:00",
+  "completedAt": "2026-09-05T14:11:08.208562+00:00",
+  "changedPriorInputs": [
+    "tests/desktop/test_desktop_app_check.py"
+  ],
+  "newTestSourceSha256": "a8b2223ec6ba498aa79ef78c31701cd7be9707e1000ad144fb7298b2f22a2a88",
+  "allOtherSourceInputsUnchanged": true,
+  "exactIncrementalGitDiff": [
+    "tests/desktop/test_desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": [
+        "C:\\workspace\\research-observatory\\.venv\\Scripts\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/desktop",
+        "-p",
+        "test_desktop_app_check.py",
+        "-k",
+        "ProjectRecoveryInteractionTests",
+        "-v"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "test_readiness_catalog_retry_and_late_mutation_are_separate (test_desktop_app_check.ProjectRecoveryInteractionTests.test_readiness_catalog_retry_and_late_mutation_are_separate) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 3.814s\n\nOK\n"
+    },
+    {
+      "command": [
+        "C:\\workspace\\research-observatory\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "tests/desktop/test_desktop_app_check.py"
+      ],
+      "exitCode": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    }
+  ],
+  "ok": true
+}
