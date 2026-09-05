@@ -1,0 +1,56 @@
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.6
+version: '1.6'
+status: proposed
+approval_kind: pending-human-review
+approved_by: null
+approved_at: null
+approval_basis: Inert ECR-0008 proposal only. Exact candidate and correction packet
+  require independent review and explicit human approval before activation.
+  Earlier preparation approval does not approve these bytes. No application,
+  task, amendment, Wave, release, or remote-push authority is granted.
+authority:
+  wave_id: W1
+  proposed_amendment_id: W1.A09
+  approved_wave_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
+  proposal_commit: null
+  preparation_addendum: planning/enabler-change-requests/ECR-0008.ux-addendum-01.md
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.5
+scope:
+  normative:
+  - design tokens
+  - semantic evidence, result, manuscript, review, and revision-state meanings
+  - fourteen use-case workflow profiles
+  - project-creation selection
+  - shared native directory selection and read-only destination preview
+  - protected cancellation, catalog readiness and explicit recovery
+  - adaptive ordered navigation
+  - workflow context and previous/next behavior
+  - route and page inventory
+  - application-wide Security & sign-in governance form and provider states
+  - dependency staleness explanation and persistent deferred state
+  - grouped controlled-recalculation impact preview
+  - current privacy, rights, and egress policy visibility
+  - immutable recalculation comparison and human-gated restoration
+  - required page regions
+  - research-production safeguards
+  - cross-platform desktop parity
+  - light/dark parity
+  - keyboard, focus, responsive, density, and accessibility behavior
+  illustrative:
+  - mock names
+  - studies
+  - sources
+  - providers
+  - counts
+  - dates
+  - prose
+  - chart values
+  - nonfunctional actions
+implementation_rule: Any intentional user-facing change requires a proposed reference
+  update, validation, and explicit human approval before application implementation.
+  Restoring a defect to this baseline may cite the approved reference.
+deferred_surfaces:
+- university administrator console until W10
+- tenant administration until W11
+- billing until W11
+- managed-cloud operations console until W11
