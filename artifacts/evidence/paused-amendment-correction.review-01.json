@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-independent-review",
+  "reviewId": "paused-amendment-correction.review-01",
+  "reviewedCommit": "c6cff6f3c99beb23e0adc3890941f2e8ef8b7ce3",
+  "predecessorCommit": "07473e15a6212995fa48ece9909f0d51be7ebc26",
+  "reviewedAt": "2026-09-05T02:35:56Z",
+  "reviewer": "agent:t01-r02-independent-reviewer",
+  "independence": {
+    "implementer": "agent:root",
+    "implementationAuthoredByReviewer": false,
+    "preflightParticipation": "Read-only adversarial preflight identified boundary risks; the reviewer did not author the maintenance implementation or tests.",
+    "reviewerWrites": ["artifacts/evidence/paused-amendment-correction.review-01.json"]
+  },
+  "disposition": "ACCEPTED",
+  "summary": "The bounded maintenance satisfies MA-01 through MA-06 at the exact reviewed commit. No blocking or nonblocking acceptance-bound defect was found. This is an independent maintenance disposition, not a taskctl transition, correction-packet approval, reference approval, or W1 exit decision.",
+  "evidence": {
+    "path": "artifacts/evidence/paused-amendment-correction.evidence-01.json",
+    "introductionCommit": "5f741d6eec8995e2654ca092ef26c2d9c580735f",
+    "gitBlob": "d728a9e559945ce1b09c256e186846bfcc3d3160",
+    "sha256": "aa2c8e12a1406621c10465c82f6701a1d51e30dfa876b78c72e25b4b0a928caf",
+    "authentication": "The evidence-only commit has the reviewed candidate as its sole parent and changes only this evidence file. The working-file SHA-256 and Git blob match the frozen evidence. All ten candidate file bindings were independently matched against the reviewed commit and current unchanged source.",
+    "truthAssessment": "The nine post-commit checks and six criterion mappings are consistent with the source and independent replay. Broader pre-commit regression runs are expressly contextual, not represented as exact-candidate process loads. Synthetic authority in isolated adapter persistence tests is disclosed; it is not asserted to be production approval. The evidence's PENDING review status remains truthful historical input and is not edited by this disposition."
+  },
+  "reviewedArtifacts": [
+    {"path": "artifacts/evidence/paused-amendment-correction.maintenance-01.md", "gitBlob": "75f6d12e2db977558f333dbfa171fde2804b721b", "sha256": "a4ca06fef325a03b0b17753cb6bf6116cdfb600b09e08ce8a62bd6176ed3dead"},
+    {"path": "docs/automation/governance-automation-simplification.md", "gitBlob": "1d61a4ae6c1554de281644799973195a0143b6d9", "sha256": "29e160162f36e199d880e18258c4c049624429ef2f5a9b701b2c67ea7751a0d1"},
+    {"path": "planning/backlog.schema.json", "gitBlob": "81588092472db0957d9a7d623850119192089e82", "sha256": "793c0f1186bba263460009a300b8f3c09c4e8b47e62982743a9551db8dfa208d"},
+    {"path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json", "gitBlob": "19b189a21b89ad07366d2c49e1a540e6c81c2e3c", "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c"},
+    {"path": "tests/foundation/test_governance_kernel.py", "gitBlob": "e4b84840708fdbcf96f33dc408525ae7905a6ac1", "sha256": "aa14da5719605f412dd28263138653fd81e7c996cb3f8c9e4bda8e80233f2170"},
+    {"path": "tests/foundation/test_planctl_amendments.py", "gitBlob": "5449277f9bdaaf691267ebe30b8228c9845d5c13", "sha256": "54bbeac3415033bd26cad710e1115075c9f26fb581c95cc54a97c02b6c166e56"},
+    {"path": "tests/foundation/test_taskctl_workflow.py", "gitBlob": "5b4bb302387b03a94201beef945df77022c988a3", "sha256": "ebb08cdff65dd53512ba00f6e08b38fc3c2361c1179103e3e10584e26eca441f"},
+    {"path": "tools/governance_kernel.py", "gitBlob": "b780a5c616ab473afd9efc1016c55c9aeb14a3bc", "sha256": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7"},
+    {"path": "tools/planctl.py", "gitBlob": "fb42cc6062215e91fbbb65234009d54467125cb0", "sha256": "ffe446154eefeb1d588f9374baa57658288adc057e7a64364efd3d97bbe65aec"},
+    {"path": "tools/taskctl.py", "gitBlob": "204344a4fb2c3fe472b35255ec713b98f8f3657f", "sha256": "40e5e014b343cde302d93d215150c269769c62e1edaebd371a31f1f7d4784d60"}
+  ],
+  "independentChecks": [
+    {
+      "id": "IR-kernel",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_governance_kernel -v",
+      "result": "PASS", "exitCode": 0, "tests": 11, "durationSeconds": 0.003
+    },
+    {
+      "id": "IR-git-schema-chain",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_planctl_amendments -k paused_correction -v",
+      "result": "PASS", "exitCode": 0, "tests": 4, "durationSeconds": 51.744
+    },
+    {
+      "id": "IR-workflow",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_taskctl_workflow -k paused_correction -v",
+      "result": "PASS", "exitCode": 0, "tests": 6, "durationSeconds": 95.706
+    },
+    {
+      "id": "IR-scope-and-bindings",
+      "result": "PASS",
+      "method": "Read the exact base-to-candidate ten-file diff; matched explicit-path SHA-256 and candidate Git blobs; checked those paths for uncommitted changes; authenticated evidence-only child ancestry and evidence hash/blob. No broad evidence traversal was used."
+    },
+    {
+      "id": "IR-candidate-whitespace",
+      "command": "git diff --check 07473e15a6212995fa48ece9909f0d51be7ebc26 c6cff6f3c99beb23e0adc3890941f2e8ef8b7ce3",
+      "result": "PASS", "exitCode": 0
+    }
+  ],
+  "criterionDisposition": [
+    {
+      "id": "MA-01", "result": "SATISFIED",
+      "basis": "The complete serialized parent, canonical approval reference, paused Git snapshot, approval introduction and ancestry are authenticated. The child's immutable packet relation is checked in bootstrap and later replay, including after adoption; its approved packet must descend from the snapshot. Real-Git negative fixtures reject forked state, substituted approval and non-quiescent historical state."
+    },
+    {
+      "id": "MA-02", "result": "SATISFIED",
+      "basis": "Pure roles and adapter validation preserve a sole hold owner: parent during pending bootstrap, child after materialization, still-paused parent after reviewed adoption. Frozen-parent changes fail complete-record validation, derived refresh skips the parent, activation is denied while frozen, and next-action selects the correction. The existing Wave-resume hold barrier is retained. Real command replay proves explicit parent activation only after return."
+    },
+    {
+      "id": "MA-03", "result": "SATISFIED",
+      "basis": "Correction metadata is append-only and packet-bound. Historical snapshot replay protects bootstrap, completed tasks and prior lifecycle/task/exit review prefixes after return. Missing/wrong return relations and repeat adoption are denied. The old v4 schema is unchanged; the extension has a distinct v4.1 identity. Legacy projection and older-adapter rejection are exercised without fabricating historical reviews."
+    },
+    {
+      "id": "MA-04", "result": "SATISFIED",
+      "basis": "Temporary Git fixtures exercise real authority ancestry and real adoption checkpoints. Existing schema/state validation and CAS/lock/replace persistence are replayed against stale writers, lock contention and interrupted publication. Failures preserve the predecessor file and successful entry/adoption occurs once. Authority-isolation mocks are explicit rather than hidden as end-to-end production approval."
+    },
+    {
+      "id": "MA-05", "result": "SATISFIED",
+      "basis": "The exact candidate changes only maintenance code, schemas, tests and documentation. No product/native/reference/baseline, live backlog or previously reviewed ECR-0008 preparation artifact is changed. No new reference, correction, task or release authority is granted."
+    },
+    {
+      "id": "MA-06", "result": "SATISFIED",
+      "basis": "Twenty-one focused tests independently passed. Root's frozen evidence additionally records affected lint/format/type and generated-view checks; earlier wider regression runs are clearly labeled contextual. The narrow selection is proportionate to the changed authority and persistence boundaries; product/deployment and full W1 qualification remain outside this increment."
+    }
+  ],
+  "preflightReplay": [
+    {"boundary": "Serialized parent freeze rather than private index annotations", "result": "CLOSED_BY_SOURCE_AND_REPLAY"},
+    {"boundary": "Historical source quiescence and real approval/snapshot/packet ancestry", "result": "CLOSED_BY_SOURCE_AND_REPLAY"},
+    {"boundary": "Packet-to-projection equality at entry and after adoption", "result": "CLOSED_BY_SOURCE_AND_REPLAY"},
+    {"boundary": "Authenticated historical readiness; bare current YAML cannot bypass entry", "result": "CLOSED_BY_SOURCE_AND_REPLAY"},
+    {"boundary": "Frozen-parent next-action/activation and explicit post-return activation", "result": "CLOSED_BY_SOURCE_AND_REPLAY"},
+    {"boundary": "Returned-parent immutable history and repeat-adoption rejection", "result": "CLOSED_BY_SOURCE_AND_REPLAY"},
+    {"boundary": "Separate schema identity, unchanged v4 bytes and legacy-reader fail-closed behavior", "result": "CLOSED_BY_SOURCE_AND_REPLAY"}
+  ],
+  "findings": [],
+  "openAcceptanceBoundFindings": 0,
+  "retainedOutOfScopeFindings": [
+    "W1.A08.T02-preflight-F01", "W1.A08.T02-preflight-F02",
+    "UX01", "UX02", "UX03", "UX04", "UX05", "UX06"
+  ],
+  "integrationDisposition": {
+    "status": "DEFERRED",
+    "reason": "Existing branch ancestry contains prior A08 work with unmet review gates. Acceptance of this maintenance does not permit bypassing those gates or merging that ancestry into local main.",
+    "mainIntegrationPerformed": false,
+    "forceMoveOrHistoryRewriteAuthorized": false,
+    "newControllerOrAdoptionJournalRequired": false
+  },
+  "preparationContinuation": {
+    "inertReference16PreparationMayProceed": true,
+    "basis": "Existing ECR-0008 preparation scope, not new authority created by this review. An inert proposal may be assembled and verified on the reviewed branch while local-main integration remains deferred.",
+    "constraints": [
+      "Keep the proposed 1.6 reference distinguishable from active approved authority; do not activate its reference ID or overwrite same-ID approved observations.",
+      "Preserve original preparation packets, approvals, adverse evidence and all retained product findings.",
+      "Bind the eventual exact correction/reference packet, resolve readiness and obtain required independent and human approval before execution.",
+      "Do not bootstrap/materialize a correction, resume parent or Wave work, implement product fixes or approve G1 by virtue of preparation or this review."
+    ]
+  },
+  "approvals": {
+    "maintenanceImplementationAccepted": true,
+    "correctionPacketApproval": false,
+    "referenceApproval": false,
+    "executionApproval": false,
+    "taskApproval": false,
+    "sliceApproval": false,
+    "amendmentExitApproval": false,
+    "waveExitApproval": false,
+    "releaseApproval": false
+  },
+  "limitations": "This is the required commit-bound review of the ten-file generic maintenance, not a new review round for product work. No full product suite or live governance transition was run by this reviewer. Future product/reference implementation, Windows qualification, W1 completion and local-main integration remain subject to their existing gates.",
+  "safety": "The protected witness was not accessed, hashed, changed, staged or ignored. No researcher data, native app session, project operation, credentials, live backlog state or external system was touched. Only this new review artifact was written."
+}
