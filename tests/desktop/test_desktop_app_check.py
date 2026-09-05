@@ -538,6 +538,9 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(details["adaptiveWorkflowNavigation"])
         self.assertTrue(details["workflowProfileMatrixValid"])
         matrix = details["workflowProfileMatrix"]
+        # A new presentation does not relabel persisted scholarly workflows.
+        activation = json.loads((REPO / "verification/extensions/desktop-ui.json").read_text(encoding="utf-8"))
+        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.6", activation["referenceId"])
         self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.5", matrix["referenceId"])
         self.assertEqual("1.5", matrix["referenceVersion"])
         self.assertEqual("1.0.0", matrix["profileCatalogVersion"])

@@ -581,7 +581,9 @@ class UiConformanceTests(unittest.TestCase):
         self.assertTrue(any("approval fields must be exact" in error for error in malformed_errors), malformed_errors)
 
     def test_actual_wave_slice_bound_v15_approval_shape_is_exact(self) -> None:
-        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+        approval = yaml.safe_load(
+            self.git(REPO, "show", "7ec1b27d72c189216d7a203586b7339202733531:design/ui-reference/APPROVAL.yaml")
+        )
 
         errors = approval_record_errors(approval, "v1.5-approval", "RO-UI-ACADEMIC-MINIMAL-1.5")
 
@@ -598,7 +600,9 @@ class UiConformanceTests(unittest.TestCase):
         )
 
     def test_actual_wave_slice_bound_v15_approval_resolves_exact_authority(self) -> None:
-        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+        approval = yaml.safe_load(
+            self.git(REPO, "show", "7ec1b27d72c189216d7a203586b7339202733531:design/ui-reference/APPROVAL.yaml")
+        )
 
         errors = wave_slice_authority_bound_approval_errors(
             REPO,
@@ -610,7 +614,9 @@ class UiConformanceTests(unittest.TestCase):
         self.assertEqual([], errors)
 
     def test_wave_slice_bound_approval_rejects_unresolvable_wave_authority(self) -> None:
-        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+        approval = yaml.safe_load(
+            self.git(REPO, "show", "7ec1b27d72c189216d7a203586b7339202733531:design/ui-reference/APPROVAL.yaml")
+        )
         approval["authority"]["approved_wave_commit"] = "0" * 40
 
         errors = wave_slice_authority_bound_approval_errors(
@@ -621,6 +627,34 @@ class UiConformanceTests(unittest.TestCase):
         )
 
         self.assertTrue(any("approved Wave authority commit cannot be resolved" in error for error in errors), errors)
+
+    def test_active_presentation_requires_its_exact_compatibility_witness(self) -> None:
+        with (
+            mock.patch(
+                "ui_conformance.presentation_compatibility_errors", return_value=["missing exact witness"]
+            ) as verify,
+            self.assertRaisesRegex(ValueError, "invalid presentation compatibility.*missing exact witness"),
+        ):
+            load_context(REPO)
+        verify.assert_called_once_with(
+            REPO,
+            "RO-UI-ACADEMIC-MINIMAL-1.6",
+            "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+        )
+
+    def test_actual_amendment_bound_v16_approval_shape_is_exact(self) -> None:
+        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+        self.assertEqual([], approval_record_errors(approval, "v1.6-approval", "RO-UI-ACADEMIC-MINIMAL-1.6"))
+        self.assertEqual(
+            {
+                "amendment_id",
+                "change_request_id",
+                "approval_record",
+                "approval_record_sha256",
+                "approval_record_introduction_commit",
+            },
+            set(approval["authority"]),
+        )
 
     def test_wave_slice_bound_approval_accepts_exact_projection_fixture(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

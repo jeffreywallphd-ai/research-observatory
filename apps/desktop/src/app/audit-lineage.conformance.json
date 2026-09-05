@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
   "referencePage": "audit-lineage.html",
   "routeId": "audit-lineage",
   "component": "apps/desktop/src/app/AuditLineageWorkspace.tsx",

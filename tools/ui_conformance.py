@@ -420,6 +420,12 @@ def load_context(repo: Path) -> Context:
         if missing_common:
             raise ValueError(f"CAPABILITY_COVERAGE.json#{page_name} omits common regions {missing_common}")
         page_contracts[page_name] = raw_contract
+    if config["referenceId"] != SEMANTIC_SOURCE_AUTHORITY["referenceId"]:
+        compatibility_errors = presentation_compatibility_errors(
+            repo, config["referenceId"], config["referencePackageSha256"]
+        )
+        if compatibility_errors:
+            raise ValueError("invalid presentation compatibility: " + "; ".join(compatibility_errors))
     return Context(repo, config, reference, target, site, workflows, page_contracts, pages)
 
 
